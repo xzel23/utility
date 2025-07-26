@@ -189,9 +189,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">A constant representing an empty array of type <code>short</code>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final char</code></div>
-<div class="col-second odd-row-color"><code><a href="#UTF_BYTE_ORDER_MARK" class="member-name-link">UTF_BYTE_ORDER_MARK</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#INVALID_FORMATTING" class="member-name-link">INVALID_FORMATTING</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final char</code></div>
+<div class="col-second even-row-color"><code><a href="#UTF_BYTE_ORDER_MARK" class="member-name-link">UTF_BYTE_ORDER_MARK</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The byte order mark in UTF files</div>
 </div>
 </div>
@@ -264,7 +267,7 @@ V extends U&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/j
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#check(boolean,java.lang.String,java.lang.Object...)" class="member-name-link">check</a><wbr>(boolean&nbsp;condition,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Check that condition is fulfilled.</div>
 </div>
@@ -273,6 +276,21 @@ V extends U&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/j
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;E&gt;&nbsp;exceptionSupplier)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Check that condition is fulfilled.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkArg(boolean,java.lang.String,java.lang.Object...)" class="member-name-link">checkArg</a><wbr>(boolean&nbsp;condition,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Checks a condition and throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a> with a formatted message
+ if the condition is false.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkArg(boolean,java.util.function.Supplier)" class="member-name-link">checkArg</a><wbr>(boolean&nbsp;condition,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Validates the provided boolean condition and throws an IllegalArgumentException with the
+ specified message if the condition is false.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkArg(java.lang.String,java.util.function.Predicate,T)" class="member-name-link">checkArg</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
@@ -340,7 +358,7 @@ V extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#formatLazy(java.lang.String,java.lang.Object...)" class="member-name-link">formatLazy</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a lazy formatted string using the given format string and arguments.</div>
 </div>
@@ -570,7 +588,7 @@ V&gt;&nbsp;void</code></div>
  double&nbsp;min,
  double&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given value is within the specified interval and throws an exception if it is not.</div>
 </div>
@@ -586,7 +604,7 @@ V&gt;&nbsp;void</code></div>
  float&nbsp;min,
  float&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given value is within the specified interval and throws an exception if it is not.</div>
 </div>
@@ -602,7 +620,7 @@ V&gt;&nbsp;void</code></div>
  int&nbsp;min,
  int&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Ensures that the given value is within the specified interval.</div>
 </div>
@@ -618,7 +636,7 @@ V&gt;&nbsp;void</code></div>
  long&nbsp;min,
  long&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given value is within the specified interval and throws an exception if it is not.</div>
 </div>
@@ -634,7 +652,7 @@ V&gt;&nbsp;void</code></div>
  short&nbsp;min,
  short&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Ensures that the given value is within the specified interval.</div>
 </div>
@@ -646,7 +664,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static double</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNegative(double,java.lang.String,java.lang.Object...)" class="member-name-link">requireNegative</a><wbr>(double&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Throws an IllegalArgumentException if the specified value is not negative.</div>
 </div>
@@ -658,7 +676,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNegative(float,java.lang.String,java.lang.Object...)" class="member-name-link">requireNegative</a><wbr>(float&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Throws an IllegalArgumentException if the specified value is not negative.</div>
 </div>
@@ -670,7 +688,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNegative(int,java.lang.String,java.lang.Object...)" class="member-name-link">requireNegative</a><wbr>(int&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the negative value of the given integer if it is not already negative.</div>
 </div>
@@ -682,7 +700,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNegative(long,java.lang.String,java.lang.Object...)" class="member-name-link">requireNegative</a><wbr>(long&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Throws an IllegalArgumentException if the specified value is not negative.</div>
 </div>
@@ -694,7 +712,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static short</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNegative(short,java.lang.String,java.lang.Object...)" class="member-name-link">requireNegative</a><wbr>(short&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the negative value of the given integer if it is not already negative.</div>
 </div>
@@ -706,7 +724,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static double</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNonNegative(double,java.lang.String,java.lang.Object...)" class="member-name-link">requireNonNegative</a><wbr>(double&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Ensures that a given long value is non-negative.</div>
 </div>
@@ -718,7 +736,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNonNegative(float,java.lang.String,java.lang.Object...)" class="member-name-link">requireNonNegative</a><wbr>(float&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Ensures that a given long value is non-negative.</div>
 </div>
@@ -730,7 +748,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNonNegative(int,java.lang.String,java.lang.Object...)" class="member-name-link">requireNonNegative</a><wbr>(int&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given value is a non-negative integer.</div>
 </div>
@@ -742,7 +760,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNonNegative(long,java.lang.String,java.lang.Object...)" class="member-name-link">requireNonNegative</a><wbr>(long&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Ensures that a given long value is non-negative.</div>
 </div>
@@ -754,7 +772,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static short</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requireNonNegative(short,java.lang.String,java.lang.Object...)" class="member-name-link">requireNonNegative</a><wbr>(short&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given value is a non-negative integer.</div>
 </div>
@@ -766,7 +784,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static double</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requirePositive(double,java.lang.String,java.lang.Object...)" class="member-name-link">requirePositive</a><wbr>(double&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given value is positive.</div>
 </div>
@@ -778,7 +796,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requirePositive(float,java.lang.String,java.lang.Object...)" class="member-name-link">requirePositive</a><wbr>(float&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given value is positive.</div>
 </div>
@@ -790,7 +808,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requirePositive(int,java.lang.String,java.lang.Object...)" class="member-name-link">requirePositive</a><wbr>(int&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the absolute value of the given integer if it is positive.</div>
 </div>
@@ -802,7 +820,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requirePositive(long,java.lang.String,java.lang.Object...)" class="member-name-link">requirePositive</a><wbr>(long&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given value is positive.</div>
 </div>
@@ -814,7 +832,7 @@ V&gt;&nbsp;void</code></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static short</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requirePositive(short,java.lang.String,java.lang.Object...)" class="member-name-link">requirePositive</a><wbr>(short&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the absolute value of the given integer if it is positive.</div>
 </div>
@@ -916,6 +934,20 @@ E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="INVALID_FORMATTING">
+<h3>INVALID_FORMATTING</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">INVALID_FORMATTING</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../constant-values.html#com.dua3.utility.lang.LangUtil.INVALID_FORMATTING">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="UTF_BYTE_ORDER_MARK">
 <h3>UTF_BYTE_ORDER_MARK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">char</span>&nbsp;<span class="element-name">UTF_BYTE_ORDER_MARK</span></div>
@@ -1008,6 +1040,42 @@ E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 </section>
 </li>
 <li>
+<section class="detail" id="checkArg(boolean,java.util.function.Supplier)">
+<h3>checkArg</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">checkArg</span><wbr><span class="parameters">(boolean&nbsp;condition,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg)</span>
+                     throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></span></div>
+<div class="block">Validates the provided boolean condition and throws an IllegalArgumentException with the
+ specified message if the condition is false.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>condition</code> - the boolean condition to be checked</dd>
+<dd><code>msg</code> - a supplier that provides the exception message if the condition is false</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the condition is false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="checkArg(boolean,java.lang.String,java.lang.Object...)">
+<h3>checkArg</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">checkArg</span><wbr><span class="parameters">(boolean&nbsp;condition,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span>
+                     throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></span></div>
+<div class="block">Checks a condition and throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a> with a formatted message
+ if the condition is false.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>condition</code> - the boolean condition to check; if false, an exception is thrown</dd>
+<dd><code>fmt</code> - the format string used to construct the exception message</dd>
+<dd><code>fmtArgs</code> - the arguments referenced by the format specifiers in the format string</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the specified condition is false</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="check(boolean)">
 <h3>check</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">check</span><wbr><span class="parameters">(boolean&nbsp;condition)</span></div>
@@ -1043,14 +1111,14 @@ E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <h3>check</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">check</span><wbr><span class="parameters">(boolean&nbsp;condition,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Check that condition is fulfilled.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>condition</code> - condition to test</dd>
 <dd><code>fmt</code> - message format (@see
                   <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(String, Object...)</code></a>)</dd>
-<dd><code>args</code> - format arguments</dd>
+<dd><code>fmtArgs</code> - format arguments</dd>
 <dt>Throws:</dt>
 <dd><code><a href="LangUtil.FailedCheckException.html" title="class in com.dua3.utility.lang">LangUtil.FailedCheckException</a></code> - if condition does not evaluate to <code>true</code></dd>
 </dl>
@@ -1922,12 +1990,12 @@ V extends U&gt;</span>
 <section class="detail" id="formatLazy(java.lang.String,java.lang.Object...)">
 <h3>formatLazy</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">formatLazy</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Creates a lazy formatted string using the given format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>fmt</code> - the format string</dd>
-<dd><code>args</code> - the arguments to be formatted</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted</dd>
 <dt>Returns:</dt>
 <dd>a lazy formatter object</dd>
 </dl>
@@ -1953,14 +2021,14 @@ V extends U&gt;</span>
 <h3>requireNonNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">requireNonNegative</span><wbr><span class="parameters">(double&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Ensures that a given long value is non-negative. If the value is negative, an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a>
  is thrown with the specified format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - the long value to ensure non-negativity</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -1988,14 +2056,14 @@ V extends U&gt;</span>
 <h3>requireNonNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">requireNonNegative</span><wbr><span class="parameters">(float&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Ensures that a given long value is non-negative. If the value is negative, an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a>
  is thrown with the specified format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - the long value to ensure non-negativity</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2023,14 +2091,14 @@ V extends U&gt;</span>
 <h3>requireNonNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">requireNonNegative</span><wbr><span class="parameters">(long&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Ensures that a given long value is non-negative. If the value is negative, an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a>
  is thrown with the specified format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - the long value to ensure non-negativity</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2058,13 +2126,13 @@ V extends U&gt;</span>
 <h3>requireNonNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">requireNonNegative</span><wbr><span class="parameters">(int&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Checks if the given value is a non-negative integer.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - The value to be checked.</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2092,13 +2160,13 @@ V extends U&gt;</span>
 <h3>requireNonNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">short</span>&nbsp;<span class="element-name">requireNonNegative</span><wbr><span class="parameters">(short&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Checks if the given value is a non-negative integer.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - The value to be checked.</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2126,14 +2194,14 @@ V extends U&gt;</span>
 <h3>requirePositive</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">requirePositive</span><wbr><span class="parameters">(double&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Checks if the given value is positive. If it is not, throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a> with a formatted
  error message using the provided format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - the value to check if it is positive</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2161,14 +2229,14 @@ V extends U&gt;</span>
 <h3>requirePositive</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">requirePositive</span><wbr><span class="parameters">(float&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Checks if the given value is positive. If it is not, throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a> with a formatted
  error message using the provided format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - the value to check if it is positive</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2196,14 +2264,14 @@ V extends U&gt;</span>
 <h3>requirePositive</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">requirePositive</span><wbr><span class="parameters">(long&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Checks if the given value is positive. If it is not, throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a> with a formatted
  error message using the provided format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - the value to check if it is positive</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2232,14 +2300,14 @@ V extends U&gt;</span>
 <h3>requirePositive</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">requirePositive</span><wbr><span class="parameters">(int&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Returns the absolute value of the given integer if it is positive.
  If the value is negative, it throws an IllegalArgumentException with a specified error message formatted using the given format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - The integer value to be checked.</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2268,14 +2336,14 @@ V extends U&gt;</span>
 <h3>requirePositive</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">short</span>&nbsp;<span class="element-name">requirePositive</span><wbr><span class="parameters">(short&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Returns the absolute value of the given integer if it is positive.
  If the value is negative, it throws an IllegalArgumentException with a specified error message formatted using the given format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - The integer value to be checked.</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2303,13 +2371,13 @@ V extends U&gt;</span>
 <h3>requireNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">requireNegative</span><wbr><span class="parameters">(double&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Throws an IllegalArgumentException if the specified value is not negative.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - the value to check</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2337,13 +2405,13 @@ V extends U&gt;</span>
 <h3>requireNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">requireNegative</span><wbr><span class="parameters">(float&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Throws an IllegalArgumentException if the specified value is not negative.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - the value to check</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2371,13 +2439,13 @@ V extends U&gt;</span>
 <h3>requireNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">requireNegative</span><wbr><span class="parameters">(long&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Throws an IllegalArgumentException if the specified value is not negative.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - the value to check</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2405,7 +2473,7 @@ V extends U&gt;</span>
 <h3>requireNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">requireNegative</span><wbr><span class="parameters">(int&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Returns the negative value of the given integer if it is not already negative.
  Otherwise, it returns the same value. The optional format string and arguments
  can be used to specify a message if the value is not negative.</div>
@@ -2413,7 +2481,7 @@ V extends U&gt;</span>
 <dt>Parameters:</dt>
 <dd><code>value</code> - the integer value to be checked</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2441,7 +2509,7 @@ V extends U&gt;</span>
 <h3>requireNegative</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">short</span>&nbsp;<span class="element-name">requireNegative</span><wbr><span class="parameters">(short&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Returns the negative value of the given integer if it is not already negative.
  Otherwise, it returns the same value. The optional format string and arguments
  can be used to specify a message if the value is not negative.</div>
@@ -2449,7 +2517,7 @@ V extends U&gt;</span>
 <dt>Parameters:</dt>
 <dd><code>value</code> - the integer value to be checked</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2483,7 +2551,7 @@ V extends U&gt;</span>
  double&nbsp;min,
  double&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Checks if the given value is within the specified interval and throws an exception if it is not.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -2491,7 +2559,7 @@ V extends U&gt;</span>
 <dd><code>min</code> - the minimum value of the interval (inclusive)</dd>
 <dd><code>max</code> - the maximum value of the interval (inclusive)</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2525,7 +2593,7 @@ V extends U&gt;</span>
  float&nbsp;min,
  float&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Checks if the given value is within the specified interval and throws an exception if it is not.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -2533,7 +2601,7 @@ V extends U&gt;</span>
 <dd><code>min</code> - the minimum value of the interval (inclusive)</dd>
 <dd><code>max</code> - the maximum value of the interval (inclusive)</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2567,7 +2635,7 @@ V extends U&gt;</span>
  long&nbsp;min,
  long&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Checks if the given value is within the specified interval and throws an exception if it is not.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -2575,7 +2643,7 @@ V extends U&gt;</span>
 <dd><code>min</code> - the minimum value of the interval (inclusive)</dd>
 <dd><code>max</code> - the maximum value of the interval (inclusive)</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2609,7 +2677,7 @@ V extends U&gt;</span>
  int&nbsp;min,
  int&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Ensures that the given value is within the specified interval. If the value is outside the interval, an exception
  is thrown with a formatted error message.</div>
 <dl class="notes">
@@ -2618,7 +2686,7 @@ V extends U&gt;</span>
 <dd><code>min</code> - the minimum value in the interval (inclusive)</dd>
 <dd><code>max</code> - the maximum value in the interval (inclusive)</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
@@ -2652,7 +2720,7 @@ V extends U&gt;</span>
  short&nbsp;min,
  short&nbsp;max,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;fmtArgs)</span></div>
 <div class="block">Ensures that the given value is within the specified interval. If the value is outside the interval, an exception
  is thrown with a formatted error message.</div>
 <dl class="notes">
@@ -2661,7 +2729,7 @@ V extends U&gt;</span>
 <dd><code>min</code> - the minimum value in the interval (inclusive)</dd>
 <dd><code>max</code> - the maximum value in the interval (inclusive)</dd>
 <dd><code>fmt</code> - the format string for the error message</dd>
-<dd><code>args</code> - the arguments to be formatted in the error message</dd>
+<dd><code>fmtArgs</code> - the arguments to be formatted in the error message</dd>
 <dt>Returns:</dt>
 <dd>the given value</dd>
 <dt>Throws:</dt>
