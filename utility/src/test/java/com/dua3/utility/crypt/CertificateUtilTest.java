@@ -9,17 +9,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -125,6 +128,28 @@ class CertificateUtilTest {
                 "certificate", parentCertificates[0],
                 "privateKey", parentKeyPair.getPrivate()
         );
+    }
+
+    @Test
+    void testToX509Certificate() throws GeneralSecurityException {
+        // Generate a self-signed certificate as bytes
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        String subject = "CN=Test To X509 Certificate, O=Test Organization, C=US";
+        int validityDays = 365;
+
+        Certificate[] certificates = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, validityDays, true);
+        X509Certificate originalCertificate = (X509Certificate) certificates[0];
+        byte[] certBytes = originalCertificate.getEncoded();
+
+        // Test conversion of bytes back to a certificate
+        X509Certificate convertedCertificate = CertificateUtil.toX509Certificate(certBytes);
+        assertNotNull(convertedCertificate, "The converted certificate should not be null.");
+        assertArrayEquals(originalCertificate.getEncoded(), convertedCertificate.getEncoded(), "The certificate bytes should match.");
+        assertTrue(convertedCertificate.toString().contains("CN=Test To X509 Certificate"), "The certificate subject should match the original.");
+
+        // Test with invalid data
+        byte[] invalidBytes = "Invalid Bytes".getBytes(StandardCharsets.UTF_8);
+        assertThrows(CertificateException.class, () -> CertificateUtil.toX509Certificate(invalidBytes));
     }
 
 }

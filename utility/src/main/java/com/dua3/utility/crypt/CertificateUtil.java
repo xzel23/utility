@@ -2,10 +2,12 @@ package com.dua3.utility.crypt;
 
 import com.dua3.utility.lang.LangUtil;
 
+import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Optional;
@@ -134,5 +136,20 @@ public final class CertificateUtil {
         } catch (IllegalArgumentException e) {
             throw new GeneralSecurityException("Unsupported signing key algorithm: " + signingKeyAlgorithm, e);
         }
+    }
+
+    /**
+     * Converts a byte array representing an encoded X.509 certificate into an
+     * {@link X509Certificate} object.
+     *
+     * @param bytes the byte array containing the X.509 certificate data in DER-encoded format
+     * @return an {@link X509Certificate} object representing the parsed certificate
+     * @throws GeneralSecurityException if an error occurs while parsing the certificate,
+     *                                  such as if the byte array does not represent
+     *                                  a valid X.509 certificate
+     */
+    public static X509Certificate toX509Certificate(byte[] bytes) throws GeneralSecurityException {
+        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+        return (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(bytes));
     }
 }
