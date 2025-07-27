@@ -238,7 +238,7 @@ public class FxTextRendering extends Application {
          * This method is typically called to update the visual representation of the canvas
          * after changes to the rendering logic or other data affecting the graphical content.
          */
-        public void redraw() {
+        public final void redraw() {
             renderer.accept(graphics);
         }
     }
