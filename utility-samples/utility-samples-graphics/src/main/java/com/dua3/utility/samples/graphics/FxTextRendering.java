@@ -43,6 +43,11 @@ import java.util.function.Consumer;
  */
 public class FxTextRendering extends Application {
 
+    /**
+     * A predefined {@link RichText} constant that demonstrates the usage of rotated text with various
+     * styles, including bold, italic, underline, and line-through. This text is constructed using
+     * a {@link RichTextBuilder} and utilizes different formatting styles for illustrative purposes.
+     */
     public static final RichText TEXT = new RichTextBuilder()
             .append("rotated text\n")
             .append("using different modes and angles\n")
@@ -62,9 +67,20 @@ public class FxTextRendering extends Application {
 
     private double rotationAngle = 0;
 
+    /**
+     * The main entry point of the FxGraphicsSample application. This method initializes
+     * the JavaFX runtime and launches the graphical application.
+     *
+     * @param args command-line arguments passed to the application
+     */
     public static void main(String[] args) {
         launch(args);
     }
+
+    /**
+     * Constructor.
+     */
+    public FxTextRendering() { /* nothing to do */ }
 
     @Override
     public void start(Stage primaryStage) {
@@ -182,6 +198,14 @@ public class FxTextRendering extends Application {
         return new Tile("HAnchor: %s, VAnchor: %s".formatted(hAnchor, vAnchor), renderer);
     }
 
+    /**
+     * The Tile class is a custom UI component extending BorderPane and is designed to encapsulate
+     * a rendered canvas with a configurable header. It provides functionality to draw custom
+     * graphics using a user-supplied renderer.
+     * <p>
+     * The header of the tile displays a title in bold white text with a dark blue background.
+     * The body of the tile contains a resizable canvas that binds its dimensions to the dimensions of the Tile.
+     */
     public static class Tile extends BorderPane {
         private static final Font font = FxFontUtil.getInstance().getDefaultFont();
         private final Canvas canvas;

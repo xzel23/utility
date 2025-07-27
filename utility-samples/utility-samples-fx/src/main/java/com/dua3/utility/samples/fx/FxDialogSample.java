@@ -39,6 +39,11 @@ public class FxDialogSample extends Application {
         launch(args);
     }
 
+    /**
+     * Constructor.
+     */
+    public FxDialogSample() { /* nothing to do */ }
+
     @Override
     public void start(Stage primaryStage) {
         VBox container = new VBox();

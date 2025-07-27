@@ -32,6 +32,11 @@ public class ShapeFx extends Application {
         launch(args);
     }
 
+    /**
+     * Constructor.
+     */
+    public ShapeFx() { /* nothing to do */ }
+
     @Override
     public void start(Stage stage) {
         Pane root = new Pane();

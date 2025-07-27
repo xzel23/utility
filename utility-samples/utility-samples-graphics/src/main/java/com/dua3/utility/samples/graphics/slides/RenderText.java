@@ -16,6 +16,12 @@ import com.dua3.utility.ui.Graphics;
  * specific slide content to display styled text on a canvas.
  */
 public class RenderText implements IGraphicsSample.Slide {
+
+    /**
+     * Constructor.
+     */
+    public RenderText() { /* nothing to do */ }
+
     @Override
     public String title() {
         return "renderText()";

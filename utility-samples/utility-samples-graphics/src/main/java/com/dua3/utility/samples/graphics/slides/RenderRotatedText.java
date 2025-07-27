@@ -45,7 +45,14 @@ public class RenderRotatedText implements IGraphicsSample.Slide {
     private final Graphics.VAnchor vAnchor;
     private final double[] angles;
 
-
+    /**
+     * Constructs a new {@code RenderRotatedText} instance with the specified horizontal anchor,
+     * vertical anchor, and array of angles for text rotation.
+     *
+     * @param hAnchor the horizontal anchor specifying the alignment of the text
+     * @param vAnchor the vertical anchor specifying the alignment of the text
+     * @param angles  the array of angles indicating the rotation applied to the text
+     */
     public RenderRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, double[] angles) {
         this.hAnchor = hAnchor;
         this.vAnchor = vAnchor;
@@ -62,6 +69,13 @@ public class RenderRotatedText implements IGraphicsSample.Slide {
         drawText(g);
     }
 
+    /**
+     * Draws text with various rotation angles and alignment modes onto the provided {@code Graphics} context.
+     * This method arranges the text elements in a grid-like structure, with rows representing different
+     * {@code TextRotationMode}s and columns corresponding to specific rotation angles.
+     *
+     * @param g the {@code Graphics} context used for rendering the text and associated visual elements
+     */
     public void drawText(Graphics g) {
         Graphics.TextRotationMode[] modes = Graphics.TextRotationMode.values();
 

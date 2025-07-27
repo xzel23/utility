@@ -26,6 +26,11 @@ public class IconViewSample extends Application {
         launch(args);
     }
 
+    /**
+     * Constructor.
+     */
+    public IconViewSample() { /* nothing to do */ }
+
     @Override
     public void start(Stage primaryStage) {
         IconView iv = new IconView("fa-exclamation-triangle", 80, Paint.valueOf("DARKBLUE"));

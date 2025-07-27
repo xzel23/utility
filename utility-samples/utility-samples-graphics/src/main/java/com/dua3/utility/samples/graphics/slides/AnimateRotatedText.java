@@ -28,6 +28,12 @@ import java.util.stream.DoubleStream;
  */
 public class AnimateRotatedText implements IGraphicsSample.Slide {
 
+    /**
+     * A rich text instance that demonstrates the use of various text styles such as bold,
+     * italic, underline, and line-through. The text is compiled from a sequence of styled
+     * segments and contains multiple lines of text showcasing different visual properties.
+     * This constant is used in demonstrating rotated text with various modes and angles.
+     */
     public static final RichText TEXT = new RichTextBuilder()
             .append("rotated text\n")
             .append("using different modes\n")

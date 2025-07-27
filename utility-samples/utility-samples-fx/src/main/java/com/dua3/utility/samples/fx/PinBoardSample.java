@@ -47,6 +47,11 @@ public class PinBoardSample extends Application {
         launch(args);
     }
 
+    /**
+     * Constructor.
+     */
+    public PinBoardSample() { /* nothing to do */ }
+
     @Override
     public void start(Stage stage) {
         pinBoard.clear();

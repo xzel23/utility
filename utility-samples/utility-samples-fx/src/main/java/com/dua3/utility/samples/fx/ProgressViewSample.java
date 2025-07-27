@@ -30,6 +30,11 @@ public class ProgressViewSample extends Application {
         launch(args);
     }
 
+    /**
+     * Constructor.
+     */
+    public ProgressViewSample() { /* nothing to do */ }
+
     @Override
     public void start(Stage primaryStage) {
         ProgressView<SampleTask> pv = new ProgressView<>();

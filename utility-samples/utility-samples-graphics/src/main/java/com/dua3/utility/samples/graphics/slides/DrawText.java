@@ -12,6 +12,12 @@ import com.dua3.utility.ui.Graphics;
  * (HAnchor and VAnchor) using the com.dua3.utility.ui.Graphics API.
  */
 public class DrawText implements IGraphicsSample.Slide {
+
+    /**
+     * Constructor.
+     */
+    public DrawText() { /* nothing to do */ }
+
     @Override
     public String title() {
         return "drawText()";

@@ -44,6 +44,11 @@ public class FxLogPaneSample extends Application {
         launch(args);
     }
 
+    /**
+     * Constructor.
+     */
+    public FxLogPaneSample() { /* nothing to do */ }
+
     @Override
     public void start(Stage primaryStage) {
         FxLogPane logPane = new FxLogPane(LOG_BUFFER_SIZE);

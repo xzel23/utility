@@ -28,8 +28,21 @@ public interface IGraphicsSample<T> {
      * scenes or visual elements in a graphical framework or user interface.
      */
     interface Slide {
+        /**
+         * Retrieves the title of the slide.
+         *
+         * @return the title of the slide as a string
+         */
         String title();
 
+        /**
+         * Renders the graphical content of the slide with a scaled and translated
+         * transformation applied to the graphics context. This method sets up the
+         * graphics transformation and calls {@link #drawContent(Graphics)} to render
+         * the specific content of the slide.
+         *
+         * @param g the graphics context used for rendering the slide
+         */
         default void draw(Graphics g) {
             g.transform(
                     AffineTransformation2f.scale(0.9f),
@@ -38,6 +51,14 @@ public interface IGraphicsSample<T> {
             drawContent(g);
         }
 
+        /**
+         * Renders the specific graphical content of the slide. This method is intended
+         * to be implemented by classes that define the visual representation of a slide.
+         * It is called after the graphical transformation is set up in the {@link #draw(Graphics)}
+         * method.
+         *
+         * @param g the graphics context used for rendering the content of the slide
+         */
         void drawContent(Graphics g);
     }
 

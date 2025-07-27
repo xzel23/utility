@@ -26,6 +26,11 @@ public class FxGraphicsSample extends Application implements IGraphicsSample<Tab
         launch(args);
     }
 
+    /**
+     * Constructor.
+     */
+    public FxGraphicsSample() { /* nothing to do */ }
+
     @Override
     public void start(Stage primaryStage) {
         TabPane tabPane = new TabPane(createSlides(TILE_WIDTH, TILE_HEIGHT).toArray(Tab[]::new));

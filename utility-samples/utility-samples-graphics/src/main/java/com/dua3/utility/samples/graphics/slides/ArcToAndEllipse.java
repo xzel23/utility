@@ -33,6 +33,11 @@ import com.dua3.utility.ui.Graphics;
  */
 public class ArcToAndEllipse implements IGraphicsSample.Slide {
 
+    /**
+     * Constructor.
+     */
+    public ArcToAndEllipse() { /* nothing to do */ }
+
     @Override
     public String title() {
         return "arcTo(), strokeEllipse(), fillEllipse()";
