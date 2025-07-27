@@ -62,7 +62,25 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
             DialogPaneBuilder.ResultHandler<R> resultHandler,
             Consumer<InputDialogPane<R>> action,
             BooleanExpression enabled
-    ) {}
+    ) {
+        /**
+         * Creates and returns a {@code ButtonDef} instance configured as a cancel button.
+         * The cancel button is defined with a {@code ButtonType.CANCEL},
+         * a result handler that always returns {@code true}, an action that performs no operation,
+         * and an enablement state that is always {@code true}.
+         *
+         * @param <Q> the type of the result associated with this button
+         * @return a {@code ButtonDef} instance representing a cancel button
+         */
+        public static <Q> ButtonDef<Q> cancel() {
+            return new ButtonDef<>(
+                    ButtonType.CANCEL,
+                    (bt, r) -> true,
+                    idp -> {},
+                    Bindings.createBooleanBinding(() -> true)
+            );
+        }
+    }
 
     /**
      * A collection of button definitions used to configure actions and behavior
