@@ -231,7 +231,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds the current set of parameters as a batch entry.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputDialogPane.html#addButton(javafx.scene.control.ButtonType,com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler,java.util.function.Consumer,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">addButton(ButtonType, DialogPaneBuilder.ResultHandler&lt;R&gt;, Consumer&lt;InputDialogPane&lt;R&gt;&gt;, ObservableBooleanValue)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPane.html#addButton(javafx.scene.control.ButtonType,com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler,java.util.function.Consumer,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">addButton(ButtonType, DialogPaneBuilder.ResultHandler&lt;? super R&gt;, Consumer&lt;? super InputDialogPane&lt;R&gt;&gt;, ObservableBooleanValue)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a></dt>
 <dd>
 <div class="block">Adds a button to the dialog pane with the specified type, result handler, action,
  and enablement state.</div>
@@ -549,7 +549,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/data/RGBColor.html#alpha()" class="member-name-link">alpha()</a> - Method in class com.dua3.utility.data.<a href="com/dua3/utility/data/RGBColor.html" title="class in com.dua3.utility.data">RGBColor</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html#ALWAYS_TRUE" class="member-name-link">ALWAYS_TRUE</a> - Static variable in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/FxUtil.html#ALWAYS_FALSE" class="member-name-link">ALWAYS_FALSE</a> - Static variable in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxUtil.html" title="class in com.dua3.utility.fx">FxUtil</a></dt>
+<dd>
+<div class="block">A constant that represents a boolean expression which always evaluates to false.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/FxUtil.html#ALWAYS_TRUE" class="member-name-link">ALWAYS_TRUE</a> - Static variable in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxUtil.html" title="class in com.dua3.utility.fx">FxUtil</a></dt>
 <dd>
 <div class="block">A constant that represents a boolean expression which always evaluates to true.</div>
 </dd>
@@ -2750,6 +2754,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/i18n/I18N.html#create(java.util.ResourceBundle)" class="member-name-link">create(ResourceBundle)</a> - Static method in class com.dua3.utility.i18n.<a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n">I18N</a></dt>
 <dd>
 <div class="block">Creates an instance of the I18N class with the provided resource bundle.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPane.ButtonDef.html#create(javafx.scene.control.ButtonType,com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler,java.util.function.Consumer,javafx.beans.binding.BooleanExpression)" class="member-name-link">create(ButtonType, DialogPaneBuilder.ResultHandler&lt;Q&gt;, Consumer&lt;InputDialogPane&lt;Q&gt;&gt;, BooleanExpression)</a> - Static method in record class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPane.ButtonDef.html" title="class in com.dua3.utility.fx.controls">InputDialogPane.ButtonDef</a></dt>
+<dd>
+<div class="block">Creates a new <code>ButtonDef</code> instance with the specified parameters.</div>
 </dd>
 <dt><a href="com/dua3/utility/concurrent/Value.html#create(T)" class="member-name-link">create(T)</a> - Static method in interface com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/Value.html" title="interface in com.dua3.utility.concurrent">Value</a></dt>
 <dd>

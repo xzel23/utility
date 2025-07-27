@@ -136,8 +136,8 @@ R&gt;<br><a href="../WizardDialogBuilder.html" title="class in com.dua3.utility.
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>void</code></div>
 <div class="col-second even-row-color"><span class="type-name-label">InputDialogPane.</span><code><a href="../InputDialogPane.html#addButton(javafx.scene.control.ButtonType,com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler,java.util.function.Consumer,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">addButton</a><wbr>(javafx.scene.control.ButtonType&nbsp;type,
- @Nullable <a href="../abstract_builders/DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a>&lt;@Nullable <a href="../InputDialogPane.html" title="type parameter in InputDialogPane">R</a>&gt;&nbsp;resultHandler,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a>&lt;<a href="../InputDialogPane.html" title="type parameter in InputDialogPane">R</a>&gt;&gt;&nbsp;action,
+ @Nullable <a href="../abstract_builders/DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a>&lt;? super @Nullable <a href="../InputDialogPane.html" title="type parameter in InputDialogPane">R</a>&gt;&nbsp;resultHandler,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super <a href="../InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a>&lt;<a href="../InputDialogPane.html" title="type parameter in InputDialogPane">R</a>&gt;&gt;&nbsp;action,
  @Nullable javafx.beans.value.ObservableBooleanValue&nbsp;enabled)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Adds a button to the dialog pane with the specified type, result handler, action,
@@ -149,6 +149,14 @@ R&gt;<br><a href="../WizardDialogBuilder.html" title="class in com.dua3.utility.
  @Nullable javafx.beans.binding.BooleanExpression&nbsp;enabled)</code></div>
 <div class="col-last odd-row-color">
 <div class="block">Adds a button to the current page of the wizard dialog.</div>
+</div>
+<div class="col-first even-row-color"><code>static &lt;Q&gt;&nbsp;<a href="../InputDialogPane.ButtonDef.html" title="class in com.dua3.utility.fx.controls">InputDialogPane.ButtonDef</a><wbr>&lt;Q&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">InputDialogPane.ButtonDef.</span><code><a href="../InputDialogPane.ButtonDef.html#create(javafx.scene.control.ButtonType,com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler,java.util.function.Consumer,javafx.beans.binding.BooleanExpression)" class="member-name-link">create</a><wbr>(javafx.scene.control.ButtonType&nbsp;type,
+ <a href="../abstract_builders/DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a>&lt;Q&gt;&nbsp;resultHandler,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a>&lt;Q&gt;&gt;&nbsp;action,
+ javafx.beans.binding.BooleanExpression&nbsp;enabled)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Creates a new <code>ButtonDef</code> instance with the specified parameters.</div>
 </div>
 </div>
 <div class="caption"><span>Constructor parameters in <a href="../package-summary.html">com.dua3.utility.fx.controls</a> with type arguments of type <a href="../InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a></span></div>
