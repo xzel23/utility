@@ -159,11 +159,14 @@ public final class LangUtil {
 
     /**
      * Validates whether the provided format string and arguments are compatible.
+     * <p>
+     * <strong>Note:</strong> This method is for checks during development only!
      *
      * @param fmt the format string to be validated
      * @param fmtArgs the arguments to be applied to the format string
      * @return true if the format string is valid with the provided arguments, false otherwise
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static boolean isFormatValid(String fmt, Object[] fmtArgs) {
         try {
             String.format(fmt, fmtArgs);
