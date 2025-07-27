@@ -155,8 +155,8 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
      */
     public void addButton(
             ButtonType type,
-            DialogPaneBuilder.@Nullable ResultHandler<@Nullable R> resultHandler,
-            Consumer<InputDialogPane<R>> action,
+            DialogPaneBuilder.@Nullable ResultHandler<? super @Nullable R> resultHandler,
+            Consumer<? super InputDialogPane<R>> action,
             @Nullable ObservableBooleanValue enabled
     ) {
         ObservableList<ButtonType> bt = getButtonTypes();
