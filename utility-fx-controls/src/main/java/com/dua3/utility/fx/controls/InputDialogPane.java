@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.binding.Bindings;
@@ -77,7 +78,31 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
                     ButtonType.CANCEL,
                     (bt, r) -> true,
                     idp -> {},
-                    Bindings.createBooleanBinding(() -> true)
+                    FxUtil.ALWAYS_TRUE
+            );
+        }
+
+        /**
+         * Creates a new {@code ButtonDef} instance with the specified parameters.
+         *
+         * @param <Q>           the type of the result associated with the button
+         * @param type          the {@code ButtonType} representing the type of the button (e.g., OK, CANCEL, etc.)
+         * @param resultHandler a {@link DialogPaneBuilder.ResultHandler} to handle the result when the button is pressed
+         * @param action        a {@link Consumer} specifying the operation to execute when the button is clicked
+         * @param enabled       a {@link BooleanExpression} that determines whether the button is enabled or disabled
+         * @return a new {@code ButtonDef} instance configured with the provided parameters
+         */
+        public static <Q> ButtonDef<Q> create(
+                ButtonType type,
+                DialogPaneBuilder.ResultHandler<Q> resultHandler,
+                Consumer<InputDialogPane<Q>> action,
+                BooleanExpression enabled
+        ) {
+            return new ButtonDef<>(
+                    type,
+                    resultHandler,
+                    action,
+                    enabled
             );
         }
     }

@@ -7,6 +7,8 @@ import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
 import javafx.animation.AnimationTimer;
+import javafx.beans.binding.BooleanExpression;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.shape.ClosePath;
 import org.apache.logging.log4j.LogManager;
@@ -79,6 +81,18 @@ import java.util.regex.Pattern;
  */
 public final class FxUtil {
     private static final Logger LOG = LogManager.getLogger(FxUtil.class);
+    /**
+     * A constant that represents a boolean expression which always evaluates to true.
+     * This can be used in scenarios where an always-true condition is required,
+     * commonly for default or unconditional bindings in JavaFX applications.
+     */
+    public static final BooleanExpression ALWAYS_TRUE = new ReadOnlyBooleanWrapper(true);
+    /**
+     * A constant that represents a boolean expression which always evaluates to false.
+     * This can be used in scenarios where an always-false condition is required,
+     * commonly for default or unconditional bindings in JavaFX applications.
+     */
+    public static final BooleanExpression ALWAYS_FALSE = new ReadOnlyBooleanWrapper(false);
 
     private static final Pattern PATTERN_FILENAME_AND_DOT = Pattern.compile("^\\*\\.");
     private static final FxFontUtil FX_FONT_UTIL = FxFontUtil.getInstance();

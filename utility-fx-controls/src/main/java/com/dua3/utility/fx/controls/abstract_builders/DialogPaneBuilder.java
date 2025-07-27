@@ -14,9 +14,8 @@
 
 package com.dua3.utility.fx.controls.abstract_builders;
 
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.InputDialogPane;
-import javafx.beans.binding.BooleanExpression;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 
@@ -36,13 +35,6 @@ import java.util.function.Supplier;
  * @param <R> the result type
  */
 public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>, R> {
-
-    /**
-     * A constant that represents a boolean expression which always evaluates to true.
-     * This can be used in scenarios where an always-true condition is required,
-     * commonly for default or unconditional bindings in JavaFX applications.
-     */
-    public static final BooleanExpression ALWAYS_TRUE = new ReadOnlyBooleanWrapper(true);
 
     private final BiConsumer<? super D, ? super String> headerSetter;
     private Supplier<? extends D> dialogSupplier;
@@ -187,13 +179,13 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
                             ButtonType.CANCEL,
                             (btn, r) -> true,
                             dlg -> {},
-                            ALWAYS_TRUE
+                            FxUtil.ALWAYS_TRUE
                     ),
                     new InputDialogPane.ButtonDef<>(
                             ButtonType.OK,
                             (btn, r) -> true,
                             dlg -> {},
-                            ALWAYS_TRUE
+                            FxUtil.ALWAYS_TRUE
                     )
             );
         } else {
