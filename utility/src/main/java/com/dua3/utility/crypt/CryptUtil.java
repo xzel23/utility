@@ -1,16 +1,22 @@
 package com.dua3.utility.crypt;
 
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
+import org.bouncycastle.crypto.params.HKDFParameters;
+
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Optional;
@@ -333,5 +339,59 @@ public final class CryptUtil {
 
         // Decrypt data with AES key
         return decryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, aesKey, encryptedData);
+    }
+
+    /**
+     * Derives a cryptographic key using the specified symmetric algorithm, salt, input data, and additional info.
+     * The method utilizes the HKDF (HMAC-based Extract-and-Expand Key Derivation Function) with SHA-256 to
+     * securely derive a key.
+     *
+     * @param algorithm the symmetric algorithm for which the key is being derived; it determines the key size
+     *                  and the key algorithm (e.g., AES)
+     * @param salt a non-secret random value used to ensure uniqueness of derived keys; must be at least 16 bytes
+     * @param input the input keying material (IKM) used as a source of entropy for key derivation
+     * @param info optional context and application-specific information used for domain separation during
+     *             key derivation
+     * @return a {@link SecretKey} instance containing the derived key that is compatible with the specified algorithm
+     * @throws IllegalArgumentException if the provided salt is shorter than 16 bytes
+     */
+    public static SecretKey deriveKey(SymmetricAlgorithm algorithm, byte[] salt, byte[] input, byte[] info) {
+        // Validate salt size
+        if (salt.length < 16) {
+            throw new IllegalArgumentException("Salt must be at least 16 bytes for security");
+        }
+
+        // Create HKDF with SHA-256
+        HKDFBytesGenerator hkdf = new HKDFBytesGenerator(new SHA256Digest());
+
+        // Initialize HKDF with info parameter for domain separation
+        hkdf.init(new HKDFParameters(input, salt, info));
+
+        // Generate key bytes
+        byte[] keyBytes = new byte[algorithm.getDefaultKeySize() / 8];
+        hkdf.generateBytes(keyBytes, 0, keyBytes.length);
+
+        // Create SecretKey from derived bytes
+        return new SecretKeySpec(keyBytes, algorithm.getKeyAlgorithm());
+    }
+
+    /**
+     * Derives a cryptographic key with a randomly generated salt using the specified
+     * symmetric algorithm, input keying material, and additional context information.
+     * This method securely generates a 256-bit random salt and uses it in conjunction
+     * with the input parameters to derive the key.
+     *
+     * @param algorithm the symmetric algorithm for which the key is being derived;
+     *                  it determines the key size and the key algorithm (e.g., AES)
+     * @param input     the input keying material (IKM) used as a source of entropy for key derivation
+     * @param info      optional context and application-specific information used for domain
+     *                  separation during key derivation; can be null
+     * @return a {@link SecretKey} instance containing the derived key that is
+     *         compatible with the specified algorithm
+     */
+    public static SecretKey deriveKeyWithRandomSalt(SymmetricAlgorithm algorithm, byte[] input, byte[] info) {
+        byte[] salt = new byte[32]; // 256-bit salt
+        new SecureRandom().nextBytes(salt);
+        return deriveKey(algorithm, salt, input, info);
     }
 }
