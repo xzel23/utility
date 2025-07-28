@@ -33,7 +33,7 @@ import java.util.function.Predicate;
  */
 public class RingBuffer<T extends @Nullable Object> implements SequencedCollection<T> {
 
-    private @Nullable T[] data;
+    private T[] data;
     private int entries;
     private int start;
 
@@ -44,7 +44,7 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
      */
     @SuppressWarnings("unchecked")
     public RingBuffer(int capacity) {
-        data = (@Nullable T[]) new Object[capacity];
+        data = (T[]) new Object[capacity];
         start = 0;
         entries = 0;
     }
@@ -246,7 +246,7 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
 
     @Override
     @SuppressWarnings("unchecked")
-    public <U> @Nullable U[] toArray(@Nullable U[] a) {
+    public <U extends @Nullable Object> U[] toArray(U[] a) {
         if (a.length < entries) {
             a = (U[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), entries);
         }
@@ -274,7 +274,7 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
     @SuppressWarnings("unchecked")
     public void setCapacity(int n) {
         if (n != capacity()) {
-            var dataNew = (@Nullable T[]) new Object[n];
+            var dataNew = (T[]) new Object[n];
             int itemsToCopy = Math.min(size(), n);
             int startIndex = Math.max(0, size() - n);
             for (int i = 0; i < itemsToCopy; i++) {

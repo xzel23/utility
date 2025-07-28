@@ -5,7 +5,11 @@
 
 package com.dua3.utility.lang;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.NullString;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -520,5 +525,15 @@ class RingBufferTest {
         assertEquals("item5", buffer.get(0));
         assertEquals("item6", buffer.get(1));
         assertEquals("item7", buffer.get(2));
+    }
+
+    @Test
+    void testNullableElements() {
+        RingBuffer<@Nullable String> b = new RingBuffer<>(CAPACITY);
+        b.add("test");
+        b.add(null);
+        assertEquals(2, b.size());
+        assertEquals("test", b.get(0));
+        assertNull(b.get(1));
     }
 }
