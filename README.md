@@ -249,6 +249,7 @@ could not be loaded.
     - Run tasks have been added for the sample applications.
 
 - Package `utility`
+    - Add new field `build.key` and method `digest()` to the `BuildInfo` class.
     - Added `Version` class and refactored BuildInfo class to use it.
     - Added `LangUtil.checkArg()` that throws `IllegalArgumentException`.
     - Check format string matches arguments in `LangUtil.check()` and `LangUtil.checkArg()`.
