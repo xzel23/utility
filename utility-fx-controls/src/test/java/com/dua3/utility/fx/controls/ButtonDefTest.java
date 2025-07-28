@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ButtonDefTest extends FxTestBase {
 
@@ -37,8 +39,7 @@ class ButtonDefTest extends FxTestBase {
     }
 
     /**
-     * Tests the static create method of ButtonDef with null resultHandler.
-     * Verifies instance creation still works with null resultHandler.
+     * Tests the static create method of ButtonDef will throw {@link NullPointerException} with null resultHandler.
      */
     @Test
     void testCreateMethodAllowsNullResultHandler() {
@@ -47,12 +48,8 @@ class ButtonDefTest extends FxTestBase {
         BooleanExpression enabled = new SimpleBooleanProperty(false);
 
         // Act
-        ButtonDef<String> buttonDef = ButtonDef.create(buttonType, (bt, r) -> true, pane -> {}, enabled);
-
-        // Assert
-        assertNotNull(buttonDef);
-        assertEquals(buttonType, buttonDef.type());
-        assertEquals(enabled, buttonDef.enabled());
+        Throwable t = assertThrows(Throwable.class, () -> ButtonDef.create(buttonType, null, pane -> {}, enabled));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
     }
 
     /**
