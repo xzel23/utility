@@ -1,8 +1,13 @@
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
+import java.io.UncheckedIOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -149,7 +154,42 @@ public final class CertificateUtil {
      *                                  a valid X.509 certificate
      */
     public static X509Certificate toX509Certificate(byte[] bytes) throws GeneralSecurityException {
-        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
-        return (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(bytes));
+        try (InputStream in = new ByteArrayInputStream(bytes)) {
+            return readX509Certificate(in);
+        } catch (IOException e) {
+            // this should never happen
+            throw new UncheckedIOException(e);
+        }
     }
+
+    /**
+     * Reads and parses an X.509 certificate from a PEM-encoded string.
+     *
+     * @param pemData the PEM-encoded string containing the X.509 certificate data
+     * @return an {@link X509Certificate} object representing the parsed certificate
+     * @throws GeneralSecurityException if an error occurs while parsing the certificate
+     *                                  or if the provided data is not a valid X.509 certificate
+     */
+    public static X509Certificate toX509Certificate(String pemData) throws GeneralSecurityException {
+        try (InputStream in = IoUtil.stringInputStream(pemData)) {
+            return readX509Certificate(in);
+        } catch (IOException e) {
+            // this should never happen
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Reads and parses an X.509 certificate from the provided input stream.
+     *
+     * @param in the input stream containing the DER-encoded X.509 certificate data
+     * @return an {@link X509Certificate} object representing the parsed certificate
+     * @throws GeneralSecurityException if an error occurs while parsing the certificate
+     *                                  or if the provided data is not a valid X.509 certificate
+     */
+    public static X509Certificate readX509Certificate(InputStream in) throws GeneralSecurityException {
+        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+        return (X509Certificate) certFactory.generateCertificate(in);
+    }
+
 }
