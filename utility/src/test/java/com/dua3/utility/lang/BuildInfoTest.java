@@ -13,52 +13,80 @@ class BuildInfoTest {
 
     @Test
     void testMajorOnly() {
-        BuildInfo bi = BuildInfo.create("1.0.0", ZonedDateTime.now().toString());
+        BuildInfo bi = BuildInfo.create("1.0.0", ZonedDateTime.now().toString(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(0, bi.version().minor());
         assertEquals(0, bi.version().patch());
         assertEquals("", bi.version().suffix());
         assertEquals("1.0.0", bi.version().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("", bi.commit());
+        assertEquals("", bi.system());
     }
 
     @Test
     void testMajorMinor() {
-        BuildInfo bi = BuildInfo.create("1.2.0", ZonedDateTime.now().toString());
+        BuildInfo bi = BuildInfo.create("1.2.0", ZonedDateTime.now().toString(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(2, bi.version().minor());
         assertEquals(0, bi.version().patch());
         assertEquals("", bi.version().suffix());
         assertEquals("1.2.0", bi.version().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("", bi.commit());
+        assertEquals("", bi.system());
     }
 
     @Test
     void testMajorMinorPatch() {
-        BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.now().toString());
+        BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.now().toString(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(2, bi.version().minor());
         assertEquals(3, bi.version().patch());
         assertEquals("", bi.version().suffix());
         assertEquals("1.2.3", bi.version().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("", bi.commit());
+        assertEquals("", bi.system());
     }
 
     @Test
     void testMajorMinorPatchSuffix() {
-        BuildInfo bi = BuildInfo.create("1.2.3-alpha", ZonedDateTime.now().toString());
+        BuildInfo bi = BuildInfo.create("1.2.3-alpha", ZonedDateTime.now().toString(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(2, bi.version().minor());
         assertEquals(3, bi.version().patch());
         assertEquals("alpha", bi.version().suffix());
         assertEquals("1.2.3-alpha", bi.version().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("", bi.commit());
+        assertEquals("", bi.system());
     }
 
     @Test
     void testMajorMinorPatchDashSuffix() {
-        BuildInfo bi = BuildInfo.create("1.2.3-SNAPSHOT", ZonedDateTime.now().toString());
+        BuildInfo bi = BuildInfo.create("1.2.3-SNAPSHOT", ZonedDateTime.now().toString(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(2, bi.version().minor());
         assertEquals(3, bi.version().patch());
         assertEquals("SNAPSHOT", bi.version().suffix());
         assertEquals("1.2.3-SNAPSHOT", bi.version().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("", bi.commit());
+        assertEquals("", bi.system());
+    }
+    
+    @Test
+    void testCreateWithCommitAndSystem() {
+        BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.now().toString(), "key123", "abc123", "test-system");
+        assertEquals(1, bi.version().major());
+        assertEquals(2, bi.version().minor());
+        assertEquals(3, bi.version().patch());
+        assertEquals("", bi.version().suffix());
+        assertEquals("1.2.3", bi.version().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("abc123", bi.commit());
+        assertEquals("test-system", bi.system());
     }
 
     @Test
@@ -66,6 +94,7 @@ class BuildInfoTest {
         Properties props = new Properties();
         props.setProperty(BuildInfo.KEY_BUILD_VERSION, "2.3.4-beta");
         props.setProperty(BuildInfo.KEY_BUILD_TIME, "2023-01-01T12:00:00Z[UTC]");
+        props.setProperty(BuildInfo.KEY_PUBLIC_KEY, "key123");
 
         BuildInfo bi = BuildInfo.create(props);
 
@@ -74,6 +103,33 @@ class BuildInfoTest {
         assertEquals(4, bi.version().patch());
         assertEquals("beta", bi.version().suffix());
         assertEquals("2.3.4-beta", bi.version().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("", bi.commit());
+        assertEquals("", bi.system());
+
+        // ZonedDateTime.toString() formats the time as "2023-01-01T12:00Z[UTC]"
+        assertEquals("2023-01-01T12:00Z[UTC]", bi.buildTime().toString());
+    }
+    
+    @Test
+    void testCreateFromPropertiesWithCommitAndSystem() {
+        Properties props = new Properties();
+        props.setProperty(BuildInfo.KEY_BUILD_VERSION, "2.3.4-beta");
+        props.setProperty(BuildInfo.KEY_BUILD_TIME, "2023-01-01T12:00:00Z[UTC]");
+        props.setProperty(BuildInfo.KEY_PUBLIC_KEY, "key123");
+        props.setProperty(BuildInfo.KEY_COMMIT, "abc123");
+        props.setProperty(BuildInfo.KEY_SYSTEM, "test-system");
+
+        BuildInfo bi = BuildInfo.create(props);
+
+        assertEquals(2, bi.version().major());
+        assertEquals(3, bi.version().minor());
+        assertEquals(4, bi.version().patch());
+        assertEquals("beta", bi.version().suffix());
+        assertEquals("2.3.4-beta", bi.version().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("abc123", bi.commit());
+        assertEquals("test-system", bi.system());
 
         // ZonedDateTime.toString() formats the time as "2023-01-01T12:00Z[UTC]"
         assertEquals("2023-01-01T12:00Z[UTC]", bi.buildTime().toString());
@@ -82,6 +138,7 @@ class BuildInfoTest {
     @Test
     void testDefaultPropertiesValues() {
         Properties props = new Properties();
+        props.setProperty(BuildInfo.KEY_PUBLIC_KEY, "key123");
 
         BuildInfo bi = BuildInfo.create(props);
 
@@ -90,21 +147,33 @@ class BuildInfoTest {
         assertEquals(1, bi.version().patch());
         assertEquals("SNAPSHOT", bi.version().suffix());
         assertEquals("0.0.1-SNAPSHOT", bi.version().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("", bi.commit());
+        assertEquals("", bi.system());
     }
 
     @Test
     void testToString() {
         ZonedDateTime buildTime = ZonedDateTime.parse("2023-01-01T12:00:00Z[UTC]");
         Version version = Version.valueOf("1.2.3-beta");
-        BuildInfo bi = new BuildInfo(buildTime, version);
+        BuildInfo bi = new BuildInfo(version, buildTime, "key123", "", "");
 
         assertEquals("1.2.3-beta (2023-01-01T12:00Z[UTC])", bi.toString());
+    }
+    
+    @Test
+    void testToStringWithCommitAndSystem() {
+        ZonedDateTime buildTime = ZonedDateTime.parse("2023-01-01T12:00:00Z[UTC]");
+        Version version = Version.valueOf("1.2.3-beta");
+        BuildInfo bi = new BuildInfo(version, buildTime, "key123", "abc123", "test-system");
+
+        assertEquals("1.2.3-beta (2023-01-01T12:00Z[UTC]) commit: abc123 system: test-system", bi.toString());
     }
 
     @Test
     void testInvalidVersionFormat() {
         assertThrows(IllegalArgumentException.class, () ->
-                BuildInfo.create("1.2", ZonedDateTime.now().toString())
+                BuildInfo.create("1.2", ZonedDateTime.now().toString(), "key123")
         );
     }
 
@@ -119,6 +188,9 @@ class BuildInfoTest {
         assertEquals("test", bi.version().suffix());
         assertEquals("3.4.5-test", bi.version().toString());
         assertEquals("2023-02-02T14:30Z[UTC]", bi.buildTime().toString());
+        assertEquals("key123", bi.key());
+        assertEquals("abc123", bi.commit());
+        assertEquals("test-system", bi.system());
     }
 
     @Test

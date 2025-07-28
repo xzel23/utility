@@ -50,8 +50,8 @@ public record SystemInfo(
     /**
      * Formats and returns a string containing detailed system information.
      *
-     * @return a formatted string representation of the operating system details, 
-     *         Java runtime details, and JavaFX version.
+     * @return a formatted string representation of the operating system details,
+     * Java runtime details, and JavaFX version.
      */
     public String formatted() {
         return String.format("""
@@ -63,5 +63,32 @@ public record SystemInfo(
                 javaVersion, javaVendor, javaHome,
                 javafxVersion
         );
+    }
+
+    /**
+     * Retrieves information about the operating system in a formatted string.
+     *
+     * @return a string containing the operating system name, version, and architecture in the format "OS_NAME OS_VERSION (OS_ARCH)".
+     */
+    public String getOsInfo() {
+        return String.format("%s %s (%s)", osName, osVersion, osArch);
+    }
+
+    /**
+     * Retrieves information about the Java runtime environment.
+     *
+     * @return a formatted string containing the Java version, vendor, and installation directory.
+     */
+    public String getJavaInfo() {
+        return String.format("%s %s (%s)", javaVersion, javaVendor, javaHome);
+    }
+
+    /**
+     * Retrieves the version of JavaFX, if available.
+     *
+     * @return the JavaFX version as a string, or "Unknown" if the version information is unavailable.
+     */
+    public String getJavafxInfo() {
+        return javafxVersion;
     }
 }
