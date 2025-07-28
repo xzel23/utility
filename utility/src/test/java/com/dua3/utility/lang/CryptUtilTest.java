@@ -16,24 +16,30 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.util.Arrays;
-import javax.crypto.SecretKey;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
-import java.security.InvalidKeyException;
 import java.util.Locale;
-import javax.crypto.Cipher;
-import java.security.NoSuchAlgorithmException;
-import javax.crypto.NoSuchPaddingException;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class CryptUtilTest {
 
@@ -570,5 +576,30 @@ class CryptUtilTest {
                 CryptUtil.encryptAsymmetric(publicKey, shortData);
             });
         }
+    }
+
+    @Test
+    void testValidateAsymmetricEncryptionKey() throws GeneralSecurityException {
+        KeyPair rsaKeyPair = KeyUtil.generateRSAKeyPair();
+        PublicKey rsaPublicKey = rsaKeyPair.getPublic();
+
+        // Test valid key with appropriate data size
+        byte[] validData = new byte[190]; // RSA max size for 2048-bit key
+        assertDoesNotThrow(() ->
+                CryptUtil.validateAsymmetricEncryptionKey(rsaPublicKey, validData.length));
+
+        // Test RSA key with oversized data
+        byte[] oversizedData = new byte[300];
+        IllegalBlockSizeException exception = assertThrows(IllegalBlockSizeException.class, () ->
+                CryptUtil.validateAsymmetricEncryptionKey(rsaPublicKey, oversizedData.length));
+        assertTrue(exception.getMessage().contains("Data too large for RSA key"));
+
+        // Test invalid DSA key
+        KeyPair dsaKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.DSA, 2048);
+        PublicKey dsaPublicKey = dsaKeyPair.getPublic();
+
+        InvalidKeyException dsaException = assertThrows(InvalidKeyException.class, () ->
+                CryptUtil.validateAsymmetricEncryptionKey(dsaPublicKey, validData.length));
+        assertTrue(dsaException.getMessage().contains("DSA keys are for signatures only, not encryption"));
     }
 }
