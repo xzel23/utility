@@ -86,7 +86,7 @@ class CertificateUtilTest {
 
         // Create a certificate signed by the parent
         X509Certificate[] certificates = CertificateUtil.createX509Certificate(
-                childKeyPair, subject, validityDays, parentCertificate, parentPrivateKey);
+                childKeyPair, subject, validityDays, parentCertificate, parentPrivateKey, false);
 
         // Verify the certificate was created
         assertNotNull(certificates);

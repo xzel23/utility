@@ -81,7 +81,7 @@ public final class CertificateUtil {
      * @throws GeneralSecurityException if an error occurs during the certificate generation
      *                                  or signing process
      */
-    public static X509Certificate[] createX509Certificate(KeyPair keyPair, String subject, int validityDays, X509Certificate parentCertificate, PrivateKey parentPrivateKey) throws GeneralSecurityException {
+    public static X509Certificate[] createX509Certificate(KeyPair keyPair, String subject, int validityDays, X509Certificate parentCertificate, PrivateKey parentPrivateKey, boolean enableCA) throws GeneralSecurityException {
         try {
             LangUtil.checkArg(validityDays > 0, () -> "Validity days must be positive: " + validityDays);
 
@@ -105,7 +105,7 @@ public final class CertificateUtil {
                 throw new GeneralSecurityException("Parent certificate cannot sign certificates");
             }
 
-            X509CertificateBuilder builder = X509CertificateBuilder.getBuilder(false)
+            X509CertificateBuilder builder = X509CertificateBuilder.getBuilder(enableCA)
                     .orElseThrow(() -> new GeneralSecurityException("No X.509 certificate builder available"));
 
             return builder
