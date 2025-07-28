@@ -109,47 +109,55 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sign(java.security.PrivateKey,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">sign</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;privateKey,
- byte[]&nbsp;data,
- <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.bouncycastle.cms.CMSSignedData</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSignedData(java.security.PrivateKey,java.security.cert.X509Certificate,byte%5B%5D)" class="member-name-link">createSignedData</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;developerPrivateKey,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>&nbsp;certificate,
+ byte[]&nbsp;certificateBytes)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Sign data using a private key.</div>
+<div class="block">Creates a CMSSignedData object by signing the input data (certificate bytes) using the provided
+ private key and certificate.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sign(java.security.PrivateKey,char%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">sign</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;privateKey,
- char[]&nbsp;text,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sign(java.security.PrivateKey,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">sign</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;privateKey,
+ byte[]&nbsp;data,
  <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Sign text using a private key.</div>
+<div class="block">Sign data using a private key.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sign(java.security.PrivateKey,java.lang.CharSequence)" class="member-name-link">sign</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;privateKey,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;text)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sign(java.security.PrivateKey,char%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">sign</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;privateKey,
+ char[]&nbsp;text,
+ <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Sign text using a private key.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verify(java.security.PublicKey,byte%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">verify</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;publicKey,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sign(java.security.PrivateKey,java.lang.CharSequence)" class="member-name-link">sign</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;privateKey,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;text)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Sign text using a private key.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verify(java.security.PublicKey,byte%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">verify</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;publicKey,
  byte[]&nbsp;data,
  byte[]&nbsp;signature,
  <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verify a digital signature.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verify(java.security.PublicKey,char%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">verify</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;publicKey,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verify(java.security.PublicKey,char%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">verify</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;publicKey,
  char[]&nbsp;text,
  byte[]&nbsp;signature,
  <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verify a digital signature for text.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verify(java.security.PublicKey,java.lang.CharSequence,byte%5B%5D)" class="member-name-link">verify</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;publicKey,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verify(java.security.PublicKey,java.lang.CharSequence,byte%5B%5D)" class="member-name-link">verify</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;publicKey,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;text,
  byte[]&nbsp;signature)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verify a digital signature for text.</div>
 </div>
 </div>
@@ -296,6 +304,31 @@ loadScripts(document, 'script');</script>
 <dd>true if the signature is valid, false otherwise</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></code> - if verification fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createSignedData(java.security.PrivateKey,java.security.cert.X509Certificate,byte[])">
+<h3>createSignedData</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">org.bouncycastle.cms.CMSSignedData</span>&nbsp;<span class="element-name">createSignedData</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;developerPrivateKey,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>&nbsp;certificate,
+ byte[]&nbsp;certificateBytes)</span>
+                                                           throws <span class="exceptions">org.bouncycastle.operator.OperatorCreationException,
+<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateEncodingException.html" title="class or interface in java.security.cert" class="external-link">CertificateEncodingException</a>,
+org.bouncycastle.cms.CMSException</span></div>
+<div class="block">Creates a CMSSignedData object by signing the input data (certificate bytes) using the provided
+ private key and certificate.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>developerPrivateKey</code> - the private key used to sign the data</dd>
+<dd><code>certificate</code> - the X509Certificate used in the signing process</dd>
+<dd><code>certificateBytes</code> - the byte array representation of the certificate to be signed</dd>
+<dt>Returns:</dt>
+<dd>a CMSSignedData object containing the signed data</dd>
+<dt>Throws:</dt>
+<dd><code>org.bouncycastle.operator.OperatorCreationException</code> - if there is an error creating the content signer or signature generator</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateEncodingException.html" title="class or interface in java.security.cert" class="external-link">CertificateEncodingException</a></code> - if there is an error encoding the certificate</dd>
+<dd><code>org.bouncycastle.cms.CMSException</code> - if there is an error in generating the signed data</dd>
 </dl>
 </section>
 </li>

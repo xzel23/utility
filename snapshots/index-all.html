@@ -1387,7 +1387,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A record class representing build information, including build time and version components.</div>
 </dd>
-<dt><a href="com/dua3/utility/lang/BuildInfo.html#%3Cinit%3E(java.time.ZonedDateTime,com.dua3.utility.lang.Version)" class="member-name-link">BuildInfo(ZonedDateTime, Version)</a> - Constructor for record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#%3Cinit%3E(com.dua3.utility.lang.Version,java.time.ZonedDateTime,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">BuildInfo(Version, ZonedDateTime, String, String, String)</a> - Constructor for record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>BuildInfo</code> record class.</div>
 </dd>
@@ -2045,6 +2045,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a <code>ComboBox</code> input control with specified choices, default value <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a>, and validation <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a>.</div>
 </dd>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#commit()" class="member-name-link">commit()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/dua3/utility/lang/BuildInfo.html#param-commit"><code>commit</code></a> record component.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/TableCellAutoCommit.html#commitEdit(T)" class="member-name-link">commitEdit(T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TableCellAutoCommit.html" title="class in com.dua3.utility.fx.controls">TableCellAutoCommit</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/CompactableSortedMap.html#compact()" class="member-name-link">compact()</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/CompactableSortedMap.html" title="class in com.dua3.utility.lang">CompactableSortedMap</a></dt>
@@ -2667,9 +2671,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a new CsvWriter by using the provided OutputStream and Arguments options.</div>
 </dd>
-<dt><a href="com/dua3/utility/lang/BuildInfo.html#create(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">create(CharSequence, CharSequence)</a> - Static method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#create(java.lang.CharSequence,java.lang.CharSequence,java.lang.String)" class="member-name-link">create(CharSequence, CharSequence, String)</a> - Static method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
 <dd>
-<div class="block">Create from a version and timestamp</div>
+<div class="block">Creates a new instance of <code>BuildInfo</code> using the provided version string, build timestamp, and key.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#create(java.lang.CharSequence,java.lang.CharSequence,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">create(CharSequence, CharSequence, String, String, String)</a> - Static method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dd>
+<div class="block">Creates a new instance of <code>BuildInfo</code> using the provided version string, build timestamp, key, commit, and system.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/BuildInfo.html#create(java.lang.Class,java.lang.String)" class="member-name-link">create(Class&lt;?&gt;, String)</a> - Static method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
 <dd>
@@ -2911,6 +2919,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a self-signed X.509 certificate using the provided key pair, subject distinguished name,
  validity duration, and a flag to enable Certificate Authority (CA) settings.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/SignatureUtil.html#createSignedData(java.security.PrivateKey,java.security.cert.X509Certificate,byte%5B%5D)" class="member-name-link">createSignedData(PrivateKey, X509Certificate, byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/SignatureUtil.html" title="class in com.dua3.utility.crypt">SignatureUtil</a></dt>
+<dd>
+<div class="block">Creates a CMSSignedData object by signing the input data (certificate bytes) using the provided
+ private key and certificate.</div>
+</dd>
 <dt><a href="com/dua3/utility/options/Option.html#createSimpleOption(java.lang.String,java.lang.String,com.dua3.utility.options.Param,java.util.function.Supplier,java.lang.String,java.lang.String...)" class="member-name-link">createSimpleOption(String, String, Param&lt;T&gt;, Supplier&lt;T&gt;, String, String...)</a> - Static method in class com.dua3.utility.options.<a href="com/dua3/utility/options/Option.html" title="class in com.dua3.utility.options">Option</a></dt>
 <dd>
 <div class="block">Creates an <code>Option</code> representing a customizable and reusable parameter
@@ -2918,7 +2931,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/FxService.html#createTask()" class="member-name-link">createTask()</a> - Method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxService.html" title="class in com.dua3.utility.fx">FxService</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#createX509Certificate(java.security.KeyPair,java.lang.String,int,java.security.cert.X509Certificate,java.security.PrivateKey)" class="member-name-link">createX509Certificate(KeyPair, String, int, X509Certificate, PrivateKey)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#createX509Certificate(java.security.KeyPair,java.lang.String,int,java.security.cert.X509Certificate,java.security.PrivateKey,boolean)" class="member-name-link">createX509Certificate(KeyPair, String, int, X509Certificate, PrivateKey, boolean)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
 <dd>
 <div class="block">Creates an X.509 certificate using the provided key pair, subject distinguished name,
  validity period, and a parent certificate.</div>
@@ -3354,13 +3367,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Derives a new Font object based on a given font and font definition specifications.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/KeyUtil.html#deriveSecretKey(char%5B%5D,byte%5B%5D,int,int,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">deriveSecretKey(char[], byte[], int, int, InputBufferHandling)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/KeyUtil.html#deriveSecretKey(com.dua3.utility.crypt.SymmetricAlgorithm,byte%5B%5D,byte%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">deriveSecretKey(SymmetricAlgorithm, byte[], byte[], byte[], InputBufferHandling)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></dt>
 <dd>
-<div class="block">Derive a SecretKey from a passphrase using PBKDF2-SHA256.</div>
+<div class="block">Derives a cryptographic key using the specified symmetric algorithm, salt, input data, and additional info.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/KeyUtil.html#deriveSecretKey(char%5B%5D,char%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">deriveSecretKey(char[], char[], InputBufferHandling)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/KeyUtil.html#deriveSecretKeyWithRandomSalt(com.dua3.utility.crypt.SymmetricAlgorithm,byte%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">deriveSecretKeyWithRandomSalt(SymmetricAlgorithm, byte[], byte[], InputBufferHandling)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></dt>
 <dd>
-<div class="block">Derive a SecretKey using a context-based salt.</div>
+<div class="block">Derives a secret key for the specified symmetric algorithm using a randomly generated salt.</div>
 </dd>
 <dt><a href="com/dua3/utility/text/FontData.html#descent()" class="member-name-link">descent()</a> - Method in record class com.dua3.utility.text.<a href="com/dua3/utility/text/FontData.html" title="class in com.dua3.utility.text">FontData</a></dt>
 <dd>
@@ -3421,6 +3434,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/data/DataUtil.html#diff(java.util.Map,java.util.Map,java.util.function.Supplier)" class="member-name-link">diff(Map&lt;? extends U, ? extends V&gt;, Map&lt;? extends U, ? extends V&gt;, Supplier&lt;? extends Map&lt;U, V&gt;&gt;)</a> - Static method in class com.dua3.utility.data.<a href="com/dua3/utility/data/DataUtil.html" title="class in com.dua3.utility.data">DataUtil</a></dt>
 <dd>
 <div class="block">Compute the difference of mappings between two maps.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#digest()" class="member-name-link">digest()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dd>
+<div class="block">Computes the SHA-256 hash of the concatenated string representation of the version and build time.</div>
 </dd>
 <dt><a href="com/dua3/utility/math/geometry/Dimension2f.html" class="type-name-link" title="class in com.dua3.utility.math.geometry">Dimension2f</a> - Record Class in <a href="com/dua3/utility/math/geometry/package-summary.html">com.dua3.utility.math.geometry</a></dt>
 <dd>
@@ -5617,6 +5634,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Retrieves the initialization vector (IV) length in bytes.</div>
 </dd>
+<dt><a href="com/dua3/utility/lang/SystemInfo.html#getJavafxInfo()" class="member-name-link">getJavafxInfo()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/SystemInfo.html" title="class in com.dua3.utility.lang">SystemInfo</a></dt>
+<dd>
+<div class="block">Retrieves the version of JavaFX, if available.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/SystemInfo.html#getJavaInfo()" class="member-name-link">getJavaInfo()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/SystemInfo.html" title="class in com.dua3.utility.lang">SystemInfo</a></dt>
+<dd>
+<div class="block">Retrieves information about the Java runtime environment.</div>
+</dd>
 <dt><a href="com/dua3/utility/db/DbUtil.html#getJdbcDrivers()" class="member-name-link">getJdbcDrivers()</a> - Static method in class com.dua3.utility.db.<a href="com/dua3/utility/db/DbUtil.html" title="class in com.dua3.utility.db">DbUtil</a></dt>
 <dd>
 <div class="block">Get Map with known JDBC drivers.</div>
@@ -5789,6 +5814,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/options/Arguments.html#getOrThrow(com.dua3.utility.options.Option)" class="member-name-link">getOrThrow(Option&lt;T&gt;)</a> - Method in class com.dua3.utility.options.<a href="com/dua3/utility/options/Arguments.html" title="class in com.dua3.utility.options">Arguments</a></dt>
 <dd>
 <div class="block">Get value of <a href="com/dua3/utility/options/Option.html" title="class in com.dua3.utility.options"><code>Option</code></a>.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/SystemInfo.html#getOsInfo()" class="member-name-link">getOsInfo()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/SystemInfo.html" title="class in com.dua3.utility.lang">SystemInfo</a></dt>
+<dd>
+<div class="block">Retrieves information about the operating system in a formatted string.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/IoUtil.html#getOutputStream(java.lang.Object)" class="member-name-link">getOutputStream(Object)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
 <dd>
@@ -7755,6 +7784,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/data/Histogram.Entry.html#param-key"><code>key</code></a> record component.</div>
 </dd>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#key()" class="member-name-link">key()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/dua3/utility/lang/BuildInfo.html#param-key"><code>key</code></a> record component.</div>
+</dd>
 <dt><a href="com/dua3/utility/lang/BuildInfo.html#KEY_BUILD_TIME" class="member-name-link">KEY_BUILD_TIME</a> - Static variable in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
 <dd>
 <div class="block">Key to use for the build time in properties files.</div>
@@ -7762,6 +7795,18 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/lang/BuildInfo.html#KEY_BUILD_VERSION" class="member-name-link">KEY_BUILD_VERSION</a> - Static variable in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
 <dd>
 <div class="block">Key to use for the build version in properties files.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#KEY_COMMIT" class="member-name-link">KEY_COMMIT</a> - Static variable in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dd>
+<div class="block">Key to use for the commit in properties files.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#KEY_PUBLIC_KEY" class="member-name-link">KEY_PUBLIC_KEY</a> - Static variable in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dd>
+<div class="block">Key to use for the key in properties files.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#KEY_SYSTEM" class="member-name-link">KEY_SYSTEM</a> - Static variable in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dd>
+<div class="block">Key to use for the system in properties files.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html#keyFactoryAlgorithm()" class="member-name-link">keyFactoryAlgorithm()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a></dt>
 <dd>
@@ -10245,6 +10290,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Read some rows of CSV data.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#readX509Certificate(java.io.InputStream)" class="member-name-link">readX509Certificate(InputStream)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Reads and parses an X.509 certificate from the provided input stream.</div>
+</dd>
 <dt><a href="com/dua3/utility/data/Color.html#REBECCAPURPLE" class="member-name-link">REBECCAPURPLE</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">The color REBECCAPURPLE.</div>
@@ -12615,6 +12664,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Enum representing symmetric encryption algorithms.</div>
 </dd>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#system()" class="member-name-link">system()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/dua3/utility/lang/BuildInfo.html#param-system"><code>system</code></a> record component.</div>
+</dd>
 <dt><a href="com/dua3/utility/lang/SystemInfo.html" class="type-name-link" title="class in com.dua3.utility.lang">SystemInfo</a> - Record Class in <a href="com/dua3/utility/lang/package-summary.html">com.dua3.utility.lang</a></dt>
 <dd>
 <div class="block">A record that stores detailed system information, including operating system details,
@@ -12906,11 +12959,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Converts the LogBuffer into an array of LogEntry objects.</div>
 </dd>
-<dt><a href="com/dua3/utility/lang/RingBuffer.html#toArray(U%5B%5D)" class="member-name-link">toArray(U[])</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/RingBuffer.html" title="class in com.dua3.utility.lang">RingBuffer</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/ImmutableListBackedSortedSet.html#toArray(T1%5B%5D)" class="member-name-link">toArray(T1[])</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/ImmutableListBackedSortedSet.html" title="class in com.dua3.utility.lang">ImmutableListBackedSortedSet</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/ReversedSequencedCollectionWrapper.html#toArray(T1%5B%5D)" class="member-name-link">toArray(T1[])</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/ReversedSequencedCollectionWrapper.html" title="class in com.dua3.utility.lang">ReversedSequencedCollectionWrapper</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/lang/RingBuffer.html#toArray(U%5B%5D)" class="member-name-link">toArray(U[])</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/RingBuffer.html" title="class in com.dua3.utility.lang">RingBuffer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/data/Color.html#toByteArray()" class="member-name-link">toByteArray()</a> - Method in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
@@ -13381,6 +13434,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Converts a byte array representing an encoded X.509 certificate into an
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link"><code>X509Certificate</code></a> object.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#toX509Certificate(java.lang.String)" class="member-name-link">toX509Certificate(String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Reads and parses an X.509 certificate from a PEM-encoded string.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/web/WebViews.JSLogger.html#trace(netscape.javascript.JSObject)" class="member-name-link">trace(JSObject)</a> - Method in class com.dua3.utility.fx.web.<a href="com/dua3/utility/fx/web/WebViews.JSLogger.html" title="class in com.dua3.utility.fx.web">WebViews.JSLogger</a></dt>
 <dd>
@@ -14451,6 +14508,10 @@ the order they are declared.</div>
 <dt><a href="com/dua3/utility/io/FileType.html#writerForType(java.lang.Class)" class="member-name-link">writerForType(Class&lt;T&gt;)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/FileType.html" title="class in com.dua3.utility.io">FileType</a></dt>
 <dd>
 <div class="block">Retrieves the first file type that can write the given document class.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/BuildInfo.html#writeToPropertiesFile(java.nio.file.Path)" class="member-name-link">writeToPropertiesFile(Path)</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
+<dd>
+<div class="block">Writes the build information as properties to the specified file destination.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:X">X</h2>

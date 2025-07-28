@@ -72,20 +72,30 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static <a href="../BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">BuildInfo.</span><code><a href="../BuildInfo.html#create(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">create</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;versionString,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;zonedDateTimeBuild)</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">BuildInfo.</span><code><a href="../BuildInfo.html#create(java.lang.CharSequence,java.lang.CharSequence,java.lang.String)" class="member-name-link">create</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;versionString,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;zonedDateTimeBuild,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Create from a version and timestamp</div>
+<div class="block">Creates a new instance of <code>BuildInfo</code> using the provided version string, build timestamp, and key.</div>
 </div>
 <div class="col-first odd-row-color"><code>static <a href="../BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">BuildInfo.</span><code><a href="../BuildInfo.html#create(java.lang.Class,java.lang.String)" class="member-name-link">create</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;cls,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;resource)</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">BuildInfo.</span><code><a href="../BuildInfo.html#create(java.lang.CharSequence,java.lang.CharSequence,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">create</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;versionString,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;zonedDateTimeBuild,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;commit,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;system)</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Load properties from resource and return BuildInfo.</div>
+<div class="block">Creates a new instance of <code>BuildInfo</code> using the provided version string, build timestamp, key, commit, and system.</div>
 </div>
 <div class="col-first even-row-color"><code>static <a href="../BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">BuildInfo.</span><code><a href="../BuildInfo.html#create(java.util.Properties)" class="member-name-link">create</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;properties)</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">BuildInfo.</span><code><a href="../BuildInfo.html#create(java.lang.Class,java.lang.String)" class="member-name-link">create</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;cls,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;resource)</code></div>
 <div class="col-last even-row-color">
+<div class="block">Load properties from resource and return BuildInfo.</div>
+</div>
+<div class="col-first odd-row-color"><code>static <a href="../BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">BuildInfo.</span><code><a href="../BuildInfo.html#create(java.util.Properties)" class="member-name-link">create</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;properties)</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Create instance from properties.</div>
 </div>
 </div>
