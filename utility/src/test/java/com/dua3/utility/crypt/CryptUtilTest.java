@@ -12,53 +12,39 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.Locale;
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class CryptUtilTest {
     private static final Logger LOG = LogManager.getLogger(CryptUtilTest.class);
-
-    static {
-        // Register Bouncy Castle provider for tests
-        try {
-            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        } catch (Exception e) {
-            LOG.error("Failed to register Bouncy Castle provider: {}", e.getMessage());
-        }
-    }
-
     private static final int[] KEY_LENGTHS = {128, 192, 256};
-
     private static final String[] MESSAGES = {
             "",
             "secret message",
             System.getProperties().toString()
     };
-
-    private static boolean isEciesSupported() {
-        try {
-            // Try to get an ECIES cipher to check if a provider supports it
-            Cipher.getInstance("ECIES");
-            return true;
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            return false;
-        }
-    }
 
     @Test
     void testSymmetricEncryption() throws GeneralSecurityException {
@@ -80,10 +66,9 @@ class CryptUtilTest {
 
     @Test
     void testEndToEndWithDerivedKey() throws GeneralSecurityException {
-        char[] passphrase = "secure-passphrase".toCharArray();
-        char[] context = "app:test".toCharArray();
-
-        SecretKey key = KeyUtil.deriveSecretKey(passphrase.clone(), context, InputBufferHandling.CLEAR_AFTER_USE);
+        byte[] input = "secure-passphrase".getBytes(StandardCharsets.UTF_8);
+        byte[] info = "app:test".getBytes(StandardCharsets.UTF_8);
+        SecretKey key = KeyUtil.deriveSecretKeyWithRandomSalt(SymmetricAlgorithm.AES, input, info, InputBufferHandling.CLEAR_AFTER_USE);
 
         String message = "This is a secret message";
         byte[] encrypted = CryptUtil.encryptSymmetric(key, TextUtil.toByteArray(message), InputBufferHandling.CLEAR_AFTER_USE);
@@ -111,12 +96,12 @@ class CryptUtilTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = AsymmetricAlgorithm.class)
+    @EnumSource(AsymmetricAlgorithm.class)
     void testAsymmetricEncryption(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         // Add assumption for ECIES
         if (algorithm == AsymmetricAlgorithm.EC) {
-            assumeTrue(isEciesSupported(), 
-                "ECIES algorithm requires a third-party security provider (like Bouncy Castle) to be available");
+            assumeTrue(isEciesSupported(),
+                    "ECIES algorithm requires a third-party security provider (like Bouncy Castle) to be available");
         }
 
         KeyPair keyPair = generateSecretKeyPairForAlgorithm(algorithm);
@@ -151,6 +136,29 @@ class CryptUtilTest {
             assertThrows(InvalidKeyException.class, () -> {
                 CryptUtil.encryptAsymmetric(publicKey, testData);
             });
+        }
+    }
+
+    private static boolean isEciesSupported() {
+        try {
+            // Try to get an ECIES cipher to check if a provider supports it
+            Cipher.getInstance("ECIES");
+            return true;
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            return false;
+        }
+    }
+
+    private KeyPair generateSecretKeyPairForAlgorithm(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        switch (algorithm) {
+            case RSA:
+                return KeyUtil.generateRSAKeyPair();
+            case EC:
+                return KeyUtil.generateECKeyPair("secp256r1");
+            case DSA:
+                return KeyUtil.generateKeyPair(algorithm, 2048);
+            default:
+                throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
         }
     }
 
@@ -210,12 +218,12 @@ class CryptUtilTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = AsymmetricAlgorithm.class)
+    @EnumSource(AsymmetricAlgorithm.class)
     void testHybridEncryption(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         // Add assumption for ECIES
         if (algorithm == AsymmetricAlgorithm.EC) {
-            assumeTrue(isEciesSupported(), 
-                "ECIES algorithm requires a third-party security provider (like Bouncy Castle) to be available");
+            assumeTrue(isEciesSupported(),
+                    "ECIES algorithm requires a third-party security provider (like Bouncy Castle) to be available");
         }
 
         KeyPair keyPair = generateSecretKeyPairForAlgorithm(algorithm);
@@ -262,17 +270,17 @@ class CryptUtilTest {
             // (since that's what we're already trying to do)
             String expectedPattern = "do(es)? not support.*encryption|for signatures only, not encryption";
             assertTrue(exception1.getMessage().toLowerCase(Locale.ROOT).matches(".*(" + expectedPattern + ").*"),
-                "Exception message should indicate algorithm doesn't support encryption: " + exception1.getMessage());
+                    "Exception message should indicate algorithm doesn't support encryption: " + exception1.getMessage());
         }
     }
 
     @ParameterizedTest
-    @EnumSource(value = AsymmetricAlgorithm.class)
+    @EnumSource(AsymmetricAlgorithm.class)
     void testAsymmetricEncryptionSupport(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         // Add assumption for ECIES
         if (algorithm == AsymmetricAlgorithm.EC) {
-            assumeTrue(isEciesSupported(), 
-                "ECIES algorithm requires a third-party security provider (like Bouncy Castle) to be available");
+            assumeTrue(isEciesSupported(),
+                    "ECIES algorithm requires a third-party security provider (like Bouncy Castle) to be available");
         }
 
         KeyPair keyPair = generateSecretKeyPairForAlgorithm(algorithm);
@@ -295,16 +303,89 @@ class CryptUtilTest {
         }
     }
 
-    private KeyPair generateSecretKeyPairForAlgorithm(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
-        switch (algorithm) {
-            case RSA:
-                return KeyUtil.generateRSAKeyPair();
-            case EC:
-                return KeyUtil.generateECKeyPair("secp256r1");
-            case DSA:
-                return KeyUtil.generateKeyPair(algorithm, 2048);
-            default:
-                throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
+    @Test
+    void testSigningAndVerification() throws GeneralSecurityException {
+        // Generate a key pair for testing
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        // Test byte array signing/verification
+        for (String message : MESSAGES) {
+            byte[] data = message.getBytes(StandardCharsets.UTF_8);
+
+            byte[] signature = SignatureUtil.sign(privateKey, data, InputBufferHandling.PRESERVE);
+            boolean verified = SignatureUtil.verify(publicKey, data, signature, InputBufferHandling.CLEAR_AFTER_USE);
+
+            assertTrue(verified);
+
+            // Verify that modifying the data invalidates the signature
+            if (data.length > 0) {
+                byte[] modifiedData = Arrays.copyOf(data, data.length);
+                modifiedData[0] = (byte) (modifiedData[0] + 1);
+                boolean verifiedModified = SignatureUtil.verify(publicKey, modifiedData, signature, InputBufferHandling.CLEAR_AFTER_USE);
+                assertFalse(verifiedModified);
+            }
         }
+
+        // Test string signing/verification
+        String message = "Test message for signing";
+        byte[] signature = SignatureUtil.sign(privateKey, message);
+        boolean verified = SignatureUtil.verify(publicKey, message, signature);
+
+        assertTrue(verified);
+
+        // Test char array signing/verification
+        byte[] signatureChars = SignatureUtil.sign(privateKey, message.toCharArray(), InputBufferHandling.CLEAR_AFTER_USE);
+        boolean verifiedChars = SignatureUtil.verify(publicKey, message.toCharArray(), signatureChars, InputBufferHandling.CLEAR_AFTER_USE);
+
+        assertTrue(verifiedChars);
     }
+
+    @Test
+    void testgenerateSecretKeyPair() throws GeneralSecurityException {
+        // Test RSA key pair generation
+        KeyPair rsaKeyPair = KeyUtil.generateRSAKeyPair();
+        assertNotNull(rsaKeyPair);
+        assertEquals(AsymmetricAlgorithm.RSA.name(), rsaKeyPair.getPublic().getAlgorithm());
+        assertEquals(AsymmetricAlgorithm.RSA.name(), rsaKeyPair.getPrivate().getAlgorithm());
+
+        // Test custom algorithm and key size
+        KeyPair customKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        assertNotNull(customKeyPair);
+        assertEquals(AsymmetricAlgorithm.RSA.name(), customKeyPair.getPublic().getAlgorithm());
+        assertEquals(AsymmetricAlgorithm.RSA.name(), customKeyPair.getPrivate().getAlgorithm());
+
+        // Test EC key pair generation
+        KeyPair ecKeyPair = KeyUtil.generateECKeyPair("secp256r1");
+        assertNotNull(ecKeyPair);
+        assertEquals("EC", ecKeyPair.getPublic().getAlgorithm());
+        assertEquals("EC", ecKeyPair.getPrivate().getAlgorithm());
+    }
+
+    @Test
+    void testValidateAsymmetricEncryptionKey() throws GeneralSecurityException {
+        KeyPair rsaKeyPair = KeyUtil.generateRSAKeyPair();
+        PublicKey rsaPublicKey = rsaKeyPair.getPublic();
+
+        // Test valid key with appropriate data size
+        byte[] validData = new byte[190]; // RSA max size for 2048-bit key
+        assertDoesNotThrow(() ->
+                CryptUtil.validateAsymmetricEncryptionKey(rsaPublicKey, validData.length));
+
+        // Test RSA key with oversized data
+        byte[] oversizedData = new byte[300];
+        IllegalBlockSizeException exception = assertThrows(IllegalBlockSizeException.class, () ->
+                CryptUtil.validateAsymmetricEncryptionKey(rsaPublicKey, oversizedData.length));
+        assertTrue(exception.getMessage().contains("Data too large for RSA key"));
+
+        // Test invalid DSA key
+        KeyPair dsaKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.DSA, 2048);
+        PublicKey dsaPublicKey = dsaKeyPair.getPublic();
+
+        InvalidKeyException dsaException = assertThrows(InvalidKeyException.class, () ->
+                CryptUtil.validateAsymmetricEncryptionKey(dsaPublicKey, validData.length));
+        assertTrue(dsaException.getMessage().contains("DSA keys are for signatures only, not encryption"));
+    }
+
 }

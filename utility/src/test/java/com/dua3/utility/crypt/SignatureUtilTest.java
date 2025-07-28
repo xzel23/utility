@@ -22,15 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class SignatureUtilTest {
     private static final Logger LOG = LogManager.getLogger(SignatureUtilTest.class);
 
-    static {
-        // Register Bouncy Castle provider for tests
-        try {
-            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        } catch (Exception e) {
-            LOG.error("Failed to register Bouncy Castle provider: {}", e.getMessage(), e);
-        }
-    }
-
     private static final String[] MESSAGES = {
             "",
             "secret message",

@@ -1,11 +1,12 @@
 package com.dua3.utility.crypt;
 
-import com.dua3.utility.text.TextUtil;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
+import org.bouncycastle.crypto.params.HKDFParameters;
+import org.jspecify.annotations.Nullable;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -17,6 +18,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -61,112 +63,6 @@ public final class KeyUtil {
                     throw new InvalidAlgorithmParameterException("EC key size must be 256, 384, or 521 bits, but was: " + keySize);
                 }
             }
-        }
-    }
-
-    /**
-     * Derive an encryption key from a passphrase using PBKDF2-SHA256.
-     * <p>
-     * <strong>Make sure to store the salt to be able to retrieve the generated key again later.</strong>
-     * <p>
-     * <strong>Security Note:</strong> This method clears (overwrites with null characters)
-     * the passphrase array after use to prevent sensitive data from remaining in memory.
-     * Do not reuse the same array for subsequent operations.
-     *
-     * @param passphrase the passphrase (cleared after use)
-     * @param salt random salt (minimum 16 bytes)
-     * @param iterations iteration count (minimum 10000)
-     * @param keyBits key size in bits (128, 192, or 256)
-     * @param inputBufferHandling how to handle input buffers
-     * @return derived encryption key
-     * @throws InvalidAlgorithmParameterException if key derivation fails
-     */
-    private static byte[] deriveKey(char[] passphrase, byte[] salt, int iterations, int keyBits, InputBufferHandling inputBufferHandling)
-            throws GeneralSecurityException {
-
-        try {
-            if (salt.length < 16) {
-                throw new InvalidAlgorithmParameterException("Salt must be at least 16 bytes");
-            }
-            if (iterations < 10000) {
-                throw new InvalidAlgorithmParameterException("Iterations must be at least 10000");
-            }
-            SymmetricAlgorithm.AES.validateKeySize(keyBits);
-
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            PBEKeySpec spec = new PBEKeySpec(passphrase, salt, iterations, keyBits);
-            SecretKey key = factory.generateSecret(spec);
-            byte[] keyBytes = key.getEncoded();
-            spec.clearPassword();
-            return keyBytes;
-        } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
-                Arrays.fill(passphrase, '\0');
-                Arrays.fill(salt, (byte) 0);
-            }
-        }
-    }
-
-    /**
-     * Derive a SecretKey from a passphrase using PBKDF2-SHA256.
-     * <p>
-     * <strong>Make sure to store the salt to be able to retrieve the generated key again later.</strong>
-     * <p>
-     * This method provides a type-safe alternative to {@link #deriveKey(char[], byte[], int, int, InputBufferHandling)}
-     * that returns a SecretKey object instead of raw bytes.
-     *
-     * @param passphrase the passphrase (cleared after use)
-     * @param salt random salt (minimum 16 bytes)
-     * @param iterations iteration count (minimum 10000)
-     * @param keyBits key size in bits (128, 192, or 256)
-     * @param inputBufferHandling how to handle input buffers
-     * @return derived SecretKey for symmetric encryption
-     * @throws GeneralSecurityException if key derivation fails
-     */
-    public static SecretKey deriveSecretKey(char[] passphrase, byte[] salt, int iterations, int keyBits, InputBufferHandling inputBufferHandling)
-            throws GeneralSecurityException {
-        byte[] keyBytes = deriveKey(passphrase, salt, iterations, keyBits, inputBufferHandling);
-        try {
-            return toSecretKey(keyBytes);
-        } finally {
-            Arrays.fill(keyBytes, (byte) 0);
-        }
-    }
-
-    /**
-     * Derive a SecretKey using a context-based salt.
-     * The context should be unique and stable for the intended use case.
-     * <p>
-     * <strong>Security Note:</strong> While more secure than a fixed salt, this approach
-     * still produces deterministic results. For maximum security in multi-user systems,
-     * consider using {@link #deriveSecretKey(char[], byte[], int, int, InputBufferHandling)} with a unique random salt
-     * per user/session and store the salt securely.
-     *
-     * <p><strong>Example usage:</strong></p>
-     * <pre>{@code
-     * char[] password = "mySecretPassword".toCharArray();
-     * SecretKey key = KeyUtil.deriveSecretKey(password, "user:john.doe");
-     * String encrypted = SymmetricCryptUtil.encrypt(key, "sensitive data");
-     * }</pre>
-     *
-     * @param passphrase the passphrase (cleared after use)
-     * @param context unique context (e.g., "user:john", "file:/path/to/file", "section:config")
-     * @param inputBufferHandling how to handle input buffers
-     * @return derived SecretKey for symmetric encryption
-     * @throws GeneralSecurityException if key derivation fails
-     */
-    public static SecretKey deriveSecretKey(char[] passphrase, char[] context, InputBufferHandling inputBufferHandling)
-            throws GeneralSecurityException {
-        byte[] contextSalt = TextUtil.toByteArray(context);
-        // Pad salt to minimum 16 bytes
-        byte[] salt = new byte[Math.max(16, contextSalt.length)];
-        System.arraycopy(contextSalt, 0, salt, 0, contextSalt.length);
-
-        try {
-            return deriveSecretKey(passphrase, salt, KEY_DERIVATION_DEFAULT_ITERATIONS, KEY_DERIVATION_DEFAULT_BITS, inputBufferHandling);
-        } finally {
-            Arrays.fill(contextSalt, (byte) 0);
-            Arrays.fill(salt, (byte) 0);
         }
     }
 
@@ -365,5 +261,63 @@ public final class KeyUtil {
      */
     public static KeyPair generateRSAKeyPair() throws InvalidAlgorithmParameterException {
         return generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+    }
+
+    /**
+     * Derives a cryptographic key using the specified symmetric algorithm, salt, input data, and additional info.
+     * The method utilizes the HKDF (HMAC-based Extract-and-Expand Key Derivation Function) with SHA-256 to
+     * securely derive a key.
+     *
+     * @param algorithm the symmetric algorithm for which the key is being derived; it determines the key size
+     *                  and the key algorithm (e.g., AES)
+     * @param salt a non-secret random value used to ensure uniqueness of derived keys; must be at least 16 bytes
+     * @param input the input keying material (IKM) used as a source of entropy for key derivation
+     * @param info optional context and application-specific information used for domain separation during
+     *             key derivation
+     * @param inputBufferHandling the handling mechanism for input buffers during key derivation
+     * @return a {@link SecretKey} instance containing the derived key that is compatible with the specified algorithm
+     * @throws IllegalArgumentException if the provided salt is shorter than 16 bytes
+     */
+    public static SecretKey deriveSecretKey(SymmetricAlgorithm algorithm, byte[] salt, byte[] input, byte @Nullable[] info, InputBufferHandling inputBufferHandling) {
+        try {
+            // Validate salt size
+            if (salt.length < 16) {
+                throw new IllegalArgumentException("Salt must be at least 16 bytes for security");
+            }
+
+            // Create HKDF with SHA-256
+            HKDFBytesGenerator hkdf = new HKDFBytesGenerator(new SHA256Digest());
+
+            // Initialize HKDF with info parameter for domain separation
+            hkdf.init(new HKDFParameters(input, salt, info));
+
+            // Generate key bytes
+            byte[] keyBytes = new byte[algorithm.getDefaultKeySize() / 8];
+            hkdf.generateBytes(keyBytes, 0, keyBytes.length);
+
+            // Create SecretKey from derived bytes
+            return new SecretKeySpec(keyBytes, algorithm.getKeyAlgorithm());
+        } finally {
+            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+                Arrays.fill(input, (byte) 0);
+                Arrays.fill(salt, (byte) 0);
+                Arrays.fill(info, (byte) 0);
+            }
+        }
+    }
+
+    /**
+     * Derives a secret key for the specified symmetric algorithm using a randomly generated salt.
+     *
+     * @param algorithm the symmetric algorithm for which the key is to be derived
+     * @param input the input data used for key derivation
+     * @param info optional context-specific information used in the key derivation process
+     * @param inputBufferHandling the handling mechanism for input buffers during key derivation
+     * @return the derived secret key
+     */
+    public static SecretKey deriveSecretKeyWithRandomSalt(SymmetricAlgorithm algorithm, byte[] input, byte @Nullable[] info, InputBufferHandling inputBufferHandling) {
+        byte[] salt = new byte[32]; // 256-bit salt
+        new SecureRandom().nextBytes(salt);
+        return deriveSecretKey(algorithm, salt, input, info, inputBufferHandling);
     }
 }

@@ -1,11 +1,22 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.text.TextUtil;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
@@ -148,5 +159,40 @@ public final class SignatureUtil {
             }
             Arrays.fill(data, (byte) 0);
         }
+    }
+
+    /**
+     * Creates a CMSSignedData object by signing the input data (certificate bytes) using the provided
+     * private key and certificate.
+     *
+     * @param developerPrivateKey the private key used to sign the data
+     * @param certificate the X509Certificate used in the signing process
+     * @param certificateBytes the byte array representation of the certificate to be signed
+     * @return a CMSSignedData object containing the signed data
+     * @throws OperatorCreationException if there is an error creating the content signer or signature generator
+     * @throws CertificateEncodingException if there is an error encoding the certificate
+     * @throws CMSException if there is an error in generating the signed data
+     */
+    public static CMSSignedData createSignedData(PrivateKey developerPrivateKey, X509Certificate certificate, byte[] certificateBytes) throws OperatorCreationException, CertificateEncodingException, CMSException {
+        // Create a content signer using the private key
+        ContentSigner contentSigner = new JcaContentSignerBuilder("SHA256withRSA")
+                .setProvider(BouncyCastleX509CertificateBuilder.ensureProvider())
+                .build(developerPrivateKey);
+
+        // Create a CMSSignedDataGenerator
+        CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
+
+        // Add the certificate and private key to the generator
+        generator.addSignerInfoGenerator(
+                new JcaSignerInfoGeneratorBuilder(
+                        new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
+                        .build(contentSigner, certificate)
+        );
+
+        // Create the signed data of the certificate in DER format
+        return generator.generate(
+                new CMSProcessableByteArray(certificateBytes),
+                true
+        );
     }
 }

@@ -29,15 +29,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 class CertificateUtilTest {
     private static final Logger LOG = LogManager.getLogger(CertificateUtilTest.class);
 
-    static {
-        // Register Bouncy Castle provider for tests
-        try {
-            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        } catch (Exception e) {
-            LOG.error("Failed to register Bouncy Castle provider: {}", e.getMessage());
-        }
-    }
-
     @Test
     void testCreateSelfSignedX509Certificate() throws GeneralSecurityException {
         // Generate a key pair for testing

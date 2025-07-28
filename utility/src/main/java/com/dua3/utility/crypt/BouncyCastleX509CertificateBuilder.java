@@ -1,5 +1,7 @@
 package com.dua3.utility.crypt;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -16,6 +18,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
@@ -29,6 +32,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -38,8 +42,26 @@ import java.util.Optional;
  * the subject and issuer, validity period, signature algorithm, and certificate chain.
  */
 final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder {
+    private static final Logger LOG = LogManager.getLogger(BouncyCastleX509CertificateBuilder.class);
 
-    private static final @Nullable Provider provider = Security.getProvider("BC");
+    private static final class ProviderHolder {
+        // Register BouncyCastle provider if not already registered
+        static {
+            if (java.security.Security.getProvider("BC") == null) {
+                try {
+                    Class<?> cls = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
+                    java.security.Security.addProvider(((org.bouncycastle.jce.provider.BouncyCastleProvider) cls.getConstructor().newInstance()));
+                    LOG.info("BouncyCastle provider registered");
+                } catch (ClassNotFoundException e) {
+                    LOG.warn("BouncyCastle provider not found on classpath");
+                } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+                    LOG.warn("BouncyCastle provider could not be registered", e);
+                }
+            }
+        }
+
+        private static final @Nullable Provider PROVIDER = Security.getProvider("BC");
+    }
 
     private final boolean enableCA;
     private @Nullable String subjectDn;
@@ -62,7 +84,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
      *         {@code Optional}.
      */
     public static Optional<X509CertificateBuilder> create(boolean enableCA) {
-        return provider == null ? Optional.empty() : Optional.of(new BouncyCastleX509CertificateBuilder(enableCA));
+        return ProviderHolder.PROVIDER == null ? Optional.empty() : Optional.of(new BouncyCastleX509CertificateBuilder(enableCA));
     }
 
     /**
@@ -118,6 +140,8 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
         if (subjectDn == null) throw new IllegalStateException("subject DN not set");
         if (issuerDn == null && issuerCert == null) issuerDn = subjectDn;
 
+        Provider provider = ensureProvider();
+
         Instant now = Instant.now();
         Date notBefore = Date.from(now);
         Date notAfter = Date.from(now.plusSeconds(validityDays * 86400L));
@@ -170,10 +194,14 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
             fullChain.add(cert);
             if (issuerCert != null) fullChain.add(issuerCert);
             fullChain.addAll(chain);
-            return fullChain.toArray(new X509Certificate[0]);
+            return fullChain.toArray(X509Certificate[]::new);
 
         } catch (OperatorCreationException | CertIOException e) {
             throw new CertificateException("Failed to create certificate", e);
         }
+    }
+
+    public static Provider ensureProvider() {
+        return Objects.requireNonNull(ProviderHolder.PROVIDER, "No X509Provider");
     }
 }

@@ -13,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -25,15 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class KeyUtilTest {
     private static final Logger LOG = LogManager.getLogger(KeyUtilTest.class);
-
-    static {
-        // Register Bouncy Castle provider for tests
-        try {
-            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        } catch (Exception e) {
-            LOG.error("Failed to register Bouncy Castle provider: {}", e.getMessage());
-        }
-    }
 
     @ParameterizedTest
     @ValueSource(ints = {16, 24, 32})
@@ -55,98 +47,6 @@ class KeyUtilTest {
         // Generate another key and verify it's different (extremely unlikely to be the same)
         SecretKey anotherKey = KeyUtil.generateSecretKey(bits);
         assertFalse(Arrays.equals(key.getEncoded(), anotherKey.getEncoded()));
-    }
-
-    @Test
-    void testDeriveKeyWithSalt() throws GeneralSecurityException {
-        char[] passphrase = "test-passphrase".toCharArray();
-        byte[] salt = KeyUtil.generateSalt(16);
-
-        // Test with different key sizes
-        for (int keyBits : new int[]{128, 192, 256}) {
-            SecretKey key = KeyUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits, InputBufferHandling.PRESERVE);
-
-            // Derive the key again with the same parameters and verify it's the same
-            SecretKey sameKey = KeyUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits, InputBufferHandling.CLEAR_AFTER_USE);
-            assertArrayEquals(key.getEncoded(), sameKey.getEncoded());
-
-            // Derive with different salt and verify it's different
-            byte[] differentSalt = KeyUtil.generateSalt(16);
-            SecretKey differentKey = KeyUtil.deriveSecretKey(passphrase.clone(), differentSalt, 10000, keyBits, InputBufferHandling.CLEAR_AFTER_USE);
-            assertFalse(Arrays.equals(key.getEncoded(), differentKey.getEncoded()));
-        }
-    }
-
-    @Test
-    void testDeriveKeyWithContext() throws GeneralSecurityException {
-        char[] passphrase = "test-passphrase".toCharArray();
-        char[] context = "user:testuser".toCharArray();
-
-        SecretKey key = KeyUtil.deriveSecretKey(passphrase.clone(), context, InputBufferHandling.CLEAR_AFTER_USE);
-
-        // Derive the key again with the same parameters and verify it's the same
-        SecretKey sameKey = KeyUtil.deriveSecretKey(passphrase.clone(), context, InputBufferHandling.CLEAR_AFTER_USE);
-        assertArrayEquals(key.getEncoded(), sameKey.getEncoded());
-
-        // Derive with different context and verify it's different
-        char[] differentContext = "user:otheruser".toCharArray();
-        SecretKey differentKey = KeyUtil.deriveSecretKey(passphrase.clone(), differentContext, InputBufferHandling.CLEAR_AFTER_USE);
-        assertFalse(Arrays.equals(key.getEncoded(), differentKey.getEncoded()));
-    }
-
-    @Test
-    void testDeriveSecretKeyWithSalt() throws GeneralSecurityException {
-        char[] passphrase = "test-passphrase".toCharArray();
-        byte[] salt = KeyUtil.generateSalt(16);
-
-        // Test with different key sizes
-        for (int keyBits : new int[]{128, 192, 256}) {
-            SecretKey key = KeyUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits, InputBufferHandling.PRESERVE);
-
-            // Verify key length
-            assertEquals(keyBits / 8, key.getEncoded().length);
-
-            // Derive the key again with the same parameters and verify it's the same
-            SecretKey sameKey = KeyUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits, InputBufferHandling.CLEAR_AFTER_USE);
-            assertArrayEquals(key.getEncoded(), sameKey.getEncoded());
-
-            // Derive with different salt and verify it's different
-            byte[] differentSalt = KeyUtil.generateSalt(16);
-            SecretKey differentKey = KeyUtil.deriveSecretKey(passphrase.clone(), differentSalt, 10000, keyBits, InputBufferHandling.CLEAR_AFTER_USE);
-            assertFalse(Arrays.equals(key.getEncoded(), differentKey.getEncoded()));
-
-            // Test encryption/decryption with the derived key
-            String message = "Test message for derived key";
-            byte[] encrypted = CryptUtil.encryptSymmetric(key, TextUtil.toByteArray(message), InputBufferHandling.CLEAR_AFTER_USE);
-            String decrypted = TextUtil.decodeToString(CryptUtil.decryptSymmetric(key, encrypted));
-            assertEquals(message, decrypted);
-        }
-    }
-
-    @Test
-    void testDeriveSecretKeyWithContext() throws GeneralSecurityException {
-        char[] passphrase = "test-passphrase".toCharArray();
-        char[] context = "user:testuser".toCharArray();
-
-        SecretKey key = KeyUtil.deriveSecretKey(passphrase.clone(), context, InputBufferHandling.CLEAR_AFTER_USE);
-
-        // Default key size is 256 bits = 32 bytes
-        assertEquals(32, key.getEncoded().length);
-
-        // Derive the key again with the same parameters and verify it's the same
-        SecretKey sameKey = KeyUtil.deriveSecretKey(passphrase.clone(), context, InputBufferHandling.CLEAR_AFTER_USE);
-        assertArrayEquals(key.getEncoded(), sameKey.getEncoded());
-
-        // Derive with different context and verify it's different
-        char[] differentContext = "user:otheruser".toCharArray();
-        SecretKey differentKey = KeyUtil.deriveSecretKey(passphrase.clone(), differentContext, InputBufferHandling.CLEAR_AFTER_USE);
-        assertFalse(Arrays.equals(key.getEncoded(), differentKey.getEncoded()));
-
-        // Test encryption/decryption with the derived key
-        String message = "Test message for context-derived key";
-        byte[] encrypted = CryptUtil.encryptSymmetric(key, TextUtil.toByteArray(message), InputBufferHandling.CLEAR_AFTER_USE);
-        String decrypted = TextUtil.decodeToString(CryptUtil.decryptSymmetric(key, encrypted));
-        assertEquals(message, decrypted);
     }
 
     @Test
@@ -268,4 +168,33 @@ class KeyUtilTest {
         assertEquals("EC", ecKeyPair.getPublic().getAlgorithm());
         assertEquals("EC", ecKeyPair.getPrivate().getAlgorithm());
     }
+
+    @Test
+    void testDeriveSecretKeyWithSalt() throws GeneralSecurityException {
+        byte[] passphrase = "secure-passphrase".getBytes(StandardCharsets.UTF_8);
+        byte[] info = "app:test".getBytes(StandardCharsets.UTF_8);
+        byte[] salt = KeyUtil.generateSalt(16);
+
+        // derive key
+        SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, passphrase.clone(), salt, info, InputBufferHandling.PRESERVE);
+
+        // Verify key length
+        assertEquals(256 / 8, key.getEncoded().length);
+
+        // Derive the key again with the same parameters and verify it's the same
+        SecretKey sameKey = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, passphrase.clone(), salt, info, InputBufferHandling.PRESERVE);
+        assertArrayEquals(key.getEncoded(), sameKey.getEncoded());
+
+        // Derive with different salt and verify it's different
+        byte[] differentSalt = KeyUtil.generateSalt(16);
+        SecretKey differentKey = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, passphrase.clone(), differentSalt, info, InputBufferHandling.PRESERVE);
+        assertFalse(Arrays.equals(key.getEncoded(), differentKey.getEncoded()));
+
+        // Test encryption/decryption with the derived key
+        String message = "Test message for derived key";
+        byte[] encrypted = CryptUtil.encryptSymmetric(key, TextUtil.toByteArray(message), InputBufferHandling.CLEAR_AFTER_USE);
+        String decrypted = TextUtil.decodeToString(CryptUtil.decryptSymmetric(key, encrypted));
+        assertEquals(message, decrypted);
+    }
+
 }

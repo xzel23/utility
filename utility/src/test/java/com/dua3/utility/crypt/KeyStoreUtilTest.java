@@ -28,15 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class KeyStoreUtilTest {
     private static final Logger LOG = LogManager.getLogger(KeyStoreUtilTest.class);
 
-    static {
-        // Register Bouncy Castle provider for tests
-        try {
-            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        } catch (Exception e) {
-            LOG.error("Failed to register Bouncy Castle provider: {}", e.getMessage());
-        }
-    }
-
     private static final char[] PASSWORD = "test-password".toCharArray();
     private static final String SECRET_KEY_ALIAS = "test-secret-key";
     private static final String KEY_PAIR_ALIAS = "test-key-pair";

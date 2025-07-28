@@ -28,6 +28,11 @@ public final class KeyStoreUtil {
 
     private static final String KEYSTORE_TYPE_DEFAULT = "PKCS12";
 
+    static {
+        // make sure BouncyCastle is loaded
+        BouncyCastleX509CertificateBuilder.ensureProvider();
+    }
+
     /**
      * Utility class private constructor.
      */
