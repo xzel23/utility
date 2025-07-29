@@ -374,6 +374,46 @@ public final class MathUtil {
     public static final double PI_DIV_180 = Math.PI / 180.0;
 
     /**
+     * Represents the mathematical constant known as the Golden Ratio,
+     * denoted by the Greek letter phi (φ). This is an irrational number
+     * approximately equal to 1.618033988749895 and is often encountered
+     * in mathematics, art, architecture, and nature.
+     */
+    public static final double GOLDEN_RATIO = 1.618033988749895;
+
+    /**
+     * A mathematical constant representing Euler's number (e), the base of the natural logarithm.
+     * It is an irrational constant approximately equal to 2.7182818284590455.
+     */
+    public static final double E = 2.7182818284590455;
+
+    /**
+     * Represents the natural logarithm of 2 (ln(2)), a constant value approximately equal to 0.6931471805599453.
+     * This constant is often used in mathematical calculations and algorithms that involve logarithms with a natural base.
+     */
+    public static final double LN_2 = 0.6931471805599453;
+
+    /**
+     * A constant that represents the square root of 2 (√2) with high precision.
+     * The square root of 2 is an irrational number that is approximately equal to 1.4142135623730951.
+     */
+    public static final double SQRT_2 = 1.4142135623730951;
+
+    /**
+     * A constant holding the square root of 3, approximately 1.7320508075688772.
+     * This value is often used in mathematical calculations and geometry-related computations.
+     */
+    public static final double SQRT_3 = 1.7320508075688772;
+
+    /**
+     * Represents the square root of 5 as a constant value.
+     * This value is computed to a high precision and is
+     * commonly used in mathematical calculations requiring
+     * the square root of 5.
+     */
+    public static final double SQRT_5 = 2.23606797749979;
+
+    /**
      * Converts an angle measured in degrees to an equivalent angle measured in radians.
      *
      * @param alpha the angle in degrees
