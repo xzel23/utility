@@ -64,17 +64,13 @@ public final class CryptUtil {
      * @throws IllegalBlockSizeException if the data is too large for the key/algorithm
      */
     public static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
-        String algorithm = key.getAlgorithm();
-
-        switch (algorithm.toUpperCase()) {
-            case "RSA":
-                validateRSAEncryptionKey(key, dataLength);
-                break;
-            case "DSA":
-                throw new InvalidKeyException("DSA keys are for signatures only, not encryption");
-            default:
-                // for EC the validity cannot be checked here
-                break;
+        switch (key) {
+            case RSAPublicKey rsaKey -> validateRSAEncryptionKey(rsaKey, dataLength);
+            default -> {
+                if (key.getAlgorithm().equalsIgnoreCase("DSA")) {
+                    throw new InvalidKeyException("DSA keys are for signatures only, not encryption");
+                }
+            }
         }
     }
 

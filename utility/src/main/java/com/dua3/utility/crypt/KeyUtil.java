@@ -18,7 +18,6 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -313,8 +312,7 @@ public final class KeyUtil {
      * @return the derived secret key
      */
     public static SecretKey deriveSecretKeyWithRandomSalt(SymmetricAlgorithm algorithm, byte[] input, byte @Nullable[] info, InputBufferHandling inputBufferHandling) {
-        byte[] salt = new byte[32]; // 256-bit salt
-        new SecureRandom().nextBytes(salt);
+        byte[] salt = RandomUtil.generateRandomBytes(32); // 256-bit salt
         return deriveSecretKey(algorithm, salt, input, info, inputBufferHandling);
     }
 }
