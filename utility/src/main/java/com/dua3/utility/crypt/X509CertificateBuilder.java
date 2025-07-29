@@ -71,26 +71,13 @@ public interface X509CertificateBuilder {
      * Specifies the issuer certificate and private key to sign the certificate being built.
      * This method is used to define the signer of the resulting certificate in the chain.
      *
-     * @param issuerCert the X.509 certificate of the issuer that will sign the generated certificate.
+     * @param issuerKey  the private key corresponding to the issuer certificate. It is used
+     *                   to generate the signature for the certificate being built.
+     * @param issuerCert the X.509 certificate chain of the issuer that will sign the generated certificate.
      *                   This certificate indicates the identity of the signing authority.
-     * @param issuerKey the private key corresponding to the issuer certificate. It is used
-     *                  to generate the signature for the certificate being built.
      * @return the current instance of {@code X509CertificateBuilder} for method chaining.
      */
-    X509CertificateBuilder signedBy(X509Certificate issuerCert, PrivateKey issuerKey);
-
-    /**
-     * Adds one or more X.509 certificates to the certificate chain being built.
-     * This method can be used to include intermediate or root certificates
-     * that are part of the chain of trust.
-     *
-     * @param additionalCerts one or more certificates to add to the chain.
-     *                        These certificates should typically be intermediate
-     *                        or root certificates that establish the trust chain.
-     * @return the current instance of {@code X509CertificateBuilder}, allowing for
-     *         method chaining to continue building the certificate.
-     */
-    X509CertificateBuilder addToChain(X509Certificate... additionalCerts);
+    X509CertificateBuilder signedBy(PrivateKey issuerKey, X509Certificate... issuerCert);
 
     /**
      * Returns an {@code Optional} containing an instance of {@code X509CertificateBuilder},

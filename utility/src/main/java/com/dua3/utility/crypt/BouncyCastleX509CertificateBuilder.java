@@ -69,9 +69,8 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
     private int validityDays = 365;
     private String signatureAlgorithm = "SHA256withRSA";
 
-    private @Nullable X509Certificate issuerCert;
+    private @Nullable X509Certificate[] issuerCert = {};
     private @Nullable PrivateKey issuerKey;
-    private final List<X509Certificate> chain = new ArrayList<>();
 
     /**
      * Creates and returns an optional instance of {@code X509CertificateBuilder}.
@@ -104,15 +103,9 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
     }
 
     @Override
-    public BouncyCastleX509CertificateBuilder signedBy(X509Certificate issuerCert, PrivateKey issuerKey) {
+    public BouncyCastleX509CertificateBuilder signedBy(PrivateKey issuerKey, X509Certificate... issuerCert) {
         this.issuerCert = issuerCert;
         this.issuerKey = issuerKey;
-        return this;
-    }
-
-    @Override
-    public BouncyCastleX509CertificateBuilder addToChain(X509Certificate... additionalCerts) {
-        this.chain.addAll(List.of(additionalCerts));
         return this;
     }
 
@@ -137,8 +130,12 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
     @SuppressWarnings("UseOfObsoleteDateTimeApi")
     @Override
     public X509Certificate[] build(KeyPair keyPair) throws GeneralSecurityException {
-        if (subjectDn == null) throw new IllegalStateException("subject DN not set");
-        if (issuerDn == null && issuerCert == null) issuerDn = subjectDn;
+        if (subjectDn == null) {
+            throw new IllegalStateException("subject DN not set");
+        }
+        if (issuerDn == null && issuerCert.length == 0) {
+            issuerDn = subjectDn;
+        }
 
         Provider provider = ensureProvider();
 
@@ -148,8 +145,8 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
         BigInteger serial = new BigInteger(64, new SecureRandom());
 
         X500Name subject = new X500Name(subjectDn);
-        X500Name issuer = (issuerCert != null)
-                ? new X500Name(issuerCert.getSubjectX500Principal().getName())
+        X500Name issuer = (issuerCert.length > 0)
+                ? new X500Name(issuerCert[0].getSubjectX500Principal().getName())
                 : new X500Name(issuerDn);
 
         PrivateKey signingKey = (issuerKey != null) ? issuerKey : keyPair.getPrivate();
@@ -181,20 +178,22 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
                     new SubjectKeyIdentifier(pubKeyInfo.getPublicKeyData().getBytes()));
 
             // Authority Key Identifier (if issuerCert is provided)
-            if (issuerCert != null) {
+            if (issuerCert.length > 0) {
                 certBuilder.addExtension(Extension.authorityKeyIdentifier, false,
-                        new AuthorityKeyIdentifier(issuerCert.getPublicKey().getEncoded()));
+                        new AuthorityKeyIdentifier(issuerCert[0].getPublicKey().getEncoded()));
             }
 
             X509Certificate cert = new JcaX509CertificateConverter()
                     .setProvider(provider)
                     .getCertificate(certBuilder.build(signer));
 
-            List<X509Certificate> fullChain = new ArrayList<>();
-            fullChain.add(cert);
-            if (issuerCert != null) fullChain.add(issuerCert);
-            fullChain.addAll(chain);
-            return fullChain.toArray(X509Certificate[]::new);
+            X509Certificate[] chain = new X509Certificate[issuerCert.length + 1];
+            chain[0] = cert;
+            for (int i = 0; i < issuerCert.length; i++) {
+                chain[i + 1] = issuerCert[i];
+            }
+
+            return chain;
 
         } catch (OperatorCreationException | CertIOException e) {
             throw new CertificateException("Failed to create certificate", e);
