@@ -72,4 +72,57 @@ class SystemInfoTest {
                 """;
         assertEquals(expected, formatted);
     }
+
+    @Test
+    void testGetJavaInfo() {
+        // Create a SystemInfo instance with known values
+        SystemInfo info = new SystemInfo("TestOS", "1.0", "x64", "17.0.2", "TestVendor", "/path/to/java", "11.0.2");
+
+        // Test the getJavaInfo method
+        String javaInfo = info.getJavaInfo();
+
+        // Verify the content and format of the Java information
+        assertEquals("17.0.2 TestVendor (/path/to/java)", javaInfo);
+
+        // Test with actual system info
+        SystemInfo actualInfo = SystemInfo.getSystemInfo();
+        String expectedJavaInfo = String.format("%s %s (%s)",
+                System.getProperty("java.version", "Unknown"),
+                System.getProperty("java.vendor", "Unknown"),
+                System.getProperty("java.home", "Unknown"));
+
+        // Verify actual system info matches the expected format
+        assertEquals(expectedJavaInfo, actualInfo.getJavaInfo());
+    }
+
+    @Test
+    void testGetJavafxInfo() {
+        // Create a SystemInfo instance with known values
+        SystemInfo info = new SystemInfo("TestOS", "1.0", "x64", "17.0.2", "TestVendor", "/path/to/java", "11.0.2");
+
+        // Test the getJavafxInfo method
+        String javafxInfo = info.getJavafxInfo();
+
+        // Verify the JavaFX version is returned correctly
+        assertEquals("11.0.2", javafxInfo);
+
+        // Test with actual system info
+        SystemInfo actualInfo = SystemInfo.getSystemInfo();
+        String expectedJavafxInfo = System.getProperty("javafx.runtime.version", "Unknown");
+
+        // Verify actual system info matches the system property value
+        assertEquals(expectedJavafxInfo, actualInfo.getJavafxInfo());
+    }
+
+    @Test
+    void testGetOsInfo() {
+        // Create a SystemInfo instance with known values
+        SystemInfo info = new SystemInfo("TestOS", "1.0", "x64", "17.0.2", "TestVendor", "/path/to/java", "11.0.2");
+
+        // Test the getOsInfo method
+        String osInfo = info.getOsInfo();
+
+        // Verify the format and content of the OS information
+        assertEquals("TestOS 1.0 (x64)", osInfo);
+    }
 }
