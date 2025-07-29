@@ -66,24 +66,30 @@ public final class CertificateUtil {
      * validity period, and a parent certificate. The generated certificate is included in a chain
      * along with the specified parent certificate(s).
      *
-     * @param keyPair           the key pair containing the private key used to sign the certificate
-     *                          and the public key embedded within the certificate
-     * @param subject           the distinguished name (DN) of the certificate's subject, formatted as
-     *                          a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
-     * @param validityDays      the number of days from the current date for which the certificate
-     *                          will be valid
-     * @param enableCA          a boolean flag indicating whether the certificate should include settings
-     *                          for acting as a Certificate Authority (CA). If {@code true}, the certificate
-     *                          will be configured as a CA.
-     * @param parentPrivateKey  the parent certificate's private key
+     * @param keyPair                the key pair containing the private key used to sign the certificate
+     *                               and the public key embedded within the certificate
+     * @param subject                the distinguished name (DN) of the certificate's subject, formatted as
+     *                               a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
+     * @param validityDays           the number of days from the current date for which the certificate
+     *                               will be valid
+     * @param enableCA               a boolean flag indicating whether the certificate should include settings
+     *                               for acting as a Certificate Authority (CA). If {@code true}, the certificate
+     *                               will be configured as a CA.
+     * @param parentPrivateKey       the parent certificate's private key
      * @param parentCertificateChain the parent X.509 certificate to include in the generated certificate's
-     *                          chain, establishing a chain of trust
+     *                               chain, establishing a chain of trust
      * @return an array of X.509 certificates, with the first certificate being the newly created
-     * certificate, followed by the specified parent certificate(s) in the chain
+     *         certificate, followed by the specified parent certificate(s) in the chain
      * @throws GeneralSecurityException if an error occurs during the certificate generation
      *                                  or signing process
      */
-    public static X509Certificate[] createX509Certificate(KeyPair keyPair, String subject, int validityDays, boolean enableCA, PrivateKey parentPrivateKey, X509Certificate... parentCertificateChain) throws GeneralSecurityException {
+    public static X509Certificate[] createX509Certificate(
+            KeyPair keyPair, String subject,
+            int validityDays,
+            boolean enableCA,
+            PrivateKey parentPrivateKey,
+            X509Certificate... parentCertificateChain
+    ) throws GeneralSecurityException {
         try {
             LangUtil.checkArg(validityDays > 0, () -> "Validity days must be positive: " + validityDays);
 
