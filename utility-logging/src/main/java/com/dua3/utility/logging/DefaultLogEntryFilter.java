@@ -23,7 +23,7 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
      * message filters that let all log entries pass.
      */
     public DefaultLogEntryFilter() {
-        this(LogLevel.TRACE, (name, level) -> true, (text, level) -> true);
+        this(LogLevel.TRACE, (name, lvl) -> true, (text, lvl) -> true);
     }
 
     /**

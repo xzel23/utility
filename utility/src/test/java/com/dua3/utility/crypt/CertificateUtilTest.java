@@ -5,8 +5,6 @@
 
 package com.dua3.utility.crypt;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -14,7 +12,6 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -27,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class CertificateUtilTest {
-    private static final Logger LOG = LogManager.getLogger(CertificateUtilTest.class);
 
     @Test
     void testCreateSelfSignedX509Certificate() throws GeneralSecurityException {

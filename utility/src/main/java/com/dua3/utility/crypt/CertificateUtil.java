@@ -84,25 +84,9 @@ public final class CertificateUtil {
         try {
             LangUtil.checkArg(validityDays > 0, () -> "Validity days must be positive: " + validityDays);
 
-            // Validate subject DN format
-            try {
-                new javax.security.auth.x500.X500Principal(subject);
-            } catch (IllegalArgumentException e) {
-                throw new GeneralSecurityException("Invalid subject DN format: " + subject, e);
-            }
-
-            // Check parent certificate validity
-            try {
-                parentCertificate.checkValidity();
-            } catch (CertificateExpiredException | CertificateNotYetValidException e) {
-                throw new GeneralSecurityException("Parent certificate is not valid", e);
-            }
-
-            // Verify parent certificate can sign (has CA constraint)
-            boolean[] keyUsage = parentCertificate.getKeyUsage();
-            if (keyUsage != null && !keyUsage[5]) { // keyCertSign bit
-                throw new GeneralSecurityException("Parent certificate cannot sign certificates");
-            }
+            ensureDNSubjectIsValid(subject);
+            ensureCertificateIsValid(parentCertificate);
+            ensureCanSign(parentCertificate);
 
             X509CertificateBuilder builder = X509CertificateBuilder.getBuilder(enableCA)
                     .orElseThrow(() -> new GeneralSecurityException("No X.509 certificate builder available"));
@@ -119,6 +103,57 @@ public final class CertificateUtil {
             throw e;
         } catch (Exception e) {
             throw new GeneralSecurityException("Failed to create X.509 certificate", e);
+        }
+    }
+
+    /**
+     * Ensures that the provided X.509 certificate is valid by checking its validity dates.
+     * If the certificate is expired or not yet valid, a {@link GeneralSecurityException} is thrown.
+     *
+     * @param parentCertificate the X.509 certificate to validate
+     * @throws GeneralSecurityException if the certificate is not valid due to being expired or not yet valid
+     */
+    private static void ensureCertificateIsValid(X509Certificate parentCertificate) throws GeneralSecurityException {
+        try {
+            parentCertificate.checkValidity();
+        } catch (CertificateExpiredException | CertificateNotYetValidException e) {
+            throw new GeneralSecurityException("certificate is not valid", e);
+        }
+    }
+
+    /**
+     * Ensures that the provided X.509 certificate has the ability to sign other certificates.
+     * Verifies the "keyCertSign" bit in the certificate's key usage to determine if
+     * it can be used for certificate signing. If the certificate lacks this capability,
+     * a {@link GeneralSecurityException} is thrown.
+     *
+     * @param parentCertificate the X.509 certificate to be checked for signing capability.
+     *                          This certificate must not be null and should represent
+     *                          a valid certificate for verification.
+     * @throws GeneralSecurityException if the certificate cannot be used to sign other certificates,
+     *                                  as indicated by the "keyCertSign" bit in its key usage.
+     */
+    private static void ensureCanSign(X509Certificate parentCertificate) throws GeneralSecurityException {
+        boolean[] keyUsage = parentCertificate.getKeyUsage();
+        if (keyUsage != null && !keyUsage[5]) { // keyCertSign bit
+            throw new GeneralSecurityException("certificate cannot sign certificates");
+        }
+    }
+
+    /**
+     * Validates whether the provided distinguished name (DN) subject string is in a valid
+     * format for use in X.509 certificates. If the subject is invalid, a
+     * {@link GeneralSecurityException} is thrown.
+     *
+     * @param subject the distinguished name (DN) of the certificate's subject, formatted as
+     *                a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
+     * @throws GeneralSecurityException if the subject DN format is invalid
+     */
+    private static void ensureDNSubjectIsValid(String subject) throws GeneralSecurityException {
+        try {
+            new javax.security.auth.x500.X500Principal(subject);
+        } catch (IllegalArgumentException e) {
+            throw new GeneralSecurityException("invalid subject DN format: " + subject, e);
         }
     }
 

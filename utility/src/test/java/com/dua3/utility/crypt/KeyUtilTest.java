@@ -6,8 +6,6 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.text.TextUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -18,14 +16,12 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Security;
 import java.util.Arrays;
 import javax.crypto.SecretKey;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class KeyUtilTest {
-    private static final Logger LOG = LogManager.getLogger(KeyUtilTest.class);
 
     @ParameterizedTest
     @ValueSource(ints = {16, 24, 32})

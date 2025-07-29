@@ -29,9 +29,6 @@ import java.util.Arrays;
  */
 public final class KeyUtil {
 
-    private static final int KEY_DERIVATION_DEFAULT_ITERATIONS = 10000;
-    private static final int KEY_DERIVATION_DEFAULT_BITS = 256;
-
     /**
      * Utility class private constructor.
      */

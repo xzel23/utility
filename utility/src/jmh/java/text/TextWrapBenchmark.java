@@ -25,15 +25,18 @@ public class TextWrapBenchmark {
     @Setup
     public void setup() {
         shortText = "Hello, world!";
-        
+
         longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
                 "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
                 "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
                 "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-        
-        textWithParagraphs = "First paragraph with some text that should be wrapped.\n\n" +
-                "Second paragraph with different content that also needs to be wrapped properly.\n\n" +
-                "Third paragraph with even more text to ensure we have enough content for testing the line splitter functionality.";
+
+        textWithParagraphs = """
+                First paragraph with some text that should be wrapped.
+                
+                Second paragraph with different content that also needs to be wrapped properly.
+                
+                Third paragraph with even more text to ensure we have enough content for testing the line splitter functionality.""";
     }
 
     @Benchmark

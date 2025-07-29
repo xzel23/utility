@@ -6,8 +6,6 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.text.TextUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -24,7 +22,6 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Security;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -38,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class CryptUtilTest {
-    private static final Logger LOG = LogManager.getLogger(CryptUtilTest.class);
     private static final int[] KEY_LENGTHS = {128, 192, 256};
     private static final String[] MESSAGES = {
             "",

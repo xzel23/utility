@@ -492,7 +492,7 @@ public final class CsvReader extends CsvIo {
      */
     public static class ListRowBuilder implements RowBuilder {
 
-        private static final Consumer<List<String>> EMPTY_CONSUMER = row -> {};
+        private static final Consumer<List<String>> EMPTY_CONSUMER = strings -> {};
 
         private final Consumer<List<String>> onRowRead;
         private final List<String> row = new ArrayList<>();

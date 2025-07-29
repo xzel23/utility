@@ -101,7 +101,7 @@ class ButtonDefTest extends FxTestBase {
             }
 
             @Override
-            public void init() {}
+            public void init() { /* nothing to do in test */ }
         };
     }
 }

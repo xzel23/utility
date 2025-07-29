@@ -5,9 +5,6 @@
 
 package com.dua3.utility.crypt;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.cms.CMSSignedData;
 import org.junit.jupiter.api.Test;
 
@@ -20,13 +17,11 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SignatureUtilTest {
-    private static final Logger LOG = LogManager.getLogger(SignatureUtilTest.class);
 
     private static final String[] MESSAGES = {
             "",

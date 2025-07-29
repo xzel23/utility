@@ -5,8 +5,6 @@
 
 package com.dua3.utility.crypt;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -16,7 +14,6 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.Security;
 import java.security.cert.Certificate;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -26,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KeyStoreUtilTest {
-    private static final Logger LOG = LogManager.getLogger(KeyStoreUtilTest.class);
-
     private static final char[] PASSWORD = "test-password".toCharArray();
     private static final String SECRET_KEY_ALIAS = "test-secret-key";
     private static final String KEY_PAIR_ALIAS = "test-key-pair";
