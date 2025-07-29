@@ -3,13 +3,75 @@ package com.dua3.utility.lang;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.Properties;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BuildInfoTest {
+
+    @Test
+    void testDigestConsistency() {
+        BuildInfo bi = BuildInfo.create("1.2.3", "2023-01-01T12:00:00Z[UTC]", "key123", "abc123", "test-system");
+        byte[] digest1 = bi.digest();
+        byte[] digest2 = bi.digest();
+        assertArrayEquals(digest1, digest2, "Digest should be consistent for the same BuildInfo object.");
+    }
+
+    @Test
+    void testDigestUniqueness() {
+        BuildInfo bi1 = BuildInfo.create("1.2.3", "2023-01-01T12:00:00Z[UTC]", "key123", "abc123", "test-system");
+        BuildInfo bi2 = BuildInfo.create("1.2.4", "2023-01-01T12:00:00Z[UTC]", "key123", "abc123", "test-system");
+        byte[] digest1 = bi1.digest();
+        byte[] digest2 = bi2.digest();
+        assertThrows(AssertionError.class, () -> assertArrayEquals(digest1, digest2));
+    }
+
+    @Test
+    void testWriteToPropertiesFile() throws IOException {
+        Path tempFile = java.nio.file.Files.createTempFile("build-info-", ".properties");
+        BuildInfo bi = BuildInfo.create("1.2.3", "2023-01-01T12:00:00Z[UTC]", "key123", "abc123", "test-system");
+
+        bi.writeToPropertiesFile(tempFile);
+
+        Properties properties = new Properties();
+        try (var in = java.nio.file.Files.newInputStream(tempFile)) {
+            properties.load(in);
+        }
+
+        assertEquals("1.2.3", properties.getProperty(BuildInfo.KEY_BUILD_VERSION));
+        assertEquals("2023-01-01T12:00Z[UTC]", properties.getProperty(BuildInfo.KEY_BUILD_TIME));
+        assertEquals("key123", properties.getProperty(BuildInfo.KEY_PUBLIC_KEY));
+        assertEquals("abc123", properties.getProperty(BuildInfo.KEY_COMMIT));
+        assertEquals("test-system", properties.getProperty(BuildInfo.KEY_SYSTEM));
+
+        BuildInfo bi2 = BuildInfo.create(properties);
+        assertEquals(bi, bi2);
+
+        assertArrayEquals(bi.digest(), bi2.digest());
+    }
+
+    @Test
+    void testWriteToPropertiesFileDefaultValues() throws IOException {
+        Path tempFile = java.nio.file.Files.createTempFile("build-info-default-", ".properties");
+        BuildInfo bi = BuildInfo.create("0.0.1-SNAPSHOT", "2000-01-01T00:00Z[UTC]", "key123");
+
+        bi.writeToPropertiesFile(tempFile);
+
+        Properties properties = new Properties();
+        try (var in = java.nio.file.Files.newInputStream(tempFile)) {
+            properties.load(in);
+        }
+
+        assertEquals("0.0.1-SNAPSHOT", properties.getProperty(BuildInfo.KEY_BUILD_VERSION));
+        assertEquals("2000-01-01T00:00Z[UTC]", properties.getProperty(BuildInfo.KEY_BUILD_TIME));
+        assertEquals("key123", properties.getProperty(BuildInfo.KEY_PUBLIC_KEY));
+        assertEquals("", properties.getProperty(BuildInfo.KEY_COMMIT));
+        assertEquals("", properties.getProperty(BuildInfo.KEY_SYSTEM));
+    }
 
     @Test
     void testMajorOnly() {
