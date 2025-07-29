@@ -66,6 +66,15 @@ final class StreamSupplier<V extends @Nullable Object> {
                 }
                 return buffer[bufferPos++] & 0xFF;
             }
+
+            @Override
+            public void close() throws IOException {
+                try {
+                    reader.close();
+                } finally {
+                    super.close();
+                }
+            }
         };
     }
 
