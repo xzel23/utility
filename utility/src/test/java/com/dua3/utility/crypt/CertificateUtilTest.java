@@ -139,4 +139,30 @@ class CertificateUtilTest {
         assertThrows(CertificateException.class, () -> CertificateUtil.toX509Certificate(invalidBytes));
     }
 
+    @Test
+    void testToX509CertificateFromPemString() throws GeneralSecurityException {
+        // Create a self-signed certificate
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        String subject = "CN=Test PEM Certificate, O=Test Organization, C=US";
+        int validityDays = 365;
+
+        Certificate[] certificates = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, validityDays, true);
+        X509Certificate originalCertificate = (X509Certificate) certificates[0];
+
+        // Convert the certificate to PEM (assuming utility to create PEM string)
+        String pemData = "-----BEGIN CERTIFICATE-----\n"
+                + java.util.Base64.getEncoder().encodeToString(originalCertificate.getEncoded())
+                + "\n-----END CERTIFICATE-----";
+
+        // Test conversion
+        X509Certificate convertedCertificate = CertificateUtil.toX509Certificate(pemData);
+        assertNotNull(convertedCertificate, "The converted certificate should not be null.");
+        assertArrayEquals(originalCertificate.getEncoded(), convertedCertificate.getEncoded(), "The certificate bytes should match.");
+        assertTrue(convertedCertificate.toString().contains("CN=Test PEM Certificate"), "The certificate subject should match the original.");
+
+        // Test with invalid PEM data
+        String invalidPem = "-----BEGIN CERTIFICATE-----\nInvalid PEM Data\n-----END CERTIFICATE-----";
+        assertThrows(CertificateException.class, () -> CertificateUtil.toX509Certificate(invalidPem));
+    }
+
 }
