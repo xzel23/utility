@@ -209,20 +209,20 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>keyPair</code> - the key pair containing the private key used to sign the certificate
-                          and the public key embedded within the certificate</dd>
+                               and the public key embedded within the certificate</dd>
 <dd><code>subject</code> - the distinguished name (DN) of the certificate's subject, formatted as
-                          a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")</dd>
+                               a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")</dd>
 <dd><code>validityDays</code> - the number of days from the current date for which the certificate
-                          will be valid</dd>
+                               will be valid</dd>
 <dd><code>enableCA</code> - a boolean flag indicating whether the certificate should include settings
-                          for acting as a Certificate Authority (CA). If <code>true</code>, the certificate
-                          will be configured as a CA.</dd>
+                               for acting as a Certificate Authority (CA). If <code>true</code>, the certificate
+                               will be configured as a CA.</dd>
 <dd><code>parentPrivateKey</code> - the parent certificate's private key</dd>
 <dd><code>parentCertificateChain</code> - the parent X.509 certificate to include in the generated certificate's
-                          chain, establishing a chain of trust</dd>
+                               chain, establishing a chain of trust</dd>
 <dt>Returns:</dt>
 <dd>an array of X.509 certificates, with the first certificate being the newly created
- certificate, followed by the specified parent certificate(s) in the chain</dd>
+         certificate, followed by the specified parent certificate(s) in the chain</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></code> - if an error occurs during the certificate generation
                                   or signing process</dd>
