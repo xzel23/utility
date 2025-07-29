@@ -237,10 +237,9 @@ could not be loaded.
 
 - CI workflow and deployment
     - The CI workflow has been completely rewritten.
-    - The Project has been migrated from OSS-RH to Maven Central Portal.
-    - Deployments are done through GitHub actions using JReleaser.
+    - The Project has been migrated from OSS-RH to Maven Central Publish Portal.
+    - Deployments are done through GitHub actions using JReleaser, snapshots are published to Maven snapshots.
     - Javadoc is automatically published to GitHub Pages after each succesfull CI build.
-    - Builds are now automatically published to either the Maven snapshots repository or Maven Central.
 
 - Introduce a BOM artifact
     - A new artefact `utility-bom` has been introduced that specifies the version for all modules.
@@ -248,7 +247,7 @@ could not be loaded.
 - Run tasks for samples
     - Run tasks have been added for the sample applications.
 
-- Package `utility`
+- Package `utility.lang`
     - Add new field `build.key` and method `digest()` to the `BuildInfo` class.
     - Added `Version` class and refactored BuildInfo class to use it.
     - Added `LangUtil.checkArg()` that throws `IllegalArgumentException`.
@@ -258,19 +257,11 @@ could not be loaded.
     - `LangUtil.isWrapperFor()` to test if a class is a primitive wrapper for another class
     - Added `LangUtil.addIf()` and `LangUtil.addIfNonNull()`.
     - `RingBuffer` implements `SequencedCollection`
-    - `LogBuffer.setCapacity()` to change the capacity of an existing buffer
     - Added `ReversedSequencedCollectionWrapper` to facilitate implementing `reversed()` for `SequencedCollection` 
       implementations
-    - hardened `IoUtil.unzip()` and provided an overload to use custom limits for unzipping.
-    - added `IoUtil.getApplicationDataDir()` and `IoUtil.getUserDir()`  to get the canonical directory
-      for application data storage of the platform and the user's home directory. 
-    - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
-    - Added `TextUtil.isNullOrBlank()`
-    - Fixed an issue where `TextUtil.wrap()` would drop the last line if not ended with a line-end character.
+    - Removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
+      `filter()` and `map()`.
 
-- Package `utility.db`
-    - Fixed a bug that prevented parsing of command line options to specify a JDBC connection
-    - Added convenience method `createArgumentsParser()`.
 
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
@@ -282,6 +273,34 @@ could not be loaded.
         - message signing
         - ECIES support depends on BouncyCastle being present
 
+- Package `utility.data`
+    - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
+
+- Package `utility.db`
+    - Fixed a bug that prevented parsing of command line options to specify a JDBC connection
+    - Added convenience method `createArgumentsParser()`.
+
+- Package `utility.fx`
+    - `AboutDialogBuilder.name()` was changed to `AboutDialogBuilder.applicationName()` and `AboutDialog` was removed.
+    - Fixed validation of numeric fields in Dialogs created using `Dialogs.input()`.
+    - Show markers vor invalid input in Dialogs created using `Dialogs.input()`.
+    - Small fixes and improvements.
+
+- Package `utility.io`
+    - Fix a race condition that sometimes would lead to a failure of the `IoUtil.testRedirectStandardStreams()`
+      tests when a test on another thread used standard I/O at the same time (which it really should not).
+    - hardened `IoUtil.unzip()` and provided an overload to use custom limits for unzipping.
+    - added `IoUtil.getApplicationDataDir()` and `IoUtil.getUserDir()`  to get the canonical directory
+      for application data storage of the platform and the user's home directory.
+
+- Package `utility.logging`
+    - Removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.
+    - `LogBuffer.setCapacity()` to change the capacity of an existing buffer
+
+- Package `utility.math`
+    - fix `MathUtil.pow10()` for negative arguments < -4
+    - Added several mathematical constants.
+
 - Package `utility.options`
     - The package has been completely refactored to be more consistent and allow for finer control.
       It is now for example easier to create options that have enum or record generic type.
@@ -289,6 +308,10 @@ could not be loaded.
     - `ArgumentsParser.help()` output was changed to be more informative and use system line ends as its intended use is
       to display a help message in the system terminal.
     - Use `Option.isEquivalent()` instead of `equals()` when checking for specific options.
+
+- Package `utility.swing`
+    - `FileInput` was changed to work around the missing "New Directory" button in open dialogs on macOS.
+    - Race conditions and missed updates in `LogTableModel` have been fixed.
 
 - Package `utility.text`
     - `TextUtil`
@@ -298,25 +321,9 @@ could not be loaded.
           cryptographically weak and insecure, and the API should not make using an unsecure algorithm easier to use than
           a secure one. Which algorithms are considered safe is always subject to ongoing research, so be neutral about
           algorithms.
-    - `RichText`
-        - Fix some RichText.split() issues; the method should now always produce results consistent with String.split()
-
-- Package `utility.swing`
-    - `FileInput` was changed to work around the missing "New Directory" button in open dialogs on macOS.
-    - Race conditions and missed updates in `LogTableModel` have been fixed.
-
-- Package `utility.fx`
-    - `AboutDialogBuilder.name()` was changed to `AboutDialogBuilder.applicationName()` and `AboutDialog` was removed.
-    - Fixed validation of numeric fields in Dialogs created using `Dialogs.input()`.
-    - Show markers vor invalid input in Dialogs created using `Dialogs.input()`.
-    - Small fixes and improvements.
-
-- Other changes
-    - Removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.
-    - Removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
-      `filter()` and `map()`.
-    - Fix a race condition that sometimes would lead to a failure of the `IoUtil.testRedirectStandardStreams()`
-      tests when a test on another thread used standard I/O at the same time (which it really should not).
+        - Added `isNullOrBlank()`
+        - Fixed an issue where `TextUtil.wrap()` would drop the last line if not ended with a line-end character.
+    - Fix some `RichText.split()` issues; the method should now always produce results consistent with String.split()
 
 ### 19.2.1
 
