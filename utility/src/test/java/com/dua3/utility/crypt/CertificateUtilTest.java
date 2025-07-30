@@ -18,6 +18,8 @@ import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -98,6 +100,9 @@ class CertificateUtilTest {
             assertTrue(certificates[0].toString().contains(strippedPart),
                     "Certificate string should contain '" + strippedPart + "'");
         }
+
+        // verify that the certificate chain is valid
+        assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(certificates));
     }
 
     /**
@@ -165,4 +170,73 @@ class CertificateUtilTest {
         assertThrows(CertificateException.class, () -> CertificateUtil.toX509Certificate(invalidPem));
     }
 
+    @Test
+    void testCreateX509CertificateWithParentChain() throws GeneralSecurityException {
+        // Generate a key pair for the certificate to be tested
+        KeyPair childKeyPair = KeyUtil.generateRSAKeyPair();
+        String childSubject = "CN=Child, O=Test Organization, C=US";
+        int childValidityDays = 180;
+
+        // Create a root certificate
+        KeyPair rootKeyPair = KeyUtil.generateRSAKeyPair();
+        String rootSubject = "CN=Root, O=Test Organization, C=US";
+        int rootValidityDays = 730;
+        X509Certificate[] rootCertificates = CertificateUtil.createSelfSignedX509Certificate(
+                rootKeyPair, rootSubject, rootValidityDays, true);
+        X509Certificate rootCertificate = rootCertificates[0];
+
+        // Create an intermediate certificate signed by the root
+        KeyPair intermediateKeyPair = KeyUtil.generateRSAKeyPair();
+        String intermediateSubject = "CN=Intermediate, O=Test Organization, C=US";
+        int intermediateValidityDays = 365;
+        X509Certificate[] intermediateCertificates = CertificateUtil.createX509Certificate(
+                intermediateKeyPair, intermediateSubject, intermediateValidityDays, true,
+                rootKeyPair.getPrivate(), rootCertificate);
+        X509Certificate intermediateCertificate = intermediateCertificates[0];
+
+        // Create a second intermediate certificate signed by the first intermediate
+        KeyPair intermediate2KeyPair = KeyUtil.generateRSAKeyPair();
+        String intermediate2Subject = "CN=Intermediate2, O=Test Organization, C=US";
+        int intermediate2ValidityDays = 365;
+        X509Certificate[] intermediate2Certificates = CertificateUtil.createX509Certificate(
+                intermediate2KeyPair, intermediate2Subject, intermediate2ValidityDays, true,
+                intermediateKeyPair.getPrivate(), intermediateCertificate, rootCertificate);
+        X509Certificate intermediate2Certificate = intermediate2Certificates[0];
+
+        // Create a certificate signed by the second intermediate with a chain of three certificates
+        X509Certificate[] certificates = CertificateUtil.createX509Certificate(
+                childKeyPair, childSubject, childValidityDays, false,
+                intermediate2KeyPair.getPrivate(),
+                intermediate2Certificate, intermediateCertificate, rootCertificate);
+
+        // Verify the certificate was created
+        assertNotNull(certificates);
+        assertTrue(certificates.length > 0);
+        assertNotNull(certificates[0]);
+
+        // Verify the certificate contains the expected public key
+        PublicKey certPublicKey = certificates[0].getPublicKey();
+        assertNotNull(certPublicKey);
+        assertArrayEquals(childKeyPair.getPublic().getEncoded(), certPublicKey.getEncoded());
+
+        // Verify the certificate was signed by the immediate parent (intermediate2)
+        try {
+            certificates[0].verify(intermediate2Certificate.getPublicKey());
+        } catch (Exception e) {
+            fail("Certificate verification with immediate parent certificate failed: " + e.getMessage());
+        }
+
+        // Verify the certificate's string representation contains the subject
+        for (String part : childSubject.split("[,\n]")) {
+            String strippedPart = part.strip();
+            assertTrue(certificates[0].toString().contains(strippedPart),
+                    "Certificate string should contain '" + strippedPart + "'");
+        }
+
+        // Verify that the certificate chain is valid and complete
+        // The chain should contain 4 certificates: child, intermediate2, intermediate, root
+        assertEquals(4, certificates.length, "Certificate chain should contain 4 certificates");
+        assertEquals(rootCertificate, certificates[certificates.length - 1], "root should be last entry.");
+        assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(certificates));
+    }
 }

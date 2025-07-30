@@ -8,8 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.SignatureException;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
@@ -238,4 +243,32 @@ public final class CertificateUtil {
         return (X509Certificate) certFactory.generateCertificate(in);
     }
 
+    /**
+     * Verifies the validity of a given X.509 certificate chain. For each certificate in the chain,
+     * this method ensures that it is signed by the subsequent certificate in the chain.
+     *
+     * @param certificates an array of {@link X509Certificate} objects representing the certificate chain.
+     *                     The first certificate in the array should be the leaf certificate, followed
+     *                     by the intermediate certificates, and the last certificate should be the
+     *                     root certificate.
+     * @throws CertificateException if the chain is invalid, such as when a certificate is not
+     *                              signed by the next certificate in the chain or has other
+     *                              verification errors.
+     */
+    public static void verifyCertificateChain(X509Certificate... certificates) throws CertificateException {
+        // verify that the certificate chain is valid
+        for (int i = 0; i < certificates.length - 1; i++) {
+            X509Certificate currentCert = certificates[i];
+            X509Certificate parentCeert = certificates[i + 1];
+            try {
+                currentCert.verify(parentCeert.getPublicKey());
+            } catch (InvalidKeyException e) {
+                throw new CertificateException(currentCert.getSubjectX500Principal().getName() + " is not signed by the public key of " + parentCeert.getSubjectX500Principal().getName(), e);
+            } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+                throw new CertificateException(currentCert.getSubjectX500Principal().getName() + " could not be verified", e);
+            } catch (SignatureException e) {
+                throw new CertificateException("the signature of " + currentCert.getSubjectX500Principal().getName() + " is invalid", e);
+            }
+        }
+    }
 }
