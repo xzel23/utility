@@ -13010,6 +13010,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the color components.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#toCertificateChain(java.lang.String)" class="member-name-link">toCertificateChain(String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Converts a PEM-encoded string containing one or more X.509 certificates into an array
+ of <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link"><code>X509Certificate</code></a> instances.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/TextUtil.html#toCharArray(byte%5B%5D)" class="member-name-link">toCharArray(byte[])</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
 <dd>
 <div class="block">Convert a byte array to a char array using UTF-8 encoding.</div>
@@ -13124,6 +13129,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/io/IoUtil.html#toPath(java.net.URL)" class="member-name-link">toPath(URL)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
 <dd>
 <div class="block">Get URI for URL.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#toPem(java.security.cert.X509Certificate...)" class="member-name-link">toPem(X509Certificate...)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Converts one or more X509 certificates into their PEM-encoded string representation.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/KeyUtil.html#toPrivateKey(byte%5B%5D)" class="member-name-link">toPrivateKey(byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></dt>
 <dd>
@@ -14270,6 +14279,10 @@ the order they are declared.</div>
 <dd>
 <div class="block">Verify a digital signature for text.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#verifyCertificateChain(java.security.cert.X509Certificate...)" class="member-name-link">verifyCertificateChain(X509Certificate...)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Verifies the validity of a given X.509 certificate chain.</div>
+</dd>
 <dt><a href="com/dua3/utility/lang/BuildInfo.html#version()" class="member-name-link">version()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/lang/BuildInfo.html#param-version"><code>version</code></a> record component.</div>
@@ -14526,6 +14539,10 @@ the order they are declared.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/LogBuffer.html#writeExternal(java.io.ObjectOutput)" class="member-name-link">writeExternal(ObjectOutput)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#writePem(T,java.security.cert.X509Certificate...)" class="member-name-link">writePem(T, X509Certificate...)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Writes a PEM-encoded representation of a chain of X.509 certificates to the provided writer.</div>
+</dd>
 <dt><a href="com/dua3/utility/io/FileType.html#writerForType(java.lang.Class)" class="member-name-link">writerForType(Class&lt;T&gt;)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/FileType.html" title="class in com.dua3.utility.io">FileType</a></dt>
 <dd>
 <div class="block">Retrieves the first file type that can write the given document class.</div>
