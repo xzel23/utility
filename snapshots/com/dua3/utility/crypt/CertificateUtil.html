@@ -134,38 +134,39 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Reads and parses an X.509 certificate from the provided input stream.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toCertificateChain(java.lang.String)" class="member-name-link">toCertificateChain</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pemData)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toPem(T...)" class="member-name-link">toPem</a><wbr>(T...&nbsp;certificates)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts a PEM-encoded string containing one or more X.509 certificates into an array
- of <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link"><code>X509Certificate</code></a> instances.</div>
+<div class="block">Converts one or more certificates into their PEM-encoded string representation.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toPem(java.security.cert.X509Certificate...)" class="member-name-link">toPem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>...&nbsp;certificates)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toX509Certificate(byte%5B%5D)" class="member-name-link">toX509Certificate</a><wbr>(byte[]&nbsp;bytes)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts one or more X509 certificates into their PEM-encoded string representation.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toX509Certificate(byte%5B%5D)" class="member-name-link">toX509Certificate</a><wbr>(byte[]&nbsp;bytes)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Converts a byte array representing an encoded X.509 certificate into an
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link"><code>X509Certificate</code></a> object.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toX509Certificate(java.lang.String)" class="member-name-link">toX509Certificate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pemData)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toX509Certificate(java.lang.String)" class="member-name-link">toX509Certificate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pemData)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Reads and parses an X.509 certificate from a PEM-encoded string.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyCertificateChain(java.security.cert.X509Certificate...)" class="member-name-link">verifyCertificateChain</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>...&nbsp;certificates)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toX509CertificateChain(java.lang.String)" class="member-name-link">toX509CertificateChain</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pemData)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Converts a PEM-encoded string containing one or more X.509 certificates into an array
+ of <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link"><code>X509Certificate</code></a> instances.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>&gt;<br>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyCertificateChain(T...)" class="member-name-link">verifyCertificateChain</a><wbr>(T...&nbsp;certificates)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verifies the validity of a given X.509 certificate chain.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link">Appendable</a>&gt;<br>T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#writePem(T,java.security.cert.X509Certificate...)" class="member-name-link">writePem</a><wbr>(T&nbsp;app,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>...&nbsp;certificates)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>,<wbr>
+U extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link">Appendable</a>&gt;<br>U</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#writePem(U,T...)" class="member-name-link">writePem</a><wbr>(U&nbsp;app,
+ T...&nbsp;certificates)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Writes a PEM-encoded representation of a chain of X.509 certificates to the provided writer.</div>
+<div class="block">Writes a PEM-encoded representation of a chain of certificates to the provided writer.</div>
 </div>
 </div>
 </div>
@@ -288,10 +289,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="toCertificateChain(java.lang.String)">
-<h3>toCertificateChain</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</span>&nbsp;<span class="element-name">toCertificateChain</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pemData)</span>
-                                            throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></span></div>
+<section class="detail" id="toX509CertificateChain(java.lang.String)">
+<h3>toX509CertificateChain</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</span>&nbsp;<span class="element-name">toX509CertificateChain</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pemData)</span>
+                                                throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></span></div>
 <div class="block">Converts a PEM-encoded string containing one or more X.509 certificates into an array
  of <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link"><code>X509Certificate</code></a> instances. This method processes each certificate enclosed
  in "BEGIN CERTIFICATE" and "END CERTIFICATE" markers within the PEM data, parses them,
@@ -329,13 +330,16 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="verifyCertificateChain(java.security.cert.X509Certificate...)">
-<h3>verifyCertificateChain</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyCertificateChain</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>...&nbsp;certificates)</span>
-                                   throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateException.html" title="class or interface in java.security.cert" class="external-link">CertificateException</a></span></div>
+<section class="detail" id="verifyCertificateChain(T...)">
+<h3 id="verifyCertificateChain(java.security.cert.Certificate[])">verifyCertificateChain</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyCertificateChain</span><wbr><span class="parameters">(T...&nbsp;certificates)</span>
+                                                           throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateException.html" title="class or interface in java.security.cert" class="external-link">CertificateException</a></span></div>
 <div class="block">Verifies the validity of a given X.509 certificate chain. For each certificate in the chain,
  this method ensures that it is signed by the subsequent certificate in the chain.</div>
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the generic certificate type</dd>
 <dt>Parameters:</dt>
 <dd><code>certificates</code> - an array of <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link"><code>X509Certificate</code></a> objects representing the certificate chain.
                      The first certificate in the array should be the leaf certificate, followed
@@ -349,18 +353,24 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="writePem(T,java.security.cert.X509Certificate...)">
-<h3 id="writePem(java.lang.Appendable,java.security.cert.X509Certificate[])">writePem</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link">Appendable</a>&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">writePem</span><wbr><span class="parameters">(T&nbsp;app,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>...&nbsp;certificates)</span>
-                                         throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a>,
+<section class="detail" id="writePem(U,T...)">
+<h3 id="writePem(java.lang.Appendable,java.security.cert.Certificate[])">writePem</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>,<wbr>
+U extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link">Appendable</a>&gt;</span>
+<span class="return-type">U</span>&nbsp;<span class="element-name">writePem</span><wbr><span class="parameters">(U&nbsp;app,
+ T...&nbsp;certificates)</span>
+    throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a>,
 <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateEncodingException.html" title="class or interface in java.security.cert" class="external-link">CertificateEncodingException</a></span></div>
-<div class="block">Writes a PEM-encoded representation of a chain of X.509 certificates to the provided writer.
+<div class="block">Writes a PEM-encoded representation of a chain of certificates to the provided writer.
  Each certificate in the chain is written enclosed between "-----BEGIN CERTIFICATE-----"
- and "-----END CERTIFICATE-----" markers.</div>
+ and "-----END CERTIFICATE-----" markers.
+ <p>
+ <strong>Note:</strong> Most tools only support X509 certificates</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
-<dd><code>T</code> - the generic type of the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link"><code>Appendable</code></a> used for output</dd>
+<dd><code>T</code> - the generic certificate type*</dd>
+<dd><code>U</code> - the generic type of the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link"><code>Appendable</code></a> used for output</dd>
 <dt>Parameters:</dt>
 <dd><code>app</code> - the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Writer.html" title="class or interface in java.io" class="external-link"><code>Writer</code></a> used to write the PEM-encoded certificates.
                      The writer must be initialized prior to calling this method, and the caller
@@ -378,12 +388,17 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="toPem(java.security.cert.X509Certificate...)">
-<h3>toPem</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toPem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>...&nbsp;certificates)</span>
-                    throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateEncodingException.html" title="class or interface in java.security.cert" class="external-link">CertificateEncodingException</a></span></div>
-<div class="block">Converts one or more X509 certificates into their PEM-encoded string representation.</div>
+<section class="detail" id="toPem(T...)">
+<h3 id="toPem(java.security.cert.Certificate[])">toPem</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toPem</span><wbr><span class="parameters">(T...&nbsp;certificates)</span>
+                                            throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateEncodingException.html" title="class or interface in java.security.cert" class="external-link">CertificateEncodingException</a></span></div>
+<div class="block">Converts one or more certificates into their PEM-encoded string representation.
+ <p>
+ <strong>Note:</strong> Most tools only support X509 certificates</div>
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the generic certificate type</dd>
 <dt>Parameters:</dt>
 <dd><code>certificates</code> - one or more X509 certificates to be converted to PEM format</dd>
 <dt>Returns:</dt>

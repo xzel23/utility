@@ -895,7 +895,9 @@ loadScripts(document, 'script');</script>
 <h3>lines</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">lines</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s)</span></div>
 <div class="block">Splits the provided character sequence into an array of lines, using
- the predefined line splitting pattern.</div>
+ the predefined line splitting pattern.
+ <p>
+ For a parameter s of type string, this unit returns the same result as s.split("\\R")}.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>s</code> - the character sequence to be split into lines</dd>
