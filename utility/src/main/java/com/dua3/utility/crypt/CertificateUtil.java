@@ -3,6 +3,8 @@ package com.dua3.utility.crypt;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
@@ -24,12 +27,14 @@ import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
  * Utility class for certificate operations.
  */
 public final class CertificateUtil {
+    private static final Logger LOG = LogManager.getLogger(CertificateUtil.class);
 
     /**
      * Utility class private constructor.
@@ -187,7 +192,7 @@ public final class CertificateUtil {
         String signingKeyAlgorithm = signingKey.getAlgorithm();
 
         try {
-            AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(signingKeyAlgorithm.toUpperCase());
+            AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(signingKeyAlgorithm.toUpperCase(Locale.ROOT));
             return asymmAlg.getSignatureAlgorithm()
                     .orElseThrow(() -> new GeneralSecurityException("Algorithm " + asymmAlg + " does not support signing"));
         } catch (IllegalArgumentException e) {
@@ -246,7 +251,7 @@ public final class CertificateUtil {
      *                                  validating the certificate chain, or if the input PEM data
      *                                  is invalid or improperly formatted.
      */
-    public static X509Certificate[] toCertificateChain(String pemData) throws GeneralSecurityException {
+    public static X509Certificate[] toX509CertificateChain(String pemData) throws GeneralSecurityException {
         List<X509Certificate> certificates = new ArrayList<>();
         String[] lines = TextUtil.lines(pemData);
         StringBuilder currentCertPem = new StringBuilder();
@@ -297,6 +302,7 @@ public final class CertificateUtil {
      * Verifies the validity of a given X.509 certificate chain. For each certificate in the chain,
      * this method ensures that it is signed by the subsequent certificate in the chain.
      *
+     * @param <T>          the generic certificate type
      * @param certificates an array of {@link X509Certificate} objects representing the certificate chain.
      *                     The first certificate in the array should be the leaf certificate, followed
      *                     by the intermediate certificates, and the last certificate should be the
@@ -305,29 +311,33 @@ public final class CertificateUtil {
      *                              signed by the next certificate in the chain or has other
      *                              verification errors.
      */
-    public static void verifyCertificateChain(X509Certificate... certificates) throws CertificateException {
+    @SafeVarargs
+    public static <T extends Certificate> void verifyCertificateChain(T... certificates) throws CertificateException {
         // verify that the certificate chain is valid
         for (int i = 0; i < certificates.length - 1; i++) {
-            X509Certificate currentCert = certificates[i];
-            X509Certificate parentCeert = certificates[i + 1];
+            T currentCert = certificates[i];
+            T parentCert = certificates[i + 1];
             try {
-                currentCert.verify(parentCeert.getPublicKey());
+                currentCert.verify(parentCert.getPublicKey());
             } catch (InvalidKeyException e) {
-                throw new CertificateException(currentCert.getSubjectX500Principal().getName() + " is not signed by the public key of " + parentCeert.getSubjectX500Principal().getName(), e);
+                throw new CertificateException(currentCert + " is not signed by the public key of " + parentCert, e);
             } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-                throw new CertificateException(currentCert.getSubjectX500Principal().getName() + " could not be verified", e);
+                throw new CertificateException(currentCert + " could not be verified", e);
             } catch (SignatureException e) {
-                throw new CertificateException("the signature of " + currentCert.getSubjectX500Principal().getName() + " is invalid", e);
+                throw new CertificateException("the signature of " + currentCert + " is invalid", e);
             }
         }
     }
 
     /**
-     * Writes a PEM-encoded representation of a chain of X.509 certificates to the provided writer.
+     * Writes a PEM-encoded representation of a chain of certificates to the provided writer.
      * Each certificate in the chain is written enclosed between "-----BEGIN CERTIFICATE-----"
      * and "-----END CERTIFICATE-----" markers.
+     * <p>
+     * <strong>Note:</strong> Most tools only support X509 certificates
      *
-     * @param <T>          the generic type of the {@link Appendable} used for output
+     * @param <T>          the generic certificate type*
+     * @param <U>          the generic type of the {@link Appendable} used for output
      * @param app          the {@link Writer} used to write the PEM-encoded certificates.
      *                     The writer must be initialized prior to calling this method, and the caller
      *                     is responsible for closing the writer after use.
@@ -339,8 +349,13 @@ public final class CertificateUtil {
      * @throws CertificateEncodingException if an error occurs while encoding a certificate to the
      *                                       DER format for PEM conversion.
      */
-    public static <T extends Appendable> T writePem(T app, X509Certificate... certificates) throws IOException, CertificateEncodingException {
-        for (X509Certificate certificate : certificates) {
+    @SafeVarargs
+    public static <T extends Certificate, U extends Appendable> U writePem(U app, T... certificates) throws IOException, CertificateEncodingException {
+        for (T certificate : certificates) {
+            if (!(certificate instanceof X509Certificate)) {
+                LOG.warn("exporting certificate of non-X509 type {} as PEM", certificate.getType());
+            }
+
             app.append("-----BEGIN CERTIFICATE-----\n")
                     .append(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded()))
                     .append("\n-----END CERTIFICATE-----\n");
@@ -349,14 +364,18 @@ public final class CertificateUtil {
     }
 
     /**
-     * Converts one or more X509 certificates into their PEM-encoded string representation.
+     * Converts one or more certificates into their PEM-encoded string representation.
+     * <p>
+     * <strong>Note:</strong> Most tools only support X509 certificates
      *
+     * @param <T> the generic certificate type
      * @param certificates one or more X509 certificates to be converted to PEM format
      * @return a string containing the PEM-encoded representation of the provided certificates
      * @throws CertificateEncodingException if an encoding error occurs while converting the certificates
      * @throws UncheckedIOException if an unexpected I/O exception happens during the operation
      */
-    public static String toPem(X509Certificate... certificates) throws CertificateEncodingException {
+    @SafeVarargs
+    public static <T extends Certificate> String toPem(T... certificates) throws CertificateEncodingException {
         StringBuilder sb = new StringBuilder(certificates.length * 1600);
         try {
             return writePem(sb, certificates).toString();
