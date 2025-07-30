@@ -3,10 +3,8 @@ package com.dua3.utility.data;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -61,17 +60,17 @@ class DataUtilTest {
     }
 
     @Test
-    void testConvert() throws IOException, URISyntaxException {
+    void testConvert() throws Exception {
         // Object to String
         assertEquals("123", DataUtil.convert(123, String.class));
 
         // String to Number
         assertEquals(123, DataUtil.convert("123", Integer.class));
-        assertEquals(Integer.class, DataUtil.convert("123", Integer.class).getClass());
+        assertSame(Integer.class, DataUtil.convert("123", Integer.class).getClass());
         assertEquals(123.0, DataUtil.convert("123", Double.class));
-        assertEquals(Double.class, DataUtil.convert("123", Double.class).getClass());
+        assertSame(Double.class, DataUtil.convert("123", Double.class).getClass());
         assertEquals(-0.5f, DataUtil.convert("-0.5", Float.class));
-        assertEquals(Float.class, DataUtil.convert("-0.5", Float.class).getClass());
+        assertSame(Float.class, DataUtil.convert("-0.5", Float.class).getClass());
         assertThrows(ConversionException.class, () -> DataUtil.convert("", Integer.class));
         assertNull(DataUtil.convert((Object) null, Integer.class));
 
@@ -86,26 +85,26 @@ class DataUtilTest {
         assertThrows(ConversionException.class, () -> DataUtil.convert(123.5, Integer.class));
         assertThrows(ConversionException.class, () -> DataUtil.convert(123.5, Integer.class));
         assertThrows(ConversionException.class, () -> DataUtil.convert(123.5, Long.class));
-        assertEquals(Integer.class, DataUtil.convert(123.0, Integer.class).getClass());
+        assertSame(Integer.class, DataUtil.convert(123.0, Integer.class).getClass());
         assertEquals(123.0, DataUtil.convert(123, Double.class));
-        assertEquals(Double.class, DataUtil.convert(123, Double.class).getClass());
+        assertSame(Double.class, DataUtil.convert(123, Double.class).getClass());
         assertEquals(-0.5f, DataUtil.convert(-0.5, Float.class));
-        assertEquals(Float.class, DataUtil.convert(-0.5, Float.class).getClass());
+        assertSame(Float.class, DataUtil.convert(-0.5, Float.class).getClass());
 
         // String to Boolean
         assertEquals(true, DataUtil.convert("true", Boolean.class));
-        assertEquals(Boolean.class, DataUtil.convert("true", Boolean.class).getClass());
+        assertSame(Boolean.class, DataUtil.convert("true", Boolean.class).getClass());
         assertEquals(true, DataUtil.convert("TRUE", Boolean.class));
-        assertEquals(Boolean.class, DataUtil.convert("TRUE", Boolean.class).getClass());
+        assertSame(Boolean.class, DataUtil.convert("TRUE", Boolean.class).getClass());
         assertEquals(true, DataUtil.convert("True", Boolean.class));
-        assertEquals(Boolean.class, DataUtil.convert("True", Boolean.class).getClass());
+        assertSame(Boolean.class, DataUtil.convert("True", Boolean.class).getClass());
 
         assertEquals(false, DataUtil.convert("false", Boolean.class));
-        assertEquals(Boolean.class, DataUtil.convert("false", Boolean.class).getClass());
+        assertSame(Boolean.class, DataUtil.convert("false", Boolean.class).getClass());
         assertEquals(false, DataUtil.convert("FALSE", Boolean.class));
-        assertEquals(Boolean.class, DataUtil.convert("FALSE", Boolean.class).getClass());
+        assertSame(Boolean.class, DataUtil.convert("FALSE", Boolean.class).getClass());
         assertEquals(false, DataUtil.convert("False", Boolean.class));
-        assertEquals(Boolean.class, DataUtil.convert("False", Boolean.class).getClass());
+        assertSame(Boolean.class, DataUtil.convert("False", Boolean.class).getClass());
 
         assertThrows(ConversionException.class, () -> DataUtil.convert("yes", Boolean.class));
         assertThrows(ConversionException.class, () -> DataUtil.convert("no", Boolean.class));
@@ -159,11 +158,17 @@ class DataUtilTest {
     }
 
     @Test
+    void testConvertArrayTypes() {
+        assertArrayEquals(new Integer[]{5, -7, 13}, DataUtil.convert(new Number[]{5, -7, 13}, Integer[].class));
+        assertArrayEquals(new Number[]{5, -7, 13}, DataUtil.convert(new Integer[]{5, -7, 13}, Number[].class));
+    }
+
+    @Test
     void convertCollection() {
         assertEquals(List.of(5, -7, 13), DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, ArrayList::new));
-        assertEquals(ArrayList.class, DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, ArrayList::new).getClass());
+        assertSame(ArrayList.class, DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, ArrayList::new).getClass());
         assertEquals(new HashSet<>(List.of(5, -7, 13)), DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, HashSet::new));
-        assertEquals(HashSet.class, DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, HashSet::new).getClass());
+        assertSame(HashSet.class, DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, HashSet::new).getClass());
     }
 
     @Test

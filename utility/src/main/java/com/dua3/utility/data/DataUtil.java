@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -102,6 +103,8 @@ public final class DataUtil {
             (t, s, v) -> t.isAssignableFrom(s) ? t.cast(v) : null,
             // target is String -> use toString()
             (t, s, v) -> t == String.class ? v.toString() : null,
+            // convert array of type A[] to array of type B[]
+            DataUtil::convertArray,
             // convert floating point numbers without fractional part to integer types
             DataUtil::convertToIntegralNumber,
             // convert other numbers to double
@@ -291,6 +294,31 @@ public final class DataUtil {
             case "false" -> Boolean.FALSE;
             default -> throw new ConversionException("invalid text for boolean conversion: " + value);
         };
+    }
+
+    /**
+     * Converts an array of one type to another type, provided both the target and source are arrays.
+     * The method validates if the provided targetClass and sourceClass are array types.
+     * If the conversion cannot be performed or an error occurs, an exception is thrown.
+     *
+     * @param targetClass the target array type to which the input array should be converted
+     * @param sourceClass the source array type of the input array
+     * @param value the object representing the array to be converted
+     * @return the converted array as an object, or null if either targetClass or sourceClass is not an array type
+     * @throws ConversionException if an error occurs during the conversion process
+     */
+    @SuppressWarnings("unchecked")
+    private static @Nullable Object convertArray(Class<?> targetClass, Class<?> sourceClass, Object value) {
+        if (!targetClass.isArray() || !sourceClass.isArray()) {
+            return null;
+        }
+
+        try {
+            int n = Array.getLength(value);
+            return Arrays.copyOf((Object[]) value, n, (Class<Object[]>) targetClass);
+        } catch (Exception e) {
+            throw new ConversionException(sourceClass, targetClass, e);
+        }
     }
 
     /**
@@ -507,7 +535,7 @@ public final class DataUtil {
      * @param <T>            target type
      * @return the object converted to the target class
      */
-    @SuppressWarnings({"unchecked", "ChainOfInstanceofChecks"}) // types are checked with isAssignable()
+    @SuppressWarnings("unchecked") // types are checked with isAssignable()
     public static <T> @Nullable T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
         // null -> null
         if (value == null) {
@@ -898,7 +926,7 @@ public final class DataUtil {
      * @return {@code true} if the collection is sorted in the order defined by the comparator,
      *         otherwise {@code false}
      */
-    public static <T> boolean isSorted(Collection<T> collection, Comparator<T> comparator) {
+    public static <T> boolean isSorted(Iterable<T> collection, Comparator<T> comparator) {
         T last = null;
         for (T t : collection) {
             if (last != null && comparator.compare(last, t) > 0) {
