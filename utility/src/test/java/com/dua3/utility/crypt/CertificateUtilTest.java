@@ -302,7 +302,7 @@ class CertificateUtilTest {
 
         // Verify that creating a certificate with an invalid subject throws an exception
         assertThrows(
-                GeneralSecurityException.class,
+                IllegalArgumentException.class,
                 () -> CertificateUtil.createSelfSignedX509Certificate(keyPair, invalidSubject, validityDays, true)
         );
     }
