@@ -247,22 +247,6 @@ could not be loaded.
 - Run tasks for samples
     - Run tasks have been added for the sample applications.
 
-- Package `utility.lang`
-    - Add new field `build.key` and method `digest()` to the `BuildInfo` class.
-    - Added `Version` class and refactored BuildInfo class to use it.
-    - Added `LangUtil.checkArg()` that throws `IllegalArgumentException`.
-    - Check format string matches arguments in `LangUtil.check()` and `LangUtil.checkArg()`.
-    - `LangUtil.newUuidV7()` to create UUID v7 instances.
-    - `LangUtil.reverseInPlace()` to reverse array contents
-    - `LangUtil.isWrapperFor()` to test if a class is a primitive wrapper for another class
-    - Added `LangUtil.addIf()` and `LangUtil.addIfNonNull()`.
-    - `RingBuffer` implements `SequencedCollection`
-    - Added `ReversedSequencedCollectionWrapper` to facilitate implementing `reversed()` for `SequencedCollection` 
-      implementations
-    - Removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
-      `filter()` and `map()`.
-
-
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
       that has a more secure API and adds many new features:
@@ -275,6 +259,7 @@ could not be loaded.
 
 - Package `utility.data`
     - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
+    - `DataUtil.convert()` now supports converting between array types.
 
 - Package `utility.db`
     - Fixed a bug that prevented parsing of command line options to specify a JDBC connection
@@ -292,6 +277,21 @@ could not be loaded.
     - hardened `IoUtil.unzip()` and provided an overload to use custom limits for unzipping.
     - added `IoUtil.getApplicationDataDir()` and `IoUtil.getUserDir()`  to get the canonical directory
       for application data storage of the platform and the user's home directory.
+
+- Package `utility.lang`
+    - Add new field `build.key` and method `digest()` to the `BuildInfo` class.
+    - Added `Version` class and refactored BuildInfo class to use it.
+    - Added `LangUtil.checkArg()` that throws `IllegalArgumentException`.
+    - Check format string matches arguments in `LangUtil.check()` and `LangUtil.checkArg()`.
+    - `LangUtil.newUuidV7()` to create UUID v7 instances.
+    - `LangUtil.reverseInPlace()` to reverse array contents
+    - `LangUtil.isWrapperFor()` to test if a class is a primitive wrapper for another class
+    - Added `LangUtil.addIf()` and `LangUtil.addIfNonNull()`.
+    - `RingBuffer` implements `SequencedCollection`
+    - Added `ReversedSequencedCollectionWrapper` to facilitate implementing `reversed()` for `SequencedCollection`
+      implementations
+    - Removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
+      `filter()` and `map()`.
 
 - Package `utility.logging`
     - Removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.

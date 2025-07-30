@@ -159,6 +159,12 @@ class DataUtilTest {
     }
 
     @Test
+    void testConvertArrayTypes() {
+        assertArrayEquals(new Integer[]{5, -7, 13}, DataUtil.convert(new Number[]{5, -7, 13}, Integer[].class));
+        assertArrayEquals(new Number[]{5, -7, 13}, DataUtil.convert(new Integer[]{5, -7, 13}, Number[].class));
+    }
+
+    @Test
     void convertCollection() {
         assertEquals(List.of(5, -7, 13), DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, ArrayList::new));
         assertEquals(ArrayList.class, DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, ArrayList::new).getClass());
