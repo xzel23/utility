@@ -415,6 +415,8 @@ public final class TextUtil {
     /**
      * Splits the provided character sequence into an array of lines, using
      * the predefined line splitting pattern.
+     * <p>
+     * For a parameter s of type string, this unit returns the same result as {@code }s.split("\\R")}.
      *
      * @param s the character sequence to be split into lines
      * @return an array of strings, where each string represents a line

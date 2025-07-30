@@ -914,4 +914,83 @@ class TextUtilTest {
         byte[] result = TextUtil.toByteArray(input);
         Assertions.assertArrayEquals(expected, result, "Expected byte array for special characters does not match the result.");
     }
+
+    @Test
+    void testStripTrailingWithWhitespace() {
+        String input = "Test String   ";
+        CharSequence result = TextUtil.stripTrailing(input);
+        Assertions.assertEquals("Test String", result.toString(), "Expected to remove trailing whitespaces.");
+    }
+
+    @Test
+    void testStripTrailingWithoutWhitespace() {
+        String input = "TestString";
+        CharSequence result = TextUtil.stripTrailing(input);
+        Assertions.assertEquals("TestString", result.toString(), "Expected no change for strings without trailing whitespaces.");
+    }
+
+    @Test
+    void testStripTrailingWithEmptyString() {
+        String input = "";
+        CharSequence result = TextUtil.stripTrailing(input);
+        Assertions.assertEquals("", result.toString(), "Expected empty string as result for empty input.");
+    }
+
+    @Test
+    void testStripTrailingWithOnlyWhitespace() {
+        String input = "   ";
+        CharSequence result = TextUtil.stripTrailing(input);
+        Assertions.assertEquals("", result.toString(), "Expected empty string after removing all whitespaces.");
+    }
+
+    @Test
+    void testStripLeadingWithOnlyWhitespace() {
+        String input = "   ";
+        CharSequence result = TextUtil.stripLeading(input);
+        Assertions.assertEquals("", result.toString(), "Expected empty string after removing leading whitespaces.");
+    }
+
+    @Test
+    void testStripLeadingWithLeadingWhitespace() {
+        String input = "   Test String";
+        CharSequence result = TextUtil.stripLeading(input);
+        Assertions.assertEquals("Test String", result.toString(), "Expected to remove leading whitespaces only.");
+    }
+
+    @Test
+    void testStripLeadingWithoutWhitespace() {
+        String input = "TestString";
+        CharSequence result = TextUtil.stripLeading(input);
+        Assertions.assertEquals("TestString", result.toString(), "Expected no change for strings without leading whitespaces.");
+    }
+
+    @Test
+    void testStripLeadingWithEmptyString() {
+        String input = "";
+        CharSequence result = TextUtil.stripLeading(input);
+        Assertions.assertEquals("", result.toString(), "Expected empty string as result for empty input.");
+    }
+
+    @Test
+    void testStripWithWhitespace() {
+        // Test with leading and trailing whitespaces
+        String input = "   Test String   ";
+        CharSequence result = TextUtil.strip(input);
+        Assertions.assertEquals("Test String", result.toString(), "Expected to remove both leading and trailing whitespaces.");
+
+        // Test without any whitespaces
+        input = "TestString";
+        result = TextUtil.strip(input);
+        Assertions.assertEquals("TestString", result.toString(), "Expected no change for strings without whitespaces.");
+
+        // Test with only whitespaces
+        input = "   ";
+        result = TextUtil.strip(input);
+        Assertions.assertEquals("", result.toString(), "Expected empty string after removing all whitespaces.");
+
+        // Test with an empty string
+        input = "";
+        result = TextUtil.strip(input);
+        Assertions.assertEquals("", result.toString(), "Expected empty string as result for empty input.");
+    }
 }
