@@ -239,4 +239,55 @@ class CertificateUtilTest {
         assertEquals(rootCertificate, certificates[certificates.length - 1], "root should be last entry.");
         assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(certificates));
     }
+
+    @Test
+    void testToCertificateChain() throws GeneralSecurityException {
+        // Create a root certificate
+        KeyPair rootKeyPair = KeyUtil.generateRSAKeyPair();
+        String rootSubject = "CN=Root, O=Test Organization, C=US";
+        int rootValidityDays = 730;
+        X509Certificate[] rootCertificates = CertificateUtil.createSelfSignedX509Certificate(
+                rootKeyPair, rootSubject, rootValidityDays, true);
+        X509Certificate rootCertificate = rootCertificates[0];
+
+        // Create an intermediate certificate signed by the root
+        KeyPair intermediateKeyPair = KeyUtil.generateRSAKeyPair();
+        String intermediateSubject = "CN=Intermediate, O=Test Organization, C=US";
+        int intermediateValidityDays = 365;
+        X509Certificate[] intermediateCertificates = CertificateUtil.createX509Certificate(
+                intermediateKeyPair, intermediateSubject, intermediateValidityDays, true,
+                rootKeyPair.getPrivate(), rootCertificate);
+        X509Certificate intermediateCertificate = intermediateCertificates[0];
+
+        // Convert certificates to PEM format and concatenate
+        String rootPem = "-----BEGIN CERTIFICATE-----\n"
+                + java.util.Base64.getEncoder().encodeToString(rootCertificate.getEncoded())
+                + "\n-----END CERTIFICATE-----\n";
+        String intermediatePem = "-----BEGIN CERTIFICATE-----\n"
+                + java.util.Base64.getEncoder().encodeToString(intermediateCertificate.getEncoded())
+                + "\n-----END CERTIFICATE-----";
+        String concatenatedPem = intermediatePem + "\n" + rootPem;
+
+        // Convert PEM string back to certificate chain and validate
+        X509Certificate[] chain = CertificateUtil.toCertificateChain(concatenatedPem);
+        assertNotNull(chain, "The certificate chain should not be null.");
+        assertEquals(2, chain.length, "The certificate chain should contain 2 certificates.");
+        assertEquals(intermediateCertificate, chain[0], "The first certificate in the chain should be the intermediate.");
+        assertEquals(rootCertificate, chain[1], "The second certificate in the chain should be the root.");
+    }
+
+    @Test
+    void testToCertificateChainWithInvalidData() {
+        // Invalid PEM data with missing end marker
+        String invalidPem = "-----BEGIN CERTIFICATE-----\nInvalid Data";
+        assertThrows(IllegalStateException.class, () -> CertificateUtil.toCertificateChain(invalidPem),
+                "An exception should be thrown for invalid PEM data.");
+    }
+
+    @Test
+    void testToCertificateChainWithEmptyData() throws GeneralSecurityException {
+        // Invalid PEM data does not contain certificates
+        String emptyPem = "";
+        assertEquals(0, CertificateUtil.toCertificateChain(emptyPem).length, "Chain should have 0 length for empty PEM data.");
+    }
 }
