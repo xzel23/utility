@@ -259,8 +259,4 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         done = true;
         super.dispose();
     }
-
-    public SecureRandom getRandom() {
-        return random;
-    }
 }
