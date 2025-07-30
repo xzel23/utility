@@ -487,11 +487,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The color ALICEBLUE.</div>
 </dd>
-<dt><a href="com/dua3/utility/text/TextUtil.html#align(java.lang.String,int,com.dua3.utility.text.Alignment)" class="member-name-link">align(String, int, Alignment)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dt><a href="com/dua3/utility/text/TextUtil.html#align(java.lang.CharSequence,int,com.dua3.utility.text.Alignment)" class="member-name-link">align(CharSequence, int, Alignment)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
 <dd>
 <div class="block">Pad String to width with alignment.</div>
 </dd>
-<dt><a href="com/dua3/utility/text/TextUtil.html#align(java.lang.String,int,com.dua3.utility.text.Alignment,char)" class="member-name-link">align(String, int, Alignment, char)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dt><a href="com/dua3/utility/text/TextUtil.html#align(java.lang.CharSequence,int,com.dua3.utility.text.Alignment,char)" class="member-name-link">align(CharSequence, int, Alignment, char)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
 <dd>
 <div class="block">Pad String to width with alignment.</div>
 </dd>
@@ -7495,7 +7495,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Check if current platform is macOS.</div>
 </dd>
-<dt><a href="com/dua3/utility/text/TextUtil.html#isNewlineTerminated(java.lang.String)" class="member-name-link">isNewlineTerminated(String)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dt><a href="com/dua3/utility/text/TextUtil.html#isNewlineTerminated(java.lang.CharSequence)" class="member-name-link">isNewlineTerminated(CharSequence)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
 <dd>
 <div class="block">Checks if the given string ends with a newline character.</div>
 </dd>
@@ -8158,6 +8158,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/io/IoUtil.html#lines(java.io.InputStream,java.nio.charset.Charset)" class="member-name-link">lines(InputStream, Charset)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
 <dd>
 <div class="block">Get stream of lines from InputStream instance.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/TextUtil.html#lines(java.lang.CharSequence)" class="member-name-link">lines(CharSequence)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dd>
+<div class="block">Splits the provided character sequence into an array of lines, using
+ the predefined line splitting pattern.</div>
 </dd>
 <dt><a href="com/dua3/utility/math/geometry/PathBuilder2f.html#lineTo(float,float)" class="member-name-link">lineTo(float, float)</a> - Method in class com.dua3.utility.math.geometry.<a href="com/dua3/utility/math/geometry/PathBuilder2f.html" title="class in com.dua3.utility.math.geometry">PathBuilder2f</a></dt>
 <dd>
@@ -12431,6 +12436,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Remove leading and trailing whitespace, as defined by Unicode, removed.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/TextUtil.html#strip(java.lang.CharSequence)" class="member-name-link">strip(CharSequence)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dd>
+<div class="block">Removes leading and trailing whitespace characters from the given character sequence.</div>
+</dd>
 <dt><a href="com/dua3/utility/io/IoUtil.html#stripExtension(java.lang.String)" class="member-name-link">stripExtension(String)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
 <dd>
 <div class="block">Remove file extension.</div>
@@ -12439,9 +12448,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Remove leading whitespace, as defined by Unicode, removed.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/TextUtil.html#stripLeading(java.lang.CharSequence)" class="member-name-link">stripLeading(CharSequence)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dd>
+<div class="block">Removes all leading whitespace characters from the given character sequence.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/RichText.html#stripTrailing()" class="member-name-link">stripTrailing()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichText.html" title="class in com.dua3.utility.text">RichText</a></dt>
 <dd>
 <div class="block">Remove trailing whitespace, as defined by Unicode, removed.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/TextUtil.html#stripTrailing(java.lang.CharSequence)" class="member-name-link">stripTrailing(CharSequence)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dd>
+<div class="block">Removes trailing whitespace characters from the given character sequence.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/abstract_builders/ShapeBuilder.html#stroke(com.dua3.utility.data.Color)" class="member-name-link">stroke(Color)</a> - Method in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/ShapeBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">ShapeBuilder</a></dt>
 <dd>
