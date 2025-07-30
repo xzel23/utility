@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.io.Writer;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -14,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
@@ -53,19 +55,15 @@ public final class CertificateUtil {
      *                                  or signing process
      */
     public static X509Certificate[] createSelfSignedX509Certificate(KeyPair keyPair, String subject, int validityDays, boolean enableCA) throws GeneralSecurityException {
-        try {
-            Optional<X509CertificateBuilder> builder = X509CertificateBuilder.getBuilder(enableCA);
-            if (builder.isEmpty()) {
-                throw new GeneralSecurityException("No X.509 certificate builder available");
-            }
-
-            return builder.get()
-                    .subject(subject)
-                    .validityDays(validityDays)
-                    .build(keyPair);
-        } catch (Exception e) {
-            throw new GeneralSecurityException("Failed to create X.509 certificate", e);
+        Optional<X509CertificateBuilder> builder = X509CertificateBuilder.getBuilder(enableCA);
+        if (builder.isEmpty()) {
+            throw new GeneralSecurityException("No X.509 certificate builder available");
         }
+
+        return builder.get()
+                .subject(subject)
+                .validityDays(validityDays)
+                .build(keyPair);
     }
 
     /**
@@ -320,6 +318,50 @@ public final class CertificateUtil {
             } catch (SignatureException e) {
                 throw new CertificateException("the signature of " + currentCert.getSubjectX500Principal().getName() + " is invalid", e);
             }
+        }
+    }
+
+    /**
+     * Writes a PEM-encoded representation of a chain of X.509 certificates to the provided writer.
+     * Each certificate in the chain is written enclosed between "-----BEGIN CERTIFICATE-----"
+     * and "-----END CERTIFICATE-----" markers.
+     *
+     * @param <T>          the generic type of the {@link Appendable} used for output
+     * @param app          the {@link Writer} used to write the PEM-encoded certificates.
+     *                     The writer must be initialized prior to calling this method, and the caller
+     *                     is responsible for closing the writer after use.
+     * @param certificates a varargs array of {@link X509Certificate} objects representing the certificate
+     *                     chain to be written. Each certificate in the array is encoded and written
+     *                     in the order specified.
+     * @return the appendable used for output
+     * @throws IOException                 if an I/O error occurs while writing to the writer.
+     * @throws CertificateEncodingException if an error occurs while encoding a certificate to the
+     *                                       DER format for PEM conversion.
+     */
+    public static <T extends Appendable> T writePem(T app, X509Certificate... certificates) throws IOException, CertificateEncodingException {
+        for (X509Certificate certificate : certificates) {
+            app.append("-----BEGIN CERTIFICATE-----\n")
+                    .append(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded()))
+                    .append("\n-----END CERTIFICATE-----\n");
+        }
+        return app;
+    }
+
+    /**
+     * Converts one or more X509 certificates into their PEM-encoded string representation.
+     *
+     * @param certificates one or more X509 certificates to be converted to PEM format
+     * @return a string containing the PEM-encoded representation of the provided certificates
+     * @throws CertificateEncodingException if an encoding error occurs while converting the certificates
+     * @throws UncheckedIOException if an unexpected I/O exception happens during the operation
+     */
+    public static String toPem(X509Certificate... certificates) throws CertificateEncodingException {
+        StringBuilder sb = new StringBuilder(certificates.length * 1600);
+        try {
+            return writePem(sb, certificates).toString();
+        } catch (IOException e) {
+            // this should never happen
+            throw new UncheckedIOException(e);
         }
     }
 }

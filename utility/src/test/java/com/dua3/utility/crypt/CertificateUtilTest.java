@@ -7,8 +7,10 @@ package com.dua3.utility.crypt;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -289,5 +291,196 @@ class CertificateUtilTest {
         // Invalid PEM data does not contain certificates
         String emptyPem = "";
         assertEquals(0, CertificateUtil.toCertificateChain(emptyPem).length, "Chain should have 0 length for empty PEM data.");
+    }
+
+    @Test
+    void testCreateSelfSignedCertificate_InvalidSubject() throws InvalidAlgorithmParameterException {
+        // Generate a key pair for testing
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        String invalidSubject = "Invalid Subject Format";
+        int validityDays = 365;
+
+        // Verify that creating a certificate with an invalid subject throws an exception
+        assertThrows(
+                GeneralSecurityException.class,
+                () -> CertificateUtil.createSelfSignedX509Certificate(keyPair, invalidSubject, validityDays, true)
+        );
+    }
+
+    @Test
+    void testCreateSelfSignedCertificate_InvalidValidityDays() throws InvalidAlgorithmParameterException {
+        // Generate a key pair for testing
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        String subject = "CN=Invalid Validity Days, O=Test Organization, C=US";
+
+        // Test with zero and negative validity days
+        assertThrows(IllegalArgumentException.class,
+                () -> CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, 0, true),
+                "Expected exception for zero validity days.");
+        assertThrows(IllegalArgumentException.class,
+                () -> CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, -1, true),
+                "Expected exception for negative validity days.");
+    }
+
+    @Test
+    void testWritePem() throws GeneralSecurityException, IOException {
+        // Create a test certificate
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        String subject = "CN=Test WritePem, O=Test Organization, C=US";
+        int validityDays = 365;
+        X509Certificate[] certificates = CertificateUtil.createSelfSignedX509Certificate(
+                keyPair, subject, validityDays, true);
+        X509Certificate certificate = certificates[0];
+
+        // Test writing a single certificate
+        StringBuilder sb = new StringBuilder();
+        CertificateUtil.writePem(sb, certificate);
+        String pemOutput = sb.toString();
+
+        // Verify the PEM format is correct
+        assertTrue(pemOutput.startsWith("-----BEGIN CERTIFICATE-----\n"), "PEM should start with BEGIN marker");
+        assertTrue(pemOutput.endsWith("-----END CERTIFICATE-----\n"), "PEM should end with END marker");
+        assertTrue(pemOutput.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
+                "PEM should contain Base64 encoded certificate");
+
+        // Test writing multiple certificates
+        KeyPair keyPair2 = KeyUtil.generateRSAKeyPair();
+        String subject2 = "CN=Test WritePem 2, O=Test Organization, C=US";
+        X509Certificate[] certificates2 = CertificateUtil.createSelfSignedX509Certificate(
+                keyPair2, subject2, validityDays, true);
+        X509Certificate certificate2 = certificates2[0];
+
+        StringBuilder sb2 = new StringBuilder();
+        CertificateUtil.writePem(sb2, certificate, certificate2);
+        String pemOutput2 = sb2.toString();
+
+        // Verify both certificates are in the output
+        assertTrue(pemOutput2.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
+                "PEM should contain first certificate");
+        assertTrue(pemOutput2.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate2.getEncoded())),
+                "PEM should contain second certificate");
+        assertEquals(2, pemOutput2.split("-----BEGIN CERTIFICATE-----").length - 1,
+                "PEM should contain two BEGIN markers");
+        assertEquals(2, pemOutput2.split("-----END CERTIFICATE-----").length - 1,
+                "PEM should contain two END markers");
+
+        // Test with empty array
+        StringBuilder sb3 = new StringBuilder();
+        CertificateUtil.writePem(sb3, new X509Certificate[0]);
+        assertEquals("", sb3.toString(), "PEM output should be empty for empty array");
+    }
+
+    @Test
+    void testToPem() throws GeneralSecurityException {
+        // Create a test certificate
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        String subject = "CN=Test ToPem, O=Test Organization, C=US";
+        int validityDays = 365;
+        X509Certificate[] certificates = CertificateUtil.createSelfSignedX509Certificate(
+                keyPair, subject, validityDays, true);
+        X509Certificate certificate = certificates[0];
+
+        // Test converting a single certificate
+        String pemOutput = CertificateUtil.toPem(certificate);
+
+        // Verify the PEM format is correct
+        assertTrue(pemOutput.startsWith("-----BEGIN CERTIFICATE-----\n"), "PEM should start with BEGIN marker");
+        assertTrue(pemOutput.endsWith("-----END CERTIFICATE-----\n"), "PEM should end with END marker");
+        assertTrue(pemOutput.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
+                "PEM should contain Base64 encoded certificate");
+
+        // Test converting multiple certificates
+        KeyPair keyPair2 = KeyUtil.generateRSAKeyPair();
+        String subject2 = "CN=Test ToPem 2, O=Test Organization, C=US";
+        X509Certificate[] certificates2 = CertificateUtil.createSelfSignedX509Certificate(
+                keyPair2, subject2, validityDays, true);
+        X509Certificate certificate2 = certificates2[0];
+
+        String pemOutput2 = CertificateUtil.toPem(certificate, certificate2);
+
+        // Verify both certificates are in the output
+        assertTrue(pemOutput2.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
+                "PEM should contain first certificate");
+        assertTrue(pemOutput2.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate2.getEncoded())),
+                "PEM should contain second certificate");
+        assertEquals(2, pemOutput2.split("-----BEGIN CERTIFICATE-----").length - 1,
+                "PEM should contain two BEGIN markers");
+        assertEquals(2, pemOutput2.split("-----END CERTIFICATE-----").length - 1,
+                "PEM should contain two END markers");
+
+        // Test with empty array
+        String pemOutput3 = CertificateUtil.toPem();
+        assertEquals("", pemOutput3, "PEM output should be empty for empty array");
+    }
+
+    @Test
+    void testRoundTripSingleCertificate() throws GeneralSecurityException {
+        // Create a test certificate
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        String subject = "CN=Test Round Trip, O=Test Organization, C=US";
+        int validityDays = 365;
+        X509Certificate[] certificates = CertificateUtil.createSelfSignedX509Certificate(
+                keyPair, subject, validityDays, true);
+        X509Certificate certificate = certificates[0];
+
+        // Convert to PEM
+        String pemOutput = CertificateUtil.toPem(certificate);
+
+        // Convert back to certificate chain
+        X509Certificate[] roundTripCertificates = CertificateUtil.toCertificateChain(pemOutput);
+
+        // Verify the round trip
+        assertEquals(1, roundTripCertificates.length, "Should have one certificate after round trip");
+        assertArrayEquals(certificate.getEncoded(), roundTripCertificates[0].getEncoded(),
+                "Certificate should be the same after round trip");
+
+        // Convert back to PEM
+        String finalPemOutput = CertificateUtil.toPem(roundTripCertificates);
+
+        // Verify the final PEM matches the original
+        assertEquals(pemOutput, finalPemOutput, "Final PEM should match original PEM");
+    }
+
+    @Test
+    void testRoundTripCertificateChain() throws GeneralSecurityException {
+        // Create a root certificate
+        KeyPair rootKeyPair = KeyUtil.generateRSAKeyPair();
+        String rootSubject = "CN=Root Round Trip, O=Test Organization, C=US";
+        int rootValidityDays = 730;
+        X509Certificate[] rootCertificates = CertificateUtil.createSelfSignedX509Certificate(
+                rootKeyPair, rootSubject, rootValidityDays, true);
+        X509Certificate rootCertificate = rootCertificates[0];
+
+        // Create an intermediate certificate signed by the root
+        KeyPair intermediateKeyPair = KeyUtil.generateRSAKeyPair();
+        String intermediateSubject = "CN=Intermediate Round Trip, O=Test Organization, C=US";
+        int intermediateValidityDays = 365;
+        X509Certificate[] intermediateCertificates = CertificateUtil.createX509Certificate(
+                intermediateKeyPair, intermediateSubject, intermediateValidityDays, true,
+                rootKeyPair.getPrivate(), rootCertificate);
+        X509Certificate intermediateCertificate = intermediateCertificates[0];
+
+        // Create the chain
+        X509Certificate[] originalChain = {intermediateCertificate, rootCertificate};
+
+        // Convert to PEM
+        String pemOutput = CertificateUtil.toPem(originalChain);
+
+        // Convert back to certificate chain
+        X509Certificate[] roundTripChain = CertificateUtil.toCertificateChain(pemOutput);
+
+        // Verify the round trip
+        assertEquals(originalChain.length, roundTripChain.length,
+                "Chain length should be the same after round trip");
+        for (int i = 0; i < originalChain.length; i++) {
+            assertArrayEquals(originalChain[i].getEncoded(), roundTripChain[i].getEncoded(),
+                    "Certificate at index " + i + " should be the same after round trip");
+        }
+
+        // Convert back to PEM
+        String finalPemOutput = CertificateUtil.toPem(roundTripChain);
+
+        // Verify the final PEM matches the original
+        assertEquals(pemOutput, finalPemOutput, "Final PEM should match original PEM");
     }
 }
