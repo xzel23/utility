@@ -2,6 +2,7 @@ package com.dua3.utility.crypt;
 
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.TextUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -246,8 +247,8 @@ public final class CertificateUtil {
      *                                  is invalid or improperly formatted.
      */
     public static X509Certificate[] toCertificateChain(String pemData) throws GeneralSecurityException {
-        List<X509Certificate> certificates = new ArrayList();
-        String[] lines = pemData.split("\\R");
+        List<X509Certificate> certificates = new ArrayList<>();
+        String[] lines = TextUtil.lines(pemData);
         StringBuilder currentCertPem = new StringBuilder();
         boolean inCertificate = false;
 

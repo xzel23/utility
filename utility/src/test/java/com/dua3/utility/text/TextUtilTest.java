@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -33,6 +34,22 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 class TextUtilTest {
+
+    @Test
+    void testLines() {
+        String input = "Line1\nLine2\rLine3\r\nLine4";
+        String[] expected = {"Line1", "Line2", "Line3", "Line4"};
+        String[] result = TextUtil.lines(input);
+        Assertions.assertArrayEquals(expected, result, "Expected lines do not match the result.");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "\n", "\n\n", "   \r\n  ", "\r\n\r\n"})
+    void testLinesWithEmptyAndWhitespaceStrings(String input) {
+        String[] expected = input.split("\\R");
+        String[] result = TextUtil.lines(input);
+        Assertions.assertArrayEquals(expected, result, "Expected lines for input with empty/whitespace strings do not match.");
+    }
 
     @Test
     void testBytesToCharsWithValidInput() {

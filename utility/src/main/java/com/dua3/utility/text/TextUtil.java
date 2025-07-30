@@ -63,6 +63,7 @@ public final class TextUtil {
     private static final String TRANSFORM_REF_END = "}";
 
     private static final Pattern PATTERN_SPLIT_PRESERVING_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
+    private static final Pattern PATTERN_SPLIT_LINES = Pattern.compile("\\R");
 
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
 
@@ -412,6 +413,18 @@ public final class TextUtil {
     }
 
     /**
+     * Splits the provided character sequence into an array of lines, using
+     * the predefined line splitting pattern.
+     *
+     * @param s the character sequence to be split into lines
+     * @return an array of strings, where each string represents a line
+     *         extracted from the input character sequence
+     */
+    public static String[] lines(CharSequence s) {
+        return PATTERN_SPLIT_LINES.split(s);
+    }
+
+    /**
      * Find the index of the first occurrence of a char in a string.
      *
      * @param seq     the string to search
@@ -449,7 +462,7 @@ public final class TextUtil {
      * @param s the string to check for newline termination
      * @return true if the string ends with a newline character, false otherwise
      */
-    public static boolean isNewlineTerminated(String s) {
+    public static boolean isNewlineTerminated(CharSequence s) {
         return !s.isEmpty() && switch (s.charAt(s.length() - 1)) {
             case '\r', '\n', '\u0085', '\u2028', '\u2029' -> true;
             default -> false;
@@ -774,6 +787,52 @@ public final class TextUtil {
     }
 
     /**
+     * Removes trailing whitespace characters from the given character sequence.
+     *
+     * @param t the character sequence to process; must not be null
+     * @return a character sequence with trailing whitespace removed
+     */
+    public static CharSequence stripTrailing(CharSequence t) {
+        int end = t.length();
+        while (end > 0 && Character.isWhitespace(t.charAt(end - 1))) {
+            end--;
+        }
+        return t.subSequence(0, end);
+    }
+
+    /**
+     * Removes all leading whitespace characters from the given character sequence.
+     *
+     * @param t the character sequence from which leading whitespace is to be removed
+     * @return a character sequence with leading whitespace removed
+     */
+    public static CharSequence stripLeading(CharSequence t) {
+        int start = 0;
+        while (start < t.length() && Character.isWhitespace(t.charAt(start))) {
+            start++;
+        }
+        return t.subSequence(start, t.length());
+    }
+
+    /**
+     * Removes leading and trailing whitespace characters from the given character sequence.
+     *
+     * @param t the character sequence from which leading and trailing whitespace should be removed
+     * @return a subsequence of the input character sequence with leading and trailing whitespace removed
+     */
+    public static CharSequence strip(CharSequence t) {
+        int start = 0;
+        while (start < t.length() && Character.isWhitespace(t.charAt(start))) {
+            start++;
+        }
+        int end = t.length();
+        while (end > start && Character.isWhitespace(t.charAt(end - 1))) {
+            end--;
+        }
+        return t.subSequence(start, end);
+    }
+
+    /**
      * Pad String to width with alignment.
      *
      * @param s     the string
@@ -782,7 +841,7 @@ public final class TextUtil {
      * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string
      * is returned
      */
-    public static String align(String s, int width, Alignment align) {
+    public static String align(CharSequence s, int width, Alignment align) {
         return align(s, width, align, ' ');
     }
 
@@ -796,8 +855,8 @@ public final class TextUtil {
      * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string
      * is returned
      */
-    public static String align(String s, int width, Alignment align, char filler) {
-        s = s.stripTrailing();
+    public static String align(CharSequence s, int width, Alignment align, char filler) {
+        s = stripTrailing(s);
         int len = s.length();
         return switch (align) {
             case LEFT -> s + padding(filler, width - len);
@@ -806,7 +865,7 @@ public final class TextUtil {
             case JUSTIFY, DISTRIBUTE -> {
                 int spaceToDistribute = Math.max(0, width - len);
                 if (spaceToDistribute == 0) {
-                    yield s;
+                    yield s.toString();
                 }
                 String[] fragments = PATTERN_SPLIT_PRESERVING_WHITESPACE.split(s);
                 record Stats(int blankChars, int blankFragments) {}
@@ -816,7 +875,7 @@ public final class TextUtil {
                         .reduce((a, b) -> new Stats(a.blankChars + b.blankChars, a.blankFragments + b.blankFragments))
                         .orElseGet(() -> new Stats(0, 0));
                 if (stats.blankFragments() == 0) {
-                    yield s;
+                    yield s.toString();
                 }
                 double fBlank = 1.0f + (double) spaceToDistribute / stats.blankFragments();
                 int used = 0;
