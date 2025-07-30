@@ -1,5 +1,6 @@
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -29,9 +30,7 @@ import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -123,6 +122,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
 
     @Override
     public X509CertificateBuilder validityDays(int days) {
+        LangUtil.checkArg("days", d -> d > 0, days);
         this.validityDays = days;
         return this;
     }
@@ -189,9 +189,9 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
 
             X509Certificate[] chain = new X509Certificate[issuerCert.length + 1];
             chain[0] = cert;
-            for (int i = 0; i < issuerCert.length; i++) {
-                chain[i + 1] = issuerCert[i];
-            }
+            System.arraycopy(issuerCert, 0, chain, 1, issuerCert.length);
+
+            CertificateUtil.verifyCertificateChain(chain);
 
             return chain;
 
@@ -200,6 +200,14 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
         }
     }
 
+    /**
+     * Ensures that the BouncyCastle provider is available in the security configuration.
+     * This method retrieves the provider instance associated with the "BC" (BouncyCastle) identifier.
+     * If the provider is not registered, it throws a {@code NullPointerException}.
+     *
+     * @return the {@code Provider} instance for BouncyCastle.
+     * @throws NullPointerException if the BouncyCastle provider is not available.
+     */
     public static Provider ensureProvider() {
         return Objects.requireNonNull(ProviderHolder.PROVIDER, "No X509Provider");
     }
