@@ -1,18 +1,24 @@
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.text.TextUtil;
+
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
+import java.util.HexFormat;
 import java.util.Optional;
 
 /**
@@ -329,6 +335,26 @@ public final class CryptUtil {
 
         // Decrypt data with AES key
         return decryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, aesKey, encryptedData);
+    }
+
+    /**
+     * Computes an HMAC using the SHA-256 algorithm on the normalized form of the provided email.
+     *
+     * @param email the email address to be processed; it will be normalized before computing the HMAC
+     * @param key the secret key to use for HMAC generation
+     * @return the computed HMAC as a hexadecimal string
+     * @throws NoSuchAlgorithmException if the SHA-256 algorithm is not supported
+     * @throws InvalidKeyException if the provided secret key is invalid
+     */
+    public static String hmacSha256(String email, SecretKey key) throws NoSuchAlgorithmException, InvalidKeyException {
+        String normalizedEmail = TextUtil.normalizeEmail(email);
+
+        Mac hmacSha256 = Mac.getInstance("HmacSHA256");
+        hmacSha256.init(key);
+
+        byte[] hmacBytes = hmacSha256.doFinal(normalizedEmail.getBytes(StandardCharsets.UTF_8));
+
+        return HexFormat.of().formatHex(hmacBytes);
     }
 
 }

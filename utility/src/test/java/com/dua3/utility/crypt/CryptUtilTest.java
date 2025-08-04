@@ -14,6 +14,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -384,4 +385,34 @@ class CryptUtilTest {
         assertTrue(dsaException.getMessage().contains("DSA keys are for signatures only, not encryption"));
     }
 
+    @Test
+    void testHmacSha256ValidData() throws Exception {
+        SecretKeySpec keySpec = new SecretKeySpec("testKey".getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+
+        String hmac = CryptUtil.hmacSha256("User@Test.com", keySpec);
+
+        assertNotNull(hmac);
+        assertEquals(64, hmac.length());
+        assertTrue(hmac.matches("^[a-fA-F0-9]{64}$"), "HMAC should be in hexadecimal format");
+
+        String hmac2 = CryptUtil.hmacSha256("user@test.com", keySpec);
+        assertEquals(hmac, hmac2, "HMAC should be the same for equivalent input data");
+    }
+
+    @Test
+    void testHmacSha256InvalidKey() {
+        Exception exception = assertThrows(Exception.class, () -> {
+            SecretKeySpec invalidKeySpec = new SecretKeySpec(new byte[0], "HmacSHA256");
+            CryptUtil.hmacSha256("test@example.com", invalidKeySpec);
+        });
+
+        assertTrue(exception instanceof IllegalArgumentException, "Expected an InvalidKeyException to be thrown");
+    }
+
+    @Test
+    void testHmacSha256EmptyEmail() {
+        SecretKeySpec keySpec = new SecretKeySpec("testKey".getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+
+        assertThrows(IllegalArgumentException.class, () -> CryptUtil.hmacSha256("", keySpec));
+    }
 }
