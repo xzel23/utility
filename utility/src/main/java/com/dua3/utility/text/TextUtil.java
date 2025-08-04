@@ -88,6 +88,57 @@ public final class TextUtil {
     }
 
     /**
+     * HTML-unescape a string.
+     *
+     * @param s the string
+     * @return the HTML-unescaped string
+     */
+    public static String unescapeHtml(CharSequence s) {
+        StringBuilder sb = new StringBuilder(s.length());
+        int i = 0;
+        while (i < s.length()) {
+            char ch = s.charAt(i);
+            if (ch == '&') {
+                int semicolon = indexOf(s, ';', i);
+                if (semicolon > 0) {
+                    CharSequence entity = s.subSequence(i + 1, semicolon);
+                    if (startsWith(entity,"#")) {
+                        try {
+                            if (startsWith(entity, "#x")) {
+                                ch = (char) Integer.parseInt(entity, 2, entity.length(), 16);
+                            } else {
+                                ch = (char) Integer.parseInt(entity, 1, entity.length(), 10);
+                            }
+                            sb.append(ch);
+                            i = semicolon + 1;
+                            continue;
+                        } catch (NumberFormatException ignored) {
+                            // invalid numeric entity, treat as literal
+                        }
+                    } else {
+                        ch = switch (entity.toString()) {
+                            case "quot" -> '"';
+                            case "amp" -> '&';
+                            case "lt" -> '<';
+                            case "gt" -> '>';
+                            case "apos" -> '\'';
+                            default -> '?';
+                        };
+                        if (ch != '?') {
+                            sb.append(ch);
+                            i = semicolon + 1;
+                            continue;
+                        }
+                    }
+                }
+            }
+            sb.append(ch);
+            i++;
+        }
+        return sb.toString();
+    }
+    
+    /**
      * Append HTML-escaped character to an Appendable.
      *
      * @param app the {@link Appendable}
