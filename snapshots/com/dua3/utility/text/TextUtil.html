@@ -415,6 +415,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns the given character sequence if it is not <code>null</code> or empty, otherwise returns the specified value.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#normalize(java.lang.CharSequence)" class="member-name-link">normalize</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Normalizes the given character sequence by applying Unicode normalization
+ in NFKC form and normalizing line endings.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#normalizeEmail(java.lang.String)" class="member-name-link">normalizeEmail</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;email)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Normalizes an email address by performing the following transformations:
+ 1.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#normalizeLineEnds(java.lang.String)" class="member-name-link">normalizeLineEnds</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Convert all line ends to '\n'.</div>
@@ -541,20 +553,25 @@ loadScripts(document, 'script');</script>
 <div class="block">Transform a templated Text.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wrap(java.lang.String,int,com.dua3.utility.text.Alignment,boolean)" class="member-name-link">wrap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#unescapeHtml(java.lang.CharSequence)" class="member-name-link">unescapeHtml</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">HTML-unescape a string.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wrap(java.lang.String,int,com.dua3.utility.text.Alignment,boolean)" class="member-name-link">wrap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s,
  int&nbsp;width,
  <a href="Alignment.html" title="enum class in com.dua3.utility.text">Alignment</a>&nbsp;align,
  boolean&nbsp;hardWrap)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Wraps a given string `s` into multiple lines based on the specified `width`, alignment, and hard wrap options.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wrap(java.lang.String,int,com.dua3.utility.text.Alignment,boolean,java.lang.String)" class="member-name-link">wrap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wrap(java.lang.String,int,com.dua3.utility.text.Alignment,boolean,java.lang.String)" class="member-name-link">wrap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s,
  int&nbsp;width,
  <a href="Alignment.html" title="enum class in com.dua3.utility.text">Alignment</a>&nbsp;align,
  boolean&nbsp;hardWrap,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;lineSeparator)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Wraps a given string `s` into multiple lines based on the specified `width`, alignment, and hard wrap options.</div>
 </div>
 </div>
@@ -636,6 +653,19 @@ loadScripts(document, 'script');</script>
 <dd><code>seq</code> - the string</dd>
 <dt>Returns:</dt>
 <dd>the HTML-escaped string</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="unescapeHtml(java.lang.CharSequence)">
+<h3>unescapeHtml</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">unescapeHtml</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s)</span></div>
+<div class="block">HTML-unescape a string.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>s</code> - the string</dd>
+<dt>Returns:</dt>
+<dd>the HTML-unescaped string</dd>
 </dl>
 </section>
 </li>
@@ -1751,6 +1781,44 @@ loadScripts(document, 'script');</script>
 <dd><code>bytes</code> - the byte array to decode</dd>
 <dt>Returns:</dt>
 <dd>the resulting string after decoding the byte array</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="normalize(java.lang.CharSequence)">
+<h3>normalize</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">normalize</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s)</span></div>
+<div class="block">Normalizes the given character sequence by applying Unicode normalization
+ in NFKC form and normalizing line endings.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>s</code> - the character sequence to be normalized</dd>
+<dt>Returns:</dt>
+<dd>a normalized string with Unicode NFKC form and standardized line endings ('\n')</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="normalizeEmail(java.lang.String)">
+<h3>normalizeEmail</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">normalizeEmail</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;email)</span></div>
+<div class="block">Normalizes an email address by performing the following transformations:
+ 1. Unescapes any HTML entities in the email string.
+ 2. Converts the email to lowercase using the default locale.
+ 3. Trims any leading and trailing whitespace.
+
+ The method also does basic validation of the email to ensure that:
+ - The normalized email is not empty.
+ - The email does not contain newline characters.
+ - The email contains a single '@' symbol, which is neither at the beginning nor at the end.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>email</code> - the original email address to be normalized; must be a valid string</dd>
+<dt>Returns:</dt>
+<dd>the normalized email address as a lowercase and stripped string</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the email is empty, contains a newline,
+         or does not include a valid '@' symbol</dd>
 </dl>
 </section>
 </li>

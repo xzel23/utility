@@ -162,10 +162,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Symmetrically encrypt data using a Key object with the default algorithm.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#validateAsymmetricEncryptionKey(java.security.PublicKey,int)" class="member-name-link">validateAsymmetricEncryptionKey</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;key,
- int&nbsp;dataLength)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hmacSha256(java.lang.String,javax.crypto.SecretKey)" class="member-name-link">hmacSha256</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;email,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;key)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Computes an HMAC using the SHA-256 algorithm on the normalized form of the provided email.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#validateAsymmetricEncryptionKey(java.security.PublicKey,int)" class="member-name-link">validateAsymmetricEncryptionKey</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;key,
+ int&nbsp;dataLength)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Validates the provided asymmetric encryption key to ensure it satisfies the requirements
  for encrypting data of the specified length.</div>
 </div>
@@ -371,6 +377,26 @@ loadScripts(document, 'script');</script>
 <dd>the decrypted data</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></code> - if decryption fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="hmacSha256(java.lang.String,javax.crypto.SecretKey)">
+<h3>hmacSha256</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">hmacSha256</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;email,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;key)</span>
+                         throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/NoSuchAlgorithmException.html" title="class or interface in java.security" class="external-link">NoSuchAlgorithmException</a>,
+<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/InvalidKeyException.html" title="class or interface in java.security" class="external-link">InvalidKeyException</a></span></div>
+<div class="block">Computes an HMAC using the SHA-256 algorithm on the normalized form of the provided email.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>email</code> - the email address to be processed; it will be normalized before computing the HMAC</dd>
+<dd><code>key</code> - the secret key to use for HMAC generation</dd>
+<dt>Returns:</dt>
+<dd>the computed HMAC as a hexadecimal string</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/NoSuchAlgorithmException.html" title="class or interface in java.security" class="external-link">NoSuchAlgorithmException</a></code> - if the SHA-256 algorithm is not supported</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/InvalidKeyException.html" title="class or interface in java.security" class="external-link">InvalidKeyException</a></code> - if the provided secret key is invalid</dd>
 </dl>
 </section>
 </li>
