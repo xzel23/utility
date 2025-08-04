@@ -1042,4 +1042,34 @@ class TextUtilTest {
         assertTrue(t instanceof NullPointerException || t instanceof AssertionError, "unexpected exception thrown: " + t.getClass());
     }
 
+    @Test
+    void testNormalizeWithNormalText() {
+        String input = "Test Normalization";
+        String expected = "Test Normalization";  // NFKC form does not change for typical text
+        String result = TextUtil.normalize(input);
+        assertEquals(expected, result, "Expected normalized text to match the input.");
+    }
+
+    @Test
+    void testNormalizeWithSpecialCharacters() {
+        String input = "e\u0301"; // "e" + acute accent
+        String expected = "\u00E9"; // "é" as a single character
+        String result = TextUtil.normalize(input);
+        assertEquals(expected, result, "Expected normalized text to combine characters.");
+    }
+
+    @Test
+    void testNormalizeWithUnicode() {
+        String input = "\u212B"; // Angstrom symbol
+        String expected = "Å"; // Unicode equivalence
+        String result = TextUtil.normalize(input);
+        assertEquals(expected, result, "Expected normalized text to replace Unicode equivalent.");
+    }
+
+    @Test
+    void testNormalizeWithEmptyString() {
+        String input = "";
+        String result = TextUtil.normalize(input);
+        assertEquals("", result, "Expected normalized result to be an empty string.");
+    }
 }

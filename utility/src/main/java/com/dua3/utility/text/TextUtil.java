@@ -20,6 +20,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.Collator;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Comparator;
@@ -1262,5 +1263,16 @@ public final class TextUtil {
      */
     public static String decodeToString(byte[] bytes) {
         return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Normalizes the given character sequence by applying Unicode normalization
+     * in NFKC form and normalizing line endings.
+     *
+     * @param s the character sequence to be normalized
+     * @return a normalized string with Unicode NFKC form and standardized line endings ('\n')
+     */
+    public static String normalize(CharSequence s) {
+        return normalizeLineEnds(Normalizer.normalize(s, Normalizer.Form.NFKC));
     }
 }
