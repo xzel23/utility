@@ -192,6 +192,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Setup JDK 24 with JavaFX
       - name: 'Set up JDK 24 with JavaFX'
