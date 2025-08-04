@@ -1042,70 +1042,80 @@ class TextUtilTest {
         assertTrue(t instanceof NullPointerException || t instanceof AssertionError, "unexpected exception thrown: " + t.getClass());
     }
 
-    @Test
-    void testNormalizeWithNormalText() {
-        String input = "Test Normalization";
-        String expected = "Test Normalization";  // NFKC form does not change for typical text
+    @ParameterizedTest
+    @MethodSource("normalizeTestCases")
+    void testNormalize(String input, String expected, String message) {
         String result = TextUtil.normalize(input);
-        assertEquals(expected, result, "Expected normalized text to match the input.");
+        assertEquals(expected, result, message);
     }
 
-    @Test
-    void testNormalizeWithSpecialCharacters() {
-        String input = "e\u0301"; // "e" + acute accent
-        String expected = "\u00E9"; // "é" as a single character
-        String result = TextUtil.normalize(input);
-        assertEquals(expected, result, "Expected normalized text to combine characters.");
+    private static Stream<Arguments> normalizeTestCases() {
+        return Stream.of(
+                Arguments.of("Test Normalization", "Test Normalization", "Expected normalized text to match the input."),
+                Arguments.of("e\u0301", "\u00E9", "Expected normalized text to combine characters."),
+                Arguments.of("\u212B", "Å", "Expected normalized text to replace Unicode equivalent."),
+                Arguments.of("", "", "Expected normalized result to be an empty string.")
+        );
     }
 
-    @Test
-    void testNormalizeWithUnicode() {
-        String input = "\u212B"; // Angstrom symbol
-        String expected = "Å"; // Unicode equivalence
-        String result = TextUtil.normalize(input);
-        assertEquals(expected, result, "Expected normalized text to replace Unicode equivalent.");
+    @ParameterizedTest
+    @MethodSource("normalizeEmailTestCases")
+    void testNormalizeEmail(String input, String expected, Class<? extends Throwable> expectedException) {
+        if (expectedException != null) {
+            assertThrows(expectedException, () -> TextUtil.normalizeEmail(input));
+        } else {
+            assertEquals(expected, TextUtil.normalizeEmail(input));
+        }
     }
 
-    @Test
-    void testNormalizeWithEmptyString() {
-        String input = "";
-        String result = TextUtil.normalize(input);
-        assertEquals("", result, "Expected normalized result to be an empty string.");
+    private static Stream<Arguments> normalizeEmailTestCases() {
+        return Stream.of(
+                // Valid emails - should normalize successfully
+                Arguments.of("user@example.com", "user@example.com", null),
+                Arguments.of(" USER@EXAMPLE.COM ", "user@example.com", null),
+                Arguments.of("user.name+alias@Example.Com", "user.name+alias@example.com", null),
+                Arguments.of("\nuser@example.com ", "user@example.com", null),
+                Arguments.of("user+filter@example.com", "user+filter@example.com", null),
+                Arguments.of("User.Name-With.Dash@EXAMPLE.CO.UK", "user.name-with.dash@example.co.uk", null),
+                Arguments.of("user_with_underscore@Example.Com", "user_with_underscore@example.com", null),
+
+                // Invalid emails - should throw IllegalArgumentException
+                Arguments.of("userexample.com", null, IllegalArgumentException.class),
+                Arguments.of("", null, IllegalArgumentException.class),
+                Arguments.of("   ", null, IllegalArgumentException.class),
+                Arguments.of("my\nuser@example.com", null, IllegalArgumentException.class),
+                Arguments.of("@example.com", null, IllegalArgumentException.class),
+                Arguments.of("user@", null, IllegalArgumentException.class)
+        );
     }
 
-    @Test
-    void testNormalizeEmailWithValidEmails() {
-        // Test with valid emails
-        assertEquals("user@example.com", TextUtil.normalizeEmail("user@example.com"));
-        assertEquals("user@example.com", TextUtil.normalizeEmail(" USER@EXAMPLE.COM "));
-        assertEquals("user.name+alias@example.com", TextUtil.normalizeEmail("user.name+alias@Example.Com"));
-        assertEquals("user@example.com", TextUtil.normalizeEmail("\nuser@example.com "));
+    @ParameterizedTest
+    @MethodSource("normalizeEmailWithInvalidEmailTestCases")
+    void testNormalizeEmailWithInvalidEmails(String input, String expected, Class<? extends Throwable> expectedException) {
+        if (expectedException != null) {
+            assertThrows(expectedException, () -> TextUtil.normalizeEmail(input));
+        } else {
+            assertEquals(expected, TextUtil.normalizeEmail(input));
+        }
     }
 
-    @Test
-    void testNormalizeEmailWithInvalidEmails() {
-        // Test missing "@" symbol
-        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("userexample.com"));
+    private static Stream<Arguments> normalizeEmailWithInvalidEmailTestCases() {
+        return Stream.of(
+                // Test missing "@" symbol
+                Arguments.of("userexample.com", null, IllegalArgumentException.class),
 
-        // Test with empty string
-        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail(""));
+                // Test with empty string
+                Arguments.of("", null, IllegalArgumentException.class),
 
-        // Test with only whitespaces
-        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("   "));
+                // Test with only whitespaces
+                Arguments.of("   ", null, IllegalArgumentException.class),
 
-        // Test with newline character
-        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("my\nuser@example.com"));
+                // Test with newline character
+                Arguments.of("my\nuser@example.com", null, IllegalArgumentException.class),
 
-        // Test with "@" symbol at invalid positions
-        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("@example.com"));
-        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("user@"));
-    }
-
-    @Test
-    void testNormalizeEmailWithSpecialCharacters() {
-        // Test emails with special characters
-        assertEquals("user+filter@example.com", TextUtil.normalizeEmail("user+filter@example.com"));
-        assertEquals("user.name-with.dash@example.co.uk", TextUtil.normalizeEmail("User.Name-With.Dash@EXAMPLE.CO.UK"));
-        assertEquals("user_with_underscore@example.com", TextUtil.normalizeEmail("user_with_underscore@Example.Com"));
+                // Test with "@" symbol at invalid positions
+                Arguments.of("@example.com", null, IllegalArgumentException.class),
+                Arguments.of("user@", null, IllegalArgumentException.class)
+        );
     }
 }
