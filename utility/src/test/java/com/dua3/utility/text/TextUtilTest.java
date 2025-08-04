@@ -1072,4 +1072,40 @@ class TextUtilTest {
         String result = TextUtil.normalize(input);
         assertEquals("", result, "Expected normalized result to be an empty string.");
     }
+
+    @Test
+    void testNormalizeEmailWithValidEmails() {
+        // Test with valid emails
+        assertEquals("user@example.com", TextUtil.normalizeEmail("user@example.com"));
+        assertEquals("user@example.com", TextUtil.normalizeEmail(" USER@EXAMPLE.COM "));
+        assertEquals("user.name+alias@example.com", TextUtil.normalizeEmail("user.name+alias@Example.Com"));
+        assertEquals("user@example.com", TextUtil.normalizeEmail("\nuser@example.com "));
+    }
+
+    @Test
+    void testNormalizeEmailWithInvalidEmails() {
+        // Test missing "@" symbol
+        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("userexample.com"));
+
+        // Test with empty string
+        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail(""));
+
+        // Test with only whitespaces
+        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("   "));
+
+        // Test with newline character
+        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("my\nuser@example.com"));
+
+        // Test with "@" symbol at invalid positions
+        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("@example.com"));
+        assertThrows(IllegalArgumentException.class, () -> TextUtil.normalizeEmail("user@"));
+    }
+
+    @Test
+    void testNormalizeEmailWithSpecialCharacters() {
+        // Test emails with special characters
+        assertEquals("user+filter@example.com", TextUtil.normalizeEmail("user+filter@example.com"));
+        assertEquals("user.name-with.dash@example.co.uk", TextUtil.normalizeEmail("User.Name-With.Dash@EXAMPLE.CO.UK"));
+        assertEquals("user_with_underscore@example.com", TextUtil.normalizeEmail("user_with_underscore@Example.Com"));
+    }
 }

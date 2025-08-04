@@ -1275,4 +1275,31 @@ public final class TextUtil {
     public static String normalize(CharSequence s) {
         return normalizeLineEnds(Normalizer.normalize(s, Normalizer.Form.NFKC));
     }
+
+    /**
+     * Normalizes an email address by performing the following transformations:
+     * 1. Unescapes any HTML entities in the email string.
+     * 2. Converts the email to lowercase using the default locale.
+     * 3. Trims any leading and trailing whitespace.
+     *
+     * The method also does basic validation of the email to ensure that:
+     * - The normalized email is not empty.
+     * - The email does not contain newline characters.
+     * - The email contains a single '@' symbol, which is neither at the beginning nor at the end.
+     *
+     * @param email the original email address to be normalized; must be a valid string
+     * @return the normalized email address as a lowercase and stripped string
+     * @throws IllegalArgumentException if the email is empty, contains a newline,
+     *         or does not include a valid '@' symbol
+     */
+    public static String normalizeEmail(String email) {
+        String normalizedEmail = normalize(unescapeHtml(email)).toLowerCase(Locale.ROOT).strip();
+
+        LangUtil.checkArg(!normalizedEmail.isEmpty(), "email is empty");
+        LangUtil.checkArg(normalizedEmail.indexOf('\n') < 0, "email contains newline");
+        int indexOfAt = normalizedEmail.indexOf('@');
+        LangUtil.checkArg(indexOfAt > 0 && indexOfAt < normalizedEmail.length() - 1, "email does not contain '@' symbol or symbol is found at invalid position");
+
+        return normalizedEmail;
+    }
 }
