@@ -1292,7 +1292,7 @@ public final class TextUtil {
      * @throws IllegalArgumentException if the email is empty, contains a newline,
      *         or does not include a valid '@' symbol
      */
-    public static String normalizeEmail(String email) {
+    public static String normalizeEmail(CharSequence email) {
         String normalizedEmail = normalize(unescapeHtml(email)).toLowerCase(Locale.ROOT).strip();
 
         LangUtil.checkArg(!normalizedEmail.isEmpty(), "email is empty");
