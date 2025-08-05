@@ -255,7 +255,9 @@ could not be loaded.
         - key store handling
         - asymmetric encryption
         - message signing
-        - ECIES support depends on BouncyCastle being present
+        - ECIES support (depends on BouncyCastle being present)
+        - HMAC support (depends on BouncyCastle being present)
+        - Argon2 hash support (depends on BouncyCastle being present)
 
 - Package `utility.data`
     - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
