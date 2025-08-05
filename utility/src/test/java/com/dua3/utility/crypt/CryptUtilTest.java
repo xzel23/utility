@@ -24,12 +24,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,6 +43,15 @@ class CryptUtilTest {
             "",
             "secret message",
             System.getProperties().toString()
+    };
+
+    // Test data for Argon2id tests
+    private static final String TEST_PASSWORD = "test-password";
+    private static final String TEST_PEPPER = "test-pepper";
+    // Use a fixed salt for testing instead of generating a random one
+    private static final byte[] TEST_SALT = new byte[]{
+            0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+            0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10
     };
 
     @Test
@@ -474,5 +485,271 @@ class CryptUtilTest {
 
         assertThrows(InvalidKeyException.class, () ->
                 CryptUtil.validateAsymmetricEncryptionKey(invalidKey, validData.length));
+    }
+
+    // Argon2id Tests
+
+    @Test
+    void testGetArgon2idBytesWithSecretKey() {
+        // Create test data
+        byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
+        SecretKey secretKey = new SecretKeySpec(RandomUtil.generateRandomBytes(32), "AES");
+
+        // Test valid case
+        byte[] result = CryptUtil.getArgon2idBytes(input, TEST_SALT, secretKey);
+
+        // Verify result
+        assertNotNull(result);
+        assertEquals(32, result.length); // Should be 256 bits (32 bytes)
+
+        // Test consistency - same inputs should produce same output
+        byte[] result2 = CryptUtil.getArgon2idBytes(input, TEST_SALT, secretKey);
+        assertArrayEquals(result, result2);
+
+        // Test different inputs produce different outputs
+        byte[] differentInput = "different-password".getBytes(StandardCharsets.UTF_8);
+        byte[] differentResult = CryptUtil.getArgon2idBytes(differentInput, TEST_SALT, secretKey);
+        assertFalse(Arrays.equals(result, differentResult));
+    }
+
+    @Test
+    void testGetArgon2idBytesWithPepper() {
+        // Create test data
+        byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
+
+        // Test valid case
+        byte[] result = CryptUtil.getArgon2idBytes(input, TEST_SALT, TEST_PEPPER);
+
+        // Verify result
+        assertNotNull(result);
+        assertEquals(32, result.length); // Should be 256 bits (32 bytes)
+
+        // Test consistency - same inputs should produce same output
+        byte[] result2 = CryptUtil.getArgon2idBytes(input, TEST_SALT, TEST_PEPPER);
+        assertArrayEquals(result, result2);
+
+        // Test different inputs produce different outputs
+        String differentPepper = "different-pepper";
+        byte[] differentResult = CryptUtil.getArgon2idBytes(input, TEST_SALT, differentPepper);
+        assertFalse(Arrays.equals(result, differentResult));
+    }
+
+    @Test
+    void testGetArgon2idBytesWithByteArraySecret() {
+        // Create test data
+        byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
+        byte[] secret = RandomUtil.generateRandomBytes(32);
+
+        // Test valid case
+        byte[] result = CryptUtil.getArgon2idBytes(input, TEST_SALT, secret);
+
+        // Verify result
+        assertNotNull(result);
+        assertEquals(32, result.length); // Should be 256 bits (32 bytes)
+
+        // Test with invalid salt length
+        byte[] invalidSalt = RandomUtil.generateRandomBytes(8); // Not 16 bytes
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.getArgon2idBytes(input, invalidSalt, secret)
+        );
+    }
+
+    @Test
+    void testGetArgon2idWithByteArrayAndSecretKey() {
+        // Create test data
+        byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
+        SecretKey secretKey = new SecretKeySpec(RandomUtil.generateRandomBytes(32), "AES");
+
+        // Test valid case
+        String result = CryptUtil.getArgon2id(input, secretKey);
+
+        // Verify result format (should be salt$hash in Base64)
+        assertNotNull(result);
+        assertTrue(result.contains("$"), "Result should contain $ separator");
+
+        String[] parts = result.split("\\$");
+        assertEquals(2, parts.length, "Result should have exactly two parts");
+
+        // Both parts should be valid Base64
+        assertDoesNotThrow(() -> Base64.getDecoder().decode(parts[0]));
+        assertDoesNotThrow(() -> Base64.getDecoder().decode(parts[1]));
+
+        // Salt should be 16 bytes
+        assertEquals(16, Base64.getDecoder().decode(parts[0]).length);
+
+        // Hash should be 32 bytes (256 bits)
+        assertEquals(32, Base64.getDecoder().decode(parts[1]).length);
+    }
+
+    @Test
+    void testGetArgon2idWithByteArrayAndPepper() {
+        // Create test data
+        byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
+
+        // Test valid case
+        String result = CryptUtil.getArgon2id(input, TEST_PEPPER);
+
+        // Verify result format (should be salt$hash in Base64)
+        assertNotNull(result);
+        assertTrue(result.contains("$"), "Result should contain $ separator");
+
+        String[] parts = result.split("\\$");
+        assertEquals(2, parts.length, "Result should have exactly two parts");
+
+        // Both parts should be valid Base64
+        assertDoesNotThrow(() -> Base64.getDecoder().decode(parts[0]));
+        assertDoesNotThrow(() -> Base64.getDecoder().decode(parts[1]));
+    }
+
+    @Test
+    void testGetArgon2idWithStringAndSecretKey() {
+        // Create test data
+        SecretKey secretKey = new SecretKeySpec(RandomUtil.generateRandomBytes(32), "AES");
+
+        // Test valid case
+        String result = CryptUtil.getArgon2id(TEST_PASSWORD, secretKey);
+
+        // Verify result format (should be salt$hash in Base64)
+        assertNotNull(result);
+        assertTrue(result.contains("$"), "Result should contain $ separator");
+
+        // Test that different inputs produce different outputs
+        String differentPassword = "different-password";
+        String differentResult = CryptUtil.getArgon2id(differentPassword, secretKey);
+        assertNotEquals(result, differentResult);
+    }
+
+    @Test
+    void testGetArgon2idWithStringAndPepper() {
+        // Test valid case
+        String result = CryptUtil.getArgon2id(TEST_PASSWORD, TEST_PEPPER);
+
+        // Verify result format (should be salt$hash in Base64)
+        assertNotNull(result);
+        assertTrue(result.contains("$"), "Result should contain $ separator");
+
+        // Test that different inputs produce different outputs
+        String differentPassword = "different-password";
+        String differentResult = CryptUtil.getArgon2id(differentPassword, TEST_PEPPER);
+        assertNotEquals(result, differentResult);
+    }
+
+    @Test
+    void testVerifyArgon2idWithByteArrayAndSecretKey() {
+        // Create test data
+        byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
+        SecretKey secretKey = new SecretKeySpec(RandomUtil.generateRandomBytes(32), "AES");
+
+        // Generate hash
+        String saltAndHash = CryptUtil.getArgon2id(input, secretKey);
+
+        // Test verification with correct input
+        boolean result = CryptUtil.verifyArgon2id(input, secretKey, saltAndHash);
+        assertTrue(result, "Verification should succeed with correct input");
+
+        // Test verification with incorrect input
+        byte[] wrongInput = "wrong-password".getBytes(StandardCharsets.UTF_8);
+        boolean wrongResult = CryptUtil.verifyArgon2id(wrongInput, secretKey, saltAndHash);
+        assertFalse(wrongResult, "Verification should fail with incorrect input");
+
+        // Test with invalid saltAndHash format
+        String invalidSaltAndHash = "invalid-format";
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.verifyArgon2id(input, secretKey, invalidSaltAndHash)
+        );
+    }
+
+    @Test
+    void testVerifyArgon2idWithByteArrayAndByteArraySecret() {
+        // Create test data
+        byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
+        byte[] secret = RandomUtil.generateRandomBytes(32);
+
+        // Generate hash using the byte array version
+        byte[] salt = RandomUtil.generateRandomBytes(16);
+        byte[] hash = CryptUtil.getArgon2idBytes(input, salt, secret);
+        String saltAndHash = Base64.getEncoder().encodeToString(salt) + "$" +
+                Base64.getEncoder().encodeToString(hash);
+
+        // Test verification with correct input
+        boolean result = CryptUtil.verifyArgon2id(input, secret, saltAndHash);
+        assertTrue(result, "Verification should succeed with correct input");
+
+        // Test verification with incorrect input
+        byte[] wrongInput = "wrong-password".getBytes(StandardCharsets.UTF_8);
+        boolean wrongResult = CryptUtil.verifyArgon2id(wrongInput, secret, saltAndHash);
+        assertFalse(wrongResult, "Verification should fail with incorrect input");
+    }
+
+    @Test
+    void testVerifyArgon2idWithByteArrayAndPepper() {
+        // Create test data
+        byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
+
+        // Generate hash
+        String saltAndHash = CryptUtil.getArgon2id(input, TEST_PEPPER);
+
+        // Test verification with correct input
+        boolean result = CryptUtil.verifyArgon2id(input, TEST_PEPPER, saltAndHash);
+        assertTrue(result, "Verification should succeed with correct input");
+
+        // Test verification with incorrect input
+        byte[] wrongInput = "wrong-password".getBytes(StandardCharsets.UTF_8);
+        boolean wrongResult = CryptUtil.verifyArgon2id(wrongInput, TEST_PEPPER, saltAndHash);
+        assertFalse(wrongResult, "Verification should fail with incorrect input");
+    }
+
+    @Test
+    void testVerifyArgon2idWithStringAndSecretKey() {
+        // Create test data
+        SecretKey secretKey = new SecretKeySpec(RandomUtil.generateRandomBytes(32), "AES");
+
+        // Generate hash
+        String saltAndHash = CryptUtil.getArgon2id(TEST_PASSWORD, secretKey);
+
+        // Test verification with correct input
+        boolean result = CryptUtil.verifyArgon2id(TEST_PASSWORD, secretKey, saltAndHash);
+        assertTrue(result, "Verification should succeed with correct input");
+
+        // Test verification with incorrect input
+        String wrongPassword = "wrong-password";
+        boolean wrongResult = CryptUtil.verifyArgon2id(wrongPassword, secretKey, saltAndHash);
+        assertFalse(wrongResult, "Verification should fail with incorrect input");
+    }
+
+    @Test
+    void testVerifyArgon2idWithStringAndByteArraySecret() {
+        // Create test data
+        byte[] secret = RandomUtil.generateRandomBytes(32);
+
+        // Generate hash using the byte array version
+        byte[] salt = RandomUtil.generateRandomBytes(16);
+        byte[] hash = CryptUtil.getArgon2idBytes(TEST_PASSWORD.getBytes(StandardCharsets.UTF_8), salt, secret);
+        String saltAndHash = Base64.getEncoder().encodeToString(salt) + "$" +
+                Base64.getEncoder().encodeToString(hash);
+
+        // Test verification with correct input
+        boolean result = CryptUtil.verifyArgon2id(TEST_PASSWORD, secret, saltAndHash);
+        assertTrue(result, "Verification should succeed with correct input");
+
+        // Test verification with incorrect input
+        String wrongPassword = "wrong-password";
+        boolean wrongResult = CryptUtil.verifyArgon2id(wrongPassword, secret, saltAndHash);
+        assertFalse(wrongResult, "Verification should fail with incorrect input");
+    }
+
+    @Test
+    void testVerifyArgon2idWithStringAndPepper() {
+        // Generate hash
+        String saltAndHash = CryptUtil.getArgon2id(TEST_PASSWORD, TEST_PEPPER);
+
+        // Test verification with correct input
+        boolean result = CryptUtil.verifyArgon2id(TEST_PASSWORD, TEST_PEPPER, saltAndHash);
+        assertTrue(result, "Verification should succeed with correct input");
+
+        // Test verification with incorrect input
+        String wrongPassword = "wrong-password";
+        boolean wrongResult = CryptUtil.verifyArgon2id(wrongPassword, TEST_PEPPER, saltAndHash);
+        assertFalse(wrongResult, "Verification should fail with incorrect input");
     }
 }
