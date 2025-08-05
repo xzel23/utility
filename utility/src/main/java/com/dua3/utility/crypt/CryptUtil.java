@@ -4,7 +4,6 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
-import org.jspecify.annotations.NonNull;
 
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -458,7 +457,7 @@ public final class CryptUtil {
      * @param pepper the pepper string to be converted to a byte array; must be at least 16 characters long
      * @return a non-null byte array representation of the input pepper string in UTF-8 encoding
      */
-    private static byte @NonNull [] getPepperBytes(String pepper) {
+    private static byte [] getPepperBytes(String pepper) {
         LangUtil.checkArg(pepper.length() >= 16, "pepper must have at least 16 characters");
         return pepper.getBytes(StandardCharsets.UTF_8);
     }
