@@ -669,4 +669,14 @@ public final class CryptUtil {
         return verifyArgon2id(input.getBytes(StandardCharsets.UTF_8), pepper, saltAndHash);
     }
 
+    /**
+     * Generates a random password encoded in Base64 format.
+     * The password is created using 18 random bytes, which do not require additional padding.
+     *
+     * @return a Base64-encoded string representing the randomly generated password
+     */
+    public static String generatePassword() {
+        // 18 bytes do not require padding
+        return TextUtil.base64Encode(RandomUtil.generateRandomBytes(18));
+    }
 }

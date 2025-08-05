@@ -40,6 +40,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class CryptUtilTest {
+
+    @Test
+    void testGeneratePasswordValidLength() {
+        // Generate a password
+        String password = CryptUtil.generatePassword();
+
+        // Verify that the password length matches the expected size
+        assertNotNull(password, "Password should not be null");
+        assertEquals(24, password.length(), "Password length should be 24 characters (Base64 encoding of 16 bytes)");
+    }
+
+    @Test
+    void testGeneratePasswordUniqueValues() {
+        // Generate multiple passwords
+        String password1 = CryptUtil.generatePassword();
+        String password2 = CryptUtil.generatePassword();
+
+        // Verify that the passwords are unique
+        assertNotNull(password1, "Password1 should not be null");
+        assertNotNull(password2, "Password2 should not be null");
+        assertNotEquals(password1, password2, "Generated passwords should be unique");
+    }
+
     private static final int[] KEY_LENGTHS = {128, 192, 256};
     private static final String[] MESSAGES = {
             "",
