@@ -1281,7 +1281,7 @@ public final class TextUtil {
      * 1. Unescapes any HTML entities in the email string.
      * 2. Converts the email to lowercase using the default locale.
      * 3. Trims any leading and trailing whitespace.
-     *
+     * <p>
      * The method also does basic validation of the email to ensure that:
      * - The normalized email is not empty.
      * - The email does not contain newline characters.
