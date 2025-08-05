@@ -42,6 +42,42 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class CryptUtilTest {
 
     @Test
+    void testHmacSha256WithValidData() throws Exception {
+        SecretKey key = new SecretKeySpec("0123456789abcdef0123456789abcdef".getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        String input = "Test message";
+
+        String hmac1 = CryptUtil.hmacSha256(input, key);
+        String hmac2 = CryptUtil.hmacSha256(input, key);
+
+        assertNotNull(hmac1);
+        assertNotNull(hmac2);
+        assertEquals(hmac1, hmac2, "HMAC hashes should match for the same input and key");
+    }
+
+    @Test
+    void testHmacSha256WithDifferentData() throws Exception {
+        SecretKey key = new SecretKeySpec("0123456789abcdef0123456789abcdef".getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        String input1 = "Test message 1";
+        String input2 = "Test message 2";
+
+        String hmac1 = CryptUtil.hmacSha256(input1, key);
+        String hmac2 = CryptUtil.hmacSha256(input2, key);
+
+        assertNotNull(hmac1);
+        assertNotNull(hmac2);
+        assertNotEquals(hmac1, hmac2, "HMAC hashes should differ for different inputs");
+    }
+
+    @Test
+    void testHmacSha256WithInvalidKey() {
+        SecretKey invalidKey = new SecretKeySpec("shortKey".getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        String input = "Test message";
+
+        // Test that invalid key size throws an InvalidKeyException
+        assertThrows(InvalidKeyException.class, () -> CryptUtil.hmacSha256(input, invalidKey));
+    }
+
+    @Test
     void testGeneratePasswordValidLength() {
         // Generate a password
         String password = CryptUtil.generatePassword();

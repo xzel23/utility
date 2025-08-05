@@ -362,6 +362,8 @@ public final class CryptUtil {
      * It does not:
      * - trim the text
      * - convert it to lowercase
+     * <p>
+     * <strong>Note:</strong> The key size must be at least 256 bits.
      *
      * @param s the text
      * @param key the secret key to use for HMAC generation
@@ -371,6 +373,10 @@ public final class CryptUtil {
      */
     public static String hmacSha256(CharSequence s, SecretKey key) throws NoSuchAlgorithmException, InvalidKeyException {
         String normalizedText = TextUtil.normalize(s);
+
+        if (key.getEncoded().length < 32) {
+            throw new InvalidKeyException("key must be at least 32 bytes long");
+        }
 
         Mac hmacSha256 = Mac.getInstance("HmacSHA256");
         hmacSha256.init(key);
