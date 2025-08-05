@@ -415,4 +415,64 @@ class CryptUtilTest {
 
         assertThrows(IllegalArgumentException.class, () -> CryptUtil.hmacSha256("", keySpec));
     }
+
+    @Test
+    void testValidateAsymmetricEncryptionKeyWithValidRSAKey() throws GeneralSecurityException {
+        KeyPair rsaKeyPair = KeyUtil.generateRSAKeyPair();
+        PublicKey rsaPublicKey = rsaKeyPair.getPublic();
+
+        byte[] validData = new byte[190]; // RSA max size for 2048-bit key
+
+        assertDoesNotThrow(() ->
+                CryptUtil.validateAsymmetricEncryptionKey(rsaPublicKey, validData.length));
+    }
+
+    @Test
+    void testValidateAsymmetricEncryptionKeyWithOversizedDataRSA() throws GeneralSecurityException {
+        KeyPair rsaKeyPair = KeyUtil.generateRSAKeyPair();
+        PublicKey rsaPublicKey = rsaKeyPair.getPublic();
+
+        byte[] oversizedData = new byte[300]; // Exceeding max size for 2048-bit RSA key
+
+        IllegalBlockSizeException exception = assertThrows(IllegalBlockSizeException.class, () ->
+                CryptUtil.validateAsymmetricEncryptionKey(rsaPublicKey, oversizedData.length));
+        assertTrue(exception.getMessage().contains("Data too large for RSA key"));
+    }
+
+    @Test
+    void testValidateAsymmetricEncryptionKeyWithDSAKey() throws GeneralSecurityException {
+        KeyPair dsaKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.DSA, 2048);
+        PublicKey dsaPublicKey = dsaKeyPair.getPublic();
+
+        byte[] validData = new byte[190]; // Arbitrary size for testing
+
+        InvalidKeyException exception = assertThrows(InvalidKeyException.class, () ->
+                CryptUtil.validateAsymmetricEncryptionKey(dsaPublicKey, validData.length));
+        assertTrue(exception.getMessage().contains("DSA keys are for signatures only, not encryption"));
+    }
+
+    @Test
+    void testValidateAsymmetricEncryptionKeyWithInvalidKey() {
+        PublicKey invalidKey = new PublicKey() {
+            @Override
+            public String getAlgorithm() {
+                return "INVALID";
+            }
+
+            @Override
+            public String getFormat() {
+                return "X.509";
+            }
+
+            @Override
+            public byte[] getEncoded() {
+                return new byte[0];
+            }
+        };
+
+        byte[] validData = new byte[190]; // Arbitrary size for testing
+
+        assertThrows(InvalidKeyException.class, () ->
+                CryptUtil.validateAsymmetricEncryptionKey(invalidKey, validData.length));
+    }
 }

@@ -30,7 +30,7 @@ public final class KeyStoreUtil {
 
     static {
         // make sure BouncyCastle is loaded
-        BouncyCastleX509CertificateBuilder.ensureProvider();
+        BouncyCastle.ensureAvailable();
     }
 
     /**

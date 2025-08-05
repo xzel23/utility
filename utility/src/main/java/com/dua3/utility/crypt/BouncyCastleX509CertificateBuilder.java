@@ -1,8 +1,6 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.lang.LangUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -19,19 +17,16 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -41,26 +36,6 @@ import java.util.Optional;
  * the subject and issuer, validity period, signature algorithm, and certificate chain.
  */
 final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder {
-    private static final Logger LOG = LogManager.getLogger(BouncyCastleX509CertificateBuilder.class);
-
-    private static final class ProviderHolder {
-        // Register BouncyCastle provider if not already registered
-        static {
-            if (java.security.Security.getProvider("BC") == null) {
-                try {
-                    Class<?> cls = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
-                    java.security.Security.addProvider(((org.bouncycastle.jce.provider.BouncyCastleProvider) cls.getConstructor().newInstance()));
-                    LOG.info("BouncyCastle provider registered");
-                } catch (ClassNotFoundException e) {
-                    LOG.warn("BouncyCastle provider not found on classpath");
-                } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                    LOG.warn("BouncyCastle provider could not be registered", e);
-                }
-            }
-        }
-
-        private static final @Nullable Provider PROVIDER = Security.getProvider("BC");
-    }
 
     private final boolean enableCA;
     private @Nullable String subjectDn;
@@ -82,7 +57,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
      *         {@code Optional}.
      */
     public static Optional<X509CertificateBuilder> create(boolean enableCA) {
-        return ProviderHolder.PROVIDER == null ? Optional.empty() : Optional.of(new BouncyCastleX509CertificateBuilder(enableCA));
+        return !BouncyCastle.isAvailable() ? Optional.empty() : Optional.of(new BouncyCastleX509CertificateBuilder(enableCA));
     }
 
     /**
@@ -137,7 +112,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
             issuerDn = subjectDn;
         }
 
-        Provider provider = ensureProvider();
+        Provider provider = BouncyCastle.ensureProvider();
 
         Instant now = Instant.now();
         Date notBefore = Date.from(now);
@@ -198,17 +173,5 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
         } catch (OperatorCreationException | CertIOException e) {
             throw new CertificateException("Failed to create certificate", e);
         }
-    }
-
-    /**
-     * Ensures that the BouncyCastle provider is available in the security configuration.
-     * This method retrieves the provider instance associated with the "BC" (BouncyCastle) identifier.
-     * If the provider is not registered, it throws a {@code NullPointerException}.
-     *
-     * @return the {@code Provider} instance for BouncyCastle.
-     * @throws NullPointerException if the BouncyCastle provider is not available.
-     */
-    public static Provider ensureProvider() {
-        return Objects.requireNonNull(ProviderHolder.PROVIDER, "No X509Provider");
     }
 }

@@ -1,6 +1,9 @@
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
+import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
+import org.bouncycastle.crypto.params.Argon2Parameters;
 
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -13,11 +16,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Optional;
 
@@ -28,6 +33,8 @@ public final class CryptUtil {
 
     private static final SymmetricAlgorithm SYMMETRIC_ALGORITHM_DEFAULT = SymmetricAlgorithm.AES;
     private static final int GCM_TAG_LENGTH = 128;
+    public static final int ARGON2_MEMORY_MB = 64;
+    public static final int ARGON2_ITERATIONS = 5;
 
     /**
      * Utility class private constructor.
@@ -70,12 +77,19 @@ public final class CryptUtil {
      * @throws IllegalBlockSizeException if the data is too large for the key/algorithm
      */
     public static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
+        try {
+            AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(key.getAlgorithm());
+            if (!algorithm.isEncryptionSupported()) {
+                throw new InvalidKeyException(key.getAlgorithm() + " keys are for signatures only, not encryption");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new InvalidKeyException("Unsupported asymmetric algorithm: " + key.getAlgorithm(), e);
+        }
+
         switch (key) {
             case RSAPublicKey rsaKey -> validateRSAEncryptionKey(rsaKey, dataLength);
             default -> {
-                if (key.getAlgorithm().equalsIgnoreCase("DSA")) {
-                    throw new InvalidKeyException("DSA keys are for signatures only, not encryption");
-                }
+                // For other supported algorithms like EC, no additional validation needed
             }
         }
     }
@@ -106,7 +120,7 @@ public final class CryptUtil {
 
         if (dataLength > maxDataSize) {
             throw new IllegalBlockSizeException(
-                    String.format("Data too large for RSA key. Max size: %d bytes, actual: %d bytes",
+                    java.lang.String.format("Data too large for RSA key. Max size: %d bytes, actual: %d bytes",
                             maxDataSize, dataLength));
         }
     }
@@ -201,7 +215,7 @@ public final class CryptUtil {
                 return cipher.doFinal(data);
             }
         } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != com.dua3.utility.crypt.InputBufferHandling.PRESERVE) {
                 Arrays.fill(data, (byte) 0);
             }
         }
@@ -295,7 +309,7 @@ public final class CryptUtil {
 
             return buffer.array();
         } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != com.dua3.utility.crypt.InputBufferHandling.PRESERVE) {
                 Arrays.fill(data, (byte) 0);
             }
         }
@@ -355,6 +369,244 @@ public final class CryptUtil {
         byte[] hmacBytes = hmacSha256.doFinal(normalizedEmail.getBytes(StandardCharsets.UTF_8));
 
         return HexFormat.of().formatHex(hmacBytes);
+    }
+
+    /**
+     * Derives a 256-bit hash using the Argon2id algorithm based on the provided input, salt,
+     * and secret key parameters.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input the input data to be hashed
+     * @param salt the cryptographic salt to use for the hashing process; must be 16 bytes
+     * @param secretKey the secret key incorporated into the hash generation
+     * @return a byte array containing the 256-bit Argon2id hash
+     * @throws IllegalArgumentException if the provided salt is not 16 bytes long
+     */
+    public static byte[] getArgon2idBytes(byte[] input, byte[] salt, SecretKey secretKey) {
+        return getArgon2idBytes(input, salt, secretKey.getEncoded());
+    }
+
+    /**
+     * Generates a derived key using the Argon2id hashing algorithm.
+     * This method combines the provided input, salt, and pepper to produce a secure byte array.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input The input byte array to be hashed.
+     * @param salt The salt byte array to be used in the hashing process for added security.
+     * @param pepper A string value used as an additional secret to strengthen the hash.
+     * @return A byte array representing the securely hashed result using the Argon2id algorithm.
+     */
+    public static byte[] getArgon2idBytes(byte[] input, byte[] salt, String pepper) {
+        return getArgon2idBytes(input, salt, pepper.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Generates a 256-bit Argon2id hash based on the provided input, salt, and secret.
+     * The salt must be exactly 16 bytes in length; otherwise, an exception is thrown.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input The input byte array to be hashed. Cannot be null.
+     * @param salt The salt used in the hashing process. Must be exactly 16 bytes in length.
+     * @param secret An optional secret used as additional input for the hash. Can be null.
+     * @return A byte array representing the 256-bit Argon2id hash of the input.
+     * @throws IllegalArgumentException If the salt is not 16 bytes in length.
+     */
+    public static byte[] getArgon2idBytes(byte[] input, byte[] salt, byte[] secret) {
+        LangUtil.checkArg(salt.length == 16, "salt must be 16 bytes");
+
+        BouncyCastle.ensureAvailable();
+
+        Argon2Parameters.Builder builder = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
+                .withVersion(Argon2Parameters.ARGON2_VERSION_13)
+                .withIterations(ARGON2_ITERATIONS)
+                .withMemoryAsKB(ARGON2_MEMORY_MB * 1024) // 64 MB
+                .withParallelism(1)
+                .withSalt(salt)
+                .withSecret(secret);
+
+        Argon2Parameters params = builder.build();
+
+        Argon2BytesGenerator generator = new Argon2BytesGenerator();
+        generator.init(params);
+
+        byte[] hash = new byte[32]; // 256-bit output
+        generator.generateBytes(input, hash);
+
+        return hash;
+    }
+
+    /**
+     * Returns a string containing the Argon2id hash and the associated salt, encoded in Base64 format.
+     * The hash is computed using the provided input data and secret key, with a randomly generated salt.
+     * The salt and hash are concatenated with a "$" delimiter.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input the input data to be hashed
+     * @param secretKey the secret key incorporated into the Argon2id hash generation
+     * @return a Base64-encoded string containing the salt and the Argon2id hash, separated by "$"
+     */
+    public static String getArgon2id(byte[] input, SecretKey secretKey) {
+        byte[] salt = RandomUtil.generateRandomBytes(16);
+        byte[] hash = getArgon2idBytes(input, salt, secretKey);
+        return Base64.getEncoder().encodeToString(salt) + "$" +
+                Base64.getEncoder().encodeToString(hash);
+    }
+
+    /**
+     * Generates an Argon2id hash from the given input using a random salt and the provided pepper.
+     * The resulting hash includes the Base64-encoded salt and hash separated by a "$" symbol.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input The input byte array to be hashed.
+     * @param pepper A string used as an additional security parameter in the hash computation.
+     * @return A string containing the Base64-encoded salt and hash, separated by a "$".
+     */
+    public static String getArgon2id(byte[] input, String pepper) {
+        byte[] salt = RandomUtil.generateRandomBytes(16);
+        byte[] hash = getArgon2idBytes(input, salt, pepper);
+        return Base64.getEncoder().encodeToString(salt) + "$" +
+                Base64.getEncoder().encodeToString(hash);
+    }
+
+    /**
+     * Generates an Argon2id hash using the provided input and secret key.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input      the input string to be hashed
+     * @param secretKey  the secret key used in the hashing process
+     * @return           the generated Argon2id hash as a string
+     */
+    public static String getArgon2id(String input, SecretKey secretKey) {
+        return getArgon2id(input.getBytes(StandardCharsets.UTF_8), secretKey);
+    }
+
+    /**
+     * Generates an Argon2id hash of the given input string using the provided pepper.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input the input string to be hashed
+     * @param pepper the pepper value to be used alongside the input for hashing
+     * @return the resulting Argon2id hash as a string
+     */
+    public static String getArgon2id(String input, String pepper) {
+        return getArgon2id(input.getBytes(StandardCharsets.UTF_8), pepper);
+    }
+
+    /**
+     * Verifies if the input data, when combined with the provided secret key and salt,
+     * produces the same Argon2id hash as the one specified in the saltAndHash string.
+     * <p>
+     * The salt and the expected hash are extracted from the saltAndHash parameter, where
+     * they are separated by the '$' delimiter. The method computes the actual Argon2id hash
+     * using the provided input data, salt, and secret key, and compares it with the expected hash.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input the input data to be hashed
+     * @param secretKey the secret key used in the Argon2id hashing algorithm
+     * @param saltAndHash a string containing the base64-encoded salt and hash, separated by '$'
+     * @return true if the computed hash matches the expected hash stored in saltAndHash; false otherwise
+     * @throws IllegalArgumentException if saltAndHash has an invalid format
+     */
+    public static boolean verifyArgon2id(byte[] input, SecretKey secretKey, String saltAndHash) {
+        return verifyArgon2id(input, secretKey.getEncoded(), saltAndHash);
+    }
+
+    /**
+     * Verifies the provided input against a given Argon2id hash and salt combination.
+     * This method compares the actual Argon2id hash derived from the input, salt, and secret
+     * with the expected hash to ensure integrity and authenticity.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input The input data to be verified.
+     * @param secret A secret key used in the Argon2id hash derivation process.
+     * @param saltAndHash A string containing the Base64-encoded salt and hash, delimited by a '$' character.
+     *                     The format of the string must be "salt$hash".
+     * @return true if the input data matches the expected hash when processed with the given salt and secret,
+     *         false otherwise.
+     * @throws IllegalArgumentException if the format of the saltAndHash string is invalid.
+     */
+    public static boolean verifyArgon2id(byte[] input, byte[] secret, String saltAndHash) {
+        int splitAt = saltAndHash.indexOf('$');
+        LangUtil.checkArg(splitAt > 0, "Invalid saltAndHash format");
+
+        String saltBase64 = saltAndHash.substring(0, splitAt);
+        String expectedHashBase64 = saltAndHash.substring(splitAt + 1);
+
+        byte[] salt = Base64.getDecoder().decode(saltBase64);
+        byte[] expectedHash = Base64.getDecoder().decode(expectedHashBase64);
+
+        byte[] actualHash = getArgon2idBytes(input, salt, secret);
+
+        return MessageDigest.isEqual(actualHash, expectedHash);
+    }
+
+    /**
+     * Verifies an Argon2id hash by comparing the provided input, pepper, and the
+     * combined salt and hash string.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input the raw input data to be verified, typically a password, as a byte array
+     * @param pepper the secret value added to the input for additional security, as a string
+     * @param saltAndHash the concatenation of the salt and hashed result to be used for verification, as a string
+     * @return true if the verification succeeds (i.e., the input matches the hash), false otherwise
+     */
+    public static boolean verifyArgon2id(byte[] input, String pepper, String saltAndHash) {
+        return verifyArgon2id(input, pepper.getBytes(StandardCharsets.UTF_8), saltAndHash);
+    }
+
+    /**
+     * Verifies whether the provided input matches the given Argon2id hash.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input the plain text input to verify
+     * @param secretKey the secret key used for the verification process
+     * @param saltAndHash the combined salt and hash string to validate against
+     * @return true if the input matches the provided hash, otherwise false
+     */
+    public static boolean verifyArgon2id(String input, SecretKey secretKey, String saltAndHash) {
+        return verifyArgon2id(input.getBytes(StandardCharsets.UTF_8), secretKey, saltAndHash);
+    }
+
+    /**
+     * Verifies if the input string, along with a secret, matches the provided Argon2id hash.
+     * This method uses the Argon2id password hashing algorithm for verification.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input the input string to be verified against the provided hash
+     * @param secret a byte array representing the additional secret used for hashing
+     * @param saltAndHash the salt and Argon2id hash to verify the input and secret against
+     * @return true if the input and secret match the provided Argon2id hash, false otherwise
+     */
+    public static boolean verifyArgon2id(String input, byte[] secret, String saltAndHash) {
+        return verifyArgon2id(input.getBytes(StandardCharsets.UTF_8), secret, saltAndHash);
+    }
+
+    /**
+     * Verifies if the provided input, combined with a pepper, matches the given Argon2id-derived hash.
+     * This method performs validation by combining the input and the pepper with the Argon2id parameters
+     * embedded in the provided salt-and-hash string and checks if the input corresponds to the same hash.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input the plain text input to verify
+     * @param pepper the additional secret value used to harden the hashing process
+     * @param saltAndHash the combined string of salt and the Argon2id hash to validate against
+     * @return true if the provided input and pepper produce the same hash as saltAndHash; false otherwise
+     */
+    public static boolean verifyArgon2id(String input, String pepper, String saltAndHash) {
+        return verifyArgon2id(input.getBytes(StandardCharsets.UTF_8), pepper, saltAndHash);
     }
 
 }

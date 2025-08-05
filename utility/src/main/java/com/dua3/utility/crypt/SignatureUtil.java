@@ -176,7 +176,7 @@ public final class SignatureUtil {
     public static CMSSignedData createSignedData(PrivateKey developerPrivateKey, X509Certificate certificate, byte[] certificateBytes) throws OperatorCreationException, CertificateEncodingException, CMSException {
         // Create a content signer using the private key
         ContentSigner contentSigner = new JcaContentSignerBuilder("SHA256withRSA")
-                .setProvider(BouncyCastleX509CertificateBuilder.ensureProvider())
+                .setProvider(BouncyCastle.ensureProvider())
                 .build(developerPrivateKey);
 
         // Create a CMSSignedDataGenerator
