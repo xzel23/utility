@@ -793,6 +793,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/options/Param.html#param-argName"><code>argName</code></a> record component.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#ARGON2_ITERATIONS" class="member-name-link">ARGON2_ITERATIONS</a> - Static variable in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#ARGON2_MEMORY_MB" class="member-name-link">ARGON2_MEMORY_MB</a> - Static variable in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/options/Param.html#argRepetitions()" class="member-name-link">argRepetitions()</a> - Method in record class com.dua3.utility.options.<a href="com/dua3/utility/options/Param.html" title="class in com.dua3.utility.options">Param</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/options/Param.html#param-argRepetitions"><code>argRepetitions</code></a> record component.</div>
@@ -1249,6 +1253,12 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/ui/Graphics.VAnchor.html#BOTTOM" class="member-name-link">BOTTOM</a> - Enum constant in enum class com.dua3.utility.ui.<a href="com/dua3/utility/ui/Graphics.VAnchor.html" title="enum class in com.dua3.utility.ui">Graphics.VAnchor</a></dt>
 <dd>
 <div class="block">Align the bottom of the element.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/BouncyCastle.html" class="type-name-link" title="class in com.dua3.utility.crypt">BouncyCastle</a> - Class in <a href="com/dua3/utility/crypt/package-summary.html">com.dua3.utility.crypt</a></dt>
+<dd>
+<div class="block">The <code>BouncyCastleInitializer</code> class provides functionality to ensure
+ that the BouncyCastle security provider is registered and available in 
+ the Java security environment.</div>
 </dd>
 <dt><a href="com/dua3/utility/data/Color.html#brighter()" class="member-name-link">brighter()</a> - Method in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
@@ -3598,6 +3608,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get elapsed time in current split as a string.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#emailHash(java.lang.CharSequence,java.lang.String)" class="member-name-link">emailHash(CharSequence, String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Generates a hash for the given email representing the Argon2id hash of the normalized email,
+ using a salt derived from HMAC(email, pepper), and the pepper as an Argon2id secret.</div>
+</dd>
 <dt><a href="com/dua3/utility/options/Arguments.html#empty()" class="member-name-link">empty()</a> - Static method in class com.dua3.utility.options.<a href="com/dua3/utility/options/Arguments.html" title="class in com.dua3.utility.options">Arguments</a></dt>
 <dd>
 <div class="block">Create an empty instance.</div>
@@ -3728,9 +3743,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">End the current row.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/BouncyCastle.html#ensureAvailable()" class="member-name-link">ensureAvailable()</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/BouncyCastle.html" title="class in com.dua3.utility.crypt">BouncyCastle</a></dt>
+<dd>
+<div class="block">Ensures that the BouncyCastle security provider is properly initialized and available.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/RichTextBuilder.html#ensureCapacity(int)" class="member-name-link">ensureCapacity(int)</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichTextBuilder.html" title="class in com.dua3.utility.text">RichTextBuilder</a></dt>
 <dd>
 <div class="block">Ensures that the capacity is at least equal to the specified minimum.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/BouncyCastle.html#ensureProvider()" class="member-name-link">ensureProvider()</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/BouncyCastle.html" title="class in com.dua3.utility.crypt">BouncyCastle</a></dt>
+<dd>
+<div class="block">Retrieves the BouncyCastle security provider instance.</div>
 </dd>
 <dt><a href="com/dua3/utility/data/Histogram.html#entries()" class="member-name-link">entries()</a> - Method in class com.dua3.utility.data.<a href="com/dua3/utility/data/Histogram.html" title="class in com.dua3.utility.data">Histogram</a></dt>
 <dd>
@@ -5088,6 +5111,35 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/FxStandardImage.html#getArgb()" class="member-name-link">getArgb()</a> - Method in record class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxStandardImage.html" title="class in com.dua3.utility.fx">FxStandardImage</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#getArgon2id(byte%5B%5D,java.lang.String)" class="member-name-link">getArgon2id(byte[], String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Generates an Argon2id hash from the given input using a random salt and the provided pepper.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#getArgon2id(byte%5B%5D,javax.crypto.SecretKey)" class="member-name-link">getArgon2id(byte[], SecretKey)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Returns a string containing the Argon2id hash and the associated salt, encoded in Base64 format.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#getArgon2id(java.lang.String,java.lang.String)" class="member-name-link">getArgon2id(String, String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Generates an Argon2id hash of the given input string using the provided pepper.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#getArgon2id(java.lang.String,javax.crypto.SecretKey)" class="member-name-link">getArgon2id(String, SecretKey)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Generates an Argon2id hash using the provided input and secret key.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#getArgon2idBytes(byte%5B%5D,byte%5B%5D,byte%5B%5D)" class="member-name-link">getArgon2idBytes(byte[], byte[], byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Generates a 256-bit Argon2id hash based on the provided input, salt, and secret.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#getArgon2idBytes(byte%5B%5D,byte%5B%5D,java.lang.String)" class="member-name-link">getArgon2idBytes(byte[], byte[], String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Generates a derived key using the Argon2id hashing algorithm.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#getArgon2idBytes(byte%5B%5D,byte%5B%5D,javax.crypto.SecretKey)" class="member-name-link">getArgon2idBytes(byte[], byte[], SecretKey)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Derives a 256-bit hash using the Argon2id algorithm based on the provided input, salt,
+ and secret key parameters.</div>
+</dd>
 <dt><a href="com/dua3/utility/swing/ArgumentsDialog.ArgumentsPanel.html#getArguments()" class="member-name-link">getArguments()</a> - Method in class com.dua3.utility.swing.<a href="com/dua3/utility/swing/ArgumentsDialog.ArgumentsPanel.html" title="class in com.dua3.utility.swing">ArgumentsDialog.ArgumentsPanel</a></dt>
 <dd>
 <div class="block">Returns the arguments generated based on the input options and their corresponding OptionInput components.</div>
@@ -5857,6 +5909,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/xml/SimpleNamespaceContext.html#getPrefixes(java.lang.String)" class="member-name-link">getPrefixes(String)</a> - Method in class com.dua3.utility.xml.<a href="com/dua3/utility/xml/SimpleNamespaceContext.html" title="class in com.dua3.utility.xml">SimpleNamespaceContext</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/BouncyCastle.html#getProvider()" class="member-name-link">getProvider()</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/BouncyCastle.html" title="class in com.dua3.utility.crypt">BouncyCastle</a></dt>
+<dd>
+<div class="block">Retrieves the BouncyCastle security provider instance, if available.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/RandomUtil.html#getRandom()" class="member-name-link">getRandom()</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/RandomUtil.html" title="class in com.dua3.utility.crypt">RandomUtil</a></dt>
 <dd>
 <div class="block">Get the secure random instance.</div>
@@ -6713,9 +6769,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Draw a horizontal line.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/CryptUtil.html#hmacSha256(java.lang.String,javax.crypto.SecretKey)" class="member-name-link">hmacSha256(String, SecretKey)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#hmacSha256(java.lang.CharSequence,javax.crypto.SecretKey)" class="member-name-link">hmacSha256(CharSequence, SecretKey)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
 <dd>
-<div class="block">Computes an HMAC using the SHA-256 algorithm on the normalized form of the provided email.</div>
+<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided text.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/SoftResource.html#hold()" class="member-name-link">hold()</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/SoftResource.html" title="class in com.dua3.utility.io">SoftResource</a></dt>
 <dd>
@@ -7329,6 +7385,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/crypt/SymmetricAlgorithm.html#isAuthenticated()" class="member-name-link">isAuthenticated()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a></dt>
 <dd>
 <div class="block">Checks if this algorithm provides authenticated encryption.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/BouncyCastle.html#isAvailable()" class="member-name-link">isAvailable()</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/BouncyCastle.html" title="class in com.dua3.utility.crypt">BouncyCastle</a></dt>
+<dd>
+<div class="block">Checks if the BouncyCastle security provider is available in the system.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/LangUtil.html#isBetween(double,double,double)" class="member-name-link">isBetween(double, double, double)</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
 <dd>
@@ -9219,7 +9279,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Normalizes the namespaces of the given documents by creating a consistent namespace mapping.</div>
 </dd>
-<dt><a href="com/dua3/utility/text/TextUtil.html#normalizeEmail(java.lang.String)" class="member-name-link">normalizeEmail(String)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dt><a href="com/dua3/utility/text/TextUtil.html#normalizeEmail(java.lang.CharSequence)" class="member-name-link">normalizeEmail(CharSequence)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
 <dd>
 <div class="block">Normalizes an email address by performing the following transformations:
  1.</div>
@@ -11223,6 +11283,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/lang/Stopwatch.Format.html#SECONDS_MILLIS" class="member-name-link">SECONDS_MILLIS</a> - Enum constant in enum class com.dua3.utility.lang.<a href="com/dua3/utility/lang/Stopwatch.Format.html" title="enum class in com.dua3.utility.lang">Stopwatch.Format</a></dt>
 <dd>
 <div class="block">Seconds formatted as floating point value.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#secureHash(byte%5B%5D,java.lang.String)" class="member-name-link">secureHash(byte[], String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Generates a secure hash for the given input using a combination of HMAC-SHA256 and Argon2id.</div>
 </dd>
 <dt><a href="com/dua3/utility/math/geometry/Segment2f.html" class="type-name-link" title="class in com.dua3.utility.math.geometry">Segment2f</a> - Class in <a href="com/dua3/utility/math/geometry/package-summary.html">com.dua3.utility.math.geometry</a></dt>
 <dd>
@@ -14313,6 +14377,32 @@ the order they are declared.</div>
 <dt><a href="com/dua3/utility/crypt/SignatureUtil.html#verify(java.security.PublicKey,java.lang.CharSequence,byte%5B%5D)" class="member-name-link">verify(PublicKey, CharSequence, byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/SignatureUtil.html" title="class in com.dua3.utility.crypt">SignatureUtil</a></dt>
 <dd>
 <div class="block">Verify a digital signature for text.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#verifyArgon2id(byte%5B%5D,byte%5B%5D,java.lang.String)" class="member-name-link">verifyArgon2id(byte[], byte[], String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Verifies the provided input against a given Argon2id hash and salt combination.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#verifyArgon2id(byte%5B%5D,java.lang.String,java.lang.String)" class="member-name-link">verifyArgon2id(byte[], String, String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Verifies an Argon2id hash by comparing the provided input, pepper, and the
+ combined salt and hash string.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#verifyArgon2id(byte%5B%5D,javax.crypto.SecretKey,java.lang.String)" class="member-name-link">verifyArgon2id(byte[], SecretKey, String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Verifies if the input data, when combined with the provided secret key and salt,
+ produces the same Argon2id hash as the one specified in the saltAndHash string.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#verifyArgon2id(java.lang.String,byte%5B%5D,java.lang.String)" class="member-name-link">verifyArgon2id(String, byte[], String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Verifies if the input string, along with a secret, matches the provided Argon2id hash.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#verifyArgon2id(java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">verifyArgon2id(String, String, String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Verifies if the provided input, combined with a pepper, matches the given Argon2id-derived hash.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#verifyArgon2id(java.lang.String,javax.crypto.SecretKey,java.lang.String)" class="member-name-link">verifyArgon2id(String, SecretKey, String)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Verifies whether the provided input matches the given Argon2id hash.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/CertificateUtil.html#verifyCertificateChain(T...)" class="member-name-link">verifyCertificateChain(T...)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
 <dd>
