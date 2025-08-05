@@ -4,6 +4,7 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
+import org.jspecify.annotations.NonNull;
 
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -11,6 +12,7 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -352,23 +354,70 @@ public final class CryptUtil {
     }
 
     /**
-     * Computes an HMAC using the SHA-256 algorithm on the normalized form of the provided email.
+     * Computes an HMAC using the SHA-256 algorithm of the provided text.
+     * <p>
+     * This method normalizes the text before creating the HMAC like this:
+     * - unicode normalization
+     * - conversion of line ends to '\n'
+     * <p>
+     * It does not:
+     * - trim the text
+     * - convert it to lowercase
      *
-     * @param email the email address to be processed; it will be normalized before computing the HMAC
+     * @param s the text
      * @param key the secret key to use for HMAC generation
      * @return the computed HMAC as a hexadecimal string
      * @throws NoSuchAlgorithmException if the SHA-256 algorithm is not supported
      * @throws InvalidKeyException if the provided secret key is invalid
      */
-    public static String hmacSha256(String email, SecretKey key) throws NoSuchAlgorithmException, InvalidKeyException {
-        String normalizedEmail = TextUtil.normalizeEmail(email);
+    public static String hmacSha256(CharSequence s, SecretKey key) throws NoSuchAlgorithmException, InvalidKeyException {
+        String normalizedText = TextUtil.normalize(s);
 
         Mac hmacSha256 = Mac.getInstance("HmacSHA256");
         hmacSha256.init(key);
 
-        byte[] hmacBytes = hmacSha256.doFinal(normalizedEmail.getBytes(StandardCharsets.UTF_8));
+        byte[] hmacBytes = hmacSha256.doFinal(normalizedText.getBytes(StandardCharsets.UTF_8));
 
         return HexFormat.of().formatHex(hmacBytes);
+    }
+
+    /**
+     * Generates a hash for the given email representing the Argon2id hash of the normalized email,
+     * using a salt derived from HMAC(email, pepper), and the pepper as an Argon2id secret.
+     *
+     * @param email the email address to be hashed; it will be normalized before the hashing process
+     * @param pepper the secret key used for the HMAC generation; it adds an extra layer of security
+     * @return a byte array representing the Argon2id hash of the normalized email combined with the HMAC
+     * @throws IllegalStateException If the hash could not be generated.
+     */
+    public static byte[] emailHash(CharSequence email, String pepper) throws IllegalStateException {
+        return secureHash(TextUtil.normalizeEmail(email).getBytes(StandardCharsets.UTF_8), pepper);
+    }
+
+    /**
+     * Generates a secure hash for the given input using a combination of HMAC-SHA256 and Argon2id.
+     * A pepper value is used to enhance the security.
+     *
+     * @param input The input data to be hashed, represented as a byte array.
+     * @param pepper A string value used as a cryptographic key for generating the HMAC-SHA256 hash.
+     *               This enhances the overall security of the hashing process.
+     * @return A byte array representing the resulting hash generated after applying Argon2id to the
+     *         input and the HMAC-derived salt.
+     * @throws IllegalStateException If the hash could not be generated.
+     */
+    public static byte [] secureHash(byte[] input, String pepper) throws IllegalStateException {
+        LangUtil.checkArg(pepper.length() > 16, "pepper must have at least 16 characters");
+        try {
+            // compute a HMAC as salt
+            Mac hmacSha256 = Mac.getInstance("HmacSHA256");
+            hmacSha256.init(new SecretKeySpec(getPepperBytes(pepper), "HmacSHA256"));
+            byte[] hmacBytes = hmacSha256.doFinal(input);
+
+            // return the argon2 ID
+            return getArgon2idBytes(input, hmacBytes, pepper);
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new IllegalStateException("Failed to generate secure hash", e);
+        }
     }
 
     /**
@@ -399,7 +448,19 @@ public final class CryptUtil {
      * @return A byte array representing the securely hashed result using the Argon2id algorithm.
      */
     public static byte[] getArgon2idBytes(byte[] input, byte[] salt, String pepper) {
-        return getArgon2idBytes(input, salt, pepper.getBytes(StandardCharsets.UTF_8));
+        return getArgon2idBytes(input, salt, getPepperBytes(pepper));
+    }
+
+    /**
+     * Converts the provided pepper string into a byte array using UTF-8 encoding.
+     * The input pepper string must have a minimum length of 16 characters; otherwise, an exception is thrown.
+     *
+     * @param pepper the pepper string to be converted to a byte array; must be at least 16 characters long
+     * @return a non-null byte array representation of the input pepper string in UTF-8 encoding
+     */
+    private static byte @NonNull [] getPepperBytes(String pepper) {
+        LangUtil.checkArg(pepper.length() >= 16, "pepper must have at least 16 characters");
+        return pepper.getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -415,7 +476,7 @@ public final class CryptUtil {
      * @throws IllegalArgumentException If the salt is not 16 bytes in length.
      */
     public static byte[] getArgon2idBytes(byte[] input, byte[] salt, byte[] secret) {
-        LangUtil.checkArg(salt.length == 16, "salt must be 16 bytes");
+        LangUtil.checkArg(salt.length >= 16, "salt must be at least 16 bytes");
 
         BouncyCastle.ensureAvailable();
 
@@ -561,7 +622,7 @@ public final class CryptUtil {
      * @return true if the verification succeeds (i.e., the input matches the hash), false otherwise
      */
     public static boolean verifyArgon2id(byte[] input, String pepper, String saltAndHash) {
-        return verifyArgon2id(input, pepper.getBytes(StandardCharsets.UTF_8), saltAndHash);
+        return verifyArgon2id(input, getPepperBytes(pepper), saltAndHash);
     }
 
     /**

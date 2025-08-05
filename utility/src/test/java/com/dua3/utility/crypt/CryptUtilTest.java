@@ -49,7 +49,7 @@ class CryptUtilTest {
 
     // Test data for Argon2id tests
     private static final String TEST_PASSWORD = "test-password";
-    private static final String TEST_PEPPER = "test-pepper";
+    private static final String TEST_PEPPER = "khcb6fbdvdqtd8923rbvjhcv96c";
     // Use a fixed salt for testing instead of generating a random one
     private static final byte[] TEST_SALT = new byte[]{
             0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
@@ -399,34 +399,26 @@ class CryptUtilTest {
     }
 
     @Test
-    void testHmacSha256ValidData() throws Exception {
-        SecretKeySpec keySpec = new SecretKeySpec("testKey".getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+    void testEmailHashValidData() {
+        byte[] hash = CryptUtil.emailHash("User@Test.com", TEST_PEPPER);
 
-        String hmac = CryptUtil.hmacSha256("User@Test.com", keySpec);
+        assertNotNull(hash);
+        assertEquals(32, hash.length);
 
-        assertNotNull(hmac);
-        assertEquals(64, hmac.length());
-        assertTrue(hmac.matches("^[a-fA-F0-9]{64}$"), "HMAC should be in hexadecimal format");
-
-        String hmac2 = CryptUtil.hmacSha256("user@test.com", keySpec);
-        assertEquals(hmac, hmac2, "HMAC should be the same for equivalent input data");
+        byte[] hash2 = CryptUtil.emailHash("user@test.com", TEST_PEPPER);
+        assertArrayEquals(hash, hash2, "Hash should be the same for equivalent input data");
     }
 
     @Test
-    void testHmacSha256InvalidKey() {
-        Exception exception = assertThrows(Exception.class, () -> {
-            SecretKeySpec invalidKeySpec = new SecretKeySpec(new byte[0], "HmacSHA256");
-            CryptUtil.hmacSha256("test@example.com", invalidKeySpec);
+    void testEmailHashInvalidPepper() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            CryptUtil.emailHash("test@example.com", "123");
         });
-
-        assertTrue(exception instanceof IllegalArgumentException, "Expected an InvalidKeyException to be thrown");
     }
 
     @Test
-    void testHmacSha256EmptyEmail() {
-        SecretKeySpec keySpec = new SecretKeySpec("testKey".getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-
-        assertThrows(IllegalArgumentException.class, () -> CryptUtil.hmacSha256("", keySpec));
+    void testEmailHashEmptyEmail() {
+        assertThrows(IllegalArgumentException.class, () -> CryptUtil.emailHash("", TEST_PEPPER));
     }
 
     @Test
