@@ -7,6 +7,8 @@ package com.dua3.utility.crypt;
 
 import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -490,6 +492,7 @@ class CryptUtilTest {
     // Argon2id Tests
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testGetArgon2idBytesWithSecretKey() {
         // Create test data
         byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
@@ -513,6 +516,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testGetArgon2idBytesWithPepper() {
         // Create test data
         byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
@@ -535,6 +539,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testGetArgon2idBytesWithByteArraySecret() {
         // Create test data
         byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
@@ -555,6 +560,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testGetArgon2idWithByteArrayAndSecretKey() {
         // Create test data
         byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
@@ -582,6 +588,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testGetArgon2idWithByteArrayAndPepper() {
         // Create test data
         byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
@@ -602,6 +609,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testGetArgon2idWithStringAndSecretKey() {
         // Create test data
         SecretKey secretKey = new SecretKeySpec(RandomUtil.generateRandomBytes(32), "AES");
@@ -620,6 +628,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testGetArgon2idWithStringAndPepper() {
         // Test valid case
         String result = CryptUtil.getArgon2id(TEST_PASSWORD, TEST_PEPPER);
@@ -635,6 +644,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testVerifyArgon2idWithByteArrayAndSecretKey() {
         // Create test data
         byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
@@ -660,6 +670,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testVerifyArgon2idWithByteArrayAndByteArraySecret() {
         // Create test data
         byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
@@ -682,6 +693,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testVerifyArgon2idWithByteArrayAndPepper() {
         // Create test data
         byte[] input = TEST_PASSWORD.getBytes(StandardCharsets.UTF_8);
@@ -700,6 +712,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testVerifyArgon2idWithStringAndSecretKey() {
         // Create test data
         SecretKey secretKey = new SecretKeySpec(RandomUtil.generateRandomBytes(32), "AES");
@@ -718,6 +731,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testVerifyArgon2idWithStringAndByteArraySecret() {
         // Create test data
         byte[] secret = RandomUtil.generateRandomBytes(32);
@@ -739,6 +753,7 @@ class CryptUtilTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     void testVerifyArgon2idWithStringAndPepper() {
         // Generate hash
         String saltAndHash = CryptUtil.getArgon2id(TEST_PASSWORD, TEST_PEPPER);
