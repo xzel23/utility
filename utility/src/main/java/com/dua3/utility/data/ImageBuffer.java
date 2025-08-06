@@ -12,9 +12,9 @@ import java.util.Arrays;
  * <p>
  * Note that premultiplied alpha is used throughout the library.
  *
- * @param data      the pixel data to use; no copy is created, the class manipulates the data directly
- * @param width     the width in pixels
- * @param height    the height in pixels
+ * @param data   the pixel data to use; no copy is created, the class manipulates the data directly
+ * @param width  the width in pixels
+ * @param height the height in pixels
  */
 public record ImageBuffer(int[] data, int width, int height) implements Image {
 
@@ -23,8 +23,34 @@ public record ImageBuffer(int[] data, int width, int height) implements Image {
         return data;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ImageBuffer that = (ImageBuffer) o;
+
+        if (width != that.width) return false;
+        if (height != that.height) return false;
+        return Arrays.equals(data, that.data);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(data);
+        result = 31 * result + width;
+        result = 17 * result + height;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ImageBuffer[width=" + width + ", height=" + height + ", data=" + Arrays.toString(data) + "]";
+    }
+
     /**
      * Get the color at the given position.
+     *
      * @param x the x coordinate
      * @param y the y coordinate
      * @return the color as ARGB value
@@ -36,8 +62,9 @@ public record ImageBuffer(int[] data, int width, int height) implements Image {
 
     /**
      * Set the color at the given position.
-     * @param x the x coordinate
-     * @param y the y coordinate
+     *
+     * @param x    the x coordinate
+     * @param y    the y coordinate
      * @param argb the color as ARGB value
      */
     public void set(int x, int y, int argb) {
@@ -47,9 +74,10 @@ public record ImageBuffer(int[] data, int width, int height) implements Image {
 
     /**
      * Draw a horizontal line.
-     * @param x the x coordinate of the leftmost pixel
-     * @param y the y coordinate
-     * @param w the width of the line
+     *
+     * @param x    the x coordinate of the leftmost pixel
+     * @param y    the y coordinate
+     * @param w    the width of the line
      * @param argb the color as ARGB value
      */
     public void hline(int x, int y, int w, int argb) {
@@ -59,9 +87,10 @@ public record ImageBuffer(int[] data, int width, int height) implements Image {
 
     /**
      * Draw a vertical line.
-     * @param x the x coordinate
-     * @param y the y coordinate of the topmost pixel
-     * @param h the height of the line
+     *
+     * @param x    the x coordinate
+     * @param y    the y coordinate of the topmost pixel
+     * @param h    the height of the line
      * @param argb the color as ARGB value
      */
     public void vline(int x, int y, int h, int argb) {
@@ -73,10 +102,11 @@ public record ImageBuffer(int[] data, int width, int height) implements Image {
 
     /**
      * Fill the given rectangle with the given color.
-     * @param x the x coordinate of the left most pixel
-     * @param y the y coordinate of the topmost pixel
-     * @param w the height of the rectangle
-     * @param h the height of the rectangle
+     *
+     * @param x    the x coordinate of the left most pixel
+     * @param y    the y coordinate of the topmost pixel
+     * @param w    the height of the rectangle
+     * @param h    the height of the rectangle
      * @param argb the color as ARGB value
      */
     public void fill(int x, int y, int w, int h, int argb) {
