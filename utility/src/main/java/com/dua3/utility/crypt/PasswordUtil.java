@@ -110,6 +110,7 @@ public final class PasswordUtil {
             StrengthLevel strengthLevel,
             List<String> issues
     ) {
+        @SuppressWarnings("MissingJavadoc")
         public PasswordStrength {
             issues = List.copyOf(issues);
         }
@@ -224,7 +225,7 @@ public final class PasswordUtil {
         double entropy = 0.0;
         int length = password.length;
 
-        for (int frequency : frequencies.values()) {
+        for (Integer frequency : frequencies.values()) {
             double probability = (double) frequency / length;
             entropy -= probability * (Math.log(probability) / Math.log(2));
         }

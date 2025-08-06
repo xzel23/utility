@@ -13,8 +13,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PasswordUtilTest {
@@ -65,14 +67,7 @@ class PasswordUtilTest {
         int invalidLength = 7;
 
         // Verify that an IllegalArgumentException is thrown
-        try {
-            PasswordUtil.generatePassword(invalidLength);
-            // If we get here, the test should fail
-            assertTrue(false, "Should have thrown IllegalArgumentException for length < 8");
-        } catch (IllegalArgumentException e) {
-            // Expected exception
-            assertTrue(true);
-        }
+        assertThrows(IllegalArgumentException.class, () -> PasswordUtil.generatePassword(invalidLength));
     }
 
     /**
@@ -144,9 +139,10 @@ class PasswordUtilTest {
 
         // For weak passwords, verify that there are issues reported
         if (expectedLevel.getLevel() < PasswordUtil.StrengthLevel.STRONG.getLevel()) {
-            assertTrue(!strength.issues().isEmpty(),
-                    "Weak password '" + password + "' should have issues reported");
+            assertFalse(strength.issues().isEmpty(), "Weak password '" + password + "' should have issues reported");
         }
+
+        assertEquals(expectedSecure, strength.isSecure());
     }
 
     @Test
@@ -163,5 +159,34 @@ class PasswordUtilTest {
         double expectedEfficiency = (strength.shannonEntropy() / strength.theoreticalEntropy()) * 100;
         assertEquals(expectedEfficiency, strength.getEntropyEfficiency(), 0.001,
                 "Entropy efficiency calculation should match expected formula");
+    }
+
+    @ParameterizedTest
+    @MethodSource("passwordStrengthTestData")
+    void testPasswordStrengthToString(String password, PasswordUtil.StrengthLevel expectedLevel, boolean expectedSecure) {
+        // Skip empty password as it's a special case
+        if (password.isEmpty()) {
+            return;
+        }
+
+        // Evaluate the password strength
+        PasswordUtil.PasswordStrength strength = PasswordUtil.evaluatePasswordStrength(password.toCharArray());
+
+        // Verify that toString() returns a non-null, non-empty string
+        String toString = strength.toString();
+        assertNotNull(toString, "toString() should not return null");
+        assertNotEquals("", toString, "toString() should not return empty string");
+
+        // Verify that toString() contains all the expected components
+        assertTrue(toString.contains("Password Strength: " + expectedLevel),
+                "toString() should contain the strength level");
+        assertTrue(toString.contains("Shannon: " + String.format("%.1f", strength.shannonEntropy()) + " bits"),
+                "toString() should contain Shannon entropy");
+        assertTrue(toString.contains("Theoretical: " + String.format("%.1f", strength.theoreticalEntropy()) + " bits"),
+                "toString() should contain theoretical entropy");
+        assertTrue(toString.contains("Efficiency: " + String.format("%.1f", strength.getEntropyEfficiency()) + "%"),
+                "toString() should contain entropy efficiency");
+        assertTrue(toString.contains("Est. crack time: " + strength.getEstimatedCrackTime()),
+                "toString() should contain estimated crack time");
     }
 }
