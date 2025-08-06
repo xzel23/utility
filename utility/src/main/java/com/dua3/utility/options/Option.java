@@ -256,7 +256,7 @@ public class Option<T extends @Nullable Object> {
 
     /**
      * Retrieves the {@code Repetitions} instance associated with this {@code Option}.
-     *
+     * <p>
      * The {@code Repetitions} object specifies the minimum and maximum
      * number of times this option can be repeated when used.
      *
@@ -497,7 +497,7 @@ public class Option<T extends @Nullable Object> {
      *         and the first parameter of the object has allowed values; false otherwise.
      */
     public boolean hasAllowedValues() {
-        return minArgs() == 1 && maxArgs() == 1 && params().get(0).hasAllowedValues();
+        return minArgs() == 1 && maxArgs() == 1 && params().getFirst().hasAllowedValues();
     }
 
     /**

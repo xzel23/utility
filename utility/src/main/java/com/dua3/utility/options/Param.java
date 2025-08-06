@@ -694,7 +694,7 @@ public record Param<T>(
                 targetClass,
                 listConverter(elementConverter),
                 Collections.emptyList(),
-                v -> LangUtil.isBetween(((List<?>)v).size(), repetitions.min(), repetitions.max())
+                v -> LangUtil.isBetween(v.size(), repetitions.min(), repetitions.max())
                         ? Optional.empty()
                         : Optional.of("expected %d to %d arguments for option %s, got %d".formatted(repetitions.min(), repetitions.max(), displayName, v.size())),
                 repetitions

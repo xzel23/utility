@@ -596,7 +596,7 @@ public final class SwingUtil {
         private final Consumer<? super Collection<File>> action;
         private final Consumer<? super Exception> exceptionHandler;
 
-        public SwingDropFilesTarget(Predicate<? super Collection<File>> test, Consumer<? super Collection<File>> action, Consumer<? super Exception> exceptionHandler) throws HeadlessException {
+        SwingDropFilesTarget(Predicate<? super Collection<File>> test, Consumer<? super Collection<File>> action, Consumer<? super Exception> exceptionHandler) throws HeadlessException {
             this.test = test;
             this.action = action;
             this.exceptionHandler = exceptionHandler;
@@ -668,7 +668,7 @@ public final class SwingUtil {
         private final transient Consumer<? super String> action;
         private final transient Consumer<? super Exception> exceptionHandler;
 
-        public SwingDropTextTarget(Predicate<? super String> test, Consumer<? super String> action, Consumer<? super Exception> exceptionHandler) throws HeadlessException {
+        SwingDropTextTarget(Predicate<? super String> test, Consumer<? super String> action, Consumer<? super Exception> exceptionHandler) throws HeadlessException {
             this.test = test;
             this.action = action;
             this.exceptionHandler = exceptionHandler;

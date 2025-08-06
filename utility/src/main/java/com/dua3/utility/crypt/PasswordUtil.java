@@ -13,6 +13,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Utility class for password analysis and generation.
+ * <p>
+ * Provides a set of methods for evaluating password strength, calculating its characteristics,
+ * identifying potential weaknesses, and generating secure random passwords.
+ */
 public final class PasswordUtil {
 
     private static final List<String> COMMON_PATTERNS;
@@ -48,10 +54,30 @@ public final class PasswordUtil {
      * Represents the strength level of a password.
      */
     public enum StrengthLevel {
+        /**
+         * Represents a password strength level categorized as "Very Weak."
+         * <p>
+         * This is the lowest strength level for a password, often indicating
+         * minimal security or poor password practices.
+         */
         VERY_WEAK("Very Weak", 0),
+        /**
+         * Represents a password strength level classified as "Weak".
+         * <p>
+         * Indicates that the password has a low level of strength and is relatively easy to compromise.
+         */
         WEAK("Weak", 1),
+        /**
+         * Represents the moderate strength level of a password.
+         */
         MODERATE("Moderate", 2),
+        /**
+         * Represents a strong level of password strength.
+         */
         STRONG("Strong", 3),
+        /**
+         * Indicates the highest level of password strength, labeled as "Very Strong".
+         */
         VERY_STRONG("Very Strong", 4);
 
         private final String description;
@@ -116,7 +142,7 @@ public final class PasswordUtil {
         public String getEstimatedCrackTime() {
             // Assume attacker can try 10^12 combinations per second (modern hardware)
             double combinations = Math.pow(2, theoreticalEntropy);
-            double secondsToHalfCrack = combinations / (2 * 1e12); // Average time is half the keyspace
+            double secondsToHalfCrack = combinations / (2 * 1.0e12); // Average time is half the keyspace
 
             if (secondsToHalfCrack < 1) {
                 return "Less than 1 second";

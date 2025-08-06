@@ -505,7 +505,7 @@ public class SwingLogPane extends JPanel {
     private static class RowFilter extends javax.swing.RowFilter<AbstractTableModel, Integer> {
         private final LogLevel c;
 
-        public RowFilter(LogLevel c) {
+        RowFilter(LogLevel c) {
             this.c = c;
         }
 

@@ -34,8 +34,9 @@ public final class CryptUtil {
 
     private static final SymmetricAlgorithm SYMMETRIC_ALGORITHM_DEFAULT = SymmetricAlgorithm.AES;
     private static final int GCM_TAG_LENGTH = 128;
-    public static final int ARGON2_MEMORY_MB = 64;
-    public static final int ARGON2_ITERATIONS = 5;
+    private static final int ARGON2_MEMORY_MB = 64;
+    private static final int ARGON2_ITERATIONS = 5;
+    private static final byte[] ZERO_LENGTH_BYTE_ARRAY = {};
 
     /**
      * Utility class private constructor.
@@ -58,7 +59,7 @@ public final class CryptUtil {
      */
     private static String getAsymmetricTransformation(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         Optional<String> transformation = algorithm.getTransformation();
-        if (!transformation.isPresent()) {
+        if (transformation.isEmpty()) {
             throw new InvalidKeyException("Algorithm " + algorithm + " does not support direct encryption");
         }
         return transformation.get();
@@ -242,7 +243,7 @@ public final class CryptUtil {
         try {
             LangUtil.checkArg(password.length >= 8, "password must have at least 8 characters");
             byte[] salt = RandomUtil.generateRandomBytes(16);
-            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), new byte[]{}, InputBufferHandling.PRESERVE);
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
             byte[] encrypted = encryptSymmetric(SymmetricAlgorithm.AES, key, input, inputBufferHandling);
             return TextUtil.base64Encode(salt) + "$" + TextUtil.base64Encode(encrypted);
         } catch (GeneralSecurityException e) {
@@ -278,7 +279,7 @@ public final class CryptUtil {
             LangUtil.checkArg(splitIndex > 0, "Invalid input");
             byte[] salt = TextUtil.base64Decode(input.substring(0, splitIndex));
             byte[] encoded = TextUtil.base64Decode(input.substring(splitIndex + 1));
-            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), new byte[]{}, InputBufferHandling.PRESERVE);
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
             return decryptSymmetric(SymmetricAlgorithm.AES, key, encoded);
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Failed to decrypt", e);

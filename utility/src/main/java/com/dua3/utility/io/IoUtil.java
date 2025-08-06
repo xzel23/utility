@@ -842,7 +842,7 @@ public final class IoUtil {
     /**
      * Unzips the contents of a ZIP file to the specified destination directory.
      * If the entry is a file, it will be extracted. If the entry is a directory, the directory will be created.
-     * 
+     * <p>
      * This method uses default safety limits to protect against zip bombs and other malicious zip files.
      * The default limits are:
      * <ul>
@@ -850,7 +850,7 @@ public final class IoUtil {
      *   <li>Maximum total bytes: {@value #DEFAULT_MAX_BYTES}</li>
      *   <li>Maximum compression ratio: {@value #DEFAULT_MAX_COMPRESSION_RATIO}</li>
      * </ul>
-     * 
+     * <p>
      * The implementation enforces these limits during streaming, without buffering the entire file content
      * in memory. It also does not rely solely on the compressed size reported in the zip file, which can
      * be spoofed in malicious zip files.
@@ -869,14 +869,14 @@ public final class IoUtil {
     /**
      * Unzips the contents of a ZIP file to the specified destination directory with safety limits.
      * If the entry is a file, it will be extracted. If the entry is a directory, the directory will be created.
-     * 
+     * <p>
      * This method includes safety parameters to protect against zip bombs and other malicious zip files:
      * <ul>
      *   <li>maxFiles: Maximum number of files to extract</li>
      *   <li>maxBytes: Maximum total bytes to extract</li>
      *   <li>maxCompressionRatio: Maximum allowed compression ratio</li>
      * </ul>
-     * 
+     * <p>
      * The implementation enforces these limits during streaming, without buffering the entire file content
      * in memory. It also does not rely solely on the compressed size reported in the zip file, which can
      * be spoofed in malicious zip files.
@@ -998,7 +998,7 @@ public final class IoUtil {
         private final long compressedSize;
         private long bytesWritten = 0;
 
-        public LimitedOutputStream(OutputStream out, long maxBytes, double maxCompressionRatio, long compressedSize) {
+        LimitedOutputStream(OutputStream out, long maxBytes, double maxCompressionRatio, long compressedSize) {
             super(out);
             this.maxBytes = maxBytes;
             this.maxCompressionRatio = maxCompressionRatio;

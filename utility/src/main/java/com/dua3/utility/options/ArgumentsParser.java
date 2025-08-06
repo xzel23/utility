@@ -258,7 +258,7 @@ public class ArgumentsParser {
         }
     }
 
-    private String getOccurrenceText(Repetitions repetitions, boolean isFlag) {
+    private static String getOccurrenceText(Repetitions repetitions, boolean isFlag) {
         if (isFlag) {
             return "";
         }

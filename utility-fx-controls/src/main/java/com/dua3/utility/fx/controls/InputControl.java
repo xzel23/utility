@@ -459,7 +459,7 @@ class FormatWithDefaultValue extends Format {
     Format baseFormat;
     Supplier<?> defaultValue;
 
-    public FormatWithDefaultValue(Format baseFormat, Supplier<?> defaultValue) {
+    FormatWithDefaultValue(Format baseFormat, Supplier<?> defaultValue) {
         this.baseFormat = baseFormat;
         this.defaultValue = defaultValue;
     }
