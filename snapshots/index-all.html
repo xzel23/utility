@@ -793,10 +793,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/options/Param.html#param-argName"><code>argName</code></a> record component.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/CryptUtil.html#ARGON2_ITERATIONS" class="member-name-link">ARGON2_ITERATIONS</a> - Static variable in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/crypt/CryptUtil.html#ARGON2_MEMORY_MB" class="member-name-link">ARGON2_MEMORY_MB</a> - Static variable in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/options/Param.html#argRepetitions()" class="member-name-link">argRepetitions()</a> - Method in record class com.dua3.utility.options.<a href="com/dua3/utility/options/Param.html" title="class in com.dua3.utility.options">Param</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/options/Param.html#param-argRepetitions"><code>argRepetitions</code></a> record component.</div>
@@ -3219,6 +3215,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the text for the decrement button of the slider.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#decrypt(java.lang.String,char%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">decrypt(String, char[], InputBufferHandling)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Decrypts the given input string using the specified password and input buffer handling strategy.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/CryptUtil.html#decryptAsymmetric(java.security.PrivateKey,byte%5B%5D)" class="member-name-link">decryptAsymmetric(PrivateKey, byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
 <dd>
 <div class="block">Asymmetrically decrypt data using a private key.</div>
@@ -3705,6 +3705,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Write instance to stream, not throwing checked exceptions.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#encrypt(byte%5B%5D,char%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">encrypt(byte[], char[], InputBufferHandling)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Encrypts the provided input data using AES encryption with a password-based key derivation.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/CryptUtil.html#encryptAsymmetric(java.security.PublicKey,byte%5B%5D)" class="member-name-link">encryptAsymmetric(PublicKey, byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
 <dd>
 <div class="block">Asymmetrically encrypt data using a public key.</div>
@@ -3835,6 +3839,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/text/TextAttributes.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextAttributes.html" title="class in com.dua3.utility.text">TextAttributes</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
 <dt><a href="com/dua3/utility/data/Counter.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class com.dua3.utility.data.<a href="com/dua3/utility/data/Counter.html" title="class in com.dua3.utility.data">Counter</a></dt>
 <dd>
 <div class="block">Compares the specified object with this Counter for equality.</div>
@@ -4087,6 +4095,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/text/TextUtil.html#escapeHTML(java.lang.CharSequence)" class="member-name-link">escapeHTML(CharSequence)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
 <dd>
 <div class="block">HTML-escape a string.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.html#evaluatePasswordStrength(char%5B%5D)" class="member-name-link">evaluatePasswordStrength(char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.html" title="class in com.dua3.utility.crypt">PasswordUtil</a></dt>
+<dd>
+<div class="block">Evaluates the entropy and strength of a password.</div>
 </dd>
 <dt><a href="com/dua3/utility/math/geometry/FillRule.html#EVEN_ODD" class="member-name-link">EVEN_ODD</a> - Enum constant in enum class com.dua3.utility.math.geometry.<a href="com/dua3/utility/math/geometry/FillRule.html" title="enum class in com.dua3.utility.math.geometry">FillRule</a></dt>
 <dd>
@@ -4957,9 +4969,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Generate mailto-link.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/CryptUtil.html#generatePassword()" class="member-name-link">generatePassword()</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.html#generatePassword()" class="member-name-link">generatePassword()</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.html" title="class in com.dua3.utility.crypt">PasswordUtil</a></dt>
 <dd>
 <div class="block">Generates a random password encoded in Base64 format.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.html#generatePassword(int)" class="member-name-link">generatePassword(int)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.html" title="class in com.dua3.utility.crypt">PasswordUtil</a></dt>
+<dd>
+<div class="block">Generates a random password of specified length and encodes it in Base64 format.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/RandomUtil.html#generateRandomBytes(int)" class="member-name-link">generateRandomBytes(int)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/RandomUtil.html" title="class in com.dua3.utility.crypt">RandomUtil</a></dt>
 <dd>
@@ -5314,6 +5330,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the descent of this font.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#getDescription()" class="member-name-link">getDescription()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/swing/SwingFileFilter.html#getDescription()" class="member-name-link">getDescription()</a> - Method in class com.dua3.utility.swing.<a href="com/dua3/utility/swing/SwingFileFilter.html" title="class in com.dua3.utility.swing">SwingFileFilter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/text/TextUtil.html#getDigest(java.lang.String,byte%5B%5D)" class="member-name-link">getDigest(String, byte[])</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
@@ -5375,6 +5393,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/text/Run.html#getEnd()" class="member-name-link">getEnd()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/Run.html" title="class in com.dua3.utility.text">Run</a></dt>
 <dd>
 <div class="block">Get the end position of this Run.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#getEntropyEfficiency()" class="member-name-link">getEntropyEfficiency()</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Calculates the entropy efficiency of the password as a percentage.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#getEstimatedCrackTime()" class="member-name-link">getEstimatedCrackTime()</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Gets the estimated time to crack this password using a modern attack.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/IoUtil.html#getExtension(java.lang.String)" class="member-name-link">getExtension(String)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
 <dd>
@@ -5722,6 +5748,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Retrieves the layout dimensions of the text as a <code>Dimension2f</code> object.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#getLevel()" class="member-name-link">getLevel()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/DefaultLogEntryFilter.html#getLevel()" class="member-name-link">getLevel()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/DefaultLogEntryFilter.html" title="class in com.dua3.utility.logging">DefaultLogEntryFilter</a></dt>
 <dd>
 <div class="block">Retrieves the log level of the DefaultLogEntryFilter.</div>
@@ -6477,6 +6505,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/concurrent/SimpleValue.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/SimpleValue.html" title="class in com.dua3.utility.concurrent">SimpleValue</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
 <dt><a href="com/dua3/utility/data/Counter.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class com.dua3.utility.data.<a href="com/dua3/utility/data/Counter.html" title="class in com.dua3.utility.data">Counter</a></dt>
 <dd>
 <div class="block">Computes the hash code for this <code>Counter</code> object based on its current value.</div>
@@ -7621,6 +7653,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Check if the refresher has been started.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#isSecure()" class="member-name-link">isSecure()</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/io/IoUtil.html#isSeparatorChar(char)" class="member-name-link">isSeparatorChar(char)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
 <dd>
 <div class="block">Test whether <code>c</code> is a separator character.</div>
@@ -7652,6 +7686,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/crypt/X509CertificateBuilder.html#issuer(java.lang.String)" class="member-name-link">issuer(String)</a> - Method in interface com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/X509CertificateBuilder.html" title="interface in com.dua3.utility.crypt">X509CertificateBuilder</a></dt>
 <dd>
 <div class="block">Sets the issuer's distinguished name (DN) for the X.509 certificate.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#issues()" class="member-name-link">issues()</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#param-issues"><code>issues</code></a> record component.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/FileType.html#isSupported(com.dua3.utility.io.OpenMode)" class="member-name-link">isSupported(OpenMode)</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/FileType.html" title="class in com.dua3.utility.io">FileType</a></dt>
 <dd>
@@ -8955,6 +8993,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The color MOCCASIN.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#MODERATE" class="member-name-link">MODERATE</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
+<dd>
+<div class="block">Represents the moderate strength level of a password.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/Style.html#MONOSPACE" class="member-name-link">MONOSPACE</a> - Static variable in class com.dua3.utility.text.<a href="com/dua3/utility/text/Style.html" title="class in com.dua3.utility.text">Style</a></dt>
 <dd>
 <div class="block">Default Monospace font.</div>
@@ -9890,6 +9932,22 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/text/FontDef.html#parseFontspec(java.lang.String)" class="member-name-link">parseFontspec(String)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/FontDef.html" title="class in com.dua3.utility.text">FontDef</a></dt>
 <dd>
 <div class="block">Parse fontspec.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#%3Cinit%3E(double,double,com.dua3.utility.crypt.PasswordUtil.StrengthLevel,java.util.List)" class="member-name-link">PasswordStrength(double, double, PasswordUtil.StrengthLevel, List&lt;String&gt;)</a> - Constructor for record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Creates an instance of a <code>PasswordStrength</code> record class.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.html" class="type-name-link" title="class in com.dua3.utility.crypt">PasswordUtil</a> - Class in <a href="com/dua3/utility/crypt/package-summary.html">com.dua3.utility.crypt</a></dt>
+<dd>
+<div class="block">Utility class for password analysis and generation.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" class="type-name-link" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a> - Record Class in <a href="com/dua3/utility/crypt/package-summary.html">com.dua3.utility.crypt</a></dt>
+<dd>
+<div class="block">Contains password strength analysis results.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" class="type-name-link" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a> - Enum Class in <a href="com/dua3/utility/crypt/package-summary.html">com.dua3.utility.crypt</a></dt>
+<dd>
+<div class="block">Represents the strength level of a password.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/Version.html#patch()" class="member-name-link">patch()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/Version.html" title="class in com.dua3.utility.lang">Version</a></dt>
 <dd>
@@ -11935,6 +11993,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Set a parameter.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#shannonEntropy()" class="member-name-link">shannonEntropy()</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#param-shannonEntropy"><code>shannonEntropy</code></a> record component.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/abstract_builders/ShapeBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls.abstract_builders">ShapeBuilder&lt;S,<wbr>B&gt;</a> - Class in <a href="com/dua3/utility/fx/controls/abstract_builders/package-summary.html">com.dua3.utility.fx.controls.abstract_builders</a></dt>
 <dd>
 <div class="block">An abstract base class for building nodes, providing a fluent API for configuring and creating instances
@@ -12445,6 +12507,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Utility class for Java streams.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#strengthLevel()" class="member-name-link">strengthLevel()</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#param-strengthLevel"><code>strengthLevel</code></a> record component.</div>
+</dd>
 <dt><a href="com/dua3/utility/io/AnsiCode.html#STRIKE_THROUGH_OFF" class="member-name-link">STRIKE_THROUGH_OFF</a> - Static variable in class com.dua3.utility.io.<a href="com/dua3/utility/io/AnsiCode.html" title="class in com.dua3.utility.io">AnsiCode</a></dt>
 <dd>
 <div class="block">ESC: disable STRIKETHROUGH output.</div>
@@ -12610,6 +12676,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/ui/Graphics.html#strokeRect(com.dua3.utility.math.geometry.Vector2f,com.dua3.utility.math.geometry.Dimension2f)" class="member-name-link">strokeRect(Vector2f, Dimension2f)</a> - Method in interface com.dua3.utility.ui.<a href="com/dua3/utility/ui/Graphics.html" title="interface in com.dua3.utility.ui">Graphics</a></dt>
 <dd>
 <div class="block">Stroke rectangle.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#STRONG" class="member-name-link">STRONG</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
+<dd>
+<div class="block">Represents a strong level of password strength.</div>
 </dd>
 <dt><a href="com/dua3/utility/text/Style.html" class="type-name-link" title="class in com.dua3.utility.text">Style</a> - Class in <a href="com/dua3/utility/text/package-summary.html">com.dua3.utility.text</a></dt>
 <dd>
@@ -13021,6 +13091,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Text-related utility class.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#theoreticalEntropy()" class="member-name-link">theoreticalEntropy()</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#param-theoreticalEntropy"><code>theoreticalEntropy</code></a> record component.</div>
+</dd>
 <dt><a href="com/dua3/utility/data/Color.html#THISTLE" class="member-name-link">THISTLE</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">The color THISTLE.</div>
@@ -13287,6 +13361,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Converts the provided byte array into a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link"><code>SecretKey</code></a> using the specified symmetric algorithm.</div>
 </dd>
 <dt><a href="com/dua3/utility/concurrent/SimpleValue.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/SimpleValue.html" title="class in com.dua3.utility.concurrent">SimpleValue</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#toString()" class="member-name-link">toString()</a> - Method in record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#toString()" class="member-name-link">toString()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/data/Cache.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.data.<a href="com/dua3/utility/data/Cache.html" title="class in com.dua3.utility.data">Cache</a></dt>
 <dd>&nbsp;</dd>
@@ -14060,6 +14140,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/SymmetricAlgorithm.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -14215,6 +14299,11 @@ the order they are declared.</div>
 the order they are declared.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/InputBufferHandling.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
@@ -14448,6 +14537,14 @@ the order they are declared.</div>
 <dd>
 <div class="block">Get this path's vertices as a list.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#VERY_STRONG" class="member-name-link">VERY_STRONG</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
+<dd>
+<div class="block">Indicates the highest level of password strength, labeled as "Very Strong".</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#VERY_WEAK" class="member-name-link">VERY_WEAK</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
+<dd>
+<div class="block">Represents a password strength level categorized as "Very Weak."</div>
+</dd>
 <dt><a href="com/dua3/utility/data/Color.html#VIOLET" class="member-name-link">VIOLET</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">The color VIOLET.</div>
@@ -14482,6 +14579,10 @@ the order they are declared.</div>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#warningPane()" class="member-name-link">warningPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
 <div class="block">Start definition of new Warning pane.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#WEAK" class="member-name-link">WEAK</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
+<dd>
+<div class="block">Represents a password strength level classified as "Weak".</div>
 </dd>
 <dt><a href="com/dua3/utility/data/Cache.ReferenceType.html#WEAK_REFERENCES" class="member-name-link">WEAK_REFERENCES</a> - Enum constant in enum class com.dua3.utility.data.<a href="com/dua3/utility/data/Cache.ReferenceType.html" title="enum class in com.dua3.utility.data">Cache.ReferenceType</a></dt>
 <dd>

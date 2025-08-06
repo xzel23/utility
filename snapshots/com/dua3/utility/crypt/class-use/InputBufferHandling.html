@@ -88,22 +88,36 @@ the order they are declared.</div>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">KeyUtil.</span><code><a href="../KeyUtil.html#deriveSecretKey(com.dua3.utility.crypt.SymmetricAlgorithm,byte%5B%5D,byte%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">deriveSecretKey</a><wbr>(<a href="../SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a>&nbsp;algorithm,
+<div class="col-first even-row-color"><code>static byte[]</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">CryptUtil.</span><code><a href="../CryptUtil.html#decrypt(java.lang.String,char%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">decrypt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
+ char[]&nbsp;password,
+ <a href="../InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Decrypts the given input string using the specified password and input buffer handling strategy.</div>
+</div>
+<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">KeyUtil.</span><code><a href="../KeyUtil.html#deriveSecretKey(com.dua3.utility.crypt.SymmetricAlgorithm,byte%5B%5D,byte%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">deriveSecretKey</a><wbr>(<a href="../SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a>&nbsp;algorithm,
  byte[]&nbsp;salt,
  byte[]&nbsp;input,
  byte @Nullable []&nbsp;info,
  <a href="../InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last odd-row-color">
 <div class="block">Derives a cryptographic key using the specified symmetric algorithm, salt, input data, and additional info.</div>
 </div>
-<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">KeyUtil.</span><code><a href="../KeyUtil.html#deriveSecretKeyWithRandomSalt(com.dua3.utility.crypt.SymmetricAlgorithm,byte%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">deriveSecretKeyWithRandomSalt</a><wbr>(<a href="../SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a>&nbsp;algorithm,
+<div class="col-first even-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">KeyUtil.</span><code><a href="../KeyUtil.html#deriveSecretKeyWithRandomSalt(com.dua3.utility.crypt.SymmetricAlgorithm,byte%5B%5D,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">deriveSecretKeyWithRandomSalt</a><wbr>(<a href="../SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a>&nbsp;algorithm,
  byte[]&nbsp;input,
  byte @Nullable []&nbsp;info,
  <a href="../InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
-<div class="col-last odd-row-color">
+<div class="col-last even-row-color">
 <div class="block">Derives a secret key for the specified symmetric algorithm using a randomly generated salt.</div>
+</div>
+<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">CryptUtil.</span><code><a href="../CryptUtil.html#encrypt(byte%5B%5D,char%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">encrypt</a><wbr>(byte[]&nbsp;input,
+ char[]&nbsp;password,
+ <a href="../InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Encrypts the provided input data using AES encryption with a password-based key derivation.</div>
 </div>
 <div class="col-first even-row-color"><code>static byte[]</code></div>
 <div class="col-second even-row-color"><span class="type-name-label">CryptUtil.</span><code><a href="../CryptUtil.html#encryptHybrid(java.security.PublicKey,byte%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">encryptHybrid</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;publicKey,
