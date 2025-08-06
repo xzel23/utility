@@ -141,8 +141,8 @@ class ImageBufferTest {
         assertEquals(buffer2, buffer1); // Symmetry
 
         // Test inequality
-        assertNotEquals(buffer1, null); // Null check
-        assertNotEquals(buffer1, "not an ImageBuffer"); // Type check
+        assertNotEquals(null, buffer1); // Null check
+        assertNotEquals("not an ImageBuffer", buffer1); // Type check
 
         // Different width
         ImageBuffer buffer3 = new ImageBuffer(data1, width + 1, height);
