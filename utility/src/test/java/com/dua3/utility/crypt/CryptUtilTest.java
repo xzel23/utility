@@ -10,7 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -77,33 +81,30 @@ class CryptUtilTest {
         assertThrows(InvalidKeyException.class, () -> CryptUtil.hmacSha256(input, invalidKey));
     }
 
-    @Test
-    void testGeneratePasswordValidLength() {
-        // Generate a password
-        String password = CryptUtil.generatePassword();
-
-        // Verify that the password length matches the expected size
-        assertNotNull(password, "Password should not be null");
-        assertEquals(24, password.length(), "Password length should be 24 characters (Base64 encoding of 16 bytes)");
-    }
-
-    @Test
-    void testGeneratePasswordUniqueValues() {
-        // Generate multiple passwords
-        String password1 = CryptUtil.generatePassword();
-        String password2 = CryptUtil.generatePassword();
-
-        // Verify that the passwords are unique
-        assertNotNull(password1, "Password1 should not be null");
-        assertNotNull(password2, "Password2 should not be null");
-        assertNotEquals(password1, password2, "Generated passwords should be unique");
-    }
+    // Tests for PasswordUtil moved to PasswordUtilTest
 
     private static final int[] KEY_LENGTHS = {128, 192, 256};
     private static final String[] MESSAGES = {
             "",
             "secret message",
             System.getProperties().toString()
+    };
+
+    // Test data for encrypt/decrypt tests
+    private static final String[] TEST_INPUTS = {
+            "",
+            "Hello, World!",
+            "Special characters: !@#$%^&*()_+{}|:<>?~`-=[]\\;',./",
+            "Unicode characters: 漢字, Ω, ñ, é",
+            "A longer text with multiple sentences. This tests the behavior with larger inputs. " +
+                    "Encryption and decryption should work correctly regardless of input size."
+    };
+    
+    private static final char[][] TEST_PASSWORDS = {
+            "simple".toCharArray(),
+            "p@ssw0rd!".toCharArray(),
+            "Very long password with spaces and symbols: !@#$%^&*()".toCharArray(),
+            "Unicode password 漢字 Ω ñ é".toCharArray()
     };
 
     // Test data for Argon2id tests
@@ -817,5 +818,69 @@ class CryptUtilTest {
         String wrongPassword = "wrong-password";
         boolean wrongResult = CryptUtil.verifyArgon2id(wrongPassword, TEST_PEPPER, saltAndHash);
         assertFalse(wrongResult, "Verification should fail with incorrect input");
+    }
+
+    /**
+     * Provides test data for encrypt-decrypt-encrypt round trip tests.
+     * Each argument contains:
+     * 1. Input string to encrypt
+     * 2. Password to use for encryption/decryption
+     */
+    private static Stream<Arguments> encryptDecryptRoundTripTestData() {
+        return Stream.of(
+                // Test all combinations of inputs and passwords
+                Arrays.stream(TEST_INPUTS)
+                        .flatMap(input -> Arrays.stream(TEST_PASSWORDS)
+                                .map(password -> Arguments.of(input, password)))
+                        .toArray(Arguments[]::new)
+        );
+    }
+
+    /**
+     * Tests the encrypt and decrypt methods in a round-trip fashion:
+     * 1. Encrypt the input
+     * 2. Decrypt the encrypted result
+     * 3. Encrypt the decrypted result again
+     * 
+     * The test verifies:
+     * - The decrypted data matches the original input
+     * - The second encryption produces a different result (due to random salt)
+     * - The second encryption can be decrypted back to the original input
+     */
+    @ParameterizedTest
+    @MethodSource("encryptDecryptRoundTripTestData")
+    void testEncryptDecryptRoundTrip(String input, char[] password) {
+        // Convert input string to bytes
+        byte[] inputBytes = input.getBytes(StandardCharsets.UTF_8);
+        
+        // Make a copy of the password for each step to avoid issues with buffer clearing
+        char[] passwordCopy1 = Arrays.copyOf(password, password.length);
+        char[] passwordCopy2 = Arrays.copyOf(password, password.length);
+        char[] passwordCopy3 = Arrays.copyOf(password, password.length);
+        
+        // Step 1: First encryption
+        String encrypted1 = CryptUtil.encrypt(inputBytes, passwordCopy1, InputBufferHandling.PRESERVE);
+        assertNotNull(encrypted1, "Encrypted result should not be null");
+        assertTrue(encrypted1.contains("$"), "Encrypted result should contain delimiter");
+        
+        // Step 2: Decrypt the encrypted data
+        byte[] decrypted = CryptUtil.decrypt(encrypted1, passwordCopy2, InputBufferHandling.PRESERVE);
+        assertNotNull(decrypted, "Decrypted result should not be null");
+        
+        // Verify the decrypted data matches the original input
+        String decryptedString = new String(decrypted, StandardCharsets.UTF_8);
+        assertEquals(input, decryptedString, "Decrypted data should match original input");
+        
+        // Step 3: Encrypt the decrypted data again
+        String encrypted2 = CryptUtil.encrypt(decrypted, passwordCopy3, InputBufferHandling.PRESERVE);
+        assertNotNull(encrypted2, "Second encrypted result should not be null");
+        
+        // Verify the second encryption is different from the first (due to random salt)
+        assertNotEquals(encrypted1, encrypted2, "Second encryption should differ from first due to random salt");
+        
+        // Step 4: Decrypt the second encryption to verify it works
+        byte[] decrypted2 = CryptUtil.decrypt(encrypted2, Arrays.copyOf(password, password.length), InputBufferHandling.PRESERVE);
+        String decryptedString2 = new String(decrypted2, StandardCharsets.UTF_8);
+        assertEquals(input, decryptedString2, "Second round decryption should match original input");
     }
 }

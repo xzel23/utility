@@ -250,6 +250,8 @@ could not be loaded.
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
       that has a more secure API and adds many new features:
+        - password generation
+        - password strength evaluation
         - certificate creation (depends on BouncyCastle being present)
         - key generation and handling
         - key store handling

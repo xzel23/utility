@@ -223,6 +223,73 @@ public final class CryptUtil {
     }
 
     /**
+     * Encrypts the provided input data using AES encryption with a password-based key derivation.
+     * The method generates a random salt, derives a secret key using the provided password,
+     * and encrypts the input data. The result is a Base64-encoded string containing the salt
+     * and the encrypted data, separated by a "$" character.
+     * <p>
+     * The password must have at least 8 characters.
+     *
+     * @param input the data to be encrypted, represented as a byte array
+     * @param password the password used to derive the encryption key, represented as a char array
+     * @param inputBufferHandling specifies how the method should handle the input buffer after encryption;
+     *                            it determines whether to preserve or clear the input
+     * @return a Base64-encoded string containing the salt and the encrypted data,
+     *         separated by a "$" character
+     * @throws IllegalStateException if the encryption process encounters a general security exception
+     */
+    public static String encrypt(byte[] input, char[] password, InputBufferHandling inputBufferHandling) {
+        try {
+            LangUtil.checkArg(password.length > 8, "password must have at least 8 characters");
+            byte[] salt = RandomUtil.generateRandomBytes(16);
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), new byte[]{}, InputBufferHandling.PRESERVE);
+            byte[] encrypted = encryptSymmetric(SymmetricAlgorithm.AES, key, input, inputBufferHandling);
+            return TextUtil.base64Encode(salt) + "$" + TextUtil.base64Encode(encrypted);
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("Failed to encrypt", e);
+        } finally {
+            if (inputBufferHandling != com.dua3.utility.crypt.InputBufferHandling.PRESERVE) {
+                Arrays.fill(input, (byte) 0);
+                Arrays.fill(password, '\0');
+            }
+        }
+    }
+
+    /**
+     * Decrypts the given input string using the specified password and input buffer handling strategy.
+     * <p>
+     * The input string should be in a specific format with a delimiter ('$') separating the salt and
+     * the encrypted data. The method extracts the salt and the encrypted data from the input string,
+     * derives a key using the provided password and salt, and then decrypts the encrypted data.
+     * <p>
+     * The password must have at least 8 characters.
+     *
+     * @param input the encrypted string, which should contain a salt and encrypted data separated by a '$' character
+     * @param password the password to derive the decryption key
+     * @param inputBufferHandling the strategy to handle the input buffer, affecting whether the password buffer is preserved or cleared
+     * @return the decrypted data as a byte array
+     * @throws IllegalArgumentException if the input string is invalid in format or there is no '$' delimiter
+     * @throws IllegalStateException if decryption fails due to cryptographic errors
+     */
+    public static byte[] decrypt(String input, char[] password, InputBufferHandling inputBufferHandling) {
+        try {
+            LangUtil.checkArg(password.length > 8, "password must have at least 8 characters");
+            int splitIndex = input.indexOf('$');
+            LangUtil.checkArg(splitIndex > 0, "Invalid input");
+            byte[] salt = TextUtil.base64Decode(input.substring(0, splitIndex));
+            byte[] encoded = TextUtil.base64Decode(input.substring(splitIndex + 1));
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), new byte[]{}, InputBufferHandling.PRESERVE);
+            return decryptSymmetric(SymmetricAlgorithm.AES, key, encoded);
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("Failed to decrypt", e);
+        } finally {
+            if (inputBufferHandling != com.dua3.utility.crypt.InputBufferHandling.PRESERVE) {
+                Arrays.fill(password, '\0');
+            }
+        }
+    }
+
+    /**
      * Symmetrically decrypt data using a Key object with the default algorithm.
      * <p>
      * The data is decrypted using AES-GCM.
@@ -675,14 +742,4 @@ public final class CryptUtil {
         return verifyArgon2id(input.getBytes(StandardCharsets.UTF_8), pepper, saltAndHash);
     }
 
-    /**
-     * Generates a random password encoded in Base64 format.
-     * The password is created using 18 random bytes, which do not require additional padding.
-     *
-     * @return a Base64-encoded string representing the randomly generated password
-     */
-    public static String generatePassword() {
-        // 18 bytes do not require padding
-        return TextUtil.base64Encode(RandomUtil.generateRandomBytes(18));
-    }
 }
