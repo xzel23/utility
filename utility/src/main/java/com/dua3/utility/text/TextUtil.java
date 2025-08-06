@@ -1226,7 +1226,10 @@ public final class TextUtil {
      * @return the byte array
      */
     public static byte[] toByteArray(char[] chars) {
-        return StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars)).array();
+        ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars));
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        return bytes;
     }
 
     /**
@@ -1236,7 +1239,10 @@ public final class TextUtil {
      * @return the byte array
      */
     public static byte[] toByteArray(CharSequence chars) {
-        return StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars)).array();
+        ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars));
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        return bytes;
     }
 
     /**
