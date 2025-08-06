@@ -189,12 +189,9 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">A constant representing an empty array of type <code>short</code>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#INVALID_FORMATTING" class="member-name-link">INVALID_FORMATTING</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final char</code></div>
-<div class="col-second even-row-color"><code><a href="#UTF_BYTE_ORDER_MARK" class="member-name-link">UTF_BYTE_ORDER_MARK</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final char</code></div>
+<div class="col-second odd-row-color"><code><a href="#UTF_BYTE_ORDER_MARK" class="member-name-link">UTF_BYTE_ORDER_MARK</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The byte order mark in UTF files</div>
 </div>
 </div>
@@ -933,20 +930,6 @@ E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="INVALID_FORMATTING">
-<h3>INVALID_FORMATTING</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">INVALID_FORMATTING</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../../../constant-values.html#com.dua3.utility.lang.LangUtil.INVALID_FORMATTING">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
 <li>
 <section class="detail" id="UTF_BYTE_ORDER_MARK">
 <h3>UTF_BYTE_ORDER_MARK</h3>
@@ -2879,7 +2862,8 @@ V extends U&gt;</span>
 <li>
 <section class="detail" id="addIf(java.util.function.Predicate,java.util.Collection,T...)">
 <h3 id="addIf(java.util.function.Predicate,java.util.Collection,java.lang.Object[])">addIf</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addIf</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super T&gt;&nbsp;predicate,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addIf</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super T&gt;&nbsp;predicate,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
  @Nullable T...&nbsp;items)</span></div>
 <div class="block">Adds the specified items to a collection if they satisfy the given predicate.
@@ -2903,7 +2887,8 @@ V extends U&gt;</span>
 <li>
 <section class="detail" id="addIfNonNull(java.util.Collection,T...)">
 <h3 id="addIfNonNull(java.util.Collection,java.lang.Object[])">addIfNonNull</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addIfNonNull</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addIfNonNull</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
  @Nullable T...&nbsp;items)</span></div>
 <div class="block">Adds the given non-null items to the collection. Items that are null are ignored.</div>
 <dl class="notes">
