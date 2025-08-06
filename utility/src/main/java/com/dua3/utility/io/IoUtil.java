@@ -257,8 +257,6 @@ public final class IoUtil {
      * @return filename with replaced extension
      */
     public static Path replaceExtension(Path path, String extension) {
-        Path parent = path.getParent();
-
         Path filename = path.getFileName();
         if (filename == null) {
             return path;
@@ -266,7 +264,7 @@ public final class IoUtil {
 
         filename = path.getFileSystem().getPath(replaceExtension(filename.toString(), extension));
 
-        return parent == null ? filename : parent.resolve(filename);
+        return path.resolveSibling(filename);
     }
 
     /**
