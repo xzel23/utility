@@ -101,7 +101,7 @@ class CryptUtilTest {
     };
     
     private static final char[][] TEST_PASSWORDS = {
-            "simple".toCharArray(),
+            "simple12".toCharArray(),
             "p@ssw0rd!".toCharArray(),
             "Very long password with spaces and symbols: !@#$%^&*()".toCharArray(),
             "Unicode password 漢字 Ω ñ é".toCharArray()
