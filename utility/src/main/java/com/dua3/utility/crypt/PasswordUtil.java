@@ -1,5 +1,6 @@
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 
@@ -24,8 +25,7 @@ public final class PasswordUtil {
     private static final List<String> COMMON_PATTERNS;
 
     static {
-        List<String> patterns = new ArrayList<>();
-        patterns.addAll(List.of(
+        List<String> patterns = new ArrayList<>(LangUtil.asUnmodifiableList(
                 "password", "1234", "qwert", "abc", "admin",
                 "user", "login", "welcome", "hello", "test",
                 "1q2w3e", "asdf", "yxcv"

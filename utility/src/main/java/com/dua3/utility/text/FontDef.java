@@ -663,7 +663,7 @@ public final class FontDef {
         return css.stripTrailing();
     }
 
-    private String textIfNonNull(@Nullable Object obj, Supplier<String> sIfTrue) {
+    private static String textIfNonNull(@Nullable Object obj, Supplier<String> sIfTrue) {
         return obj != null ? sIfTrue.get() : "";
     }
 

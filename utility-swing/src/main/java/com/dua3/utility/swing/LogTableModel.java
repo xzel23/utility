@@ -160,7 +160,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
      * flag to true and signals any waiting threads that updates are no longer available.
      * This method ensures proper handling of thread-safe operations using a lock to avoid
      * concurrent modification issues.
-     *
+     * <p>
      * Thread safety is achieved by acquiring a write lock before modifying the condition
      * variable and releasing it after signaling all waiting threads.
      */

@@ -5,23 +5,19 @@
 
 package com.dua3.utility.data;
 
-import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 
 /**
  * Color in ARGB format.
+ *
+ * @param argb This color's ARGB value.
  */
-public final class RGBColor implements Color {
+public record RGBColor(int argb) implements Color {
 
     static final int SHIFT_A = 24;
     static final int SHIFT_B = 0;
     static final int SHIFT_G = 8;
     static final int SHIFT_R = 16;
-
-    /**
-     * This color's ARGB value.
-     */
-    private final int argb;
 
     /**
      * Create a new Color.
@@ -43,17 +39,10 @@ public final class RGBColor implements Color {
      * @param a alpha (0..255)
      */
     public RGBColor(int r, int g, int b, int a) {
-        argb = shiftComponentValue(a, SHIFT_A) + shiftComponentValue(r, SHIFT_R) + shiftComponentValue(g, SHIFT_G)
-                + shiftComponentValue(b, SHIFT_B);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param argb the ARGB value
-     */
-    RGBColor(int argb) {
-        this.argb = argb;
+        this(shiftComponentValue(a, SHIFT_A)
+                + shiftComponentValue(r, SHIFT_R)
+                + shiftComponentValue(g, SHIFT_G)
+                + shiftComponentValue(b, SHIFT_B));
     }
 
     private static int shiftComponentValue(int value, int bits) {
@@ -110,11 +99,6 @@ public final class RGBColor implements Color {
         return a() / 255.0f;
     }
 
-    @Override
-    public int argb() {
-        return argb;
-    }
-
     /**
      * Get blue component of color.
      *
@@ -166,11 +150,6 @@ public final class RGBColor implements Color {
         return new RGBColor((int) (r() * F_BRIGHTEN), (int) (g() * F_BRIGHTEN), (int) (b() * F_BRIGHTEN), a());
     }
 
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        return obj instanceof RGBColor other && other.argb == argb;
-    }
-
     /**
      * Get green component of color.
      *
@@ -220,11 +199,6 @@ public final class RGBColor implements Color {
     @Override
     public RGBColor toRGBColor() {
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return argb;
     }
 
     @Override

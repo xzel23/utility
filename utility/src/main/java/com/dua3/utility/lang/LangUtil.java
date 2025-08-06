@@ -74,7 +74,7 @@ import java.util.stream.Stream;
  */
 public final class LangUtil {
     private static final Logger LOG = LogManager.getLogger(LangUtil.class);
-    public static final String INVALID_FORMATTING = "format String does not match arguments";
+    private static final String INVALID_FORMATTING = "format String does not match arguments";
 
     /**
      * A holder class for a securely initialized instance of {@link SecureRandom}.
@@ -87,7 +87,7 @@ public final class LangUtil {
 
     /**
      * Provides a thread-safe instance of SecureRandom.
-     *
+     * <p>
      * The method accesses a lazily initialized SecureRandom instance
      * that ensures cryptographic security and should be preferred for
      * generating secure random values.
@@ -2072,6 +2072,7 @@ public final class LangUtil {
      * @param items the items to be evaluated and potentially added to the collection
      * @return true if at least one item was added to the collection; false otherwise
      */
+    @SafeVarargs
     public static <T extends @Nullable Object> boolean addIf(Predicate<? super T> predicate, Collection<? super T> collection, @Nullable T... items) {
         boolean changed = false;
         for (T item : items) {
@@ -2090,6 +2091,7 @@ public final class LangUtil {
      * @param items the items to add to the collection, some of which may be null
      * @return true if the collection was modified as a result of the operation, false otherwise
      */
+    @SafeVarargs
     public static <T extends @Nullable Object> boolean addIfNonNull(Collection<? super T> collection, @Nullable T... items) {
         return addIf(Objects::nonNull, collection, items);
     }

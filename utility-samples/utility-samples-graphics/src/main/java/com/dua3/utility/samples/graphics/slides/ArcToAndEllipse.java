@@ -139,7 +139,7 @@ public class ArcToAndEllipse implements IGraphicsSample.Slide {
         g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1, r, angle, true, false).build());
     }
 
-    private void drawPoint(Graphics g, Vector2f p, Color color, float size) {
+    private static void drawPoint(Graphics g, Vector2f p, Color color, float size) {
         g.setFill(color);
         g.fillCircle(p.x(), p.y(), size);
     }

@@ -15,12 +15,39 @@ import com.dua3.utility.lang.LangUtil;
  * @param max the maximum number of repetitions, must be greater than or equal to min
  */
 public record Repetitions(int min, int max) {
+    /**
+     * A constant representing a {@code Repetitions} instance with both minimum
+     * and maximum repetitions set to 0.
+     */
     public static final Repetitions ZERO = new Repetitions(0, 0);
+    /**
+     * A predefined {@code Repetitions} instance representing a minimum of zero repetitions
+     * and a maximum of one repetition. This denotes an optional occurrence.
+     */
     public static final Repetitions ZERO_OR_ONE = new Repetitions(0, 1);
+    /**
+     * Represents a {@code Repetitions} instance allowing zero or more repetitions.
+     */
     public static final Repetitions ZERO_OR_MORE = new Repetitions(0, Integer.MAX_VALUE);
+    /**
+     * A constant representing a {@code Repetitions} instance where the minimum
+     * and maximum number of repetitions are both set to one.
+     */
     public static final Repetitions EXACTLY_ONE = new Repetitions(1, 1);
+    /**
+     * A predefined {@code Repetitions} instance representing one or more repetitions.
+     */
     public static final Repetitions ONE_OR_MORE = new Repetitions(1, Integer.MAX_VALUE);
 
+    /**
+     * Represents a range of repetitions defined by a minimum and a maximum value.
+     * Guarantees the constraints that the minimum value must not be negative and
+     * the maximum value must be greater than or equal to the minimum value.
+     *
+     * @param min the minimum number of repetitions, must be zero or greater
+     * @param max the maximum number of repetitions, must be greater than or equal to {@code min}
+     * @throws IllegalArgumentException if {@code min} is negative or {@code max} is less than {@code min}
+     */
     public Repetitions {
         LangUtil.check(min >= 0, () -> new IllegalArgumentException("min must be >= 0"));
         LangUtil.check(max >= min, () -> new IllegalArgumentException("max must be >= min"));

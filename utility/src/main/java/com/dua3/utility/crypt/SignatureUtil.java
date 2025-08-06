@@ -18,6 +18,7 @@ import java.security.Signature;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 /**
@@ -42,7 +43,7 @@ public final class SignatureUtil {
     public static byte[] sign(PrivateKey privateKey, byte[] data, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
         try {
             String algorithm = privateKey.getAlgorithm();
-            AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
+            AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase(Locale.ROOT));
             String signatureAlgorithm = asymmAlg.getSignatureAlgorithm()
                     .orElseThrow(() -> new NoSuchElementException("Algorithm " + asymmAlg + " does not support signing"));
 
@@ -104,7 +105,7 @@ public final class SignatureUtil {
     public static boolean verify(PublicKey publicKey, byte[] data, byte[] signature, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
         try {
             String algorithm = publicKey.getAlgorithm();
-            AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
+            AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase(Locale.ROOT));
             String signatureAlgorithm = asymmAlg.getSignatureAlgorithm()
                     .orElseThrow(() -> new NoSuchElementException("Algorithm " + asymmAlg + " does not support verification"));
 

@@ -37,13 +37,15 @@ import java.util.Optional;
  */
 final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder {
 
+    private static final @Nullable X509Certificate[] EMPTY_CERTIFICATE_ARRAY = {};
+
     private final boolean enableCA;
     private @Nullable String subjectDn;
     private @Nullable String issuerDn;
     private int validityDays = 365;
     private String signatureAlgorithm = "SHA256withRSA";
 
-    private @Nullable X509Certificate[] issuerCert = {};
+    private @Nullable X509Certificate[] issuerCert = EMPTY_CERTIFICATE_ARRAY;
     private @Nullable PrivateKey issuerKey;
 
     /**

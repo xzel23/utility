@@ -175,10 +175,10 @@ public class SwingLogPane extends JPanel {
      * Sets up a selection listener for the log table to handle user selection events.
      * The method listens to changes in the table's selection, retrieves the selected log entries,
      * and updates the detailed view based on the selected entries.
-     *
+     * <p>
      * If the selection changes, the method ensures the detailed text view is updated with
      * the formatted content of the newly selected log entries.
-     *
+     * <p>
      * The listener is executed on the Event Dispatch Thread to ensure thread safety with
      * Swing components.
      */

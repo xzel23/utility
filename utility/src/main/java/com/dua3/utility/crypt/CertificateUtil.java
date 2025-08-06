@@ -172,6 +172,7 @@ public final class CertificateUtil {
      *                a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
      * @throws GeneralSecurityException if the subject DN format is invalid
      */
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private static void ensureDNSubjectIsValid(String subject) throws GeneralSecurityException {
         try {
             new javax.security.auth.x500.X500Principal(subject);

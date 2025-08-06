@@ -40,8 +40,8 @@ public class StatusBar extends CustomControl<HBox> implements FxTaskTracker {
     private static final Logger LOG = LogManager.getLogger(StatusBar.class);
 
     // -- input controls
-    Label text;
-    ProgressBar progressBar;
+    final Label text;
+    final ProgressBar progressBar;
 
     /**
      * Construct new StatusBar instance.

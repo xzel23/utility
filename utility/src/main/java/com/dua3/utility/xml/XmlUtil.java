@@ -907,7 +907,7 @@ public final class XmlUtil {
 
     /**
      * Checks if the given Node represents an XML namespace (xmlns) attribute.
-     *
+     * <p>
      * This method evaluates whether the specified node's name starts with the
      * XML namespace scheme prefix or matches the exact XML namespace identifier.
      *
