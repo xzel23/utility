@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,41 +25,41 @@ class PasswordUtilTest {
     @Test
     void testGeneratePasswordValidLength() {
         // Generate a password
-        String password = PasswordUtil.generatePassword();
+        char[] password = PasswordUtil.generatePassword();
 
         // Verify that the password length matches the expected size
         assertNotNull(password, "Password should not be null");
-        assertEquals(24, password.length(), "Password length should be 24 characters (Base64 encoding of 18 bytes)");
+        assertEquals(24, password.length, "Password length should be 24 characters (Base64 encoding of 18 bytes)");
     }
 
     @Test
     void testGeneratePasswordUniqueValues() {
         // Generate multiple passwords
-        String password1 = PasswordUtil.generatePassword();
-        String password2 = PasswordUtil.generatePassword();
+        char[] password1 = PasswordUtil.generatePassword();
+        char[] password2 = PasswordUtil.generatePassword();
 
         // Verify that the passwords are unique
         assertNotNull(password1, "Password1 should not be null");
         assertNotNull(password2, "Password2 should not be null");
-        assertNotEquals(password1, password2, "Generated passwords should be unique");
+        assertFalse(Arrays.equals(password1, password2), "Generated passwords should be unique");
     }
 
     @Test
     void testGeneratePasswordWithLength() {
         // Test with minimum valid length
         int length = 9;
-        String password = PasswordUtil.generatePassword(length);
+        char[] password = PasswordUtil.generatePassword(length);
 
         // Verify the password is not null and has appropriate length
         assertNotNull(password, "Password should not be null");
-        assertTrue(password.length() >= length, "Password length should be at least the specified length");
+        assertTrue(password.length >= length, "Password length should be at least the specified length");
 
         // Test with a larger length
         length = 20;
         password = PasswordUtil.generatePassword(length);
 
         assertNotNull(password, "Password should not be null");
-        assertTrue(password.length() >= length, "Password length should be at least the specified length");
+        assertTrue(password.length >= length, "Password length should be at least the specified length");
     }
 
     @Test

@@ -755,6 +755,21 @@ public final class TextUtil {
     }
 
     /**
+     * Base64-encode data.
+     *
+     * @param data the data to be encoded
+     * @return the Base64-encoded data
+     */
+    public static char[] base64EncodeToChars(byte[] data) {
+        byte[] encoded = Base64.getEncoder().encode(data);
+        char[] chars = new char[encoded.length];
+        for (int i = 0; i < encoded.length; i++) {
+            chars[i] = (char) (encoded[i] & 0xFF);
+        }
+        return chars;
+    }
+
+    /**
      * Base64-decode data.
      *
      * @param text the Base64-encoded data

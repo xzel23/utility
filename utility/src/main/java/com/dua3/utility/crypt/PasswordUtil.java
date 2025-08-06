@@ -490,7 +490,7 @@ public final class PasswordUtil {
      *
      * @return a Base64-encoded string representing the randomly generated password
      */
-    public static String generatePassword() {
+    public static char[] generatePassword() {
         // 18 bytes do not require padding
         return generatePassword(18);
     }
@@ -503,12 +503,12 @@ public final class PasswordUtil {
      * @return a Base64-encoded string representing the randomly generated password.
      * @throws IllegalArgumentException if the specified length is less than or equal to 8.
      */
-    public static String generatePassword(int length) {
+    public static char[] generatePassword(int length) {
         LangUtil.checkArg(length >= 8, "length must be at least than 8");
-        String password;
+        char[] password;
         for (int i = 0; i < 10; i++) {
-            password = TextUtil.base64Encode(RandomUtil.generateRandomBytes(length));
-            if (evaluatePasswordStrength(password.toCharArray()).isSecure()) {
+            password = TextUtil.base64EncodeToChars(RandomUtil.generateRandomBytes(length));
+            if (evaluatePasswordStrength(password).isSecure()) {
                 return password;
             }
         }
