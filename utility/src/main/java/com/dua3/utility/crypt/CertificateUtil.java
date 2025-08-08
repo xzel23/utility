@@ -97,7 +97,8 @@ public final class CertificateUtil {
      *                                  or signing process
      */
     public static X509Certificate[] createX509Certificate(
-            KeyPair keyPair, String subject,
+            KeyPair keyPair,
+            String subject,
             int validityDays,
             boolean enableCA,
             PrivateKey parentPrivateKey,

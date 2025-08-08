@@ -22,6 +22,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -105,6 +106,9 @@ class CertificateUtilTest {
 
         // verify that the certificate chain is valid
         assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(certificates));
+
+        // Verify that both certificates have different public keys
+        assertNotEquals(certificates[1].getPublicKey(), certificates[0].getPublicKey());
     }
 
     /**
