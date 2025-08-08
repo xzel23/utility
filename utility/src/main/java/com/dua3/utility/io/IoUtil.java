@@ -889,9 +889,7 @@ public final class IoUtil {
      * @throws ZipException if the extraction exceeds any of the safety limits.
      */
     public static void unzip(URL zipUrl, Path destination, long maxFiles, long maxBytes, double maxCompressionRatio) throws IOException {
-        if (!Files.isDirectory(destination)) {
-            throw new IllegalArgumentException("Destination does not exist or is not a directory: " + destination);
-        }
+        LangUtil.checkArg(Files.isDirectory(destination), "Destination does not exist or is not a directory: " + destination);
 
         FileSystem fs = destination.getFileSystem();
 
@@ -1047,13 +1045,11 @@ public final class IoUtil {
         Comparator<String> comparator = TextUtil.lexicographicComparator(locale);
 
         return (p1, p2) -> {
-            if (p1 == null || p2 == null) {
-                return p1 == null ? p2 == null ? 0 : -1 : 1;
+            if (Objects.equals(p1, p2)) {
+                return 0;
             }
 
-            String root1 = p1.getRoot() != null ? p1.getRoot().toString() : "";
-            String root2 = p2.getRoot() != null ? p2.getRoot().toString() : "";
-            int c = comparator.compare(root1, root2);
+            int c = comparePathRoots(p1, p2, comparator);
             if (c != 0) {
                 return c;
             }
@@ -1072,6 +1068,30 @@ public final class IoUtil {
 
             return Integer.compare(nc1, nc2);
         };
+    }
+
+    /**
+     * Compares the root components of two given paths using the specified comparator.
+     * If either path is null, it assigns a priority such that a null path is considered less than a non-null path.
+     *
+     * @param p1 the first path to compare; may be null
+     * @param p2 the second path to compare; may be null
+     * @param comparator the comparator used to compare the string representations of the path roots
+     * @return a negative integer, zero, or a positive integer as the first path root is less than,
+     *         equal to, or greater than the second path root. If one path is null, a non-null path is considered greater.
+     */
+    private static int comparePathRoots(@Nullable Path p1, @Nullable Path p2, Comparator<String> comparator) {
+        if (p1 == null) {
+            return -1;
+        }
+
+        if (p2 == null) {
+            return 1;
+        }
+
+        String root1 = Objects.requireNonNullElse(p1.getRoot(), "").toString();
+        String root2 = Objects.requireNonNullElse(p2.getRoot(), "").toString();
+        return comparator.compare(root1, root2);
     }
 
     /**
