@@ -5,7 +5,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "20.0.0-beta8-SNAPSHOT"
+val projectVersion = "20.0.0-beta8"
 
 // define subprojects
 include("utility")
@@ -51,7 +51,7 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.19.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.2.2")
+            plugin("spotbugs", "com.github.spotbugs").version("6.2.3")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
 
