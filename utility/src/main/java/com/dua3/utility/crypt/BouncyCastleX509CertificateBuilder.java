@@ -171,7 +171,6 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
             CertificateUtil.verifyCertificateChain(chain);
 
             return chain;
-
         } catch (OperatorCreationException | CertIOException e) {
             throw new CertificateException("Failed to create certificate", e);
         }
