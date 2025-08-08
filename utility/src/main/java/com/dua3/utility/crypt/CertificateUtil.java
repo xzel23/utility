@@ -117,7 +117,7 @@ public final class CertificateUtil {
 
             return builder
                     .subject(subject)
-                    .issuer(parentCertificateChain[0].getSubjectX500Principal().getName())
+                    .issuer(parentCertificateChain[0].getSubjectX500Principal().toString())
                     .validityDays(validityDays)
                     .signatureAlgorithm(determineSignatureAlgorithm(parentPrivateKey))
                     .signedBy(parentPrivateKey, parentCertificateChain)
