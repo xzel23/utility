@@ -6,6 +6,7 @@ import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +29,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -117,7 +119,7 @@ public final class CertificateUtil {
 
             return builder
                     .subject(subject)
-                    .issuer(parentCertificateChain[0].getSubjectX500Principal().toString())
+                    .issuer(parentCertificateChain[0].getSubjectX500Principal().getName())
                     .validityDays(validityDays)
                     .signatureAlgorithm(determineSignatureAlgorithm(parentPrivateKey))
                     .signedBy(parentPrivateKey, parentCertificateChain)
@@ -318,6 +320,21 @@ public final class CertificateUtil {
         for (int i = 0; i < certificates.length - 1; i++) {
             T currentCert = certificates[i];
             T parentCert = certificates[i + 1];
+
+            X500Principal issuerDN =
+                    ((X509Certificate)currentCert).getIssuerX500Principal();
+            X500Principal subjectDN =
+                    ((X509Certificate)parentCert).getSubjectX500Principal();
+            if (!Objects.equals(issuerDN, subjectDN)) {
+                throw new CertificateException(
+                        "issuer of certificate %s ('%s') does not match parent certificate subject '%S'".formatted(
+                                ((X509Certificate) currentCert).getSubjectX500Principal().toString(),
+                                ((X509Certificate) currentCert).getIssuerX500Principal().toString(),
+                                ((X509Certificate) parentCert).getSubjectX500Principal().toString()
+                        )
+                );
+            }
+
             try {
                 currentCert.verify(parentCert.getPublicKey());
             } catch (InvalidKeyException e) {
