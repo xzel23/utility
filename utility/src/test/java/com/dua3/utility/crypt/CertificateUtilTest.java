@@ -112,11 +112,19 @@ class CertificateUtilTest {
      */
     private Map<String, Object> createTestParentCertificate() throws GeneralSecurityException {
         KeyPair parentKeyPair = KeyUtil.generateRSAKeyPair();
-        String parentSubject = "CN=Parent, O=Test Organization, C=US";
+        // Use the format that will be used as issuer in the child certificate
+        String parentSubject = "C=US, O=Test Organization, CN=Parent";
         int parentValidityDays = 365;
 
         X509Certificate[] parentCertificates = CertificateUtil.createSelfSignedX509Certificate(
                 parentKeyPair, parentSubject, parentValidityDays, true);
+        
+        // Print the actual subject DN of the created certificate
+        System.out.println("[DEBUG_LOG] Parent certificate created with subject: " + parentSubject);
+        System.out.println("[DEBUG_LOG] Actual parent certificate subject: " + 
+                parentCertificates[0].getSubjectX500Principal().toString());
+        System.out.println("[DEBUG_LOG] Parent certificate subject (RFC2253): " + 
+                parentCertificates[0].getSubjectX500Principal().getName(javax.security.auth.x500.X500Principal.RFC2253));
 
         return Map.of(
                 "certificate", parentCertificates[0],

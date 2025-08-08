@@ -1,7 +1,6 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.lang.LangUtil;
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
@@ -17,6 +16,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.jspecify.annotations.Nullable;
 
+import javax.security.auth.x500.X500Principal;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
@@ -40,8 +40,8 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
     private static final @Nullable X509Certificate[] EMPTY_CERTIFICATE_ARRAY = {};
 
     private final boolean enableCA;
-    private @Nullable String subjectDn;
-    private @Nullable String issuerDn;
+    private @Nullable X500Principal subject;
+    private @Nullable X500Principal issuer;
     private int validityDays = 365;
     private String signatureAlgorithm = "SHA256withRSA";
 
@@ -87,13 +87,13 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
 
     @Override
     public X509CertificateBuilder subject(String dn) {
-        this.subjectDn = dn;
+        this.subject = new javax.security.auth.x500.X500Principal(dn);
         return this;
     }
 
     @Override
     public X509CertificateBuilder issuer(String dn) {
-        this.issuerDn = dn;
+        this.issuer = new javax.security.auth.x500.X500Principal(dn);
         return this;
     }
 
@@ -107,11 +107,11 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
     @SuppressWarnings("UseOfObsoleteDateTimeApi")
     @Override
     public X509Certificate[] build(KeyPair keyPair) throws GeneralSecurityException {
-        if (subjectDn == null) {
+        if (subject == null) {
             throw new IllegalStateException("subject DN not set");
         }
-        if (issuerDn == null && issuerCert.length == 0) {
-            issuerDn = subjectDn;
+        if (issuer == null && issuerCert.length == 0) {
+            issuer = subject;
         }
 
         Provider provider = BouncyCastle.ensureProvider();
@@ -120,11 +120,6 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
         Date notBefore = Date.from(now);
         Date notAfter = Date.from(now.plusSeconds(validityDays * 86400L));
         BigInteger serial = new BigInteger(64, new SecureRandom());
-
-        X500Name subject = new X500Name(subjectDn);
-        X500Name issuer = (issuerCert.length > 0)
-                ? new X500Name(issuerCert[0].getSubjectX500Principal().getName())
-                : new X500Name(issuerDn);
 
         PrivateKey signingKey = (issuerKey != null) ? issuerKey : keyPair.getPrivate();
 
