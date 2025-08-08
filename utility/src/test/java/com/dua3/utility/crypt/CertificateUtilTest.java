@@ -122,12 +122,12 @@ class CertificateUtilTest {
 
         X509Certificate[] parentCertificates = CertificateUtil.createSelfSignedX509Certificate(
                 parentKeyPair, parentSubject, parentValidityDays, true);
-        
+
         // Print the actual subject DN of the created certificate
         System.out.println("[DEBUG_LOG] Parent certificate created with subject: " + parentSubject);
-        System.out.println("[DEBUG_LOG] Actual parent certificate subject: " + 
+        System.out.println("[DEBUG_LOG] Actual parent certificate subject: " +
                 parentCertificates[0].getSubjectX500Principal().toString());
-        System.out.println("[DEBUG_LOG] Parent certificate subject (RFC2253): " + 
+        System.out.println("[DEBUG_LOG] Parent certificate subject (RFC2253): " +
                 parentCertificates[0].getSubjectX500Principal().getName(javax.security.auth.x500.X500Principal.RFC2253));
 
         return Map.of(
@@ -252,6 +252,9 @@ class CertificateUtilTest {
         assertEquals(4, certificates.length, "Certificate chain should contain 4 certificates");
         assertEquals(rootCertificate, certificates[certificates.length - 1], "root should be last entry.");
         assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(certificates));
+
+        // Verify that both certificates have different public keys
+        assertNotEquals(certificates[1].getPublicKey(), certificates[0].getPublicKey());
     }
 
     @Test
