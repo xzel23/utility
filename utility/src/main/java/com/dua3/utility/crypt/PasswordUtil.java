@@ -87,12 +87,19 @@ public final class PasswordUtil {
             this.level = level;
         }
 
+        /**
+         * Retrieves the description of the password strength level.
+         *
+         * @return the description of the password strength level as a String.
+         */
         public String getDescription() {return description;}
 
+        /**
+         * Retrieves the numeric representation of the strength level.
+         *
+         * @return an integer representing the strength level of the password.
+         */
         public int getLevel() {return level;}
-
-        @Override
-        public String toString() {return description;}
     }
 
     /**
@@ -115,7 +122,10 @@ public final class PasswordUtil {
         }
 
         /**
-         * @return true if the password is considered secure (Strong or Very Strong)
+         * Determines if the password meets the required security threshold.
+         * A password is considered secure if its strength level is "Strong" or higher.
+         *
+         * @return true if the password strength level is "Strong" or "Very Strong"; false otherwise
          */
         public boolean isSecure() {
             return strengthLevel.getLevel() >= StrengthLevel.STRONG.getLevel();
