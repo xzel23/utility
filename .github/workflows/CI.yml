@@ -373,7 +373,7 @@ jobs:
           path: build/docs/javadoc
 
       - name: 'publish build'
-        run: gradle --no-daemon --build-cache jreleaserDeploy jreleaserUpload
+        run: gradle --no-daemon --build-cache --no-configuration-cache jreleaserDeploy jreleaserUpload
         env:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
