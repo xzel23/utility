@@ -66,7 +66,7 @@ public class SwingLogPane extends JPanel {
     private final transient Function<LogEntry, Color> colorize;
     private final transient TableRowSorter<AbstractTableModel> tableRowSorter;
     private transient Function<? super LogEntry, String> format = LogEntry::toString;
-    private double dividerLocation = 0.5;
+    private volatile double dividerLocation = 0.5;
     private final JScrollPane scrollPaneTable;
     private transient List<LogEntry> selectedEntries = Collections.emptyList();
 
