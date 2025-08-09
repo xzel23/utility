@@ -430,6 +430,18 @@ public class SwingLogPane extends JPanel {
     }
 
     /**
+     * Retrieves the current location of the divider within the split pane.
+     * The location is represented as a proportional value between 0.0 and 1.0,
+     * where 0.0 corresponds to the top/leftmost position and 1.0 corresponds
+     * to the bottom/rightmost position of the split pane.
+     *
+     * @return the proportional location of the divider as a double
+     */
+    public double getDividerLocation() {
+        return dividerLocation;
+    }
+
+    /**
      * Set the divider location. Analog to {@link JSplitPane#setDividerLocation(int)}.
      *
      * @param location the location
