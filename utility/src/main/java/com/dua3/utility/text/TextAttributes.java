@@ -132,6 +132,7 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
         return getFontDefInternal(attributes);
     }
 
+    @SuppressWarnings("unchecked")
     private static FontDef getFontDefInternal(Map<? super String, @Nullable Object> attributes) {
         Font font = (Font) attributes.get(Style.FONT);
         if (font != null) {
@@ -139,7 +140,6 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
         }
 
         FontDef fd = new FontDef();
-        //noinspection unchecked
         DataUtil.ifPresent(attributes, Style.FONT_FAMILIES, v -> fd.setFamilies((List<String>) v));
         DataUtil.ifPresent(attributes, Style.FONT_SIZE, v -> fd.setSize((Float) v));
         DataUtil.ifPresent(attributes, Style.COLOR, v -> fd.setColor((Color) v));
@@ -150,9 +150,9 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
         return fd;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public SortedSet<Map.Entry<String, @Nullable Object>> entrySet() {
-        //noinspection rawtypes
         return (SortedSet) entries;
     }
 

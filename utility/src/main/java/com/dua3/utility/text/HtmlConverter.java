@@ -520,6 +520,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             return fd.getFamilies() == null && fd.getSize() == null && fd.getColor() == null;
         }
 
+        @SuppressWarnings("unchecked")
         private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
             Map<String, @Nullable Object> properties = new LinkedHashMap<>();

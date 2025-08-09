@@ -38,12 +38,6 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
      */
     protected InputDialogPane() { /* nothing to do */ }
 
-    /**
-     * Represents a property that indicates whether the current state of the input dialog pane is valid.
-     * This property is used to enable or disable functionality (such as buttons) depending on the
-     * validation state of the input. It is initialized to {@code false} by default and can be updated
-     * based on the implementation's specific validation logic.
-     */
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
     /**

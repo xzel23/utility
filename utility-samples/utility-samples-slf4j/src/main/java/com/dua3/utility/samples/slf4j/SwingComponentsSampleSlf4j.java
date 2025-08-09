@@ -8,7 +8,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
  *
  * <p>This implementation uses the SLF4J logging facade.
  */
-public class SwingComponentsSampleSlf4j extends SwingComponentsSampleLogBase {
+public final class SwingComponentsSampleSlf4j extends SwingComponentsSampleLogBase {
     static {
         java.util.logging.LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
@@ -22,4 +22,6 @@ public class SwingComponentsSampleSlf4j extends SwingComponentsSampleLogBase {
     public static void main(String[] args) {
         start(SwingComponentsSampleSlf4j::new);
     }
+
+    private SwingComponentsSampleSlf4j() { /* nothing to do */ }
 }

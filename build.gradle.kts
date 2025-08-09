@@ -309,7 +309,7 @@ subprojects {
     if (!project.name.endsWith("-bom")) {
         tasks.compileJava {
             options.encoding = "UTF-8"
-            options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:-module"))
+            options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:-module", "-Xlint:unchecked"))
             options.javaModuleVersion.set(provider { project.version as String })
             options.release.set(java.targetCompatibility.majorVersion.toInt())
         }
@@ -353,6 +353,7 @@ subprojects {
             reports.create("html") {
                 required.set(true)
                 outputLocation.set(layout.buildDirectory.file("reports/spotbugs/main.html"))
+                setStylesheet("fancy-hist.xsl")
             }
         }
 
@@ -360,6 +361,7 @@ subprojects {
             reports.create("html") {
                 required.set(true)
                 outputLocation.set(layout.buildDirectory.file("reports/spotbugs/test.html"))
+                setStylesheet("fancy-hist.xsl")
             }
         }
     }

@@ -374,8 +374,8 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param dflt     the default value to return if the property is not set
      * @return the value of the property if set, otherwise the provided default value
      */
+    @SuppressWarnings("unchecked")
     public <T extends @Nullable Object> T getOrDefault(String property, T dflt) {
-        //noinspection unchecked - by design
         return (T) properties.getOrDefault(property, dflt);
     }
 

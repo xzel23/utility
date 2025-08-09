@@ -732,8 +732,8 @@ public final class IoUtil {
      * @param <E> the generic exception type
      * @throws E always
      */
+    @SuppressWarnings("unchecked")
     private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
-        //noinspection unchecked
         throw (E) e;
     }
 
