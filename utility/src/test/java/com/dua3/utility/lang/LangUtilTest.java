@@ -559,6 +559,27 @@ class LangUtilTest {
     }
 
     @Test
+    void testGetResourceURLNonExistentResource() {
+        assertThrows(NullPointerException.class, () -> LangUtil.getResourceURL(this.getClass(), "nonexistent.txt"), "Resource not found: nonexistent.txt");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            ", resource.txt",
+            "com.dua3.utility.lang.LangUtilTest, ",
+            ", "
+    })
+    void testGetResourceURLNullInputs(String className, String resourceName) {
+        Class<?> clazz = className == null ? null : this.getClass();
+        if (clazz == null || resourceName == null) {
+            Throwable t = assertThrows(Throwable.class, () -> LangUtil.getResourceURL(clazz, resourceName));
+            assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+        } else {
+            assertDoesNotThrow(() -> LangUtil.getResourceURL(clazz, resourceName));
+        }
+    }
+
+    @Test
     void testGetResourceAsString() throws IOException {
         String s = LangUtil.getResourceAsString(this.getClass(), "resource.txt");
         assertEquals("test", s);
