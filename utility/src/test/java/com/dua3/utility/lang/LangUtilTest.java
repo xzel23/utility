@@ -980,4 +980,32 @@ class LangUtilTest {
         UUID uuidV4 = UUID.randomUUID(); // Version 4 UUID
         assertThrows(UnsupportedOperationException.class, () -> LangUtil.getTimestampAsInstant(uuidV4));
     }
+
+    @Test
+    void testMapNonNullOrElse_WithValuePresent() {
+        String input = "test";
+        String result = LangUtil.mapNonNullOrElse(input, String::toUpperCase, "default");
+        assertEquals("TEST", result);
+    }
+
+    @Test
+    void testMapNonNullOrElse_WithNullValue() {
+        String input = null;
+        String result = LangUtil.mapNonNullOrElse(input, String::toUpperCase, "default");
+        assertEquals("default", result);
+    }
+
+    @Test
+    void testMapNonNullElseGet_WithValuePresent() {
+        String input = "test";
+        String result = LangUtil.mapNonNullElseGet(input, String::toUpperCase, () -> "default");
+        assertEquals("TEST", result);
+    }
+
+    @Test
+    void testMapNonNullElseGet_WithNullValue() {
+        String input = null;
+        String result = LangUtil.mapNonNullElseGet(input, String::toUpperCase, () -> "default");
+        assertEquals("default", result);
+    }
 }

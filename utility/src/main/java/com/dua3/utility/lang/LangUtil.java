@@ -2277,7 +2277,39 @@ public final class LangUtil {
      * @param mapper the function to apply to the input value, must not be null
      * @return the result of applying the mapper function to the value, or null if the value is null
      */
-    public static <T,U> U mapNonNull (@Nullable T value, Function<T, U> mapper) {
+    public static <T,U> U mapNonNull(@Nullable T value, Function<T, U> mapper) {
         return value == null ? null : mapper.apply(value);
+    }
+
+    /**
+     * Applies the given mapping function to the provided non-null value, returning the result,
+     * or returns a default value if the input is null.
+     *
+     * @param <T> the type of the input value
+     * @param <U> the type of the output value
+     * @param value the input value to map, which may be null
+     * @param mapper the function used to transform the non-null input value
+     * @param ifNull the default value to return if the input value is null
+     * @return the result of applying the mapper function to the input value
+     *         if it is non-null; otherwise, the default value
+     */
+    public static <T,U> U mapNonNullOrElse(@Nullable T value, Function<T, U> mapper, U ifNull) {
+        return value == null ? ifNull : mapper.apply(value);
+    }
+
+    /**
+     * Maps a non-null value using the provided mapper function, or supplies a default value
+     * if the input value is null.
+     *
+     * @param <T> the type of the input value
+     * @param <U> the type of the output value
+     * @param value the input value which may be null
+     * @param mapper the function to map the input value if it is non-null
+     * @param ifNull the supplier to provide a value if the input value is null
+     * @return the result of applying the mapper function to the input value if it is non-null,
+     *         or the value provided by the supplier if the input value is null
+     */
+    public static <T,U> U mapNonNullElseGet(@Nullable T value, Function<T, U> mapper, Supplier<U> ifNull) {
+        return value == null ? ifNull.get() : mapper.apply(value);
     }
 }
