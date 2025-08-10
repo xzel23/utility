@@ -19,6 +19,7 @@ class FileTypeTest {
     private static TestFileType documentFileType;
     private static TestCompoundFileType compoundFileType;
 
+    @SuppressWarnings("unchecked")
     @BeforeAll
     static void setUp() {
         // Create test file types

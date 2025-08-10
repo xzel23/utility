@@ -529,6 +529,7 @@ class ArgumentsParserTest {
         ));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void testStandardOptionArity() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()

@@ -108,6 +108,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         return Comparator.naturalOrder();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ImmutableListBackedSortedSet<T> subSet(T fromElement, T toElement) {
         int start = getIndex(fromElement);
@@ -120,7 +121,6 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         }
         if (start >= end) {
             if (start == end) {
-                //noinspection unchecked
                 return (ImmutableListBackedSortedSet<T>) EMPTY_SET;
             }
             throw new IllegalArgumentException("fromElement > toElement");
@@ -128,6 +128,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, start, end));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ImmutableSortedListSet<T> headSet(T toElement) {
         int end = getIndex(toElement);
@@ -135,12 +136,12 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             end = -end - 1;
         }
         if (end == 0) {
-            //noinspection unchecked
             return (ImmutableSortedListSet<T>) EMPTY_SET;
         }
         return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, 0, end));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ImmutableSortedListSet<T> tailSet(T fromElement) {
         int start = getIndex(fromElement);
@@ -148,7 +149,6 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             start = -start - 1;
         }
         if (start >= elements.length) {
-            //noinspection unchecked
             return (ImmutableSortedListSet<T>) EMPTY_SET;
         }
         return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, start, elements.length));
@@ -408,6 +408,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             }
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public ImmutableSortedListSet<T> headSet(T toElement) {
             int start = original.getIndex(toElement);
@@ -422,7 +423,6 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             } else if (start < size()) {
                 return original.tailSet(original.get(start)).reversed();
             } else {
-                //noinspection unchecked
                 return (ImmutableSortedListSet<T>) EMPTY_SET_REVERSED;
             }
         }

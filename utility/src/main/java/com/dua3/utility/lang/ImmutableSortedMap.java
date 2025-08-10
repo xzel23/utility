@@ -41,14 +41,15 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
      */
     record Entry<K extends Comparable<K>, V extends @Nullable Object>(K getKey, V getValue)
             implements Map.Entry<K, V>, Comparable<Entry<K, V>> {
+        @SuppressWarnings("unchecked")
         @Override
         public @Nullable Object setValue(@Nullable Object value) {
             throw new UnsupportedOperationException("the collection is immutable");
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public int compareTo(Entry o) {
-            //noinspection unchecked
             return getKey().compareTo((K) o.getKey());
         }
     }
@@ -66,8 +67,8 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
      * @param <V> the type of the values, which can be nullable
      * @return an empty {@code ImmutableSortedMap} instance
      */
+    @SuppressWarnings("unchecked")
     public static <K extends Comparable<K>, V extends @Nullable Object> ImmutableSortedMap<K,V> emptyMap() {
-        //noinspection unchecked
         return (ImmutableSortedMap<K, V>) EMPTY_MAP;
     }
 
@@ -102,9 +103,9 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         assert keyAreSortedAndUnique() : "keys are not sorted or not unique";
     }
 
+    @SuppressWarnings("unchecked")
     private boolean keyAreSortedAndUnique() {
         for (int i=1; i<keys.length; i++) {
-            //noinspection unchecked
             if (((Comparable<Object>) keys[i-1]).compareTo(keys[i]) >= 0) {
                 return false;
             }
@@ -112,10 +113,10 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     private static <K extends Comparable<K>, V extends @Nullable Object> Entry<K, V>[] getArrayOfEntries(Map<K, V> map) {
         List<Entry<K,V>> entries = new ArrayList<>(map.size());
         map.forEach((k, v) -> entries.add(new Entry<>(k, v)));
-        //noinspection unchecked
         return entries.toArray(Entry[]::new);
     }
 
@@ -169,11 +170,13 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         return subMapHelper(start, keys.length);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public K firstKey() {
         return (K) keys[0];
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public K lastKey() {
         return (K) keys[keys.length - 1];
@@ -204,10 +207,10 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public V get(Object key) {
         int idx = keyIndex(key);
-        //noinspection unchecked
         return idx < 0 ? null : (V) values[idx];
     }
 
@@ -240,9 +243,9 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         return Set.of((K[]) keys);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<V> values() {
-        //noinspection unchecked
         return LangUtil.asUnmodifiableList((V[]) values);
     }
 
@@ -264,6 +267,7 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         return Objects.deepEquals(keys, ism.keys) && Objects.deepEquals(values, ism.values);
     }
 
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
         int h = hash;
