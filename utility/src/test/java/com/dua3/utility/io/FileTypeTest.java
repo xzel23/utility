@@ -13,13 +13,13 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("unchecked")
 class FileTypeTest {
 
     private static TestFileType textFileType;
     private static TestFileType documentFileType;
     private static TestCompoundFileType compoundFileType;
 
-    @SuppressWarnings("unchecked")
     @BeforeAll
     static void setUp() {
         // Create test file types
