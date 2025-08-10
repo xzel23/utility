@@ -148,6 +148,7 @@ tasks.register("showTaskIO") {
 // Aggregate all subprojects for JaCoCo report aggregation
 
 dependencies {
+    jacocoAggregation(rootProject)
     jacocoAggregation(project(":utility"))
     jacocoAggregation(project(":utility-db"))
     jacocoAggregation(project(":utility-swing"))
