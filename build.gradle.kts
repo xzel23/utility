@@ -315,6 +315,7 @@ subprojects {
         }
         tasks.compileTestJava {
             options.encoding = "UTF-8"
+            options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:-module", "-Xlint:unchecked"))
         }
         tasks.javadoc {
             (options as StandardJavadocDocletOptions).apply {
