@@ -68,6 +68,12 @@
         </Or>
     </Match>
 
+    <!-- false positive -->
+    <Match>
+        <Class name="com.dua3.utility.xml.XmlUtil"/>
+        <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+    </Match>
+
     <!-- false positive; the field contains an unmodifiable list -->
     <Match>
         <Class name="com.dua3.fx.icons.IconView"/>
