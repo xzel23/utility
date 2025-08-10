@@ -49,6 +49,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class LangUtilTest {
 
     @Test
+    void testRemoveLeadingAndTrailing() {
+        List<Integer> list = new ArrayList<>(List.of(1, 1, 2, 3, 1, 1));
+        LangUtil.removeLeadingAndTrailing(list, i -> i == 1);
+        assertEquals(List.of(2, 3), list);
+
+        List<Integer> list2 = new ArrayList<>(List.of(3, 3, 3, 4, 5, 3, 3));
+        LangUtil.removeLeadingAndTrailing(list2, i -> i == 3);
+        assertEquals(List.of(4, 5), list2);
+    }
+
+    @Test
+    void testRemoveLeadingAndTrailingNoChanges() {
+        List<Integer> list = new ArrayList<>(List.of(2, 3, 4));
+        LangUtil.removeLeadingAndTrailing(list, i -> i == 1);
+        assertEquals(List.of(2, 3, 4), list);
+    }
+
+    @Test
+    void testRemoveLeadingAndTrailingEmptyList() {
+        List<Integer> emptyList = new ArrayList<>();
+        LangUtil.removeLeadingAndTrailing(emptyList, i -> i == 1);
+        assertTrue(emptyList.isEmpty());
+    }
+
+    @Test
     void check() {
         assertDoesNotThrow(() -> LangUtil.check(true));
         assertThrows(LangUtil.FailedCheckException.class, () -> LangUtil.check(false));
@@ -761,6 +786,27 @@ class LangUtilTest {
     }
 
     @Test
+    void testRequireInIntervalFloat() {
+        assertEquals(5.0f, LangUtil.requireInInterval(5.0f, 1.0f, 10.0f));
+        assertEquals(5.0f, LangUtil.requireInInterval(5.0f, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5.0f, 6.0f, 10.0f));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5.0f, 6.0f, Float.NaN));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(Float.NaN, 6.0f, 10.0f));
+    }
+
+    @Test
+    void testRequireInIntervalShort() {
+        assertEquals((short) 5, LangUtil.requireInInterval((short) 5, (short) 1, (short) 10));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval((short) 5, (short) 6, (short) 10));
+    }
+
+    @Test
+    void testRequireInIntervalShortFmtArgs() {
+        assertEquals((short) 5, LangUtil.requireInInterval((short) 5, (short) 1, (short) 10, "Error: %s", 5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval((short) 5, (short) 6, (short) 10, "Error: %s", 5));
+    }
+
+    @Test
     void testRequireInIntervalIntFmtArgs() {
         assertEquals(5, LangUtil.requireInInterval(5, 1, 10, "Error: %s", 5));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5, 6, 10, "Error: %s", 5));
@@ -1074,4 +1120,37 @@ class LangUtilTest {
         LangUtil.removeLeading(emptyList, i -> i == 1);
         assertTrue(emptyList.isEmpty());
     }
+
+    @Test
+    void testAddIfNonNull_withNonNullItems() {
+        List<String> list = new ArrayList<>();
+        boolean changed = LangUtil.addIfNonNull(list, "a", "b", "c");
+        assertTrue(changed);
+        assertEquals(List.of("a", "b", "c"), list);
+    }
+
+    @Test
+    void testAddIfNonNull_withMixedItems() {
+        List<String> list = new ArrayList<>();
+        boolean changed = LangUtil.addIfNonNull(list, "a", null, "b", null, "c");
+        assertTrue(changed);
+        assertEquals(List.of("a", "b", "c"), list);
+    }
+
+    @Test
+    void testAddIfNonNull_withEmptyItems() {
+        List<String> list = new ArrayList<>();
+        boolean changed = LangUtil.addIfNonNull(list);
+        assertFalse(changed);
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    void testAddIfNonNull_withNoItems() {
+        List<String> list = new ArrayList<>();
+        boolean changed = LangUtil.addIfNonNull(list, (String) null);
+        assertFalse(changed);
+        assertTrue(list.isEmpty());
+    }
+
 }
