@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -1007,5 +1008,70 @@ class LangUtilTest {
         String input = null;
         String result = LangUtil.mapNonNullElseGet(input, String::toUpperCase, () -> "default");
         assertEquals("default", result);
+    }
+
+    @Test
+    void testAddIf_withAllItemsValid() {
+        List<Integer> list = new ArrayList<>();
+        boolean changed = LangUtil.addIf(i -> i % 2 == 0, list, 2, 4, 6);
+        assertTrue(changed);
+        assertEquals(List.of(2, 4, 6), list);
+    }
+
+    @Test
+    void testAddIf_withSomeItemsValid() {
+        List<Integer> list = new ArrayList<>();
+        boolean changed = LangUtil.addIf(i -> i % 2 == 0, list, 3, 4, 5);
+        assertTrue(changed);
+        assertEquals(List.of(4), list);
+    }
+
+    @Test
+    void testAddIf_withNoItemsValid() {
+        List<Integer> list = new ArrayList<>();
+        boolean changed = LangUtil.addIf(i -> i % 2 == 0, list, 1, 3, 5);
+        assertFalse(changed);
+        assertEquals(List.of(), list);
+    }
+
+    @Test
+    void testAddIf_withEmptyItems() {
+        List<Integer> list = new ArrayList<>();
+        boolean changed = LangUtil.addIf(i -> i % 2 == 0, list);
+        assertFalse(changed);
+        assertEquals(List.of(), list);
+    }
+
+    @Test
+    void testAddIf_withNullPredicate() {
+        List<String> list = new ArrayList<>();
+        boolean changed = LangUtil.addIf(Objects::nonNull, list, "a", null, "b");
+        assertTrue(changed);
+        assertEquals(List.of("a", "b"), list);
+    }
+
+    @Test
+    void testRemoveLeading() {
+        List<Integer> list = new ArrayList<>(List.of(1, 1, 2, 3, 1));
+        LangUtil.removeLeading(list, i -> i == 1);
+        assertEquals(List.of(2, 3, 1), list);
+
+        List<Integer> list2 = new ArrayList<>(List.of(3, 3, 3, 4, 5));
+        LangUtil.removeLeading(list2, i -> i == 3);
+        assertEquals(List.of(4, 5), list2);
+    }
+
+    @Test
+    void testRemoveLeadingNoChanges() {
+        List<Integer> list = new ArrayList<>(List.of(2, 3, 4));
+        LangUtil.removeLeading(list, i -> i == 1);
+        assertEquals(List.of(2, 3, 4), list);
+    }
+
+    @Test
+    void testRemoveLeadingEmptyList() {
+        List<Integer> emptyList = new ArrayList<>();
+        LangUtil.removeLeading(emptyList, i -> i == 1);
+        assertTrue(emptyList.isEmpty());
     }
 }
