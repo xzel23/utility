@@ -3,6 +3,9 @@ package com.dua3.utility.lang;
 import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -1153,4 +1156,97 @@ class LangUtilTest {
         assertTrue(list.isEmpty());
     }
 
+    @ParameterizedTest
+    @ValueSource(doubles = {-1.0, -0.0001, -Double.MAX_VALUE, -1e-10})
+    void testRequireNegativeDoubleValid(double value) {
+        assertEquals(value, LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, Double.POSITIVE_INFINITY, Double.NaN, 1.0})
+    void testRequireNegativeDoubleInvalid(double value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(floats = {-1.0f, -0.0001f, -Float.MAX_VALUE, -1e-10f})
+    void testRequireNegativeFloatValid(float value) {
+        assertEquals(value, LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(floats = {0.0f, Float.POSITIVE_INFINITY, Float.NaN, 1.0f})
+    void testRequireNegativeFloatInvalid(float value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-1L, -123456789L, Long.MIN_VALUE})
+    void testRequireNegativeLongValid(long value) {
+        assertEquals(value, LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {0L, 1L, Long.MAX_VALUE})
+    void testRequireNegativeLongInvalid(long value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-1, -1000, Integer.MIN_VALUE})
+    void testRequireNegativeIntValid(int value) {
+        assertEquals(value, LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
+    void testRequireNegativeIntInvalid(int value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(shorts = {-1, -100, Short.MIN_VALUE})
+    void testRequireNegativeShortValid(short value) {
+        assertEquals(value, LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(shorts = {0, 1, Short.MAX_VALUE})
+    void testRequireNegativeShortInvalid(short value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value));
+    }
+
+    @Test
+    void testRequireNegativeByte() {
+        byte validNegative = -10;
+        byte zeroValue = 0;
+        byte positiveValue = 10;
+
+        assertEquals(validNegative, LangUtil.requireNegative(validNegative));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(zeroValue));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(positiveValue));
+    }
+
+    @ParameterizedTest
+    @ValueSource(bytes = {-1, -100, Byte.MIN_VALUE})
+    void testRequireNegativeByteValid(byte value) {
+        assertEquals(value, LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(bytes = {0, 1, Byte.MAX_VALUE})
+    void testRequireNegativeByteInvalid(byte value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-1.0, valid negative value", "-0.0001, valid negative value", "1.0, wrong value", "0.0, zero value"})
+    void testRequireNegativeDoubleWithMessage(double value, String description) {
+        if (value < 0) {
+            assertEquals(value, LangUtil.requireNegative(value, "Error: %f is not negative", value));
+        } else {
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value, "Error: %f is not negative", value));
+            assertTrue(ex.getMessage().contains("%f".formatted(value)));
+        }
+    }
 }
