@@ -1,6 +1,9 @@
 package com.dua3.utility.lang;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,6 +14,7 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BuildInfoTest {
 
@@ -223,6 +227,49 @@ class BuildInfoTest {
         assertThrows(IllegalArgumentException.class, () ->
                 BuildInfo.create("1.2", ZonedDateTime.now(), "key123")
         );
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "1.0.0,2023-01-01T00:00:00Z,key123,abc123,test-system",
+            "3.0.0-alpha,2020-02-29T12:34:56Z,key789,commit456,system123"
+    })
+    void testValidCreateMethod(String version, String buildTime, String key, String commit, String system) {
+        ZonedDateTime zdt = ZonedDateTime.parse(buildTime);
+        BuildInfo buildInfo = system == null || system.isEmpty()
+                ? BuildInfo.create(version, zdt, key, commit, "")
+                : BuildInfo.create(version, zdt, key, commit, system);
+
+        assertEquals(version, buildInfo.version().toString());
+        assertEquals(zdt, buildInfo.buildTime());
+        assertEquals(key, buildInfo.key());
+        assertEquals(commit, buildInfo.commit());
+        assertEquals(system, buildInfo.system());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'',2023-01-01T00:00:00Z,key123,abc123,test-system",
+            "invalid-version,2023-01-01T00:00:00Z,key123,abc123,test-system"
+    })
+    void testInvalidCreateMethod(String version, String buildTime, String key, String commit, String system) {
+        Throwable t = assertThrows(Throwable.class, () -> {
+            ZonedDateTime zdt = ZonedDateTime.parse(buildTime);
+            BuildInfo.create(version, zdt, key, commit, system);
+        });
+        assertTrue(t instanceof IllegalArgumentException);
+    }
+
+    @Test
+    void testCreateWithNullValues() {
+        Throwable t = assertThrows(Throwable.class, () -> BuildInfo.create(null, ZonedDateTime.now(), "key123"));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+
+        t = assertThrows(Throwable.class, () -> BuildInfo.create("1.2.3", (ZonedDateTime) null, "key123"));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+
+        t = assertThrows(Throwable.class, () -> BuildInfo.create("1.2.3", ZonedDateTime.now(), null));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
     }
 
     @Test
