@@ -616,10 +616,14 @@ public final class LangUtil {
      * @param clazz    the Class that's used to load the resource.
      * @param resource path (relative to clazz) of resource to load
      * @return URL for the given resource
-     * @throws NullPointerException if the resource could not be found
+     * @throws MissingResourceException if the resource could not be found
      */
     public static URL getResourceURL(Class<?> clazz, String resource) {
-        return Objects.requireNonNull(clazz.getResource(resource), () -> "Resource not found: " + resource);
+        URL url = clazz.getResource(resource);
+        if (url == null) {
+            throw new MissingResourceException("Resource not found: " + resource, clazz.getName(), resource);
+        }
+        return url;
     }
 
     /**
@@ -770,7 +774,7 @@ public final class LangUtil {
      * @param cls    the class for resource loading
      * @param name   the resource name
      * @param locale the locale
-     * @return the URL of the resource if found, or {@code null}
+     * @return the URL of the resource
      * @throws MissingResourceException if no resource was found
      */
     public static URL getResourceURL(Class<?> cls, String name, Locale locale) {

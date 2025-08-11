@@ -10,7 +10,7 @@ package com.dua3.utility.lang;
  * bigger than versions with a suffix. This makes sure that the final version, i.e., the version
  * without a suffix, is always considered the newest one.
  * <p>
- * <strong>This means that you must not add a suffix like {@literal '-final'} tho the version for the
+ * <strong>This means that you must not add a suffix like {@literal '-final'} to the version for the
  * release version.</strong>
  *
  * @param major the major version

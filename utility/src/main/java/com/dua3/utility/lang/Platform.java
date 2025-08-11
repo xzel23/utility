@@ -129,6 +129,8 @@ public enum Platform {
 
     /**
      * Check if argument needs to be quoted before passing to {@link ProcessBuilder}.
+     * <p>
+     * The default version of this method returns false and is overridden to return true on Windows.
      *
      * @param s the argument
      * @return true, if s needs to be quoted
@@ -139,6 +141,8 @@ public enum Platform {
 
     /**
      * Quote argument for {@link ProcessBuilder}.
+     * <p>
+     * Only WINDOWS applies special quoting rules; on other platforms the default assumes no quoting is necessary.
      *
      * @param s the argument
      * @return quoted version of s if quoting needed, otherwise s

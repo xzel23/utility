@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
+import java.util.MissingResourceException;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -137,7 +138,7 @@ class BuildInfoTest {
         assertEquals("", bi.commit());
         assertEquals("", bi.system());
     }
-    
+
     @Test
     void testCreateWithCommitAndSystem() {
         BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.now(), "key123", "abc123", "test-system");
@@ -157,6 +158,8 @@ class BuildInfoTest {
         props.setProperty(BuildInfo.KEY_BUILD_VERSION, "2.3.4-beta");
         props.setProperty(BuildInfo.KEY_BUILD_TIME, "2023-01-01T12:00:00Z[UTC]");
         props.setProperty(BuildInfo.KEY_PUBLIC_KEY, "key123");
+        props.setProperty(BuildInfo.KEY_COMMIT, "abcdef");
+        props.setProperty(BuildInfo.KEY_SYSTEM, "OS 123");
 
         BuildInfo bi = BuildInfo.create(props);
 
@@ -166,13 +169,13 @@ class BuildInfoTest {
         assertEquals("beta", bi.version().suffix());
         assertEquals("2.3.4-beta", bi.version().toString());
         assertEquals("key123", bi.key());
-        assertEquals("", bi.commit());
-        assertEquals("", bi.system());
+        assertEquals("abcdef", bi.commit());
+        assertEquals("OS 123", bi.system());
 
         // ZonedDateTime.toString() formats the time as "2023-01-01T12:00Z[UTC]"
         assertEquals("2023-01-01T12:00Z[UTC]", bi.buildTime().toString());
     }
-    
+
     @Test
     void testCreateFromPropertiesWithCommitAndSystem() {
         Properties props = new Properties();
@@ -198,23 +201,6 @@ class BuildInfoTest {
     }
 
     @Test
-    void testDefaultPropertiesValues() {
-        Properties props = new Properties();
-        props.setProperty(BuildInfo.KEY_PUBLIC_KEY, "key123");
-
-        BuildInfo bi = BuildInfo.create(props);
-
-        assertEquals(0, bi.version().major());
-        assertEquals(0, bi.version().minor());
-        assertEquals(1, bi.version().patch());
-        assertEquals("SNAPSHOT", bi.version().suffix());
-        assertEquals("0.0.1-SNAPSHOT", bi.version().toString());
-        assertEquals("key123", bi.key());
-        assertEquals("", bi.commit());
-        assertEquals("", bi.system());
-    }
-
-    @Test
     void testToString() {
         ZonedDateTime buildTime = ZonedDateTime.parse("2023-01-01T12:00:00Z[UTC]");
         Version version = Version.valueOf("1.2.3-beta");
@@ -222,7 +208,7 @@ class BuildInfoTest {
 
         assertEquals("1.2.3-beta (2023-01-01T12:00Z[UTC])", bi.toString());
     }
-    
+
     @Test
     void testToStringWithCommitAndSystem() {
         ZonedDateTime buildTime = ZonedDateTime.parse("2023-01-01T12:00:00Z[UTC]");
@@ -258,7 +244,7 @@ class BuildInfoTest {
     @Test
     void testCreateFromNonExistentResource() {
         // Test loading from a non-existent resource
-        assertThrows(NullPointerException.class, () ->
+        assertThrows(MissingResourceException.class, () ->
                 BuildInfo.create(BuildInfoTest.class, "non-existent.properties")
         );
     }

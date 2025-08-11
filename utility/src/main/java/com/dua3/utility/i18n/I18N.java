@@ -40,6 +40,8 @@ import java.util.function.Function;
  * <p>
  * The application should implement the {@link I18NProvider} interface to announce the I18N instance to libraries.
  * Once initialised, libraries can get the instance using {@link I18N#getInstance()} and merge their own bundles.
+ * <p>
+ * If multiple providers are found, class initialization fails with an {@link IllegalStateException}.
  */
 public final class I18N {
     private static final Logger LOG = LogManager.getLogger(I18N.class);
@@ -203,7 +205,7 @@ public final class I18N {
      *
      * @param key The key to lookup in the bundleMap.
      * @param bundleLoader The function used to load the ResourceBundle for the given locale.
-     * @return The ResourceBundle containing the key, or {@code null} if the key is not found.
+     * @return An Optional containing the ResourceBundle for the key, or an empty Optional if the key is not found.
      */
     public Optional<ResourceBundle> lookupBundle(String key, Function<Locale, ResourceBundle> bundleLoader) {
         return Optional.ofNullable(bundleMap.computeIfAbsent(key, k -> {
@@ -285,7 +287,7 @@ public final class I18N {
      * @param key The key to check.
      * @return {@code true} if the key is present, {@code false} otherwise.
      */
-    public boolean containsKey(String key) {
+    public boolean isMapped(String key) {
         return bundleMap.containsKey(key);
     }
 }

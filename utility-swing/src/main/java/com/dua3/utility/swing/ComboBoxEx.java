@@ -39,9 +39,9 @@ public class ComboBoxEx<T> extends JPanel {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
     private transient @Nullable Comparator<? super T> comparator;
-    private final transient @Nullable Function<T, @Nullable T> edit;
+    private final transient @Nullable UnaryOperator<T> edit;
     private final transient @Nullable Supplier<? extends T> add;
-    private final transient @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
+    private final transient @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
     private final transient Function<T, String> format;
     private final DefaultComboBoxModel<T> model;
     private final JComboBox<T> comboBox;
@@ -59,7 +59,12 @@ public class ComboBoxEx<T> extends JPanel {
      * @param items the initial items to populate the ComboBoxEx with
      */
     @SafeVarargs
-    public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<? extends T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, T... items) {
+    public ComboBoxEx(
+            @Nullable UnaryOperator<T> edit,
+            @Nullable Supplier<? extends T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            Function<T, String> format, T... items
+    ) {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         this.format = format;
@@ -191,7 +196,7 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     /**
-     * Method to be passed as a method reference in the {@code remove} parameter to the ComboBoxEx construvtor.
+     * Method to be passed as a method reference in the {@code remove} parameter to the ComboBoxEx constructor.
      * Asks the user to confirm the removal of a selected item from the given ComboBoxEx.
      *
      * @param <T> the type of the items in the ComboBox
@@ -203,15 +208,15 @@ public class ComboBoxEx<T> extends JPanel {
         int rc = JOptionPane.showConfirmDialog(
                 cb,
                 "Remove " + cb.format.apply(item) + "?",
-                "",
-                JOptionPane.OK_CANCEL_OPTION,
+                "Edit Values",
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE
         );
         return rc == JOptionPane.YES_OPTION;
     }
 
     /**
-     * Method to be passed as a method reference in the {@code remove} parameter to the ComboBoxEx construvtor.
+     * Method to be passed as a method reference in the {@code remove} parameter to the ComboBoxEx constructor.
      * Always remove selected item from the given ComboBoxEx without asking for user confirmation.
      *
      * @param <T> the type of the items in the ComboBox

@@ -101,8 +101,8 @@ class I18NTest {
     @Test
     void testContainsKey() {
         I18N i18n = I18N.create(testBundle);
-        assertTrue(i18n.containsKey(TEST_KEY));
-        assertFalse(i18n.containsKey("missing.key"));
+        assertTrue(i18n.isMapped(TEST_KEY));
+        assertFalse(i18n.isMapped("missing.key"));
     }
 
     @Test
