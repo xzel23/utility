@@ -39,7 +39,7 @@ public class ComboBoxEx<T> extends JPanel {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
     private transient @Nullable Comparator<? super T> comparator;
-    private final transient @Nullable UnaryOperator<T> edit;
+    private final transient @Nullable UnaryOperator<@Nullable T> edit;
     private final transient @Nullable Supplier<? extends T> add;
     private final transient @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
     private final transient Function<T, String> format;
@@ -60,7 +60,7 @@ public class ComboBoxEx<T> extends JPanel {
      */
     @SafeVarargs
     public ComboBoxEx(
-            @Nullable UnaryOperator<T> edit,
+            @Nullable UnaryOperator<@Nullable T> edit,
             @Nullable Supplier<? extends T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format, T... items
