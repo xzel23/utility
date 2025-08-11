@@ -47,20 +47,33 @@ public record BuildInfo(Version version, ZonedDateTime buildTime, String key, St
 
     private static final Logger LOG = LogManager.getLogger(BuildInfo.class);
 
+    public static BuildInfo create(String versionString, String key, String commit) {
+        BuildInfo buildInfo = new BuildInfo(
+                Version.valueOf(versionString),
+                ZonedDateTime.now(),
+                key,
+                commit,
+                SystemInfo.getSystemInfo().getOsInfo()
+        );
+
+        LOG.debug("BuildInfo: {}", buildInfo);
+
+        return buildInfo;
+    }
+
     /**
      * Creates a new instance of {@code BuildInfo} using the provided version string, build timestamp, key, commit, and system.
      *
      * @param versionString      the version string to parse into a {@code Version} object, in the format "major.minor.patch" or "major.minor.patch-suffix"
-     * @param zonedDateTimeBuild the string representing the build timestamp, to be parsed as a {@code ZonedDateTime}
+     * @param buildTime          the build time and date
      * @param key                the key associated with the build information
      * @param commit             the commit information
      * @param system             the system information
      * @return a new {@code BuildInfo} instance containing the parsed build time, version, key, commit, and system
      * @throws IllegalArgumentException if the version string is invalid or the build timestamp cannot be parsed
      */
-    public static BuildInfo create(CharSequence versionString, CharSequence zonedDateTimeBuild, String key, String commit, String system) {
-        Version version = Version.valueOf(versionString.toString());
-        ZonedDateTime buildTime = ZonedDateTime.parse(zonedDateTimeBuild);
+    public static BuildInfo create(String versionString, ZonedDateTime buildTime, String key, String commit, String system) {
+        Version version = Version.valueOf(versionString);
 
         BuildInfo buildInfo = new BuildInfo(version, buildTime, key, commit, system);
 
@@ -74,13 +87,13 @@ public record BuildInfo(Version version, ZonedDateTime buildTime, String key, St
      * Uses empty strings for commit and system.
      *
      * @param versionString      the version string to parse into a {@code Version} object, in the format "major.minor.patch" or "major.minor.patch-suffix"
-     * @param zonedDateTimeBuild the string representing the build timestamp, to be parsed as a {@code ZonedDateTime}
+     * @param buildTime the string representing the build timestamp, to be parsed as a {@code ZonedDateTime}
      * @param key                the key associated with the build information
      * @return a new {@code BuildInfo} instance containing the parsed build time, version, and key
      * @throws IllegalArgumentException if the version string is invalid or the build timestamp cannot be parsed
      */
-    public static BuildInfo create(CharSequence versionString, CharSequence zonedDateTimeBuild, String key) {
-        return create(versionString, zonedDateTimeBuild, key, "", "");
+    public static BuildInfo create(String versionString, ZonedDateTime buildTime, String key) {
+        return create(versionString, buildTime, key, "", "");
     }
 
     /**
@@ -95,7 +108,7 @@ public record BuildInfo(Version version, ZonedDateTime buildTime, String key, St
         String key = Objects.requireNonNull(properties.getProperty(KEY_PUBLIC_KEY), "missing public key ('" + KEY_PUBLIC_KEY + "')");
         String commit = properties.getProperty(KEY_COMMIT, "");
         String system = properties.getProperty(KEY_SYSTEM, "");
-        return create(version, buildTime, key, commit, system);
+        return create(version, ZonedDateTime.parse(buildTime), key, commit, system);
     }
 
     /**

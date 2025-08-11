@@ -15,7 +15,7 @@ class BuildInfoTest {
 
     @Test
     void testDigestConsistency() {
-        BuildInfo bi = BuildInfo.create("1.2.3", "2023-01-01T12:00:00Z[UTC]", "key123", "abc123", "test-system");
+        BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.parse("2023-01-01T12:00:00Z[UTC]"), "key123", "abc123", "test-system");
         byte[] digest1 = bi.digest();
         byte[] digest2 = bi.digest();
         assertArrayEquals(digest1, digest2, "Digest should be consistent for the same BuildInfo object.");
@@ -23,8 +23,8 @@ class BuildInfoTest {
 
     @Test
     void testDigestUniqueness() {
-        BuildInfo bi1 = BuildInfo.create("1.2.3", "2023-01-01T12:00:00Z[UTC]", "key123", "abc123", "test-system");
-        BuildInfo bi2 = BuildInfo.create("1.2.4", "2023-01-01T12:00:00Z[UTC]", "key123", "abc123", "test-system");
+        BuildInfo bi1 = BuildInfo.create("1.2.3", ZonedDateTime.parse("2023-01-01T12:00:00Z[UTC]"), "key123", "abc123", "test-system");
+        BuildInfo bi2 = BuildInfo.create("1.2.4", ZonedDateTime.parse("2023-01-01T12:00:00Z[UTC]"), "key123", "abc123", "test-system");
         byte[] digest1 = bi1.digest();
         byte[] digest2 = bi2.digest();
         assertThrows(AssertionError.class, () -> assertArrayEquals(digest1, digest2));
@@ -33,7 +33,7 @@ class BuildInfoTest {
     @Test
     void testWriteToPropertiesFile() throws IOException {
         Path tempFile = java.nio.file.Files.createTempFile("build-info-", ".properties");
-        BuildInfo bi = BuildInfo.create("1.2.3", "2023-01-01T12:00:00Z[UTC]", "key123", "abc123", "test-system");
+        BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.parse("2023-01-01T12:00:00Z[UTC]"), "key123", "abc123", "test-system");
 
         bi.writeToPropertiesFile(tempFile);
 
@@ -57,7 +57,7 @@ class BuildInfoTest {
     @Test
     void testWriteToPropertiesFileDefaultValues() throws IOException {
         Path tempFile = java.nio.file.Files.createTempFile("build-info-default-", ".properties");
-        BuildInfo bi = BuildInfo.create("0.0.1-SNAPSHOT", "2000-01-01T00:00Z[UTC]", "key123");
+        BuildInfo bi = BuildInfo.create("0.0.1-SNAPSHOT", ZonedDateTime.parse("2000-01-01T00:00Z[UTC]"), "key123");
 
         bi.writeToPropertiesFile(tempFile);
 
@@ -75,7 +75,7 @@ class BuildInfoTest {
 
     @Test
     void testMajorOnly() {
-        BuildInfo bi = BuildInfo.create("1.0.0", ZonedDateTime.now().toString(), "key123");
+        BuildInfo bi = BuildInfo.create("1.0.0", ZonedDateTime.now(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(0, bi.version().minor());
         assertEquals(0, bi.version().patch());
@@ -88,7 +88,7 @@ class BuildInfoTest {
 
     @Test
     void testMajorMinor() {
-        BuildInfo bi = BuildInfo.create("1.2.0", ZonedDateTime.now().toString(), "key123");
+        BuildInfo bi = BuildInfo.create("1.2.0", ZonedDateTime.now(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(2, bi.version().minor());
         assertEquals(0, bi.version().patch());
@@ -101,7 +101,7 @@ class BuildInfoTest {
 
     @Test
     void testMajorMinorPatch() {
-        BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.now().toString(), "key123");
+        BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.now(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(2, bi.version().minor());
         assertEquals(3, bi.version().patch());
@@ -114,7 +114,7 @@ class BuildInfoTest {
 
     @Test
     void testMajorMinorPatchSuffix() {
-        BuildInfo bi = BuildInfo.create("1.2.3-alpha", ZonedDateTime.now().toString(), "key123");
+        BuildInfo bi = BuildInfo.create("1.2.3-alpha", ZonedDateTime.now(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(2, bi.version().minor());
         assertEquals(3, bi.version().patch());
@@ -127,7 +127,7 @@ class BuildInfoTest {
 
     @Test
     void testMajorMinorPatchDashSuffix() {
-        BuildInfo bi = BuildInfo.create("1.2.3-SNAPSHOT", ZonedDateTime.now().toString(), "key123");
+        BuildInfo bi = BuildInfo.create("1.2.3-SNAPSHOT", ZonedDateTime.now(), "key123");
         assertEquals(1, bi.version().major());
         assertEquals(2, bi.version().minor());
         assertEquals(3, bi.version().patch());
@@ -140,7 +140,7 @@ class BuildInfoTest {
     
     @Test
     void testCreateWithCommitAndSystem() {
-        BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.now().toString(), "key123", "abc123", "test-system");
+        BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.now(), "key123", "abc123", "test-system");
         assertEquals(1, bi.version().major());
         assertEquals(2, bi.version().minor());
         assertEquals(3, bi.version().patch());
@@ -235,7 +235,7 @@ class BuildInfoTest {
     @Test
     void testInvalidVersionFormat() {
         assertThrows(IllegalArgumentException.class, () ->
-                BuildInfo.create("1.2", ZonedDateTime.now().toString(), "key123")
+                BuildInfo.create("1.2", ZonedDateTime.now(), "key123")
         );
     }
 
