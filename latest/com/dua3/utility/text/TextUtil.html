@@ -257,7 +257,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Backslash-escape a string to ASCII-only representation.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#escapeHTML(java.lang.CharSequence)" class="member-name-link">escapeHTML</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;seq)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#escapeHtml(java.lang.CharSequence)" class="member-name-link">escapeHtml</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;seq)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">HTML-escape a string.</div>
 </div>
@@ -649,9 +649,9 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="escapeHTML(java.lang.CharSequence)">
-<h3>escapeHTML</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">escapeHTML</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;seq)</span></div>
+<section class="detail" id="escapeHtml(java.lang.CharSequence)">
+<h3>escapeHtml</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">escapeHtml</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;seq)</span></div>
 <div class="block">HTML-escape a string.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1257,7 +1257,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="base64EncodeToChars(byte[])">
 <h3>base64EncodeToChars</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">char[]</span>&nbsp;<span class="element-name">base64EncodeToChars</span><wbr><span class="parameters">(byte[]&nbsp;data)</span></div>
-<div class="block">Base64-encode data.</div>
+<div class="block">Base64-encode data.
+ <p>
+ This method avoids creating String instances to reduce the lifetime of sensitive data on the heap.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>data</code> - the data to be encoded</dd>
@@ -1835,8 +1837,7 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the normalized email address as a lowercase and stripped string</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the email is empty, contains a newline,
-         or does not include a valid '@' symbol</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the email fails validation as described above</dd>
 </dl>
 </section>
 </li>
