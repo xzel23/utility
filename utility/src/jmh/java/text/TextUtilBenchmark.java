@@ -39,17 +39,17 @@ public class TextUtilBenchmark {
 
     @Benchmark
     public void escapeHTML_short(Blackhole blackhole) {
-        blackhole.consume(TextUtil.escapeHTML(shortText));
+        blackhole.consume(TextUtil.escapeHtml(shortText));
     }
 
     @Benchmark
     public void escapeHTML_long(Blackhole blackhole) {
-        blackhole.consume(TextUtil.escapeHTML(longText));
+        blackhole.consume(TextUtil.escapeHtml(longText));
     }
 
     @Benchmark
     public void escapeHTML_withHtmlTags(Blackhole blackhole) {
-        blackhole.consume(TextUtil.escapeHTML(htmlText));
+        blackhole.consume(TextUtil.escapeHtml(htmlText));
     }
 
     @Benchmark

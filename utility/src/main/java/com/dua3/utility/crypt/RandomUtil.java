@@ -1,5 +1,7 @@
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.lang.LangUtil;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -64,8 +66,10 @@ public final class RandomUtil {
      * @param min the inclusive lower bound of the random number range
      * @param max the exclusive upper bound of the random number range
      * @return a pseudo-randomly generated integer within the range [min, max)
+     * @throws IllegalArgumentException if min >= max
      */
     public static int nextInt(int min, int max) {
+        LangUtil.checkArg(min < max, "min must be < max");
         return min + RandomHolder.RANDOM.nextInt(max - min);
     }
 }

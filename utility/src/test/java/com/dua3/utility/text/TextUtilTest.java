@@ -249,15 +249,15 @@ class TextUtilTest {
     @Test
     void testEscapeHTML() {
         String normalString = "<div>Test Content</div>";
-        String escapedString = TextUtil.escapeHTML(normalString);
+        String escapedString = TextUtil.escapeHtml(normalString);
         assertEquals("&lt;div&gt;Test Content&lt;/div&gt;", escapedString);
 
         String stringWithAmpersand = "Tom & Jerry";
-        escapedString = TextUtil.escapeHTML(stringWithAmpersand);
+        escapedString = TextUtil.escapeHtml(stringWithAmpersand);
         assertEquals("Tom &amp; Jerry", escapedString);
 
         String specialCharactersString = "< > & \" ' /";
-        escapedString = TextUtil.escapeHTML(specialCharactersString);
+        escapedString = TextUtil.escapeHtml(specialCharactersString);
         assertEquals("&lt; &gt; &amp; &quot; &apos; /", escapedString);
     }
 
@@ -1030,7 +1030,7 @@ class TextUtilTest {
 
         for (String test : testCases) {
             String unescaped = TextUtil.unescapeHtml(test);
-            String escaped = TextUtil.escapeHTML(unescaped);
+            String escaped = TextUtil.escapeHtml(unescaped);
             String roundtrip = TextUtil.unescapeHtml(escaped);
 
             assertEquals(unescaped, roundtrip,

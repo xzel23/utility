@@ -79,7 +79,7 @@ public final class TextUtil {
      * @param seq the string
      * @return the HTML-escaped string
      */
-    public static String escapeHTML(CharSequence seq) {
+    public static String escapeHtml(CharSequence seq) {
         int length = seq.length();
         StringBuilder out = new StringBuilder(16 + length * 11 / 10);
         for (int i = 0; i < length; i++) {
@@ -769,6 +769,8 @@ public final class TextUtil {
 
     /**
      * Base64-encode data.
+     * <p>
+     * This method avoids creating String instances to reduce the lifetime of sensitive data on the heap.
      *
      * @param data the data to be encoded
      * @return the Base64-encoded data
@@ -1317,8 +1319,7 @@ public final class TextUtil {
      *
      * @param email the original email address to be normalized; must be a valid string
      * @return the normalized email address as a lowercase and stripped string
-     * @throws IllegalArgumentException if the email is empty, contains a newline,
-     *         or does not include a valid '@' symbol
+     * @throws IllegalArgumentException if the email fails validation as described above
      */
     public static String normalizeEmail(CharSequence email) {
         String normalizedEmail = normalize(unescapeHtml(email)).toLowerCase(Locale.ROOT).strip();
