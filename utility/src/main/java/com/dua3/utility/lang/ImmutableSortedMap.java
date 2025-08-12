@@ -54,10 +54,10 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         }
     }
 
-    private static final ImmutableSortedMap<?, ?> EMPTY_MAP = new ImmutableSortedMap<>(new Object[0], new Object[0]);
+    private static final ImmutableSortedMap<?, ?> EMPTY_MAP = new ImmutableSortedMap<>(new Comparable[0], new Object[0]);
 
-    private final Object[] keys;
-    private final Object[] values;
+    private final K[] keys;
+    private final V[] values;
     private int hash;
 
     /**
@@ -86,9 +86,9 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
             entries = entries.clone();
             Arrays.sort(entries, Map.Entry.comparingByKey());
         }
-        this.keys = new Object[entries.length];
-        this.values = new Object[entries.length];
-        for (int i=0; i<entries.length; i++) {
+        this.keys = (K[]) new Comparable[entries.length];
+        this.values = (V[]) new Object[entries.length];
+        for (int i = 0; i < entries.length; i++) {
             this.keys[i] = entries[i].getKey();
             this.values[i] = entries[i].getValue();
         }
@@ -96,17 +96,16 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
     }
 
     private <T extends Comparable<T>> ImmutableSortedMap(
-            Object[] keys,
-            Object[] values) {
+            K[] keys,
+            V[] values) {
         this.keys = keys;
         this.values = values;
         assert keyAreSortedAndUnique() : "keys are not sorted or not unique";
     }
 
-    @SuppressWarnings("unchecked")
     private boolean keyAreSortedAndUnique() {
         for (int i=1; i<keys.length; i++) {
-            if (((Comparable<Object>) keys[i-1]).compareTo(keys[i]) >= 0) {
+            if ((keys[i-1]).compareTo(keys[i]) >= 0) {
                 return false;
             }
         }
@@ -240,7 +239,8 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
 
     @Override
     public Set<K> keySet() {
-        return Set.of((K[]) keys);
+        Object[] kKeys = keys;
+        return Set.of((K[]) kKeys);
     }
 
     @SuppressWarnings("unchecked")

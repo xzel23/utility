@@ -95,7 +95,7 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(@Nullable Object value) {
         return map.containsValue(value);
     }
 

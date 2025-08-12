@@ -2281,7 +2281,7 @@ public final class LangUtil {
      * @param mapper the function to apply to the input value, must not be null
      * @return the result of applying the mapper function to the value, or null if the value is null
      */
-    public static <T,U> U mapNonNull(@Nullable T value, Function<T, U> mapper) {
+    public static <T,U extends @Nullable Object> U mapNonNull(@Nullable T value, Function<T, U> mapper) {
         return value == null ? null : mapper.apply(value);
     }
 
