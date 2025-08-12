@@ -1,6 +1,7 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
+import com.dua3.utility.io.IoUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -559,9 +561,95 @@ class LangUtilTest {
         assertNotNull(url);
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "com.dua3.utility.lang.LangUtilTest, resource.txt",
+            "com.dua3.utility.io.IoUtil, resource2.txt"
+    })
+    void testGetResourceURL_ValidInput(String className, String resourceName) {
+        Class<?> clazz = "com.dua3.utility.lang.LangUtilTest".equals(className) ? this.getClass() : IoUtil.class;
+        assertDoesNotThrow(() -> {
+            URL url = LangUtil.getResourceURL(clazz, resourceName);
+            assertNotNull(url, "The resource URL should not be null for valid input.");
+        });
+    }
+
     @Test
-    void testGetResourceURLNonExistentResource() {
-        assertThrows(MissingResourceException.class, () -> LangUtil.getResourceURL(this.getClass(), "nonexistent.txt"), "Resource not found: nonexistent.txt");
+    void testGetResourceURL_MissingResourceException() {
+        MissingResourceException exception = assertThrows(
+                MissingResourceException.class,
+                () -> LangUtil.getResourceURL(this.getClass(), "non_existing.txt"),
+                "Resource not found: non_existing.txt"
+        );
+        assertTrue(exception.getMessage().contains("non_existing.txt"), "Exception message should mention the missing resource.");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "null, resource.txt",
+            "com.dua3.utility.lang.LangUtilTest, null",
+            "null, null"
+    })
+    void testGetResourceURL_NullInput(String className, String resourceName) {
+        Class<?> clazz = className.equals("null") ? null : this.getClass();
+        String resource = resourceName.equals("null") ? null : resourceName;
+        Throwable t = assertThrows(Throwable.class, () -> LangUtil.getResourceURL(clazz, resource));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError,
+                "Expected exception should be NullPointerException or AssertionError.");
+    }
+
+    @Test
+    void testGetResourceURL_ValidResource() {
+        URL url = LangUtil.getResourceURL(this.getClass(), "resource.txt");
+        assertNotNull(url, "The resource should exist and not be null");
+    }
+
+    @Test
+    void testGetResourceURL_InvalidResource() {
+        assertThrows(MissingResourceException.class, () -> LangUtil.getResourceURL(this.getClass(), "nonexistent.txt"),
+                "Resource not found: nonexistent.txt");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "resource.txt, en_US",
+            "resource.txt, fr_FR",
+            "resource.txt, de_DE"
+    })
+    void testGetResourceURL_WithLocale(String resourceName, String localeTag) {
+        Locale locale = Locale.forLanguageTag(localeTag);
+        assertDoesNotThrow(() -> {
+            URL url = LangUtil.getResourceURL(this.getClass(), resourceName, locale);
+            assertNotNull(url, "Resource should be found for valid input with locale");
+        });
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "nonexistent.txt, en_US",
+            "invalidResource.xyz, fr_FR"
+    })
+    void testGetResourceURL_InvalidResourceWithLocale(String resourceName, String localeTag) {
+        Locale locale = Locale.forLanguageTag(localeTag);
+        assertThrows(MissingResourceException.class, () ->
+                        LangUtil.getResourceURL(this.getClass(), resourceName, locale),
+                "Resource should not be found for an invalid input with locale"
+        );
+    }
+
+    @Test
+    void testGetResourceURL_MissingLocale() {
+        Throwable t = assertThrows(Throwable.class, () ->
+                LangUtil.getResourceURL(this.getClass(), "resource.txt", null));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError,
+                "Expected exception should be NullPointerException or AssertionError when locale is missing.");
+    }
+
+    @Test
+    void testGetResourceURL_InvalidClass() {
+        Throwable t = assertThrows(Throwable.class, () -> LangUtil.getResourceURL(null, "resource.txt"),
+                "A null class should result in an exception.");
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
     }
 
     @ParameterizedTest
@@ -570,7 +658,7 @@ class LangUtilTest {
             "com.dua3.utility.lang.LangUtilTest, ",
             ", "
     })
-    void testGetResourceURLNullInputs(String className, String resourceName) {
+    void testGetResourceURL_NullParameters(String className, String resourceName) {
         Class<?> clazz = className == null ? null : this.getClass();
         if (clazz == null || resourceName == null) {
             Throwable t = assertThrows(Throwable.class, () -> LangUtil.getResourceURL(clazz, resourceName));
@@ -1239,6 +1327,21 @@ class LangUtilTest {
     }
 
     @Test
+    void testRequireNegativeWithMessage() {
+        double validNegative = -1.0;
+        double zeroValue = 0.0;
+        double positiveValue = 1.0;
+
+        assertEquals(validNegative, LangUtil.requireNegative(validNegative, "Error: %f must be negative", validNegative));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> LangUtil.requireNegative(positiveValue, "Error: %f must be negative", positiveValue));
+        assertTrue(exception.getMessage().contains(String.format(Locale.getDefault(), "%f", 1.0)));
+        exception = assertThrows(IllegalArgumentException.class,
+                () -> LangUtil.requireNegative(zeroValue, "Error: %f must be negative", zeroValue));
+        assertTrue(exception.getMessage().contains(String.format(Locale.getDefault(), "%f", 0.0)));
+    }
+
+    @Test
     void testRequireNegativeByte() {
         byte validNegative = -10;
         byte zeroValue = 0;
@@ -1270,5 +1373,108 @@ class LangUtilTest {
             IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value, "Error: %f is not negative", value));
             assertTrue(ex.getMessage().contains("%f".formatted(value)));
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {1.0, 0.0001, Double.MAX_VALUE, 1e-10})
+    void testRequirePositiveDoubleValid(double value) {
+        assertEquals(value, LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, -1.0, Double.NEGATIVE_INFINITY, Double.NaN})
+    void testRequirePositiveDoubleInvalid(double value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(floats = {1.0f, 0.0001f, Float.MAX_VALUE, 1e-10f})
+    void testRequirePositiveFloatValid(float value) {
+        assertEquals(value, LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(floats = {0.0f, -1.0f, Float.NEGATIVE_INFINITY, Float.NaN})
+    void testRequirePositiveFloatInvalid(float value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {1L, Long.MAX_VALUE})
+    void testRequirePositiveLongValid(long value) {
+        assertEquals(value, LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {0L, -1L, Long.MIN_VALUE})
+    void testRequirePositiveLongInvalid(long value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, Integer.MAX_VALUE})
+    void testRequirePositiveIntValid(int value) {
+        assertEquals(value, LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1, Integer.MIN_VALUE})
+    void testRequirePositiveIntInvalid(int value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(shorts = {1, Short.MAX_VALUE})
+    void testRequirePositiveShortValid(short value) {
+        assertEquals(value, LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(shorts = {0, -1, Short.MIN_VALUE})
+    void testRequirePositiveShortInvalid(short value) {
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(value));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"1.0, Valid positive value", "0.0, Zero value", "-1.0, Negative value"})
+    void testRequirePositiveDoubleWithMessage(double value, String description) {
+        if (value > 0) {
+            assertEquals(value, LangUtil.requirePositive(value, "Error: %f must be positive", value));
+        } else {
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(value, "Error: %f must be positive", value));
+            assertTrue(ex.getMessage().contains("%f".formatted(value)));
+        }
+    }
+    @Test
+    void testMapNonNullValidInput() {
+        String result = LangUtil.mapNonNull("hello", String::toUpperCase);
+        assertEquals("HELLO", result, "Expected the input 'hello' to be converted to 'HELLO'");
+    }
+
+    @Test
+    void testMapNonNullNullInput() {
+        String result = LangUtil.mapNonNull((String) null, String::toUpperCase);
+        assertNull(result, "Expected null input to result in null output");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "abc, ABC",
+            "123, 123",
+            "'', ''",
+            "null, null"
+    })
+    void testMapNonNullVariousCases(String input, String expected) {
+        String actual = LangUtil.mapNonNull("null".equals(input) ? null : input, String::toUpperCase);
+        String expectedValue = "null".equals(expected) ? null : expected;
+        assertEquals(expectedValue, actual, "Expected mapped value to equal the expected result");
+    }
+
+    @Test
+    void testMapNonNullWithNullMapper() {
+        Throwable t = assertThrows(Throwable.class, () -> LangUtil.mapNonNull("test", null),
+                "Expected an exception when null is passed as the mapper");
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError,
+                "Expected exception should be NullPointerException or AssertionError.");
     }
 }
