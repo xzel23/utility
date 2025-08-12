@@ -74,6 +74,11 @@
         <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
     </Match>
 
+    <Match>
+        <Class name="com.dua3.utility.lang.ImmutableSortedMap"/>
+        <Bug pattern="BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS"/>
+    </Match>
+
     <!-- false positive; the field contains an unmodifiable list -->
     <Match>
         <Class name="com.dua3.fx.icons.IconView"/>

@@ -171,16 +171,9 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
         map = ImmutableSortedMap.emptyMap();
     }
 
-    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
-        // the hash has to be calculated manually because implementations may use different algorithms
-        // the entry set is sorted, so this should yield the same result for both implementations
-        int h = 1;
-        for (var entry: map.entrySet()) {
-            h = 31 * h + entry.getKey().hashCode() + 37 * Objects.hashCode(entry.getValue());
-        }
-        return 0;
+        return map.hashCode();
     }
 
     @SuppressWarnings("NonFinalFieldReferenceInEquals")
@@ -198,11 +191,6 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
             return map.equals(other.map);
         }
 
-        for (Map.Entry<K, V> e : entrySet()) {
-            if (!Objects.equals(m.get(e.getKey()), e.getValue())) {
-                return false;
-            }
-        }
-        return true;
+        return map.equals(m);
     }
 }

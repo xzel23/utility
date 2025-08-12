@@ -254,17 +254,31 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
     public SortedSet<Map.Entry<K, V>> entrySet() {
         Entry[] entries = new Entry[keys.length];
         for (int i = 0; i < keys.length; i++) {
-            entries[i] = new Entry<>((K) keys[i], values[i]);
+            entries[i] = new Entry<>(keys[i], values[i]);
         }
         return new ImmutableListBackedSortedSet(entries);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ImmutableSortedMap<?,?> ism) || o.hashCode() != hashCode()) {
-            return false;
-        }
-        return Objects.deepEquals(keys, ism.keys) && Objects.deepEquals(values, ism.values);
+        return switch (o) {
+            case null -> false;
+            case ImmutableSortedMap<?, ?> ism ->
+                    Objects.deepEquals(keys, ism.keys) && Objects.deepEquals(values, ism.values);
+            case SortedMap<?,?> sm -> Objects.deepEquals(keys, sm.keySet().toArray()) && Objects.deepEquals(values, sm.values().toArray());
+            case Map<?,?> m -> {
+                if (m.size() != keys.length) {
+                    yield false;
+                }
+                for (int i = 0; i < keys.length; i++) {
+                    if (!Objects.equals(m.get(keys[i]), values[i])) {
+                        yield false;
+                    }
+                }
+                yield true;
+            }
+            default -> false;
+        };
     }
 
     @SuppressWarnings("NonFinalFieldReferencedInHashCode")
@@ -272,13 +286,8 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
     public int hashCode() {
         int h = hash;
         if (h == 0) {
-            h = 1;
-            for (int i = 0; i < keys.length; i++) {
-                h = 31 * h + Objects.hashCode(keys[i]);
-                Object value = values[i];
-                if (LangUtil.isOfKnownImmutableType(value)) {
-                    h = 37 * h + Objects.hashCode(value);
-                }
+            for (int i = 0; i < size(); i++) {
+                h += Objects.hashCode(keys[i]) ^ Objects.hashCode(values[i]);
             }
             hash = h;
         }
