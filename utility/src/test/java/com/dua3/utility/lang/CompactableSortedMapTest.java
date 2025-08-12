@@ -276,4 +276,60 @@ class CompactableSortedMapTest {
         assertEquals(0, map.headMap("a").size());
         assertEquals(0, map.tailMap("k").size());
     }
+
+    @Test
+    void testEqualsBetweenCompactedAndNonCompactedInstances() {
+        // m1 mutable
+        CompactableSortedMap<String, Integer> m1 = new CompactableSortedMap<>();
+        m1.put("a", 1);
+        m1.put("b", 2);
+        m1.put("c", 3);
+        assertFalse(m1.isCompact());
+
+        // m2 compact with same entries
+        CompactableSortedMap<String, Integer> m2 = new CompactableSortedMap<>();
+        m2.put("a", 1);
+        m2.put("b", 2);
+        m2.put("c", 3);
+        m2.compact();
+        assertTrue(m2.isCompact());
+
+        // Equal by content, despite different compact state
+        assertTrue(m1.equals(m2));
+        assertTrue(m2.equals(m1));
+
+        // Change a value in m1 (size unchanged) -> now unequal
+        m1.put("b", 20);
+        assertFalse(m1.equals(m2));
+        assertFalse(m2.equals(m1));
+    }
+
+    @Test
+    void testEqualsAgainstHashMap() {
+        CompactableSortedMap<String, Integer> csm = new CompactableSortedMap<>();
+        csm.put("x", 24);
+        csm.put("y", 25);
+        csm.put("z", 26);
+        csm.compact();
+
+        Map<String, Integer> hm = new HashMap<>();
+        hm.put("x", 24);
+        hm.put("y", 25);
+        hm.put("z", 26);
+
+        // Same entries -> equal in both directions
+        assertTrue(csm.equals(hm));
+        assertTrue(hm.equals(csm));
+
+        // Different entries -> not equal
+        hm.put("w", 23); // extra entry
+        assertFalse(csm.equals(hm));
+        assertFalse(hm.equals(csm));
+
+        // Change a value -> not equal
+        hm.remove("w");
+        hm.put("y", 99);
+        assertFalse(csm.equals(hm));
+        assertFalse(hm.equals(csm));
+    }
 }
