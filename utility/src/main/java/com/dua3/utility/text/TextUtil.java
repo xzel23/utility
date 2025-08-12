@@ -99,47 +99,59 @@ public final class TextUtil {
         StringBuilder sb = new StringBuilder(s.length());
         int i = 0;
         while (i < s.length()) {
-            char ch = s.charAt(i);
+            int ch = s.charAt(i);
             if (ch == '&') {
                 int semicolon = indexOf(s, ';', i);
                 if (semicolon > 0) {
                     CharSequence entity = s.subSequence(i + 1, semicolon);
-                    if (startsWith(entity,"#")) {
-                        try {
-                            if (startsWith(entity, "#x")) {
-                                ch = (char) Integer.parseInt(entity, 2, entity.length(), 16);
-                            } else {
-                                ch = (char) Integer.parseInt(entity, 1, entity.length(), 10);
-                            }
-                            sb.append(ch);
-                            i = semicolon + 1;
-                            continue;
-                        } catch (NumberFormatException ignored) {
-                            // invalid numeric entity, treat as literal
-                        }
-                    } else {
-                        ch = switch (entity.toString()) {
-                            case "quot" -> '"';
-                            case "amp" -> '&';
-                            case "lt" -> '<';
-                            case "gt" -> '>';
-                            case "apos" -> '\'';
-                            default -> '?';
-                        };
-                        if (ch != '?') {
-                            sb.append(ch);
-                            i = semicolon + 1;
-                            continue;
-                        }
+                    ch = parseEntity(entity);
+                    if (ch >= 0) {
+                        sb.append((char) ch);
+                        i = semicolon + 1;
+                        continue;
                     }
                 }
             }
-            sb.append(ch);
+            sb.append((char) ch);
             i++;
         }
         return sb.toString();
     }
-    
+
+    /**
+     * Parses the given character entity reference and returns its corresponding Unicode code point.
+     * <p>
+     * The method handles numeric character references (e.g., "&#34;", "&#x22;") and a predefined
+     * list of named character references ("quot", "amp", "lt", "gt", "apos").
+     * If the input does not match a valid character reference format or name, it will return -1.
+     *
+     * @param entity the character entity reference to be parsed. It can be numeric (e.g., "&#34;", "&#x22;")
+     *               or one of the predefined named entities ("quot", "amp", "lt", "gt", "apos").
+     * @return the Unicode code point of the parsed entity, or -1 if the entity is not recognized.
+     */
+    private static int parseEntity(CharSequence entity) {
+        if (startsWith(entity,"#")) {
+            try {
+                if (startsWith(entity, "#x")) {
+                    return Integer.parseInt(entity, 2, entity.length(), 16);
+                } else {
+                    return Integer.parseInt(entity, 1, entity.length(), 10);
+                }
+            } catch (NumberFormatException ignored) {
+                return -1;
+            }
+        } else {
+            return switch (entity.toString()) {
+                case "quot" -> '"';
+                case "amp" -> '&';
+                case "lt" -> '<';
+                case "gt" -> '>';
+                case "apos" -> '\'';
+                default -> -1;
+            };
+        }
+    }
+
     /**
      * Append HTML-escaped character to an Appendable.
      *
