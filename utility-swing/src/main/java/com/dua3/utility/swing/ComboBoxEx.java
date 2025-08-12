@@ -122,6 +122,7 @@ public class ComboBoxEx<T> extends JPanel {
 
         ListCellRenderer<? super @Nullable T> renderer = new BasicComboBoxRenderer() {
             @Override
+            @SuppressWarnings("unchecked")
             public Component getListCellRendererComponent(JList<?> list, @Nullable Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 String text = "";
                 if (value != null) {
@@ -187,6 +188,7 @@ public class ComboBoxEx<T> extends JPanel {
         });
     }
 
+    @SuppressWarnings("unchecked")
     private void removeItem() {
         //noinspection unchecked
         T item = (T) model.getSelectedItem();
@@ -234,6 +236,7 @@ public class ComboBoxEx<T> extends JPanel {
      *
      * @return an Optional containing the selected item, or an empty Optional if no item is selected
      */
+    @SuppressWarnings("unchecked")
     public Optional<T> getSelectedItem() {
         //noinspection unchecked
         return Optional.ofNullable((@Nullable T) comboBox.getSelectedItem());
@@ -250,7 +253,7 @@ public class ComboBoxEx<T> extends JPanel {
         for (int i = 0; i < n; i++) {
             items.add(model.getElementAt(i));
         }
-        return items;
+        return List.copyOf(items);
     }
 
     /**
@@ -300,6 +303,7 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <L extends EventListener> L[] getListeners(Class<L> listenerType) {
         if (listenerType == ActionListener.class) {
             return (L[]) comboBox.getActionListeners();
