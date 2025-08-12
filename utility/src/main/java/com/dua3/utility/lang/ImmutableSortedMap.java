@@ -169,16 +169,14 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         return subMapHelper(start, keys.length);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public K firstKey() {
-        return (K) keys[0];
+        return keys[0];
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public K lastKey() {
-        return (K) keys[keys.length - 1];
+        return keys[keys.length - 1];
     }
 
     @Override
@@ -239,14 +237,12 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
 
     @Override
     public Set<K> keySet() {
-        Object[] kKeys = keys;
-        return Set.of((K[]) kKeys);
+        return Set.of(keys);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Collection<V> values() {
-        return LangUtil.asUnmodifiableList((V[]) values);
+        return LangUtil.asUnmodifiableList(values);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -323,13 +323,13 @@ class CompactableSortedMapTest {
 
         // Different entries -> not equal
         hm.put("w", 23); // extra entry
-        assertFalse(csm.equals(hm));
-        assertFalse(hm.equals(csm));
+        assertNotEquals(csm, hm);
+        assertNotEquals(hm, csm);
 
         // Change a value -> not equal
         hm.remove("w");
         hm.put("y", 99);
-        assertFalse(csm.equals(hm));
-        assertFalse(hm.equals(csm));
+        assertNotEquals(csm, hm);
+        assertNotEquals(hm, csm);
     }
 }
