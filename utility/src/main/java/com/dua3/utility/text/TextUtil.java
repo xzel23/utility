@@ -67,6 +67,7 @@ public final class TextUtil {
     private static final Pattern PATTERN_SPLIT_LINES = Pattern.compile("\\R");
 
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
+    private static final double POINTS_PER_MILLIMETER = 720.0 / 254.0;
 
     private TextUtil() {
         // nop: utility class
@@ -796,7 +797,7 @@ public final class TextUtil {
      * @return value in points
      */
     public static double mm2pt(double mm) {
-        return mm * 72.0 / 25.4;
+        return mm * POINTS_PER_MILLIMETER;
     }
 
     /**
@@ -806,7 +807,7 @@ public final class TextUtil {
      * @return value in points
      */
     public static double pt2mm(double pt) {
-        return pt * 25.4 / 72.0;
+        return pt / POINTS_PER_MILLIMETER;
     }
 
     /**
