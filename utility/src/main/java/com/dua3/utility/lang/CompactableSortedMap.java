@@ -186,14 +186,20 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
     @SuppressWarnings("NonFinalFieldReferenceInEquals")
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CompactableSortedMap<?, ?> other) || other.size() != size()) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Map m) || m.size() != size()) {
             return false;
         }
-        if (isCompact() == other.isCompact()) {
+
+        if (obj instanceof CompactableSortedMap<?, ?> other && other.isCompact() == isCompact()) {
             return map.equals(other.map);
         }
+
         for (Map.Entry<K, V> e : entrySet()) {
-            if (other.get(e.getKey()) != e.getValue()) {
+            if (!Objects.equals(m.get(e.getKey()), e.getValue())) {
                 return false;
             }
         }
