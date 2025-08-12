@@ -48,4 +48,24 @@ public final class RandomUtil {
         RandomHolder.RANDOM.nextBytes(bytes);
         return bytes;
     }
+
+    /**
+     * Generates the next pseudo-random integer using a secure random number generator.
+     *
+     * @return a pseudo-randomly generated integer
+     */
+    public static int nextInt() {
+        return RandomHolder.RANDOM.nextInt();
+    }
+
+    /**
+     * Generates a random integer within the specified range using a secure random number generator.
+     *
+     * @param min the inclusive lower bound of the random number range
+     * @param max the exclusive upper bound of the random number range
+     * @return a pseudo-randomly generated integer within the range [min, max)
+     */
+    public static int nextInt(int min, int max) {
+        return min + RandomHolder.RANDOM.nextInt(max - min);
+    }
 }
