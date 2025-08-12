@@ -29,7 +29,7 @@ class PasswordUtilTest {
 
         // Verify that the password length matches the expected size
         assertNotNull(password, "Password should not be null");
-        assertEquals(24, password.length, "Password length should be 24 characters (Base64 encoding of 18 bytes)");
+        assertEquals(20, password.length, "Password length should be 24 characters (Base64 encoding of 18 bytes)");
     }
 
     @Test
@@ -47,7 +47,7 @@ class PasswordUtilTest {
     @Test
     void testGeneratePasswordWithLength() {
         // Test with minimum valid length
-        int length = 9;
+        int length = 14; // the minimal length to create a strong password
         char[] password = PasswordUtil.generatePassword(length);
 
         // Verify the password is not null and has appropriate length
@@ -91,9 +91,11 @@ class PasswordUtilTest {
                 Arguments.of("Password123", PasswordUtil.StrengthLevel.VERY_WEAK, false),
                 Arguments.of("P@ssw0rd123", PasswordUtil.StrengthLevel.VERY_WEAK, false),
                 Arguments.of("Qw3rty123!", PasswordUtil.StrengthLevel.VERY_WEAK, false),
+                Arguments.of("Qw3rty394!", PasswordUtil.StrengthLevel.VERY_WEAK, false),
+                Arguments.of("12345678abcdef", PasswordUtil.StrengthLevel.VERY_WEAK, false),
 
                 // Weak passwords
-                Arguments.of("Qw3rty394!", PasswordUtil.StrengthLevel.WEAK, false),
+                Arguments.of("Password!2023$", PasswordUtil.StrengthLevel.WEAK, false),
 
                 // Moderate passwords
                 Arguments.of("Password!2023Complex", PasswordUtil.StrengthLevel.MODERATE, false),

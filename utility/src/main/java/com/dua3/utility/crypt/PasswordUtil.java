@@ -1,7 +1,6 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.TextUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -116,7 +115,14 @@ public final class PasswordUtil {
             StrengthLevel strengthLevel,
             List<String> issues
     ) {
-        @SuppressWarnings("MissingJavadoc")
+        /**
+         * Compact constructor that ensures immutability of the issues list.
+         *
+         * @param shannonEntropy     the Shannon entropy in bits (measures randomness)
+         * @param theoreticalEntropy the theoretical maximum entropy based on character space
+         * @param strengthLevel      the overall strength level
+         * @param issues             list of identified issues with the password
+         */
         public PasswordStrength {
             issues = List.copyOf(issues);
         }
@@ -214,6 +220,7 @@ public final class PasswordUtil {
      * <p>
      * Shannon entropy measures the average amount of information contained in each character.
      * Higher entropy indicates more randomness and unpredictability.
+     * The formula used is: H = -Σ(p * log₂(p)) where p is the probability of each character.
      * </p>
      *
      * @param password the password to analyze
@@ -244,6 +251,8 @@ public final class PasswordUtil {
 
     /**
      * Calculates the character space (alphabet size) used in the password.
+     * This determines the theoretical maximum entropy by identifying which
+     * character sets are present in the password.
      *
      * @param password the password to analyze
      * @return the size of the character space
@@ -280,7 +289,9 @@ public final class PasswordUtil {
     }
 
     /**
-     * Assesses the overall strength level of the password.
+     * Assesses the overall strength level of the password based on multiple factors.
+     * Takes into account length, entropy, character diversity, and identifies
+     * common weaknesses such as patterns and repeated characters.
      *
      * @param password           the password to assess
      * @param entropy            the calculated Shannon entropy
@@ -344,11 +355,11 @@ public final class PasswordUtil {
         StrengthLevel baseStrength;
         if (theoreticalEntropy < 28 || password.length < 8) {
             baseStrength = StrengthLevel.VERY_WEAK;
-        } else if (theoreticalEntropy < 36 || password.length < 10) {
+        } else if (theoreticalEntropy < 36 || password.length < 12) {
             baseStrength = StrengthLevel.WEAK;
-        } else if (theoreticalEntropy < 50 || password.length < 12) {
+        } else if (theoreticalEntropy < 50 || password.length < 14) {
             baseStrength = StrengthLevel.MODERATE;
-        } else if (theoreticalEntropy < 64 || password.length < 14) {
+        } else if (theoreticalEntropy < 64 || password.length < 16) {
             baseStrength = StrengthLevel.STRONG;
         } else {
             baseStrength = StrengthLevel.VERY_STRONG;
@@ -390,6 +401,8 @@ public final class PasswordUtil {
 
     /**
      * Determines if an issue is considered severe and should cause significant penalty.
+     * Severe issues include common patterns, sequential characters, excessive repetition,
+     * and passwords that are too short.
      *
      * @param issue the issue description
      * @return true if the issue is severe
@@ -402,7 +415,12 @@ public final class PasswordUtil {
     }
 
     /**
-     * Checks for excessive character repetition.
+     * Checks for excessive character repetition in the password.
+     * A password is considered to have excessive repetition if any character
+     * appears more than 30% of the time (with a minimum threshold of 2).
+     *
+     * @param password the password to check
+     * @return true if excessive repetition is detected
      */
     private static boolean hasExcessiveRepeats(char[] password) {
         if (password.length < 3) return false;
@@ -418,7 +436,12 @@ public final class PasswordUtil {
     }
 
     /**
-     * Checks for sequential character patterns (abc, 123, etc.).
+     * Checks for sequential character patterns in the password.
+     * Detects sequences of 3 or more consecutive characters in ascending
+     * or descending order (e.g., "abc", "123", "cba", "321").
+     *
+     * @param password the password to check
+     * @return true if sequential patterns are detected
      */
     private static boolean hasSequentialPattern(char[] password) {
         for (int i = 0; i <= password.length - 3; i++) {
@@ -437,9 +460,8 @@ public final class PasswordUtil {
 
     /**
      * Checks whether the provided password contains any common patterns.
-     * This method evaluates both the raw and normalized forms of the password
-     * (e.g., replacing characters like "0" with "o" or "1" with "i") to identify
-     * common patterns that might reduce password strength.
+     * This method evaluates the password against a list of well-known
+     * weak patterns including common words, number sequences, and recent years.
      *
      * @param password the password to be checked for common patterns
      * @return true if the password contains any common patterns, otherwise false
@@ -458,10 +480,9 @@ public final class PasswordUtil {
 
     /**
      * Checks whether the provided password contains any derived common patterns.
-     * This method normalizes the password by replacing specific characters (e.g.,
-     * "0" is replaced with "o", "1" is replaced with "i", "4" and "@" are replaced
-     * with "a") to identify derived forms of common patterns. If the normalized
-     * password matches any known common patterns, the method returns true.
+     * This method normalizes the password by replacing leetspeak characters
+     * (e.g., "0"→"o", "1"→"i", "3"→"e", "4"→"a", "@"→"a") and then checks
+     * against common patterns. This helps detect passwords like "p@ssw0rd".
      *
      * @param password the password to be checked for derived common patterns
      * @return true if the password contains any derived common patterns, otherwise false
@@ -485,6 +506,11 @@ public final class PasswordUtil {
 
     /**
      * Calculates the number of unique characters in the password.
+     * This is used to assess character diversity, which is an important
+     * factor in password strength.
+     *
+     * @param password the password to analyze
+     * @return the number of unique characters
      */
     private static int calculateUniqueCharacters(char[] password) {
         Set<Character> unique = new HashSet<>();
@@ -495,29 +521,44 @@ public final class PasswordUtil {
     }
 
     /**
-     * Generates a random password encoded in Base64 format.
-     * The password is created using 18 random bytes, which do not require additional padding.
+     * Generates a random password with default length of 20 characters.
+     * The password uses printable ASCII characters (33-126) providing
+     * 128 bits of entropy.
      *
-     * @return a Base64-encoded string representing the randomly generated password
+     * @return a randomly generated secure password
      */
     public static char[] generatePassword() {
-        // 18 bytes do not require padding
-        return generatePassword(18);
+        return generatePassword(20);
     }
 
     /**
-     * Generates a random password of specified length and encodes it in Base64 format.
-     * The password is created using securely generated random bytes.
+     * Generates a random password of specified length.
+     * <p>
+     * The password is created using securely generated random characters from the printable
+     * ASCII character set (characters 33-126, total of 94 characters). Each character provides
+     * approximately 6.5392 bits of entropy. To create a password with a strength equivalent
+     * to n random bits, choose a length of at least ⌈n / 6.5392⌉ characters.
+     * <p>
+     * For common security levels:
+     * <ul>
+     * <li>64-bit security: at least 10 characters</li>
+     * <li>80-bit security: at least 13 characters</li>
+     * <li>128-bit security: at least 20 characters</li>
+     * </ul>
      *
-     * @param length the length of the password to be generated. Must be greater than 8.
-     * @return a Base64-encoded string representing the randomly generated password.
-     * @throws IllegalArgumentException if the specified length is less than or equal to 8.
+     * @param length the length of the password to be generated. Must be at least 8.
+     * @return a character array representing the randomly generated password
+     * @throws IllegalArgumentException if the specified length is less than 8
+     * @throws IllegalStateException if a secure password cannot be generated after 10 attempts
      */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static char[] generatePassword(int length) {
-        LangUtil.checkArg(length >= 8, "length must be at least than 8");
-        char[] password;
+        LangUtil.checkArg(length >= 8, "length must be at least 8");
+        char[] password = new char[length];
         for (int i = 0; i < 10; i++) {
-            password = TextUtil.base64EncodeToChars(RandomUtil.generateRandomBytes(length));
+            for (int j = 0; j < length; j++) {
+                password[j] = (char) RandomUtil.nextInt(33, 127);
+            }
             if (evaluatePasswordStrength(password).isSecure()) {
                 return password;
             }
