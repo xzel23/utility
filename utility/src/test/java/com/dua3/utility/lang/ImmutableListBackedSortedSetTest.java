@@ -638,6 +638,42 @@ class ImmutableListBackedSortedSetTest {
     }
 
     @Test
+    void testReversedEqualsAgainstTreeSetHashSetAndOthers() {
+        // base sets
+        ImmutableListBackedSortedSet<Integer> base = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3);
+        ImmutableSortedListSet<Integer> reversed = base.reversed();
+
+        // TreeSet comparisons (true and false)
+        TreeSet<Integer> treeEqual = new TreeSet<>();
+        treeEqual.addAll(List.of(1, 2, 3));
+        TreeSet<Integer> treeNotEqual = new TreeSet<>();
+        treeNotEqual.addAll(List.of(1, 2));
+        assertTrue(reversed.equals(treeEqual));
+        assertFalse(reversed.equals(treeNotEqual));
+
+        // HashSet comparisons (true and false)
+        HashSet<Integer> hashEqual = new HashSet<>(List.of(1, 2, 3));
+        HashSet<Integer> hashNotEqual = new HashSet<>(List.of(1, 2));
+        assertTrue(reversed.equals(hashEqual));
+        assertFalse(reversed.equals(hashNotEqual));
+
+        // Equality with another reversed view of equal contents
+        ImmutableSortedListSet<Integer> reversed2 = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3).reversed();
+        assertTrue(reversed.equals(reversed2));
+
+        // Inequality with reversed view of different contents/size
+        ImmutableSortedListSet<Integer> reversedSmaller = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2).reversed();
+        assertFalse(reversed.equals(reversedSmaller));
+
+        // Cross-type equality with original view (order-insensitive set equality)
+        assertTrue(reversed.equals(base));
+
+        // Unrelated class and null
+        assertFalse(reversed.equals(new Object()));
+        assertFalse(reversed.equals(null));
+    }
+
+    @Test
     void testIndexOfAndLastIndexOf_NaturalOrder() {
         ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
         // Present elements
