@@ -277,7 +277,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#sortItems()" class="member-name-link">sortItems</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sorts the items in the ComboBoxEx using the defined comparator.</div>
+<div class="block">Sorts the items in the ComboBoxEx using the current Comparator.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
@@ -547,9 +547,9 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <section class="detail" id="sortItems()">
 <h3>sortItems</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sortItems</span>()</div>
-<div class="block">Sorts the items in the ComboBoxEx using the defined comparator.
- If the comparator is null, the method returns without performing any action.
- The currently selected item, if any, will remain selected after sorting.</div>
+<div class="block">Sorts the items in the ComboBoxEx using the current Comparator.
+ If the current comparator is null, natural order is used.
+ The selected item is preserved after the sorting.</div>
 </section>
 </li>
 <li>
