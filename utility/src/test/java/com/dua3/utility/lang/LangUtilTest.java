@@ -2,6 +2,7 @@ package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.math.MathUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,6 +22,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -1476,5 +1478,96 @@ class LangUtilTest {
                 "Expected an exception when null is passed as the mapper");
         assertTrue(t instanceof NullPointerException || t instanceof AssertionError,
                 "Expected exception should be NullPointerException or AssertionError.");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "null, true",
+            "naturalOrder, true",
+            "custom, false"
+    })
+    void testIsNaturalOrder(String comparatorType, boolean expectedResult) {
+        Comparator<Integer> comparator = switch (comparatorType) {
+            case "naturalOrder" -> Comparator.naturalOrder();
+            case "custom" -> (a, b) -> -MathUtil.sign(Integer.compare(a, b));
+            default -> null; // Handles the "null" case
+        };
+        assertEquals(expectedResult, LangUtil.isNaturalOrder(comparator));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "3, 5, -1",
+            "7, 3, 1",
+            "4, 4, 0"
+    })
+    void testCompareValidInputs(Integer k1, Integer k2, int expectedResult) {
+        Comparator<Integer> naturalComparator = Integer::compareTo;
+        assertEquals(expectedResult, LangUtil.compare(naturalComparator, k1, k2));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "3, 5, -1",
+            "5, 3, 1",
+            "4, 4, 0"
+    })
+    void testCompareWithNullComparator(Integer k1, Integer k2, int expectedResult) {
+        assertEquals(expectedResult, LangUtil.compare(null, k1, k2));
+    }
+
+    @Test
+    void testCompareWithNullKeys() {
+        Comparator<String> customComparator = Comparator.nullsFirst(String::compareTo);
+        assertEquals(-1, LangUtil.compare(customComparator, null, "a"));
+        assertEquals(0, LangUtil.compare(customComparator, null, null));
+        assertEquals(1, LangUtil.compare(customComparator, "a", null));
+    }
+
+    @Test
+    void testCompareWithNullInputs() {
+        Throwable t = assertThrows(Throwable.class, () -> LangUtil.compare(null, null, null));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+
+        t = assertThrows(Throwable.class, () -> LangUtil.compare(Comparator.naturalOrder(), (String) null, (String) null));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+
+        t = assertThrows(Throwable.class, () -> LangUtil.compare(Comparator.naturalOrder(), "a", null));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+
+        t = assertThrows(Throwable.class, () -> LangUtil.compare(Comparator.naturalOrder(), null, "b"));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+
+        assertTrue(LangUtil.compare(null, "a", "b") < 0);
+        assertTrue(LangUtil.compare(null, "b", "a") > 0);
+        assertEquals(0, LangUtil.compare(null, "a", "a"));
+    }
+
+    @Test
+    void testCompareWithNullInputsAndNullAwareComparator() {
+        Comparator<String> comparator = Comparator.nullsFirst(Comparator.naturalOrder());
+
+        assertEquals(0, LangUtil.compare(comparator, (String) null, (String) null));
+        assertEquals(0, LangUtil.compare(comparator, "a", "a"));
+        assertEquals(1, LangUtil.compare(comparator, "a", (String) null));
+        assertEquals(-1, LangUtil.compare(comparator, (String) null, "a"));
+    }
+
+    @Test
+    void testCompareWithCustomComparator() {
+        Comparator<String> reverseComparator = (a, b) -> -MathUtil.sign(a.compareTo(b));
+
+        Throwable t = assertThrows(Throwable.class, () -> LangUtil.compare(reverseComparator, (String) null, (String) null));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+
+        t = assertThrows(Throwable.class, () -> LangUtil.compare(reverseComparator, "a", null));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+
+        t = assertThrows(Throwable.class, () -> LangUtil.compare(reverseComparator, null, "b"));
+        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
+
+        assertEquals(-1, LangUtil.compare(reverseComparator, "b", "a"));
+        assertEquals(1, LangUtil.compare(reverseComparator, "a", "b"));
+        assertEquals(0, LangUtil.compare(reverseComparator, "c", "c"));
     }
 }

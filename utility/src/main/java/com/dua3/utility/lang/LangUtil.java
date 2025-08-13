@@ -2344,15 +2344,15 @@ public final class LangUtil {
     /**
      * Compares two keys using the provided comparator, or the natural order if the comparator is null.
      *
-     * @param <K> the type of the keys being compared
+     * @param <T> the type of the keys being compared
      * @param comparator the comparator to determine the order of the keys; if null, the natural order is used
-     * @param key the first key to compare
-     * @param key1 the second key to compare
+     * @param a the first key to compare
+     * @param b the second key to compare
      * @return a negative integer, zero, or a positive integer as the first key is less than, equal to,
      *         or greater than the second key
      */
-    public static <K> int compare(@Nullable Comparator<? super K> comparator, K key, K key1) {
-        return orNaturalOrder(comparator).compare(key, key1);
+    public static <T> int compare(@Nullable Comparator<T> comparator, @Nullable T a, @Nullable T b) {
+        return orNaturalOrder(comparator).compare(a, b);
     }
 
 }

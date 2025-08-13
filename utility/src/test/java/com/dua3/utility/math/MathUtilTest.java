@@ -112,7 +112,7 @@ class MathUtilTest {
     void testPow10() {
         long pow = 1;
         for (int i = 0; i < 19; i++) {
-            assertEquals(1.0/pow, MathUtil.pow10(-i), 1.0e-15);
+            assertEquals(1.0 / pow, MathUtil.pow10(-i), 1.0e-15);
             assertEquals((double) pow, MathUtil.pow10(i), 1.0e-15);
             pow *= 10;
         }
@@ -523,5 +523,19 @@ class MathUtilTest {
         assertEquals(-1.0, MathUtil.getRoundingOperation(RoundingMode.FLOOR).applyAsDouble(-0.1), 1.0e-15);
         assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.CEILING).applyAsDouble(-0.9), 1.0e-15);
         assertEquals(-0.5, MathUtil.getRoundingOperation(RoundingMode.UNNECESSARY).applyAsDouble(-0.5), 1.0e-15);
+    }
+
+    @Test
+    void testSign() {
+        // Zero
+        assertEquals(0, MathUtil.sign(0L));
+
+        // Positive numbers 
+        assertEquals(1, MathUtil.sign(1L));
+        assertEquals(1, MathUtil.sign(Long.MAX_VALUE));
+
+        // Negative numbers
+        assertEquals(-1, MathUtil.sign(-1L));
+        assertEquals(-1, MathUtil.sign(Long.MIN_VALUE));
     }
 }

@@ -563,4 +563,13 @@ public final class MathUtil {
         return (int) (normalizeDegrees(alpha) / 45.0);
     }
 
+    /**
+     * Determines the sign of a given long integer.
+     *
+     * @param x the integer value to evaluate
+     * @return -1 if the input is negative, 1 if the input is positive, or 0 if the input is zero
+     */
+    public static int sign(long x) {
+        return x < 0 ? -1 : x > 0 ? 1 : 0;
+    }
 }
