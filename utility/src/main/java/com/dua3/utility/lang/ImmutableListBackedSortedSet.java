@@ -211,7 +211,7 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
      */
     private int getIndex(Object element) {
         @SuppressWarnings("unchecked")
-        Comparator<? super T> cmp = (Comparator<? super T>) LangUtil.orNaturalOrder(comparator);
+        Comparator<? super T> cmp = LangUtil.orNaturalOrder(comparator);
         @SuppressWarnings("unchecked")
         T e = (T) element;
         return Arrays.binarySearch(elements, e, cmp);
