@@ -1,5 +1,7 @@
 package com.dua3.utility.data;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Arrays;
 
 /**
@@ -24,7 +26,7 @@ public record ImageBuffer(int[] data, int width, int height) implements Image {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

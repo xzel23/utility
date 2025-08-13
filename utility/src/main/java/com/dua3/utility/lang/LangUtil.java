@@ -42,6 +42,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
@@ -1936,7 +1937,7 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <T extends Comparable<T>> ImmutableSortedListSet<T> asUnmodifiableSortedListSet(T... elements) {
-        return ImmutableListBackedSortedSet.of(elements);
+        return ImmutableListBackedSortedSet.ofNaturalOrder(elements);
     }
 
     /**
@@ -2316,4 +2317,42 @@ public final class LangUtil {
     public static <T,U> U mapNonNullElseGet(@Nullable T value, Function<T, U> mapper, Supplier<U> ifNull) {
         return value == null ? ifNull.get() : mapper.apply(value);
     }
+
+    /**
+     * Returns the comparator or if the given comparator is null, return a natural order comparator.
+     *
+     * @param <T> the type of the elements compared by the comparator
+     * @param comparator the comparator to use; if null, a natural order comparator is returned
+     * @return a comparator that is either the provided comparator or a natural order comparator
+     *         if the provided comparator is null
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Comparator<T> orNaturalOrder(@Nullable Comparator<T> comparator) {
+        return comparator != null ? comparator : (Comparator<T>) Comparator.naturalOrder();
+    }
+
+    /**
+     * Checks if the given comparator is either null or represents the natural ordering.
+     *
+     * @param comparator the comparator to check, which can be null
+     * @return true if the comparator is null or represents natural order, false otherwise
+     */
+    public static boolean isNaturalOrder(@Nullable Comparator<?> comparator) {
+        return comparator == null || comparator == Comparator.naturalOrder();
+    }
+
+    /**
+     * Compares two keys using the provided comparator, or the natural order if the comparator is null.
+     *
+     * @param <K> the type of the keys being compared
+     * @param comparator the comparator to determine the order of the keys; if null, the natural order is used
+     * @param key the first key to compare
+     * @param key1 the second key to compare
+     * @return a negative integer, zero, or a positive integer as the first key is less than, equal to,
+     *         or greater than the second key
+     */
+    public static <K> int compare(@Nullable Comparator<? super K> comparator, K key, K key1) {
+        return orNaturalOrder(comparator).compare(key, key1);
+    }
+
 }

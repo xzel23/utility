@@ -93,8 +93,7 @@ class CompactableSortedMapTest {
         assertTrue(map.containsValue(4));
         assertEquals("a", map.firstKey());
         assertEquals("d", map.lastKey());
-        assertNotNull(map.comparator()); // ImmutableSortedMap returns naturalOrder comparator
-        assertTrue(map.comparator().compare("a", "b") < 0);
+        assertTrue(LangUtil.orNaturalOrder(map.comparator()).compare("a", "b") < 0);
 
         // mutating should decompact and still perform the operation
         Integer removed = map.remove("b");
@@ -164,7 +163,7 @@ class CompactableSortedMapTest {
         SortedMap<String,Integer> sub2  = map.subMap("a", "z");
         assertThrows(UnsupportedOperationException.class, () -> head2.put("x", 24));
         assertThrows(UnsupportedOperationException.class, () -> tail2.remove("a"));
-        assertThrows(UnsupportedOperationException.class, () -> sub2.clear());
+        assertThrows(UnsupportedOperationException.class, sub2::clear);
     }
 
     @Test
@@ -242,9 +241,7 @@ class CompactableSortedMapTest {
     @Test
     void testComparatorReflectsState() {
         CompactableSortedMap<String, Integer> map = new CompactableSortedMap<>();
-        // compact empty -> comparator not null (natural order)
-        assertNotNull(map.comparator());
-        assertTrue(map.comparator().compare("a", "b") < 0);
+        assertTrue(LangUtil.orNaturalOrder(map.comparator()).compare("a", "b") < 0);
         map.put("b", 2);
     }
 

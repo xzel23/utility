@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import org.jspecify.annotations.Nullable;
@@ -276,17 +277,13 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
     }
 
     /**
-     * Sorts the items in the ComboBoxEx using the defined comparator.
-     * If the comparator is null, the method returns without performing any action.
-     * The currently selected item, if any, will remain selected after sorting.
+     * Sorts the items in the ComboBoxEx using the current Comparator.
+     * If the current comparator is null, natural order is used.
+     * The selected item is preserved after the sorting.
      */
     public void sortItems() {
-        if (comparator == null) {
-            return;
-        }
-
         Optional<T> selectedItem = getSelectedItem();
-        items.sort(comparator);
+        items.sort(LangUtil.orNaturalOrder(comparator));
         selectedItem.ifPresent((T item) -> comboBox.selectionModelProperty().get().select(item));
     }
 

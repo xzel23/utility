@@ -30,7 +30,7 @@ class SortedSetTest {
                 // Factory method that creates an ImmutableListBackedSortedSet
                 list -> {
                     Integer[] array = list.toArray(new Integer[0]);
-                    return ImmutableListBackedSortedSet.of(array);
+                    return ImmutableListBackedSortedSet.ofNaturalOrder(array);
                 }
                 // Add more factory methods for other SortedSet implementations if needed
         );
@@ -157,13 +157,10 @@ class SortedSetTest {
         SortedSet<Integer> set = factory.apply(List.of(1, 2, 3));
 
         // For natural ordering, comparator should be null or return natural order comparator
-        Comparator<? super Integer> comparator = set.comparator();
-        if (comparator != null) {
-            // If not null, it should behave like natural order
-            assertEquals(0, comparator.compare(1, 1));
-            assertTrue(comparator.compare(1, 2) < 0);
-            assertTrue(comparator.compare(2, 1) > 0);
-        }
+        Comparator<? super Integer> comparator = LangUtil.orNaturalOrder(set.comparator());
+        assertEquals(0, comparator.compare(1, 1));
+        assertTrue(comparator.compare(1, 2) < 0);
+        assertTrue(comparator.compare(2, 1) > 0);
     }
 
     @ParameterizedTest

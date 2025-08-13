@@ -119,7 +119,7 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
     }
 
     @Override
-    public Comparator<? super K> comparator() {
+    public @Nullable Comparator<? super K> comparator() {
         return map.comparator();
     }
 
@@ -177,7 +177,7 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
 
     @SuppressWarnings("NonFinalFieldReferenceInEquals")
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (this == obj) {
             return true;
         }

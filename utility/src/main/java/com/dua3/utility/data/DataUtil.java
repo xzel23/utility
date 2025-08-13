@@ -926,7 +926,7 @@ public final class DataUtil {
      * @return {@code true} if the collection is sorted in the order defined by the comparator,
      *         otherwise {@code false}
      */
-    public static <T> boolean isSorted(Iterable<T> collection, Comparator<T> comparator) {
+    public static <T> boolean isSorted(Iterable<T> collection, Comparator<? super T> comparator) {
         T last = null;
         for (T t : collection) {
             if (last != null && comparator.compare(last, t) > 0) {

@@ -2,6 +2,7 @@ package com.dua3.utility.options;
 
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.text.TextUtil;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -691,7 +692,7 @@ class ArgumentsParserOptionTest {
             URI uriValue
     ) {
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nullable Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             TestRecord that = (TestRecord) o;

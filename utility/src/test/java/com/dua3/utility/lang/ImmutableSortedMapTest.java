@@ -3,6 +3,8 @@ package com.dua3.utility.lang;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,9 +64,10 @@ class ImmutableSortedMapTest {
     @Test
     void testComparator() {
         ImmutableSortedMap<String, Integer> map = new ImmutableSortedMap<>(Map.of("a", 1, "b", 2));
-        assertEquals(0, map.comparator().compare("a", "a"));
-        assertTrue(map.comparator().compare("a", "b") < 0);
-        assertTrue(map.comparator().compare("b", "a") > 0);
+        Comparator<? super String> comparator = LangUtil.orNaturalOrder(map.comparator());
+        assertEquals(0, comparator.compare("a", "a"));
+        assertTrue(comparator.compare("a", "b") < 0);
+        assertTrue(comparator.compare("b", "a") > 0);
     }
 
     @Test
@@ -214,10 +217,20 @@ class ImmutableSortedMapTest {
         ImmutableSortedMap<String, Integer> map3 = new ImmutableSortedMap<>(
                 Map.of("a", 1, "b", 2));
 
+        Map<String, Integer> hashmap1 = new HashMap<>(
+                Map.of("a", 1, "b", 2, "c", 3));
+        Map<String, Integer> hashmap2 = new HashMap<>(
+                Map.of("a", 1));
+
         assertEquals(map1, map2);
         assertEquals(map1.hashCode(), map2.hashCode());
         assertNotEquals(map1, map3);
         assertNotEquals(map1.hashCode(), map3.hashCode());
+
+        assertTrue(map1.equals(hashmap1));
+        assertFalse(map1.equals(hashmap2));
+        assertFalse(map1.equals(new Object()));
+        assertFalse(map1.equals(null));
     }
 
     @Test
@@ -420,5 +433,61 @@ class ImmutableSortedMapTest {
         for (String key : expectedTailMap2.keySet()) {
             assertEquals(expectedTailMap2.get(key), tailMap2.get(key));
         }
+    }
+    
+    @Test
+    void testComparatorFromCustomSortedMap() {
+        // Create a TreeMap with a custom reverse-order comparator
+        Comparator<String> reverse = Comparator.reverseOrder();
+        TreeMap<String, Integer> src = new TreeMap<>(reverse);
+        src.put("a", 1);
+        src.put("b", 2);
+        src.put("c", 3);
+        // Construct ImmutableSortedMap from the SortedMap; it should adopt the comparator
+        ImmutableSortedMap<String, Integer> map = new ImmutableSortedMap<>(src);
+        assertSame(reverse, map.comparator());
+        // Verify descending order by checking first/last
+        assertEquals("c", map.firstKey());
+        assertEquals("a", map.lastKey());
+        // Verify iteration through entrySet respects order
+        Iterator<Map.Entry<String,Integer>> it = map.entrySet().iterator();
+        assertEquals("c", it.next().getKey());
+        assertEquals("b", it.next().getKey());
+        assertEquals("a", it.next().getKey());
+        assertFalse(it.hasNext());
+    }
+
+    @Test
+    void testComparatorPropagatesToViews() {
+        Comparator<String> reverse = Comparator.reverseOrder();
+        TreeMap<String, Integer> src = new TreeMap<>(reverse);
+        src.put("a", 1);
+        src.put("b", 2);
+        src.put("c", 3);
+        ImmutableSortedMap<String, Integer> map = new ImmutableSortedMap<>(src);
+        // All views should keep the same comparator instance
+        SortedMap<String,Integer> sub = map.subMap("c", "a");
+        assertSame(reverse, sub.comparator());
+        SortedMap<String,Integer> head = map.headMap("b");
+        assertSame(reverse, head.comparator());
+        SortedMap<String,Integer> tail = map.tailMap("b");
+        assertSame(reverse, tail.comparator());
+        // Check content and boundaries are correct for reverse order
+        assertEquals(2, sub.size());
+        assertEquals("c", sub.firstKey());
+        assertEquals("b", sub.lastKey());
+        assertTrue(sub.containsKey("c"));
+        assertTrue(sub.containsKey("b"));
+
+        assertEquals(1, head.size());
+        assertEquals("c", head.firstKey());
+        assertEquals("c", head.lastKey());
+        assertTrue(head.containsKey("c"));
+
+        assertEquals(2, tail.size());
+        assertEquals("b", tail.firstKey());
+        assertEquals("a", tail.lastKey());
+        assertTrue(tail.containsKey("b"));
+        assertTrue(tail.containsKey("a"));
     }
 }

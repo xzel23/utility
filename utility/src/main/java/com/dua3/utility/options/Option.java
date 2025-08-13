@@ -444,7 +444,7 @@ public class Option<T extends @Nullable Object> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (!(o instanceof Option<?> that)) return false;
         return requiredArgCount == that.requiredArgCount
                 && Objects.equals(param, that.param)

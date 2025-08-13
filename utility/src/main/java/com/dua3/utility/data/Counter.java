@@ -1,5 +1,7 @@
 package com.dua3.utility.data;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A Counter class that maintains a numerical value and provides methods to
  * manipulate and retrieve that value. It implements the {@link Comparable}
@@ -88,7 +90,7 @@ public final class Counter implements Comparable<Counter> {
      */
     @SuppressWarnings("NonFinalFieldReferenceInEquals")
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return (obj instanceof Counter c) && (value == c.value);
     }
 

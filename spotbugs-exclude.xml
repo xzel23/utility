@@ -75,7 +75,11 @@
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.lang.ImmutableSortedMap"/>
+        <Or>
+            <Class name="com.dua3.utility.lang.ImmutableSortedMap"/>
+            <Class name="com.dua3.utility.lang.ImmutableListBackedSortedSet"/>
+            <Class name="com.dua3.utility.lang.ImmutableListBackedSortedSet$ReversedImmutableSortedListSet"/>
+        </Or>
         <Bug pattern="BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS"/>
     </Match>
 

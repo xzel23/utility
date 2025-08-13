@@ -24,7 +24,7 @@ import java.util.SortedSet;
  * @param <K> the type of keys in the map, which must implement {@link Comparable}
  * @param <V> the type of values in the map
  */
-public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullable Object> implements SortedMap<K, V> {
+public final class ImmutableSortedMap<K, V extends @Nullable Object> implements SortedMap<K, V> {
 
     /**
      * A record that represents an immutable key-value pair entry. This record associates a key
@@ -39,25 +39,21 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
      * @param <K> The type of the key, which must implement {@link Comparable}.
      * @param <V> The type of the value, which can be any nullable object.
      */
-    record Entry<K extends Comparable<K>, V extends @Nullable Object>(K getKey, V getValue)
-            implements Map.Entry<K, V>, Comparable<Entry<K, V>> {
-        @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
+    record Entry<K, V>(K getKey, @Nullable V getValue, @Nullable Comparator<? super K> comparator)
+            implements Map.Entry<K, V> {
         @Override
         public @Nullable Object setValue(@Nullable Object value) {
             throw new UnsupportedOperationException("the collection is immutable");
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public int compareTo(Entry o) {
-            return getKey().compareTo((K) o.getKey());
-        }
     }
 
-    private static final ImmutableSortedMap<?, ?> EMPTY_MAP = new ImmutableSortedMap<>(new Comparable[0], new Object[0]);
+    @SuppressWarnings("unchecked")
+    private static final ImmutableSortedMap<?, ?> EMPTY_MAP = new ImmutableSortedMap<>(new Comparable[0], new Object[0], null);
 
     private final K[] keys;
     private final V[] values;
+    private final @Nullable Comparator<? super K> comparator;
     private int hash;
 
     /**
@@ -77,35 +73,50 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
      *
      * @param map the map to copy
      */
+    @SuppressWarnings("unchecked")
     public ImmutableSortedMap(Map<K, V> map) {
-        this(getArrayOfEntries(map), map instanceof SortedMap<?,?> sm && sm.comparator() == Comparator.naturalOrder());
+        this(
+                getArrayOfEntries(map, map instanceof SortedMap<?, ?> sm ? (Comparator<? super K>) sm.comparator() : null),
+                map instanceof SortedMap<?, ?> sm ? (Comparator<? super K>) sm.comparator() : null,
+                map instanceof SortedMap<?,?>
+        );
     }
 
-    private ImmutableSortedMap(Map.Entry<K, V>[] entries, boolean isSorted) {
+    @SuppressWarnings("unchecked")
+    private ImmutableSortedMap(
+            Map.Entry<K, V>[] entries,
+            @Nullable Comparator<? super K> comparator,
+            boolean isSorted
+    ) {
         if (!isSorted) {
             entries = entries.clone();
-            Arrays.sort(entries, Map.Entry.comparingByKey());
+            Arrays.sort(entries, Map.Entry.comparingByKey(LangUtil.orNaturalOrder(comparator)));
         }
         this.keys = (K[]) new Comparable[entries.length];
         this.values = (V[]) new Object[entries.length];
+        this.comparator = comparator;
         for (int i = 0; i < entries.length; i++) {
-            this.keys[i] = entries[i].getKey();
-            this.values[i] = entries[i].getValue();
+            keys[i] = entries[i].getKey();
+            values[i] = entries[i].getValue();
         }
-        assert keyAreSortedAndUnique() : "keys are not sorted or not unique";
+        assert keysAreSortedAndUnique() : "keys are not sorted or not unique";
     }
 
     private <T extends Comparable<T>> ImmutableSortedMap(
             K[] keys,
-            V[] values) {
+            V[] values,
+            @Nullable Comparator<? super K> comparator
+    ) {
         this.keys = keys;
         this.values = values;
-        assert keyAreSortedAndUnique() : "keys are not sorted or not unique";
+        this.comparator = comparator;
+        assert keysAreSortedAndUnique() : "keys are not sorted or not unique";
     }
 
-    private boolean keyAreSortedAndUnique() {
-        for (int i=1; i<keys.length; i++) {
-            if ((keys[i-1]).compareTo(keys[i]) >= 0) {
+    private boolean keysAreSortedAndUnique() {
+        Comparator<? super K> cmp = LangUtil.orNaturalOrder(comparator);
+        for (int i = 1; i < keys.length; i++) {
+            if (cmp.compare(keys[i - 1], keys[i]) >= 0) {
                 return false;
             }
         }
@@ -113,15 +124,18 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
     }
 
     @SuppressWarnings("unchecked")
-    private static <K extends Comparable<K>, V extends @Nullable Object> Entry<K, V>[] getArrayOfEntries(Map<K, V> map) {
+    private static <K, V extends @Nullable Object> Entry<K, V>[] getArrayOfEntries(
+            Map<K, V> map,
+            @Nullable Comparator<? super K> comparator
+    ) {
         List<Entry<K,V>> entries = new ArrayList<>(map.size());
-        map.forEach((k, v) -> entries.add(new Entry<>(k, v)));
+        map.forEach((k, v) -> entries.add(new Entry<>(k, v, comparator)));
         return entries.toArray(Entry[]::new);
     }
 
     @Override
-    public Comparator<? super K> comparator() {
-        return Comparator.naturalOrder();
+    public @Nullable Comparator<? super K> comparator() {
+        return comparator;
     }
 
     @Override
@@ -138,16 +152,18 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         return subMapHelper(start, end);
     }
 
+    @SuppressWarnings("unchecked")
     private ImmutableSortedMap<K, V> subMapHelper(int start, int end) {
         if (start == end) {
-            return emptyMap();
+            return (ImmutableSortedMap<K, V>) emptyMap();
         }
         if (end - start == keys.length) {
             return this;
         }
         return new ImmutableSortedMap<>(
-                Arrays.copyOfRange(this.keys, start, end),
-                Arrays.copyOfRange(this.values, start, end)
+                Arrays.copyOfRange(keys, start, end),
+                Arrays.copyOfRange(values, start, end),
+                comparator
         );
     }
 
@@ -212,7 +228,10 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
     }
 
     private int keyIndex(Object key) {
-        return Arrays.binarySearch(keys, key);
+        Comparator<? super K> cmp = LangUtil.orNaturalOrder(comparator);
+        @SuppressWarnings("unchecked")
+        K k = (K) key;
+        return Arrays.binarySearch(keys, k, cmp);
     }
 
     @Override
@@ -250,13 +269,14 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
     public SortedSet<Map.Entry<K, V>> entrySet() {
         Entry[] entries = new Entry[keys.length];
         for (int i = 0; i < keys.length; i++) {
-            entries[i] = new Entry<>(keys[i], values[i]);
+            entries[i] = new Entry<>(keys[i], values[i], comparator);
         }
-        return new ImmutableListBackedSortedSet(entries);
+        Comparator<? super Object> cmp = (Comparator<? super Object>) LangUtil.orNaturalOrder(comparator);
+        return new ImmutableListBackedSortedSet(entries, Map.Entry.comparingByKey(cmp));
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         return switch (o) {
             case null -> false;
             case ImmutableSortedMap<?, ?> ism ->

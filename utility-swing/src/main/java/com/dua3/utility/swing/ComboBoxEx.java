@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -356,21 +357,17 @@ public class ComboBoxEx<T> extends JPanel {
 
     /**
      * Sorts the items in the ComboBoxEx using the current Comparator.
-     * If no Comparator is set, the method does nothing.
+     * If the current comparator is null, natural order is used.
      * The selected item is preserved after the sorting.
      */
     public void sortItems() {
-        if (comparator == null) {
-            return;
-        }
-
         Optional<T> selectedItem = getSelectedItem();
         int n = model.getSize();
         List<T> elements = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
             elements.add(model.getElementAt(i));
         }
-        elements.sort(comparator);
+        elements.sort(LangUtil.orNaturalOrder(comparator));
         model.removeAllElements();
         model.addAll(elements);
 

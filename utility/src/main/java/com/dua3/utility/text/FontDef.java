@@ -611,7 +611,7 @@ public final class FontDef {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         //noinspection EqualsCalledOnEnumConstant
         return obj == this
                 || (obj instanceof FontDef other)

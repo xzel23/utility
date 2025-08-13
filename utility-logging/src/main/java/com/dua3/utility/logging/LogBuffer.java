@@ -1,6 +1,7 @@
 package com.dua3.utility.logging;
 
 import com.dua3.utility.lang.RingBuffer;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -215,7 +216,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      */
     public record BufferState(LogEntry[] entries, long totalRemoved, long totalAdded) {
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nullable Object o) {
             if (!(o instanceof BufferState(LogEntry[] entries1, long removed, long added))) {
                 return false;
             }

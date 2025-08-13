@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -19,19 +20,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class ImmutableListBackedSortedSetTest {
 
     @Test
-    void testOf() {
+    void testOfNaturalOrder() {
         // Test with no elements
-        ImmutableListBackedSortedSet<Integer> emptySet = ImmutableListBackedSortedSet.of();
+        ImmutableListBackedSortedSet<Integer> emptySet = ImmutableListBackedSortedSet.ofNaturalOrder();
         assertTrue(emptySet.isEmpty());
         assertEquals(0, emptySet.size());
 
         // Test with one element
-        ImmutableListBackedSortedSet<Integer> singletonSet = ImmutableListBackedSortedSet.of(42);
+        ImmutableListBackedSortedSet<Integer> singletonSet = ImmutableListBackedSortedSet.ofNaturalOrder(42);
         assertEquals(1, singletonSet.size());
         assertEquals(42, singletonSet.get(0));
 
         // Test with multiple elements (unsorted)
-        ImmutableListBackedSortedSet<Integer> multiSet = ImmutableListBackedSortedSet.of(5, 3, 1, 4, 2);
+        ImmutableListBackedSortedSet<Integer> multiSet = ImmutableListBackedSortedSet.ofNaturalOrder(5, 3, 1, 4, 2);
         assertEquals(5, multiSet.size());
         assertEquals(1, multiSet.get(0)); // Should be sorted
         assertEquals(2, multiSet.get(1));
@@ -40,7 +41,7 @@ class ImmutableListBackedSortedSetTest {
         assertEquals(5, multiSet.get(4));
 
         // Test with duplicate elements
-        ImmutableListBackedSortedSet<Integer> duplicateSet = ImmutableListBackedSortedSet.of(1, 2, 2, 3, 3, 3);
+        ImmutableListBackedSortedSet<Integer> duplicateSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 2, 3, 3, 3);
         assertEquals(3, duplicateSet.size()); // Duplicates should be removed
         assertEquals(1, duplicateSet.get(0));
         assertEquals(2, duplicateSet.get(1));
@@ -50,7 +51,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testReversed() {
         // Create a set and its reversed view
-        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.of(1, 2, 3, 4, 5);
+        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
         ImmutableSortedListSet<Integer> reversedSet = originalSet.reversed();
 
         // Test size and isEmpty
@@ -119,7 +120,7 @@ class ImmutableListBackedSortedSetTest {
 
     @Test
     void testReversedListIterators() {
-        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.of(1, 2, 3, 4, 5);
+        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
         ImmutableSortedListSet<Integer> reversedSet = originalSet.reversed();
 
         // Test listIterator()
@@ -148,7 +149,7 @@ class ImmutableListBackedSortedSetTest {
 
     @Test
     void testReversedSubList() {
-        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.of(1, 2, 3, 4, 5);
+        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
         ImmutableSortedListSet<Integer> reversedSet = originalSet.reversed();
 
         // Test subList
@@ -161,18 +162,19 @@ class ImmutableListBackedSortedSetTest {
 
     @Test
     void testReversedComparator() {
-        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.of(1, 2, 3);
+        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3);
         ImmutableSortedListSet<Integer> reversedSet = originalSet.reversed();
 
         // Test comparator is reversed
-        assertTrue(reversedSet.comparator().compare(1, 2) > 0); // Reversed order
-        assertTrue(reversedSet.comparator().compare(2, 1) < 0); // Reversed order
-        assertEquals(0, reversedSet.comparator().compare(3, 3));
+        Comparator<? super Integer> comparator = LangUtil.orNaturalOrder(reversedSet.comparator());
+        assertTrue(comparator.compare(1, 2) > 0); // Reversed order
+        assertTrue(comparator.compare(2, 1) < 0); // Reversed order
+        assertEquals(0, comparator.compare(3, 3));
     }
 
     @Test
     void testReversedSubSet() {
-        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.of(1, 2, 3, 4, 5);
+        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
         ImmutableSortedListSet<Integer> reversedSet = originalSet.reversed();
 
         // Test subSet
@@ -194,7 +196,7 @@ class ImmutableListBackedSortedSetTest {
 
     @Test
     void testReversedHeadSet() {
-        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.of(1, 2, 3, 4, 5);
+        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
         ImmutableSortedListSet<Integer> reversedSet = originalSet.reversed();
 
         // Test headSet
@@ -213,7 +215,7 @@ class ImmutableListBackedSortedSetTest {
 
     @Test
     void testReversedTailSet() {
-        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.of(1, 2, 3, 4, 5);
+        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
         ImmutableSortedListSet<Integer> reversedSet = originalSet.reversed();
 
         // Test tailSet
@@ -233,7 +235,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testDoubleReversed() {
         // Test that reversing a reversed set returns the original set
-        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.of(1, 2, 3, 4, 5);
+        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
         ImmutableSortedListSet<Integer> reversedSet = originalSet.reversed();
         ImmutableSortedListSet<Integer> doubleReversedSet = reversedSet.reversed();
 
@@ -244,7 +246,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testReversedWithEmptySet() {
         // Test reversed view of an empty set
-        ImmutableListBackedSortedSet<Integer> emptySet = ImmutableListBackedSortedSet.of();
+        ImmutableListBackedSortedSet<Integer> emptySet = ImmutableListBackedSortedSet.ofNaturalOrder();
         ImmutableSortedListSet<Integer> reversedEmptySet = emptySet.reversed();
 
         assertTrue(reversedEmptySet.isEmpty());
@@ -257,7 +259,7 @@ class ImmutableListBackedSortedSetTest {
 
     @Test
     void testReversedUnsupportedOperations() {
-        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.of(1, 2, 3);
+        ImmutableListBackedSortedSet<Integer> originalSet = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3);
         ImmutableSortedListSet<Integer> reversedSet = originalSet.reversed();
 
         // Test unsupported operations
@@ -274,21 +276,21 @@ class ImmutableListBackedSortedSetTest {
 
     @Test
     void testReversedEqualsAndHashCode() {
-        ImmutableListBackedSortedSet<Integer> set1 = ImmutableListBackedSortedSet.of(1, 2, 3);
+        ImmutableListBackedSortedSet<Integer> set1 = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3);
         ImmutableSortedListSet<Integer> reversed1 = set1.reversed();
 
-        ImmutableListBackedSortedSet<Integer> set2 = ImmutableListBackedSortedSet.of(1, 2, 3);
+        ImmutableListBackedSortedSet<Integer> set2 = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3);
         ImmutableSortedListSet<Integer> reversed2 = set2.reversed();
 
-        ImmutableListBackedSortedSet<Integer> set3 = ImmutableListBackedSortedSet.of(1, 2);
+        ImmutableListBackedSortedSet<Integer> set3 = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2);
         ImmutableSortedListSet<Integer> reversed3 = set3.reversed();
 
         // Test that same content produces same hashCode
         assertEquals(reversed1.hashCode(), reversed2.hashCode());
         assertNotEquals(reversed1.hashCode(), reversed3.hashCode());
 
-        // Test that original and reversed have different hashCodes
-        assertNotEquals(set1.hashCode(), reversed1.hashCode());
+        // Test that original and reversed have the same hashCodes (as required by Set.hashCode() contract)
+        assertEquals(set1.hashCode(), reversed1.hashCode());
 
         // Test content equality
         assertEquals(3, reversed1.size());
@@ -302,7 +304,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testCornerCasesSubSet() {
         // Create a set with some elements
-        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(10, 20, 30, 40, 50);
 
         // Create a TreeSet with the same elements for comparison
         TreeSet<Integer> treeSet = new TreeSet<>(Arrays.asList(10, 20, 30, 40, 50));
@@ -337,7 +339,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testCornerCasesHeadSet() {
         // Create a set with some elements
-        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(10, 20, 30, 40, 50);
 
         // Create a TreeSet with the same elements for comparison
         TreeSet<Integer> treeSet = new TreeSet<>(Arrays.asList(10, 20, 30, 40, 50));
@@ -366,7 +368,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testCornerCasesTailSet() {
         // Create a set with some elements
-        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(10, 20, 30, 40, 50);
 
         // Create a TreeSet with the same elements for comparison
         TreeSet<Integer> treeSet = new TreeSet<>(Arrays.asList(10, 20, 30, 40, 50));
@@ -395,7 +397,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testReversedCornerCasesSubSet() {
         // Create a set with some elements and its reversed view
-        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(10, 20, 30, 40, 50);
         ImmutableSortedListSet<Integer> reversedSet = set.reversed();
 
         // Create a TreeSet with the same elements and its reversed view for comparison
@@ -432,7 +434,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testReversedCornerCasesHeadSet() {
         // Create a set with some elements and its reversed view
-        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(10, 20, 30, 40, 50);
         ImmutableSortedListSet<Integer> reversedSet = set.reversed();
 
         // Create a TreeSet with the same elements and its reversed view for comparison
@@ -463,7 +465,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testReversedCornerCasesTailSet() {
         // Create a set with some elements and its reversed view
-        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(10, 20, 30, 40, 50);
         ImmutableSortedListSet<Integer> reversedSet = set.reversed();
 
         // Create a TreeSet with the same elements and its reversed view for comparison
@@ -494,7 +496,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testBoundaryElementsSubHeadTailSet() {
         // Create a set with some elements
-        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(10, 20, 30, 40, 50);
 
         // Create a TreeSet with the same elements for comparison
         TreeSet<Integer> treeSet = new TreeSet<>(Arrays.asList(10, 20, 30, 40, 50));
@@ -545,7 +547,7 @@ class ImmutableListBackedSortedSetTest {
     @Test
     void testReversedBoundaryElementsSubHeadTailSet() {
         // Create a set with some elements and its reversed view
-        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(10, 20, 30, 40, 50);
         ImmutableSortedListSet<Integer> reversedSet = set.reversed();
 
         // Create a TreeSet with the same elements and its reversed view for comparison
@@ -593,5 +595,21 @@ class ImmutableListBackedSortedSetTest {
         SortedSet<Integer> expectedTailSet2 = reversedTreeSet.tailSet(10);
         assertEquals(expectedTailSet2.size(), tailSet2.size());
         assertEquals(new TreeSet<>(expectedTailSet2), new TreeSet<>(tailSet2));
+    }
+    
+    @Test
+    void testComparatorMemberBasic() {
+        Comparator<Integer> reverse = Comparator.reverseOrder();
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(reverse, 1, 3, 2, 4);
+        // comparator() should return the provided comparator (not wrapped)
+        assertSame(reverse, set.comparator());
+        // Order should follow reverse comparator
+        assertEquals(List.of(4,3,2,1), set.subList(0, set.size()));
+        assertEquals(4, set.first());
+        assertEquals(1, set.last());
+        // Reversed view should use natural order comparator
+        ImmutableSortedListSet<Integer> rev = set.reversed();
+        Comparator<? super Integer> revCmp = LangUtil.orNaturalOrder(rev.comparator());
+        assertTrue(revCmp.compare(1, 2) < 0);
     }
 }

@@ -1080,7 +1080,7 @@ public final class IoUtil {
      * @return a negative integer, zero, or a positive integer as the first path root is less than,
      *         equal to, or greater than the second path root. If one path is null, a non-null path is considered greater.
      */
-    private static int comparePathRoots(@Nullable Path p1, @Nullable Path p2, Comparator<String> comparator) {
+    private static int comparePathRoots(@Nullable Path p1, @Nullable Path p2, Comparator<? super String> comparator) {
         if (p1 == null) {
             return -1;
         }

@@ -1,5 +1,7 @@
 package com.dua3.utility.lang;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
 import java.util.SortedSet;
 
 /**
@@ -23,11 +26,12 @@ import java.util.SortedSet;
  * @param <T> the type of elements maintained by this set, which must
  *            implement {@link Comparable}
  */
-public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends AbstractList<T> implements ImmutableSortedListSet<T> {
+public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> implements ImmutableSortedListSet<T> {
 
-    private static final ImmutableListBackedSortedSet<?> EMPTY_SET = of();
+    private static final ImmutableListBackedSortedSet<?> EMPTY_SET = ofNaturalOrder();
 
     private final T[] elements;
+    private final @Nullable Comparator<? super T> comparator;
     private int hash = 0;
 
     /**
@@ -35,15 +39,18 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
      * of elements. The array is expected to represent the elements of the sorted set.
      *
      * @param elements the array of elements to initialize the sorted set with
+     * @param comparator the {@link Comparator} to use, null for natural order
      */
-    ImmutableListBackedSortedSet(T[] elements) {
+    ImmutableListBackedSortedSet(T[] elements, @Nullable Comparator<? super T> comparator) {
         this.elements = elements;
+        this.comparator = comparator;
         assert elementsAreSortedAndUnique() : "elements are not sorted or not unique";
     }
 
     private boolean elementsAreSortedAndUnique() {
+        Comparator<? super T> cmp = LangUtil.orNaturalOrder(comparator);
         for (int i = 1; i < elements.length; i++) {
-            if (elements[i - 1].compareTo(elements[i]) >= 0) {
+            if (cmp.compare(elements[i - 1], elements[i]) >= 0) {
                 return false;
             }
         }
@@ -55,10 +62,8 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
     public int hashCode() {
         int h = hash;
         if (h == 0) {
-            h = 37 * (1 + size()); // make sure an empty collection does not have hash 0
             for (T element : elements) {
-                // only use the value when it is immutable
-                h = h * 11 + (LangUtil.isOfKnownImmutableType(element) ? Objects.hashCode(element) : 0);
+                h += Objects.hashCode(element);
             }
             hash = h;
         }
@@ -66,8 +71,15 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
     }
 
     @Override
-    public boolean equals(Object o) {
-        return o instanceof ImmutableSortedListSet<?> && o.hashCode() == hashCode() && super.equals(o);
+    public boolean equals(@Nullable Object o) {
+        return switch(o) {
+            case ImmutableListBackedSortedSet<?> other when Objects.equals(other.comparator(), comparator()) ->
+                    Arrays.equals(elements, other.elements);
+            case SortedSet<?> other when Objects.equals(other.comparator(), comparator()) ->
+                    Arrays.equals(elements, other.toArray());
+            case Set<?> other -> other.size() == size() && other.containsAll(this);
+            case null, default -> false;
+        };
     }
 
     /**
@@ -78,9 +90,9 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
      * @param array the input array to be sorted and de-duplicated
      * @return a new array containing the sorted, unique elements from the input array
      */
-    private static <T1 extends Comparable<T1>> T1[] sortAndRemoveDuplicates(T1[] array) {
+    private static <T1> T1[] sortAndRemoveDuplicates(T1[] array, @Nullable Comparator<? super T1> comparator) {
         T1[] copy = array.clone();
-        Arrays.sort(copy);
+        Arrays.sort(copy, LangUtil.orNaturalOrder(comparator));
         int uniqueCount = 0;
         for (int i = 0; i < copy.length; i++) {
             if (i == 0 || !copy[i].equals(copy[i - 1])) {
@@ -99,13 +111,27 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
      * @return a new immutable sorted set containing the unique, sorted elements
      */
     @SafeVarargs
-    public static <T extends Comparable<T>> ImmutableListBackedSortedSet<T> of(T... elements) {
-        return new ImmutableListBackedSortedSet<>(sortAndRemoveDuplicates(elements));
+    public static <T extends Comparable<T>> ImmutableListBackedSortedSet<T> ofNaturalOrder(T... elements) {
+        return new ImmutableListBackedSortedSet<>(sortAndRemoveDuplicates(elements, null), null);
+    }
+
+    /**
+     * Creates a new instance of {@code ImmutableListBackedSortedSet} containing the specified elements,
+     * which are sorted and have duplicates removed based on the provided comparator.
+     *
+     * @param <T> the type of elements in the set; must extend {@link Comparable}
+     * @param comparator the {@link Comparator} used to sort the elements; if null, natural ordering is used
+     * @param elements the varargs array of elements to include in the sorted set
+     * @return a new immutable sorted set containing the sorted, unique elements
+     */
+    @SafeVarargs
+    public static <T> ImmutableListBackedSortedSet<T> of(Comparator<T> comparator, T... elements) {
+        return new ImmutableListBackedSortedSet<>(sortAndRemoveDuplicates(elements, comparator), comparator);
     }
 
     @Override
-    public Comparator<? super T> comparator() {
-        return Comparator.naturalOrder();
+    public @Nullable Comparator<? super T> comparator() {
+        return comparator;
     }
 
     @SuppressWarnings("unchecked")
@@ -125,7 +151,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             }
             throw new IllegalArgumentException("fromElement > toElement");
         }
-        return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, start, end));
+        return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, start, end), comparator);
     }
 
     @SuppressWarnings("unchecked")
@@ -138,7 +164,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         if (end == 0) {
             return (ImmutableSortedListSet<T>) EMPTY_SET;
         }
-        return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, 0, end));
+        return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, 0, end), comparator);
     }
 
     @SuppressWarnings("unchecked")
@@ -151,7 +177,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         if (start >= elements.length) {
             return (ImmutableSortedListSet<T>) EMPTY_SET;
         }
-        return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, start, elements.length));
+        return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, start, elements.length), comparator);
     }
 
     @Override
@@ -184,7 +210,11 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
      *         where the element would be added to maintain sorted order
      */
     private int getIndex(Object element) {
-        return Arrays.binarySearch(elements, element);
+        @SuppressWarnings("unchecked")
+        Comparator<? super T> cmp = (Comparator<? super T>) LangUtil.orNaturalOrder(comparator);
+        @SuppressWarnings("unchecked")
+        T e = (T) element;
+        return Arrays.binarySearch(elements, e, cmp);
     }
 
     @Override
@@ -264,7 +294,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         return new ReversedImmutableSortedListSet<>(this, super.reversed());
     }
 
-    private static final class ReversedImmutableSortedListSet<T extends Comparable<T>> implements ImmutableSortedListSet<T> {
+    private static final class ReversedImmutableSortedListSet<T> implements ImmutableSortedListSet<T> {
         private static final ImmutableSortedListSet<?> EMPTY_SET_REVERSED = EMPTY_SET.reversed();
 
         private final ImmutableListBackedSortedSet<T> original;
@@ -277,12 +307,19 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
 
         @Override
         public int hashCode() {
-            return -original.hashCode();
+            return original.hashCode();
         }
 
         @Override
-        public boolean equals(Object obj) {
-            return obj instanceof ReversedImmutableSortedListSet<?> && obj.hashCode() == hashCode() && super.equals(obj);
+        public boolean equals(@Nullable Object o) {
+            return switch(o) {
+                case ReversedImmutableSortedListSet<?> other when Objects.equals(other.comparator(), comparator()) ->
+                        other.original.equals(original);
+                case ImmutableListBackedSortedSet<?> other when Objects.equals(other.comparator(), comparator()) ->
+                        Arrays.equals(original.elements, other.elements);
+                case Set<?> other -> other.size() == size() && other.containsAll(this);
+                case null, default -> false;
+            };
         }
 
         @Override
@@ -382,8 +419,8 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         }
 
         @Override
-        public Comparator<? super T> comparator() {
-            return original.comparator().reversed();
+        public @Nullable Comparator<? super T> comparator() {
+            return LangUtil.orNaturalOrder(original.comparator()).reversed();
         }
 
         @Override
