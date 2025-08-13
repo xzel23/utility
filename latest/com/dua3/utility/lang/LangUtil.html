@@ -296,10 +296,10 @@ V extends U&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/j
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Validates the provided argument based on the specified condition.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;K&gt;&nbsp;int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#compare(java.util.Comparator,K,K)" class="member-name-link">compare</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;? super K&gt;&nbsp;comparator,
- K&nbsp;key,
- K&nbsp;key1)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#compare(java.util.Comparator,T,T)" class="member-name-link">compare</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;T&gt;&nbsp;comparator,
+ @Nullable T&nbsp;a,
+ @Nullable T&nbsp;b)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Compares two keys using the provided comparator, or the natural order if the comparator is null.</div>
 </div>
@@ -3148,19 +3148,19 @@ U&gt;</span>&nbsp;<span class="return-type">U</span>&nbsp;<span class="element-n
 </section>
 </li>
 <li>
-<section class="detail" id="compare(java.util.Comparator,K,K)">
+<section class="detail" id="compare(java.util.Comparator,T,T)">
 <h3 id="compare(java.util.Comparator,java.lang.Object,java.lang.Object)">compare</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;K&gt;</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">compare</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;? super K&gt;&nbsp;comparator,
- K&nbsp;key,
- K&nbsp;key1)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">compare</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;T&gt;&nbsp;comparator,
+ @Nullable T&nbsp;a,
+ @Nullable T&nbsp;b)</span></div>
 <div class="block">Compares two keys using the provided comparator, or the natural order if the comparator is null.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
-<dd><code>K</code> - the type of the keys being compared</dd>
+<dd><code>T</code> - the type of the keys being compared</dd>
 <dt>Parameters:</dt>
 <dd><code>comparator</code> - the comparator to determine the order of the keys; if null, the natural order is used</dd>
-<dd><code>key</code> - the first key to compare</dd>
-<dd><code>key1</code> - the second key to compare</dd>
+<dd><code>a</code> - the first key to compare</dd>
+<dd><code>b</code> - the second key to compare</dd>
 <dt>Returns:</dt>
 <dd>a negative integer, zero, or a positive integer as the first key is less than, equal to,
          or greater than the second key</dd>
