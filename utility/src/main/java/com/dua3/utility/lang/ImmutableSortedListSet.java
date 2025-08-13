@@ -6,11 +6,15 @@ import java.util.SortedSet;
 import java.util.Spliterator;
 
 /**
- * An interface representing an immutable collection that combines the properties of a sorted set
- * and a list. This ensures that elements are ordered and unique, while also allowing indexed
- * access to the elements.
+ * An immutable collection that combines the properties of a {@link java.util.SortedSet} and a
+ * {@link java.util.List}. Elements are unique and kept in sorted order defined by the collection’s
+ * comparator (if present) or by their natural order otherwise. Implementations are expected to
+ * disallow null elements (the project uses a {@code @NullMarked} context).
  *
- * @param <T> the type of elements in this collection.
+ * <p>The {@link java.util.SortedSet#comparator()} method returns the comparator used for ordering,
+ * or {@code null} to indicate natural ordering, following the standard contract.
+ *
+ * @param <T> the type of elements in this collection
  */
 public interface ImmutableSortedListSet<T> extends List<T>, SortedSet<T> {
     @Override

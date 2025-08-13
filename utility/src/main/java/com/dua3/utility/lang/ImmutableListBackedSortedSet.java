@@ -16,15 +16,22 @@ import java.util.SortedSet;
 
 /**
  * An immutable implementation of {@link SortedSet}, backed by a sorted array.
- * This set guarantees natural ordering of elements as defined by their
- * {@link Comparable} implementation. Since this is an immutable set, all
- * modification operations are unsupported.
+ * The element order is defined by the set's comparator if provided, otherwise by
+ * the elements' natural order. Since this is an immutable set, all modification
+ * operations are unsupported.
  * <p>
- * Use this Set implementation for immutable Sets with a small number of elements
- * to reduce memory consumption as compared to for example {@link java.util.TreeSet}.
+ * Notes on ordering and nullness:
+ * - If a comparator was specified at creation time, it is used for all
+ *   comparisons. If no comparator was specified, natural ordering applies and
+ *   {@link #comparator()} returns {@code null} (following the {@link SortedSet}
+ *   contract).
+ * - The project is compiled in a {@code @NullMarked} context; null elements are
+ *   not permitted and parameters are checked for nullness.
+ * <p>
+ * Use this implementation for immutable sets with a small number of elements to
+ * reduce memory consumption compared to, for example, {@link java.util.TreeSet}.
  *
- * @param <T> the type of elements maintained by this set, which must
- *            implement {@link Comparable}
+ * @param <T> the element type
  */
 public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> implements ImmutableSortedListSet<T> {
 
@@ -36,10 +43,14 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
 
     /**
      * Constructs an instance of {@code ImmutableListBackedSortedSet} with the given array
-     * of elements. The array is expected to represent the elements of the sorted set.
+     * of elements and an optional comparator. The array must represent a strictly
+     * increasing sequence according to the effective ordering (the provided comparator
+     * if non-null, otherwise the elements' natural order). Duplicates are not allowed.
+     * This constructor is package-private and used internally after elements have been
+     * validated and prepared.
      *
-     * @param elements the array of elements to initialize the sorted set with
-     * @param comparator the {@link Comparator} to use, null for natural order
+     * @param elements the backing array (elements must be non-null, strictly increasing, and unique)
+     * @param comparator the comparator to use; {@code null} means natural order
      */
     ImmutableListBackedSortedSet(T[] elements, @Nullable Comparator<? super T> comparator) {
         this.elements = elements;
@@ -88,6 +99,7 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
      *
      * @param <T1> the type of elements in the array
      * @param array the input array to be sorted and de-duplicated
+     * @param comparator the comparator to use; {@code null} means natural order
      * @return a new array containing the sorted, unique elements from the input array
      */
     private static <T1> T1[] sortAndRemoveDuplicates(T1[] array, @Nullable Comparator<? super T1> comparator) {
@@ -103,12 +115,12 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
     }
 
     /**
-     * Creates a new instance of {@code ImmutableListBackedSortedSet} containing the specified elements.
-     * The input elements will be sorted and any duplicates will be removed.
+     * Creates a new instance containing the specified elements in their natural order.
+     * Duplicate elements are removed.
      *
-     * @param <T> the type of elements in the set; must extend {@link Comparable}
-     * @param elements the varargs array of elements to include in the sorted set
-     * @return a new immutable sorted set containing the unique, sorted elements
+     * @param <T> the element type; must extend {@link Comparable}
+     * @param elements the elements to include
+     * @return a new immutable sorted set containing the unique, naturally ordered elements
      */
     @SafeVarargs
     public static <T extends Comparable<T>> ImmutableListBackedSortedSet<T> ofNaturalOrder(T... elements) {
@@ -116,13 +128,13 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
     }
 
     /**
-     * Creates a new instance of {@code ImmutableListBackedSortedSet} containing the specified elements,
-     * which are sorted and have duplicates removed based on the provided comparator.
+     * Creates a new instance containing the specified elements ordered by the given comparator.
+     * Duplicate elements (w.r.t. the comparator) are removed.
      *
-     * @param <T> the type of elements in the set; must extend {@link Comparable}
-     * @param comparator the {@link Comparator} used to sort the elements; if null, natural ordering is used
-     * @param elements the varargs array of elements to include in the sorted set
-     * @return a new immutable sorted set containing the sorted, unique elements
+     * @param <T> the element type
+     * @param comparator the comparator to define the order (must not be {@code null})
+     * @param elements the elements to include
+     * @return a new immutable sorted set containing the unique elements in comparator order
      */
     @SafeVarargs
     public static <T> ImmutableListBackedSortedSet<T> of(Comparator<T> comparator, T... elements) {
@@ -131,6 +143,7 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
 
     @Override
     public @Nullable Comparator<? super T> comparator() {
+        // Returns null to indicate natural ordering, as per SortedSet contract
         return comparator;
     }
 
@@ -294,6 +307,11 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
         return new ReversedImmutableSortedListSet<>(this, super.reversed());
     }
 
+    /**
+     * Reversed view of an {@link ImmutableListBackedSortedSet}. The comparator of the
+     * reversed view is the reversed comparator of the original (or natural order reversed
+     * if the original used natural order). Null elements are not permitted.
+     */
     private static final class ReversedImmutableSortedListSet<T> implements ImmutableSortedListSet<T> {
         private static final ImmutableSortedListSet<?> EMPTY_SET_REVERSED = EMPTY_SET.reversed();
 
