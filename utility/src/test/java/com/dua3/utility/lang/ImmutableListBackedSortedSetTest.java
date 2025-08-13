@@ -11,6 +11,7 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -611,5 +612,68 @@ class ImmutableListBackedSortedSetTest {
         ImmutableSortedListSet<Integer> rev = set.reversed();
         Comparator<? super Integer> revCmp = LangUtil.orNaturalOrder(rev.comparator());
         assertTrue(revCmp.compare(1, 2) < 0);
+    }
+
+    @Test
+    void testEqualsAgainstTreeSetHashSetAndOthers() {
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3);
+
+        // TreeSet comparisons (true and false)
+        TreeSet<Integer> treeEqual = new TreeSet<>();
+        treeEqual.addAll(List.of(1, 2, 3));
+        TreeSet<Integer> treeNotEqual = new TreeSet<>();
+        treeNotEqual.addAll(List.of(1, 2));
+        assertTrue(set.equals(treeEqual));
+        assertFalse(set.equals(treeNotEqual));
+
+        // HashSet comparisons (true and false)
+        HashSet<Integer> hashEqual = new HashSet<>(List.of(1, 2, 3));
+        HashSet<Integer> hashNotEqual = new HashSet<>(List.of(1, 2));
+        assertTrue(set.equals(hashEqual));
+        assertFalse(set.equals(hashNotEqual));
+
+        // Unrelated class and null
+        assertFalse(set.equals(new Object()));
+        assertFalse(set.equals(null));
+    }
+
+    @Test
+    void testIndexOfAndLastIndexOf_NaturalOrder() {
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
+        // Present elements
+        assertEquals(0, set.indexOf(1));
+        assertEquals(2, set.indexOf(3));
+        assertEquals(4, set.indexOf(5));
+        // Not present
+        assertEquals(-1, set.indexOf(0));
+        assertEquals(-1, set.indexOf(6));
+        // lastIndexOf equals indexOf because elements are unique
+        assertEquals(set.indexOf(1), set.lastIndexOf(1));
+        assertEquals(set.indexOf(3), set.lastIndexOf(3));
+        assertEquals(set.indexOf(5), set.lastIndexOf(5));
+        assertEquals(set.indexOf(0), set.lastIndexOf(0));
+    }
+
+    @Test
+    void testIndexOfAndLastIndexOf_EmptySet() {
+        ImmutableListBackedSortedSet<Integer> empty = ImmutableListBackedSortedSet.ofNaturalOrder();
+        assertEquals(-1, empty.indexOf(1));
+        assertEquals(-1, empty.lastIndexOf(1));
+    }
+
+    @Test
+    void testIndexOfAndLastIndexOf_CustomComparator() {
+        Comparator<Integer> reverse = Comparator.reverseOrder();
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(reverse, 1, 2, 3, 4, 5);
+        // Order is [5,4,3,2,1]
+        assertEquals(0, set.indexOf(5));
+        assertEquals(2, set.indexOf(3));
+        assertEquals(4, set.indexOf(1));
+        assertEquals(-1, set.indexOf(6));
+        // lastIndexOf equals indexOf (unique elements)
+        assertEquals(set.indexOf(5), set.lastIndexOf(5));
+        assertEquals(set.indexOf(3), set.lastIndexOf(3));
+        assertEquals(set.indexOf(1), set.lastIndexOf(1));
+        assertEquals(set.indexOf(6), set.lastIndexOf(6));
     }
 }
