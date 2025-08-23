@@ -1336,12 +1336,12 @@ public final class TextUtil {
      * Splits the input string into an array of substrings using the specified delimiter,
      * while ignoring instances of the delimiter that are escaped with a backslash.
      *
-     * @param s the input string to be split
+     * @param s the input character sequence to be split
      * @param delimiter the character used as the delimiter for splitting the string
      * @return an array of substrings obtained by splitting the input string on the specified delimiter,
      *         excluding delimiters that are escaped with a backslash
      */
-    public static String [] splitOnUnescapedDelimiter(String s, char delimiter) {
+    public static String [] splitOnUnescapedDelimiter(CharSequence s, char delimiter) {
         return createUnescapedDelimiterPattern(delimiter).split(s);
     }
 
