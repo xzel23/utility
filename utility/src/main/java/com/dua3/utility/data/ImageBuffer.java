@@ -107,7 +107,7 @@ public record ImageBuffer(int[] data, int width, int height) implements Image {
      *
      * @param x    the x coordinate of the left most pixel
      * @param y    the y coordinate of the topmost pixel
-     * @param w    the height of the rectangle
+     * @param w    the width of the rectangle
      * @param h    the height of the rectangle
      * @param argb the color as ARGB value
      */

@@ -1331,4 +1331,28 @@ public final class TextUtil {
 
         return normalizedEmail;
     }
+
+    /**
+     * Splits the input string into an array of substrings using the specified delimiter,
+     * while ignoring instances of the delimiter that are escaped with a backslash.
+     *
+     * @param s the input string to be split
+     * @param delimiter the character used as the delimiter for splitting the string
+     * @return an array of substrings obtained by splitting the input string on the specified delimiter,
+     *         excluding delimiters that are escaped with a backslash
+     */
+    public static String [] splitOnUnescapedDelimiter(String s, char delimiter) {
+        return createUnescapedDelimiterPattern(delimiter).split(s);
+    }
+
+    /**
+     * Creates a regex pattern string that matches an unescaped occurrence of the specified delimiter.
+     * An unescaped delimiter is identified by ensuring it is not preceded by a backslash.
+     *
+     * @param delimiter the character for which an unescaped occurrence pattern is to be created
+     * @return a string representing the regex pattern for matching the unescaped delimiter
+     */
+    public static Pattern createUnescapedDelimiterPattern(char delimiter) {
+        return Pattern.compile(String.format("(?<!\\\\)%s", Pattern.quote(Character.toString(delimiter))));
+    }
 }
