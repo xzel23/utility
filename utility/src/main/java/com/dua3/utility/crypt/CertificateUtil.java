@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -19,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
+import java.security.cert.CertPath;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -27,6 +29,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -402,5 +405,32 @@ public final class CertificateUtil {
             // this should never happen
             throw new UncheckedIOException(e);
         }
+    }
+
+    /**
+     * Converts an array of certificates into a byte array in PKCS#7 format.
+     *
+     * @param certificates an array of certificates to be converted
+     * @return a byte array containing the certificates encoded in PKCS#7 format
+     * @throws CertificateException if an error occurs during certificate processing
+     */
+    public static byte[] toPkcs7Bytes(Certificate... certificates) throws CertificateException {
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        List<Certificate> certList = Arrays.asList(certificates);
+        CertPath certPath = cf.generateCertPath(certList);
+        return certPath.getEncoded("PKCS7");
+    }
+
+    /**
+     * Converts a byte array representing certificates into an array of Certificate objects.
+     *
+     * @param pkcs7Bytes the byte array containing the encoded certificates
+     * @return an array of Certificate objects generated from the provided byte array
+     * @throws CertificateException if an error occurs while creating the certificates
+     */
+    public static Certificate[] pkcs7BytesToCertificateChain(byte[] pkcs7Bytes) throws CertificateException {
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        CertPath certPath = cf.generateCertPath(new ByteArrayInputStream(pkcs7Bytes), "PKCS7");
+        return certPath.getCertificates().toArray(Certificate[]::new);
     }
 }

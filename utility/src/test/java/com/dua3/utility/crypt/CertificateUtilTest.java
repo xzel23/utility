@@ -498,4 +498,77 @@ class CertificateUtilTest {
         // Verify the final PEM matches the original
         assertEquals(pemOutput, finalPemOutput, "Final PEM should match original PEM");
     }
+
+    @Test
+    void testPkcs7RoundTripSingleCertificate() throws GeneralSecurityException {
+        // Create a self-signed certificate
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        String subject = "CN=PKCS7 Single, O=Test Organization, C=US";
+        X509Certificate[] chain = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, 365, true);
+        X509Certificate cert = chain[0];
+
+        // Convert to PKCS#7 bytes
+        byte[] pkcs7 = CertificateUtil.toPkcs7Bytes(cert);
+        assertNotNull(pkcs7, "PKCS#7 bytes should not be null");
+        assertTrue(pkcs7.length > 0, "PKCS#7 bytes should not be empty");
+
+        // Convert back to certificate chain
+        Certificate[] parsed = CertificateUtil.pkcs7BytesToCertificateChain(pkcs7);
+        assertNotNull(parsed, "Parsed chain should not be null");
+        assertEquals(1, parsed.length, "Parsed chain should contain one certificate");
+
+        // Verify equality by comparing encoded forms
+        assertArrayEquals(cert.getEncoded(), parsed[0].getEncoded(), "Certificate should match after PKCS#7 roundtrip");
+    }
+
+    @Test
+    void testPkcs7RoundTripCertificateChain() throws GeneralSecurityException {
+        // Create root (self-signed)
+        KeyPair rootKeyPair = KeyUtil.generateRSAKeyPair();
+        X509Certificate root = CertificateUtil.createSelfSignedX509Certificate(rootKeyPair, "CN=Root PKCS7, O=Test, C=US", 730, true)[0];
+
+        // Create intermediate signed by root
+        KeyPair interKeyPair = KeyUtil.generateRSAKeyPair();
+        X509Certificate intermediate = CertificateUtil.createX509Certificate(
+                interKeyPair,
+                "CN=Intermediate PKCS7, O=Test, C=US",
+                365,
+                true,
+                rootKeyPair.getPrivate(),
+                root
+        )[0];
+
+        // Build chain (leaf first, then parent)
+        Certificate[] chain = new Certificate[]{ intermediate, root };
+
+        // Convert to PKCS#7 bytes
+        byte[] pkcs7 = CertificateUtil.toPkcs7Bytes(chain);
+        assertNotNull(pkcs7, "PKCS#7 bytes should not be null");
+        assertTrue(pkcs7.length > 0, "PKCS#7 bytes should not be empty");
+
+        // Convert back
+        Certificate[] parsed = CertificateUtil.pkcs7BytesToCertificateChain(pkcs7);
+        assertNotNull(parsed, "Parsed chain should not be null");
+        assertEquals(2, parsed.length, "Parsed chain should have two certificates");
+
+        // Ensure both original certs are present (order-agnostic)
+        int idxIntermediate = -1;
+        int idxRoot = -1;
+        for (int i = 0; i < parsed.length; i++) {
+            if (java.util.Arrays.equals(intermediate.getEncoded(), parsed[i].getEncoded())) {
+                idxIntermediate = i;
+            } else if (java.util.Arrays.equals(root.getEncoded(), parsed[i].getEncoded())) {
+                idxRoot = i;
+            }
+        }
+        assertNotEquals(-1, idxIntermediate, "Intermediate certificate should be present after roundtrip");
+        assertNotEquals(-1, idxRoot, "Root certificate should be present after roundtrip");
+
+        // Build leaf-first chain for verification
+        X509Certificate leafFirst0 = (X509Certificate) parsed[idxIntermediate];
+        X509Certificate leafFirst1 = (X509Certificate) parsed[idxRoot];
+
+        // Verify resulting chain is valid (leaf -> root)
+        assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(leafFirst0, leafFirst1));
+    }
 }
