@@ -227,7 +227,7 @@ class AboutDialogBuilderTest extends FxTestBase {
                     licenseLink.fire();
                     assertTrue(detailsClicked[0], "License details callback should be invoked");
                 } else {
-                    throw new AssertionError("Unexpected node type: "+n.getClass().getName());
+                    throw new AssertionError("Unexpected node type: " + n.getClass().getName());
                 }
             });
         });

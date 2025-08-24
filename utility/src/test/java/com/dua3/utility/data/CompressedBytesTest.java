@@ -182,7 +182,7 @@ class CompressedBytesTest {
         assertTrue(compressedData.length > 0, "Compressed data should have some content");
 
         // Verify the first byte indicates compression status
-        assertTrue(compressedData[0] == 0 || compressedData[0] == 1, 
+        assertTrue(compressedData[0] == 0 || compressedData[0] == 1,
                 "First byte should be 0 (uncompressed) or 1 (compressed)");
     }
 }

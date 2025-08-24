@@ -263,9 +263,9 @@ public class AboutDialogBuilder {
         vBox.setAlignment(Pos.CENTER);
 
         ObservableList<Node> children = vBox.getChildren();
-        addLabel(children,"application-name", applicationName);
-        addLabel(children,"version", version);
-        addLabel(children,"copyright", copyright);
+        addLabel(children, "application-name", applicationName);
+        addLabel(children, "version", version);
+        addLabel(children, "copyright", copyright);
 
         if (!mailText.isEmpty()) {
             Hyperlink hlMail = new Hyperlink(mailText);

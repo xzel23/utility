@@ -434,7 +434,7 @@ class ImmutableSortedMapTest {
             assertEquals(expectedTailMap2.get(key), tailMap2.get(key));
         }
     }
-    
+
     @Test
     void testComparatorFromCustomSortedMap() {
         // Create a TreeMap with a custom reverse-order comparator
@@ -450,7 +450,7 @@ class ImmutableSortedMapTest {
         assertEquals("c", map.firstKey());
         assertEquals("a", map.lastKey());
         // Verify iteration through entrySet respects order
-        Iterator<Map.Entry<String,Integer>> it = map.entrySet().iterator();
+        Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
         assertEquals("c", it.next().getKey());
         assertEquals("b", it.next().getKey());
         assertEquals("a", it.next().getKey());
@@ -466,11 +466,11 @@ class ImmutableSortedMapTest {
         src.put("c", 3);
         ImmutableSortedMap<String, Integer> map = new ImmutableSortedMap<>(src);
         // All views should keep the same comparator instance
-        SortedMap<String,Integer> sub = map.subMap("c", "a");
+        SortedMap<String, Integer> sub = map.subMap("c", "a");
         assertSame(reverse, sub.comparator());
-        SortedMap<String,Integer> head = map.headMap("b");
+        SortedMap<String, Integer> head = map.headMap("b");
         assertSame(reverse, head.comparator());
-        SortedMap<String,Integer> tail = map.tailMap("b");
+        SortedMap<String, Integer> tail = map.tailMap("b");
         assertSame(reverse, tail.comparator());
         // Check content and boundaries are correct for reverse order
         assertEquals(2, sub.size());

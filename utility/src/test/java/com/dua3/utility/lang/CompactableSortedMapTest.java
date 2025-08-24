@@ -104,7 +104,7 @@ class CompactableSortedMapTest {
         map.put("e", 5);
         assertEquals(5, map.get("e"));
 
-        Map<String,Integer> more = Map.of("f", 6, "g", 7);
+        Map<String, Integer> more = Map.of("f", 6, "g", 7);
         map.putAll(more);
         assertEquals(6, map.get("f"));
         assertEquals(7, map.get("g"));
@@ -128,7 +128,7 @@ class CompactableSortedMapTest {
     @Test
     void testViewsBehaviorHeadTailSubMap() {
         // Build deterministic ordered data
-        TreeMap<String,Integer> baseline = new TreeMap<>();
+        TreeMap<String, Integer> baseline = new TreeMap<>();
         baseline.put("a", 1);
         baseline.put("c", 3);
         baseline.put("e", 5);
@@ -139,9 +139,9 @@ class CompactableSortedMapTest {
         assertFalse(map.isCompact()); // constructed from Map -> TreeMap copy, mutable
 
         // Compare views with baseline while mutable
-        SortedMap<String,Integer> head = map.headMap("f");
-        SortedMap<String,Integer> tail = map.tailMap("d");
-        SortedMap<String,Integer> sub  = map.subMap("c", "i");
+        SortedMap<String, Integer> head = map.headMap("f");
+        SortedMap<String, Integer> tail = map.tailMap("d");
+        SortedMap<String, Integer> sub = map.subMap("c", "i");
 
         assertEquals(baseline.headMap("f"), new TreeMap<>(head));
         assertEquals(baseline.tailMap("d"), new TreeMap<>(tail));
@@ -158,9 +158,9 @@ class CompactableSortedMapTest {
         // Compact and verify views become immutable (from ImmutableSortedMap)
         map.compact();
         assertTrue(map.isCompact());
-        SortedMap<String,Integer> head2 = map.headMap("z");
-        SortedMap<String,Integer> tail2 = map.tailMap("a");
-        SortedMap<String,Integer> sub2  = map.subMap("a", "z");
+        SortedMap<String, Integer> head2 = map.headMap("z");
+        SortedMap<String, Integer> tail2 = map.tailMap("a");
+        SortedMap<String, Integer> sub2 = map.subMap("a", "z");
         assertThrows(UnsupportedOperationException.class, () -> head2.put("x", 24));
         assertThrows(UnsupportedOperationException.class, () -> tail2.remove("a"));
         assertThrows(UnsupportedOperationException.class, sub2::clear);
@@ -171,7 +171,7 @@ class CompactableSortedMapTest {
         CompactableSortedMap<String, Integer> map = newFilledMap(); // mutable now
         Set<String> keys = map.keySet();
         Collection<Integer> values = map.values();
-        Set<Map.Entry<String,Integer>> entries = map.entrySet();
+        Set<Map.Entry<String, Integer>> entries = map.entrySet();
 
         // Modify through views while mutable
         assertTrue(keys.remove("a"));
@@ -189,7 +189,7 @@ class CompactableSortedMapTest {
         assertFalse(map.containsKey("d"));
 
         // remove via entries iterator
-        Iterator<Map.Entry<String,Integer>> eit = entries.iterator();
+        Iterator<Map.Entry<String, Integer>> eit = entries.iterator();
         if (eit.hasNext()) {
             eit.next();
             eit.remove();
@@ -203,7 +203,7 @@ class CompactableSortedMapTest {
         assertThrows(UnsupportedOperationException.class, () -> map.keySet().add("zzz"));
         assertThrows(UnsupportedOperationException.class, () -> map.values().clear());
         assertThrows(UnsupportedOperationException.class, () -> {
-            Iterator<Map.Entry<String,Integer>> it2 = map.entrySet().iterator();
+            Iterator<Map.Entry<String, Integer>> it2 = map.entrySet().iterator();
             it2.next();
             it2.remove();
         });
@@ -259,12 +259,12 @@ class CompactableSortedMapTest {
         assertTrue(map.tailMap("k").isEmpty());
 
         // Compare to baseline TreeMap for ranges with non-existent bounds
-        TreeMap<String,Integer> baseline = new TreeMap<>();
-        baseline.putAll(Map.of("b",2,"d",4,"f",6,"h",8,"j",10));
-        assertEquals(new TreeMap<>(baseline.subMap("a","e")), new TreeMap<>(map.subMap("a","e")));
-        assertEquals(new TreeMap<>(baseline.subMap("e","k")), new TreeMap<>(map.subMap("e","k")));
-        assertEquals(new TreeMap<>(baseline.subMap("c","i")), new TreeMap<>(map.subMap("c","i")));
-        assertEquals(new TreeMap<>(baseline.subMap("a","k")), new TreeMap<>(map.subMap("a","k")));
+        TreeMap<String, Integer> baseline = new TreeMap<>();
+        baseline.putAll(Map.of("b", 2, "d", 4, "f", 6, "h", 8, "j", 10));
+        assertEquals(new TreeMap<>(baseline.subMap("a", "e")), new TreeMap<>(map.subMap("a", "e")));
+        assertEquals(new TreeMap<>(baseline.subMap("e", "k")), new TreeMap<>(map.subMap("e", "k")));
+        assertEquals(new TreeMap<>(baseline.subMap("c", "i")), new TreeMap<>(map.subMap("c", "i")));
+        assertEquals(new TreeMap<>(baseline.subMap("a", "k")), new TreeMap<>(map.subMap("a", "k")));
 
         // Compact and recheck a couple of edge views
         map.compact();

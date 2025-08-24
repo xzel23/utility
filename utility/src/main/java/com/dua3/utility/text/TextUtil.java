@@ -237,18 +237,7 @@ public final class TextUtil {
             char c = seq.charAt(i);
             if (c < 127) {
                 // ASCII characters
-                switch (c) {
-                    case '\0' -> out.append("\\u0000"); // "\0" might be ambiguous if followed by digits
-                    case '\\' -> out.append("\\\\");
-                    case '\t' -> out.append("\\t");
-                    case '\b' -> out.append("\\b");
-                    case '\n' -> out.append("\\n");
-                    case '\r' -> out.append("\\r");
-                    case '\f' -> out.append("\\f");
-                    case '\'' -> out.append("\\'");
-                    case '\"' -> out.append("\\\"");
-                    default -> out.append(c);
-                }
+                appendAsciiChar(c, out);
             } else {
                 // non-ASCII characters
                 switch (Character.getType(c)) {
@@ -279,24 +268,35 @@ public final class TextUtil {
             char c = seq.charAt(i);
             if (c < 127) {
                 // ASCII characters
-                switch (c) {
-                    case '\0' -> out.append("\\u0000"); // "\0" might be ambiguous if followed by digits
-                    case '\\' -> out.append("\\\\");
-                    case '\t' -> out.append("\\t");
-                    case '\b' -> out.append("\\b");
-                    case '\n' -> out.append("\\n");
-                    case '\r' -> out.append("\\r");
-                    case '\f' -> out.append("\\f");
-                    case '\'' -> out.append("\\'");
-                    case '\"' -> out.append("\\\"");
-                    default -> out.append(c);
-                }
+                appendAsciiChar(c, out);
             } else {
                 // non-ASCII characters
                 out.append("\\u").append(String.format(Locale.ROOT, "%04X", (int) c));
             }
         }
         return out.toString();
+    }
+
+    /**
+     * Appends the ASCII representation of the given character to the specified StringBuilder.
+     * Handles escaping for special characters to ensure they are represented in a readable format.
+     *
+     * @param c   the character to be appended. Special characters will be escaped accordingly.
+     * @param out the StringBuilder to which the ASCII representation of the character will be appended.
+     */
+    private static void appendAsciiChar(char c, StringBuilder out) {
+        switch (c) {
+            case '\0' -> out.append("\\u0000"); // "\0" might be ambiguous if followed by digits
+            case '\\' -> out.append("\\\\");
+            case '\t' -> out.append("\\t");
+            case '\b' -> out.append("\\b");
+            case '\n' -> out.append("\\n");
+            case '\r' -> out.append("\\r");
+            case '\f' -> out.append("\\f");
+            case '\'' -> out.append("\\'");
+            case '\"' -> out.append("\\\"");
+            default -> out.append(c);
+        }
     }
 
     /**

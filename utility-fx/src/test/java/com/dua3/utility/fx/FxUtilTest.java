@@ -102,7 +102,7 @@ class FxUtilTest extends FxTestBase {
             AffineTransformation2f at = AffineTransformation2f.combine(
                     AffineTransformation2f.translate(10, 20),
                     AffineTransformation2f.scale(2, 3),
-                    AffineTransformation2f.rotate(Math.PI/4)
+                    AffineTransformation2f.rotate(Math.PI / 4)
             );
 
             Affine affine = FxUtil.convert(at);

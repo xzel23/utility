@@ -58,6 +58,7 @@ class FxGraphicsTest extends AbstractGraphicsTest {
             }
         }
     }
+
     private static final Logger LOG = LogManager.getLogger(FxGraphicsTest.class);
 
     private static final Path REFERENCE_IMAGE_PATH = Objects.requireNonNull(

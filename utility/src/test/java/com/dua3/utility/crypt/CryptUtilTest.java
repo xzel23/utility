@@ -99,7 +99,7 @@ class CryptUtilTest {
             "A longer text with multiple sentences. This tests the behavior with larger inputs. " +
                     "Encryption and decryption should work correctly regardless of input size."
     };
-    
+
     private static final char[][] TEST_PASSWORDS = {
             "simple12".toCharArray(),
             "p@ssw0rd!".toCharArray(),
@@ -841,7 +841,7 @@ class CryptUtilTest {
      * 1. Encrypt the input
      * 2. Decrypt the encrypted result
      * 3. Encrypt the decrypted result again
-     * 
+     *
      * The test verifies:
      * - The decrypted data matches the original input
      * - The second encryption produces a different result (due to random salt)
@@ -852,32 +852,32 @@ class CryptUtilTest {
     void testEncryptDecryptRoundTrip(String input, char[] password) {
         // Convert input string to bytes
         byte[] inputBytes = input.getBytes(StandardCharsets.UTF_8);
-        
+
         // Make a copy of the password for each step to avoid issues with buffer clearing
         char[] passwordCopy1 = Arrays.copyOf(password, password.length);
         char[] passwordCopy2 = Arrays.copyOf(password, password.length);
         char[] passwordCopy3 = Arrays.copyOf(password, password.length);
-        
+
         // Step 1: First encryption
         String encrypted1 = CryptUtil.encrypt(inputBytes, passwordCopy1, InputBufferHandling.PRESERVE);
         assertNotNull(encrypted1, "Encrypted result should not be null");
         assertTrue(encrypted1.contains("$"), "Encrypted result should contain delimiter");
-        
+
         // Step 2: Decrypt the encrypted data
         byte[] decrypted = CryptUtil.decrypt(encrypted1, passwordCopy2, InputBufferHandling.PRESERVE);
         assertNotNull(decrypted, "Decrypted result should not be null");
-        
+
         // Verify the decrypted data matches the original input
         String decryptedString = new String(decrypted, StandardCharsets.UTF_8);
         assertEquals(input, decryptedString, "Decrypted data should match original input");
-        
+
         // Step 3: Encrypt the decrypted data again
         String encrypted2 = CryptUtil.encrypt(decrypted, passwordCopy3, InputBufferHandling.PRESERVE);
         assertNotNull(encrypted2, "Second encrypted result should not be null");
-        
+
         // Verify the second encryption is different from the first (due to random salt)
         assertNotEquals(encrypted1, encrypted2, "Second encryption should differ from first due to random salt");
-        
+
         // Step 4: Decrypt the second encryption to verify it works
         byte[] decrypted2 = CryptUtil.decrypt(encrypted2, Arrays.copyOf(password, password.length), InputBufferHandling.PRESERVE);
         String decryptedString2 = new String(decrypted2, StandardCharsets.UTF_8);

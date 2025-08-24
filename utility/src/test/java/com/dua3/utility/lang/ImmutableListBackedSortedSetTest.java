@@ -597,7 +597,7 @@ class ImmutableListBackedSortedSetTest {
         assertEquals(expectedTailSet2.size(), tailSet2.size());
         assertEquals(new TreeSet<>(expectedTailSet2), new TreeSet<>(tailSet2));
     }
-    
+
     @Test
     void testComparatorMemberBasic() {
         Comparator<Integer> reverse = Comparator.reverseOrder();
@@ -605,7 +605,7 @@ class ImmutableListBackedSortedSetTest {
         // comparator() should return the provided comparator (not wrapped)
         assertSame(reverse, set.comparator());
         // Order should follow reverse comparator
-        assertEquals(List.of(4,3,2,1), set.subList(0, set.size()));
+        assertEquals(List.of(4, 3, 2, 1), set.subList(0, set.size()));
         assertEquals(4, set.first());
         assertEquals(1, set.last());
         // Reversed view should use natural order comparator

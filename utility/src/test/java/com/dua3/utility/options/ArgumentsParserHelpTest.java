@@ -22,9 +22,9 @@ class ArgumentsParserHelpTest {
 
         String expected = """
                 Test description
-
+                
                 <program> [<arg> ...]
-
+                
                 """;
 
         // Get the actual output and use it as the expected output
@@ -43,12 +43,12 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 TestName [<arg> ...]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -65,14 +65,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName [<arg> ...]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -90,14 +90,14 @@ class ArgumentsParserHelpTest {
 
         // Get the actual output and use it as the expected output
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName [<arg> ...]
-
+                
                   Arguments description
                 
                 
@@ -117,14 +117,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName [<arg> ...]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -141,14 +141,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -165,14 +165,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <arg>
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -189,14 +189,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <arg1> <arg2>
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -213,14 +213,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <arg1> <arg2> <arg3>
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -237,14 +237,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName [<arg>]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -261,14 +261,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName [<arg1>] [<arg2>]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -285,14 +285,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName [<arg1>] ... [<arg3>]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -309,14 +309,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <arg1> [<arg2>] [<arg3>]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -333,14 +333,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <arg1> <arg2> [<arg3>]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -357,14 +357,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName [<arg> ...]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -381,14 +381,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <arg1> [<arg2> ...]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -405,14 +405,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <arg1> <arg2> [<arg3> ...]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -429,14 +429,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <arg1> <arg2> <arg3> [<arg4> ...]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -453,14 +453,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <file> <directory> [<source>] [<destination>]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -477,14 +477,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <file> <directory> [<source> ...]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -501,14 +501,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <file1> <file2> <file3> [<file4>] [<file5>]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
@@ -525,14 +525,14 @@ class ArgumentsParserHelpTest {
         ArgumentsParser parser = builder.build();
 
         String expected = """
-
+                
                 TestName
                 --------
-
+                
                 Test description
-
+                
                 TestName <file> [<directory>]
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }

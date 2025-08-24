@@ -39,15 +39,6 @@ public class ArgumentsParser {
     private final Collection<Option<?>> validationOverridingOptions;
 
     /**
-     * Returns a new instance of ArgumentsParserBuilder.
-     *
-     * @return a new instance of ArgumentsParserBuilder
-     */
-    public static ArgumentsParserBuilder builder() {
-        return new ArgumentsParserBuilder();
-    }
-
-    /**
      * Represents a parser for command line arguments.
      *
      * @param name                        the name of the parser
@@ -76,6 +67,15 @@ public class ArgumentsParser {
         this.maxPositionalArgs = maxPositionalArgs;
         this.positionalArgDisplayNames = positionalArgDisplayNames;
         this.validationOverridingOptions = Set.of(validationOverridingOptions);
+    }
+
+    /**
+     * Returns a new instance of ArgumentsParserBuilder.
+     *
+     * @return a new instance of ArgumentsParserBuilder
+     */
+    public static ArgumentsParserBuilder builder() {
+        return new ArgumentsParserBuilder();
     }
 
     /**
@@ -258,37 +258,6 @@ public class ArgumentsParser {
         }
     }
 
-    private static String getOccurrenceText(Repetitions repetitions, boolean isFlag) {
-        if (isFlag) {
-            return "";
-        }
-        if (repetitions.equals(Repetitions.ZERO_OR_ONE)) {
-            return "    (optional)";
-        }
-        if (repetitions.equals(Repetitions.ZERO_OR_MORE)) {
-            return "    (zero or more)";
-        }
-        if (repetitions.equals(Repetitions.ONE_OR_MORE)) {
-            return "    (one or more)";
-        }
-        if (repetitions.equals(Repetitions.EXACTLY_ONE)) {
-            return "    (required)";
-        }
-        if (repetitions.min() == repetitions.max()) {
-            return "    (required %d times)".formatted(repetitions.min());
-        }
-        if (repetitions.min() == 0) {
-            return "    (repeatable up to %d times)".formatted(repetitions.max());
-        }
-        if (repetitions.min() == 1) {
-            return "    (required, up to %d times)".formatted(repetitions.max());
-        }
-        if (repetitions.max() == Integer.MAX_VALUE) {
-            return "    (at least %d times)".formatted(repetitions.min());
-        }
-        return "    (%d-%d times)".formatted(repetitions.min(), repetitions.max());
-    }
-
     /**
      * Checks if the ArgumentsParser has any options defined.
      *
@@ -299,60 +268,15 @@ public class ArgumentsParser {
     }
 
     /**
-     * Output error message for the given {@link OptionException} to {@link Formatter} instance.
-     *
-     * @param fmt formatter
-     * @param e   exception
-     */
-    public void errorMessage(Formatter fmt, OptionException e) {
-        // print title
-        if (!name.isEmpty()) {
-            fmt.format("%s%n", name);
-            fmt.format("%s%n", "-".repeat(name.length()));
-            fmt.format("%n");
-        }
-
-        // print description
-        if (!description.isEmpty()) {
-            fmt.format("%s%n", description);
-            fmt.format("%n");
-        }
-
-        fmt.format("ERROR: %s", e.getMessage());
-    }
-
-    /**
-     * Format error message for the given {@link OptionException} to {@link String}.
-     *
-     * @param e exception
-     * @return error message
-     */
-    public String errorMessage(OptionException e) {
-        try (Formatter fmt = new Formatter()) {
-            errorMessage(fmt, e);
-            return fmt.toString();
-        }
-    }
-
-    /**
-     * Get all options defined for this parser.
-     *
-     * @return list containing all options defined for this parser
-     */
-    public List<Option<?>> options() {
-        return List.copyOf(new LinkedHashSet<>(options.values()));
-    }
-
-    /**
      * Generates the formatted argument text based on the minimum and maximum number of arguments and the argument name.
      *
-     * @param min the minimum number of arguments
-     * @param max the maximum number of arguments
+     * @param min  the minimum number of arguments
+     * @param max  the maximum number of arguments
      * @param args the names of the arguments
      * @return the formatted argument text
      */
     private static String getArgText(int min, int max, String[] args) {
-        assert args.length > 0 || max == 0: "no argument names given";
+        assert args.length > 0 || max == 0 : "no argument names given";
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
 
         boolean useNumberingForArg = max == Integer.MAX_VALUE ? args.length < min + 1 : args.length < max;
@@ -370,7 +294,7 @@ public class ArgumentsParser {
 
         // append remaining arguments
         if (max == Integer.MAX_VALUE) {
-            String arg = args[Math.min(min, args.length -1)];
+            String arg = args[Math.min(min, args.length - 1)];
             for (int i = min; i < args.length - 1; i++) {
                 argText.format(" [<%s>]".formatted(arg));
                 arg = args[i + 1];
@@ -406,6 +330,37 @@ public class ArgumentsParser {
         return argText.toString();
     }
 
+    private static String getOccurrenceText(Repetitions repetitions, boolean isFlag) {
+        if (isFlag) {
+            return "";
+        }
+        if (repetitions.equals(Repetitions.ZERO_OR_ONE)) {
+            return "    (optional)";
+        }
+        if (repetitions.equals(Repetitions.ZERO_OR_MORE)) {
+            return "    (zero or more)";
+        }
+        if (repetitions.equals(Repetitions.ONE_OR_MORE)) {
+            return "    (one or more)";
+        }
+        if (repetitions.equals(Repetitions.EXACTLY_ONE)) {
+            return "    (required)";
+        }
+        if (repetitions.min() == repetitions.max()) {
+            return "    (required %d times)".formatted(repetitions.min());
+        }
+        if (repetitions.min() == 0) {
+            return "    (repeatable up to %d times)".formatted(repetitions.max());
+        }
+        if (repetitions.min() == 1) {
+            return "    (required, up to %d times)".formatted(repetitions.max());
+        }
+        if (repetitions.max() == Integer.MAX_VALUE) {
+            return "    (at least %d times)".formatted(repetitions.min());
+        }
+        return "    (%d-%d times)".formatted(repetitions.min(), repetitions.max());
+    }
+
     private static int appendArg(Formatter fmt, String arg, boolean useBrackets, boolean useNumbering, boolean addEllipsis, int argNr) {
         fmt.format(" ");
         if (useBrackets) {
@@ -426,6 +381,51 @@ public class ArgumentsParser {
             fmt.format("]");
         }
         return argNr;
+    }
+
+    /**
+     * Format error message for the given {@link OptionException} to {@link String}.
+     *
+     * @param e exception
+     * @return error message
+     */
+    public String errorMessage(OptionException e) {
+        try (Formatter fmt = new Formatter()) {
+            errorMessage(fmt, e);
+            return fmt.toString();
+        }
+    }
+
+    /**
+     * Output error message for the given {@link OptionException} to {@link Formatter} instance.
+     *
+     * @param fmt formatter
+     * @param e   exception
+     */
+    public void errorMessage(Formatter fmt, OptionException e) {
+        // print title
+        if (!name.isEmpty()) {
+            fmt.format("%s%n", name);
+            fmt.format("%s%n", "-".repeat(name.length()));
+            fmt.format("%n");
+        }
+
+        // print description
+        if (!description.isEmpty()) {
+            fmt.format("%s%n", description);
+            fmt.format("%n");
+        }
+
+        fmt.format("ERROR: %s", e.getMessage());
+    }
+
+    /**
+     * Get all options defined for this parser.
+     *
+     * @return list containing all options defined for this parser
+     */
+    public List<Option<?>> options() {
+        return List.copyOf(new LinkedHashSet<>(options.values()));
     }
 }
 

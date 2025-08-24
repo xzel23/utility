@@ -33,11 +33,11 @@ class CsvWriterTest {
     void testWriteCsv() throws IOException {
         // Create arguments with default options
         Arguments arguments = Arguments.of();
-        
+
         // Create a StringWriter to capture the output
         StringWriter stringWriter = new StringWriter();
         BufferedWriter bufferedWriter = new BufferedWriter(stringWriter);
-        
+
         // Create a CsvWriter
         try (CsvWriter csvWriter = CsvWriter.create(bufferedWriter, arguments)) {
             // Write header row
@@ -46,31 +46,31 @@ class CsvWriterTest {
             csvWriter.addField("Age");
             csvWriter.addField("Address");
             csvWriter.nextRow();
-            
+
             // Write data rows
             csvWriter.addField(1);
             csvWriter.addField("John");
             csvWriter.addField(34);
             csvWriter.addField("Street 1");
             csvWriter.nextRow();
-            
+
             csvWriter.addField(2);
             csvWriter.addField("Jane");
             csvWriter.addField(23);
             csvWriter.addField("c/o John\nStreet 2, upstairs");
             csvWriter.nextRow();
-            
+
             csvWriter.addField(3);
             csvWriter.addField("Peter, aka \"Pete\"");
             csvWriter.addField(17);
             csvWriter.addField("Street 3");
             csvWriter.nextRow();
-            
+
             csvWriter.addField(4);
             csvWriter.addField("Jon Doe");
             csvWriter.nextRow();
         }
-        
+
         // Define expected output
         String expected = """
                 Nr.,Name,Age,Address\r
@@ -93,11 +93,11 @@ class CsvWriterTest {
                 Arguments.createEntry(IoOptions.OPTION_FIELD_SEPARATOR, ';'),
                 Arguments.createEntry(IoOptions.OPTION_TEXT_DELIMITER, '\'')
         );
-        
+
         // Create a StringWriter to capture the output
         StringWriter stringWriter = new StringWriter();
         BufferedWriter bufferedWriter = new BufferedWriter(stringWriter);
-        
+
         // Create a CsvWriter
         try (CsvWriter csvWriter = CsvWriter.create(bufferedWriter, arguments)) {
             // Write header row
@@ -105,26 +105,26 @@ class CsvWriterTest {
             csvWriter.addField("Name");
             csvWriter.addField("Age");
             csvWriter.nextRow();
-            
+
             // Write data rows
             csvWriter.addField(1);
             csvWriter.addField("John");
             csvWriter.addField(34);
             csvWriter.nextRow();
-            
+
             csvWriter.addField(2);
             csvWriter.addField("Jane; with semicolon");
             csvWriter.addField(23);
             csvWriter.nextRow();
         }
-        
+
         // Define expected output
         String expected = """
                 Nr.;Name;Age\r
                 1;John;34\r
                 2;'Jane; with semicolon';23\r
                 """;
-        
+
         // Verify output
         assertEquals(expected, stringWriter.toString());
     }
@@ -138,48 +138,48 @@ class CsvWriterTest {
         Arguments arguments = Arguments.of(
                 Arguments.createEntry(IoOptions.OPTION_LOCALE, Locale.US)
         );
-        
+
         // Create a StringWriter to capture the output
         StringWriter stringWriter = new StringWriter();
         BufferedWriter bufferedWriter = new BufferedWriter(stringWriter);
-        
+
         // Create a CsvWriter
         try (CsvWriter csvWriter = CsvWriter.create(bufferedWriter, arguments)) {
             // Write header row
             csvWriter.addField("Type");
             csvWriter.addField("Value");
             csvWriter.nextRow();
-            
+
             // Write different data types
             csvWriter.addField("Integer");
             csvWriter.addField(42);
             csvWriter.nextRow();
-            
+
             csvWriter.addField("Double");
             csvWriter.addField(3.14159);
             csvWriter.nextRow();
-            
+
             csvWriter.addField("String");
             csvWriter.addField("Hello, World!");
             csvWriter.nextRow();
-            
+
             csvWriter.addField("LocalDate");
             csvWriter.addField(LocalDate.of(2023, 7, 15));
             csvWriter.nextRow();
-            
+
             csvWriter.addField("LocalTime");
             csvWriter.addField(LocalTime.of(14, 30, 0));
             csvWriter.nextRow();
-            
+
             csvWriter.addField("LocalDateTime");
             csvWriter.addField(LocalDateTime.of(2023, 7, 15, 14, 30, 0));
             csvWriter.nextRow();
-            
+
             csvWriter.addField("Null");
             csvWriter.addField(null);
             csvWriter.nextRow();
         }
-        
+
         // Verify output contains the expected data types
         String output = stringWriter.toString();
         assertTrue(output.contains("Integer,42"));
@@ -198,34 +198,34 @@ class CsvWriterTest {
     void testWriteCsvToOutputStream() throws IOException {
         // Create arguments with default options
         Arguments arguments = Arguments.of();
-        
+
         // Create a ByteArrayOutputStream to capture the output
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        
+
         // Create a CsvWriter
         try (CsvWriter csvWriter = CsvWriter.create(outputStream, arguments)) {
             // Write header row
             csvWriter.addField("Nr.");
             csvWriter.addField("Name");
             csvWriter.nextRow();
-            
+
             // Write data rows
             csvWriter.addField(1);
             csvWriter.addField("John");
             csvWriter.nextRow();
-            
+
             csvWriter.addField(2);
             csvWriter.addField("Jane");
             csvWriter.nextRow();
         }
-        
+
         // Define expected output
         String expected = """
                 Nr.,Name\r
                 1,John\r
                 2,Jane\r
                 """;
-        
+
         // Verify output
         assertEquals(expected, outputStream.toString(StandardCharsets.UTF_8));
     }

@@ -273,7 +273,7 @@ public abstract class AbstractGraphicsTest {
 
         // Test fillEllipse
         graphics.setFill(Color.RED);
-        graphics.fillEllipse(250, 450, 70, 40, (float)(Math.PI / 4));
+        graphics.fillEllipse(250, 450, 70, 40, (float) (Math.PI / 4));
 
         // Test strokeLine with float parameters
         graphics.setStroke(Color.BLACK, 3);
@@ -286,20 +286,20 @@ public abstract class AbstractGraphicsTest {
         // Test strokePolyLines
         graphics.setStroke(Color.GREEN, 2);
         graphics.strokePolyLines(
-            Vector2f.of(50, 550),
-            Vector2f.of(100, 600),
-            Vector2f.of(150, 550),
-            Vector2f.of(200, 600)
+                Vector2f.of(50, 550),
+                Vector2f.of(100, 600),
+                Vector2f.of(150, 550),
+                Vector2f.of(200, 600)
         );
 
         // Test strokePolygon
         graphics.setStroke(Color.BLUE, 2);
         graphics.strokePolygon(
-            Vector2f.of(250, 550),
-            Vector2f.of(300, 550),
-            Vector2f.of(325, 600),
-            Vector2f.of(275, 625),
-            Vector2f.of(225, 600)
+                Vector2f.of(250, 550),
+                Vector2f.of(300, 550),
+                Vector2f.of(325, 600),
+                Vector2f.of(275, 625),
+                Vector2f.of(225, 600)
         );
     }
 
@@ -309,12 +309,12 @@ public abstract class AbstractGraphicsTest {
     protected void testPathOperations() {
         // Create a path
         Path2f path = Path2f.builder()
-            .moveTo(Vector2f.of(100, 100))
-            .lineTo(Vector2f.of(200, 100))
-            .lineTo(Vector2f.of(200, 200))
-            .lineTo(Vector2f.of(100, 200))
-            .lineTo(Vector2f.of(100, 100))  // Close the path by returning to the start point
-            .build();
+                .moveTo(Vector2f.of(100, 100))
+                .lineTo(Vector2f.of(200, 100))
+                .lineTo(Vector2f.of(200, 200))
+                .lineTo(Vector2f.of(100, 200))
+                .lineTo(Vector2f.of(100, 100))  // Close the path by returning to the start point
+                .build();
 
         // Test strokePath
         graphics.setStroke(Color.BLUE, 2);
@@ -322,12 +322,12 @@ public abstract class AbstractGraphicsTest {
 
         // Create another path
         Path2f path2 = Path2f.builder()
-            .moveTo(Vector2f.of(300, 100))
-            .lineTo(Vector2f.of(400, 100))
-            .lineTo(Vector2f.of(400, 200))
-            .lineTo(Vector2f.of(300, 200))
-            .lineTo(Vector2f.of(300, 100))  // Close the path by returning to the start point
-            .build();
+                .moveTo(Vector2f.of(300, 100))
+                .lineTo(Vector2f.of(400, 100))
+                .lineTo(Vector2f.of(400, 200))
+                .lineTo(Vector2f.of(300, 200))
+                .lineTo(Vector2f.of(300, 100))  // Close the path by returning to the start point
+                .build();
 
         // Test fillPath
         graphics.setFill(Color.RED);
@@ -340,12 +340,12 @@ public abstract class AbstractGraphicsTest {
     protected void testClippingOperations() {
         // Create a clipping path
         Path2f clipPath = Path2f.builder()
-            .moveTo(Vector2f.of(100, 100))
-            .lineTo(Vector2f.of(300, 100))
-            .lineTo(Vector2f.of(300, 300))
-            .lineTo(Vector2f.of(100, 300))
-            .lineTo(Vector2f.of(100, 100))  // Close the path by returning to the start point
-            .build();
+                .moveTo(Vector2f.of(100, 100))
+                .lineTo(Vector2f.of(300, 100))
+                .lineTo(Vector2f.of(300, 300))
+                .lineTo(Vector2f.of(100, 300))
+                .lineTo(Vector2f.of(100, 100))  // Close the path by returning to the start point
+                .build();
 
         // Test clip with Path2f
         graphics.clip(clipPath);
@@ -388,32 +388,32 @@ public abstract class AbstractGraphicsTest {
         // Note: This is a simplified test as RichText creation is complex
         try {
             RichText richText = new RichTextBuilder()
-                .append("Test renderText")
-                .toRichText();
+                    .append("Test renderText")
+                    .toRichText();
 
             graphics.renderText(
-                Vector2f.of(100, 200),
-                richText,
-                HAnchor.LEFT,
-                VAnchor.TOP,
-                Alignment.LEFT,
-                VerticalAlignment.TOP,
-                new Dimension2f(200, 100),
-                TextWrapping.WRAP
+                    Vector2f.of(100, 200),
+                    richText,
+                    HAnchor.LEFT,
+                    VAnchor.TOP,
+                    Alignment.LEFT,
+                    VerticalAlignment.TOP,
+                    new Dimension2f(200, 100),
+                    TextWrapping.WRAP
             );
 
             // Test renderText with rotation
             graphics.renderText(
-                Vector2f.of(400, 200),
-                richText,
-                HAnchor.LEFT,
-                VAnchor.TOP,
-                Alignment.LEFT,
-                VerticalAlignment.TOP,
-                new Dimension2f(200, 100),
-                TextWrapping.WRAP,
-                Math.PI / 4,
-                Graphics.TextRotationMode.ROTATE_OUTPUT_AREA
+                    Vector2f.of(400, 200),
+                    richText,
+                    HAnchor.LEFT,
+                    VAnchor.TOP,
+                    Alignment.LEFT,
+                    VerticalAlignment.TOP,
+                    new Dimension2f(200, 100),
+                    TextWrapping.WRAP,
+                    Math.PI / 4,
+                    Graphics.TextRotationMode.ROTATE_OUTPUT_AREA
             );
         } catch (Exception e) {
             fail("Exception while testing renderText: " + e.getMessage());

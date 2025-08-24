@@ -218,7 +218,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
                                 .filter(entry -> entry.option.isEquivalent(flag))
                                 .map(Entry::getValue)
                                 .map(Boolean.class::cast)
-                                .reduce(null, (@Nullable Boolean a,@Nullable Boolean b) -> {
+                                .reduce(null, (@Nullable Boolean a, @Nullable Boolean b) -> {
                                     if (a == null) {
                                         return b;
                                     }

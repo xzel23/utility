@@ -605,18 +605,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testPathOption
                 --------------
-
+                
                 Unit test for the addPathOption method.
-
+                
                 testPathOption <options> [<arg> ...]
-
+                
                   <options>:
                     --path, -p <path>    (required)
                             Set the path value.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -653,18 +653,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testUriOption
                 -------------
-
+                
                 Unit test for the addUriOption method.
-
+                
                 testUriOption <options> [<arg> ...]
-
+                
                   <options>:
                     --uri, -u <uri>    (required)
                             Set the URI value.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 

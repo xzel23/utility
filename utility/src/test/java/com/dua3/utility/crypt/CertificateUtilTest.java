@@ -58,7 +58,7 @@ class CertificateUtilTest {
         }
 
         // Verify the certificate's string representation contains the subject
-        for (String part: subject.split("[,\n]")) {
+        for (String part : subject.split("[,\n]")) {
             String strippedPart = part.strip();
             assertTrue(certificates[0].toString().contains(strippedPart), "Certificate string should contain '" + strippedPart + "'");
         }
@@ -539,7 +539,7 @@ class CertificateUtilTest {
         )[0];
 
         // Build chain (leaf first, then parent)
-        Certificate[] chain = new Certificate[]{ intermediate, root };
+        Certificate[] chain = new Certificate[]{intermediate, root};
 
         // Convert to PKCS#7 bytes
         byte[] pkcs7 = CertificateUtil.toPkcs7Bytes(chain);

@@ -73,7 +73,7 @@ class ArgumentsParserTest {
                 .name("testChoiceOption")
                 .description("Unit test for passing choices on the command line.");
 
-        Option<String> oProduct = builder.optionBuilder("product name", "the product" ,String.class)
+        Option<String> oProduct = builder.optionBuilder("product name", "the product", String.class)
                 .param(Param.ofString("product name", "the product", "product", Param.Required.REQUIRED))
                 .repetitions(Repetitions.EXACTLY_ONE)
                 .build("--product", "-p");
@@ -212,7 +212,7 @@ class ArgumentsParserTest {
         );
 
         Option<Integer> optionAge = builder.addIntegerOption(
-                "age", "set the age", Repetitions.ZERO_OR_ONE,"age", () -> null, "--age", "-a");
+                "age", "set the age", Repetitions.ZERO_OR_ONE, "age", () -> null, "--age", "-a");
 
         ArgumentsParser cmd = builder.build();
 
@@ -263,7 +263,7 @@ class ArgumentsParserTest {
                 "name", () -> null, "--name", "-n");
 
         Option<Integer> optionAge = builder.addIntegerOption(
-                "age", "set the age", Repetitions.ZERO_OR_ONE,"age", () -> null, "--age", "-a");
+                "age", "set the age", Repetitions.ZERO_OR_ONE, "age", () -> null, "--age", "-a");
 
         ArgumentsParser cmd = builder.build();
 
@@ -546,7 +546,7 @@ class ArgumentsParserTest {
                 .param(Param.ofStrings("2 args", "2 args", "arg", Repetitions.exactly(2)))
                 .build("--exactly-two-args");
 
-        Option<List<String>> optionTwoOrMoreArgs = builder.optionBuilder("2 - ... args", "2 - ... args", (Class<List<String>>)((Class)List.class))
+        Option<List<String>> optionTwoOrMoreArgs = builder.optionBuilder("2 - ... args", "2 - ... args", (Class<List<String>>) ((Class) List.class))
                 .param(Param.ofStrings("2 - ... args", "2 - ... args", "arg", Repetitions.atLeast(2)))
                 .mapper(OptionBuilder.toStringListMapper())
                 .build("--at-least-two-args");

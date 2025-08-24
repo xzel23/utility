@@ -102,7 +102,7 @@ class AwtImageTest {
 
     @Test
     void testLoad() throws IOException {
-        try (InputStream in = AwtImageTest.class.getResourceAsStream("image.jpg") ) {
+        try (InputStream in = AwtImageTest.class.getResourceAsStream("image.jpg")) {
             AwtImage image = AwtImage.load(in);
             assertNotNull(image);
             assertEquals(1024, image.getWidth());

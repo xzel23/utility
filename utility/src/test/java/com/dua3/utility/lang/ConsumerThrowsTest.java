@@ -30,7 +30,7 @@ class ConsumerThrowsTest {
     @Test
     void testAndThenTry_firstThrows_preventsSecond() throws Exception {
         AtomicInteger counter = new AtomicInteger();
-        LangUtil.ConsumerThrows<String, IOException> first = s -> { throw new IOException("boom"); };
+        LangUtil.ConsumerThrows<String, IOException> first = s -> {throw new IOException("boom");};
         LangUtil.ConsumerThrows<String, IOException> second = s -> counter.incrementAndGet();
 
         LangUtil.ConsumerThrows<String, IOException> composed = first.andThenTry(second);
@@ -43,7 +43,7 @@ class ConsumerThrowsTest {
     void testAndThenTry_secondThrows_afterFirstRan() throws Exception {
         AtomicInteger counter = new AtomicInteger();
         LangUtil.ConsumerThrows<String, IOException> first = s -> counter.incrementAndGet();
-        LangUtil.ConsumerThrows<String, IOException> second = s -> { throw new IOException("kaboom"); };
+        LangUtil.ConsumerThrows<String, IOException> second = s -> {throw new IOException("kaboom");};
 
         LangUtil.ConsumerThrows<String, IOException> composed = first.andThenTry(second);
         IOException ex = assertThrows(IOException.class, () -> composed.accept("X"));
@@ -73,7 +73,7 @@ class ConsumerThrowsTest {
     @Test
     void testAndThen_firstThrows_preventsSecond() throws Exception {
         AtomicInteger counter = new AtomicInteger();
-        LangUtil.ConsumerThrows<String, IOException> first = s -> { throw new IOException("boom"); };
+        LangUtil.ConsumerThrows<String, IOException> first = s -> {throw new IOException("boom");};
         Consumer<String> second = s -> counter.incrementAndGet();
 
         LangUtil.ConsumerThrows<String, IOException> composed = first.andThen(second);
@@ -86,7 +86,7 @@ class ConsumerThrowsTest {
     void testAndThen_secondThrows_afterFirstRan() throws Exception {
         AtomicInteger counter = new AtomicInteger();
         LangUtil.ConsumerThrows<String, IOException> first = s -> counter.incrementAndGet();
-        Consumer<String> second = s -> { throw new RuntimeException("kaboom"); };
+        Consumer<String> second = s -> {throw new RuntimeException("kaboom");};
 
         LangUtil.ConsumerThrows<String, IOException> composed = first.andThen(second);
         RuntimeException ex = assertThrows(RuntimeException.class, () -> composed.accept("Y"));
