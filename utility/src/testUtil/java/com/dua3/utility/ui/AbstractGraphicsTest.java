@@ -72,7 +72,7 @@ public abstract class AbstractGraphicsTest {
     }
 
     /**
-     * Get the FontUtil instance to use for testing.
+     * Get the FontUtil instance for testing.
      * @return the FontUtil instance
      */
     protected abstract FontUtil<?> getFontUtil();
@@ -198,7 +198,7 @@ public abstract class AbstractGraphicsTest {
         assertNotNull(inverseTransform, "Inverse transformation should not be null");
 
         // Reset transformation
-        graphics.setTransformation(AffineTransformation2f.IDENTITY);
+        graphics.setTransformation(AffineTransformation2f.identity());
     }
 
     /**
@@ -478,7 +478,7 @@ public abstract class AbstractGraphicsTest {
         testTextRenderingMethods();
 
         // Add a title to the image
-        graphics.setTransformation(AffineTransformation2f.IDENTITY);
+        graphics.setTransformation(AffineTransformation2f.identity());
         Font titleFont = getFontUtil().getFont("arial-20");
         graphics.setFont(titleFont);
         String title = "Graphics Test - All Methods - %s (%s)".formatted(getClass().getSimpleName(), Platform.currentPlatform());

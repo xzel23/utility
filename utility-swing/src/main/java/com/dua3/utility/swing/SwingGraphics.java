@@ -72,7 +72,7 @@ public class SwingGraphics implements Graphics {
     private final AffineTransformation2f parentTransform;
 
     private static final class State {
-        private AffineTransformation2f transform = AffineTransformation2f.IDENTITY;
+        private AffineTransformation2f transform = AffineTransformation2f.identity();
         private Color strokeColor = Color.BLACK;
         private java.awt.Color awtStrokeColor = java.awt.Color.BLACK;
         private float strokeWidth = 1.0f;
