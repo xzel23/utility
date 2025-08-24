@@ -37,6 +37,7 @@ public final class CryptUtil {
     private static final int ARGON2_MEMORY_MB = 64;
     private static final int ARGON2_ITERATIONS = 5;
     private static final byte[] ZERO_LENGTH_BYTE_ARRAY = {};
+    private static final String HMAC_SHA_256 = "HmacSHA256";
 
     /**
      * Utility class private constructor.
@@ -446,7 +447,7 @@ public final class CryptUtil {
             throw new InvalidKeyException("key must be at least 32 bytes long");
         }
 
-        Mac hmacSha256 = Mac.getInstance("HmacSHA256");
+        Mac hmacSha256 = Mac.getInstance(HMAC_SHA_256);
         hmacSha256.init(key);
 
         byte[] hmacBytes = hmacSha256.doFinal(normalizedText.getBytes(StandardCharsets.UTF_8));
@@ -482,8 +483,8 @@ public final class CryptUtil {
         LangUtil.checkArg(pepper.length() > 16, "pepper must have at least 16 characters");
         try {
             // compute a HMAC as salt
-            Mac hmacSha256 = Mac.getInstance("HmacSHA256");
-            hmacSha256.init(new SecretKeySpec(getPepperBytes(pepper), "HmacSHA256"));
+            Mac hmacSha256 = Mac.getInstance(HMAC_SHA_256);
+            hmacSha256.init(new SecretKeySpec(getPepperBytes(pepper), HMAC_SHA_256));
             byte[] hmacBytes = hmacSha256.doFinal(input);
 
             // return the argon2 ID
