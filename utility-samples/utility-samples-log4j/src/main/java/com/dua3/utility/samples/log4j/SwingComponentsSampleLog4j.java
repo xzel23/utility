@@ -9,10 +9,12 @@ import com.dua3.utility.samples.SwingComponentsSampleLogBase;
  *
  * <p>This implementation uses the Log4J logging framework.
  */
-public class SwingComponentsSampleLog4j extends SwingComponentsSampleLogBase {
+public final class SwingComponentsSampleLog4j extends SwingComponentsSampleLogBase {
     static {
         LogUtilLog4J.init(LogLevel.TRACE);
     }
+
+    private SwingComponentsSampleLog4j() { /* nothing to do */ }
 
     /**
      * The main entry point for the application.
