@@ -171,7 +171,7 @@ class NamedParameterStatementAdditionalTest {
     }
 
     @Test
-    void testSetAsciiStreamWithIntLength() throws SQLException, IOException {
+    void testSetAsciiStreamWithIntLength() throws Exception {
         String sql = "INSERT INTO test_table (id, clob_val) VALUES (:id, :asciiStream)";
         String testString = "test ascii stream with int length";
         byte[] testBytes = testString.getBytes(StandardCharsets.US_ASCII);
@@ -194,7 +194,7 @@ class NamedParameterStatementAdditionalTest {
     }
 
     @Test
-    void testSetAsciiStreamWithLongLength() throws SQLException, IOException {
+    void testSetAsciiStreamWithLongLength() throws Exception {
         String sql = "INSERT INTO test_table (id, clob_val) VALUES (:id, :asciiStream)";
         String testString = "test ascii stream with long length";
         byte[] testBytes = testString.getBytes(StandardCharsets.US_ASCII);
@@ -217,7 +217,7 @@ class NamedParameterStatementAdditionalTest {
     }
 
     @Test
-    void testSetBinaryStreamWithIntLength() throws SQLException, IOException {
+    void testSetBinaryStreamWithIntLength() throws Exception {
         String sql = "INSERT INTO test_table (id, blob_val) VALUES (:id, :binaryStream)";
         byte[] testBytes = "test binary stream with int length".getBytes(StandardCharsets.UTF_8);
 
@@ -239,7 +239,7 @@ class NamedParameterStatementAdditionalTest {
     }
 
     @Test
-    void testSetBinaryStreamWithLongLength() throws SQLException, IOException {
+    void testSetBinaryStreamWithLongLength() throws Exception {
         String sql = "INSERT INTO test_table (id, blob_val) VALUES (:id, :binaryStream)";
         byte[] testBytes = "test binary stream with long length".getBytes(StandardCharsets.UTF_8);
 
@@ -261,7 +261,7 @@ class NamedParameterStatementAdditionalTest {
     }
 
     @Test
-    void testSetBlobWithInputStreamAndLength() throws SQLException, IOException {
+    void testSetBlobWithInputStreamAndLength() throws Exception {
         String sql = "INSERT INTO test_table (id, blob_val) VALUES (:id, :blobVal)";
         byte[] testBytes = "test blob with input stream and length".getBytes(StandardCharsets.UTF_8);
 

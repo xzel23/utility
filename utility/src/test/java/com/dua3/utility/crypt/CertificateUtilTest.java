@@ -338,7 +338,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testWritePem() throws GeneralSecurityException, IOException {
+    void testWritePem() throws Exception {
         // Create a test certificate
         KeyPair keyPair = KeyUtil.generateRSAKeyPair();
         String subject = "CN=Test WritePem, O=Test Organization, C=US";

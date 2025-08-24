@@ -863,7 +863,7 @@ class NamedParameterStatementTest {
     }
 
     @Test
-    void testSetAsciiStream() throws SQLException, java.io.IOException {
+    void testSetAsciiStream() throws Exception {
         String sql = "INSERT INTO test_table (id, clob_val) VALUES (:id, :asciiStream)";
         String testString = "test ascii stream";
 
@@ -885,7 +885,7 @@ class NamedParameterStatementTest {
     }
 
     @Test
-    void testSetBinaryStream() throws SQLException, java.io.IOException {
+    void testSetBinaryStream() throws Exception {
         String sql = "INSERT INTO test_table (id, blob_val) VALUES (:id, :binaryStream)";
         byte[] testBytes = "test binary stream".getBytes(StandardCharsets.UTF_8);
 
@@ -951,7 +951,7 @@ class NamedParameterStatementTest {
     }
 
     @Test
-    void testSetBlob() throws SQLException, java.io.IOException {
+    void testSetBlob() throws Exception {
         String sql = "INSERT INTO test_table (id, blob_val) VALUES (:id, :blobVal)";
         byte[] testBytes = "test blob data".getBytes(StandardCharsets.UTF_8);
 

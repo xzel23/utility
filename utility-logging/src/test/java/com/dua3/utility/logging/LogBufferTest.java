@@ -273,7 +273,7 @@ class LogBufferTest {
     }
 
     @Test
-    void testReadExternalEmptyBuffer() throws IOException, ClassNotFoundException {
+    void testReadExternalEmptyBuffer() throws Exception {
         // Create a serialized representation of an empty buffer
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -298,7 +298,7 @@ class LogBufferTest {
     }
 
     @Test
-    void testReadExternalWithEntries() throws IOException, ClassNotFoundException {
+    void testReadExternalWithEntries() throws Exception {
         // Create a serialized representation of a buffer with entries
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -347,7 +347,7 @@ class LogBufferTest {
     }
 
     @Test
-    void testSerializationCycle() throws IOException, ClassNotFoundException {
+    void testSerializationCycle() throws Exception {
         // Add some entries to the buffer
         for (int i = 0; i < 5; i++) {
             logBuffer.handleEntry(createTestLogEntry("Message " + i));
@@ -401,7 +401,7 @@ class LogBufferTest {
     }
 
     @Test
-    void testSerializationWithThrowable() throws IOException, ClassNotFoundException {
+    void testSerializationWithThrowable() throws Exception {
         // Create an entry with a throwable
         RuntimeException exception = new RuntimeException("Test exception");
         LogEntry entryWithThrowable = new SimpleLogEntry(

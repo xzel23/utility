@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,10 +33,10 @@ class ButtonDefTest extends FxTestBase {
 
         // Assert
         assertNotNull(buttonDef);
-        assertEquals(buttonType, buttonDef.type());
+        assertSame(buttonType, buttonDef.type());
         assertEquals(enabled, buttonDef.enabled());
         buttonDef.action().accept(inputDialogPane);
-        assertEquals(true, inputDialogPane.validProperty().get());
+        assertTrue(inputDialogPane.validProperty().get());
     }
 
     /**
@@ -71,7 +72,7 @@ class ButtonDefTest extends FxTestBase {
         // Assert
         assertEquals(true, actionInvoked[0]);
         assertNotNull(buttonDef);
-        assertEquals(buttonType, buttonDef.type());
+        assertSame(buttonType, buttonDef.type());
     }
 
     /**
@@ -89,7 +90,7 @@ class ButtonDefTest extends FxTestBase {
 
         // Assert
         assertNotNull(buttonDef);
-        assertEquals(buttonType, buttonDef.type());
+        assertSame(buttonType, buttonDef.type());
         assertEquals(enabled, buttonDef.enabled());
     }
 
