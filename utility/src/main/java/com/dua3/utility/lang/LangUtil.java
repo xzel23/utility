@@ -2046,7 +2046,7 @@ public final class LangUtil {
      */
     public static <T> void reverseInPlace(T[] array, int from, int to) {
         check(
-                from>=0 && from <= to && to <= array.length,
+                from >= 0 && from <= to && to <= array.length,
                 () -> new IllegalArgumentException("invalid range: from=%d, to=%d, length=%d".formatted(from, to, array.length))
         );
 
@@ -2282,7 +2282,7 @@ public final class LangUtil {
      * @param mapper the function to apply to the input value, must not be null
      * @return the result of applying the mapper function to the value, or null if the value is null
      */
-    public static <T,U extends @Nullable Object> U mapNonNull(@Nullable T value, Function<T, U> mapper) {
+    public static <T, U extends @Nullable Object> U mapNonNull(@Nullable T value, Function<T, U> mapper) {
         return value == null ? null : mapper.apply(value);
     }
 
@@ -2298,7 +2298,7 @@ public final class LangUtil {
      * @return the result of applying the mapper function to the input value
      *         if it is non-null; otherwise, the default value
      */
-    public static <T,U> U mapNonNullOrElse(@Nullable T value, Function<T, U> mapper, U ifNull) {
+    public static <T, U> U mapNonNullOrElse(@Nullable T value, Function<T, U> mapper, U ifNull) {
         return value == null ? ifNull : mapper.apply(value);
     }
 
@@ -2314,7 +2314,7 @@ public final class LangUtil {
      * @return the result of applying the mapper function to the input value if it is non-null,
      *         or the value provided by the supplier if the input value is null
      */
-    public static <T,U> U mapNonNullElseGet(@Nullable T value, Function<T, U> mapper, Supplier<U> ifNull) {
+    public static <T, U> U mapNonNullElseGet(@Nullable T value, Function<T, U> mapper, Supplier<U> ifNull) {
         return value == null ? ifNull.get() : mapper.apply(value);
     }
 

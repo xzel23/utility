@@ -68,17 +68,17 @@ public class TextWrapBenchmark {
     public void wrap_textWithParagraphs_hardWrap(Blackhole blackhole) {
         blackhole.consume(TextUtil.wrap(textWithParagraphs, 80, Alignment.LEFT, true));
     }
-    
+
     @Benchmark
     public void wrap_longText_center(Blackhole blackhole) {
         blackhole.consume(TextUtil.wrap(longText, 80, Alignment.CENTER, false));
     }
-    
+
     @Benchmark
     public void wrap_longText_right(Blackhole blackhole) {
         blackhole.consume(TextUtil.wrap(longText, 80, Alignment.RIGHT, false));
     }
-    
+
     @Benchmark
     public void wrap_longText_justify(Blackhole blackhole) {
         blackhole.consume(TextUtil.wrap(longText, 80, Alignment.JUSTIFY, false));

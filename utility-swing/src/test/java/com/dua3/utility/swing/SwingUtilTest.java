@@ -140,7 +140,7 @@ class SwingUtilTest {
     @Test
     void testAddDropFilesSupport() {
         // Add drop files support to the test component
-        assertDoesNotThrow( () ->
+        assertDoesNotThrow(() ->
                 SwingUtil.addDropFilesSupport(testComponent, files -> {
                     // Do nothing in this test
                 })
@@ -154,7 +154,7 @@ class SwingUtilTest {
     @Test
     void testAddDropTextSupport() {
         // Add drop text support to the test component
-        assertDoesNotThrow( () ->
+        assertDoesNotThrow(() ->
                 SwingUtil.addDropTextSupport(testComponent, text -> {
                     // Do nothing in this test
                 })

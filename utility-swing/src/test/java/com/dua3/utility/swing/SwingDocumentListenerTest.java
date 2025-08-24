@@ -107,7 +107,7 @@ class SwingDocumentListenerTest {
 
     /**
      * Create a mock DocumentEvent for testing.
-     * 
+     *
      * @return a DocumentEvent
      */
     private DocumentEvent createMockDocumentEvent() {

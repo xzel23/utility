@@ -187,7 +187,8 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                                         case 2 -> julLogger.fine(msg);
                                         case 3 -> julLogger.info(msg);
                                         case 4 -> julLogger.warning(msg);
-                                        case 5 -> julLogger.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
+                                        case 5 ->
+                                                julLogger.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
                                         default -> throw new IllegalStateException("integer out of range");
                                     }
                                 }

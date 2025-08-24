@@ -168,7 +168,9 @@ class LogEntryDispatcherTest {
                     handler.handleEntry(entry);
                 }
             }
-        }        @Override
+        }
+
+        @Override
         public void setFilter(LogEntryFilter filter) {
             this.filter = filter;
         }

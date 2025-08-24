@@ -448,7 +448,7 @@ public final class XmlUtil {
                         writer.writeEndElement();
                         hasChildren = true;
                     }
-                    case XMLEvent xmlEvent when xmlEvent.getEventType()  == XMLStreamConstants.SPACE -> {
+                    case XMLEvent xmlEvent when xmlEvent.getEventType() == XMLStreamConstants.SPACE -> {
                         // do nothing - skip whitespace
                     }
                     case ProcessingInstruction pi -> {

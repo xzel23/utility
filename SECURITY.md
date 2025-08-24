@@ -3,7 +3,8 @@
 ## Supported Versions
 
 The last released major version is supported and will receive security fixes and updates.
-In addition to that, the last major version supporting the previous LTS release of Java (LTS version here referring to OpenJDK releases) will receive security updates.
+In addition to that, the last major version supporting the previous LTS release of Java (LTS version here referring to
+OpenJDK releases) will receive security updates.
 
 | Version | Supported          | Notes                                                                                                                                                 |
 |---------|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|

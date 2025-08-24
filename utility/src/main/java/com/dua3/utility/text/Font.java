@@ -7,7 +7,9 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.ObjectCache;
 import com.dua3.utility.data.Color;
+
 import java.util.List;
+
 import org.jspecify.annotations.Nullable;
 
 /**

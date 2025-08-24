@@ -172,6 +172,7 @@ class RichTextBuilderTest {
         RichText rt = builder.toRichText();
         assertEquals(rt, RichText.emptyText());
     }
+
     @Test
     void testComposeDecompose() {
         RichTextBuilder builder = new RichTextBuilder();

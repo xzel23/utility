@@ -22,7 +22,7 @@ import java.util.TreeMap;
  * @param <V> the type of mapped values; can be nullable
  */
 public final class CompactableSortedMap<K extends Comparable<K>, V extends @Nullable Object> implements SortedMap<K, V> {
-    private SortedMap<K,V> map;
+    private SortedMap<K, V> map;
 
     /**
      * Constructs an instance of CompactableSortedMap with an initially empty TreeMap as its backing map.
@@ -49,17 +49,10 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
      * Checks if the map is in a compact or immutable state.
      *
      * @return {@code true} if the map is an instance of CompactableSortedMap in its compacted form,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     public boolean isCompact() {
         return map instanceof ImmutableSortedMap;
-    }
-
-    private SortedMap<K,V> getBackingMap(boolean mutable) {
-        if (mutable && isCompact()) {
-            map = new TreeMap<>(map);
-        }
-        return map;
     }
 
     /**
@@ -76,31 +69,36 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
         }
     }
 
+    @Override
+    public @Nullable Comparator<? super K> comparator() {
+        return map.comparator();
+    }
+
     // Non-mutating methods (mutable=false)
 
     @Override
-    public int size() {
-        return map.size();
+    public SortedMap<K, V> subMap(K fromKey, K toKey) {
+        return map.subMap(fromKey, toKey);
     }
 
     @Override
-    public boolean isEmpty() {
-        return map.isEmpty();
+    public SortedMap<K, V> headMap(K toKey) {
+        return map.headMap(toKey);
     }
 
     @Override
-    public boolean containsKey(Object key) {
-        return map.containsKey(key);
+    public SortedMap<K, V> tailMap(K fromKey) {
+        return map.tailMap(fromKey);
     }
 
     @Override
-    public boolean containsValue(@Nullable Object value) {
-        return map.containsValue(value);
+    public K firstKey() {
+        return map.firstKey();
     }
 
     @Override
-    public V get(Object key) {
-        return map.get(key);
+    public K lastKey() {
+        return map.lastKey();
     }
 
     @Override
@@ -116,58 +114,6 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
         return map.entrySet();
-    }
-
-    @Override
-    public @Nullable Comparator<? super K> comparator() {
-        return map.comparator();
-    }
-
-    @Override
-    public K firstKey() {
-        return map.firstKey();
-    }
-
-    @Override
-    public K lastKey() {
-        return map.lastKey();
-    }
-
-    @Override
-    public SortedMap<K, V> headMap(K toKey) {
-        return map.headMap(toKey);
-    }
-
-    @Override
-    public SortedMap<K, V> tailMap(K fromKey) {
-        return map.tailMap(fromKey);
-    }
-
-    @Override
-    public SortedMap<K, V> subMap(K fromKey, K toKey) {
-        return map.subMap(fromKey, toKey);
-    }
-
-    // Mutating methods (mutable=true)
-
-    @Override
-    public V put(K key, V value) {
-        return getBackingMap(true).put(key, value);
-    }
-
-    @Override
-    public V remove(Object key) {
-        return getBackingMap(true).remove(key);
-    }
-
-    @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        getBackingMap(true).putAll(m);
-    }
-
-    @Override
-    public void clear() {
-        map = ImmutableSortedMap.emptyMap();
     }
 
     @Override
@@ -191,5 +137,59 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
         }
 
         return map.equals(m);
+    }
+
+    @Override
+    public int size() {
+        return map.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return map.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(@Nullable Object value) {
+        return map.containsValue(value);
+    }
+
+    // Mutating methods (mutable=true)
+
+    @Override
+    public V get(Object key) {
+        return map.get(key);
+    }
+
+    @Override
+    public V put(K key, V value) {
+        return getBackingMap(true).put(key, value);
+    }
+
+    private SortedMap<K, V> getBackingMap(boolean mutable) {
+        if (mutable && isCompact()) {
+            map = new TreeMap<>(map);
+        }
+        return map;
+    }
+
+    @Override
+    public V remove(Object key) {
+        return getBackingMap(true).remove(key);
+    }
+
+    @Override
+    public void putAll(Map<? extends K, ? extends V> m) {
+        getBackingMap(true).putAll(m);
+    }
+
+    @Override
+    public void clear() {
+        map = ImmutableSortedMap.emptyMap();
     }
 }

@@ -7,6 +7,7 @@ This document provides an overview of all modules in the utility library.
 ### utility
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -17,6 +18,7 @@ This document provides an overview of all modules in the utility library.
 
 **Description:**
 The core utility module provides utility classes for various purposes, including:
+
 - Concurrent programming (com.dua3.utility.concurrent)
 - Data manipulation (com.dua3.utility.data)
 - I/O operations (com.dua3.utility.io)
@@ -32,6 +34,7 @@ The core utility module provides utility classes for various purposes, including
 ### utility-db
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -46,6 +49,7 @@ This module provides database utilities in the com.dua3.utility.db package.
 ### utility-swing
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -62,6 +66,7 @@ This module provides Swing-related utilities.
 ### utility-fx
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -76,6 +81,7 @@ This module provides JavaFX utilities.
 ### utility-fx-icons
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -90,6 +96,7 @@ This module provides icon utilities for JavaFX.
 ### utility-fx-icons-ikonli
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -104,6 +111,7 @@ This module provides Ikonli icon integration for JavaFX.
 ### utility-fx-controls
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -118,6 +126,7 @@ This module provides custom controls for JavaFX.
 ### utility-fx-db
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -132,6 +141,7 @@ This module provides database utilities for JavaFX.
 ### utility-fx-web
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -148,6 +158,7 @@ This module provides web-related utilities for JavaFX.
 ### utility-logging
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -162,6 +173,7 @@ This module provides utilities related to logging in the com.dua3.utility.loggin
 ### utility-logging-slf4j
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -176,6 +188,7 @@ This module provides SLF4J integration for the logging utilities.
 ### utility-logging-log4j
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -192,6 +205,7 @@ This module provides Log4j integration for the logging utilities.
 ### utility-samples-slf4j
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -206,6 +220,7 @@ This module provides samples for using the SLF4J logging integration.
 ### utility-samples-log4j
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -220,6 +235,7 @@ This module provides samples for using the Log4j logging integration.
 ### utility-samples-graphics
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>
@@ -234,6 +250,7 @@ This module provides graphics-related samples.
 ### utility-samples-fx
 
 **Maven Coordinates:**
+
 ```xml
 <dependency>
     <groupId>com.dua3.utility</groupId>

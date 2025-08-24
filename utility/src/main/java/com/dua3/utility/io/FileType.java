@@ -192,7 +192,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return FILE_TYPES.stream()
                 .filter(t -> !t.isCompound() && t.isSupported(OpenMode.READ) && cls.isAssignableFrom(t.getDocumentClass()))
                 .findFirst()
-                .map( t -> (FileType<? extends T>) t);
+                .map(t -> (FileType<? extends T>) t);
     }
 
     /**
@@ -208,7 +208,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> t.isSupported(OpenMode.READ) && cls.isAssignableFrom(t.getDocumentClass()))
-                .map( t -> (FileType<? extends T>) t)
+                .map(t -> (FileType<? extends T>) t)
                 .collect(Collectors.toUnmodifiableList());
     }
 

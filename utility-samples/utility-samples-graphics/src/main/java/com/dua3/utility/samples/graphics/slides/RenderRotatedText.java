@@ -56,7 +56,7 @@ public class RenderRotatedText implements IGraphicsSample.Slide {
     public RenderRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, double[] angles) {
         this.hAnchor = hAnchor;
         this.vAnchor = vAnchor;
-        this.angles  = angles;
+        this.angles = angles;
     }
 
     @Override

@@ -1,4 +1,5 @@
 # com.dua3.utility
+
 [![MIT License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Language](https://img.shields.io/badge/language-Java-blue.svg?style=flat-square)](https://github.com/topics/java)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://xzel23.github.io/utility/)
@@ -31,18 +32,21 @@ Source code is available at https://github.com/xzel23/utility.
 
 ## Requirements
 
-- JDK 21 or later, version 17 of the library requires JDK 17 or later (except for for JavaFX related modules that already require at least Java 21).
-- Version 17 that still supports Java 17 will receive important bugfix updates until the next LTS release (Java 25) is released.
+- JDK 21 or later, version 17 of the library requires JDK 17 or later (except for for JavaFX related modules that
+  already require at least Java 21).
+- Version 17 that still supports Java 17 will receive important bugfix updates until the next LTS release (Java 25) is
+  released.
 - The project uses Gradle toolchains to automatically download the required JDKs.
 - JavaFX dependencies are managed by the JavaFX plugin.
-- Building on Windows ARM is not supported because of missing support in Gradle and the toolchain resolver and 
+- Building on Windows ARM is not supported because of missing support in Gradle and the toolchain resolver and
   JavaFX plugins.
 
 ## Gradle Tasks
 
 ### Inspecting Task Inputs and Outputs
 
-The project includes a custom Gradle task called `showTaskIO` that displays the inputs and outputs of any specified Gradle task. This is useful for:
+The project includes a custom Gradle task called `showTaskIO` that displays the inputs and outputs of any specified
+Gradle task. This is useful for:
 
 - Debugging build issues
 - Understanding task dependencies
@@ -58,12 +62,14 @@ To use this task, run:
 Replace `<taskName>` with the name of the task you want to inspect (e.g., `compileJava`, `jar`, `test`).
 
 The output includes:
+
 - Input properties with their values
 - Input files with existence status
 - Output files with existence status
 - Output directories with existence status
 
 Example:
+
 ```bash
 ./gradlew showTaskIO -PtaskName=jar
 ```
@@ -320,9 +326,11 @@ could not be loaded.
 - Package `utility.text`
     - `TextUtil`
         - Added `TextUtil.toCharArray()|charsToBytes()|bytesToChars()`.
-        - Added `removeLeading|Trailing|LeadingAndTrailing()` to efficently strip elements from the start or end of a list.
+        - Added `removeLeading|Trailing|LeadingAndTrailing()` to efficently strip elements from the start or end of a
+          list.
         - Removed the MD5-methods. MD5 can still be used by passing "MD5" as algorithm name. Reason: MD5 is considered
-          cryptographically weak and insecure, and the API should not make using an unsecure algorithm easier to use than
+          cryptographically weak and insecure, and the API should not make using an unsecure algorithm easier to use
+          than
           a secure one. Which algorithms are considered safe is always subject to ongoing research, so be neutral about
           algorithms.
         - Added `isNullOrBlank()`
@@ -335,7 +343,8 @@ could not be loaded.
 - fix: ClosePath not implemented by FxUtil.convert(Path2f)
 - fix: LogBuffer thread-safety issues and externalization
 - PathBuilder2f: add overloads for passing float values x, y instead of Vector2f
-- run FX tests in forked mode to avoid exceptions due to starting and stopping the Platform multiple times in the same JVM
+- run FX tests in forked mode to avoid exceptions due to starting and stopping the Platform multiple times in the same
+  JVM
 - increase unit test coverage
 
 ### 19.2.0
@@ -475,7 +484,8 @@ different attributes), memory usage went down by 50% without noticeable impact o
 
 ### 18.3.0
 
-- POSSIBLY BREAKING: HtmlTag.headerChange() now returns int instead of OptionalInt and the static factory methods have also
+- POSSIBLY BREAKING: HtmlTag.headerChange() now returns int instead of OptionalInt and the static factory methods have
+  also
   been changed accordingly. This should not be a problem for most since while part of the public API, the methods
   should in general not be used directly, but from the HtmlConverter class.
 - Fixed the Qodana scan during CI build which broke due to Java 24 code being included in the multi-release JAR.
@@ -556,7 +566,8 @@ it is now provided directly by JDK classes:
 - fix TextUtil.setLineEnds() and toXXXLineEnds() not appending the trailing line end
 - fix TextUtil tests failing on windows due to different line end characters
 - add TextUtil.isNewlineTerminated(), TextUtil.setLineEnds()
-- fix PredefinedDateTimeFormatTest failing depending on the used Java version due to changes in chinese date and time formatting
+- fix PredefinedDateTimeFormatTest failing depending on the used Java version due to changes in chinese date and time
+  formatting
 - make the qodana scan run again
 - Javadoc corrections and additions
 - SwingUtil.setRenderingQuality() has been renamed to setRenderingQualityHigh()
@@ -604,7 +615,7 @@ it is now provided directly by JDK classes:
 - Java 21 is required for compilation and JavaFX related modules; all other modules require Java 17+.
 - deprecated the MathUtil.clamp() methods as Math.clamp() was added to the JDK.
   These methods will be removed once the base JDK changes to 21.
-- add a SystemInfo record to retrieve system information; run the DialogSample class and show details 
+- add a SystemInfo record to retrieve system information; run the DialogSample class and show details
   in the About dialog of the application for example output
 - add Graphics.transform()
 - RichText: Fixes and performance improvements
@@ -616,7 +627,7 @@ it is now provided directly by JDK classes:
 - support getting texts (String), images, and paths from the clipboard
 - fix HtmlConverter.useCss() ignoring the passed parameter
 - fix LangUtil.isOneOf(null, args...) throwing NPE (note that the remaining elements @NonNull)
-- add convenience methods Style.create(Font) and Style.create(Font, Color, Color) 
+- add convenience methods Style.create(Font) and Style.create(Font, Color, Color)
 
 ### 16
 
@@ -702,6 +713,7 @@ in the library and are asked to open an issue against the library.
 Release candidates and final releases will not contain any return value check.
 
 Changes:
+
 - org.jspecify annotations are used in the code base; all modules annotated with `@NullMarked`.
   That you may not pass `null` in any method or constructor parameter that is not explicitly
   annotated as `@Nullable`.
@@ -730,7 +742,7 @@ Changes:
 - BREAKING: in the fx module, the methods Validator.matches() and Validator.notEmpty() have been renamed to setRegex()
   and disallowEmpty() to better express the fact that the content is not checked immediately but instead a rule is added
   that is validated at validation time
-- IMPORTANT: resolved ambiguity of LangUtil.ConsumerThrows.andThen() overloads by renaming the version taking an 
+- IMPORTANT: resolved ambiguity of LangUtil.ConsumerThrows.andThen() overloads by renaming the version taking an
   argument of ConsumerThrows to andThenTry(); this might require a source change but code compiled using the previous
   version should still work in the same way
 - IoUtil: added methods createSecureTempDirectory(), createSecureTempDirectoryAndDeleteOnExit(), deleteRecursiveOnExit()
@@ -751,10 +763,11 @@ Changes:
 - new utility-fx modules with JavaFX related classes and components
 - StreamUtil.zip() has been changed to take an operation as third parameter that defines the combining operation
 - StreamUtil.concat() did not close streams
-- SwingImageUtil, SwingFontUtil have been renamed to AwtImageUtil, AwtFontUtil as they are usable also in non-Swing 
+- SwingImageUtil, SwingFontUtil have been renamed to AwtImageUtil, AwtFontUtil as they are usable also in non-Swing
   applications
 - Color methods have been renamed to reduce ambiguity
-- SwingUtil.getDisplayScale() to retrieve the actual scaling factor for the display (taking into account UHD and retina displays)
+- SwingUtil.getDisplayScale() to retrieve the actual scaling factor for the display (taking into account UHD and retina
+  displays)
 - AffineTransformation2f.combine()
 - return value of getTextDimension() changed to Rectangle2f (this gives access to the baseline value)
 - Rectangle2f.getXCenter(), getYCenter(), min(), max(), center(), dimension(), withCenter()

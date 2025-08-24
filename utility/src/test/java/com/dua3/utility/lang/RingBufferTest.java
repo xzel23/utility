@@ -122,7 +122,7 @@ class RingBufferTest {
 
         // add elements to see if capacity is set as expected
         for (int i = 0; i < 2 * CAPACITY; i++) {
-            buffer.add("test " + (2 * CAPACITY +i));
+            buffer.add("test " + (2 * CAPACITY + i));
         }
         assertEquals(2 * CAPACITY, buffer.capacity());
         assertEquals(2 * CAPACITY, buffer.size());
@@ -237,6 +237,7 @@ class RingBufferTest {
         // contains should return false
         assertFalse(zeroBuffer.contains(null));
     }
+
     @Test
     void testRemoveFirst() {
         buffer.clear();
@@ -447,7 +448,7 @@ class RingBufferTest {
         for (int i = 0; i < CAPACITY + 5; i++) {
             buffer.add("item" + i);
         }
-        assertTrue(buffer.removeIf(e -> ((String)e).contains("8") || ((String)e).contains("9")));
+        assertTrue(buffer.removeIf(e -> ((String) e).contains("8") || ((String) e).contains("9")));
         assertEquals(8, buffer.size());
         // items 5, 6, 7, 10, 11, 12, 13, 14 should remain
         assertEquals("item5", buffer.get(0));

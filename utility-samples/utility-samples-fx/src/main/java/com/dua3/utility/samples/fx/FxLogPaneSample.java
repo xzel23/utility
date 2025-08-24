@@ -114,8 +114,7 @@ public class FxLogPaneSample extends Application {
                                 case 2 -> JUL_LOGGER.fine(msg);
                                 case 3 -> JUL_LOGGER.info(msg);
                                 case 4 -> JUL_LOGGER.warning(msg);
-                                case 5 ->
-                                        JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
+                                case 5 -> JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }

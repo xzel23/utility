@@ -9,15 +9,16 @@ Before you can release a new version, you need to have the following:
 1. A GPG key for signing the artifacts
 2. Access to the Sonatype Central Publisher Portal
 3. The following variables set in your `~/.gradle/gradle.properties` file:
-   - `sonatypeUsername`: Your Sonatype Central Publisher Portal username
-   - `sonatypePassword`: Your Sonatype Central Publisher Portal password
-   - `signing.keyId`: Your GPG key ID (last 8 characters of the key ID)
-   - `signing.password`: Your GPG key passphrase
-   - `signing.secretKeyRingFile`: Path to your GPG secret key ring file
+    - `sonatypeUsername`: Your Sonatype Central Publisher Portal username
+    - `sonatypePassword`: Your Sonatype Central Publisher Portal password
+    - `signing.keyId`: Your GPG key ID (last 8 characters of the key ID)
+    - `signing.password`: Your GPG key passphrase
+    - `signing.secretKeyRingFile`: Path to your GPG secret key ring file
 
 ## Release Process
 
-The release process uses [JReleaser](https://jreleaser.org/) to automate the release process. JReleaser handles the following tasks:
+The release process uses [JReleaser](https://jreleaser.org/) to automate the release process. JReleaser handles the
+following tasks:
 
 1. Signing the artifacts
 2. Uploading the artifacts to Maven Central
@@ -54,10 +55,10 @@ The release process uses [JReleaser](https://jreleaser.org/) to automate the rel
    ```
 
    This command will:
-   - Build the project
-   - Sign the artifacts
-   - Upload the artifacts to Maven Central
-   - Close and release the staging repository
+    - Build the project
+    - Sign the artifacts
+    - Upload the artifacts to Maven Central
+    - Close and release the staging repository
 
 5. **Verify the Release**
 
@@ -83,7 +84,8 @@ The release process uses [JReleaser](https://jreleaser.org/) to automate the rel
 
 ## Publishing Snapshots
 
-Snapshots are development versions that can be published to the Sonatype Snapshots repository for testing before an official release.
+Snapshots are development versions that can be published to the Sonatype Snapshots repository for testing before an
+official release.
 
 ### Prerequisites
 
@@ -92,11 +94,11 @@ The prerequisites for publishing snapshots are the same as for releasing:
 1. A GPG key for signing the artifacts (optional for snapshots)
 2. Access to the Sonatype Central Publisher Portal
 3. The following variables set in your `~/.gradle/gradle.properties` file:
-   - `sonatypeUsername`: Your Sonatype Central Publisher Portal username
-   - `sonatypePassword`: Your Sonatype Central Publisher Portal password
-   - `signing.keyId`: Your GPG key ID (last 8 characters of the key ID)
-   - `signing.password`: Your GPG key passphrase
-   - `signing.secretKeyRingFile`: Path to your GPG secret key ring file
+    - `sonatypeUsername`: Your Sonatype Central Publisher Portal username
+    - `sonatypePassword`: Your Sonatype Central Publisher Portal password
+    - `signing.keyId`: Your GPG key ID (last 8 characters of the key ID)
+    - `signing.password`: Your GPG key passphrase
+    - `signing.secretKeyRingFile`: Path to your GPG secret key ring file
 
 ### Steps to Publish Snapshots
 
@@ -121,9 +123,9 @@ The prerequisites for publishing snapshots are the same as for releasing:
    ```
 
    This command will:
-   - Build the project
-   - Sign the artifacts (if configured)
-   - Upload the artifacts to the Sonatype Snapshots repository
+    - Build the project
+    - Sign the artifacts (if configured)
+    - Upload the artifacts to the Sonatype Snapshots repository
 
 4. **Verify the Snapshot**
 
@@ -140,10 +142,13 @@ You can generate a JReleaser configuration file for reference by running:
 ./gradlew generateJReleaserConfig
 ```
 
-This will create a `jreleaser-config.yml` file in the project root directory that contains the complete JReleaser configuration. You can use this file as a reference to understand the JReleaser configuration or to customize it further.
+This will create a `jreleaser-config.yml` file in the project root directory that contains the complete JReleaser
+configuration. You can use this file as a reference to understand the JReleaser configuration or to customize it
+further.
 
 ## Troubleshooting
 
 If you encounter issues during the release process, you can check the JReleaser logs in the `build/jreleaser` directory.
 
-For more detailed information about JReleaser, see the [JReleaser documentation](https://jreleaser.org/guide/latest/index.html).
+For more detailed information about JReleaser, see
+the [JReleaser documentation](https://jreleaser.org/guide/latest/index.html).

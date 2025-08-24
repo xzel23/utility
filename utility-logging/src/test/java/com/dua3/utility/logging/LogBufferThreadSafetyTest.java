@@ -189,7 +189,7 @@ class LogBufferThreadSafetyTest {
 
         // Wait for all producer threads to complete first
         producersDone.await(5, TimeUnit.SECONDS);
-        
+
         // Wait for clearer thread to complete
         clearerDone.await(5, TimeUnit.SECONDS);
 

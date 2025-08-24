@@ -257,8 +257,7 @@ public class FxGraphics implements Graphics {
                 }
                 case Arc2f s -> Graphics.approximateArc(s, this::moveTo, this::generateBezierSegment);
                 case ClosePath2f s -> gc.closePath();
-                default ->
-                        throw new IllegalArgumentException(UNSUPPORTED_SEGMENT_TYPE + segment.getClass().getName());
+                default -> throw new IllegalArgumentException(UNSUPPORTED_SEGMENT_TYPE + segment.getClass().getName());
             }
         });
     }

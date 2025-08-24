@@ -316,7 +316,7 @@ jobs:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
   publish:
-    needs: [test-linux, test-windows]
+    needs: [ test-linux, test-windows ]
     runs-on: ubuntu-latest
     permissions:
       contents: write

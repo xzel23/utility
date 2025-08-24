@@ -144,7 +144,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     <T> B constant(
             String id,
             String label,
-            T value    );
+            T value);
 
     /**
      * Creates a hidden field with the specified configurations.

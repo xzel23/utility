@@ -45,131 +45,10 @@ public final class CryptUtil {
     private CryptUtil() { /* utility class */ }
 
     /**
-     * Returns the asymmetric transformation string for the given algorithm.
-     * <p>
-     * Supported algorithms:
-     * <ul>
-     *   <li>RSA: Returns RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING for secure padding</li>
-     *   <li>EC: Returns ECIES (requires special provider like Bouncy Castle)</li>
-     *   <li>DSA: Throws exception as DSA is for signatures/key agreement only</li>
-     * </ul>
-     *
-     * @param algorithm the asymmetric algorithm
-     * @return the transformation string corresponding to the given algorithm
-     * @throws InvalidKeyException if algorithm doesn't support direct encryption
-     */
-    private static String getAsymmetricTransformation(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
-        Optional<String> transformation = algorithm.getTransformation();
-        if (transformation.isEmpty()) {
-            throw new InvalidKeyException("Algorithm " + algorithm + " does not support direct encryption");
-        }
-        return transformation.get();
-    }
-
-    /**
-     * Validates the provided asymmetric encryption key to ensure it satisfies the requirements
-     * for encrypting data of the specified length.
-     * <p>
-     * This method performs validation specific to the algorithm of the key. For RSA keys,
-     * it ensures that the data length does not exceed the maximum allowed size based on
-     * the key's modulus and padding restrictions.
-     *
-     * @param key the asymmetric encryption key to validate
-     * @param dataLength the length of the data that is intended to be encrypted
-     * @throws InvalidKeyException if the algorithm doesn't support direct encryption
-     * @throws IllegalBlockSizeException if the data is too large for the key/algorithm
-     */
-    public static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
-        try {
-            AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(key.getAlgorithm());
-            if (!algorithm.isEncryptionSupported()) {
-                throw new InvalidKeyException(key.getAlgorithm() + " keys are for signatures only, not encryption");
-            }
-        } catch (IllegalArgumentException e) {
-            throw new InvalidKeyException("Unsupported asymmetric algorithm: " + key.getAlgorithm(), e);
-        }
-
-        switch (key) {
-            case RSAPublicKey rsaKey -> validateRSAEncryptionKey(rsaKey, dataLength);
-            default -> {
-                // For other supported algorithms like EC, no additional validation needed
-            }
-        }
-    }
-
-    /**
-     * Validates the provided RSA encryption key and checks if the data length
-     * is suitable for the key size.
-     * <p>
-     * This method ensures that the provided key is an RSA public key and calculates
-     * the maximum permissible data size for the key, verifying that the input data length
-     * does not exceed this limit. If the key type or data length is invalid, an
-     * appropriate exception is thrown.
-     *
-     * @param key the public key to be validated; must be an RSA public key
-     * @param dataLength the length of the data intended for encryption, in bytes
-     * @throws GeneralSecurityException if the encryption key is not valid or if the data length
-     *         exceeds the maximum allowed size for the given RSA key
-     */
-    private static void validateRSAEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
-        if (!(key instanceof RSAPublicKey rsaKey)) {
-            throw new InvalidKeyException("Expected RSA key, but got: " + key.getClass().getSimpleName());
-        }
-
-        int keySize = rsaKey.getModulus().bitLength();
-
-        // OAEP padding overhead: 2 + 2*hLen where hLen is 32 for SHA-256
-        int maxDataSize = (keySize / 8) - 2 - (2 * 32);
-
-        if (dataLength > maxDataSize) {
-            throw new IllegalBlockSizeException(
-                    java.lang.String.format("Data too large for RSA key. Max size: %d bytes, actual: %d bytes",
-                            maxDataSize, dataLength));
-        }
-    }
-
-    /**
-     * Asymmetrically encrypt data using a public key.
-     *
-     * @param publicKey the public key for encryption
-     * @param data the data to encrypt
-     * @return the encrypted data
-     * @throws GeneralSecurityException if encryption fails
-     */
-    public static byte[] encryptAsymmetric(PublicKey publicKey, byte[] data) throws GeneralSecurityException {
-        validateAsymmetricEncryptionKey(publicKey, data.length);
-
-        AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm());
-        String transformation = getAsymmetricTransformation(algorithm);
-
-        Cipher cipher = Cipher.getInstance(transformation);
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        return cipher.doFinal(data);
-    }
-
-    /**
-     * Asymmetrically decrypt data using a private key.
-     *
-     * @param privateKey the private key for decryption
-     * @param cipherData the encrypted data
-     * @return the decrypted data
-     * @throws GeneralSecurityException if decryption fails
-     */
-    public static byte[] decryptAsymmetric(PrivateKey privateKey, byte[] cipherData) throws GeneralSecurityException {
-        String algorithm = privateKey.getAlgorithm();
-        AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
-        String transformation = getAsymmetricTransformation(asymmAlg);
-
-        Cipher cipher = Cipher.getInstance(transformation);
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        return cipher.doFinal(cipherData);
-    }
-
-    /**
      * Symmetrically encrypt data using a Key object with the default algorithm.
      *
-     * @param key  the encryption key (must be compatible with the algorithm)
-     * @param data the data to encrypt
+     * @param key                 the encryption key (must be compatible with the algorithm)
+     * @param data                the data to encrypt
      * @param inputBufferHandling how to handle input buffers
      * @return the encrypted message as byte array
      * @throws GeneralSecurityException if encryption fails
@@ -181,9 +60,9 @@ public final class CryptUtil {
     /**
      * Symmetrically encrypt data using a Key object with the specified algorithm.
      *
-     * @param algorithm the symmetric algorithm to use
-     * @param key  the encryption key (must be compatible with the algorithm)
-     * @param data the data to encrypt
+     * @param algorithm           the symmetric algorithm to use
+     * @param key                 the encryption key (must be compatible with the algorithm)
+     * @param data                the data to encrypt
      * @param inputBufferHandling how to handle input buffers
      * @return the encrypted message as byte array
      * @throws GeneralSecurityException if encryption fails
@@ -232,12 +111,12 @@ public final class CryptUtil {
      * <p>
      * The password must have at least 8 characters.
      *
-     * @param input the data to be encrypted, represented as a byte array
-     * @param password the password used to derive the encryption key, represented as a char array
+     * @param input               the data to be encrypted, represented as a byte array
+     * @param password            the password used to derive the encryption key, represented as a char array
      * @param inputBufferHandling specifies how the method should handle the input buffer after encryption;
      *                            it determines whether to preserve or clear the input
      * @return a Base64-encoded string containing the salt and the encrypted data,
-     *         separated by a "$" character
+     * separated by a "$" character
      * @throws IllegalStateException if the encryption process encounters a general security exception
      */
     public static String encrypt(byte[] input, char[] password, InputBufferHandling inputBufferHandling) {
@@ -266,12 +145,12 @@ public final class CryptUtil {
      * <p>
      * The password must have at least 8 characters.
      *
-     * @param input the encrypted string, which should contain a salt and encrypted data separated by a '$' character
-     * @param password the password to derive the decryption key
+     * @param input               the encrypted string, which should contain a salt and encrypted data separated by a '$' character
+     * @param password            the password to derive the decryption key
      * @param inputBufferHandling the strategy to handle the input buffer, affecting whether the password buffer is preserved or cleared
      * @return the decrypted data as a byte array
      * @throws IllegalArgumentException if the input string is invalid in format or there is no '$' delimiter
-     * @throws IllegalStateException if decryption fails due to cryptographic errors
+     * @throws IllegalStateException    if decryption fails due to cryptographic errors
      */
     public static byte[] decrypt(String input, char[] password, InputBufferHandling inputBufferHandling) {
         try {
@@ -292,23 +171,9 @@ public final class CryptUtil {
     }
 
     /**
-     * Symmetrically decrypt data using a Key object with the default algorithm.
-     * <p>
-     * The data is decrypted using AES-GCM.
-     *
-     * @param key           the encryption key (must be compatible with the algorithm)
-     * @param cipherMessage the encrypted data
-     * @return the decrypted message as a byte array
-     * @throws GeneralSecurityException if decryption fails
-     */
-    public static byte[] decryptSymmetric(Key key, byte[] cipherMessage) throws GeneralSecurityException {
-        return decryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherMessage);
-    }
-
-    /**
      * Symmetrically decrypt data using a Key object with the specified algorithm.
      *
-     * @param algorithm the symmetric algorithm that was used for encryption
+     * @param algorithm     the symmetric algorithm that was used for encryption
      * @param key           the encryption key (must be compatible with the algorithm)
      * @param cipherMessage the encrypted data
      * @return the decrypted message as a byte array
@@ -344,6 +209,20 @@ public final class CryptUtil {
     }
 
     /**
+     * Symmetrically decrypt data using a Key object with the default algorithm.
+     * <p>
+     * The data is decrypted using AES-GCM.
+     *
+     * @param key           the encryption key (must be compatible with the algorithm)
+     * @param cipherMessage the encrypted data
+     * @return the decrypted message as a byte array
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static byte[] decryptSymmetric(Key key, byte[] cipherMessage) throws GeneralSecurityException {
+        return decryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherMessage);
+    }
+
+    /**
      * Hybrid encryption for large data using RSA/EC for key encryption and AES-GCM for data encryption.
      * <p>
      * This method generates a random AES key, encrypts the data with AES-GCM, then encrypts
@@ -352,8 +231,8 @@ public final class CryptUtil {
      * <p>
      * Format: [4 bytes: encrypted key length][encrypted AES key][encrypted data]
      *
-     * @param publicKey the public key for encrypting the AES key (RSA, EC, or ECIES)
-     * @param data the data to encrypt
+     * @param publicKey           the public key for encrypting the AES key (RSA, EC, or ECIES)
+     * @param data                the data to encrypt
      * @param inputBufferHandling how to handle input buffers
      * @return the hybrid encrypted data as a byte array
      * @throws GeneralSecurityException if encryption fails
@@ -383,6 +262,109 @@ public final class CryptUtil {
                 Arrays.fill(data, (byte) 0);
             }
         }
+    }
+
+    /**
+     * Validates the provided asymmetric encryption key to ensure it satisfies the requirements
+     * for encrypting data of the specified length.
+     * <p>
+     * This method performs validation specific to the algorithm of the key. For RSA keys,
+     * it ensures that the data length does not exceed the maximum allowed size based on
+     * the key's modulus and padding restrictions.
+     *
+     * @param key        the asymmetric encryption key to validate
+     * @param dataLength the length of the data that is intended to be encrypted
+     * @throws InvalidKeyException       if the algorithm doesn't support direct encryption
+     * @throws IllegalBlockSizeException if the data is too large for the key/algorithm
+     */
+    public static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
+        try {
+            AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(key.getAlgorithm());
+            if (!algorithm.isEncryptionSupported()) {
+                throw new InvalidKeyException(key.getAlgorithm() + " keys are for signatures only, not encryption");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new InvalidKeyException("Unsupported asymmetric algorithm: " + key.getAlgorithm(), e);
+        }
+
+        switch (key) {
+            case RSAPublicKey rsaKey -> validateRSAEncryptionKey(rsaKey, dataLength);
+            default -> {
+                // For other supported algorithms like EC, no additional validation needed
+            }
+        }
+    }
+
+    /**
+     * Asymmetrically encrypt data using a public key.
+     *
+     * @param publicKey the public key for encryption
+     * @param data      the data to encrypt
+     * @return the encrypted data
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static byte[] encryptAsymmetric(PublicKey publicKey, byte[] data) throws GeneralSecurityException {
+        validateAsymmetricEncryptionKey(publicKey, data.length);
+
+        AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm());
+        String transformation = getAsymmetricTransformation(algorithm);
+
+        Cipher cipher = Cipher.getInstance(transformation);
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        return cipher.doFinal(data);
+    }
+
+    /**
+     * Validates the provided RSA encryption key and checks if the data length
+     * is suitable for the key size.
+     * <p>
+     * This method ensures that the provided key is an RSA public key and calculates
+     * the maximum permissible data size for the key, verifying that the input data length
+     * does not exceed this limit. If the key type or data length is invalid, an
+     * appropriate exception is thrown.
+     *
+     * @param key        the public key to be validated; must be an RSA public key
+     * @param dataLength the length of the data intended for encryption, in bytes
+     * @throws GeneralSecurityException if the encryption key is not valid or if the data length
+     *                                  exceeds the maximum allowed size for the given RSA key
+     */
+    private static void validateRSAEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
+        if (!(key instanceof RSAPublicKey rsaKey)) {
+            throw new InvalidKeyException("Expected RSA key, but got: " + key.getClass().getSimpleName());
+        }
+
+        int keySize = rsaKey.getModulus().bitLength();
+
+        // OAEP padding overhead: 2 + 2*hLen where hLen is 32 for SHA-256
+        int maxDataSize = (keySize / 8) - 2 - (2 * 32);
+
+        if (dataLength > maxDataSize) {
+            throw new IllegalBlockSizeException(
+                    java.lang.String.format("Data too large for RSA key. Max size: %d bytes, actual: %d bytes",
+                            maxDataSize, dataLength));
+        }
+    }
+
+    /**
+     * Returns the asymmetric transformation string for the given algorithm.
+     * <p>
+     * Supported algorithms:
+     * <ul>
+     *   <li>RSA: Returns RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING for secure padding</li>
+     *   <li>EC: Returns ECIES (requires special provider like Bouncy Castle)</li>
+     *   <li>DSA: Throws exception as DSA is for signatures/key agreement only</li>
+     * </ul>
+     *
+     * @param algorithm the asymmetric algorithm
+     * @return the transformation string corresponding to the given algorithm
+     * @throws InvalidKeyException if algorithm doesn't support direct encryption
+     */
+    private static String getAsymmetricTransformation(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        Optional<String> transformation = algorithm.getTransformation();
+        if (transformation.isEmpty()) {
+            throw new InvalidKeyException("Algorithm " + algorithm + " does not support direct encryption");
+        }
+        return transformation.get();
     }
 
     /**
@@ -422,6 +404,24 @@ public final class CryptUtil {
     }
 
     /**
+     * Asymmetrically decrypt data using a private key.
+     *
+     * @param privateKey the private key for decryption
+     * @param cipherData the encrypted data
+     * @return the decrypted data
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static byte[] decryptAsymmetric(PrivateKey privateKey, byte[] cipherData) throws GeneralSecurityException {
+        String algorithm = privateKey.getAlgorithm();
+        AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
+        String transformation = getAsymmetricTransformation(asymmAlg);
+
+        Cipher cipher = Cipher.getInstance(transformation);
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        return cipher.doFinal(cipherData);
+    }
+
+    /**
      * Computes an HMAC using the SHA-256 algorithm of the provided text.
      * <p>
      * This method normalizes the text before creating the HMAC like this:
@@ -434,11 +434,11 @@ public final class CryptUtil {
      * <p>
      * <strong>Note:</strong> The key size must be at least 256 bits.
      *
-     * @param s the text
+     * @param s   the text
      * @param key the secret key to use for HMAC generation
      * @return the computed HMAC as a hexadecimal string
      * @throws NoSuchAlgorithmException if the SHA-256 algorithm is not supported
-     * @throws InvalidKeyException if the provided secret key is invalid
+     * @throws InvalidKeyException      if the provided secret key is invalid
      */
     public static String hmacSha256(CharSequence s, SecretKey key) throws NoSuchAlgorithmException, InvalidKeyException {
         String normalizedText = TextUtil.normalize(s);
@@ -459,7 +459,7 @@ public final class CryptUtil {
      * Generates a hash for the given email representing the Argon2id hash of the normalized email,
      * using a salt derived from HMAC(email, pepper), and the pepper as an Argon2id secret.
      *
-     * @param email the email address to be hashed; it will be normalized before the hashing process
+     * @param email  the email address to be hashed; it will be normalized before the hashing process
      * @param pepper the secret key used for the HMAC generation; it adds an extra layer of security
      * @return a byte array representing the Argon2id hash of the normalized email combined with the HMAC
      * @throws IllegalStateException If the hash could not be generated.
@@ -472,14 +472,14 @@ public final class CryptUtil {
      * Generates a secure hash for the given input using a combination of HMAC-SHA256 and Argon2id.
      * A pepper value is used to enhance the security.
      *
-     * @param input The input data to be hashed, represented as a byte array.
+     * @param input  The input data to be hashed, represented as a byte array.
      * @param pepper A string value used as a cryptographic key for generating the HMAC-SHA256 hash.
      *               This enhances the overall security of the hashing process.
      * @return A byte array representing the resulting hash generated after applying Argon2id to the
-     *         input and the HMAC-derived salt.
+     * input and the HMAC-derived salt.
      * @throws IllegalStateException If the hash could not be generated.
      */
-    public static byte [] secureHash(byte[] input, String pepper) throws IllegalStateException {
+    public static byte[] secureHash(byte[] input, String pepper) throws IllegalStateException {
         LangUtil.checkArg(pepper.length() > 16, "pepper must have at least 16 characters");
         try {
             // compute a HMAC as salt
@@ -495,19 +495,15 @@ public final class CryptUtil {
     }
 
     /**
-     * Derives a 256-bit hash using the Argon2id algorithm based on the provided input, salt,
-     * and secret key parameters.
-     * <p>
-     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     * Converts the provided pepper string into a byte array using UTF-8 encoding.
+     * The input pepper string must have a minimum length of 16 characters; otherwise, an exception is thrown.
      *
-     * @param input the input data to be hashed
-     * @param salt the cryptographic salt to use for the hashing process; must be 16 bytes
-     * @param secretKey the secret key incorporated into the hash generation
-     * @return a byte array containing the 256-bit Argon2id hash
-     * @throws IllegalArgumentException if the provided salt is not 16 bytes long
+     * @param pepper the pepper string to be converted to a byte array; must be at least 16 characters long
+     * @return a non-null byte array representation of the input pepper string in UTF-8 encoding
      */
-    public static byte[] getArgon2idBytes(byte[] input, byte[] salt, SecretKey secretKey) {
-        return getArgon2idBytes(input, salt, secretKey.getEncoded());
+    private static byte[] getPepperBytes(String pepper) {
+        LangUtil.checkArg(pepper.length() >= 16, "pepper must have at least 16 characters");
+        return pepper.getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -516,8 +512,8 @@ public final class CryptUtil {
      * <p>
      * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
      *
-     * @param input The input byte array to be hashed.
-     * @param salt The salt byte array to be used in the hashing process for added security.
+     * @param input  The input byte array to be hashed.
+     * @param salt   The salt byte array to be used in the hashing process for added security.
      * @param pepper A string value used as an additional secret to strengthen the hash.
      * @return A byte array representing the securely hashed result using the Argon2id algorithm.
      */
@@ -526,25 +522,13 @@ public final class CryptUtil {
     }
 
     /**
-     * Converts the provided pepper string into a byte array using UTF-8 encoding.
-     * The input pepper string must have a minimum length of 16 characters; otherwise, an exception is thrown.
-     *
-     * @param pepper the pepper string to be converted to a byte array; must be at least 16 characters long
-     * @return a non-null byte array representation of the input pepper string in UTF-8 encoding
-     */
-    private static byte [] getPepperBytes(String pepper) {
-        LangUtil.checkArg(pepper.length() >= 16, "pepper must have at least 16 characters");
-        return pepper.getBytes(StandardCharsets.UTF_8);
-    }
-
-    /**
      * Generates a 256-bit Argon2id hash based on the provided input, salt, and secret.
      * The salt must be exactly 16 bytes in length; otherwise, an exception is thrown.
      * <p>
      * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
      *
-     * @param input The input byte array to be hashed. Cannot be null.
-     * @param salt The salt used in the hashing process. Must be exactly 16 bytes in length.
+     * @param input  The input byte array to be hashed. Cannot be null.
+     * @param salt   The salt used in the hashing process. Must be exactly 16 bytes in length.
      * @param secret An optional secret used as additional input for the hash. Can be null.
      * @return A byte array representing the 256-bit Argon2id hash of the input.
      * @throws IllegalArgumentException If the salt is not 16 bytes in length.
@@ -574,13 +558,26 @@ public final class CryptUtil {
     }
 
     /**
+     * Generates an Argon2id hash using the provided input and secret key.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input     the input string to be hashed
+     * @param secretKey the secret key used in the hashing process
+     * @return the generated Argon2id hash as a string
+     */
+    public static String getArgon2id(String input, SecretKey secretKey) {
+        return getArgon2id(input.getBytes(StandardCharsets.UTF_8), secretKey);
+    }
+
+    /**
      * Returns a string containing the Argon2id hash and the associated salt, encoded in Base64 format.
      * The hash is computed using the provided input data and secret key, with a randomly generated salt.
      * The salt and hash are concatenated with a "$" delimiter.
      * <p>
      * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
      *
-     * @param input the input data to be hashed
+     * @param input     the input data to be hashed
      * @param secretKey the secret key incorporated into the Argon2id hash generation
      * @return a Base64-encoded string containing the salt and the Argon2id hash, separated by "$"
      */
@@ -592,12 +589,41 @@ public final class CryptUtil {
     }
 
     /**
+     * Derives a 256-bit hash using the Argon2id algorithm based on the provided input, salt,
+     * and secret key parameters.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input     the input data to be hashed
+     * @param salt      the cryptographic salt to use for the hashing process; must be 16 bytes
+     * @param secretKey the secret key incorporated into the hash generation
+     * @return a byte array containing the 256-bit Argon2id hash
+     * @throws IllegalArgumentException if the provided salt is not 16 bytes long
+     */
+    public static byte[] getArgon2idBytes(byte[] input, byte[] salt, SecretKey secretKey) {
+        return getArgon2idBytes(input, salt, secretKey.getEncoded());
+    }
+
+    /**
+     * Generates an Argon2id hash of the given input string using the provided pepper.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input  the input string to be hashed
+     * @param pepper the pepper value to be used alongside the input for hashing
+     * @return the resulting Argon2id hash as a string
+     */
+    public static String getArgon2id(String input, String pepper) {
+        return getArgon2id(input.getBytes(StandardCharsets.UTF_8), pepper);
+    }
+
+    /**
      * Generates an Argon2id hash from the given input using a random salt and the provided pepper.
      * The resulting hash includes the Base64-encoded salt and hash separated by a "$" symbol.
      * <p>
      * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
      *
-     * @param input The input byte array to be hashed.
+     * @param input  The input byte array to be hashed.
      * @param pepper A string used as an additional security parameter in the hash computation.
      * @return A string containing the Base64-encoded salt and hash, separated by a "$".
      */
@@ -609,29 +635,17 @@ public final class CryptUtil {
     }
 
     /**
-     * Generates an Argon2id hash using the provided input and secret key.
+     * Verifies whether the provided input matches the given Argon2id hash.
      * <p>
      * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
      *
-     * @param input      the input string to be hashed
-     * @param secretKey  the secret key used in the hashing process
-     * @return           the generated Argon2id hash as a string
+     * @param input       the plain text input to verify
+     * @param secretKey   the secret key used for the verification process
+     * @param saltAndHash the combined salt and hash string to validate against
+     * @return true if the input matches the provided hash, otherwise false
      */
-    public static String getArgon2id(String input, SecretKey secretKey) {
-        return getArgon2id(input.getBytes(StandardCharsets.UTF_8), secretKey);
-    }
-
-    /**
-     * Generates an Argon2id hash of the given input string using the provided pepper.
-     * <p>
-     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
-     *
-     * @param input the input string to be hashed
-     * @param pepper the pepper value to be used alongside the input for hashing
-     * @return the resulting Argon2id hash as a string
-     */
-    public static String getArgon2id(String input, String pepper) {
-        return getArgon2id(input.getBytes(StandardCharsets.UTF_8), pepper);
+    public static boolean verifyArgon2id(String input, SecretKey secretKey, String saltAndHash) {
+        return verifyArgon2id(input.getBytes(StandardCharsets.UTF_8), secretKey, saltAndHash);
     }
 
     /**
@@ -644,8 +658,8 @@ public final class CryptUtil {
      * <p>
      * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
      *
-     * @param input the input data to be hashed
-     * @param secretKey the secret key used in the Argon2id hashing algorithm
+     * @param input       the input data to be hashed
+     * @param secretKey   the secret key used in the Argon2id hashing algorithm
      * @param saltAndHash a string containing the base64-encoded salt and hash, separated by '$'
      * @return true if the computed hash matches the expected hash stored in saltAndHash; false otherwise
      * @throws IllegalArgumentException if saltAndHash has an invalid format
@@ -661,12 +675,12 @@ public final class CryptUtil {
      * <p>
      * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
      *
-     * @param input The input data to be verified.
-     * @param secret A secret key used in the Argon2id hash derivation process.
+     * @param input       The input data to be verified.
+     * @param secret      A secret key used in the Argon2id hash derivation process.
      * @param saltAndHash A string containing the Base64-encoded salt and hash, delimited by a '$' character.
-     *                     The format of the string must be "salt$hash".
+     *                    The format of the string must be "salt$hash".
      * @return true if the input data matches the expected hash when processed with the given salt and secret,
-     *         false otherwise.
+     * false otherwise.
      * @throws IllegalArgumentException if the format of the saltAndHash string is invalid.
      */
     public static boolean verifyArgon2id(byte[] input, byte[] secret, String saltAndHash) {
@@ -685,42 +699,13 @@ public final class CryptUtil {
     }
 
     /**
-     * Verifies an Argon2id hash by comparing the provided input, pepper, and the
-     * combined salt and hash string.
-     * <p>
-     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
-     *
-     * @param input the raw input data to be verified, typically a password, as a byte array
-     * @param pepper the secret value added to the input for additional security, as a string
-     * @param saltAndHash the concatenation of the salt and hashed result to be used for verification, as a string
-     * @return true if the verification succeeds (i.e., the input matches the hash), false otherwise
-     */
-    public static boolean verifyArgon2id(byte[] input, String pepper, String saltAndHash) {
-        return verifyArgon2id(input, getPepperBytes(pepper), saltAndHash);
-    }
-
-    /**
-     * Verifies whether the provided input matches the given Argon2id hash.
-     * <p>
-     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
-     *
-     * @param input the plain text input to verify
-     * @param secretKey the secret key used for the verification process
-     * @param saltAndHash the combined salt and hash string to validate against
-     * @return true if the input matches the provided hash, otherwise false
-     */
-    public static boolean verifyArgon2id(String input, SecretKey secretKey, String saltAndHash) {
-        return verifyArgon2id(input.getBytes(StandardCharsets.UTF_8), secretKey, saltAndHash);
-    }
-
-    /**
      * Verifies if the input string, along with a secret, matches the provided Argon2id hash.
      * This method uses the Argon2id password hashing algorithm for verification.
      * <p>
      * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
      *
-     * @param input the input string to be verified against the provided hash
-     * @param secret a byte array representing the additional secret used for hashing
+     * @param input       the input string to be verified against the provided hash
+     * @param secret      a byte array representing the additional secret used for hashing
      * @param saltAndHash the salt and Argon2id hash to verify the input and secret against
      * @return true if the input and secret match the provided Argon2id hash, false otherwise
      */
@@ -735,13 +720,28 @@ public final class CryptUtil {
      * <p>
      * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
      *
-     * @param input the plain text input to verify
-     * @param pepper the additional secret value used to harden the hashing process
+     * @param input       the plain text input to verify
+     * @param pepper      the additional secret value used to harden the hashing process
      * @param saltAndHash the combined string of salt and the Argon2id hash to validate against
      * @return true if the provided input and pepper produce the same hash as saltAndHash; false otherwise
      */
     public static boolean verifyArgon2id(String input, String pepper, String saltAndHash) {
         return verifyArgon2id(input.getBytes(StandardCharsets.UTF_8), pepper, saltAndHash);
+    }
+
+    /**
+     * Verifies an Argon2id hash by comparing the provided input, pepper, and the
+     * combined salt and hash string.
+     * <p>
+     * <strong>Note:</strong> This method requires bouncycastle to be on the classpath.
+     *
+     * @param input       the raw input data to be verified, typically a password, as a byte array
+     * @param pepper      the secret value added to the input for additional security, as a string
+     * @param saltAndHash the concatenation of the salt and hashed result to be used for verification, as a string
+     * @return true if the verification succeeds (i.e., the input matches the hash), false otherwise
+     */
+    public static boolean verifyArgon2id(byte[] input, String pepper, String saltAndHash) {
+        return verifyArgon2id(input, getPepperBytes(pepper), saltAndHash);
     }
 
 }

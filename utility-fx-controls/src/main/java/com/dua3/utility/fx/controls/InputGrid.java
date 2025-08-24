@@ -51,7 +51,7 @@ public class InputGrid extends GridPane {
             Stream.of(MARKER_INITIAL, MARKER_OK, MARKER_ERROR)
                     .map(m -> TextUtil.getTextDimension(m, LABEL_FONT).getDimension())
                     .reduce(Dimension2f::max)
-                    .orElse(Dimension2f.of(0,0))
+                    .orElse(Dimension2f.of(0, 0))
     );
 
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);

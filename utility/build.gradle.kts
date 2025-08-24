@@ -75,7 +75,8 @@ tasks.named<JavaCompile>("compileJava24Java") {
     })
 
     // Make sure the Java 24 compilation can access the original module info
-    options.compilerArgs.addAll(listOf(
+    options.compilerArgs.addAll(
+        listOf(
             "--patch-module", "com.dua3.utility=${sourceSets.main.get().output.asPath}"
         )
     )
@@ -92,9 +93,12 @@ tasks.named<JavaCompile>("compileTestJava24Java") {
     })
 
     // Make sure the Java 24 test compilation can access the original module info
-    options.compilerArgs.addAll(listOf(
-            "--patch-module", "com.dua3.utility=${sourceSets.main.get().output.asPath}:${sourceSets.getByName("java24").output.asPath}"
-        ))
+    options.compilerArgs.addAll(
+        listOf(
+            "--patch-module",
+            "com.dua3.utility=${sourceSets.main.get().output.asPath}:${sourceSets.getByName("java24").output.asPath}"
+        )
+    )
 
     // Set the release flag to 24
     options.release.set(24)

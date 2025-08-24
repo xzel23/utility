@@ -25,13 +25,13 @@ class SwingDocumentFilterTest {
     void testGetUppercaseInstance() {
         // Create an uppercase filter
         DocumentFilter filter = SwingDocumentFilter.getUppercaseInstance(Locale.US);
-        
+
         // Verify the filter was created
         assertNotNull(filter, "Filter should not be null");
-        
+
         // Test the filter with a mock document
         String result = processTextWithFilter(filter, "test");
-        
+
         // Verify the text was converted to uppercase
         assertEquals("TEST", result, "Text should be converted to uppercase");
     }
@@ -43,13 +43,13 @@ class SwingDocumentFilterTest {
     void testGetLowercaseInstance() {
         // Create a lowercase filter
         DocumentFilter filter = SwingDocumentFilter.getLowercaseInstance(Locale.US);
-        
+
         // Verify the filter was created
         assertNotNull(filter, "Filter should not be null");
-        
+
         // Test the filter with a mock document
         String result = processTextWithFilter(filter, "TEST");
-        
+
         // Verify the text was converted to lowercase
         assertEquals("test", result, "Text should be converted to lowercase");
     }
@@ -61,10 +61,10 @@ class SwingDocumentFilterTest {
     void testCustomProcessor() {
         // Create a filter with a custom processor that reverses the input
         DocumentFilter filter = new SwingDocumentFilter(s -> new StringBuilder(s).reverse().toString());
-        
+
         // Test the filter with a mock document
         String result = processTextWithFilter(filter, "hello");
-        
+
         // Verify the text was reversed
         assertEquals("olleh", result, "Text should be reversed");
     }
@@ -77,23 +77,23 @@ class SwingDocumentFilterTest {
         // Create filters with different locales
         DocumentFilter filterTurkish = SwingDocumentFilter.getUppercaseInstance(Locale.forLanguageTag("tr"));
         DocumentFilter filterUS = SwingDocumentFilter.getUppercaseInstance(Locale.US);
-        
+
         // Test the filters with a string containing 'i'
         // In Turkish locale, lowercase 'i' converts to uppercase 'İ' (with a dot)
         String resultTurkish = processTextWithFilter(filterTurkish, "istanbul");
         String resultUS = processTextWithFilter(filterUS, "istanbul");
-        
+
         // Verify the locale-specific conversion
         // Note: This test might not work as expected in all environments due to JVM locale handling
-        assertEquals(resultTurkish.toUpperCase(Locale.forLanguageTag("tr")), resultTurkish, 
+        assertEquals(resultTurkish.toUpperCase(Locale.forLanguageTag("tr")), resultTurkish,
                 "Text should be converted according to Turkish locale rules");
-        assertEquals(resultUS.toUpperCase(Locale.US), resultUS, 
+        assertEquals(resultUS.toUpperCase(Locale.US), resultUS,
                 "Text should be converted according to US locale rules");
     }
 
     /**
      * Helper method to process text with a filter.
-     * 
+     *
      * @param filter the filter to use
      * @param text the text to process
      * @return the processed text
@@ -101,11 +101,11 @@ class SwingDocumentFilterTest {
     private String processTextWithFilter(DocumentFilter filter, String text) {
         // Create a mock document and filter bypass
         MockFilterBypass bypass = new MockFilterBypass();
-        
+
         try {
             // Process the text using the filter
             filter.replace(bypass, 0, 0, text, null);
-            
+
             // Return the processed text
             return bypass.getProcessedText();
         } catch (BadLocationException e) {
@@ -141,7 +141,7 @@ class SwingDocumentFilterTest {
 
         /**
          * Get the processed text.
-         * 
+         *
          * @return the processed text
          */
         public String getProcessedText() {

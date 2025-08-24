@@ -11,7 +11,7 @@ import java.util.Map;
  */
 @FunctionalInterface
 public interface RichTextConverter<T> {
-    
+
     /**
      * Add font properties of to a properties map.
      *

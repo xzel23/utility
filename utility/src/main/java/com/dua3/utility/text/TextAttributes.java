@@ -24,7 +24,8 @@ import java.util.SortedSet;
  */
 public final class TextAttributes extends AbstractMap<String, @Nullable Object> {
 
-    record Entry(String getKey, @Nullable Object getValue) implements Map.Entry<String, @Nullable Object>, Comparable<Entry> {
+    record Entry(String getKey,
+                 @Nullable Object getValue) implements Map.Entry<String, @Nullable Object>, Comparable<Entry> {
         @Override
         public @Nullable Object setValue(@Nullable Object value) {
             throw new UnsupportedOperationException();
@@ -98,7 +99,7 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
      */
     public static TextAttributes of(Map<String, @Nullable Object> map) {
         List<Entry> entries = new ArrayList<>(map.size());
-        map.forEach((k, v) -> entries.addLast(new Entry(k,v)));
+        map.forEach((k, v) -> entries.addLast(new Entry(k, v)));
         return new TextAttributes(entries.toArray(Entry[]::new));
     }
 

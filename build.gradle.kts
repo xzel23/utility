@@ -64,10 +64,10 @@ tasks.register("printVersion") {
 tasks.register("showTaskIO") {
     description = "Shows the inputs and outputs of a specified Gradle task."
     group = HelpTasksPlugin.HELP_GROUP
-    
+
     // Define a property for the task name
     val taskName = project.findProperty("taskName") as String? ?: "help"
-    
+
     doLast {
         val task = project.tasks.findByName(taskName)
         if (task == null) {
@@ -75,9 +75,9 @@ tasks.register("showTaskIO") {
             project.tasks.names.sorted().forEach { println("  $it") }
             return@doLast
         }
-        
+
         println("\n=== Task: ${task.path} ===")
-        
+
         // Display task inputs
         println("\nINPUTS:")
         if (task.inputs.hasInputs) {
@@ -94,7 +94,7 @@ tasks.register("showTaskIO") {
             } catch (e: Exception) {
                 println("  Error accessing input properties: ${e.message}")
             }
-            
+
             println("\n  Input Files:")
             try {
                 val files = task.inputs.files.files
@@ -111,7 +111,7 @@ tasks.register("showTaskIO") {
         } else {
             println("  No declared inputs.")
         }
-        
+
         // Display task outputs
         println("\nOUTPUTS:")
         if (task.outputs.hasOutput) {
@@ -125,7 +125,7 @@ tasks.register("showTaskIO") {
                 } else {
                     println("    No output files.")
                 }
-                
+
                 println("\n  Output Directories:")
                 if (files.any { it.isDirectory }) {
                     files.filter { it.isDirectory }.forEach { dir ->
@@ -140,7 +140,7 @@ tasks.register("showTaskIO") {
         } else {
             println("  No declared outputs.")
         }
-        
+
         println("\n=== End of Task Info ===\n")
     }
 }
@@ -173,7 +173,10 @@ tasks.named<JacocoReport>("testCodeCoverageReport") {
 // SonarQube root project config
 sonar {
     properties {
-        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        )
         property("sonar.coverage.exclusions", "**/samples/**")
     }
 }

@@ -13,7 +13,7 @@ class RGBColorTest {
     void testConstructorWithRGB() {
         // Create a color with RGB values
         RGBColor color = new RGBColor(100, 150, 200);
-        
+
         // Test RGB components
         assertEquals(100, color.r());
         assertEquals(150, color.g());
@@ -25,7 +25,7 @@ class RGBColorTest {
     void testConstructorWithRGBA() {
         // Create a color with RGBA values
         RGBColor color = new RGBColor(100, 150, 200, 128);
-        
+
         // Test RGBA components
         assertEquals(100, color.r());
         assertEquals(150, color.g());
@@ -38,7 +38,7 @@ class RGBColorTest {
         // Create a color using valueOf
         int argb = 0x80C0FF00; // ARGB: 128, 192, 255, 0
         RGBColor color = RGBColor.valueOf(argb);
-        
+
         // Test RGBA components
         assertEquals(192, color.r());
         assertEquals(255, color.g());
@@ -50,7 +50,7 @@ class RGBColorTest {
     void testArgbMethod() {
         // Create a color
         RGBColor color = new RGBColor(192, 255, 0, 128);
-        
+
         // Test argb method
         int argb = color.argb();
         assertEquals(0x80C0FF00, argb);
@@ -61,7 +61,7 @@ class RGBColorTest {
         // Create a color using rgb method
         int rgb = 0x00C0FF00; // RGB: 192, 255, 0
         RGBColor color = RGBColor.rgb(rgb);
-        
+
         // Test RGB components
         assertEquals(192, color.r());
         assertEquals(255, color.g());
@@ -73,7 +73,7 @@ class RGBColorTest {
     void testAlpha() {
         // Create a color
         RGBColor color = new RGBColor(100, 150, 200, 128);
-        
+
         // Test alpha method
         assertEquals(128 / 255.0f, color.alpha(), 0.001f);
     }
@@ -82,7 +82,7 @@ class RGBColorTest {
     void testAf() {
         // Create a color
         RGBColor color = new RGBColor(100, 150, 200, 128);
-        
+
         // Test af method
         assertEquals(128 / 255.0f, color.af(), 0.001f);
     }
@@ -91,7 +91,7 @@ class RGBColorTest {
     void testBf() {
         // Create a color
         RGBColor color = new RGBColor(100, 150, 200);
-        
+
         // Test bf method
         assertEquals(200 / 255.0f, color.bf(), 0.001f);
     }
@@ -100,7 +100,7 @@ class RGBColorTest {
     void testGf() {
         // Create a color
         RGBColor color = new RGBColor(100, 150, 200);
-        
+
         // Test gf method
         assertEquals(150 / 255.0f, color.gf(), 0.001f);
     }
@@ -109,7 +109,7 @@ class RGBColorTest {
     void testRf() {
         // Create a color
         RGBColor color = new RGBColor(100, 150, 200);
-        
+
         // Test rf method
         assertEquals(100 / 255.0f, color.rf(), 0.001f);
     }
@@ -118,10 +118,10 @@ class RGBColorTest {
     void testBrighter() {
         // Create a color
         RGBColor color = new RGBColor(100, 150, 200);
-        
+
         // Get brighter color
         RGBColor brighterColor = color.brighter();
-        
+
         // Test that components are brighter
         assertTrue(brighterColor.r() > color.r());
         assertTrue(brighterColor.g() > color.g());
@@ -149,10 +149,10 @@ class RGBColorTest {
         // Create two identical colors
         RGBColor color1 = new RGBColor(100, 150, 200, 128);
         RGBColor color2 = new RGBColor(100, 150, 200, 128);
-        
+
         // Create a different color
         RGBColor color3 = new RGBColor(200, 150, 100, 128);
-        
+
         // Test equals
         assertEquals(color1, color2);
         assertNotEquals(color1, color3);
@@ -164,7 +164,7 @@ class RGBColorTest {
         // Create opaque and non-opaque colors
         RGBColor opaqueColor = new RGBColor(100, 150, 200, 255);
         RGBColor semiTransparentColor = new RGBColor(100, 150, 200, 128);
-        
+
         // Test isOpaque
         assertTrue(opaqueColor.isOpaque());
         assertFalse(semiTransparentColor.isOpaque());
@@ -175,7 +175,7 @@ class RGBColorTest {
         // Create transparent and non-transparent colors
         RGBColor transparentColor = new RGBColor(100, 150, 200, 0);
         RGBColor semiTransparentColor = new RGBColor(100, 150, 200, 128);
-        
+
         // Test isTransparent
         assertTrue(transparentColor.isTransparent());
         assertFalse(semiTransparentColor.isTransparent());
@@ -185,7 +185,7 @@ class RGBColorTest {
     void testToRGBColor() {
         // Create a color
         RGBColor color = new RGBColor(100, 150, 200);
-        
+
         // Test toRGBColor
         RGBColor result = color.toRGBColor();
         assertSame(color, result);
@@ -196,10 +196,10 @@ class RGBColorTest {
         // Create two identical colors
         RGBColor color1 = new RGBColor(100, 150, 200, 128);
         RGBColor color2 = new RGBColor(100, 150, 200, 128);
-        
+
         // Create a different color
         RGBColor color3 = new RGBColor(200, 150, 100, 128);
-        
+
         // Test hashCode
         assertEquals(color1.hashCode(), color2.hashCode());
         assertNotEquals(color1.hashCode(), color3.hashCode());
@@ -209,7 +209,7 @@ class RGBColorTest {
     void testToString() {
         // Create a color
         RGBColor color = new RGBColor(100, 150, 200);
-        
+
         // Test toString
         String str = color.toString();
         assertNotNull(str);

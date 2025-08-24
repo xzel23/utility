@@ -114,7 +114,7 @@ public interface InputControl<T> {
      * @return A {@link SimpleInputControl} containing a {@link TextField} for the formattable input and
      *         associated properties, including validation.
      */
-    static <U> SimpleInputControl<TextField,U> formattableInput(Class<U> cls, Format format, Supplier<@Nullable U> dflt, Function<@Nullable U, Optional<String>> validate) {
+    static <U> SimpleInputControl<TextField, U> formattableInput(Class<U> cls, Format format, Supplier<@Nullable U> dflt, Function<@Nullable U, Optional<String>> validate) {
         TextField control = new TextField();
         StringProperty textProperty = control.textProperty();
         Property<U> value = new SimpleObjectProperty<>();

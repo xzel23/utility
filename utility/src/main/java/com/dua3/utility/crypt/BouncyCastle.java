@@ -11,10 +11,10 @@ import java.util.Optional;
 
 /**
  * The {@code BouncyCastleInitializer} class provides functionality to ensure
- * that the BouncyCastle security provider is registered and available in 
- * the Java security environment. This class automates the registration 
- * of the BouncyCastle provider upon its usage and ensures it is properly 
- * initialized before any cryptographic operations relying on this provider 
+ * that the BouncyCastle security provider is registered and available in
+ * the Java security environment. This class automates the registration
+ * of the BouncyCastle provider upon its usage and ensures it is properly
+ * initialized before any cryptographic operations relying on this provider
  * can be performed.
  */
 public final class BouncyCastle {
@@ -67,22 +67,11 @@ public final class BouncyCastle {
      * if the provider is not available.
      *
      * @return an {@link Optional} containing the BouncyCastle security provider if available,
-     *         or an empty {@link Optional} if the provider is not registered.
+     * or an empty {@link Optional} if the provider is not registered.
      */
     @SuppressWarnings("OptionalContainsCollection")
     public static Optional<Provider> getProvider() {
         return Optional.ofNullable(ProviderHolder.PROVIDER);
-    }
-
-    /**
-     * Checks if the BouncyCastle security provider is available in the system.
-     * This method verifies whether the BouncyCastle provider has been successfully
-     * registered and is ready for use.
-     *
-     * @return {@code true} if the BouncyCastle provider is available; {@code false} otherwise
-     */
-    public static boolean isAvailable() {
-        return ProviderHolder.PROVIDER != null;
     }
 
     /**
@@ -100,5 +89,16 @@ public final class BouncyCastle {
         if (!isAvailable()) {
             throw new IllegalStateException("BouncyCastle provider not available");
         }
+    }
+
+    /**
+     * Checks if the BouncyCastle security provider is available in the system.
+     * This method verifies whether the BouncyCastle provider has been successfully
+     * registered and is ready for use.
+     *
+     * @return {@code true} if the BouncyCastle provider is available; {@code false} otherwise
+     */
+    public static boolean isAvailable() {
+        return ProviderHolder.PROVIDER != null;
     }
 }

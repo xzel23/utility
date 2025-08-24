@@ -164,7 +164,7 @@ public class NamedParameterStatement implements AutoCloseable {
                 case '\'' -> inSingleQuote = !inSingleQuote;
                 case '"' -> inDoubleQuote = !inDoubleQuote;
                 case ':' -> {
-                    if (!inSingleQuote && ! inDoubleQuote && i + 1 < length && Character.isJavaIdentifierStart(query.charAt(i + 1))) {
+                    if (!inSingleQuote && !inDoubleQuote && i + 1 < length && Character.isJavaIdentifierStart(query.charAt(i + 1))) {
                         int j = i + 2;
                         while (j < length && Character.isJavaIdentifierPart(query.charAt(j))) {
                             j++;

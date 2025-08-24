@@ -457,8 +457,8 @@ class XmlUtilTest {
         assertNotNull(normalized.get(1).namespaceContext());
 
         // Verify that both documents use the same namespace context (same namespace keys)
-        assertSame(normalized.get(0).namespaceContext(), normalized.get(1).namespaceContext(), 
-                  "Both documents should use the same namespace context");
+        assertSame(normalized.get(0).namespaceContext(), normalized.get(1).namespaceContext(),
+                "Both documents should use the same namespace context");
 
         // Verify the full contents of the first normalized document (XML_WITH_NAMESPACES)
         Document normalizedDoc1 = normalized.get(0).document();

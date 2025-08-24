@@ -59,7 +59,7 @@ class SwingFileFilterTest {
 
     /**
      * Test the getFilters method.
-     * 
+     *
      * Note: This test is modified to use a mock FileType since there might not be any
      * registered FileTypes for String.class with OpenMode.READ.
      */
@@ -160,7 +160,7 @@ class SwingFileFilterTest {
 
     /**
      * Helper method to find a filter for a specific extension.
-     * 
+     *
      * @param filters the list of filters to search
      * @param extension the extension to search for
      * @return the filter for the extension, or null if not found

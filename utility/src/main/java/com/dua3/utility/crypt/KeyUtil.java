@@ -274,7 +274,7 @@ public final class KeyUtil {
      * @return a {@link SecretKey} instance containing the derived key that is compatible with the specified algorithm
      * @throws IllegalArgumentException if the provided salt is shorter than 16 bytes
      */
-    public static SecretKey deriveSecretKey(SymmetricAlgorithm algorithm, byte[] salt, byte[] input, byte @Nullable[] info, InputBufferHandling inputBufferHandling) {
+    public static SecretKey deriveSecretKey(SymmetricAlgorithm algorithm, byte[] salt, byte[] input, byte @Nullable [] info, InputBufferHandling inputBufferHandling) {
         try {
             // Validate salt size
             if (salt.length < 16) {
@@ -311,7 +311,7 @@ public final class KeyUtil {
      * @param inputBufferHandling the handling mechanism for input buffers during key derivation
      * @return the derived secret key
      */
-    public static SecretKey deriveSecretKeyWithRandomSalt(SymmetricAlgorithm algorithm, byte[] input, byte @Nullable[] info, InputBufferHandling inputBufferHandling) {
+    public static SecretKey deriveSecretKeyWithRandomSalt(SymmetricAlgorithm algorithm, byte[] input, byte @Nullable [] info, InputBufferHandling inputBufferHandling) {
         byte[] salt = RandomUtil.generateRandomBytes(32); // 256-bit salt
         return deriveSecretKey(algorithm, salt, input, info, inputBufferHandling);
     }

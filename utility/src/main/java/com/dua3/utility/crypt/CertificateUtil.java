@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -50,18 +49,18 @@ public final class CertificateUtil {
      * Creates a self-signed X.509 certificate using the provided key pair, subject distinguished name,
      * validity duration, and a flag to enable Certificate Authority (CA) settings.
      *
-     * @param keyPair     the key pair containing the private key used to sign the certificate
-     *                    and the public key embedded within the certificate
-     * @param subject     the distinguished name (DN) of the certificate's subject, formatted as
-     *                    a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
+     * @param keyPair      the key pair containing the private key used to sign the certificate
+     *                     and the public key embedded within the certificate
+     * @param subject      the distinguished name (DN) of the certificate's subject, formatted as
+     *                     a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
      * @param validityDays the number of days from the current date for which the certificate
      *                     will be valid
      * @param enableCA     a boolean flag indicating whether the certificate should include settings
-     *                    for acting as a Certificate Authority (CA). If {@code true}, the certificate
-     *                    will be configured as a CA.
+     *                     for acting as a Certificate Authority (CA). If {@code true}, the certificate
+     *                     will be configured as a CA.
      * @return an array of X.509 certificates, with the first certificate being the newly created
-     *         self-signed certificate. The array may include additional certificates if the chain
-     *         requires it.
+     * self-signed certificate. The array may include additional certificates if the chain
+     * requires it.
      * @throws GeneralSecurityException if an error occurs during the certificate generation
      *                                  or signing process
      */
@@ -95,7 +94,7 @@ public final class CertificateUtil {
      * @param parentCertificateChain the parent X.509 certificate to include in the generated certificate's
      *                               chain, establishing a chain of trust
      * @return an array of X.509 certificates, with the first certificate being the newly created
-     *         certificate, followed by the specified parent certificate(s) in the chain
+     * certificate, followed by the specified parent certificate(s) in the chain
      * @throws GeneralSecurityException if an error occurs during the certificate generation
      *                                  or signing process
      */
@@ -136,6 +135,24 @@ public final class CertificateUtil {
     }
 
     /**
+     * Validates whether the provided distinguished name (DN) subject string is in a valid
+     * format for use in X.509 certificates. If the subject is invalid, a
+     * {@link GeneralSecurityException} is thrown.
+     *
+     * @param subject the distinguished name (DN) of the certificate's subject, formatted as
+     *                a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
+     * @throws GeneralSecurityException if the subject DN format is invalid
+     */
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    private static void ensureDNSubjectIsValid(String subject) throws GeneralSecurityException {
+        try {
+            new javax.security.auth.x500.X500Principal(subject);
+        } catch (IllegalArgumentException e) {
+            throw new GeneralSecurityException("invalid subject DN format: " + subject, e);
+        }
+    }
+
+    /**
      * Ensures that the provided X.509 certificate is valid by checking its validity dates.
      * If the certificate is expired or not yet valid, a {@link GeneralSecurityException} is thrown.
      *
@@ -166,24 +183,6 @@ public final class CertificateUtil {
         boolean[] keyUsage = parentCertificate.getKeyUsage();
         if (keyUsage != null && !keyUsage[5]) { // keyCertSign bit
             throw new GeneralSecurityException("certificate cannot sign certificates");
-        }
-    }
-
-    /**
-     * Validates whether the provided distinguished name (DN) subject string is in a valid
-     * format for use in X.509 certificates. If the subject is invalid, a
-     * {@link GeneralSecurityException} is thrown.
-     *
-     * @param subject the distinguished name (DN) of the certificate's subject, formatted as
-     *                a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
-     * @throws GeneralSecurityException if the subject DN format is invalid
-     */
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    private static void ensureDNSubjectIsValid(String subject) throws GeneralSecurityException {
-        try {
-            new javax.security.auth.x500.X500Principal(subject);
-        } catch (IllegalArgumentException e) {
-            throw new GeneralSecurityException("invalid subject DN format: " + subject, e);
         }
     }
 
@@ -227,20 +226,16 @@ public final class CertificateUtil {
     }
 
     /**
-     * Reads and parses an X.509 certificate from a PEM-encoded string.
+     * Reads and parses an X.509 certificate from the provided input stream.
      *
-     * @param pemData the PEM-encoded string containing the X.509 certificate data
+     * @param in the input stream containing the DER-encoded X.509 certificate data
      * @return an {@link X509Certificate} object representing the parsed certificate
      * @throws GeneralSecurityException if an error occurs while parsing the certificate
      *                                  or if the provided data is not a valid X.509 certificate
      */
-    public static X509Certificate toX509Certificate(String pemData) throws GeneralSecurityException {
-        try (InputStream in = IoUtil.stringInputStream(pemData)) {
-            return readX509Certificate(in);
-        } catch (IOException e) {
-            // this should never happen
-            throw new UncheckedIOException(e);
-        }
+    public static X509Certificate readX509Certificate(InputStream in) throws GeneralSecurityException {
+        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+        return (X509Certificate) certFactory.generateCertificate(in);
     }
 
     /**
@@ -253,7 +248,7 @@ public final class CertificateUtil {
      *                Each certificate should be enclosed between "-----BEGIN CERTIFICATE-----"
      *                and "-----END CERTIFICATE-----".
      * @return an array of {@link X509Certificate} objects representing the certificate chain,
-     *         ordered from the leaf certificate to the root certificate.
+     * ordered from the leaf certificate to the root certificate.
      * @throws GeneralSecurityException if there is an issue parsing the certificates,
      *                                  validating the certificate chain, or if the input PEM data
      *                                  is invalid or improperly formatted.
@@ -293,16 +288,20 @@ public final class CertificateUtil {
     }
 
     /**
-     * Reads and parses an X.509 certificate from the provided input stream.
+     * Reads and parses an X.509 certificate from a PEM-encoded string.
      *
-     * @param in the input stream containing the DER-encoded X.509 certificate data
+     * @param pemData the PEM-encoded string containing the X.509 certificate data
      * @return an {@link X509Certificate} object representing the parsed certificate
      * @throws GeneralSecurityException if an error occurs while parsing the certificate
      *                                  or if the provided data is not a valid X.509 certificate
      */
-    public static X509Certificate readX509Certificate(InputStream in) throws GeneralSecurityException {
-        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
-        return (X509Certificate) certFactory.generateCertificate(in);
+    public static X509Certificate toX509Certificate(String pemData) throws GeneralSecurityException {
+        try (InputStream in = IoUtil.stringInputStream(pemData)) {
+            return readX509Certificate(in);
+        } catch (IOException e) {
+            // this should never happen
+            throw new UncheckedIOException(e);
+        }
     }
 
     /**
@@ -326,9 +325,9 @@ public final class CertificateUtil {
             T parentCert = certificates[i + 1];
 
             X500Principal issuerDN =
-                    ((X509Certificate)currentCert).getIssuerX500Principal();
+                    ((X509Certificate) currentCert).getIssuerX500Principal();
             X500Principal subjectDN =
-                    ((X509Certificate)parentCert).getSubjectX500Principal();
+                    ((X509Certificate) parentCert).getSubjectX500Principal();
             if (!Objects.equals(issuerDN, subjectDN)) {
                 throw new CertificateException(
                         "issuer of certificate %s ('%s') does not match parent certificate subject '%S'".formatted(
@@ -352,6 +351,28 @@ public final class CertificateUtil {
     }
 
     /**
+     * Converts one or more certificates into their PEM-encoded string representation.
+     * <p>
+     * <strong>Note:</strong> Most tools only support X509 certificates
+     *
+     * @param <T>          the generic certificate type
+     * @param certificates one or more X509 certificates to be converted to PEM format
+     * @return a string containing the PEM-encoded representation of the provided certificates
+     * @throws CertificateEncodingException if an encoding error occurs while converting the certificates
+     * @throws UncheckedIOException         if an unexpected I/O exception happens during the operation
+     */
+    @SafeVarargs
+    public static <T extends Certificate> String toPem(T... certificates) throws CertificateEncodingException {
+        StringBuilder sb = new StringBuilder(certificates.length * 1600);
+        try {
+            return writePem(sb, certificates).toString();
+        } catch (IOException e) {
+            // this should never happen
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
      * Writes a PEM-encoded representation of a chain of certificates to the provided writer.
      * Each certificate in the chain is written enclosed between "-----BEGIN CERTIFICATE-----"
      * and "-----END CERTIFICATE-----" markers.
@@ -367,9 +388,9 @@ public final class CertificateUtil {
      *                     chain to be written. Each certificate in the array is encoded and written
      *                     in the order specified.
      * @return the appendable used for output
-     * @throws IOException                 if an I/O error occurs while writing to the writer.
+     * @throws IOException                  if an I/O error occurs while writing to the writer.
      * @throws CertificateEncodingException if an error occurs while encoding a certificate to the
-     *                                       DER format for PEM conversion.
+     *                                      DER format for PEM conversion.
      */
     @SafeVarargs
     public static <T extends Certificate, U extends Appendable> U writePem(U app, T... certificates) throws IOException, CertificateEncodingException {
@@ -383,28 +404,6 @@ public final class CertificateUtil {
                     .append("\n-----END CERTIFICATE-----\n");
         }
         return app;
-    }
-
-    /**
-     * Converts one or more certificates into their PEM-encoded string representation.
-     * <p>
-     * <strong>Note:</strong> Most tools only support X509 certificates
-     *
-     * @param <T> the generic certificate type
-     * @param certificates one or more X509 certificates to be converted to PEM format
-     * @return a string containing the PEM-encoded representation of the provided certificates
-     * @throws CertificateEncodingException if an encoding error occurs while converting the certificates
-     * @throws UncheckedIOException if an unexpected I/O exception happens during the operation
-     */
-    @SafeVarargs
-    public static <T extends Certificate> String toPem(T... certificates) throws CertificateEncodingException {
-        StringBuilder sb = new StringBuilder(certificates.length * 1600);
-        try {
-            return writePem(sb, certificates).toString();
-        } catch (IOException e) {
-            // this should never happen
-            throw new UncheckedIOException(e);
-        }
     }
 
     /**

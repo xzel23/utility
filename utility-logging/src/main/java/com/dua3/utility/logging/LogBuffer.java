@@ -173,7 +173,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
             totalAdded.incrementAndGet();
             totalRemoved.addAndGet(removed);
         }
-        
+
         // Notify listeners outside the buffer synchronization to avoid deadlock
         listeners.forEach(listener -> listener.entries(removed, 1));
     }
@@ -187,7 +187,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
             totalRemoved.addAndGet(buffer.size());
             buffer.clear();
         }
-        
+
         // Notify listeners outside the buffer synchronization to avoid deadlock
         listeners.forEach(LogBufferListener::clear);
     }

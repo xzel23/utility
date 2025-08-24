@@ -132,7 +132,7 @@ class StreamGathererUtilTest {
         // Verify results
         Assertions.assertEquals(0, result.size());
     }
-    
+
     // Helper accumulator that creates a new group when currentGroup is null
     private static BiFunction<List<Integer>, Integer, List<Integer>> listAccumulator(Supplier<List<Integer>> supplier) {
         return (group, element) -> {

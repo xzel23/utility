@@ -98,7 +98,7 @@ class NamedParameterStatementAdditionalTest {
 
                 @Override
                 public Object getArray(long index, int count) throws SQLException {
-                    return Arrays.copyOfRange(data, (int)index - 1, (int)index - 1 + count);
+                    return Arrays.copyOfRange(data, (int) index - 1, (int) index - 1 + count);
                 }
 
                 @Override

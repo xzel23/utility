@@ -130,7 +130,7 @@ public final class TextUtil {
      * @return the Unicode code point of the parsed entity, or -1 if the entity is not recognized.
      */
     private static int parseEntity(CharSequence entity) {
-        if (startsWith(entity,"#")) {
+        if (startsWith(entity, "#")) {
             try {
                 if (startsWith(entity, "#x")) {
                     return Integer.parseInt(entity, 2, entity.length(), 16);
@@ -658,6 +658,7 @@ public final class TextUtil {
 
         return -1;
     }
+
     /**
      * Test whether a {@link CharSequence} starts with another {@link CharSequence}.
      *
@@ -1341,7 +1342,7 @@ public final class TextUtil {
      * @return an array of substrings obtained by splitting the input string on the specified delimiter,
      *         excluding delimiters that are escaped with a backslash
      */
-    public static String [] splitOnUnescapedDelimiter(CharSequence s, char delimiter) {
+    public static String[] splitOnUnescapedDelimiter(CharSequence s, char delimiter) {
         return createUnescapedDelimiterPattern(delimiter).split(s);
     }
 

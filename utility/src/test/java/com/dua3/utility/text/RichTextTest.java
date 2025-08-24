@@ -381,25 +381,29 @@ class RichTextTest {
         assertEquals(expected, actual);
     }
 
-    @Test // not a parameterized test because it expects an exception
+    @Test
+        // not a parameterized test because it expects an exception
     void testReplaceAll_MalformedRegex() {
         RichText input = RichText.valueOf("Hello, world!");
         Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceAll("[ol", RichText.valueOf("!")));
     }
 
-    @Test // not a parameterized test because it expects an exception
+    @Test
+        // not a parameterized test because it expects an exception
     void testReplaceAllStringArgument_MalformedRegex() {
         RichText input = RichText.valueOf("Hello, world!");
         Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceAll("[ol", "!"));
     }
 
-    @Test // not a parameterized test because it expects an exception
+    @Test
+        // not a parameterized test because it expects an exception
     void testReplaceFirst_MalformedRegex() {
         RichText input = RichText.valueOf("Hello, world!");
         Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceFirst("[ol", RichText.valueOf("!")));
     }
 
-    @Test // not a parameterized test because it expects an exception
+    @Test
+        // not a parameterized test because it expects an exception
     void testReplaceFirstStringArgument_MalformedRegex() {
         RichText input = RichText.valueOf("Hello, world!");
         Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceFirst("[ol", "!"));

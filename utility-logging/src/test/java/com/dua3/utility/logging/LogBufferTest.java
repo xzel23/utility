@@ -68,7 +68,7 @@ class LogBufferTest {
 
         // Verify the entries are the most recent ones (the last TEST_CAPACITY entries)
         for (int i = 0; i < TEST_CAPACITY; i++) {
-            assertEquals("Message " + (i + 5), state.entries()[i].message(), 
+            assertEquals("Message " + (i + 5), state.entries()[i].message(),
                     "Entry at index " + i + " should be Message " + (i + 5));
         }
     }
@@ -167,7 +167,7 @@ class LogBufferTest {
         // Verify the array
         assertEquals(5, array.length, "Array should contain 5 entries");
         for (int i = 0; i < 5; i++) {
-            assertEquals(entries.get(i).message(), array[i].message(), 
+            assertEquals(entries.get(i).message(), array[i].message(),
                     "Entry at index " + i + " should match the original entry");
         }
     }
@@ -185,12 +185,12 @@ class LogBufferTest {
         // Get entries by index
         for (int i = 0; i < 5; i++) {
             LogEntry entry = logBuffer.get(i);
-            assertEquals(entries.get(i).message(), entry.message(), 
+            assertEquals(entries.get(i).message(), entry.message(),
                     "Entry at index " + i + " should match the original entry");
         }
 
         // Test index out of bounds
-        assertThrows(IndexOutOfBoundsException.class, () -> logBuffer.get(5), 
+        assertThrows(IndexOutOfBoundsException.class, () -> logBuffer.get(5),
                 "Should throw IndexOutOfBoundsException for invalid index");
     }
 
@@ -207,16 +207,16 @@ class LogBufferTest {
         // Verify the sublist
         assertEquals(5, subList.size(), "Sublist should contain 5 entries");
         for (int i = 0; i < 5; i++) {
-            assertEquals("Message " + (i + 2), subList.get(i).message(), 
+            assertEquals("Message " + (i + 2), subList.get(i).message(),
                     "Entry at index " + i + " should be Message " + (i + 2));
         }
 
         // Test invalid indices
-        assertThrows(IndexOutOfBoundsException.class, () -> logBuffer.subList(-1, 5), 
+        assertThrows(IndexOutOfBoundsException.class, () -> logBuffer.subList(-1, 5),
                 "Should throw IndexOutOfBoundsException for negative fromIndex");
-        assertThrows(IndexOutOfBoundsException.class, () -> logBuffer.subList(5, 11), 
+        assertThrows(IndexOutOfBoundsException.class, () -> logBuffer.subList(5, 11),
                 "Should throw IndexOutOfBoundsException for toIndex > size");
-        assertThrows(IndexOutOfBoundsException.class, () -> logBuffer.subList(7, 5), 
+        assertThrows(IndexOutOfBoundsException.class, () -> logBuffer.subList(7, 5),
                 "Should throw IndexOutOfBoundsException for fromIndex > toIndex");
     }
 
@@ -445,7 +445,7 @@ class LogBufferTest {
         // Verify the throwable was deserialized
         assertNotNull(newEntry.throwable(), "Entry throwable should not be null");
         assertTrue(newEntry.throwable() instanceof RuntimeException, "Throwable should be a RuntimeException");
-        assertTrue(newEntry.throwable().getMessage().contains("Test exception"), 
+        assertTrue(newEntry.throwable().getMessage().contains("Test exception"),
                 "Throwable message should contain the original exception message");
 
         ois.close();
@@ -531,25 +531,25 @@ class LogBufferTest {
         StringBuilder emptyResult = new StringBuilder();
         logBuffer.appendTo(emptyResult);
         assertEquals("", emptyResult.toString(), "Appending empty buffer should result in empty string");
-        
+
         // Add some entries
         for (int i = 0; i < 5; i++) {
             logBuffer.handleEntry(createTestLogEntry("Message " + i));
         }
-        
+
         // Test with multiple entries
         StringBuilder result = new StringBuilder();
         logBuffer.appendTo(result);
-        
+
         // Verify each entry was appended
         LogEntry[] entries = logBuffer.toArray();
         for (LogEntry entry : entries) {
-            assertTrue(result.toString().contains(entry.toString()), 
+            assertTrue(result.toString().contains(entry.toString()),
                     "Result should contain entry: " + entry);
-            assertTrue(result.toString().contains(entry.message()), 
+            assertTrue(result.toString().contains(entry.message()),
                     "Result should contain message: " + entry.message());
         }
-        
+
         // Count newlines to verify all entries were appended
         int newlineCount = 0;
         for (int i = 0; i < result.length(); i++) {
@@ -558,14 +558,14 @@ class LogBufferTest {
             }
         }
         assertEquals(entries.length, newlineCount, "Number of newlines should match number of entries");
-        
+
         // Test with entry containing special characters
         logBuffer.clear();
         logBuffer.handleEntry(createTestLogEntry("Special chars: \n\t\r\f\\\""));
-        
+
         StringBuilder specialResult = new StringBuilder();
         logBuffer.appendTo(specialResult);
-        assertTrue(specialResult.toString().contains("Special chars:"), 
+        assertTrue(specialResult.toString().contains("Special chars:"),
                 "Result should contain the special characters message");
     }
 

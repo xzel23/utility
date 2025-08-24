@@ -107,7 +107,8 @@ public record Param<T>(
             this.a2b = strings -> switch (strings.length) {
                 case 0 -> null;
                 case 1 -> elementConverter.convert(strings[0]);
-                default -> throw new IllegalArgumentException("Expected array length 0 or 1, got %d".formatted(strings.length));
+                default ->
+                        throw new IllegalArgumentException("Expected array length 0 or 1, got %d".formatted(strings.length));
             };
 
             this.b2a = v -> v == null ? ZERO_LENGTH_STRING_ARRAY : new String[]{elementConverter.convertBack(v)};

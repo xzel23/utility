@@ -1,4 +1,3 @@
-
 package com.dua3.utility.swing;
 
 import com.dua3.utility.options.ArgumentsParser;

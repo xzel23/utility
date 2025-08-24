@@ -67,7 +67,7 @@ class Scale2fTest {
         Scale2f scale1 = new Scale2f(2.0f, 3.0f);
         Scale2f scale2 = new Scale2f(4.0f, 5.0f);
         Scale2f result = scale1.multiply(scale2);
-        
+
         assertEquals(8.0f, result.sx(), "Multiplied sx should be 8.0");
         assertEquals(15.0f, result.sy(), "Multiplied sy should be 15.0");
     }
@@ -79,7 +79,7 @@ class Scale2fTest {
     void testMultiplyWithTwoFloats() {
         Scale2f scale = new Scale2f(2.0f, 3.0f);
         Scale2f result = scale.multiply(4.0f, 5.0f);
-        
+
         assertEquals(8.0f, result.sx(), "Multiplied sx should be 8.0");
         assertEquals(15.0f, result.sy(), "Multiplied sy should be 15.0");
     }
@@ -91,7 +91,7 @@ class Scale2fTest {
     void testMultiplyWithOneFloat() {
         Scale2f scale = new Scale2f(2.0f, 3.0f);
         Scale2f result = scale.multiply(4.0f);
-        
+
         assertEquals(8.0f, result.sx(), "Multiplied sx should be 8.0");
         assertEquals(12.0f, result.sy(), "Multiplied sy should be 12.0");
     }

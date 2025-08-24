@@ -172,7 +172,7 @@ class RingBufferReversedTest {
         assertEquals(6, buffer.get(2));
 
         // The reversed collection should contain 5, 4, 3, 2, 1, 6, 7, 8
-        assertArrayEquals(new Object[]{5, 4, 3, 2, 1, 6, 7,8}, reversed.toArray());
+        assertArrayEquals(new Object[]{5, 4, 3, 2, 1, 6, 7, 8}, reversed.toArray());
     }
 
     @Test

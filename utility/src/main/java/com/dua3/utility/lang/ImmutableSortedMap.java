@@ -64,7 +64,7 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
      * @return an empty {@code ImmutableSortedMap} instance
      */
     @SuppressWarnings("unchecked")
-    public static <K extends Comparable<K>, V extends @Nullable Object> ImmutableSortedMap<K,V> emptyMap() {
+    public static <K extends Comparable<K>, V extends @Nullable Object> ImmutableSortedMap<K, V> emptyMap() {
         return (ImmutableSortedMap<K, V>) EMPTY_MAP;
     }
 
@@ -78,7 +78,7 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
         this(
                 getArrayOfEntries(map, map instanceof SortedMap<?, ?> sm ? (Comparator<? super K>) sm.comparator() : null),
                 map instanceof SortedMap<?, ?> sm ? (Comparator<? super K>) sm.comparator() : null,
-                map instanceof SortedMap<?,?>
+                map instanceof SortedMap<?, ?>
         );
     }
 
@@ -128,7 +128,7 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
             Map<K, V> map,
             @Nullable Comparator<? super K> comparator
     ) {
-        List<Entry<K,V>> entries = new ArrayList<>(map.size());
+        List<Entry<K, V>> entries = new ArrayList<>(map.size());
         map.forEach((k, v) -> entries.add(new Entry<>(k, v, comparator)));
         return entries.toArray(Entry[]::new);
     }
@@ -212,7 +212,7 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
 
     @Override
     public boolean containsValue(Object value) {
-        for (Object v: values()) {
+        for (Object v : values()) {
             if (Objects.equals(v, value)) {
                 return true;
             }
@@ -281,8 +281,9 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
             case null -> false;
             case ImmutableSortedMap<?, ?> ism ->
                     Objects.deepEquals(keys, ism.keys) && Objects.deepEquals(values, ism.values);
-            case SortedMap<?,?> sm -> Objects.deepEquals(keys, sm.keySet().toArray()) && Objects.deepEquals(values, sm.values().toArray());
-            case Map<?,?> m -> {
+            case SortedMap<?, ?> sm ->
+                    Objects.deepEquals(keys, sm.keySet().toArray()) && Objects.deepEquals(values, sm.values().toArray());
+            case Map<?, ?> m -> {
                 if (m.size() != keys.length) {
                     yield false;
                 }

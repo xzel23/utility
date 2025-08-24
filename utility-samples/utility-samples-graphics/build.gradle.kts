@@ -47,8 +47,16 @@ fun createJavaFxRunTask(taskName: String, mainClassName: String, description: St
     }
 }
 
-createJavaFxRunTask("runFxGraphicsSample", "com.dua3.utility.samples.graphics.FxGraphicsSample", "Run the FxGraphicsSample application.")
-createJavaFxRunTask("runFxTextRendering", "com.dua3.utility.samples.graphics.FxTextRendering", "Run the FxTextRendering application.")
+createJavaFxRunTask(
+    "runFxGraphicsSample",
+    "com.dua3.utility.samples.graphics.FxGraphicsSample",
+    "Run the FxGraphicsSample application."
+)
+createJavaFxRunTask(
+    "runFxTextRendering",
+    "com.dua3.utility.samples.graphics.FxTextRendering",
+    "Run the FxTextRendering application."
+)
 
 tasks.register<JavaExec>("runSwingGraphicsSample") {
     description = "Run the SwingGraphicsSample application."

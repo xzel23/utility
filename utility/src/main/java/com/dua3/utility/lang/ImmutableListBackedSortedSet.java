@@ -83,7 +83,7 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
 
     @Override
     public boolean equals(@Nullable Object o) {
-        return switch(o) {
+        return switch (o) {
             case ImmutableListBackedSortedSet<?> other when Objects.equals(other.comparator(), comparator()) ->
                     Arrays.equals(elements, other.elements);
             case SortedSet<?> other when Objects.equals(other.comparator(), comparator()) ->
@@ -260,7 +260,7 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
     @Override
     public <T1> T1[] toArray(T1[] a) {
         T1[] r = a.length >= elements.length ? a :
-                (T1[])java.lang.reflect.Array
+                (T1[]) java.lang.reflect.Array
                         .newInstance(a.getClass().getComponentType(), elements.length);
 
         int n = Math.min(elements.length, r.length);
@@ -330,7 +330,7 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
 
         @Override
         public boolean equals(@Nullable Object o) {
-            return switch(o) {
+            return switch (o) {
                 case ReversedImmutableSortedListSet<?> other when Objects.equals(other.comparator(), comparator()) ->
                         other.original.equals(original);
                 case ImmutableListBackedSortedSet<?> other when Objects.equals(other.comparator(), comparator()) ->

@@ -1,8 +1,8 @@
 package com.dua3.utility.data;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import com.dua3.utility.lang.LangUtil;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -45,50 +45,6 @@ import java.util.stream.Collectors;
 @SuppressWarnings("BoundedWildcard")
 public final class DataUtil {
 
-    // Utility class - private constructor
-    private DataUtil() {
-    }
-
-    /**
-     * Convert an object to a different class.
-     * <p>
-     * Conversion works as follows:
-     * <ul>
-     *     <li> if value is {@code null}, {@code null} is returned;
-     *     <li> if the target class is assignment compatible, a simple cast is performed;
-     *     <li> if the target class is {@link String}, {@link Object#toString()} is used;
-     *     <li> if the target class is an integer type and the value is of type double, a conversion without loss of precision is tried;
-     *     <li> if the value is of type {@link String} and the target class provides a method {@code public static T valueOf(String)}, that method is invoked;
-     *     <li> otherwise an exception is thrown.
-     * </ul>
-     *
-     * @param value       the object to convert
-     * @param targetClass the target class
-     * @param <T>         target type
-     * @return the object converted to the target class
-     */
-    public static <T extends @Nullable Object> T convert(@Nullable Object value, Class<T> targetClass) {
-        return convert(value, targetClass, false);
-    }
-
-    /**
-     * A functional interface that defines a method for attempting to convert an object of one type
-     * to another target type.
-     */
-    @FunctionalInterface
-    private interface TryConvert {
-        /**
-         * Attempts to convert an object of the specified source class to the target class.
-         * If the conversion is not possible, returns {@code null}.
-         *
-         * @param targetClass the target class to which the object should be converted
-         * @param sourceClass the source class of the object being converted
-         * @param value the object to be converted
-         * @return the converted object if conversion is successful; otherwise {@code null}
-         */
-        @Nullable Object tryConvert(Class<?> targetClass, Class<?> sourceClass, Object value);
-    }
-
     /**
      * An array of {@code TryConvert} instances that define various conversion strategies between types.
      * These converters handle a wide range of type conversions, including compatibility checks,
@@ -130,6 +86,126 @@ public final class DataUtil {
             // (reason for iterating methods: getDeclaredMethod() will throw if vOf is not present)
             DataUtil::convertUsingValueOf,
     };
+
+    // Utility class - private constructor
+    private DataUtil() {
+    }
+
+    /**
+     * Convert an object to a different class.
+     * <p>
+     * Conversion works as follows:
+     * <ul>
+     *     <li> if value is {@code null}, {@code null} is returned;
+     *     <li> if the target class is assignment compatible, a simple cast is performed;
+     *     <li> if the target class is {@link String}, {@link Object#toString()} is used;
+     *     <li> if the target class is an integer type and the value is of type double, a conversion without loss of precision is tried;
+     *     <li> if the value is of type {@link String} and the target class provides a method {@code public static T valueOf(String)}, that method is invoked;
+     *     <li> otherwise an exception is thrown.
+     * </ul>
+     *
+     * @param value       the object to convert
+     * @param targetClass the target class
+     * @param <T>         target type
+     * @return the object converted to the target class
+     */
+    public static <T extends @Nullable Object> T convert(@Nullable Object value, Class<T> targetClass) {
+        return convert(value, targetClass, false);
+    }
+
+    /**
+     * Convert an object to a different class.
+     * <p>
+     * Conversion works as follows:
+     * <ul>
+     *     <li> if value is {@code null}, {@code null} is returned;
+     *     <li> if the target class is assignment compatible, a simple cast is performed;
+     *     <li> if the target class is {@link String}, {@link Object#toString()} is used;
+     *     <li> if the target class is an integer type and the value is of type double, a conversion without loss of precision is tried;
+     *     <li> if the target class is {@link LocalDate} and the source class is {@link String}, use DateTimeFormatter.ISO_DATE;
+     *     <li> if the target class is {@link java.time.LocalDateTime} and the source class is {@link String}, use DateTimeFormatter.ISO_DATE_TIME;
+     *     <li> if the source and target classes is any of URI, URL, File, Path, the standard conversion rules are applied;
+     *     <li> if the source class is {@link String} and the target class is any of URI, URL, File, Path, the standard conversion rules are applied;
+     *     <li> if the target class provides a method {@code public static T valueOf(U)} and {value instanceof U}, that method is invoked;
+     *     <li> if {@code useConstructor} is {@code true} and the target class provides a constructor taking a single argument of value's type, that constructor is used;
+     *     <li> otherwise an exception is thrown.
+     * </ul>
+     *
+     * @param value          the object to convert
+     * @param targetClass    the target class
+     * @param useConstructor flag whether a public constructor {@code T(U)} should be used in conversion if present where `U` is the value's class
+     * @param <T>            target type
+     * @return the object converted to the target class
+     */
+    @SuppressWarnings("unchecked") // types are checked with isAssignable()
+    public static <T> @Nullable T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
+        // null -> null
+        if (value == null) {
+            return null;
+        }
+
+        Class<?> sourceClass = value.getClass();
+
+        for (var c : CONVERTERS) {
+            Object r = c.tryConvert(targetClass, sourceClass, value);
+            if (r != null) {
+                return (T) r;
+            }
+        }
+
+        // ... or provides a public constructor taking the value's class (and is enabled by parameter)
+        if (useConstructor) {
+            Object r = convertUsingConstructor(targetClass, sourceClass, value);
+            if (r != null) {
+                return (T) r;
+            }
+        }
+
+        throw new ConversionException(sourceClass, targetClass, "unsupported conversion");
+    }
+
+    /**
+     * Converts the given value into an instance of the target class using a public single-argument constructor
+     * that matches the provided source class. If no suitable constructor is found, or if an exception occurs
+     * during instantiation, the method either returns null or throws a {@link ConversionException}.
+     *
+     * @param targetClass the class to which the value should be converted
+     * @param sourceClass the class of the source value that matches the constructor parameter type
+     * @param value       the source object to convert
+     * @return an instance of the target class created using the matched constructor, or null if no matching constructor exists
+     * @throws ConversionException if there is an error invoking the constructor
+     */
+    private static @Nullable Object convertUsingConstructor(Class<?> targetClass, Class<?> sourceClass, @NonNull Object value) {
+        // try exact match
+        for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
+            if (constructor.getModifiers() == (Modifier.PUBLIC)
+                    && constructor.getParameterCount() == 1
+                    && constructor.getParameterTypes()[0] == sourceClass
+            ) {
+                try {
+                    return constructor.newInstance(value);
+                } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                    throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
+                }
+            }
+        }
+
+        // else try primitives
+        for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
+            try {
+                if (constructor.getModifiers() == (Modifier.PUBLIC)
+                        && constructor.getParameterCount() == 1
+                        && LangUtil.isWrapperFor(sourceClass, constructor.getParameterTypes()[0])
+                ) {
+                    return constructor.newInstance(value);
+                }
+            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Converts the provided object to a Float if the target class is Float and the source class
@@ -182,7 +258,7 @@ public final class DataUtil {
      * @param s the source class type of the provided object
      * @param v the value to be converted
      * @return the converted LocalDateTime object if the target class is LocalDateTime and the source
-     *         class is assignable from CharSequence, or null otherwise
+     * class is assignable from CharSequence, or null otherwise
      */
     private static @Nullable Object convertToLocalDateTime(Class<?> t, Class<?> s, Object v) {
         return t == LocalDateTime.class && CharSequence.class.isAssignableFrom(s)
@@ -226,49 +302,6 @@ public final class DataUtil {
     }
 
     /**
-     * Converts the given value into an instance of the target class using a public single-argument constructor
-     * that matches the provided source class. If no suitable constructor is found, or if an exception occurs
-     * during instantiation, the method either returns null or throws a {@link ConversionException}.
-     *
-     * @param targetClass the class to which the value should be converted
-     * @param sourceClass the class of the source value that matches the constructor parameter type
-     * @param value the source object to convert
-     * @return an instance of the target class created using the matched constructor, or null if no matching constructor exists
-     * @throws ConversionException if there is an error invoking the constructor
-     */
-    private static @Nullable Object convertUsingConstructor(Class<?> targetClass, Class<?> sourceClass, @NonNull Object value) {
-        // try exact match
-        for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
-            if (constructor.getModifiers() == (Modifier.PUBLIC)
-                    && constructor.getParameterCount() == 1
-                    && constructor.getParameterTypes()[0] == sourceClass
-            ) {
-                try {
-                    return constructor.newInstance(value);
-                } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                    throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
-                }
-            }
-        }
-
-        // else try primitives
-        for(Constructor<?> constructor :targetClass.getDeclaredConstructors()) {
-            try {
-                if (constructor.getModifiers() == (Modifier.PUBLIC)
-                        && constructor.getParameterCount() == 1
-                        && LangUtil.isWrapperFor(sourceClass, constructor.getParameterTypes()[0])
-                ) {
-                    return constructor.newInstance(value);
-                }
-            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Converts the given value to a {@link Boolean} if the target class is {@link Boolean}
      * and the source class is assignable from {@link CharSequence}.
      * If the conditions are not met, the method returns {@code null}.
@@ -277,12 +310,12 @@ public final class DataUtil {
      *                    It should be {@link Boolean} for successful conversion.
      * @param sourceClass The source class of the value being converted.
      *                    It should be assignable from {@link CharSequence}.
-     * @param value The object to be converted to a {@link Boolean}.
-     *              This method expects the {@code value} to represent a boolean textual
-     *              value (e.g., "true" or "false").
+     * @param value       The object to be converted to a {@link Boolean}.
+     *                    This method expects the {@code value} to represent a boolean textual
+     *                    value (e.g., "true" or "false").
      * @return A {@link Boolean} if the conversion is successful; otherwise, {@code null}.
      * @throws ConversionException if {@code value} contains invalid text
-     *                                  that cannot be converted to a boolean.
+     *                             that cannot be converted to a boolean.
      */
     private static @Nullable Object convertToBoolean(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (targetClass != Boolean.class || !CharSequence.class.isAssignableFrom(sourceClass)) {
@@ -303,7 +336,7 @@ public final class DataUtil {
      *
      * @param targetClass the target array type to which the input array should be converted
      * @param sourceClass the source array type of the input array
-     * @param value the object representing the array to be converted
+     * @param value       the object representing the array to be converted
      * @return the converted array as an object, or null if either targetClass or sourceClass is not an array type
      * @throws ConversionException if an error occurs during the conversion process
      */
@@ -327,11 +360,11 @@ public final class DataUtil {
      *
      * @param targetClass the target integral type class, such as {@code Integer.class} or {@code Long.class}
      * @param sourceClass the source type class, which must be {@code Double.class} or {@code Float.class}
-     * @param value the floating-point number to be converted
+     * @param value       the floating-point number to be converted
      * @return a {@code Number} representing the converted value as an instance of the target class,
-     *         or {@code null} if the conversion is not applicable
+     * or {@code null} if the conversion is not applicable
      * @throws ConversionException if the value cannot be converted to the target class
-     *         without loss of precision
+     *                             without loss of precision
      */
     private static @Nullable Object convertToIntegralNumber(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (sourceClass != Double.class && sourceClass != Float.class) {
@@ -361,9 +394,9 @@ public final class DataUtil {
      *
      * @param targetClass The target class to which the value is to be converted. It must be {@link Path}.
      * @param sourceClass The source class of the value being converted. Supported classes include {@link String}, {@link File}, {@link URI}, and {@link URL}.
-     * @param value The value to be converted to a {@link Path}. The type of the value must match the source class.
+     * @param value       The value to be converted to a {@link Path}. The type of the value must match the source class.
      * @return A {@link Path} object resulting from the conversion if successful, or {@code null} if the target class is not {@link Path}
-     *         or the source class is unsupported.
+     * or the source class is unsupported.
      * @throws ConversionException If the source class is {@link URL} and the value cannot be successfully converted to a {@link URI}.
      */
     private static @Nullable Object convertToPath(Class<?> targetClass, Class<?> sourceClass, Object value) {
@@ -397,11 +430,11 @@ public final class DataUtil {
      *
      * @param targetClass the class of the target type to which the value needs to be converted
      * @param sourceClass the class of the source type of the provided value
-     * @param value the object to be converted to a {@code File}
+     * @param value       the object to be converted to a {@code File}
      * @return a {@code File} object if the conversion is successful and the target class is {@code File},
      * or {@code null} if the target class is not {@code File} or the conversion cannot be performed
      * @throws ConversionException if the source class is {@code URL} and the conversion to {@code File} fails
-     * due to a {@code URISyntaxException}
+     *                             due to a {@code URISyntaxException}
      */
     private static @Nullable Object convertToFile(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (targetClass != File.class) {
@@ -435,9 +468,9 @@ public final class DataUtil {
      *
      * @param targetClass the desired target class for the conversion, expected to be {@link URI}
      * @param sourceClass the actual class type of the provided value
-     * @param value the object to be converted to a URI; must be compatible with the supplied source class
+     * @param value       the object to be converted to a URI; must be compatible with the supplied source class
      * @return a URI representation of the given value if conversion is possible, or null if the target class
-     *         is not {@link URI} or the source class is unsupported
+     * is not {@link URI} or the source class is unsupported
      */
     private static @Nullable Object convertToUri(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (targetClass != URI.class) {
@@ -470,9 +503,9 @@ public final class DataUtil {
      *
      * @param targetClass the class to which the value is being converted; must be {@link URL}
      * @param sourceClass the class of the input value; determines the conversion logic
-     * @param value the input object to be converted to a {@link URL}
+     * @param value       the input object to be converted to a {@link URL}
      * @return the corresponding {@link URL} if conversion is successful, or {@code null}
-     *         if the target class is not {@link URL} or conversion is unsupported
+     * if the target class is not {@link URL} or conversion is unsupported
      * @throws ConversionException if the conversion fails
      */
     private static @Nullable Object convertToUrl(Class<?> targetClass, Class<?> sourceClass, Object value) {
@@ -509,57 +542,6 @@ public final class DataUtil {
             }
         }
         return null;
-    }
-
-    /**
-     * Convert an object to a different class.
-     * <p>
-     * Conversion works as follows:
-     * <ul>
-     *     <li> if value is {@code null}, {@code null} is returned;
-     *     <li> if the target class is assignment compatible, a simple cast is performed;
-     *     <li> if the target class is {@link String}, {@link Object#toString()} is used;
-     *     <li> if the target class is an integer type and the value is of type double, a conversion without loss of precision is tried;
-     *     <li> if the target class is {@link LocalDate} and the source class is {@link String}, use DateTimeFormatter.ISO_DATE;
-     *     <li> if the target class is {@link java.time.LocalDateTime} and the source class is {@link String}, use DateTimeFormatter.ISO_DATE_TIME;
-     *     <li> if the source and target classes is any of URI, URL, File, Path, the standard conversion rules are applied;
-     *     <li> if the source class is {@link String} and the target class is any of URI, URL, File, Path, the standard conversion rules are applied;
-     *     <li> if the target class provides a method {@code public static T valueOf(U)} and {value instanceof U}, that method is invoked;
-     *     <li> if {@code useConstructor} is {@code true} and the target class provides a constructor taking a single argument of value's type, that constructor is used;
-     *     <li> otherwise an exception is thrown.
-     * </ul>
-     *
-     * @param value          the object to convert
-     * @param targetClass    the target class
-     * @param useConstructor flag whether a public constructor {@code T(U)} should be used in conversion if present where `U` is the value's class
-     * @param <T>            target type
-     * @return the object converted to the target class
-     */
-    @SuppressWarnings("unchecked") // types are checked with isAssignable()
-    public static <T> @Nullable T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
-        // null -> null
-        if (value == null) {
-            return null;
-        }
-
-        Class<?> sourceClass = value.getClass();
-
-        for (var c : CONVERTERS) {
-            Object r = c.tryConvert(targetClass, sourceClass, value);
-            if (r != null) {
-                return (T) r;
-            }
-        }
-
-        // ... or provides a public constructor taking the value's class (and is enabled by parameter)
-        if (useConstructor) {
-            Object r = convertUsingConstructor(targetClass, sourceClass, value);
-            if (r != null) {
-                return (T) r;
-            }
-        }
-
-        throw new ConversionException(sourceClass, targetClass, "unsupported conversion");
     }
 
     /**
@@ -759,6 +741,18 @@ public final class DataUtil {
     }
 
     /**
+     * Create a generic array of the arguments.
+     *
+     * @param args the arguments
+     * @param <T>  the generic array type
+     * @return generic array containing the arguments
+     */
+    @SafeVarargs
+    private static <T> T[] genericArray(T... args) {
+        return args;
+    }
+
+    /**
      * Collect items from an iterator into an array.
      *
      * @param <T>      the element type
@@ -767,17 +761,6 @@ public final class DataUtil {
      */
     public static <T> T[] collectArray(Iterator<T> iterator) {
         return collect(iterator).toArray(genericArray());
-    }
-
-    /**
-     * Create a generic array of the arguments.
-     * @param args the arguments
-     * @return generic array containing the arguments
-     * @param <T> the generic array type
-     */
-    @SafeVarargs
-    private static <T> T[] genericArray(T... args) {
-        return args;
     }
 
     /**
@@ -837,11 +820,11 @@ public final class DataUtil {
      * {@code mapFactory.get()} that maps keys to the new values for all changed keys.
      * See also{@link #changes(Map, Map)}.
      *
-     * @param a   the first map
-     * @param b   the second map
+     * @param a          the first map
+     * @param b          the second map
      * @param mapFactory the Map factory
-     * @param <U> the key type
-     * @param <V> the value type
+     * @param <U>        the key type
+     * @param <V>        the value type
      * @return a new map that contains the changed mappings (k -> mapped value in b)
      */
     public static <U, V> Map<U, V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b, Supplier<? extends Map<U, V>> mapFactory) {
@@ -903,7 +886,7 @@ public final class DataUtil {
      * and use the natural order.
      * Its main purpose is to be used in assertions on method parameters that have to be sorted.
      *
-     * @param <T> the type of elements in the collection, which must extend Comparable
+     * @param <T>        the type of elements in the collection, which must extend Comparable
      * @param collection the collection to check for sorted order
      * @return {@code true} if the collection is sorted in natural order, {@code false} otherwise
      */
@@ -920,11 +903,11 @@ public final class DataUtil {
      * This method has a time complexity of O(n). Its main purpose is to be used in assertions on method
      * parameters that have to be sorted.
      *
-     * @param <T> the type of objects in the collection
+     * @param <T>        the type of objects in the collection
      * @param collection the collection of elements to check for sorting
      * @param comparator the comparator used to define the sorting order
      * @return {@code true} if the collection is sorted in the order defined by the comparator,
-     *         otherwise {@code false}
+     * otherwise {@code false}
      */
     public static <T> boolean isSorted(Iterable<T> collection, Comparator<? super T> comparator) {
         T last = null;
@@ -935,5 +918,24 @@ public final class DataUtil {
             last = t;
         }
         return true;
+    }
+
+    /**
+     * A functional interface that defines a method for attempting to convert an object of one type
+     * to another target type.
+     */
+    @FunctionalInterface
+    private interface TryConvert {
+        /**
+         * Attempts to convert an object of the specified source class to the target class.
+         * If the conversion is not possible, returns {@code null}.
+         *
+         * @param targetClass the target class to which the object should be converted
+         * @param sourceClass the source class of the object being converted
+         * @param value       the object to be converted
+         * @return the converted object if conversion is successful; otherwise {@code null}
+         */
+        @Nullable
+        Object tryConvert(Class<?> targetClass, Class<?> sourceClass, Object value);
     }
 }

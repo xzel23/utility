@@ -183,7 +183,7 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
 
         static {
             AVAILABLE_FONTS = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment()
-                    .getAvailableFontFamilyNames())
+                            .getAvailableFontFamilyNames())
                     .collect(Collectors.toUnmodifiableMap(Function.identity(), FontList::isMonospaced, (a, b) -> b));
             ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
             MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();

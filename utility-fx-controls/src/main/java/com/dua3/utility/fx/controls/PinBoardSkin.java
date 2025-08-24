@@ -376,7 +376,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      *              where values greater than 1 represent zooming in, and values less than 1 represent zooming out.
      */
     private void setDisplayScale(double scale) {
-        FxUtil.runOnNextFrame(() ->{
+        FxUtil.runOnNextFrame(() -> {
             ScrollPosition oldPos = getScrollPosition();
             Rectangle2D boardArea = getSkinnable().getArea();
             Rectangle2D viewportBefore = getViewPortInBoardCoordinates();

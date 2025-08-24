@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import java.util.Objects;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;

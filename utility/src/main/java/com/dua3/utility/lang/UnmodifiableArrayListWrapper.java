@@ -1,4 +1,4 @@
- package com.dua3.utility.lang;
+package com.dua3.utility.lang;
 
 import org.jspecify.annotations.Nullable;
 

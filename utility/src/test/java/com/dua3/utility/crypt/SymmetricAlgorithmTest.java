@@ -55,8 +55,8 @@ class SymmetricAlgorithmTest {
     @ParameterizedTest
     @ValueSource(ints = {64, 96, 127, 129, 191, 193, 255, 257, 384})
     void testValidateKeySizeInvalid(int keySize) {
-        assertThrows(InvalidAlgorithmParameterException.class, () -> 
-            SymmetricAlgorithm.AES.validateKeySize(keySize)
+        assertThrows(InvalidAlgorithmParameterException.class, () ->
+                SymmetricAlgorithm.AES.validateKeySize(keySize)
         );
     }
 
