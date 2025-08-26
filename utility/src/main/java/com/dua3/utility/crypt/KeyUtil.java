@@ -1,5 +1,7 @@
 package com.dua3.utility.crypt;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
@@ -19,14 +21,18 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utility class for cryptographic key operations.
  */
 public final class KeyUtil {
+    private static final Logger LOG = LogManager.getFormatterLogger( KeyUtil.class);
 
     /**
      * Utility class private constructor.
@@ -256,6 +262,7 @@ public final class KeyUtil {
                     throw new InvalidAlgorithmParameterException("EC key size must be 256, 384, or 521 bits, but was: " + keySize);
                 }
             }
+            default -> throw new IllegalStateException("Unexpected value: " + algorithm);
         }
     }
 
@@ -314,5 +321,108 @@ public final class KeyUtil {
                 Arrays.fill(info, (byte) 0);
             }
         }
+    }
+
+    /**
+     * Loads a public key from a PEM formatted string.
+     *
+     * @param pem the PEM formatted string containing the public key.
+     * @return the {@code PublicKey} object representing the loaded public key.
+     * @throws InvalidKeySpecException if the specified key specification is invalid.
+     * @throws NoSuchAlgorithmException if the algorithm is not available in the environment
+     */
+    public static PublicKey loadPublicKeyFromPem(String pem) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        String algorithm = extractAlgorithmFromPemHeader(pem, "PUBLIC KEY");
+        String clean = PATTERN_CLEAN_PEM.matcher(pem).replaceAll("");
+        byte[] bytes = decodeKeyDataBase64(clean);
+
+        // For standard "PUBLIC KEY" format, let Java determine the algorithm from the key data
+        if ("PUBLIC".equals(algorithm)) {
+            for (AsymmetricAlgorithm alg : AsymmetricAlgorithm.values()) {
+                try {
+                    KeyFactory kf = KeyFactory.getInstance(alg.keyFactoryAlgorithm());
+                    return kf.generatePublic(new X509EncodedKeySpec(bytes));
+                } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+                    LOG.debug("Unable to load public key from PEM data using algorithm '{}', trying next: {}", alg, e.getMessage());
+                }
+            }
+            // If all fail, throw with the last exception
+            throw new InvalidKeySpecException("Unable to determine key algorithm from PEM data");
+        }
+
+        KeyFactory kf = KeyFactory.getInstance(algorithm);
+        return kf.generatePublic(new X509EncodedKeySpec(bytes));
+    }
+
+    private static byte[] decodeKeyDataBase64(String clean) throws InvalidKeySpecException {
+        try {
+            return java.util.Base64.getDecoder().decode(clean);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidKeySpecException(e);
+        }
+    }
+
+    private static final Pattern PATTERN_CLEAN_PEM = Pattern.compile("-----[^-]*-----|\\s");
+
+    /**
+     * Loads a private key from a PEM-formatted PKCS#8 string.
+     * Supports multiple algorithms (RSA, EC, DSA) by attempting to parse with each.
+     *
+     * @param pem the PEM-formatted private key string, including the header and footer
+     * @return the PrivateKey object reconstructed from the provided PEM string
+     * @throws InvalidKeySpecException if the provided PEM content cannot be converted to a valid private key
+     * @throws NoSuchAlgorithmException if the algorithm is not available in the environment
+     */
+    public static PrivateKey loadPrivateKeyFromPem(String pem) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String algorithm = extractAlgorithmFromPemHeader(pem, "PRIVATE KEY");
+        String clean = PATTERN_CLEAN_PEM.matcher(pem).replaceAll("");
+        byte[] bytes = decodeKeyDataBase64(clean);
+
+        // For standard "PRIVATE KEY" format, let Java determine the algorithm from the key data
+        if ("PRIVATE".equals(algorithm)) {
+            // Try RSA first (most common), then EC, then DSA
+            for (AsymmetricAlgorithm alg : AsymmetricAlgorithm.values()) {
+                try {
+                    KeyFactory kf = KeyFactory.getInstance(alg.keyFactoryAlgorithm());
+                    return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
+                } catch (InvalidKeySpecException e) {
+                    LOG.debug("Unable to load private key from PEM data using algorithm '{}', trying next: {}", alg.keyFactoryAlgorithm(), e.getMessage());
+                } catch (NoSuchAlgorithmException e) {
+                    LOG.debug("Unable to load private key from PEM data using algorithm '{}', trying next: {}", alg, e.getMessage());
+                }
+            }
+            // If all fail, throw with the last exception
+            throw new InvalidKeySpecException("Unable to determine key algorithm from PEM data");
+        }
+
+        KeyFactory kf = KeyFactory.getInstance(algorithm);
+        return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
+    }
+
+    /**
+     * Extracts the algorithm from a PEM header using regex pattern matching.
+     *
+     * @param pem the PEM formatted string
+     * @param keyType the type of key ("PUBLIC KEY" or "PRIVATE KEY")
+     * @return the algorithm name for KeyFactory, or the keyType if no specific algorithm found
+     * @throws InvalidKeySpecException if the PEM format is invalid or missing required headers
+     */
+    private static String extractAlgorithmFromPemHeader(String pem, String keyType) throws InvalidKeySpecException {
+        // Add size limit for security
+        if (pem.length() > 100_000) { // 100KB limit
+            throw new InvalidKeySpecException("PEM data exceeds maximum allowed size");
+        }
+
+        String pattern = "-----BEGIN\\s+(?:(?<algorithm>\\w+)\\s+)?" + Pattern.quote(keyType) + "-----";
+        Pattern pemPattern = Pattern.compile(pattern);
+        Matcher matcher = pemPattern.matcher(pem);
+
+        if (matcher.find()) {
+            String algorithm = matcher.group("algorithm");
+            return algorithm != null ? algorithm : keyType.split("\\s+")[0]; // Return "PUBLIC" or "PRIVATE" for standard format
+        }
+
+        // Fallback - shouldn't happen with valid PEM
+        throw new InvalidKeySpecException("Invalid PEM format: missing required header");
     }
 }
