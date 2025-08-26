@@ -34,35 +34,6 @@ public final class KeyUtil {
     private KeyUtil() { /* utility class */ }
 
     /**
-     * Validates the size of an asymmetric key based on the specified algorithm.
-     * Ensures that the key size meets the minimum or required standards for security purposes.
-     *
-     * @param algorithm the asymmetric algorithm
-     * @param keySize   the size of the key in bits, which will be checked against the requirements
-     *                  specified for the given algorithm.
-     *                  For RSA and DSA, the minimum is 2048 bits.
-     *                  For EC, only specific sizes such as 256 (P-256), 384 (P-384), or 521 (P-521) bits are allowed.
-     *                  If the key size does not satisfy the constraints for the selected algorithm,
-     *                  an exception will be thrown.
-     * @throws InvalidAlgorithmParameterException if the key size does not satisfy the constraints
-     *                                           for the selected algorithm
-     */
-    public static void validateAsymmetricKeySize(AsymmetricAlgorithm algorithm, int keySize) throws InvalidAlgorithmParameterException {
-        switch (algorithm) {
-            case RSA, DSA -> {
-                if (keySize < 2048) {
-                    throw new InvalidAlgorithmParameterException(algorithm + " key size must be at least 2048 bits, but was: " + keySize);
-                }
-            }
-            case EC -> {
-                if (keySize != 256 && keySize != 384 && keySize != 521) {
-                    throw new InvalidAlgorithmParameterException("EC key size must be 256, 384, or 521 bits, but was: " + keySize);
-                }
-            }
-        }
-    }
-
-    /**
      * Generate random salt for key derivation.
      *
      * @param length salt length in bytes (recommended: 16 or 32)
@@ -75,7 +46,7 @@ public final class KeyUtil {
     /**
      * Validates a symmetric key for use with the specified algorithm.
      *
-     * @param key the key to validate
+     * @param key       the key to validate
      * @param algorithm the algorithm the key will be used with
      * @throws GeneralSecurityException if the key is not compatible or key validation fails
      */
@@ -105,7 +76,7 @@ public final class KeyUtil {
     /**
      * Converts the provided byte array into a {@link SecretKey} using the specified symmetric algorithm.
      *
-     * @param keyBytes the byte array representing the key material
+     * @param keyBytes  the byte array representing the key material
      * @param algorithm the symmetric algorithm used to validate the key size and determine the key algorithm
      * @return a {@link SecretKey} generated from the provided key material and algorithm
      * @throws InvalidAlgorithmParameterException if the key size is invalid for the specified algorithm
@@ -129,7 +100,7 @@ public final class KeyUtil {
     /**
      * Generate SecretKey for the specified algorithm.
      *
-     * @param bits the number of bits
+     * @param bits      the number of bits
      * @param algorithm the symmetric algorithm
      * @return the generated SecretKey
      * @throws GeneralSecurityException if key generation fails
@@ -140,20 +111,6 @@ public final class KeyUtil {
         KeyGenerator keyGen = KeyGenerator.getInstance(algorithm.getKeyAlgorithm());
         keyGen.init(bits, RandomUtil.getRandom());
         return keyGen.generateKey();
-    }
-
-    /**
-     * Converts a given byte array into a {@code PrivateKey} instance using the specified algorithm.
-     *
-     * @param bytes the private key in encoded byte format
-     * @param algorithm the asymmetric algorithm
-     * @return a {@code PrivateKey} created from the provided byte array and algorithm
-     * @throws GeneralSecurityException if the key conversion fails
-     */
-    public static PrivateKey toPrivateKey(byte[] bytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm.keyFactoryAlgorithm());
-        return keyFactory.generatePrivate(keySpec);
     }
 
     /**
@@ -169,17 +126,17 @@ public final class KeyUtil {
     }
 
     /**
-     * Converts the provided byte array into a {@code PublicKey} instance using the specified algorithm.
+     * Converts a given byte array into a {@code PrivateKey} instance using the specified algorithm.
      *
-     * @param bytes the byte array containing the key data
+     * @param bytes     the private key in encoded byte format
      * @param algorithm the asymmetric algorithm
-     * @return the generated {@code PublicKey}
+     * @return a {@code PrivateKey} created from the provided byte array and algorithm
      * @throws GeneralSecurityException if the key conversion fails
      */
-    public static PublicKey toPublicKey(byte[] bytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
+    public static PrivateKey toPrivateKey(byte[] bytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm.keyFactoryAlgorithm());
-        return keyFactory.generatePublic(keySpec);
+        return keyFactory.generatePrivate(keySpec);
     }
 
     /**
@@ -194,11 +151,25 @@ public final class KeyUtil {
     }
 
     /**
+     * Converts the provided byte array into a {@code PublicKey} instance using the specified algorithm.
+     *
+     * @param bytes     the byte array containing the key data
+     * @param algorithm the asymmetric algorithm
+     * @return the generated {@code PublicKey}
+     * @throws GeneralSecurityException if the key conversion fails
+     */
+    public static PublicKey toPublicKey(byte[] bytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(algorithm.keyFactoryAlgorithm());
+        return keyFactory.generatePublic(keySpec);
+    }
+
+    /**
      * Creates a {@code KeyPair} using the given public and private key byte arrays.
      *
-     * @param publicKeyBytes the byte array representation of the public key
+     * @param publicKeyBytes  the byte array representation of the public key
      * @param privateKeyBytes the byte array representation of the private key
-     * @param algorithm the asymmetric algorithm
+     * @param algorithm       the asymmetric algorithm
      * @return a {@code KeyPair} consisting of the public and private keys
      * @throws GeneralSecurityException if the key conversion fails
      */
@@ -206,26 +177,6 @@ public final class KeyUtil {
         PublicKey publicKey = toPublicKey(publicKeyBytes, algorithm);
         PrivateKey privateKey = toPrivateKey(privateKeyBytes, algorithm);
         return new KeyPair(publicKey, privateKey);
-    }
-
-    /**
-     * Generate an asymmetric key pair.
-     *
-     * @param algorithm the asymmetric algorithm
-     * @param keySize the key size in bits
-     * @return the generated key pair
-     * @throws InvalidAlgorithmParameterException if key size validation fails or key generation fails
-     */
-    public static KeyPair generateKeyPair(AsymmetricAlgorithm algorithm, int keySize) throws InvalidAlgorithmParameterException {
-        validateAsymmetricKeySize(algorithm, keySize);
-
-        try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance(algorithm.keyFactoryAlgorithm());
-            keyGen.initialize(keySize, RandomUtil.getRandom());
-            return keyGen.generateKeyPair();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Algorithm not available: " + algorithm, e);
-        }
     }
 
     /**
@@ -260,16 +211,79 @@ public final class KeyUtil {
     }
 
     /**
+     * Generate an asymmetric key pair.
+     *
+     * @param algorithm the asymmetric algorithm
+     * @param keySize   the key size in bits
+     * @return the generated key pair
+     * @throws InvalidAlgorithmParameterException if key size validation fails or key generation fails
+     */
+    public static KeyPair generateKeyPair(AsymmetricAlgorithm algorithm, int keySize) throws InvalidAlgorithmParameterException {
+        validateAsymmetricKeySize(algorithm, keySize);
+
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance(algorithm.keyFactoryAlgorithm());
+            keyGen.initialize(keySize, RandomUtil.getRandom());
+            return keyGen.generateKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Algorithm not available: " + algorithm, e);
+        }
+    }
+
+    /**
+     * Validates the size of an asymmetric key based on the specified algorithm.
+     * Ensures that the key size meets the minimum or required standards for security purposes.
+     *
+     * @param algorithm the asymmetric algorithm
+     * @param keySize   the size of the key in bits, which will be checked against the requirements
+     *                  specified for the given algorithm.
+     *                  For RSA and DSA, the minimum is 2048 bits.
+     *                  For EC, only specific sizes such as 256 (P-256), 384 (P-384), or 521 (P-521) bits are allowed.
+     *                  If the key size does not satisfy the constraints for the selected algorithm,
+     *                  an exception will be thrown.
+     * @throws InvalidAlgorithmParameterException if the key size does not satisfy the constraints
+     *                                            for the selected algorithm
+     */
+    public static void validateAsymmetricKeySize(AsymmetricAlgorithm algorithm, int keySize) throws InvalidAlgorithmParameterException {
+        switch (algorithm) {
+            case RSA, DSA -> {
+                if (keySize < 2048) {
+                    throw new InvalidAlgorithmParameterException(algorithm + " key size must be at least 2048 bits, but was: " + keySize);
+                }
+            }
+            case EC -> {
+                if (keySize != 256 && keySize != 384 && keySize != 521) {
+                    throw new InvalidAlgorithmParameterException("EC key size must be 256, 384, or 521 bits, but was: " + keySize);
+                }
+            }
+        }
+    }
+
+    /**
+     * Derives a secret key for the specified symmetric algorithm using a randomly generated salt.
+     *
+     * @param algorithm           the symmetric algorithm for which the key is to be derived
+     * @param input               the input data used for key derivation
+     * @param info                optional context-specific information used in the key derivation process
+     * @param inputBufferHandling the handling mechanism for input buffers during key derivation
+     * @return the derived secret key
+     */
+    public static SecretKey deriveSecretKeyWithRandomSalt(SymmetricAlgorithm algorithm, byte[] input, byte @Nullable [] info, InputBufferHandling inputBufferHandling) {
+        byte[] salt = RandomUtil.generateRandomBytes(32); // 256-bit salt
+        return deriveSecretKey(algorithm, salt, input, info, inputBufferHandling);
+    }
+
+    /**
      * Derives a cryptographic key using the specified symmetric algorithm, salt, input data, and additional info.
      * The method utilizes the HKDF (HMAC-based Extract-and-Expand Key Derivation Function) with SHA-256 to
      * securely derive a key.
      *
-     * @param algorithm the symmetric algorithm for which the key is being derived; it determines the key size
-     *                  and the key algorithm (e.g., AES)
-     * @param salt a non-secret random value used to ensure uniqueness of derived keys; must be at least 16 bytes
-     * @param input the input keying material (IKM) used as a source of entropy for key derivation
-     * @param info optional context and application-specific information used for domain separation during
-     *             key derivation
+     * @param algorithm           the symmetric algorithm for which the key is being derived; it determines the key size
+     *                            and the key algorithm (e.g., AES)
+     * @param salt                a non-secret random value used to ensure uniqueness of derived keys; must be at least 16 bytes
+     * @param input               the input keying material (IKM) used as a source of entropy for key derivation
+     * @param info                optional context and application-specific information used for domain separation during
+     *                            key derivation
      * @param inputBufferHandling the handling mechanism for input buffers during key derivation
      * @return a {@link SecretKey} instance containing the derived key that is compatible with the specified algorithm
      * @throws IllegalArgumentException if the provided salt is shorter than 16 bytes
@@ -300,19 +314,5 @@ public final class KeyUtil {
                 Arrays.fill(info, (byte) 0);
             }
         }
-    }
-
-    /**
-     * Derives a secret key for the specified symmetric algorithm using a randomly generated salt.
-     *
-     * @param algorithm the symmetric algorithm for which the key is to be derived
-     * @param input the input data used for key derivation
-     * @param info optional context-specific information used in the key derivation process
-     * @param inputBufferHandling the handling mechanism for input buffers during key derivation
-     * @return the derived secret key
-     */
-    public static SecretKey deriveSecretKeyWithRandomSalt(SymmetricAlgorithm algorithm, byte[] input, byte @Nullable [] info, InputBufferHandling inputBufferHandling) {
-        byte[] salt = RandomUtil.generateRandomBytes(32); // 256-bit salt
-        return deriveSecretKey(algorithm, salt, input, info, inputBufferHandling);
     }
 }
