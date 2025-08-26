@@ -23,6 +23,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class KeyUtilTest {
 
+    private static String toPem(String header, byte[] data) {
+        String base64 = java.util.Base64.getEncoder().encodeToString(data);
+        StringBuilder sb = new StringBuilder();
+        sb.append("-----BEGIN ").append(header).append("-----\n");
+        for (int i = 0; i < base64.length(); i += 64) {
+            int end = Math.min(i + 64, base64.length());
+            sb.append(base64, i, end).append('\n');
+        }
+        sb.append("-----END ").append(header).append("-----\n");
+        return sb.toString();
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {16, 24, 32})
     void testGenerateSalt(int length) {
@@ -191,6 +203,91 @@ class KeyUtilTest {
         byte[] encrypted = CryptUtil.encryptSymmetric(key, TextUtil.toByteArray(message), InputBufferHandling.CLEAR_AFTER_USE);
         String decrypted = TextUtil.decodeToString(CryptUtil.decryptSymmetric(key, encrypted));
         assertEquals(message, decrypted);
+    }
+
+    @Test
+    void testLoadPublicAndPrivateKeyFromGenericPem_RSA() throws Exception {
+        KeyPair kp = KeyUtil.generateRSAKeyPair();
+        String pemPub = toPem("PUBLIC KEY", kp.getPublic().getEncoded());
+        String pemPriv = toPem("PRIVATE KEY", kp.getPrivate().getEncoded());
+
+        PublicKey loadedPub = KeyUtil.loadPublicKeyFromPem(pemPub);
+        PrivateKey loadedPriv = KeyUtil.loadPrivateKeyFromPem(pemPriv);
+
+        assertArrayEquals(kp.getPublic().getEncoded(), loadedPub.getEncoded());
+        assertArrayEquals(kp.getPrivate().getEncoded(), loadedPriv.getEncoded());
+    }
+
+    @Test
+    void testLoadPublicAndPrivateKeyFromAlgorithmSpecificPem_RSA() throws Exception {
+        KeyPair kp = KeyUtil.generateRSAKeyPair();
+        // Use RSA-specific headers but still PKCS#8/X.509 content
+        String pemPub = toPem("RSA PUBLIC KEY", kp.getPublic().getEncoded());
+        String pemPriv = toPem("RSA PRIVATE KEY", kp.getPrivate().getEncoded());
+
+        PublicKey loadedPub = KeyUtil.loadPublicKeyFromPem(pemPub);
+        PrivateKey loadedPriv = KeyUtil.loadPrivateKeyFromPem(pemPriv);
+
+        assertArrayEquals(kp.getPublic().getEncoded(), loadedPub.getEncoded());
+        assertArrayEquals(kp.getPrivate().getEncoded(), loadedPriv.getEncoded());
+    }
+
+    @Test
+    void testLoadPublicAndPrivateKeyFromGenericPem_EC() throws Exception {
+        KeyPair kp = KeyUtil.generateECKeyPair("secp256r1");
+        String pemPub = toPem("PUBLIC KEY", kp.getPublic().getEncoded());
+        String pemPriv = toPem("PRIVATE KEY", kp.getPrivate().getEncoded());
+
+        PublicKey loadedPub = KeyUtil.loadPublicKeyFromPem(pemPub);
+        PrivateKey loadedPriv = KeyUtil.loadPrivateKeyFromPem(pemPriv);
+
+        assertArrayEquals(kp.getPublic().getEncoded(), loadedPub.getEncoded());
+        assertArrayEquals(kp.getPrivate().getEncoded(), loadedPriv.getEncoded());
+    }
+
+    @Test
+    void testLoadPublicAndPrivateKeyFromAlgorithmSpecificPem_EC() throws Exception {
+        KeyPair kp = KeyUtil.generateECKeyPair("secp256r1");
+        String pemPub = toPem("EC PUBLIC KEY", kp.getPublic().getEncoded());
+        String pemPriv = toPem("EC PRIVATE KEY", kp.getPrivate().getEncoded());
+
+        PublicKey loadedPub = KeyUtil.loadPublicKeyFromPem(pemPub);
+        PrivateKey loadedPriv = KeyUtil.loadPrivateKeyFromPem(pemPriv);
+
+        assertArrayEquals(kp.getPublic().getEncoded(), loadedPub.getEncoded());
+        assertArrayEquals(kp.getPrivate().getEncoded(), loadedPriv.getEncoded());
+    }
+
+    @Test
+    void testLoadKeyFromPem_withWhitespaceAndWindowsNewlines() throws Exception {
+        KeyPair kp = KeyUtil.generateRSAKeyPair();
+        String pemPub = toPem("PUBLIC KEY", kp.getPublic().getEncoded()).replace("\n", "\r\n");
+        String pemPriv = ("  \n" + toPem("PRIVATE KEY", kp.getPrivate().getEncoded()) + "\n  ").replace("\n", "\r\n");
+
+        PublicKey loadedPub = KeyUtil.loadPublicKeyFromPem(pemPub);
+        PrivateKey loadedPriv = KeyUtil.loadPrivateKeyFromPem(pemPriv);
+
+        assertArrayEquals(kp.getPublic().getEncoded(), loadedPub.getEncoded());
+        assertArrayEquals(kp.getPrivate().getEncoded(), loadedPriv.getEncoded());
+    }
+
+    @Test
+    void testLoadPublicKeyFromPem_invalidBase64() {
+        String pem = "-----BEGIN PUBLIC KEY-----\ninvalid$$base64==\n-----END PUBLIC KEY-----\n";
+        assertThrows(java.security.spec.InvalidKeySpecException.class, () -> KeyUtil.loadPublicKeyFromPem(pem));
+    }
+
+    @Test
+    void testLoadPrivateKeyFromPem_invalidBase64() {
+        String pem = "-----BEGIN PRIVATE KEY-----\ninvalid$$base64==\n-----END PRIVATE KEY-----\n";
+        assertThrows(java.security.spec.InvalidKeySpecException.class, () -> KeyUtil.loadPrivateKeyFromPem(pem));
+    }
+
+    @Test
+    void testLoadKeyFromPem_missingHeader() {
+        String pem = "no headers here\n";
+        assertThrows(java.security.spec.InvalidKeySpecException.class, () -> KeyUtil.loadPublicKeyFromPem(pem));
+        assertThrows(java.security.spec.InvalidKeySpecException.class, () -> KeyUtil.loadPrivateKeyFromPem(pem));
     }
 
 }
