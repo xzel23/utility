@@ -299,7 +299,7 @@ jobs:
         run: |
           cat > qodana.yaml << 'EOF'
           version: "1.0"
-          linter: jetbrains/qodana-jvm-community:2025.1
+          linter: jetbrains/qodana-jvm-community:2025.2
           profile:
             name: qodana.starter
           exclude:
@@ -309,7 +309,7 @@ jobs:
           EOF
 
       - name: 'Qodana Scan'
-        uses: JetBrains/qodana-action@v2025.1.1
+        uses: JetBrains/qodana-action@v2025.2
         with:
           args: --property,idea.kotlin.plugin.use.k2=false
         env:
