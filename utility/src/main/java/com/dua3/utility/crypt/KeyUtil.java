@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * Utility class for cryptographic key operations.
  */
 public final class KeyUtil {
-    private static final Logger LOG = LogManager.getFormatterLogger( KeyUtil.class);
+    private static final Logger LOG = LogManager.getLogger(KeyUtil.class);
 
     /**
      * Utility class private constructor.
