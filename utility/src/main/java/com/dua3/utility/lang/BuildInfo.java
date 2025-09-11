@@ -23,6 +23,11 @@ import java.util.Properties;
  */
 public record BuildInfo(Version version, ZonedDateTime buildTime, String key, String commit, String system) {
 
+    @SuppressWarnings("MissingJavadoc")
+    public BuildInfo {
+        LOG.debug("BuildInfo: {}", this);
+    }
+
     /**
      * Key to use for the build version in properties files.
      */
@@ -61,17 +66,13 @@ public record BuildInfo(Version version, ZonedDateTime buildTime, String key, St
      * @throws IllegalArgumentException if the version string is invalid.
      */
     public static BuildInfo create(String versionString, String key, String commit) {
-        BuildInfo buildInfo = new BuildInfo(
+        return new BuildInfo(
                 Version.valueOf(versionString),
                 ZonedDateTime.now(),
                 key,
                 commit,
                 SystemInfo.getSystemInfo().getOsInfo()
         );
-
-        LOG.debug("BuildInfo: {}", buildInfo);
-
-        return buildInfo;
     }
 
     /**
@@ -87,12 +88,7 @@ public record BuildInfo(Version version, ZonedDateTime buildTime, String key, St
      */
     public static BuildInfo create(String versionString, ZonedDateTime buildTime, String key, String commit, String system) {
         Version version = Version.valueOf(versionString);
-
-        BuildInfo buildInfo = new BuildInfo(version, buildTime, key, commit, system);
-
-        LOG.debug("BuildInfo: {}", buildInfo);
-
-        return buildInfo;
+        return new BuildInfo(version, buildTime, key, commit, system);
     }
 
     /**
