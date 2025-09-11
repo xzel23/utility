@@ -88,7 +88,8 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
                     Arrays.equals(elements, other.elements);
             case SortedSet<?> other when Objects.equals(other.comparator(), comparator()) ->
                     Arrays.equals(elements, other.toArray());
-            case Set<?> other -> other.size() == size() && other.containsAll(this);
+            case Set<?> other -> //noinspection SuspiciousMethodCalls
+                    other.size() == size() && other.containsAll(this);
             case null, default -> false;
         };
     }
@@ -335,7 +336,8 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
                         other.original.equals(original);
                 case ImmutableListBackedSortedSet<?> other when Objects.equals(other.comparator(), comparator()) ->
                         Arrays.equals(original.elements, other.elements);
-                case Set<?> other -> other.size() == size() && other.containsAll(this);
+                case Set<?> other -> //noinspection SuspiciousMethodCalls
+                        other.size() == size() && other.containsAll(this);
                 case null, default -> false;
             };
         }
