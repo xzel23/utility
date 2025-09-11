@@ -386,9 +386,9 @@ public final class KeyUtil {
                     KeyFactory kf = KeyFactory.getInstance(alg.keyFactoryAlgorithm());
                     return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
                 } catch (InvalidKeySpecException e) {
-                    LOG.debug("Unable to load private key from PEM data using algorithm '{}', trying next: {}", alg.keyFactoryAlgorithm(), e.getMessage());
+                    LOG.debug("Unable to load private key from PEM data using {} algorithm '{}', trying next: {}", alg.getClass().getSimpleName(), alg.keyFactoryAlgorithm(), e.getMessage());
                 } catch (NoSuchAlgorithmException e) {
-                    LOG.debug("Unable to load private key from PEM data using algorithm '{}', trying next: {}", alg, e.getMessage());
+                    LOG.debug("Unable to load private key from PEM data - {} algorithm '{}' not available, trying next: {}", alg.getClass().getSimpleName(), alg.keyFactoryAlgorithm(), e.getMessage());
                 }
             }
             // If all fail, throw with the last exception
