@@ -40,6 +40,8 @@ import java.util.Optional;
 public final class CertificateUtil {
     private static final Logger LOG = LogManager.getLogger(CertificateUtil.class);
 
+    private static final String CERT_TYPE_X_509 = "X.509";
+
     /**
      * Utility class private constructor.
      */
@@ -234,7 +236,7 @@ public final class CertificateUtil {
      *                                  or if the provided data is not a valid X.509 certificate
      */
     public static X509Certificate readX509Certificate(InputStream in) throws GeneralSecurityException {
-        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+        CertificateFactory certFactory = CertificateFactory.getInstance(CERT_TYPE_X_509);
         return (X509Certificate) certFactory.generateCertificate(in);
     }
 
@@ -414,7 +416,7 @@ public final class CertificateUtil {
      * @throws CertificateException if an error occurs during certificate processing
      */
     public static byte[] toPkcs7Bytes(Certificate... certificates) throws CertificateException {
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        CertificateFactory cf = CertificateFactory.getInstance(CERT_TYPE_X_509);
         List<Certificate> certList = Arrays.asList(certificates);
         CertPath certPath = cf.generateCertPath(certList);
         return certPath.getEncoded("PKCS7");
@@ -428,7 +430,7 @@ public final class CertificateUtil {
      * @throws CertificateException if an error occurs while creating the certificates
      */
     public static Certificate[] pkcs7BytesToCertificateChain(byte[] pkcs7Bytes) throws CertificateException {
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        CertificateFactory cf = CertificateFactory.getInstance(CERT_TYPE_X_509);
         CertPath certPath = cf.generateCertPath(new ByteArrayInputStream(pkcs7Bytes), "PKCS7");
         return certPath.getCertificates().toArray(Certificate[]::new);
     }

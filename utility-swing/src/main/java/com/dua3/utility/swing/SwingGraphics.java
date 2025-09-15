@@ -419,13 +419,13 @@ public class SwingGraphics implements Graphics {
 
                 if (lineEnd > lineStart) {
                     // Extract the line using subSequence
-                    CharSequence line = text.subSequence(lineStart, lineEnd);
+                    CharSequence textLine = text.subSequence(lineStart, lineEnd);
 
                     // Create AttributedString for the line
-                    AttributedString as = new AttributedString(line.toString());
-                    as.addAttribute(TextAttribute.FONT, state.awtFont, 0, line.length());
-                    as.addAttribute(TextAttribute.UNDERLINE, state.isUnderlined ? TextAttribute.UNDERLINE_ON : null, 0, line.length());
-                    as.addAttribute(TextAttribute.STRIKETHROUGH, state.isStrikeThrough ? TextAttribute.STRIKETHROUGH_ON : null, 0, line.length());
+                    AttributedString as = new AttributedString(textLine.toString());
+                    as.addAttribute(TextAttribute.FONT, state.awtFont, 0, textLine.length());
+                    as.addAttribute(TextAttribute.UNDERLINE, state.isUnderlined ? TextAttribute.UNDERLINE_ON : null, 0, textLine.length());
+                    as.addAttribute(TextAttribute.STRIKETHROUGH, state.isStrikeThrough ? TextAttribute.STRIKETHROUGH_ON : null, 0, textLine.length());
 
                     // Draw the line
                     g2d.drawString(as.getIterator(), x, y + offsetY);
