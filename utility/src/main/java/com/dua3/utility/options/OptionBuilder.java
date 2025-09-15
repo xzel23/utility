@@ -40,6 +40,7 @@ public class OptionBuilder<T> extends AbstractOptionBuilder<T, OptionBuilder<T>>
      *
      * @return a function that transforms an object array into a list of strings
      */
+    @SuppressWarnings("unchecked")
     public static Function<Object[], List<String>> toStringListMapper() {
         return list -> Arrays.stream(list).map(x -> ((List<Object>) x)).flatMap(list2 -> list2.stream().map(String::valueOf))
                 .toList();

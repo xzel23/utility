@@ -354,6 +354,7 @@ public final class DbUtil {
             switch (e.getCause()) {
                 case SQLException sqlEx -> throw sqlEx;
                 case IOException ioEx -> throw new UncheckedIOException(ioEx);
+                case RuntimeException ex -> throw ex;
                 default -> throw e;
             }
         }
