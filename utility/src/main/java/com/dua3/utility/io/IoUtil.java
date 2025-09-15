@@ -1269,16 +1269,12 @@ public final class IoUtil {
 
     private static int findFirstUnescapedGlobChar(String pattern) {
         for (int i = 0; i < pattern.length(); i++) {
-            char c = pattern.charAt(i);
-
-            if (c == '\\') {
-                // Skip over the escaped character.
-                i++;
-            } else if (c == '*' || c == '?' || c == '[' || c == '{') {
-                return i;
+            switch (pattern.charAt(i)) {
+                case '*', '?', '[', '{' -> {return i;}
+                case '\\' -> i++; // Skip over the escaped character
+                default -> { /* nothing to do */ }
             }
         }
-
         return pattern.length();
     }
 
