@@ -4,7 +4,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "20.0.0-beta14-SNAPSHOT"
+val projectVersion = "20.0.0-beta14"
 
 // define subprojects
 include("utility")
@@ -64,7 +64,7 @@ dependencyResolutionManagement {
             version("log4j-bom", "2.25.1")
             version("miglayout", "11.4.2")
             version("slf4j", "2.0.17")
-            version("spotbugs", "4.9.4")
+            version("spotbugs", "4.9.5")
             version("bouncycastle", "1.81")
             version("utility-bom", projectVersion)
 
