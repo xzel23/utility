@@ -21,21 +21,21 @@ dependencies {
         api("com.dua3.utility:utility-logging-slf4j:${project.version}")
         api("com.dua3.utility:utility-logging-log4j:${project.version}")
 
-        // External dependencies used by utility modules
         // Common dependencies
-        api("org.jspecify:jspecify:${rootProject.libs.versions.jspecify.get()}")
+        api(rootProject.libs.jspecify)
 
         // Logging dependencies
-        api("org.apache.logging.log4j:log4j-api:${rootProject.libs.versions.log4j.bom.get()}")
-        api("org.apache.logging.log4j:log4j-core:${rootProject.libs.versions.log4j.bom.get()}")
-        api("org.slf4j:slf4j-api:${rootProject.libs.versions.slf4j.get()}")
+        api(platform(rootProject.libs.log4j.bom))
+        api(rootProject.libs.log4j.api)
+        api(rootProject.libs.log4j.core)
+        api(rootProject.libs.slf4j.api)
 
         // JavaFX and UI dependencies
-        api("org.kordamp.ikonli:ikonli-javafx:${rootProject.libs.versions.ikonli.get()}")
+        api(rootProject.libs.ikonli.javafx)
 
         // Security dependencies
-        api("org.bouncycastle:bcprov-jdk18on:${rootProject.libs.versions.bouncycastle.get()}")
-        api("org.bouncycastle:bcpkix-jdk18on:${rootProject.libs.versions.bouncycastle.get()}")
+        api(rootProject.libs.bouncycastle.provider)
+        api(rootProject.libs.bouncycastle.pkix)
     }
 }
 
