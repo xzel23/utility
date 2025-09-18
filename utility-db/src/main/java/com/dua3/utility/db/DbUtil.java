@@ -317,7 +317,8 @@ public final class DbUtil {
     }
 
     /**
-     * Create a stream of objects from a {@link ResultSet}.
+     * Create a stream of objects from a {@link ResultSet} and automatically closes the passed
+     * {@link ResultSet} when the stream is closed.
      * <p>
      * <strong>IMPORTANT:</strong> do not close the database or the result set before all stream items are consumed.
      * The result set will be automatically closed together with the stream. If more resources have to be closed,
@@ -331,11 +332,27 @@ public final class DbUtil {
      * @param <T> stream item type
      * @throws SQLException if an SQL exception occurrs
      */
-    public static <T> Stream<T> stream(ResultSet rs, Function<? super ResultSet, ? extends T> mapper, AutoCloseable... closeables) throws SQLException {
+    public static <T> Stream<T> streamAndClose(ResultSet rs, Function<? super ResultSet, ? extends T> mapper, AutoCloseable... closeables) throws SQLException {
         UncheckedCloser closer = rs::close;
         for (AutoCloseable closeable : closeables) {
             closer = closer.nest(closeable);
         }
+        Stream<T> stream = stream(rs, mapper);
+        return stream.onClose(closer::doClose);
+    }
+
+    /**
+     * Creates a sequential {@link Stream} from the given {@link ResultSet}. The Stream processes
+     * each row of the ResultSet using the provided mapping function. The ResultSet must not be
+     * closed while the Stream is being processed.
+     *
+     * @param <T> the type of elements in the resulting Stream
+     * @param rs the ResultSet to create the Stream from
+     * @param mapper a function to map each row of the ResultSet to an object of type T
+     * @return a Stream of objects of type T created from the rows in the ResultSet
+     * @throws SQLException if an SQL exception occurs while accessing the ResultSet
+     */
+    public static <T> Stream<T> stream(ResultSet rs, Function<? super ResultSet, ? extends T> mapper) throws SQLException {
         try {
             return StreamSupport.stream(new Spliterators.AbstractSpliterator<T>(
                     Long.MAX_VALUE, Spliterator.ORDERED) {
@@ -349,7 +366,7 @@ public final class DbUtil {
                         throw new WrappedException(ex);
                     }
                 }
-            }, false).onClose(closer::doClose);
+            }, false);
         } catch (WrappedException e) {
             switch (e.getCause()) {
                 case SQLException sqlEx -> throw sqlEx;

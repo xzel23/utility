@@ -154,7 +154,6 @@ public final class CryptUtil {
      */
     public static byte[] decrypt(String input, char[] password, InputBufferHandling inputBufferHandling) {
         try {
-            LangUtil.checkArg(password.length >= 8, "password must have at least 8 characters");
             int splitIndex = input.indexOf('$');
             LangUtil.checkArg(splitIndex > 0, "Invalid input");
             byte[] salt = TextUtil.base64Decode(input.substring(0, splitIndex));
