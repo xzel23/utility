@@ -42,6 +42,34 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Execution(ExecutionMode.SAME_THREAD) // all tests use the same Database instance
 class DbUtilTest {
 
+    private static class RecordingCloseable implements AutoCloseable {
+        private final String name;
+        private final java.util.List<String> log;
+        private final ResultSet rs;
+        private boolean closed = false;
+        RecordingCloseable(String name, java.util.List<String> log, ResultSet rs) {
+            this.name = name;
+            this.log = log;
+            this.rs = rs;
+        }
+        @Override
+        public void close() throws Exception {
+            // when this closeable is closed, the ResultSet must not yet be closed
+            if (rs != null) {
+                try {
+                    if (rs.isClosed()) {
+                        throw new IllegalStateException("ResultSet was closed before closeable '"+name+"'");
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            log.add(name);
+            closed = true;
+        }
+        boolean isClosed() { return closed; }
+    }
+
     private Connection connection;
 
     @BeforeEach
@@ -306,6 +334,59 @@ class DbUtilTest {
             assertTrue(exception.getMessage().contains("URL not accepted by driver"), "Exception message should indicate URL is not accepted");
         } catch (ClassNotFoundException | SQLException e) {
             fail("Exception while testing createDataSource with invalid URL: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testStreamAndClose_withThreeCloseables_ordering() throws Exception {
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet realRs = stmt.executeQuery("SELECT * FROM test_table ORDER BY id");
+
+            java.util.List<String> log = new java.util.ArrayList<>();
+
+            // Create a proxy ResultSet that records when close() is called, then delegates to real ResultSet
+            ResultSet rs = (ResultSet) java.lang.reflect.Proxy.newProxyInstance(
+                    getClass().getClassLoader(),
+                    new Class[]{ResultSet.class},
+                    (proxy, method, args) -> {
+                        if ("close".equals(method.getName())) {
+                            log.add("RS");
+                        }
+                        try {
+                            return method.invoke(realRs, args);
+                        } catch (java.lang.reflect.InvocationTargetException e) {
+                            throw e.getCause();
+                        }
+                    }
+            );
+
+            RecordingCloseable a = new RecordingCloseable("A", log, rs);
+            RecordingCloseable b = new RecordingCloseable("B", log, rs);
+            RecordingCloseable c = new RecordingCloseable("C", log, rs);
+
+            Stream<Integer> stream = DbUtil.streamAndClose(rs, resultSet -> {
+                try {
+                    return resultSet.getInt("id");
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }, a, b, c);
+
+            // consume the stream
+            int count = (int) stream.count();
+            assertEquals(1, count);
+
+            // close the stream to trigger closing chain
+            stream.close();
+
+            // Validate ordering: closeables in reverse order, then ResultSet
+            assertEquals(java.util.List.of("C", "B", "A", "RS"), log);
+
+            // Ensure closeables are closed and ResultSet is closed at the end
+            assertTrue(a.isClosed());
+            assertTrue(b.isClosed());
+            assertTrue(c.isClosed());
+            assertTrue(realRs.isClosed());
         }
     }
 
