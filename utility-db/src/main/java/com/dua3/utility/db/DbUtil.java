@@ -309,7 +309,7 @@ public final class DbUtil {
 
         default UncheckedCloser nest(AutoCloseable c) {
             return () -> {
-                try (UncheckedCloser unused = this) {
+                try (this) {
                     c.close();
                 }
             };
