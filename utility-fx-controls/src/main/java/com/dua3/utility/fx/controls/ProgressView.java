@@ -98,7 +98,7 @@ public class ProgressView<T> extends GridPane implements ProgressTracker<T> {
         }
 
         @Override
-        public void update(int done, int total) {
+        public void update(int total, int done) {
             Platform.runLater(() -> {
                 if (total == 0) {
                     pb.setProgress(-1);

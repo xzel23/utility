@@ -108,7 +108,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
         }
 
         @Override
-        public void update(int done, int total) {
+        public void update(int total, int done) {
             SwingUtilities.invokeLater(() -> {
                 if (total == 0) {
                     pb.setIndeterminate(true);
