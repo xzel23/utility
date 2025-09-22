@@ -61,7 +61,7 @@ dependencyResolutionManagement {
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
             version("junit-bom", "5.13.4")
-            version("log4j-bom", "2.25.1")
+            version("log4j-bom", "2.25.2")
             version("miglayout", "11.4.2")
             version("slf4j", "2.0.17")
             version("spotbugs", "4.9.6")
