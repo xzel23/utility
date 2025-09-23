@@ -380,6 +380,7 @@ public final class DbUtil {
                         action.accept(mapped);
                     } catch (RuntimeException ex) {
                         LOG.warn("RuntimeException in action.accept()", ex);
+                        throw ex;
                     }
 
                     return true;

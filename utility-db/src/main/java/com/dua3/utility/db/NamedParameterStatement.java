@@ -115,6 +115,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalStateException if the same parameter is used for different types
      */
     public NamedParameterStatement(Connection connection, String query) throws SQLException {
+        LOG.debug("creating NamedParameterStatement: {}", () -> System.identityHashCode(this));
         indexMap = new HashMap<>();
         String parsedQuery = parse(query, indexMap);
         //noinspection JDBCPrepareStatementWithNonConstantString - by design
@@ -931,6 +932,7 @@ public class NamedParameterStatement implements AutoCloseable {
      */
     @Override
     public void close() throws SQLException {
+        LOG.debug("closing NamedParameterStatement: {}", () -> System.identityHashCode(this));
         statement.close();
     }
 
