@@ -359,15 +359,30 @@ public final class DbUtil {
                 @Override
                 public boolean tryAdvance(Consumer<? super T> action) {
                     try {
-                        if (!rs.next() || rs.isClosed()) {
+                        if (!rs.next()) {
+                            LOG.debug("ResultSet.next() returned false");
                             return false;
                         }
-
-                        action.accept(mapper.apply(rs));
-                        return true;
                     } catch (SQLException ex) {
+                        LOG.warn("SQLException in ResultSet.next()", ex);
                         throw new WrappedException(ex);
                     }
+
+                    T mapped;
+                    try {
+                        mapped = mapper.apply(rs);
+                    } catch (RuntimeException ex) {
+                        LOG.warn("RuntimeException in ResultSet mapper", ex);
+                        throw ex;
+                    }
+
+                    try {
+                        action.accept(mapped);
+                    } catch (RuntimeException ex) {
+                        LOG.warn("RuntimeException in action.accept()", ex);
+                    }
+
+                    return true;
                 }
             }, false);
         } catch (WrappedException e) {
