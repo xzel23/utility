@@ -359,7 +359,10 @@ public final class DbUtil {
                 @Override
                 public boolean tryAdvance(Consumer<? super T> action) {
                     try {
-                        if (rs.isClosed() || !rs.next()) return false;
+                        if (!rs.next() || rs.isClosed()) {
+                            return false;
+                        }
+
                         action.accept(mapper.apply(rs));
                         return true;
                     } catch (SQLException ex) {
