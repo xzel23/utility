@@ -364,10 +364,24 @@ public final class DbUtil {
                             return false;
                         }
                     } catch (SQLException ex) {
-                        LOG.warn("SQLException in ResultSet.next()", ex);
+                        if (ex.getErrorCode() == 17010) {
+                            // ResultSet was closed on the server, ignore the ORA-17010 exception
+                            LOG.debug("Oracle quirk: ResultSet was closed on the server, ignoring exception", ex);
+                            return false;
+                        }
+                        try {
+                            // ResultSet was closed on the server, but the error code is not 17010, warn about this
+                            if (rs.isClosed()) {
+                                LOG.warn("ResultSet was closed by the server; this might be a quirk implemented by the database vendor");
+                                return false;
+                            }
+                        } catch (SQLException ex2) {
+                            // this should not happen, add the exception
+                            ex.setNextException(ex2);
+                        }
+                        LOG.warn("SQLException in ResultSet.next() ", ex);
                         throw new WrappedException(ex);
                     }
-
                     T mapped;
                     try {
                         mapped = mapper.apply(rs);
@@ -375,14 +389,12 @@ public final class DbUtil {
                         LOG.warn("RuntimeException in ResultSet mapper", ex);
                         throw ex;
                     }
-
                     try {
                         action.accept(mapped);
                     } catch (RuntimeException ex) {
                         LOG.warn("RuntimeException in action.accept()", ex);
                         throw ex;
                     }
-
                     return true;
                 }
             }, false);
@@ -395,4 +407,5 @@ public final class DbUtil {
             }
         }
     }
+
 }
