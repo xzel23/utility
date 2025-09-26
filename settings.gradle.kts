@@ -52,9 +52,9 @@ dependencyResolutionManagement {
             plugin("jreleaser", "org.jreleaser").version("1.20.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.4.2")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
+            plugin("versions", "com.github.ben-manes.versions").version("0.53.0")
 
-            version("h2database", "2.3.232")
+            version("h2database", "2.4.240")
             version("ikonli", "12.4.0")
             version("javafx", "23.0.2") // IMPORTANT: JavaFX 23 is the last version to support Java 21!
             version("jimfs", "1.3.1")
