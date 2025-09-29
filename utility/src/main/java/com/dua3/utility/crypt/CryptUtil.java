@@ -244,10 +244,10 @@ public final class CryptUtil {
             SecretKey aesKey = KeyUtil.generateSecretKey(256, SYMMETRIC_ALGORITHM_DEFAULT);
 
             // Encrypt data with AES
-            byte[] encryptedData = encryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, aesKey, data, InputBufferHandling.PRESERVE);
+            byte[] encryptedData = encryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, aesKey, data, InputBufferHandling.CLEAR_AFTER_USE);
 
             // Encrypt AES key with public key
-            byte[] encryptedKey = encryptAsymmetric(publicKey, aesKey.getEncoded());
+            byte[] encryptedKey = encryptAsymmetric(publicKey, aesKey.getEncoded(), InputBufferHandling.CLEAR_AFTER_USE);
 
             // Combine: [4 bytes: key length][encrypted key][encrypted data]
             ByteBuffer buffer = ByteBuffer.allocate(4 + encryptedKey.length + encryptedData.length);
@@ -257,6 +257,7 @@ public final class CryptUtil {
 
             return buffer.array();
         } finally {
+            // clear the passed data, it might not have been cleared when an exception occurrs early in this method
             if (inputBufferHandling != com.dua3.utility.crypt.InputBufferHandling.PRESERVE) {
                 Arrays.fill(data, (byte) 0);
             }
@@ -302,15 +303,21 @@ public final class CryptUtil {
      * @return the encrypted data
      * @throws GeneralSecurityException if encryption fails
      */
-    public static byte[] encryptAsymmetric(PublicKey publicKey, byte[] data) throws GeneralSecurityException {
-        validateAsymmetricEncryptionKey(publicKey, data.length);
+    public static byte[] encryptAsymmetric(PublicKey publicKey, byte[] data, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
+        try {
+            validateAsymmetricEncryptionKey(publicKey, data.length);
 
-        AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm());
-        String transformation = getAsymmetricTransformation(algorithm);
+            AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm());
+            String transformation = getAsymmetricTransformation(algorithm);
 
-        Cipher cipher = Cipher.getInstance(transformation);
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        return cipher.doFinal(data);
+            Cipher cipher = Cipher.getInstance(transformation);
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            return cipher.doFinal(data);
+        } finally {
+            if (inputBufferHandling != com.dua3.utility.crypt.InputBufferHandling.PRESERVE) {
+                Arrays.fill(data, (byte) 0);
+            }
+        }
     }
 
     /**
