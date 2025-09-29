@@ -244,7 +244,7 @@ public final class CryptUtil {
             SecretKey aesKey = KeyUtil.generateSecretKey(256, SYMMETRIC_ALGORITHM_DEFAULT);
 
             // Encrypt data with AES
-            byte[] encryptedData = encryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, aesKey, data, InputBufferHandling.CLEAR_AFTER_USE);
+            byte[] encryptedData = encryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, aesKey, data, inputBufferHandling);
 
             // Encrypt AES key with public key
             byte[] encryptedKey = encryptAsymmetric(publicKey, aesKey.getEncoded(), InputBufferHandling.CLEAR_AFTER_USE);

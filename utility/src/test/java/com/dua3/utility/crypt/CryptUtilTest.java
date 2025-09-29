@@ -194,7 +194,7 @@ class CryptUtilTest {
                     continue;
                 }
 
-                byte[] encrypted = CryptUtil.encryptAsymmetric(publicKey, data);
+                byte[] encrypted = CryptUtil.encryptAsymmetric(publicKey, data, InputBufferHandling.PRESERVE);
                 byte[] decrypted = CryptUtil.decryptAsymmetric(privateKey, encrypted);
                 assertArrayEquals(data, decrypted);
             }
@@ -204,7 +204,7 @@ class CryptUtilTest {
 
             // Test that all encryption methods throw InvalidKeyException
             assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptAsymmetric(publicKey, testData);
+                CryptUtil.encryptAsymmetric(publicKey, testData, InputBufferHandling.CLEAR_AFTER_USE);
             });
         }
     }
@@ -246,7 +246,7 @@ class CryptUtilTest {
 
         // This should throw an exception
         assertThrows(GeneralSecurityException.class, () -> {
-            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedData);
+            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedData, InputBufferHandling.PRESERVE);
         });
     }
 
@@ -264,7 +264,7 @@ class CryptUtilTest {
 
         // This should work (at the limit)
         try {
-            byte[] encrypted = CryptUtil.encryptAsymmetric(rsaPublicKey, maxSizeData);
+            byte[] encrypted = CryptUtil.encryptAsymmetric(rsaPublicKey, maxSizeData, InputBufferHandling.PRESERVE);
             byte[] decrypted = CryptUtil.decryptAsymmetric(rsaPrivateKey, encrypted);
             assertArrayEquals(maxSizeData, decrypted);
         } catch (GeneralSecurityException e) {
@@ -273,7 +273,7 @@ class CryptUtilTest {
             byte[] smallerData = new byte[180];
             Arrays.fill(smallerData, (byte) 'X');
 
-            byte[] encrypted = CryptUtil.encryptAsymmetric(rsaPublicKey, smallerData);
+            byte[] encrypted = CryptUtil.encryptAsymmetric(rsaPublicKey, smallerData, InputBufferHandling.PRESERVE);
             byte[] decrypted = CryptUtil.decryptAsymmetric(rsaPrivateKey, encrypted);
             assertArrayEquals(smallerData, decrypted);
         }
@@ -283,7 +283,7 @@ class CryptUtilTest {
         Arrays.fill(oversizedByOne, (byte) 'Y');
 
         assertThrows(GeneralSecurityException.class, () -> {
-            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedByOne);
+            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedByOne, InputBufferHandling.PRESERVE);
         });
     }
 
@@ -362,13 +362,13 @@ class CryptUtilTest {
 
         if (algorithm.isEncryptionSupported()) {
             // Algorithm supports direct encryption - test it
-            byte[] encryptedData = CryptUtil.encryptAsymmetric(publicKey, shortData);
+            byte[] encryptedData = CryptUtil.encryptAsymmetric(publicKey, shortData, InputBufferHandling.PRESERVE);
             byte[] decryptedData = CryptUtil.decryptAsymmetric(privateKey, encryptedData);
             assertArrayEquals(shortData, decryptedData);
         } else {
             // Algorithm doesn't support direct encryption - should throw exception
             assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptAsymmetric(publicKey, shortData);
+                CryptUtil.encryptAsymmetric(publicKey, shortData, InputBufferHandling.PRESERVE);
             });
         }
     }
