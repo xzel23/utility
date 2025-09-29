@@ -54,7 +54,22 @@ public class InputGrid extends GridPane {
                     .orElse(Dimension2f.of(0, 0))
     );
 
+    /**
+     * Represents a boolean property that indicates the validity state of the input in the dialog pane.
+     * This property is used to dynamically track and manage whether the input provided by the user
+     * meets certain predefined validation criteria.
+     * <p>
+     * The default value for this property is {@code false}, meaning the input is considered invalid
+     * until explicitly validated or updated by the dialog's logic.
+     * <p>+
+     * This property is typically bound to validation mechanisms within the dialog pane,
+     * allowing it to automatically update based on user interactions or changes in the input fields.
+     * <p>
+     * It is marked as {@code protected final}, indicating it is immutable after initialization
+     * and can only be accessed or modified within the class hierarchy.
+     */
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
+
     private SequencedCollection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;
 
