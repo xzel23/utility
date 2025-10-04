@@ -1,5 +1,6 @@
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -10,6 +11,8 @@ import org.jspecify.annotations.Nullable;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -25,6 +28,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -356,7 +360,7 @@ public final class KeyUtil {
 
     private static byte[] decodeKeyDataBase64(String clean) throws InvalidKeySpecException {
         try {
-            return java.util.Base64.getDecoder().decode(clean);
+            return Base64.getDecoder().decode(clean);
         } catch (IllegalArgumentException e) {
             throw new InvalidKeySpecException(e);
         }
@@ -424,5 +428,60 @@ public final class KeyUtil {
 
         // Fallback - shouldn't happen with valid PEM
         throw new InvalidKeySpecException("Invalid PEM format: missing required header");
+    }
+
+    /**
+     * Converts the given cryptographic key to its PEM (Privacy-Enhanced Mail) format.
+     *
+     * @param key the cryptographic key to be converted into PEM format
+     * @return the PEM-encoded string representation of the key
+     * @throws UncheckedIOException if an unexpected I/O exception occurs
+     */
+    public static String toPem(Key key) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            appendPem(key, sb);
+            return sb.toString();
+        } catch (IOException e) {
+            // should never happen
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Appends a PEM (Privacy Enhanced Mail) format representation of the specified cryptographic key
+     * to the provided {@link Appendable}.
+     * <p>
+     * The method determines the key type (private or public), extracts its binary encoding, converts
+     * it to a Base64-encoded string, and wraps it in the appropriate PEM format with headers and footers.
+     *
+     * @param key the cryptographic key to be formatted into PEM; must be either a {@link PrivateKey} or {@link PublicKey}.
+     * @param app the target {@link Appendable} to which the PEM representation will be appended.
+     * @throws IOException if an I/O error occurs while writing to the {@link Appendable}.
+     * @throws IllegalStateException if the key type is not supported.
+     * @throws IllegalArgumentException if the provided key cannot be encoded.
+     */
+    public static void appendPem(Key key, Appendable app) throws IOException {
+        // Determine key type and algorithm prefix
+        String type = switch (key) {
+            case PrivateKey pk -> "PRIVATE KEY";
+            case PublicKey pk -> "PUBLIC KEY";
+            default -> throw new IllegalStateException("Unsupported key type: " + key.getClass().getName());
+        };
+        byte[] encoded = key.getEncoded();
+        if (encoded == null) {
+            throw new IllegalArgumentException("Key cannot be encoded");
+        }
+
+        // Convert to Base64 with line breaks every 64 characters
+        CharSequence base64 = TextUtil.asCharSequence(TextUtil.base64EncodeToChars(encoded));
+
+        // Write PEM format
+        app.append("-----BEGIN ").append(type).append("-----\n");
+        for (int i = 0; i < base64.length(); i += 64) {
+            app.append(base64, i, Math.min(i + 64, base64.length()));
+            app.append('\n');
+        }
+        app.append("-----END ").append(type).append("-----\n");
     }
 }

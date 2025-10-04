@@ -11,15 +11,22 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Arrays;
-import javax.crypto.SecretKey;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KeyUtilTest {
 
@@ -290,4 +297,32 @@ class KeyUtilTest {
         assertThrows(java.security.spec.InvalidKeySpecException.class, () -> KeyUtil.loadPrivateKeyFromPem(pem));
     }
 
+    @Test
+    void testToPem_ValidKey() throws GeneralSecurityException {
+        // Generate a RSA key pair
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+
+        // Convert public key to PEM
+        String publicKeyPem = KeyUtil.toPem(keyPair.getPublic());
+        assertNotNull(publicKeyPem);
+        assertTrue(publicKeyPem.contains("-----BEGIN PUBLIC KEY-----"));
+        assertTrue(publicKeyPem.contains("-----END PUBLIC KEY-----"));
+
+        // Convert private key to PEM
+        String privateKeyPem = KeyUtil.toPem(keyPair.getPrivate());
+        assertNotNull(privateKeyPem);
+        assertTrue(privateKeyPem.contains("-----BEGIN PRIVATE KEY-----"));
+        assertTrue(privateKeyPem.contains("-----END PRIVATE KEY-----"));
+
+        // Convert back to key
+        Key loaded = KeyUtil.loadPublicKeyFromPem(publicKeyPem);
+        assertEquals(keyPair.getPublic(), loaded);
+    }
+
+    @Test
+    void testToPem_InvalidKey() {
+        // Test with an unsupported key type
+        Key unsupportedKey = new SecretKeySpec(new byte[16], "AES"); // SecretKey not supported for PEM
+        assertThrows(IllegalStateException.class, () -> KeyUtil.toPem(unsupportedKey));
+    }
 }
