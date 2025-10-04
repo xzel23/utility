@@ -920,6 +920,28 @@ class TextUtilTest {
         Assertions.assertArrayEquals(expected, result, "Expected byte array for special characters does not match the result.");
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"", "abcdef"})
+    void testAsCharSequence(String s) {
+        CharSequence cs = TextUtil.asCharSequence(s.toCharArray());
+
+        assertTrue(TextUtil.contentEquals(s, cs));
+        assertEquals(s, cs.toString());
+        assertEquals(s.length(), cs.length());
+
+        for (int i = -1; i <= s.length() + 1; i++) {
+            for (int j = -1; j <= s.length() + 1; j++) {
+                if (i < 0 || j < 0 || j < i || i > s.length() || j > s.length()) {
+                    int ii = i;
+                    int jj = j;
+                    assertThrows(IllegalArgumentException.class, () -> cs.subSequence(ii, jj));
+                } else {
+                    assertEquals(s.substring(i, j), cs.subSequence(i, j).toString());
+                }
+            }
+        }
+    }
+
     @Test
     void testStripTrailingWithWhitespace() {
         String input = "Test String   ";

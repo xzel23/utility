@@ -478,6 +478,63 @@ public final class TextUtil {
     }
 
     /**
+     * A private implementation of the {@link CharSequence} interface that wraps a portion of a character array.
+     * This class provides an immutable, read-only view of a specific range within a given character array.
+     */
+    private static final class CharSequenceWrapper implements CharSequence {
+        private final char[] chars;
+        private final int start;
+        private final int end;
+
+        /**
+         * Constructs a new {@code CharSequenceWrapper} that wraps a specific portion of a character array.
+         *
+         * @param chars the character array to wrap
+         * @param start the starting offset (inclusive) within the character array
+         * @param end the ending offset (exclusive) within the character array
+         * @throws IllegalArgumentException if the {@code start} or {@code end} indices are out of bounds
+         */
+        CharSequenceWrapper(char[] chars, int start, int end) {
+            this.chars = chars;
+            this.start = start;
+            this.end = end;
+
+            LangUtil.checkArg(LangUtil.isBetween(start, 0, chars.length), "start out of bounds: %s", start);
+            LangUtil.checkArg(LangUtil.isBetween(end, start, chars.length), "end out of bounds: %s", end);
+        }
+
+        @Override
+        public int length() {
+            return end - start;
+        }
+
+        @Override
+        public char charAt(int index) {
+            return chars[start + index];
+        }
+
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            return new CharSequenceWrapper(chars, this.start + start, this.start + end);
+        }
+
+        @Override
+        public String toString() {
+            return new String(chars, start, end - start);
+        }
+    }
+
+    /**
+     * Converts a character array into a {@link CharSequence}.
+     *
+     * @param chars the character array to be converted into a CharSequence
+     * @return a CharSequence wrapping the provided character array
+     */
+    public static CharSequence asCharSequence(char[] chars) {
+        return new CharSequenceWrapper(chars, 0, chars.length);
+    }
+
+    /**
      * Splits the provided character sequence into an array of lines, using
      * the predefined line splitting pattern.
      * <p>

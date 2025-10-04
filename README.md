@@ -335,6 +335,7 @@ could not be loaded.
           algorithms.
         - Added `isNullOrBlank()`
         - Fixed an issue where `TextUtil.wrap()` would drop the last line if not ended with a line-end character.
+        - Add `TextUtil.asCharSequence(chars[])`.
     - Fix some `RichText.split()` issues; the method should now always produce results consistent with String.split()
 
 ### 19.2.1
