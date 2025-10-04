@@ -158,9 +158,9 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      *               action to execute, and enablement state
      * @return the current builder instance with the added button definition
      */
+    @SuppressWarnings("unchecked")
     protected B button(InputDialogPane.ButtonDef<R> button) {
         this.buttons.add(button);
-        //noinspection unchecked
         return (B) this;
     }
 
