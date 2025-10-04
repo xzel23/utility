@@ -43,6 +43,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @return a Converter that handles the bidirectional conversion between objects of type T and Strings
      * @throws ConversionException if the specified class does not declare the matching factory method or constructor
      */
+    @SuppressWarnings("unchecked")
     static <T> Converter<String, T> stringConverter(Class<T> type) throws ConversionException {
         if (type.isEnum()) {
             return new SimpleConverter<>(
