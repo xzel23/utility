@@ -45,7 +45,7 @@ dependencyResolutionManagement {
 
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
             plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("1.0.0")
-            plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
+            plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.10")
             plugin("sonar", "org.sonarqube").version("6.3.1.5724")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
