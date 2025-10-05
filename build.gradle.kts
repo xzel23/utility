@@ -182,6 +182,7 @@ sonar {
     }
 }
 
+// check for development/release version
 fun isDevelopmentVersion(versionString: String): Boolean {
     val v = versionString.toDefaultLowerCase()
     val markers = listOf("snapshot", "alpha", "beta")
@@ -627,13 +628,19 @@ jreleaser {
 allprojects {
     fun isStable(version: String): Boolean {
         val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
-        val regex = "[0-9,.v-]+-(rc|alpha|beta|b|M)(-?[0-9]*)?".toRegex()
+        val regex = "[0-9,.v-]+-(rc|ea|alpha|beta|b|M|SNAPSHOT)([+-]?[0-9]*)?".toRegex()
         return stableKeyword || !regex.matches(version)
     }
 
     tasks.withType<DependencyUpdatesTask> {
+        // refuse non-stable versions
         rejectVersionIf {
             !isStable(candidate.version)
+        }
+
+        // dependencyUpdates fails in parallel mode with Gradle 9+ (https://github.com/ben-manes/gradle-versions-plugin/issues/968)
+        doFirst {
+            gradle.startParameter.isParallelProjectExecutionEnabled = false
         }
     }
 }
