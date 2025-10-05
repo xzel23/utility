@@ -87,12 +87,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Setup JDK 24 + JavaFX
-      - name: 'Set up JDK 24 with JavaFX'
+      # Setup JDK 25 + JavaFX
+      - name: 'Set up JDK 25 with JavaFX'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '24'
+          java-version: '25'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -147,12 +147,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Setup JDK 24 with JavaFX
-      - name: 'Set up JDK 24 with JavaFX'
+      # Setup JDK 25 with JavaFX
+      - name: 'Set up JDK 25 with JavaFX'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '24'
+          java-version: '25'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -195,12 +195,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Setup JDK 24 with JavaFX
-      - name: 'Set up JDK 24 with JavaFX'
+      # Setup JDK 54 with JavaFX
+      - name: 'Set up JDK 25 with JavaFX'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '24'
+          java-version: '25'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -260,12 +260,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Setup JDK 24 with JavaFX
-      - name: 'Set up JDK 24 with JavaFX'
+      # Setup JDK 25 with JavaFX
+      - name: 'Set up JDK 25 with JavaFX'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '24'
+          java-version: '25'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
