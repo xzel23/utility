@@ -159,6 +159,7 @@ public class ArgumentsDialog extends JDialog {
          *
          * @return the generated Arguments object
          */
+        @SuppressWarnings("unchecked")
         public Arguments getArguments() {
             List<Arguments.Entry<?>> parsedOptions = inputs.values().stream()
                     .map(oi -> {

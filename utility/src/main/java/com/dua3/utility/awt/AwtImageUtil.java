@@ -42,8 +42,8 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
         return AwtImage.create(w, h, data);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public AwtImage createBufferedImage(int w, int h) {
         return AwtImage.create(w, h);
     }

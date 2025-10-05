@@ -140,6 +140,7 @@ public final class PropertyConverter {
      * @param property the {@code DoubleProperty} to be converted
      * @return the {@code Property<Double>} representation of the given {@code DoubleProperty}
      */
+    @SuppressWarnings("unchecked")
     public static Property<Double> convert(DoubleProperty property) {
         // Explanation
         //	- DoubleProperty extends Property<Number>, not Property<Double>, due to Java’s type system and generics erasure.

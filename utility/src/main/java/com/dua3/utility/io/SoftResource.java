@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the resource type
  */
-public final class SoftResource<T> {
+public final class SoftResource<T extends @Nullable Object> {
 
     /**
      * A static final SoftReference holding a null reference.
@@ -33,12 +33,12 @@ public final class SoftResource<T> {
      */
     public static final SoftResource<?> EMPTY_RESOURCE = new SoftResource<>(null);
 
-    private @Nullable Supplier<? extends @Nullable T> supplier;
+    private @Nullable Supplier<? extends T> supplier;
     private SoftReference<T> ref;
 
-    private SoftResource(@Nullable Supplier<? extends @Nullable T> supplier) {
+    @SuppressWarnings("unchecked")
+    private SoftResource(@Nullable Supplier<? extends T> supplier) {
         this.supplier = supplier;
-        //noinspection unchecked
         this.ref = (SoftReference<T>) EMPTY_REFERENCE;
     }
 
@@ -50,7 +50,7 @@ public final class SoftResource<T> {
      *                 invocation return equal instances
      * @return soft resource
      */
-    public static <T> SoftResource<T> of(Supplier<? extends @Nullable T> supplier) {
+    public static <T> SoftResource<T> of(Supplier<? extends T> supplier) {
         return new SoftResource<>(supplier);
     }
 
@@ -60,9 +60,9 @@ public final class SoftResource<T> {
      * @param <T> the type of the resource
      * @return empty soft resource
      */
-    public static <T> SoftResource<@Nullable T> emptyReference() {
-        //noinspection unchecked
-        return (SoftResource<@Nullable T>) EMPTY_RESOURCE;
+    @SuppressWarnings("unchecked")
+    public static <T extends @Nullable Object> SoftResource<T> emptyReference() {
+        return (SoftResource<T>) EMPTY_RESOURCE;
     }
 
     /**
@@ -72,6 +72,7 @@ public final class SoftResource<T> {
      * if it has not yet been set or has been garbage collected, it will be
      * restored by invoking the supplier
      */
+    @SuppressWarnings("unchecked")
     public @Nullable T get() {
         T obj = ref.get();
         if (obj == null && supplier != null) {
@@ -79,7 +80,6 @@ public final class SoftResource<T> {
 
             if (obj == null) {
                 supplier = null;
-                //noinspection unchecked
                 ref = (SoftReference<T>) EMPTY_REFERENCE;
             } else {
                 ref = new SoftReference<>(obj);
@@ -114,7 +114,7 @@ public final class SoftResource<T> {
      */
     public static final class ResourceHolder<T extends @Nullable Object> implements AutoCloseable {
         private final SoftResource<T> soft;
-        private @Nullable T strong;
+        private T strong;
 
         private ResourceHolder(SoftResource<T> sr) {
             this.strong = sr.get();

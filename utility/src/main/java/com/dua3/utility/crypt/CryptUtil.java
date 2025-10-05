@@ -300,6 +300,7 @@ public final class CryptUtil {
      *
      * @param publicKey the public key for encryption
      * @param data      the data to encrypt
+     * @param inputBufferHandling how to handle input buffers
      * @return the encrypted data
      * @throws GeneralSecurityException if encryption fails
      */

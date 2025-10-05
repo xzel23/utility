@@ -43,8 +43,8 @@ public final class FxImageUtil implements ImageUtil<Image> {
         return new FxStandardImage(wr);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public FxBufferedImage createBufferedImage(int w, int h) {
         return new FxBufferedImage(w, h);
     }

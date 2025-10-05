@@ -187,8 +187,8 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return an {@link Optional} containing the first matching file type, or an empty {@code Optional}
      * if no matching file type is found
      */
+    @SuppressWarnings("unchecked")
     public static <T> Optional<FileType<? extends T>> readerForType(Class<T> cls) {
-        //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> !t.isCompound() && t.isSupported(OpenMode.READ) && cls.isAssignableFrom(t.getDocumentClass()))
                 .findFirst()
@@ -204,8 +204,8 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param cls the class of the document type to look for
      * @return an unmodifiable {@link List} containing the matching file types
      */
+    @SuppressWarnings("unchecked")
     public static <T> List<FileType<? extends T>> allReadersForType(Class<T> cls) {
-        //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> t.isSupported(OpenMode.READ) && cls.isAssignableFrom(t.getDocumentClass()))
                 .map(t -> (FileType<? extends T>) t)
@@ -220,8 +220,8 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return an {@link Optional} containing the first matching file type, or an empty {@code Optional}
      * if no matching file type is found
      */
+    @SuppressWarnings("unchecked")
     public static <T> Optional<FileType<? super T>> writerForType(Class<T> cls) {
-        //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getWriteableClass().isAssignableFrom(cls))
                 .findFirst()
@@ -235,8 +235,8 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param cls the class of the document type to look for
      * @return an unmodifiable {@link List} containing the matching file types
      */
+    @SuppressWarnings("unchecked")
     public static <T> List<FileType<? super T>> allWritersForType(Class<T> cls) {
-        //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getWriteableClass().isAssignableFrom(cls))
                 .map(t -> (FileType<? super T>) t)
