@@ -88,6 +88,26 @@ the order they are declared.</div>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">CertificateUtil.</span><code><a href="../CertificateUtil.html#createSelfSignedX509Certificate(com.dua3.utility.crypt.AsymmetricAlgorithm,int,java.lang.String,int,boolean)" class="member-name-link">createSelfSignedX509Certificate</a><wbr>(<a href="../AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a>&nbsp;algorithm,
+ int&nbsp;keySize,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subject,
+ int&nbsp;validityDays,
+ boolean&nbsp;enableCA)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Creates a self-signed X.509 certificate generating the key pair from the provided key type and size.</div>
+</div>
+<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">CertificateUtil.</span><code><a href="../CertificateUtil.html#createX509Certificate(com.dua3.utility.crypt.AsymmetricAlgorithm,int,java.lang.String,int,boolean,java.security.PrivateKey,java.security.cert.X509Certificate...)" class="member-name-link">createX509Certificate</a><wbr>(<a href="../AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a>&nbsp;algorithm,
+ int&nbsp;keySize,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subject,
+ int&nbsp;validityDays,
+ boolean&nbsp;enableCA,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;parentPrivateKey,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>...&nbsp;parentCertificateChain)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Creates an X.509 certificate generating the subject key pair from the provided key type and size.</div>
+</div>
 <div class="col-first even-row-color"><code>static void</code></div>
 <div class="col-second even-row-color"><span class="type-name-label">KeyStoreUtil.</span><code><a href="../KeyStoreUtil.html#generateAndStoreKeyPairWithX509Certificate(java.security.KeyStore,java.lang.String,com.dua3.utility.crypt.AsymmetricAlgorithm,int,char%5B%5D,java.lang.String,int)" class="member-name-link">generateAndStoreKeyPairWithX509Certificate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html" title="class or interface in java.security" class="external-link">KeyStore</a>&nbsp;keyStore,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;alias,

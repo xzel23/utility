@@ -110,13 +110,33 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSelfSignedX509Certificate(java.security.KeyPair,java.lang.String,int,boolean)" class="member-name-link">createSelfSignedX509Certificate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyPair.html" title="class or interface in java.security" class="external-link">KeyPair</a>&nbsp;keyPair,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSelfSignedX509Certificate(com.dua3.utility.crypt.AsymmetricAlgorithm,int,java.lang.String,int,boolean)" class="member-name-link">createSelfSignedX509Certificate</a><wbr>(<a href="AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a>&nbsp;algorithm,
+ int&nbsp;keySize,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subject,
  int&nbsp;validityDays,
  boolean&nbsp;enableCA)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a self-signed X.509 certificate generating the key pair from the provided key type and size.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSelfSignedX509Certificate(java.security.KeyPair,java.lang.String,int,boolean)" class="member-name-link">createSelfSignedX509Certificate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyPair.html" title="class or interface in java.security" class="external-link">KeyPair</a>&nbsp;keyPair,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subject,
+ int&nbsp;validityDays,
+ boolean&nbsp;enableCA)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a self-signed X.509 certificate using the provided key pair, subject distinguished name,
  validity duration, and a flag to enable Certificate Authority (CA) settings.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createX509Certificate(com.dua3.utility.crypt.AsymmetricAlgorithm,int,java.lang.String,int,boolean,java.security.PrivateKey,java.security.cert.X509Certificate...)" class="member-name-link">createX509Certificate</a><wbr>(<a href="AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a>&nbsp;algorithm,
+ int&nbsp;keySize,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subject,
+ int&nbsp;validityDays,
+ boolean&nbsp;enableCA,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;parentPrivateKey,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>...&nbsp;parentCertificateChain)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates an X.509 certificate generating the subject key pair from the provided key type and size.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createX509Certificate(java.security.KeyPair,java.lang.String,int,boolean,java.security.PrivateKey,java.security.cert.X509Certificate...)" class="member-name-link">createX509Certificate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyPair.html" title="class or interface in java.security" class="external-link">KeyPair</a>&nbsp;keyPair,
@@ -227,6 +247,30 @@ U extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 </section>
 </li>
 <li>
+<section class="detail" id="createSelfSignedX509Certificate(com.dua3.utility.crypt.AsymmetricAlgorithm,int,java.lang.String,int,boolean)">
+<h3>createSelfSignedX509Certificate</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</span>&nbsp;<span class="element-name">createSelfSignedX509Certificate</span><wbr><span class="parameters">(<a href="AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a>&nbsp;algorithm,
+ int&nbsp;keySize,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subject,
+ int&nbsp;validityDays,
+ boolean&nbsp;enableCA)</span>
+                                                         throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></span></div>
+<div class="block">Creates a self-signed X.509 certificate generating the key pair from the provided key type and size.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>algorithm</code> - the algorithm to use</dd>
+<dd><code>keySize</code> - the key size in bits (RSA/DSA: &gt;=2048, EC: 256/384/521)</dd>
+<dd><code>subject</code> - the distinguished name (DN) of the certificate's subject</dd>
+<dd><code>validityDays</code> - the number of days the certificate will be valid</dd>
+<dd><code>enableCA</code> - whether to include CA extensions</dd>
+<dt>Returns:</dt>
+<dd>an array containing the generated self-signed certificate (and optional chain elements)</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></code> - if key generation or certificate creation fails</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="createX509Certificate(java.security.KeyPair,java.lang.String,int,boolean,java.security.PrivateKey,java.security.cert.X509Certificate...)">
 <h3>createX509Certificate</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</span>&nbsp;<span class="element-name">createX509Certificate</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyPair.html" title="class or interface in java.security" class="external-link">KeyPair</a>&nbsp;keyPair,
@@ -259,6 +303,34 @@ U extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></code> - if an error occurs during the certificate generation
                                   or signing process</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createX509Certificate(com.dua3.utility.crypt.AsymmetricAlgorithm,int,java.lang.String,int,boolean,java.security.PrivateKey,java.security.cert.X509Certificate...)">
+<h3>createX509Certificate</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>[]</span>&nbsp;<span class="element-name">createX509Certificate</span><wbr><span class="parameters">(<a href="AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a>&nbsp;algorithm,
+ int&nbsp;keySize,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subject,
+ int&nbsp;validityDays,
+ boolean&nbsp;enableCA,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;parentPrivateKey,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a>...&nbsp;parentCertificateChain)</span>
+                                               throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></span></div>
+<div class="block">Creates an X.509 certificate generating the subject key pair from the provided key type and size.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>algorithm</code> - the algorithm to use</dd>
+<dd><code>keySize</code> - the key size in bits (RSA/DSA: &gt;=2048, EC: 256/384/521)</dd>
+<dd><code>subject</code> - the distinguished name (DN) of the certificate's subject</dd>
+<dd><code>validityDays</code> - the number of days from the current date for which the certificate will be valid</dd>
+<dd><code>enableCA</code> - whether to include CA extensions on the child certificate</dd>
+<dd><code>parentPrivateKey</code> - the parent certificate's private key</dd>
+<dd><code>parentCertificateChain</code> - the parent certificate chain used for signing</dd>
+<dt>Returns:</dt>
+<dd>the generated certificate chain with the new certificate at position 0</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></code> - if key generation or certificate creation fails</dd>
 </dl>
 </section>
 </li>
