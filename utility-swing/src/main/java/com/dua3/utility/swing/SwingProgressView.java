@@ -15,7 +15,7 @@ import java.awt.Label;
  *
  * @param <T> the task type
  */
-public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
+public final class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
 
     private final ProgressView<T> imp;
     private int rowCount;
