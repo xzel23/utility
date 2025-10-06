@@ -75,7 +75,24 @@ public final class CertificateUtil {
         return builder.get()
                 .subject(subject)
                 .validityDays(validityDays)
+                .signatureAlgorithm(determineSignatureAlgorithm(keyPair.getPrivate()))
                 .build(keyPair);
+    }
+
+    /**
+     * Creates a self-signed X.509 certificate generating the key pair from the provided key type and size.
+     *
+     * @param algorithm    the algorithm to use
+     * @param keySize      the key size in bits (RSA/DSA: >=2048, EC: 256/384/521)
+     * @param subject      the distinguished name (DN) of the certificate's subject
+     * @param validityDays the number of days the certificate will be valid
+     * @param enableCA     whether to include CA extensions
+     * @return an array containing the generated self-signed certificate (and optional chain elements)
+     * @throws GeneralSecurityException if key generation or certificate creation fails
+     */
+    public static X509Certificate[] createSelfSignedX509Certificate(AsymmetricAlgorithm algorithm, int keySize, String subject, int validityDays, boolean enableCA) throws GeneralSecurityException {
+        KeyPair keyPair = KeyUtil.generateKeyPair(algorithm, keySize);
+        return createSelfSignedX509Certificate(keyPair, subject, validityDays, enableCA);
     }
 
     /**
@@ -134,6 +151,32 @@ public final class CertificateUtil {
         } catch (Exception e) {
             throw new GeneralSecurityException("Failed to create X.509 certificate", e);
         }
+    }
+
+    /**
+     * Creates an X.509 certificate generating the subject key pair from the provided key type and size.
+     *
+     * @param algorithm    the algorithm to use
+     * @param keySize                the key size in bits (RSA/DSA: >=2048, EC: 256/384/521)
+     * @param subject                the distinguished name (DN) of the certificate's subject
+     * @param validityDays           the number of days from the current date for which the certificate will be valid
+     * @param enableCA               whether to include CA extensions on the child certificate
+     * @param parentPrivateKey       the parent certificate's private key
+     * @param parentCertificateChain the parent certificate chain used for signing
+     * @return the generated certificate chain with the new certificate at position 0
+     * @throws GeneralSecurityException if key generation or certificate creation fails
+     */
+    public static X509Certificate[] createX509Certificate(
+            AsymmetricAlgorithm algorithm,
+            int keySize,
+            String subject,
+            int validityDays,
+            boolean enableCA,
+            PrivateKey parentPrivateKey,
+            X509Certificate... parentCertificateChain
+    ) throws GeneralSecurityException {
+        KeyPair keyPair = KeyUtil.generateKeyPair(algorithm, keySize);
+        return createX509Certificate(keyPair, subject, validityDays, enableCA, parentPrivateKey, parentCertificateChain);
     }
 
     /**

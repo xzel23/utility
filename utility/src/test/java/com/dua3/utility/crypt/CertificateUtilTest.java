@@ -570,4 +570,75 @@ class CertificateUtilTest {
         // Verify resulting chain is valid (leaf -> root)
         assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(leafFirst0, leafFirst1));
     }
+
+    // New tests for keyType/keySize overloads
+
+    @Test
+    void testCreateSelfSignedX509Certificate_WithKeyTypeAndSize_RSA() throws GeneralSecurityException {
+        String subject = "CN=Self RSA, O=Test Org, C=US";
+        X509Certificate[] chain = CertificateUtil.createSelfSignedX509Certificate(AsymmetricAlgorithm.RSA, 2048, subject, 365, true);
+        assertNotNull(chain);
+        assertTrue(chain.length >= 1);
+        X509Certificate cert = chain[0];
+        assertEquals("RSA", cert.getPublicKey().getAlgorithm());
+        assertTrue(cert.toString().contains("CN=Self RSA"));
+        // self-verify
+        assertDoesNotThrow(() -> cert.verify(cert.getPublicKey()));
+    }
+
+    @Test
+    void testCreateSelfSignedX509Certificate_WithKeyTypeAndSize_EC() throws GeneralSecurityException {
+        String subject = "CN=Self EC, O=Test Org, C=US";
+        X509Certificate[] chain = CertificateUtil.createSelfSignedX509Certificate(AsymmetricAlgorithm.EC, 256, subject, 365, true);
+        assertNotNull(chain);
+        assertTrue(chain.length >= 1);
+        X509Certificate cert = chain[0];
+        assertEquals("EC", cert.getPublicKey().getAlgorithm());
+        assertTrue(cert.toString().contains("CN=Self EC"));
+        assertDoesNotThrow(() -> cert.verify(cert.getPublicKey()));
+    }
+
+    @Test
+    void testCreateX509Certificate_WithKeyTypeAndSize_RSA_ChildSignedByRSAParent() throws GeneralSecurityException {
+        // Parent (RSA)
+        Map<String, Object> parentInfo = createTestParentCertificate();
+        X509Certificate parentCert = (X509Certificate) parentInfo.get("certificate");
+        PrivateKey parentPrivateKey = (PrivateKey) parentInfo.get("privateKey");
+
+        // Child via new overload (RSA 2048)
+        String subject = "CN=Child RSA, O=Test Org, C=US";
+        X509Certificate[] chain = CertificateUtil.createX509Certificate(
+                AsymmetricAlgorithm.RSA, 2048, subject, 180, false, parentPrivateKey, parentCert);
+
+        assertNotNull(chain);
+        assertTrue(chain.length >= 2, "Chain should contain child and parent");
+        X509Certificate child = chain[0];
+        assertEquals("RSA", child.getPublicKey().getAlgorithm());
+        // verify signature with parent public key
+        assertDoesNotThrow(() -> child.verify(parentCert.getPublicKey()));
+        // verify chain
+        assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(chain));
+    }
+
+    @Test
+    void testCreateX509Certificate_WithKeyTypeAndSize_EC_ChildSignedByRSAParent() throws GeneralSecurityException {
+        // Parent (RSA)
+        Map<String, Object> parentInfo = createTestParentCertificate();
+        X509Certificate parentCert = (X509Certificate) parentInfo.get("certificate");
+        PrivateKey parentPrivateKey = (PrivateKey) parentInfo.get("privateKey");
+
+        // Child via new overload (EC 256)
+        String subject = "CN=Child EC, O=Test Org, C=US";
+        X509Certificate[] chain = CertificateUtil.createX509Certificate(
+                AsymmetricAlgorithm.EC, 256, subject, 180, false, parentPrivateKey, parentCert);
+
+        assertNotNull(chain);
+        assertTrue(chain.length >= 2, "Chain should contain child and parent");
+        X509Certificate child = chain[0];
+        assertEquals("EC", child.getPublicKey().getAlgorithm());
+        // verify signature with parent public key
+        assertDoesNotThrow(() -> child.verify(parentCert.getPublicKey()));
+        // verify chain
+        assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(chain));
+    }
 }
