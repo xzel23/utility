@@ -53,8 +53,8 @@ class SwingFileFilterTest {
     @BeforeAll
     static void setUp() {
         // Create mock FileTypes
-        FileType.addType(new TestFileType("Text", OpenMode.READ_AND_WRITE, String.class, "txt", "text"));
-        FileType.addType(new TestFileType("Document", OpenMode.READ, String.class, "doc", "docx"));
+        FileType.addType(new TestFileType<>("Text", OpenMode.READ_AND_WRITE, String.class, "txt", "text"));
+        FileType.addType(new TestFileType<>("Document", OpenMode.READ, String.class, "doc", "docx"));
     }
 
     /**
