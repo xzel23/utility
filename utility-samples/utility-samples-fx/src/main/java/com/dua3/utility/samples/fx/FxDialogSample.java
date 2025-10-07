@@ -4,6 +4,7 @@ import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.FileDialogMode;
 import com.dua3.utility.lang.SystemInfo;
+import com.dua3.utility.text.MessageFormatter;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -63,7 +64,7 @@ public class FxDialogSample extends Application {
 
         // Confirmation
         container.getChildren().add(createButton("Confirmation", () ->
-                Dialogs.confirmation(primaryStage)
+                Dialogs.confirmation(MessageFormatter.standard(), primaryStage)
                         .title("Elevator cleaning")
                         .header("Good for you!")
                         .text("You've decided to clean the elevator.")
@@ -73,7 +74,7 @@ public class FxDialogSample extends Application {
 
         // Information
         container.getChildren().add(createButton("Info", () -> {
-            Dialogs.information(primaryStage)
+            Dialogs.information(MessageFormatter.standard(), primaryStage)
                     .title("Info")
                     .header("Elevator cleaning")
                     .text("To clean and service the electromagnetic coils in the bottom, " +
@@ -84,7 +85,7 @@ public class FxDialogSample extends Application {
 
         // Warning
         container.getChildren().add(createButton("Warning", () -> {
-            Dialogs.warning(primaryStage)
+            Dialogs.warning(MessageFormatter.standard(), primaryStage)
                     .title("Warning")
                     .header("Attention... danger")
                     .text("Automatic charges will now blow the explosive bolts in the floor plate unit. " +
@@ -95,7 +96,7 @@ public class FxDialogSample extends Application {
 
         // Error
         container.getChildren().add(createButton("Error", () -> {
-            Dialogs.error(primaryStage)
+            Dialogs.error(MessageFormatter.standard(), primaryStage)
                     .title("Error")
                     .header("Please leave the elevator immediately")
                     .text("5-4-3-2-1...")
@@ -105,7 +106,7 @@ public class FxDialogSample extends Application {
 
         // Prompt
         container.getChildren().add(createButton("Prompt", () ->
-                Dialogs.prompt(primaryStage)
+                Dialogs.prompt(MessageFormatter.standard(), primaryStage)
                         .title("Prompt")
                         .header("This is a prompt dialog.")
                         .showAndWait()
@@ -128,7 +129,7 @@ public class FxDialogSample extends Application {
 
         // Input
         container.getChildren().add(createButton("Input", () ->
-                Dialogs.input(primaryStage)
+                Dialogs.input(MessageFormatter.standard(), primaryStage)
                         .title("Input")
                         .header("This is an input dialog.")
                         .text("This is some text without label.")
@@ -148,8 +149,8 @@ public class FxDialogSample extends Application {
                         .chooseFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(new FileChooser.ExtensionFilter("all files", "*")))
                         .comboBoxEx("listEx",
                                 "edit items and choose one",
-                                s -> Dialogs.prompt(primaryStage).title("Edit item").defaultValue("%s", Objects.requireNonNullElse(s, "")).build().showAndWait().orElse(null),
-                                () -> Dialogs.prompt(primaryStage).title("Add item").build().showAndWait().orElse(null),
+                                s -> Dialogs.prompt(MessageFormatter.standard(), primaryStage).title("Edit item").defaultValue("%s", Objects.requireNonNullElse(s, "")).build().showAndWait().orElse(null),
+                                () -> Dialogs.prompt(MessageFormatter.standard(), primaryStage).title("Add item").build().showAndWait().orElse(null),
                                 (cb, item) -> true,
                                 Objects::toString,
                                 () -> null,
@@ -161,7 +162,7 @@ public class FxDialogSample extends Application {
 
         // Options
         container.getChildren().add(createButton("Options", () ->
-                Dialogs.options(primaryStage)
+                Dialogs.options(MessageFormatter.standard(), primaryStage)
                         .options(CsvIo.getOptions())
                         .title("Options")
                         .header("This is an options dialog.")
@@ -174,7 +175,7 @@ public class FxDialogSample extends Application {
                 Dialogs.wizard()
                         .title("Database Connection Wizard")
                         .page("start",
-                                Dialogs.informationPane()
+                                Dialogs.informationPane(MessageFormatter.standard())
                                         .header("Create new database connection")
                                         .text("""
                                                 This wizard helps you to define a new database connection.
@@ -184,7 +185,7 @@ public class FxDialogSample extends Application {
                                                 - the server name and port
                                                 """))
                         .page("dbms",
-                                Dialogs.inputPane()
+                                Dialogs.inputPane(MessageFormatter.standard())
                                         .header("Choose your Database from the list below.")
                                         .radioList("rdbms", "Database", () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
                         )

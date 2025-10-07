@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
+import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -37,8 +38,15 @@ public class AlertBuilder
     private ButtonType @Nullable [] buttons;
     private @Nullable ButtonType defaultButton;
 
-    AlertBuilder(AlertType type, @Nullable Window parentWindow) {
-        super(parentWindow);
+    /**
+     * Constructs an AlertBuilder for creating Alert dialogs.
+     *
+     * @param type         the type of the alert, such as confirmation or error
+     * @param formatter    the message formatter used for building formatted messages
+     * @param parentWindow the parent window for the alert dialog; can be null
+     */
+    AlertBuilder(AlertType type, MessageFormatter formatter, @Nullable Window parentWindow) {
+        super(formatter, parentWindow);
         setDialogSupplier(() -> new Alert(type));
     }
 
@@ -81,7 +89,7 @@ public class AlertBuilder
      * @return {@code this}
      */
     public AlertBuilder text(String fmt, Object... args) {
-        this.text = String.format(fmt, args);
+        this.text = format(fmt, args);
         return this;
     }
 

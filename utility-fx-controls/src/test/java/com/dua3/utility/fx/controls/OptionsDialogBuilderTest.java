@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.Param;
+import com.dua3.utility.text.MessageFormatter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -25,7 +26,7 @@ class OptionsDialogBuilderTest extends FxTestBase {
     void testCreateBuilder() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            OptionsDialogBuilder builder = Dialogs.options(null);
+            OptionsDialogBuilder builder = Dialogs.options(MessageFormatter.standard(), null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -39,7 +40,7 @@ class OptionsDialogBuilderTest extends FxTestBase {
     void testOptions() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            OptionsDialogBuilder builder = Dialogs.options(null);
+            OptionsDialogBuilder builder = Dialogs.options(MessageFormatter.standard(), null);
 
             // Create some options
             Option<Boolean> verboseOption = Option.createFlag("Verbose", "Enable verbose output", "--verbose", "-v");
@@ -65,7 +66,7 @@ class OptionsDialogBuilderTest extends FxTestBase {
     void testCurrentValues() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            OptionsDialogBuilder builder = Dialogs.options(null);
+            OptionsDialogBuilder builder = Dialogs.options(MessageFormatter.standard(), null);
 
             // Create some options
             Option<Boolean> verboseOption = Option.createFlag("Verbose", "Enable verbose output", "--verbose", "-v");
@@ -95,7 +96,7 @@ class OptionsDialogBuilderTest extends FxTestBase {
     void testBuild() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            OptionsDialogBuilder builder = Dialogs.options(null);
+            OptionsDialogBuilder builder = Dialogs.options(MessageFormatter.standard(), null);
 
             // Create some options
             Option<Boolean> verboseOption = Option.createFlag("Verbose", "Enable verbose output", "--verbose", "-v");
@@ -140,7 +141,7 @@ class OptionsDialogBuilderTest extends FxTestBase {
             Arguments currentValues = Arguments.of(Arguments.createEntry(verboseOption, true), Arguments.createEntry(countOption, 5));
 
             // Create a builder and chain methods
-            OptionsDialogBuilder builder = Dialogs.options(null).options(options).currentValues(currentValues).title("Options").header("Configure Options");
+            OptionsDialogBuilder builder = Dialogs.options(MessageFormatter.standard(), null).options(options).currentValues(currentValues).title("Options").header("Configure Options");
 
             // Verify builder is valid after chaining
             assertNotNull(builder);

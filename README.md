@@ -280,6 +280,7 @@ could not be loaded.
     - Fixed validation of numeric fields in Dialogs created using `Dialogs.input()`.
     - Show markers vor invalid input in Dialogs created using `Dialogs.input()`.
     - Small fixes and improvements.
+    - Dialog builders support the new `MessageFormatter` class, making creating localized dialogs less verbose
 
 - Package `utility.io`
     - Fix a race condition that sometimes would lead to a failure of the `IoUtil.testRedirectStandardStreams()`
@@ -337,6 +338,7 @@ could not be loaded.
         - Fixed an issue where `TextUtil.wrap()` would drop the last line if not ended with a line-end character.
         - Add `TextUtil.asCharSequence(chars[])`.
     - Fix some `RichText.split()` issues; the method should now always produce results consistent with String.split()
+    - Add `MessageFormatter` class
 
 ### 19.2.1
 

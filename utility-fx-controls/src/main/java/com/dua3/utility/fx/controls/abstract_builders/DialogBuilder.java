@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls.abstract_builders;
 
+import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.Dialog;
@@ -40,10 +41,11 @@ public abstract class DialogBuilder<D extends @NonNull Dialog<R>, B extends @Non
     /**
      * Constructs a DialogBuilder with an optional parent window.
      *
+     * @param formatter the {@link MessageFormatter} to use
      * @param parentWindow the parent window for the dialog, or {@code null} if no parent is specified
      */
-    protected DialogBuilder(@Nullable Window parentWindow) {
-        super(Dialog::setHeaderText);
+    protected DialogBuilder(MessageFormatter formatter, @Nullable Window parentWindow) {
+        super(formatter, Dialog::setHeaderText);
         this.parentWindow = parentWindow;
         this.titleSetter = Dialog::setTitle;
     }
@@ -57,7 +59,7 @@ public abstract class DialogBuilder<D extends @NonNull Dialog<R>, B extends @Non
      */
     @SuppressWarnings("unchecked")
     public B title(String fmt, Object... args) {
-        this.title = String.format(fmt, args);
+        this.title = format(fmt, args);
         return (B) this;
     }
 

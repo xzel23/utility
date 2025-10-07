@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.web;
 
 import com.dua3.utility.fx.controls.Dialogs;
+import com.dua3.utility.text.MessageFormatter;
 import javafx.event.Event;
 import javafx.event.EventDispatchChain;
 import javafx.event.EventDispatcher;
@@ -64,7 +65,7 @@ public final class WebViews {
      * @throws NullPointerException if the engine is null
      */
     public static void setAlertHandler(WebEngine engine) {
-        engine.setOnAlert(e -> Dialogs.warning(null).header("%s", e.getData()).showAndWait());
+        engine.setOnAlert(e -> Dialogs.warning(MessageFormatter.standard(), null).header("%s", e.getData()).showAndWait());
     }
 
     /**
@@ -73,7 +74,7 @@ public final class WebViews {
      * @param engine the WebEngine to set the confirmation handler for
      */
     public static void setConfirmationHandler(WebEngine engine) {
-        engine.setConfirmHandler(s -> Dialogs.confirmation(null)
+        engine.setConfirmHandler(s -> Dialogs.confirmation(MessageFormatter.standard(), null)
                 .header("%s", s)
                 .buttons(ButtonType.YES, ButtonType.NO)
                 .defaultButton(ButtonType.NO)
@@ -89,7 +90,7 @@ public final class WebViews {
      * @param engine the WebEngine to set the prompt handler for
      */
     public static void setPromptHandler(WebEngine engine) {
-        engine.setPromptHandler(p -> Dialogs.prompt(null).header("%s", p.getMessage())
+        engine.setPromptHandler(p -> Dialogs.prompt(MessageFormatter.standard(), null).header("%s", p.getMessage())
                 .defaultValue("%s", p.getDefaultValue()).showAndWait().orElse(""));
     }
 

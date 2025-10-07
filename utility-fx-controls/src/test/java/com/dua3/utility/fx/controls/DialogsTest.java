@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class DialogsTest extends FxTestBase {
     void testWarning() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a warning alert builder
-            AlertBuilder builder = Dialogs.warning(null);
+            AlertBuilder builder = Dialogs.warning(MessageFormatter.standard(), null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -44,7 +45,7 @@ class DialogsTest extends FxTestBase {
     void testWarningPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a warning alert pane builder
-            AlertPaneBuilder builder = Dialogs.warningPane();
+            AlertPaneBuilder builder = Dialogs.warningPane(MessageFormatter.standard());
 
             // Verify builder was created
             assertNotNull(builder);
@@ -58,7 +59,7 @@ class DialogsTest extends FxTestBase {
     void testError() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an error alert builder
-            AlertBuilder builder = Dialogs.error(null);
+            AlertBuilder builder = Dialogs.error(MessageFormatter.standard(), null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -79,7 +80,7 @@ class DialogsTest extends FxTestBase {
     void testErrorPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an error alert pane builder
-            AlertPaneBuilder builder = Dialogs.errorPane();
+            AlertPaneBuilder builder = Dialogs.errorPane(MessageFormatter.standard());
 
             // Verify builder was created
             assertNotNull(builder);
@@ -93,7 +94,7 @@ class DialogsTest extends FxTestBase {
     void testInformation() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an information alert builder
-            AlertBuilder builder = Dialogs.information(null);
+            AlertBuilder builder = Dialogs.information(MessageFormatter.standard(), null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -114,7 +115,7 @@ class DialogsTest extends FxTestBase {
     void testInformationPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an information alert pane builder
-            AlertPaneBuilder builder = Dialogs.informationPane();
+            AlertPaneBuilder builder = Dialogs.informationPane(MessageFormatter.standard());
 
             // Verify builder was created
             assertNotNull(builder);
@@ -128,7 +129,7 @@ class DialogsTest extends FxTestBase {
     void testConfirmation() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a confirmation alert builder
-            AlertBuilder builder = Dialogs.confirmation(null);
+            AlertBuilder builder = Dialogs.confirmation(MessageFormatter.standard(), null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -149,7 +150,7 @@ class DialogsTest extends FxTestBase {
     void testConfirmationPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a confirmation alert pane builder
-            AlertPaneBuilder builder = Dialogs.confirmationPane();
+            AlertPaneBuilder builder = Dialogs.confirmationPane(MessageFormatter.standard());
 
             // Verify builder was created
             assertNotNull(builder);
@@ -205,7 +206,7 @@ class DialogsTest extends FxTestBase {
     void testPrompt() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a prompt dialog builder
-            PromptBuilder builder = Dialogs.prompt(null);
+            PromptBuilder builder = Dialogs.prompt(MessageFormatter.standard(), null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -219,7 +220,7 @@ class DialogsTest extends FxTestBase {
     void testPromptPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a prompt pane builder
-            PromptPaneBuilder builder = Dialogs.promptPane();
+            PromptPaneBuilder builder = Dialogs.promptPane(MessageFormatter.standard());
 
             // Verify builder was created
             assertNotNull(builder);
@@ -233,7 +234,7 @@ class DialogsTest extends FxTestBase {
     void testInput() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an input dialog builder
-            InputDialogBuilder builder = Dialogs.input(null);
+            InputDialogBuilder builder = Dialogs.input(MessageFormatter.standard(), null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -247,7 +248,7 @@ class DialogsTest extends FxTestBase {
     void testInputPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an input pane builder
-            InputPaneBuilder builder = Dialogs.inputPane();
+            InputPaneBuilder builder = Dialogs.inputPane(MessageFormatter.standard());
 
             // Verify builder was created
             assertNotNull(builder);
@@ -275,7 +276,7 @@ class DialogsTest extends FxTestBase {
     void testOptions() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an options dialog builder
-            OptionsDialogBuilder builder = Dialogs.options(null);
+            OptionsDialogBuilder builder = Dialogs.options(MessageFormatter.standard(), null);
 
             // Verify builder was created
             assertNotNull(builder);

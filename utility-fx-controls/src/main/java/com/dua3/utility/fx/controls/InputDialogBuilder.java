@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
+import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
@@ -43,10 +44,11 @@ public class InputDialogBuilder
         extends DialogBuilder<InputDialog, InputDialogBuilder, Map<String, Object>>
         implements InputBuilder<InputDialogBuilder> {
 
-    private final InputPaneBuilder pb = new InputPaneBuilder();
+    private final InputPaneBuilder pb;
 
-    InputDialogBuilder(@Nullable Window parentWindow) {
-        super(parentWindow);
+    InputDialogBuilder(MessageFormatter formatter, @Nullable Window parentWindow) {
+        super(formatter, parentWindow);
+        this.pb = new InputPaneBuilder(formatter);
         setDialogSupplier(this::createDialog);
     }
 
@@ -68,7 +70,7 @@ public class InputDialogBuilder
 
     @Override
     public <T> InputDialogBuilder add(String id, String label, Class<T> type, Supplier<T> dflt, InputControl<T> control, boolean hidden) {
-        pb.add(id, label, type, dflt, control, hidden);
+        pb.add(id, format(label), type, dflt, control, hidden);
         return this;
     }
 
@@ -80,7 +82,7 @@ public class InputDialogBuilder
 
     @Override
     public InputDialogBuilder addNode(String id, String label, Node node) {
-        pb.addNode(id, label, node);
+        pb.addNode(id, format(label), node);
         return this;
     }
 

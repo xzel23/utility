@@ -290,4 +290,11 @@ public final class I18N {
     public boolean isMapped(String key) {
         return bundleMap.containsKey(key);
     }
+
+    @Override
+    public String toString() {
+        return "I18N{" +
+                "mainBundle=" + mainBundle +
+                '}';
+    }
 }

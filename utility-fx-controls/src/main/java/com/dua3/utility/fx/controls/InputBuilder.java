@@ -92,16 +92,15 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B columns(int columns);
 
     /**
-     * Add a static text without label.
+     * Add a static text without a label.
      *
      * @param text the text to show.
      * @return {@code this}
      */
-    B text(String text
-    );
+    B text(String text);
 
     /**
-     * Add a static text without label.
+     * Add a static text.
      *
      * @param label the label text
      * @param text the text to show.

@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
+import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
@@ -32,8 +33,8 @@ public class PromptBuilder extends DialogBuilder<TextInputDialog, PromptBuilder,
     private String defaultValue = "";
     private Predicate<? super @Nullable String> validate = (@Nullable String s) -> s != null && !s.isEmpty();
 
-    PromptBuilder(@Nullable Window parentWindow) {
-        super(parentWindow);
+    PromptBuilder(MessageFormatter formatter, @Nullable Window parentWindow) {
+        super(formatter, parentWindow);
         setDialogSupplier(this::createDialog);
         header("");
     }
@@ -46,7 +47,7 @@ public class PromptBuilder extends DialogBuilder<TextInputDialog, PromptBuilder,
      * @return the current instance of PromptBuilder for method chaining
      */
     public PromptBuilder defaultValue(String fmt, Object... args) {
-        this.defaultValue = args.length == 0 ? fmt : String.format(fmt, args);
+        this.defaultValue = format(fmt, args);
         return this;
     }
 

@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls.abstract_builders;
 
+import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.DialogPane;
 import org.jspecify.annotations.Nullable;
 
@@ -23,9 +24,11 @@ public abstract class PaneBuilder<D extends DialogPane & Supplier<R>, B extends 
      * This constructor initializes the builder by associating it with a header setter
      * that configures the header text of the dialog pane.
      * The constructor must be called by subclasses to initialize the base class.
+     *
+     * @param formatter the {@link MessageFormatter} to use
      */
-    protected PaneBuilder() {
-        super(DialogPane::setHeaderText);
+    protected PaneBuilder(MessageFormatter formatter) {
+        super(formatter, DialogPane::setHeaderText);
     }
 
     /**

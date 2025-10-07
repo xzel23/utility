@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
+import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
@@ -33,8 +34,8 @@ public class OptionsDialogBuilder extends DialogBuilder<OptionsDialog, OptionsDi
     private Collection<Option<?>> options = new ArrayList<>();
     private Arguments currentValues = Arguments.empty();
 
-    OptionsDialogBuilder(@Nullable Window parentWindow) {
-        super(parentWindow);
+    OptionsDialogBuilder(MessageFormatter formatter, @Nullable Window parentWindow) {
+        super(formatter, parentWindow);
         setDialogSupplier(OptionsDialog::new);
     }
 

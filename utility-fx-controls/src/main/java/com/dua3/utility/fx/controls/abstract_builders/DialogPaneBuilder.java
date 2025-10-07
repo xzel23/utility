@@ -16,6 +16,7 @@ package com.dua3.utility.fx.controls.abstract_builders;
 
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.InputDialogPane;
+import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 
@@ -38,6 +39,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
 
     private final BiConsumer<? super D, ? super String> headerSetter;
     private Supplier<? extends D> dialogSupplier;
+    private final MessageFormatter formatter;
     private @Nullable String header = null;
     private ResultHandler<R> resultHandler = (b, r) -> true;
     private final List<InputDialogPane.ButtonDef<R>> buttons = new ArrayList<>();
@@ -46,14 +48,17 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * Constructs an instance of DialogPaneBuilder with the specified header setter.
      * The header setter is used to configure the header text of the dialog.
      *
+     * @param formatter    the {@link MessageFormatter} to use
      * @param headerSetter a {@code BiConsumer} used to set the header text for the dialog.
      *                     The first parameter is the dialog instance, and the second parameter is the header text.
      */
     protected DialogPaneBuilder(
+            MessageFormatter formatter,
             BiConsumer<? super D, ? super String> headerSetter
     ) {
         this.dialogSupplier = () -> {throw new IllegalStateException("call setDialogSupplier() first");};
         this.headerSetter = headerSetter;
+        this.formatter = formatter;
     }
 
     /**
@@ -78,6 +83,18 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
         applyIfNotNull(headerSetter, dlg, header);
 
         return dlg;
+    }
+
+    /**
+     * Formats the given format string using the provided arguments.
+     * This method delegates the formatting process to an associated formatter instance.
+     *
+     * @param fmt  the format string containing placeholders as specified for formatting
+     * @param args the arguments to be inserted into the format string's placeholders
+     * @return the formatted string after inserting the provided arguments
+     */
+    protected String format(String fmt, Object... args) {
+        return formatter.format(fmt, args);
     }
 
     /**
@@ -106,7 +123,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      */
     @SuppressWarnings("unchecked")
     public B header(String fmt, Object... args) {
-        this.header = String.format(fmt, args);
+        this.header = formatter.format(fmt, args);
         return (B) this;
     }
 
@@ -191,5 +208,15 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
         } else {
             return Collections.unmodifiableList(buttons);
         }
+    }
+
+    /**
+     * Retrieves the message formatter associated with this instance of {@code DialogPaneBuilder}.
+     * The message formatter is used to format messages for this dialog pane.
+     *
+     * @return the {@code MessageFormatter} used for message formatting
+     */
+    public MessageFormatter getMessageFormatter() {
+        return formatter;
     }
 }

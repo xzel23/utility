@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
+import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
@@ -41,7 +42,8 @@ public class InputPaneBuilder
 
     private final InputGridBuilder pb = new InputGridBuilder();
 
-    InputPaneBuilder() {
+    InputPaneBuilder(MessageFormatter formatter) {
+        super(formatter);
         setDialogSupplier(() -> {
             InputPane inputPane = new InputPane(pb.build());
             inputPane.init();

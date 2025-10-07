@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
+import com.dua3.utility.text.MessageFormatter;
 
 /**
  * Builder for Prompt Panes.
@@ -22,7 +23,8 @@ import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
  * Provides a fluent interface to create Prompts.
  */
 public class PromptPaneBuilder extends PaneBuilder<PromptPane, PromptPaneBuilder, String> {
-    PromptPaneBuilder() {
+    PromptPaneBuilder(MessageFormatter formatter) {
+        super(formatter);
         setDialogSupplier(PromptPane::new);
     }
 

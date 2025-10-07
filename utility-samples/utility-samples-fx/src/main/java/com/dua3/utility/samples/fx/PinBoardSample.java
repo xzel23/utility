@@ -4,6 +4,7 @@ import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.InputPane;
 import com.dua3.utility.fx.controls.PinBoard;
+import com.dua3.utility.text.MessageFormatter;
 import javafx.application.Application;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -70,7 +71,7 @@ public class PinBoardSample extends Application {
         textArea.setPrefHeight(400);
 
         BooleanProperty inputValid = new SimpleBooleanProperty(false);
-        input = Dialogs.inputPane()
+        input = Dialogs.inputPane(MessageFormatter.standard())
                 .header("Input target coordinates.")
                 .integer("item", "item", () -> 0L)
                 .decimal("x", "x", () -> 0.0)
