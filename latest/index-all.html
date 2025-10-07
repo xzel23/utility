@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#about(javafx.stage.Window)" class="member-name-link">about(Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new AboutDialog.</div>
+<div class="block">Start the definition of a new AboutDialog.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AboutDialogBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -1664,11 +1664,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#chooseDirectory()" class="member-name-link">chooseDirectory()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new DirectoryChooser.</div>
+<div class="block">Start the definition of a new DirectoryChooser.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#chooseFile()" class="member-name-link">chooseFile()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new FileChooser.</div>
+<div class="block">Start the definition of a new FileChooser.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#chooseFile(java.lang.String,java.lang.String,java.util.function.Supplier,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.Collection)" class="member-name-link">chooseFile(String, String, Supplier&lt;Path&gt;, FileDialogMode, boolean, Collection&lt;FileChooser.ExtensionFilter&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
@@ -2187,13 +2187,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Concat multiple streams.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#confirmation(com.dua3.utility.text.MessageFormatter,javafx.stage.Window)" class="member-name-link">confirmation(MessageFormatter, Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new confirmation dialog.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#confirmation(javafx.stage.Window)" class="member-name-link">confirmation(Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new Confirmation dialog.</div>
+<div class="block">Start the definition of a new confirmation dialog using the standard MessageFormatter.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#confirmationPane()" class="member-name-link">confirmationPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new Confirmation pane.</div>
+<div class="block">Start the definition of a new Confirmation pane using the standard MessageFormatter.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#confirmationPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">confirmationPane(MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new Confirmation pane.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/ConsoleHandler.html" class="type-name-link" title="class in com.dua3.utility.logging">ConsoleHandler</a> - Class in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
 <dd>
@@ -3444,7 +3452,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Abstract class for building dialog boxes.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogBuilder.html#%3Cinit%3E(javafx.stage.Window)" class="member-name-link">DialogBuilder(Window)</a> - Constructor for class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogBuilder.html#%3Cinit%3E(com.dua3.utility.text.MessageFormatter,javafx.stage.Window)" class="member-name-link">DialogBuilder(MessageFormatter, Window)</a> - Constructor for class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogBuilder</a></dt>
 <dd>
 <div class="block">Constructs a DialogBuilder with an optional parent window.</div>
 </dd>
@@ -3452,7 +3460,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Abstract base class for DialogPane builders.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html#%3Cinit%3E(java.util.function.BiConsumer)" class="member-name-link">DialogPaneBuilder(BiConsumer&lt;? super D, ? super String&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html#%3Cinit%3E(com.dua3.utility.text.MessageFormatter,java.util.function.BiConsumer)" class="member-name-link">DialogPaneBuilder(MessageFormatter, BiConsumer&lt;? super D, ? super String&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a></dt>
 <dd>
 <div class="block">Constructs an instance of DialogPaneBuilder with the specified header setter.</div>
 </dd>
@@ -4058,6 +4066,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Textual compare ignoring case.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#error(com.dua3.utility.text.MessageFormatter,javafx.stage.Window)" class="member-name-link">error(MessageFormatter, Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new Error dialog.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/ValidationResult.html#error(javafx.scene.control.Control,java.lang.String)" class="member-name-link">error(Control, String)</a> - Static method in record class com.dua3.utility.fx.<a href="com/dua3/utility/fx/ValidationResult.html" title="class in com.dua3.utility.fx">ValidationResult</a></dt>
 <dd>
 <div class="block">Creates a <code>ValidationResult</code> indicating an error for the specified control,
@@ -4065,7 +4077,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#error(javafx.stage.Window)" class="member-name-link">error(Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new Error dialog.</div>
+<div class="block">Start definition of new Error dialog using the standard MessageFormatter.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/web/WebViews.JSLogger.html#error(netscape.javascript.JSObject)" class="member-name-link">error(JSObject)</a> - Method in class com.dua3.utility.fx.web.<a href="com/dua3/utility/fx/web/WebViews.JSLogger.html" title="class in com.dua3.utility.fx.web">WebViews.JSLogger</a></dt>
 <dd>
@@ -4089,7 +4101,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#errorPane()" class="member-name-link">errorPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new Error pane.</div>
+<div class="block">Start the definition of a new Error pane using the standard MessageFormatter.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#errorPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">errorPane(MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new Error pane.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/ChoiceInputControl.html#errorProperty()" class="member-name-link">errorProperty()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ChoiceInputControl.html" title="class in com.dua3.utility.fx.controls">ChoiceInputControl</a></dt>
 <dd>&nbsp;</dd>
@@ -4719,11 +4735,25 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Format an object into a string based on its type.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html#format(java.lang.String,java.lang.Object...)" class="member-name-link">format(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a></dt>
+<dd>
+<div class="block">Formats the given format string using the provided arguments.</div>
+</dd>
 <dt><a href="com/dua3/utility/i18n/I18N.html#format(java.lang.String,java.lang.Object...)" class="member-name-link">format(String, Object...)</a> - Method in class com.dua3.utility.i18n.<a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n">I18N</a></dt>
 <dd>
 <div class="block">Retrieves the formatted localized string for the given key from the resource bundle,
  using the provided arguments.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.html#format(java.lang.String,java.lang.Object...)" class="member-name-link">format(String, Object...)</a> - Method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
+<dd>
+<div class="block">Formats the given format string by replacing placeholders with the provided arguments.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html#format(java.lang.String,java.lang.Object...)" class="member-name-link">format(String, Object...)</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterI18n</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterMessageFormat.html#format(java.lang.String,java.lang.Object...)" class="member-name-link">format(String, Object...)</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterMessageFormat.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterMessageFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html#format(java.lang.String,java.lang.Object...)" class="member-name-link">format(String, Object...)</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterStringFormat</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/LogEntry.html#format(java.lang.String,java.lang.String)" class="member-name-link">format(String, String)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></dt>
 <dd>
 <div class="block">Formats the log entry with the given prefix and suffix.</div>
@@ -5634,6 +5664,16 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Retrieves the FontUtil compatible with this Graphics object.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.html#getFormatStyle()" class="member-name-link">getFormatStyle()</a> - Method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
+<dd>
+<div class="block">Retrieves the formatting style currently in use by the <code>MessageFormatter</code>.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html#getFormatStyle()" class="member-name-link">getFormatStyle()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterI18n</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterMessageFormat.html#getFormatStyle()" class="member-name-link">getFormatStyle()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterMessageFormat.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterMessageFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html#getFormatStyle()" class="member-name-link">getFormatStyle()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterStringFormat</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggerSlf4j.html#getFullyQualifiedCallerName()" class="member-name-link">getFullyQualifiedCallerName()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerSlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerSlf4j</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/LogUtil.html#getGlobalDispatcher()" class="member-name-link">getGlobalDispatcher()</a> - Static method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogUtil.html" title="class in com.dua3.utility.logging">LogUtil</a></dt>
@@ -5879,6 +5919,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/lang/WrappedException.html#getMessage()" class="member-name-link">getMessage()</a> - Method in exception class com.dua3.utility.lang.<a href="com/dua3/utility/lang/WrappedException.html" title="class in com.dua3.utility.lang">WrappedException</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html#getMessageFormatter()" class="member-name-link">getMessageFormatter()</a> - Method in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a></dt>
+<dd>
+<div class="block">Retrieves the message formatter associated with this instance of <code>DialogPaneBuilder</code>.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/SliderWithButtons.html#getMin()" class="member-name-link">getMin()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/SliderWithButtons.html" title="class in com.dua3.utility.fx.controls">SliderWithButtons</a></dt>
 <dd>
 <div class="block">Retrieves the minimum value of the slider.</div>
@@ -6940,9 +6984,19 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Retrieves an instance of the Internationalization (I18N) class.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.html#i18n(com.dua3.utility.i18n.I18N)" class="member-name-link">i18n(I18N)</a> - Static method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
+<dd>
+<div class="block">Creates a <code>MessageFormatter</code> configured with the specified <code>I18N</code> instance,
+ which allows for internationalized message formatting.</div>
+</dd>
 <dt><a href="com/dua3/utility/i18n/I18N.html" class="type-name-link" title="class in com.dua3.utility.i18n">I18N</a> - Class in <a href="com/dua3/utility/i18n/package-summary.html">com.dua3.utility.i18n</a></dt>
 <dd>
 <div class="block">The I18N class provides internationalization support for applications.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html#I18N" class="member-name-link">I18N</a> - Enum constant in enum class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html" title="enum class in com.dua3.utility.text">MessageFormatter.FormatStyle</a></dt>
+<dd>
+<div class="block">A constant representing the usage of a specific internationalization (I18N) instance
+ for formatting messages.</div>
 </dd>
 <dt><a href="com/dua3/utility/i18n/I18NProvider.html" class="type-name-link" title="interface in com.dua3.utility.i18n">I18NProvider</a> - Interface in <a href="com/dua3/utility/i18n/package-summary.html">com.dua3.utility.i18n</a></dt>
 <dd>
@@ -7250,13 +7304,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">INFO log level.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#information(com.dua3.utility.text.MessageFormatter,javafx.stage.Window)" class="member-name-link">information(MessageFormatter, Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new Information dialog.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#information(javafx.stage.Window)" class="member-name-link">information(Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new Information dialog.</div>
+<div class="block">Start the definition of a new Information dialog using the standard MessageFormatter.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#informationPane()" class="member-name-link">informationPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new Information pane.</div>
+<div class="block">Start the definition of a new Information pane using the standard MessageFormatter.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#informationPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">informationPane(MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new Information pane.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputControl.html#init()" class="member-name-link">init()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
@@ -7316,13 +7378,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Replace font declarations with declarations for single properties.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#input(com.dua3.utility.text.MessageFormatter,javafx.stage.Window)" class="member-name-link">input(MessageFormatter, Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start definition of a new input dialog.</div>
+</dd>
 <dt><a href="com/dua3/utility/io/IoOptions.html#input(java.util.function.Supplier)" class="member-name-link">input(Supplier&lt;Path&gt;)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoOptions.html" title="class in com.dua3.utility.io">IoOptions</a></dt>
 <dd>
 <div class="block">Creates an option for specifying the input path.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#input(javafx.stage.Window)" class="member-name-link">input(Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of a new input dialog.</div>
+<div class="block">Start definition of a new input dialog using the standard MessageFormatter.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/InputBufferHandling.html" class="type-name-link" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a> - Enum Class in <a href="com/dua3/utility/crypt/package-summary.html">com.dua3.utility.crypt</a></dt>
 <dd>
@@ -7366,7 +7432,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#inputGrid()" class="member-name-link">inputGrid()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new input dialog.</div>
+<div class="block">Start the definition of a new input dialog.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputGrid.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputGrid</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -7383,7 +7449,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#inputPane()" class="member-name-link">inputPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new input pane.</div>
+<div class="block">Start the definition of a new input pane using the standard MessageFormatter.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#inputPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">inputPane(MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new input pane.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPane.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputPane</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -8499,6 +8569,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Represents a locale-dependent short format style.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.html#localized(java.util.Locale)" class="member-name-link">localized(Locale)</a> - Static method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
+<dd>
+<div class="block">Creates an instance of <code>MessageFormatter</code> that uses <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.util.Locale,java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(Locale, String, Object...)</code></a>
+ for formatting using the provided locale.</div>
+</dd>
 <dt><a href="com/dua3/utility/logging/log4j/LogEntryLog4J.html#location()" class="member-name-link">location()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogEntryLog4J.html" title="class in com.dua3.utility.logging.log4j">LogEntryLog4J</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/LogEntry.html#location()" class="member-name-link">location()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></dt>
@@ -8990,6 +9065,41 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LogEntrySlf4j.html#message()" class="member-name-link">message()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LogEntrySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LogEntrySlf4j</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html#MESSAGE_FORMAT" class="member-name-link">MESSAGE_FORMAT</a> - Enum constant in enum class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html" title="enum class in com.dua3.utility.text">MessageFormatter.FormatStyle</a></dt>
+<dd>
+<div class="block">Specifies a formatting style to be applied for processing messages.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.html#messageFormat()" class="member-name-link">messageFormat()</a> - Static method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
+<dd>
+<div class="block">Returns the instance of <code>MessageFormatter</code> that utilizes <code>MessageFormat</code>
+ for formatting messages.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.html" class="type-name-link" title="interface in com.dua3.utility.text">MessageFormatter</a> - Interface in <a href="com/dua3/utility/text/package-summary.html">com.dua3.utility.text</a></dt>
+<dd>
+<div class="block">The <code>MessageFormatter</code> interface provides methods to format messages
+ using different strategies.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html" class="type-name-link" title="enum class in com.dua3.utility.text">MessageFormatter.FormatStyle</a> - Enum Class in <a href="com/dua3/utility/text/package-summary.html">com.dua3.utility.text</a></dt>
+<dd>
+<div class="block">Defines the style of formatting to be used within the <code>MessageFormatter</code>.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html" class="type-name-link" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterI18n</a> - Class in <a href="com/dua3/utility/text/package-summary.html">com.dua3.utility.text</a></dt>
+<dd>
+<div class="block">The <code>I18NFormatter</code> class is an implementation of the <code>MessageFormatter</code> interface
+ that formats messages using an <code>I18N</code> instance.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterMessageFormat.html" class="type-name-link" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterMessageFormat</a> - Class in <a href="com/dua3/utility/text/package-summary.html">com.dua3.utility.text</a></dt>
+<dd>
+<div class="block">The MessageFormatterMessageFormat class is an implementation of the MessageFormatter
+ interface that formats messages using the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/MessageFormat.html#format(java.lang.String,java.lang.Object...)" title="class or interface in java.text" class="external-link"><code>MessageFormat.format(String, Object...)</code></a>
+ method.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html" class="type-name-link" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterStringFormat</a> - Class in <a href="com/dua3/utility/text/package-summary.html">com.dua3.utility.text</a></dt>
+<dd>
+<div class="block">The <code>MessageFormatterStringFormat</code> class is an implementation of the <code>MessageFormatter</code>
+ interface that uses the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.util.Locale,java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(Locale, String, Object...)</code></a> method for formatting
+ messages.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/VerticalAlignment.html#MIDDLE" class="member-name-link">MIDDLE</a> - Enum constant in enum class com.dua3.utility.text.<a href="com/dua3/utility/text/VerticalAlignment.html" title="enum class in com.dua3.utility.text">VerticalAlignment</a></dt>
 <dd>
 <div class="block">Align middle.</div>
@@ -9804,6 +9914,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get all options defined for this parser.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#options(com.dua3.utility.text.MessageFormatter,javafx.stage.Window)" class="member-name-link">options(MessageFormatter, Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new <a href="com/dua3/utility/fx/controls/OptionsDialog.html" title="class in com.dua3.utility.fx.controls"><code>OptionsDialog</code></a>.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#options(java.lang.String,java.lang.String,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">options(String, String, Supplier&lt;Arguments&gt;, Supplier&lt;Collection&lt;Option&lt;?&gt;&gt;&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
 <div class="block">Add a labeled pane with options.</div>
@@ -9830,7 +9944,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#options(javafx.stage.Window)" class="member-name-link">options(Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start the definition of a new <a href="com/dua3/utility/fx/controls/OptionsDialog.html" title="class in com.dua3.utility.fx.controls"><code>OptionsDialog</code></a>.</div>
+<div class="block">Start the definition of a new <a href="com/dua3/utility/fx/controls/OptionsDialog.html" title="class in com.dua3.utility.fx.controls"><code>OptionsDialog</code></a> using the standard MessageFormatter.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/OptionsDialog.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">OptionsDialog</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -9957,7 +10071,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Abstract base for DialogPane builders.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/abstract_builders/PaneBuilder.html#%3Cinit%3E()" class="member-name-link">PaneBuilder()</a> - Constructor for class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/PaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">PaneBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/abstract_builders/PaneBuilder.html#%3Cinit%3E(com.dua3.utility.text.MessageFormatter)" class="member-name-link">PaneBuilder(MessageFormatter)</a> - Constructor for class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/PaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">PaneBuilder</a></dt>
 <dd>
 <div class="block">Constructs an instance of the PaneBuilder class.</div>
 </dd>
@@ -10312,9 +10426,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Indicator for a single task's progress.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#prompt(com.dua3.utility.text.MessageFormatter,javafx.stage.Window)" class="member-name-link">prompt(MessageFormatter, Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new prompt dialog.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#prompt(javafx.stage.Window)" class="member-name-link">prompt(Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new prompt dialog.</div>
+<div class="block">Start the definition of a new prompt dialog using the standard MessageFormatter.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/PromptBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">PromptBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -10322,7 +10440,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#promptPane()" class="member-name-link">promptPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new prompt pane.</div>
+<div class="block">Start the definition of a new prompt pane using the standard MessageFormatter.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#promptPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">promptPane(MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new prompt pane.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/PromptPane.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">PromptPane</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -12472,6 +12594,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Represents the square root of 5 as a constant value.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.html#standard()" class="member-name-link">standard()</a> - Static method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
+<dd>
+<div class="block">Returns an instance of <code>MessageFormatter</code> that uses <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.util.Locale,java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(Locale, String, Object...)</code></a>
+ for formatting, using <code>Locale.getDefault()</code> as locale.</div>
+</dd>
 <dt><a href="com/dua3/utility/lang/Stopwatch.Format.html#STANDARD" class="member-name-link">STANDARD</a> - Enum constant in enum class com.dua3.utility.lang.<a href="com/dua3/utility/lang/Stopwatch.Format.html" title="enum class in com.dua3.utility.lang">Stopwatch.Format</a></dt>
 <dd>
 <div class="block">standard format, same as <a href="com/dua3/utility/lang/Stopwatch.Format.html#HOURS_MINUTES_SECONDS_MILLIS"><code>Stopwatch.Format.HOURS_MINUTES_SECONDS_MILLIS</code></a>.</div>
@@ -12667,6 +12794,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#string(java.lang.String,java.lang.String,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">string(String, String, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html#STRING_FORMAT" class="member-name-link">STRING_FORMAT</a> - Enum constant in enum class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html" title="enum class in com.dua3.utility.text">MessageFormatter.FormatStyle</a></dt>
+<dd>
+<div class="block">Represents the formatting style that uses <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.util.Locale,java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(Locale, String, Object...)</code></a>
+ for formatting messages or text.</div>
+</dd>
 <dt><a href="com/dua3/utility/awt/AwtFontUtil.html#stringBounds(java.lang.CharSequence,com.dua3.utility.text.Font)" class="member-name-link">stringBounds(CharSequence, Font)</a> - Method in class com.dua3.utility.awt.<a href="com/dua3/utility/awt/AwtFontUtil.html" title="class in com.dua3.utility.awt">AwtFontUtil</a></dt>
 <dd>
 <div class="block">Calculate the string bounds of a text using the font passed as argument.</div>
@@ -13090,7 +13222,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#text(java.lang.String)" class="member-name-link">text(String)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
-<div class="block">Add a static text without label.</div>
+<div class="block">Add a static text without a label.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#text(java.lang.String)" class="member-name-link">text(String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -13102,6 +13234,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the text for the TextField being constructed.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.html#text(java.lang.String)" class="member-name-link">text(String)</a> - Method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
+<dd>
+<div class="block">Returns the input string as is, without any formatting applied.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AlertBuilder.html#text(java.lang.String,java.lang.Object...)" class="member-name-link">text(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AlertBuilder.html" title="class in com.dua3.utility.fx.controls">AlertBuilder</a></dt>
 <dd>
 <div class="block">Set text.</div>
@@ -13112,7 +13248,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#text(java.lang.String,java.lang.String)" class="member-name-link">text(String, String)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
-<div class="block">Add a static text without label.</div>
+<div class="block">Add a static text.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#text(java.lang.String,java.lang.String)" class="member-name-link">text(String, String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -13564,6 +13700,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
+<dt><a href="com/dua3/utility/i18n/I18N.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.i18n.<a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n">I18N</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/io/FileSystemView.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/FileSystemView.html" title="class in com.dua3.utility.io">FileSystemView</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/io/PredefinedDateTimeFormat.html#toString()" class="member-name-link">toString()</a> - Method in enum class com.dua3.utility.io.<a href="com/dua3/utility/io/PredefinedDateTimeFormat.html" title="enum class in com.dua3.utility.io">PredefinedDateTimeFormat</a></dt>
@@ -13688,6 +13826,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterI18n</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterMessageFormat.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterMessageFormat.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterMessageFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterStringFormat</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/text/RichText.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichText.html" title="class in com.dua3.utility.text">RichText</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/text/RichTextBuilder.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichTextBuilder.html" title="class in com.dua3.utility.text">RichTextBuilder</a></dt>
@@ -14370,6 +14514,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html" title="enum class in com.dua3.utility.text">MessageFormatter.FormatStyle</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/RichText.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichText.html" title="class in com.dua3.utility.text">RichText</a></dt>
 <dd>
 <div class="block">Convert String to RichText.</div>
@@ -14555,6 +14703,11 @@ the order they are declared.</div>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.FormatStyle.html" title="enum class in com.dua3.utility.text">MessageFormatter.FormatStyle</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/StandardFontMapper.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.text.<a href="com/dua3/utility/text/StandardFontMapper.html" title="enum class in com.dua3.utility.text">StandardFontMapper</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
@@ -14706,13 +14859,21 @@ the order they are declared.</div>
 <dd>
 <div class="block">WARN log level.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#warning(com.dua3.utility.text.MessageFormatter,javafx.stage.Window)" class="member-name-link">warning(MessageFormatter, Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new Warning dialog.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#warning(javafx.stage.Window)" class="member-name-link">warning(Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new Warning dialog.</div>
+<div class="block">Start definition of new Warning dialog using the standard MessageFormatter.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#warningPane()" class="member-name-link">warningPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new Warning pane.</div>
+<div class="block">Start the definition of a new warning pane using the standard MessageFormatter.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#warningPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">warningPane(MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new warning pane.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#WEAK" class="member-name-link">WEAK</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
 <dd>
@@ -14826,7 +14987,7 @@ the order they are declared.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#wizard()" class="member-name-link">wizard()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start definition of new wizard dialog.</div>
+<div class="block">Start the definition of a new wizard dialog.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/WizardDialog.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">WizardDialog</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>

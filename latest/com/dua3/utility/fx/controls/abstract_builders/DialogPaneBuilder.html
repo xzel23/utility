@@ -137,7 +137,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>protected </code></div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.function.BiConsumer)" class="member-name-link">DialogPaneBuilder</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;? super <a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">D</a>,<wbr>? super <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;headerSetter)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.dua3.utility.text.MessageFormatter,java.util.function.BiConsumer)" class="member-name-link">DialogPaneBuilder</a><wbr>(<a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;? super <a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">D</a>,<wbr>? super <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;headerSetter)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Constructs an instance of DialogPaneBuilder with the specified header setter.</div>
 </div>
@@ -178,6 +179,17 @@ D&gt;&nbsp;void</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the list of button definitions associated with this dialog pane builder.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#format(java.lang.String,java.lang.Object...)" class="member-name-link">format</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Formats the given format string using the provided arguments.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessageFormatter()" class="member-name-link">getMessageFormatter</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves the message formatter associated with this instance of <code>DialogPaneBuilder</code>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a><wbr>&lt;<a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">R</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getResultHandler()" class="member-name-link">getResultHandler</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -217,13 +229,15 @@ D&gt;&nbsp;void</code></div>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(java.util.function.BiConsumer)">
+<section class="detail" id="&lt;init&gt;(com.dua3.utility.text.MessageFormatter,java.util.function.BiConsumer)">
 <h3>DialogPaneBuilder</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="element-name">DialogPaneBuilder</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;? super <a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">D</a>,<wbr>? super <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;headerSetter)</span></div>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="element-name">DialogPaneBuilder</span><wbr><span class="parameters">(<a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;? super <a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">D</a>,<wbr>? super <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;headerSetter)</span></div>
 <div class="block">Constructs an instance of DialogPaneBuilder with the specified header setter.
  The header setter is used to configure the header text of the dialog.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
+<dd><code>formatter</code> - the <a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text"><code>MessageFormatter</code></a> to use</dd>
 <dd><code>headerSetter</code> - a <code>BiConsumer</code> used to set the header text for the dialog.
                      The first parameter is the dialog instance, and the second parameter is the header text.</dd>
 </dl>
@@ -258,6 +272,22 @@ D&gt;&nbsp;void</code></div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>Alert instance</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="format(java.lang.String,java.lang.Object...)">
+<h3>format</h3>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">format</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+<div class="block">Formats the given format string using the provided arguments.
+ This method delegates the formatting process to an associated formatter instance.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>fmt</code> - the format string containing placeholders as specified for formatting</dd>
+<dd><code>args</code> - the arguments to be inserted into the format string's placeholders</dd>
+<dt>Returns:</dt>
+<dd>the formatted string after inserting the provided arguments</dd>
 </dl>
 </section>
 </li>
@@ -348,6 +378,18 @@ D&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>a list of button definitions for this dialog pane builder</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getMessageFormatter()">
+<h3>getMessageFormatter</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></span>&nbsp;<span class="element-name">getMessageFormatter</span>()</div>
+<div class="block">Retrieves the message formatter associated with this instance of <code>DialogPaneBuilder</code>.
+ The message formatter is used to format messages for this dialog pane.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the <code>MessageFormatter</code> used for message formatting</dd>
 </dl>
 </section>
 </li>
