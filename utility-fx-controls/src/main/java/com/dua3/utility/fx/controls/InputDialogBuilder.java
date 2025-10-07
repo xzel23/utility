@@ -99,14 +99,14 @@ public class InputDialogBuilder
     }
 
     @Override
-    public InputDialogBuilder text(String text) {
-        pb.text(text);
+    public InputDialogBuilder description(String fmt, Object... args) {
+        pb.description(fmt, args);
         return this;
     }
 
     @Override
-    public InputDialogBuilder text(String label, String text) {
-        pb.text(label, text);
+    public InputDialogBuilder text(String fmtLabel, String fmtText, Object... args) {
+        pb.text(fmtLabel, fmtText, args);
         return this;
     }
 

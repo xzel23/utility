@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
@@ -26,6 +27,24 @@ import java.util.function.UnaryOperator;
  * @param <B> the generic type of the {@link InputBuilder}
  */
 public interface InputBuilder<B extends InputBuilder<B>> {
+
+    /**
+     * Retrieves an instance of the MessageFormatter.
+     *
+     * @return an instance of MessageFormatter that handles the formatting of messages.
+     */
+    MessageFormatter getMessageFormatter();
+
+    /**
+     * Formats the given message using the specified arguments.
+     *
+     * @param message the message template which can include placeholders for arguments
+     * @param args the arguments to be formatted and substituted into the message template
+     * @return the formatted message as a String
+     */
+    default String format(String message, Object... args) {
+        return getMessageFormatter().format(message, args);
+    }
 
     /**
      * Add a labeled input control.
@@ -94,21 +113,27 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     /**
      * Add a static text without a label.
      *
-     * @param text the text to show.
+     * @param fmt  the formatting pattern
+     * @param args the formatting arguments
      * @return {@code this}
      */
-    B text(String text);
+    B text(String text
+    );
 
     /**
-     * Add a static text.
+     * Add a static text without label.
      *
-     * @param label the label text
-     * @param text the text to show.
+     * <p>
+     * Arguments are shared for both patterns
+     *
+     * @param fmtLabel the label pattern
+     * @param fmtText  the text pattern
+     * @param args     the formatting arguments
      * @return {@code this}
      */
-    B text(String label,
-           String text
-    );
+    B text(String fmtLabel,
+           String fmtText,
+           Object... args);
 
     /**
      * Creates a disabled input field with the specified configurations.

@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
+import com.dua3.utility.text.MessageFormatter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,19 +16,23 @@ import java.util.Optional;
 public class WizardDialogBuilder {
 
     final LinkedHashMap<String, WizardDialog.Page<?, ?>> pages = new LinkedHashMap<>();
+    private final MessageFormatter formatter;
     private String title = "";
     private String startPage = "";
 
-    WizardDialogBuilder() {}
+    WizardDialogBuilder(MessageFormatter formatter) {
+        this.formatter = formatter;
+    }
 
     /**
      * Sets the title for the wizard dialog being built.
      *
-     * @param title The title to set for the wizard dialog.
+     * @param fmt  the title format pattern.
+     * @param args formatting arguments
      * @return The current instance of {@code WizardDialogBuilder}, for method chaining.
      */
-    public WizardDialogBuilder title(String title) {
-        this.title = title;
+    public WizardDialogBuilder title(String fmt, Object... args) {
+        this.title = formatter.format(fmt, args);
         return this;
     }
 

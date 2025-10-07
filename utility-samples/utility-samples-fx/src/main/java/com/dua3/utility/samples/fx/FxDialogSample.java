@@ -132,7 +132,7 @@ public class FxDialogSample extends Application {
                 Dialogs.input(MessageFormatter.standard(), primaryStage)
                         .title("Input")
                         .header("This is an input dialog.")
-                        .text("This is some text without label.")
+                        .description("This is some text without label.")
                         .text("static text", "This is some labeled text.")
                         .constant("readonly", "readonly", "This is the value of the readonly field.")
                         .constant("readonly2", "readonly date", LocalDate::now, LocalDate.class)

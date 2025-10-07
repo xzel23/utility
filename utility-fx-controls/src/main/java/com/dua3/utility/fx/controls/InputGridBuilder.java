@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.jspecify.annotations.Nullable;
@@ -50,9 +51,21 @@ public class InputGridBuilder
 
     private static final String INPUT_WITH_ID_ALREADY_DEFINED = "Input with id '%s' already defined";
     private final LinkedHashMap<String, InputGrid.Meta<?>> data = new LinkedHashMap<>();
+    private final MessageFormatter formatter;
     private int columns = 1;
 
-    InputGridBuilder() {
+    InputGridBuilder(MessageFormatter formatter) {
+        this.formatter = formatter;
+    }
+
+    @Override
+    public MessageFormatter getMessageFormatter() {
+        return formatter;
+    }
+
+    @Override
+    public String format(String message, Object... args) {
+        return formatter.format(message, args);
     }
 
     /**
@@ -71,7 +84,7 @@ public class InputGridBuilder
 
     @Override
     public <T> InputGridBuilder add(String id, String label, Class<T> type, Supplier<T> dflt, InputControl<T> control, boolean hidden) {
-        return doAdd(id, label, type, dflt, control, hidden);
+        return doAdd(id, format(label), type, dflt, control, hidden);
     }
 
     static class ControlWrapper implements InputControl<Void> {
@@ -147,15 +160,15 @@ public class InputGridBuilder
     }
 
     @Override
-    public InputGridBuilder text(String text) {
-        Label node = new Label(text);
+    public InputGridBuilder description(String fmt, Object... args) {
+        Label node = new Label(format(fmt, args));
         return addNode("$ignored$" + System.identityHashCode(node), node);
     }
 
     @Override
-    public InputGridBuilder text(String label, String text) {
-        Label node = new Label(text);
-        return addNode("$ignored$" + System.identityHashCode(node) + "#", label, node);
+    public InputGridBuilder text(String fmtLabel, String fmtText, Object... args) {
+        Label node = new Label(format(fmtText, args));
+        return addNode("$ignored$" + System.identityHashCode(node) + "#", format(fmtLabel, args), node);
     }
 
     @Override

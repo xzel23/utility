@@ -40,10 +40,11 @@ public class InputPaneBuilder
         extends PaneBuilder<InputPane, InputPaneBuilder, Map<String, Object>>
         implements InputBuilder<InputPaneBuilder> {
 
-    private final InputGridBuilder pb = new InputGridBuilder();
+    private final InputGridBuilder pb;
 
     InputPaneBuilder(MessageFormatter formatter) {
         super(formatter);
+        pb = new InputGridBuilder(formatter);
         setDialogSupplier(() -> {
             InputPane inputPane = new InputPane(pb.build());
             inputPane.init();
@@ -82,14 +83,14 @@ public class InputPaneBuilder
     }
 
     @Override
-    public InputPaneBuilder text(String text) {
-        pb.text(text);
+    public InputPaneBuilder description(String fmt, Object... args) {
+        pb.description(fmt, args);
         return this;
     }
 
     @Override
-    public InputPaneBuilder text(String label, String text) {
-        pb.text(label, text);
+    public InputPaneBuilder text(String fmtLabel, String fmtText, Object... args) {
+        pb.text(fmtLabel, fmtText, args);
         return this;
     }
 

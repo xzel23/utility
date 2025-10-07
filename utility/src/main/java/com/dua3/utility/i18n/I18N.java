@@ -277,6 +277,9 @@ public final class I18N {
      * @see MessageFormat#format(String, Object...)
      */
     public String format(String key, Object... args) {
+        if (key.isEmpty()) {
+            return "";
+        }
         String pattern = lookupBundle(key).getString(key);
         return MessageFormat.format(pattern, args);
     }

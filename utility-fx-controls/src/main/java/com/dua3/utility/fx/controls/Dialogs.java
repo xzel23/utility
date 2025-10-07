@@ -313,10 +313,20 @@ public final class Dialogs {
     /**
      * Start the definition of a new input dialog.
      *
+     * @param formatter the {@link MessageFormatter} to use
+     * @return new {@link InputDialogBuilder} instance
+     */
+    public static InputGridBuilder inputGrid(MessageFormatter formatter) {
+        return new InputGridBuilder(formatter);
+    }
+
+    /**
+     * Start the definition of a new input dialog.
+     *
      * @return new {@link InputDialogBuilder} instance
      */
     public static InputGridBuilder inputGrid() {
-        return new InputGridBuilder();
+        return inputGrid(MessageFormatter.standard());
     }
 
     /**
@@ -343,10 +353,20 @@ public final class Dialogs {
     /**
      * Start the definition of a new wizard dialog.
      *
+     * @param formatter the {@link MessageFormatter} to use
+     * @return new {@link WizardDialogBuilder} instance
+     */
+    public static WizardDialogBuilder wizard(MessageFormatter formatter) {
+        return new WizardDialogBuilder(formatter);
+    }
+
+    /**
+     * Start the definition of a new wizard dialog.
+     *
      * @return new {@link WizardDialogBuilder} instance
      */
     public static WizardDialogBuilder wizard() {
-        return new WizardDialogBuilder();
+        return new WizardDialogBuilder(MessageFormatter.standard());
     }
 
     /**

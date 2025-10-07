@@ -75,13 +75,13 @@ class InputDialogBuilderTest extends FxTestBase {
      * Test the text method.
      */
     @Test
-    void testText() throws Exception {
+    void testDescription() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
             InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
 
             // Add text
-            builder.text("Test text");
+            builder.description("Test text");
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
