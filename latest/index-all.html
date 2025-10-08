@@ -1406,7 +1406,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/lang/BuildInfo.html#%3Cinit%3E(com.dua3.utility.lang.Version,java.time.ZonedDateTime,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">BuildInfo(Version, ZonedDateTime, String, String, String)</a> - Constructor for record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
 <dd>
-<div class="block">Creates an instance of a <code>BuildInfo</code> record class.</div>
+<div class="block">Canonical record constructor.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/BuildInfo.html#buildTime()" class="member-name-link">buildTime()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/BuildInfo.html" title="class in com.dua3.utility.lang">BuildInfo</a></dt>
 <dd>
@@ -2910,13 +2910,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create JScrollPane with unit increment set.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#createKeyStore(char%5B%5D)" class="member-name-link">createKeyStore(char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#createKeyStore(com.dua3.utility.crypt.KeyStoreType,char%5B%5D)" class="member-name-link">createKeyStore(KeyStoreType, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
 <dd>
-<div class="block">Creates a new empty KeyStore using the default type (PKCS12).</div>
-</dd>
-<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#createKeyStore(java.lang.String,char%5B%5D)" class="member-name-link">createKeyStore(String, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
-<dd>
-<div class="block">Creates a new empty KeyStore of the specified type.</div>
+<div class="block">Creates and initializes a new KeyStore of the specified type, secured with the provided password.</div>
 </dd>
 <dt><a href="com/dua3/utility/concurrent/Value.html#createReadOnly(T)" class="member-name-link">createReadOnly(T)</a> - Static method in interface com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/Value.html" title="interface in com.dua3.utility.concurrent">Value</a></dt>
 <dd>
@@ -3258,7 +3254,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the text for the decrement button of the slider.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/CryptUtil.html#decrypt(java.lang.String,char%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">decrypt(String, char[], InputBufferHandling)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#decrypt(java.lang.String,char%5B%5D)" class="member-name-link">decrypt(String, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
 <dd>
 <div class="block">Decrypts the given input string using the specified password and input buffer handling strategy.</div>
 </dd>
@@ -3448,6 +3444,16 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the description for the ArgumentsParserBuilder instance being built.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#description(java.lang.String,java.lang.Object...)" class="member-name-link">description(String, Object...)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
+<dd>
+<div class="block">Add a static text without a label.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#description(java.lang.String,java.lang.Object...)" class="member-name-link">description(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputGridBuilder.html#description(java.lang.String,java.lang.Object...)" class="member-name-link">description(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputGridBuilder.html" title="class in com.dua3.utility.fx.controls">InputGridBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#description(java.lang.String,java.lang.Object...)" class="member-name-link">description(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogBuilder&lt;D,<wbr>B,<wbr>R&gt;</a> - Class in <a href="com/dua3/utility/fx/controls/abstract_builders/package-summary.html">com.dua3.utility.fx.controls.abstract_builders</a></dt>
 <dd>
 <div class="block">Abstract class for building dialog boxes.</div>
@@ -4640,7 +4646,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/text/FontData.html#%3Cinit%3E(java.util.List,float,boolean,boolean,boolean,boolean,boolean,com.dua3.utility.text.FontDef,java.lang.String,java.lang.String,double,double,double,double)" class="member-name-link">FontData(List&lt;String&gt;, float, boolean, boolean, boolean, boolean, boolean, FontDef, String, String, double, double, double, double)</a> - Constructor for record class com.dua3.utility.text.<a href="com/dua3/utility/text/FontData.html" title="class in com.dua3.utility.text">FontData</a></dt>
 <dd>
-<div class="block">Creates an instance of a <code>FontData</code> record class.</div>
+<div class="block">Canonical record constructor..</div>
 </dd>
 <dt><a href="com/dua3/utility/text/FontData.html#fontDef()" class="member-name-link">fontDef()</a> - Method in record class com.dua3.utility.text.<a href="com/dua3/utility/text/FontData.html" title="class in com.dua3.utility.text">FontData</a></dt>
 <dd>
@@ -4711,6 +4717,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Query file type by extension.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreType.html#forExtension(java.lang.String)" class="member-name-link">forExtension(String)</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreType.html" title="enum class in com.dua3.utility.crypt">KeyStoreType</a></dt>
+<dd>
+<div class="block">Determines the appropriate <code>KeyStoreType</code> for the provided file extension.</div>
+</dd>
 <dt><a href="com/dua3/utility/io/FileType.html#forExtension(java.lang.String)" class="member-name-link">forExtension(String)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/FileType.html" title="class in com.dua3.utility.io">FileType</a></dt>
 <dd>
 <div class="block">Query file type by extension.</div>
@@ -4739,6 +4749,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Formats the given format string using the provided arguments.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#format(java.lang.String,java.lang.Object...)" class="member-name-link">format(String, Object...)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
+<dd>
+<div class="block">Formats the given message using the specified arguments.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputGridBuilder.html#format(java.lang.String,java.lang.Object...)" class="member-name-link">format(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputGridBuilder.html" title="class in com.dua3.utility.fx.controls">InputGridBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/i18n/I18N.html#format(java.lang.String,java.lang.Object...)" class="member-name-link">format(String, Object...)</a> - Method in class com.dua3.utility.i18n.<a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n">I18N</a></dt>
 <dd>
 <div class="block">Retrieves the formatted localized string for the given key from the resource bundle,
@@ -4797,6 +4813,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/icons/ikonli/IkonliIconProvider.html#forName(java.lang.String)" class="member-name-link">forName(String)</a> - Method in class com.dua3.utility.fx.icons.ikonli.<a href="com/dua3/utility/fx/icons/ikonli/IkonliIconProvider.html" title="class in com.dua3.utility.fx.icons.ikonli">IkonliIconProvider</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreType.html#forPath(java.lang.String)" class="member-name-link">forPath(String)</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreType.html" title="enum class in com.dua3.utility.crypt">KeyStoreType</a></dt>
+<dd>
+<div class="block">Determines the appropriate <code>KeyStoreType</code> for the given file path.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreType.html#forPath(java.nio.file.Path)" class="member-name-link">forPath(Path)</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreType.html" title="enum class in com.dua3.utility.crypt">KeyStoreType</a></dt>
+<dd>
+<div class="block">Determines the appropriate <code>KeyStoreType</code> based on the file path provided.</div>
+</dd>
 <dt><a href="com/dua3/utility/io/FileType.html#forPath(java.nio.file.Path,java.lang.Class)" class="member-name-link">forPath(Path, Class&lt;T&gt;)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/FileType.html" title="class in com.dua3.utility.io">FileType</a></dt>
 <dd>
 <div class="block">Query file type by path and class.</div>
@@ -5019,7 +5043,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Calculate the greatest common divisor.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#generateAndStoreKeyPairWithX509Certificate(java.security.KeyStore,java.lang.String,com.dua3.utility.crypt.AsymmetricAlgorithm,int,char%5B%5D,java.lang.String,int)" class="member-name-link">generateAndStoreKeyPairWithX509Certificate(KeyStore, String, AsymmetricAlgorithm, int, char[], String, int)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#generateAndStoreKeyPairWithX509Certificate(java.security.KeyStore,java.lang.String,com.dua3.utility.crypt.AsymmetricAlgorithm,int,java.lang.String,int,char%5B%5D)" class="member-name-link">generateAndStoreKeyPairWithX509Certificate(KeyStore, String, AsymmetricAlgorithm, int, String, int, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
 <dd>
 <div class="block">Generates a key pair and stores it in the KeyStore with a proper self-signed X.509 certificate.</div>
 </dd>
@@ -5923,6 +5947,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Retrieves the message formatter associated with this instance of <code>DialogPaneBuilder</code>.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#getMessageFormatter()" class="member-name-link">getMessageFormatter()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
+<dd>
+<div class="block">Retrieves an instance of the MessageFormatter.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputGridBuilder.html#getMessageFormatter()" class="member-name-link">getMessageFormatter()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputGridBuilder.html" title="class in com.dua3.utility.fx.controls">InputGridBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/SliderWithButtons.html#getMin()" class="member-name-link">getMin()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/SliderWithButtons.html" title="class in com.dua3.utility.fx.controls">SliderWithButtons</a></dt>
 <dd>
 <div class="block">Retrieves the minimum value of the slider.</div>
@@ -6909,9 +6939,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Draw a horizontal line.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/CryptUtil.html#hmacSha256(java.lang.CharSequence,javax.crypto.SecretKey)" class="member-name-link">hmacSha256(CharSequence, SecretKey)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#hmacSha256(javax.crypto.SecretKey,char%5B%5D)" class="member-name-link">hmacSha256(SecretKey, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
 <dd>
-<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided text.</div>
+<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided input.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CryptUtil.html#hmacSha256(javax.crypto.SecretKey,java.lang.CharSequence)" class="member-name-link">hmacSha256(SecretKey, CharSequence)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CryptUtil.html" title="class in com.dua3.utility.crypt">CryptUtil</a></dt>
+<dd>
+<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided input.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/SoftResource.html#hold()" class="member-name-link">hold()</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/SoftResource.html" title="class in com.dua3.utility.io">SoftResource</a></dt>
 <dd>
@@ -7434,6 +7468,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Start the definition of a new input dialog.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#inputGrid(com.dua3.utility.text.MessageFormatter)" class="member-name-link">inputGrid(MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new input dialog.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputGrid.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputGrid</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
 <div class="block">The InputGrid class is an extension of GridPane that manages input controls and
@@ -7950,6 +7988,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get instance using JAXP Lookup Mechanism to obtain implementing classes.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreType.html#JCEKS" class="member-name-link">JCEKS</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreType.html" title="enum class in com.dua3.utility.crypt">KeyStoreType</a></dt>
+<dd>
+<div class="block">Represents the Java Cryptography Extension KeyStore (JCEKS) format,
+ an extended version of the Java KeyStore (JKS) providing support
+ for stronger encryption algorithms.</div>
+</dd>
 <dt><a href="com/dua3/utility/db/JdbcDataSource.html" class="type-name-link" title="class in com.dua3.utility.db">JdbcDataSource</a> - Class in <a href="com/dua3/utility/db/package-summary.html">com.dua3.utility.db</a></dt>
 <dd>
 <div class="block">DataSource implementation for JDBC.</div>
@@ -7965,6 +8009,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/db/JdbcDriverInfo.html#%3Cinit%3E(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">JdbcDriverInfo(String, String, String, String, String)</a> - Constructor for class com.dua3.utility.db.<a href="com/dua3/utility/db/JdbcDriverInfo.html" title="class in com.dua3.utility.db">JdbcDriverInfo</a></dt>
 <dd>
 <div class="block">Constructor.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreType.html#JKS" class="member-name-link">JKS</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreType.html" title="enum class in com.dua3.utility.crypt">KeyStoreType</a></dt>
+<dd>
+<div class="block">Represents the Java KeyStore (JKS) type, a proprietary keystore format used in Java applications
+ for managing cryptographic keys, certificates, and trusted certificate chains.</div>
 </dd>
 <dt><a href="com/dua3/utility/text/RichText.html#join(com.dua3.utility.text.RichText,com.dua3.utility.text.RichText...)" class="member-name-link">join(RichText, RichText...)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichText.html" title="class in com.dua3.utility.text">RichText</a></dt>
 <dd>
@@ -8061,6 +8110,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/ImmutableSortedMap.html#keySet()" class="member-name-link">keySet()</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/ImmutableSortedMap.html" title="class in com.dua3.utility.lang">ImmutableSortedMap</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreType.html" class="type-name-link" title="enum class in com.dua3.utility.crypt">KeyStoreType</a> - Enum Class in <a href="com/dua3/utility/crypt/package-summary.html">com.dua3.utility.crypt</a></dt>
+<dd>
+<div class="block">KeyStoreType defines a set of constants representing different types of keystores.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html" class="type-name-link" title="class in com.dua3.utility.crypt">KeyStoreUtil</a> - Class in <a href="com/dua3/utility/crypt/package-summary.html">com.dua3.utility.crypt</a></dt>
 <dd>
 <div class="block">Utility class for KeyStore operations.</div>
@@ -8497,9 +8550,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Loads a KeyPair from the KeyStore.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#loadKeyStore(java.io.InputStream,char%5B%5D)" class="member-name-link">loadKeyStore(InputStream, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#loadKeyStore(com.dua3.utility.crypt.KeyStoreType,java.io.InputStream,char%5B%5D)" class="member-name-link">loadKeyStore(KeyStoreType, InputStream, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
 <dd>
-<div class="block">Loads a KeyStore from an InputStream.</div>
+<div class="block">Loads a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html" title="class or interface in java.security" class="external-link"><code>KeyStore</code></a> from an InputStream.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#loadKeyStoreFromFile(java.nio.file.Path,char%5B%5D)" class="member-name-link">loadKeyStoreFromFile(Path, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
 <dd>
@@ -10285,6 +10338,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/data/Color.html#PINK" class="member-name-link">PINK</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">The color PINK.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreType.html#PKCS12" class="member-name-link">PKCS12</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreType.html" title="enum class in com.dua3.utility.crypt">KeyStoreType</a></dt>
+<dd>
+<div class="block">Represents the PKCS12 keystore format, a standard defined by the Public-Key Cryptography Standards (PKCS) #12.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/CertificateUtil.html#pkcs7BytesToCertificateChain(byte%5B%5D)" class="member-name-link">pkcs7BytesToCertificateChain(byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
 <dd>
@@ -13220,16 +13277,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates and returns a new instance of TextBuilder.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#text(java.lang.String)" class="member-name-link">text(String)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
-<dd>
-<div class="block">Add a static text without a label.</div>
-</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#text(java.lang.String)" class="member-name-link">text(String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputGridBuilder.html#text(java.lang.String)" class="member-name-link">text(String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputGridBuilder.html" title="class in com.dua3.utility.fx.controls">InputGridBuilder</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#text(java.lang.String)" class="member-name-link">text(String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/TextFieldBuilder.html#text(java.lang.String)" class="member-name-link">text(String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextFieldBuilder.html" title="class in com.dua3.utility.fx.controls">TextFieldBuilder</a></dt>
 <dd>
 <div class="block">Sets the text for the TextField being constructed.</div>
@@ -13246,15 +13293,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the text content of the alert dialog.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#text(java.lang.String,java.lang.String)" class="member-name-link">text(String, String)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#text(java.lang.String,java.lang.String,java.lang.Object...)" class="member-name-link">text(String, String, Object...)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
-<div class="block">Add a static text.</div>
+<div class="block">Add a static text without a label.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#text(java.lang.String,java.lang.String)" class="member-name-link">text(String, String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#text(java.lang.String,java.lang.String,java.lang.Object...)" class="member-name-link">text(String, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputGridBuilder.html#text(java.lang.String,java.lang.String)" class="member-name-link">text(String, String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputGridBuilder.html" title="class in com.dua3.utility.fx.controls">InputGridBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputGridBuilder.html#text(java.lang.String,java.lang.String,java.lang.Object...)" class="member-name-link">text(String, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputGridBuilder.html" title="class in com.dua3.utility.fx.controls">InputGridBuilder</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#text(java.lang.String,java.lang.String)" class="member-name-link">text(String, String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#text(java.lang.String,java.lang.String,java.lang.Object...)" class="member-name-link">text(String, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/Controls.html#text(javafx.beans.value.ObservableValue)" class="member-name-link">text(ObservableValue&lt;String&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
 <dd>
@@ -13389,13 +13436,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the title for the about dialog.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/WizardDialogBuilder.html#title(java.lang.String)" class="member-name-link">title(String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/WizardDialogBuilder.html" title="class in com.dua3.utility.fx.controls">WizardDialogBuilder</a></dt>
-<dd>
-<div class="block">Sets the title for the wizard dialog being built.</div>
-</dd>
 <dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogBuilder.html#title(java.lang.String,java.lang.Object...)" class="member-name-link">title(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogBuilder</a></dt>
 <dd>
 <div class="block">Set dialog title.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/WizardDialogBuilder.html#title(java.lang.String,java.lang.Object...)" class="member-name-link">title(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/WizardDialogBuilder.html" title="class in com.dua3.utility.fx.controls">WizardDialogBuilder</a></dt>
+<dd>
+<div class="block">Sets the title for the wizard dialog being built.</div>
 </dd>
 <dt><a href="com/dua3/utility/data/Color.html#toArgb()" class="member-name-link">toArgb()</a> - Method in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
@@ -14418,6 +14465,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreType.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreType.html" title="enum class in com.dua3.utility.crypt">KeyStoreType</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -14581,6 +14632,11 @@ the order they are declared.</div>
 the order they are declared.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/InputBufferHandling.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreType.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreType.html" title="enum class in com.dua3.utility.crypt">KeyStoreType</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
@@ -14986,6 +15042,10 @@ the order they are declared.</div>
 <div class="block">Return a font derived from this font by applying the given value for the underline attribute.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#wizard()" class="member-name-link">wizard()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new wizard dialog.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#wizard(com.dua3.utility.text.MessageFormatter)" class="member-name-link">wizard(MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
 <div class="block">Start the definition of a new wizard dialog.</div>
 </dd>

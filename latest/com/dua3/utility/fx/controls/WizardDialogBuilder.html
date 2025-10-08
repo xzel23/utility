@@ -142,7 +142,8 @@ R&gt;<br><a href="WizardDialogBuilder.html" title="class in com.dua3.utility.fx.
 <div class="block">Displays the constructed wizard dialog and waits for the user to close it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="WizardDialogBuilder.html" title="class in com.dua3.utility.fx.controls">WizardDialogBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#title(java.lang.String)" class="member-name-link">title</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#title(java.lang.String,java.lang.Object...)" class="member-name-link">title</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the title for the wizard dialog being built.</div>
 </div>
@@ -164,13 +165,15 @@ R&gt;<br><a href="WizardDialogBuilder.html" title="class in com.dua3.utility.fx.
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="title(java.lang.String)">
+<section class="detail" id="title(java.lang.String,java.lang.Object...)">
 <h3>title</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="WizardDialogBuilder.html" title="class in com.dua3.utility.fx.controls">WizardDialogBuilder</a></span>&nbsp;<span class="element-name">title</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="WizardDialogBuilder.html" title="class in com.dua3.utility.fx.controls">WizardDialogBuilder</a></span>&nbsp;<span class="element-name">title</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
 <div class="block">Sets the title for the wizard dialog being built.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>title</code> - The title to set for the wizard dialog.</dd>
+<dd><code>fmt</code> - the title format pattern.</dd>
+<dd><code>args</code> - formatting arguments</dd>
 <dt>Returns:</dt>
 <dd>The current instance of <code>WizardDialogBuilder</code>, for method chaining.</dd>
 </dl>

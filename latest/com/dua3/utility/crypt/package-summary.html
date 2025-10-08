@@ -74,8 +74,11 @@ loadScripts(document, 'script');</script>
 <section class="package-description" id="package-description">
 <div class="block">This package contains cryptographic utilities and related class.
  <p>
- For some functionality that requires X509 certificates, make sure to include a dependency on Bouncycyastle
- in your build.</div>
+ <strong>Important:</strong>
+ <ul>
+ <li>Methods that take a <code>char[] password</code> parameter automatically clear the character buffer.
+ <li>For generating X509 certificates, Bouncycyastle must be on the classpath at runtime.
+ </ul></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -108,40 +111,44 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color class-summary class-summary-tab3">
 <div class="block">Defines how input buffers containing sensitive data should be handled after processing.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="KeyStoreType.html" title="enum class in com.dua3.utility.crypt">KeyStoreType</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="block">KeyStoreType defines a set of constants representing different types of keystores.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for KeyStore operations.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for cryptographic key operations.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PasswordUtil.html" title="class in com.dua3.utility.crypt">PasswordUtil</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PasswordUtil.html" title="class in com.dua3.utility.crypt">PasswordUtil</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for password analysis and generation.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab4"><a href="PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
 <div class="block">Contains password strength analysis results.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="col-first even-row-color class-summary class-summary-tab3"><a href="PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab3">
 <div class="block">Represents the strength level of a password.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="RandomUtil.html" title="class in com.dua3.utility.crypt">RandomUtil</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="RandomUtil.html" title="class in com.dua3.utility.crypt">RandomUtil</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for secure random number generation.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="SignatureUtil.html" title="class in com.dua3.utility.crypt">SignatureUtil</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="SignatureUtil.html" title="class in com.dua3.utility.crypt">SignatureUtil</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for digital signatures.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab3"><a href="SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab3">
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">
 <div class="block">Enum representing symmetric encryption algorithms.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="X509CertificateBuilder.html" title="interface in com.dua3.utility.crypt">X509CertificateBuilder</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="X509CertificateBuilder.html" title="interface in com.dua3.utility.crypt">X509CertificateBuilder</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">Interface for building custom X.509 certificates.</div>
 </div>
 </div>

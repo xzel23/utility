@@ -110,9 +110,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#decrypt(java.lang.String,char%5B%5D,com.dua3.utility.crypt.InputBufferHandling)" class="member-name-link">decrypt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
- char[]&nbsp;password,
- <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#decrypt(java.lang.String,char%5B%5D)" class="member-name-link">decrypt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
+ char[]&nbsp;password)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Decrypts the given input string using the specified password and input buffer handling strategy.</div>
 </div>
@@ -231,66 +230,72 @@ loadScripts(document, 'script');</script>
  and secret key parameters.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hmacSha256(java.lang.CharSequence,javax.crypto.SecretKey)" class="member-name-link">hmacSha256</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;key)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hmacSha256(javax.crypto.SecretKey,char%5B%5D)" class="member-name-link">hmacSha256</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;key,
+ char[]&nbsp;s)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided text.</div>
+<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided input.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#secureHash(byte%5B%5D,java.lang.String)" class="member-name-link">secureHash</a><wbr>(byte[]&nbsp;input,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pepper)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hmacSha256(javax.crypto.SecretKey,java.lang.CharSequence)" class="member-name-link">hmacSha256</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided input.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#secureHash(byte%5B%5D,java.lang.String)" class="member-name-link">secureHash</a><wbr>(byte[]&nbsp;input,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pepper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Generates a secure hash for the given input using a combination of HMAC-SHA256 and Argon2id.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#validateAsymmetricEncryptionKey(java.security.PublicKey,int)" class="member-name-link">validateAsymmetricEncryptionKey</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;key,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#validateAsymmetricEncryptionKey(java.security.PublicKey,int)" class="member-name-link">validateAsymmetricEncryptionKey</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link">PublicKey</a>&nbsp;key,
  int&nbsp;dataLength)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Validates the provided asymmetric encryption key to ensure it satisfies the requirements
  for encrypting data of the specified length.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(byte%5B%5D,byte%5B%5D,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(byte[]&nbsp;input,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(byte%5B%5D,byte%5B%5D,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(byte[]&nbsp;input,
  byte[]&nbsp;secret,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;saltAndHash)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verifies the provided input against a given Argon2id hash and salt combination.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(byte%5B%5D,java.lang.String,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(byte[]&nbsp;input,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(byte%5B%5D,java.lang.String,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(byte[]&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pepper,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;saltAndHash)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verifies an Argon2id hash by comparing the provided input, pepper, and the
  combined salt and hash string.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(byte%5B%5D,javax.crypto.SecretKey,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(byte[]&nbsp;input,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(byte%5B%5D,javax.crypto.SecretKey,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(byte[]&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;secretKey,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;saltAndHash)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verifies if the input data, when combined with the provided secret key and salt,
  produces the same Argon2id hash as the one specified in the saltAndHash string.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(java.lang.String,byte%5B%5D,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(java.lang.String,byte%5B%5D,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
  byte[]&nbsp;secret,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;saltAndHash)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verifies if the input string, along with a secret, matches the provided Argon2id hash.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pepper,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;saltAndHash)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verifies if the provided input, combined with a pepper, matches the given Argon2id-derived hash.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(java.lang.String,javax.crypto.SecretKey,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verifyArgon2id(java.lang.String,javax.crypto.SecretKey,java.lang.String)" class="member-name-link">verifyArgon2id</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;secretKey,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;saltAndHash)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Verifies whether the provided input matches the given Argon2id hash.</div>
 </div>
 </div>
@@ -379,11 +384,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="decrypt(java.lang.String,char[],com.dua3.utility.crypt.InputBufferHandling)">
+<section class="detail" id="decrypt(java.lang.String,char[])">
 <h3>decrypt</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">byte[]</span>&nbsp;<span class="element-name">decrypt</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input,
- char[]&nbsp;password,
- <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt">InputBufferHandling</a>&nbsp;inputBufferHandling)</span></div>
+ char[]&nbsp;password)</span></div>
 <div class="block">Decrypts the given input string using the specified password and input buffer handling strategy.
  <p>
  The input string should be in a specific format with a delimiter ('$') separating the salt and
@@ -395,7 +399,6 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>input</code> - the encrypted string, which should contain a salt and encrypted data separated by a '$' character</dd>
 <dd><code>password</code> - the password to derive the decryption key</dd>
-<dd><code>inputBufferHandling</code> - the strategy to handle the input buffer, affecting whether the password buffer is preserved or cleared</dd>
 <dt>Returns:</dt>
 <dd>the decrypted data as a byte array</dd>
 <dt>Throws:</dt>
@@ -411,7 +414,10 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/Key.html" title="class or interface in java.security" class="external-link">Key</a>&nbsp;key,
  byte[]&nbsp;cipherMessage)</span>
                                throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></span></div>
-<div class="block">Symmetrically decrypt data using a Key object with the specified algorithm.</div>
+<div class="block">Symmetrically decrypt data using a Key object with the specified algorithm.
+ <p>
+ <strong>Note:</strong> decryption methods to not take an <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt"><code>InputBufferHandling</code></a> argument
+ since the encrypted data is not considered security sensitive.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>algorithm</code> - the symmetric algorithm that was used for encryption</dd>
@@ -432,7 +438,10 @@ loadScripts(document, 'script');</script>
                                throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></span></div>
 <div class="block">Symmetrically decrypt data using a Key object with the default algorithm.
  <p>
- The data is decrypted using AES-GCM.</div>
+ The data is decrypted using AES-GCM.
+ <p>
+ <strong>Note:</strong> decryption methods to not take an <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt"><code>InputBufferHandling</code></a> argument
+ since the encrypted data is not considered security sensitive.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>key</code> - the encryption key (must be compatible with the algorithm)</dd>
@@ -522,7 +531,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Decrypt hybrid encrypted data using the corresponding private key.
  <p>
  This method reverses the hybrid encryption process by first extracting and decrypting
- the AES key using the private key, then using that AES key to decrypt the actual data.</div>
+ the AES key using the private key, then using that AES key to decrypt the actual data.
+ <p>
+ <strong>Note:</strong> decryption methods to not take an <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt"><code>InputBufferHandling</code></a> argument
+ since the encrypted data is not considered security sensitive.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>privateKey</code> - the private key corresponding to the public key used for encryption</dd>
@@ -540,7 +552,10 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">byte[]</span>&nbsp;<span class="element-name">decryptAsymmetric</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PrivateKey.html" title="class or interface in java.security" class="external-link">PrivateKey</a>&nbsp;privateKey,
  byte[]&nbsp;cipherData)</span>
                                 throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/GeneralSecurityException.html" title="class or interface in java.security" class="external-link">GeneralSecurityException</a></span></div>
-<div class="block">Asymmetrically decrypt data using a private key.</div>
+<div class="block">Asymmetrically decrypt data using a private key.
+ <p>
+ <strong>Note:</strong> decryption methods to not take an <a href="InputBufferHandling.html" title="enum class in com.dua3.utility.crypt"><code>InputBufferHandling</code></a> argument
+ since the encrypted data is not considered security sensitive.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>privateKey</code> - the private key for decryption</dd>
@@ -553,13 +568,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="hmacSha256(java.lang.CharSequence,javax.crypto.SecretKey)">
+<section class="detail" id="hmacSha256(javax.crypto.SecretKey,java.lang.CharSequence)">
 <h3>hmacSha256</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">hmacSha256</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;key)</span>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">hmacSha256</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s)</span>
                          throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/NoSuchAlgorithmException.html" title="class or interface in java.security" class="external-link">NoSuchAlgorithmException</a>,
 <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/InvalidKeyException.html" title="class or interface in java.security" class="external-link">InvalidKeyException</a></span></div>
-<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided text.
+<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided input.
  <p>
  This method normalizes the text before creating the HMAC like this:
  - unicode normalization
@@ -572,8 +587,30 @@ loadScripts(document, 'script');</script>
  <strong>Note:</strong> The key size must be at least 256 bits.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>s</code> - the text</dd>
 <dd><code>key</code> - the secret key to use for HMAC generation</dd>
+<dd><code>s</code> - the input data</dd>
+<dt>Returns:</dt>
+<dd>the computed HMAC as a hexadecimal string</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/NoSuchAlgorithmException.html" title="class or interface in java.security" class="external-link">NoSuchAlgorithmException</a></code> - if the SHA-256 algorithm is not supported</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/InvalidKeyException.html" title="class or interface in java.security" class="external-link">InvalidKeyException</a></code> - if the provided secret key is invalid</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="hmacSha256(javax.crypto.SecretKey,char[])">
+<h3>hmacSha256</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">hmacSha256</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a>&nbsp;key,
+ char[]&nbsp;s)</span>
+                         throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/NoSuchAlgorithmException.html" title="class or interface in java.security" class="external-link">NoSuchAlgorithmException</a>,
+<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/InvalidKeyException.html" title="class or interface in java.security" class="external-link">InvalidKeyException</a></span></div>
+<div class="block">Computes an HMAC using the SHA-256 algorithm of the provided input.
+ <p>
+ This method calls <a href="#hmacSha256(javax.crypto.SecretKey,java.lang.CharSequence)"><code>hmacSha256(SecretKey, CharSequence)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>key</code> - the secret key to use for HMAC generation</dd>
+<dd><code>s</code> - the input data</dd>
 <dt>Returns:</dt>
 <dd>the computed HMAC as a hexadecimal string</dd>
 <dt>Throws:</dt>

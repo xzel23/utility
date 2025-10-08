@@ -142,7 +142,7 @@ loadScripts(document, 'script');</script>
  double&nbsp;height,
  double&nbsp;spaceWidth)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Creates an instance of a <code>FontData</code> record class.</div>
+<div class="block">Canonical record constructor..</div>
 </div>
 </div>
 </section>
@@ -329,23 +329,25 @@ loadScripts(document, 'script');</script>
  double&nbsp;descent,
  double&nbsp;height,
  double&nbsp;spaceWidth)</span></div>
-<div class="block">Creates an instance of a <code>FontData</code> record class.</div>
+<div class="block">Canonical record constructor..</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>families</code> - the value for the <a href="#param-families"><code>families</code></a> record component</dd>
-<dd><code>size</code> - the value for the <a href="#param-size"><code>size</code></a> record component</dd>
-<dd><code>monospaced</code> - the value for the <a href="#param-monospaced"><code>monospaced</code></a> record component</dd>
-<dd><code>bold</code> - the value for the <a href="#param-bold"><code>bold</code></a> record component</dd>
-<dd><code>italic</code> - the value for the <a href="#param-italic"><code>italic</code></a> record component</dd>
-<dd><code>underline</code> - the value for the <a href="#param-underline"><code>underline</code></a> record component</dd>
-<dd><code>strikeThrough</code> - the value for the <a href="#param-strikeThrough"><code>strikeThrough</code></a> record component</dd>
-<dd><code>fontDef</code> - the value for the <a href="#param-fontDef"><code>fontDef</code></a> record component</dd>
-<dd><code>fontspec</code> - the value for the <a href="#param-fontspec"><code>fontspec</code></a> record component</dd>
-<dd><code>cssStyle</code> - the value for the <a href="#param-cssStyle"><code>cssStyle</code></a> record component</dd>
-<dd><code>ascent</code> - the value for the <a href="#param-ascent"><code>ascent</code></a> record component</dd>
-<dd><code>descent</code> - the value for the <a href="#param-descent"><code>descent</code></a> record component</dd>
-<dd><code>height</code> - the value for the <a href="#param-height"><code>height</code></a> record component</dd>
-<dd><code>spaceWidth</code> - the value for the <a href="#param-spaceWidth"><code>spaceWidth</code></a> record component</dd>
+<dd><code>families</code> - the list of font family names;
+                      it is always guaranteed to contain at least one entry with the family name at index 0
+                      and alternative names following</dd>
+<dd><code>size</code> - the font size in points</dd>
+<dd><code>monospaced</code> - if the font is monospaced</dd>
+<dd><code>bold</code> - whether the font style is bold</dd>
+<dd><code>italic</code> - whether the font style is italicized</dd>
+<dd><code>underline</code> - whether the font style includes an underline</dd>
+<dd><code>strikeThrough</code> - whether the font style includes a strike-through</dd>
+<dd><code>fontDef</code> - the <a href="FontDef.html" title="class in com.dua3.utility.text"><code>FontDef</code></a> object defining extended font properties</dd>
+<dd><code>fontspec</code> - the font specification string without color information</dd>
+<dd><code>cssStyle</code> - the CSS representation of the font's style</dd>
+<dd><code>ascent</code> - the distance above the baseline for the highest ascender</dd>
+<dd><code>descent</code> - the distance below the baseline for the lowest descender</dd>
+<dd><code>height</code> - the overall height of the font, including ascent and descent</dd>
+<dd><code>spaceWidth</code> - the width of the space character in the font</dd>
 </dl>
 </section>
 </li>
