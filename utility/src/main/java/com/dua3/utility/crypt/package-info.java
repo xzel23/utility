@@ -1,7 +1,10 @@
 /**
  * This package contains cryptographic utilities and related class.
  * <p>
- * For some functionality that requires X509 certificates, make sure to include a dependency on Bouncycyastle
- * in your build.
+ * <strong>Important:</strong>
+ * <ul>
+ * <li>Methods that take a {@code char[] password} parameter automatically clear the character buffer.
+ * <li>For generating X509 certificates, Bouncycyastle must be on the classpath at runtime.
+ * </ul>
  */
 package com.dua3.utility.crypt;
