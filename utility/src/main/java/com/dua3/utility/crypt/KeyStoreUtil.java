@@ -1,5 +1,7 @@
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.io.IoUtil;
+
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,8 +28,6 @@ import java.util.Set;
  */
 public final class KeyStoreUtil {
 
-    private static final String KEYSTORE_TYPE_DEFAULT = "PKCS12";
-
     static {
         // make sure BouncyCastle is loaded
         BouncyCastle.ensureAvailable();
@@ -39,14 +39,27 @@ public final class KeyStoreUtil {
     private KeyStoreUtil() { /* utility class */ }
 
     /**
-     * Creates a new empty KeyStore of the specified type.
+     * Creates and initializes a new KeyStore of the specified type, secured with the provided password.
+     * The InputBufferHandling parameter determines how the password buffer is handled after use.
      *
-     * @param type the KeyStore type ("PKCS12", "JKS", etc.)
-     * @param password the password to protect the KeyStore
-     * @return a new empty KeyStore
-     * @throws GeneralSecurityException if KeyStore creation fails
+     * @param type the type of KeyStore to be created, specified as a KeyStoreType
+     * @param password the password used to protect the KeyStore, provided as a character array
+     * @return a newly created KeyStore instance of the specified type
+     * @throws GeneralSecurityException if there is an issue initializing the KeyStore
      */
-    public static KeyStore createKeyStore(String type, char[] password) throws GeneralSecurityException {
+    public static KeyStore createKeyStore(KeyStoreType type, char[] password) throws GeneralSecurityException {
+        return createKeyStore(type.name(), password);
+    }
+
+    /**
+     * Creates and initializes a new KeyStore instance with the specified type and password.
+     *
+     * @param type the type of KeyStore to be created, such as "JKS" or "PKCS12"
+     * @param password the password used to secure the KeyStore; it will be cleared if inputBufferHandling is not PRESERVE
+     * @return a newly created and initialized KeyStore instance
+     * @throws GeneralSecurityException if there is an error creating or initializing the KeyStore
+     */
+    private static KeyStore createKeyStore(String type, char[] password) throws GeneralSecurityException {
         try {
             KeyStore keyStore = KeyStore.getInstance(type);
             keyStore.load(null, password);
@@ -59,27 +72,17 @@ public final class KeyStoreUtil {
     }
 
     /**
-     * Creates a new empty KeyStore using the default type (PKCS12).
+     * Loads a {@link KeyStore} from an InputStream.
      *
-     * @param password the password to protect the KeyStore
-     * @return a new empty KeyStore
-     * @throws GeneralSecurityException if KeyStore creation fails
-     */
-    public static KeyStore createKeyStore(char[] password) throws GeneralSecurityException {
-        return createKeyStore(KEYSTORE_TYPE_DEFAULT, password);
-    }
-
-    /**
-     * Loads a KeyStore from an InputStream.
-     *
+     * @param type the type of the {@link KeyStore}
      * @param inputStream the InputStream containing the KeyStore data
      * @param password the password to decrypt the KeyStore
      * @return the loaded KeyStore
      * @throws GeneralSecurityException if KeyStore loading fails
      */
-    public static KeyStore loadKeyStore(InputStream inputStream, char[] password) throws GeneralSecurityException {
+    public static KeyStore loadKeyStore(KeyStoreType type, InputStream inputStream, char[] password) throws GeneralSecurityException {
         try {
-            KeyStore keyStore = KeyStore.getInstance(KEYSTORE_TYPE_DEFAULT);
+            KeyStore keyStore = KeyStore.getInstance(type.name());
             keyStore.load(inputStream, password);
             return keyStore;
         } catch (IOException e) {
@@ -99,8 +102,13 @@ public final class KeyStoreUtil {
      * @throws IOException if file I/O fails
      */
     public static KeyStore loadKeyStoreFromFile(Path keystoreFile, char[] password) throws GeneralSecurityException, IOException {
-        try (InputStream inputStream = Files.newInputStream(keystoreFile)) {
-            return loadKeyStore(inputStream, password);
+        try {
+            KeyStoreType type = KeyStoreType.forExtension(IoUtil.getExtension(keystoreFile));
+            try (InputStream inputStream = Files.newInputStream(keystoreFile)) {
+                return loadKeyStore(type, inputStream, password);
+            }
+        } finally {
+            Arrays.fill(password, '\0');
         }
     }
 
@@ -132,8 +140,12 @@ public final class KeyStoreUtil {
      * @throws IOException if file I/O fails
      */
     public static void saveKeyStoreToFile(KeyStore keyStore, Path keystoreFile, char[] password) throws GeneralSecurityException, IOException {
-        try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
-            saveKeyStore(keyStore, outputStream, password);
+        try {
+            try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
+                saveKeyStore(keyStore, outputStream, password);
+            }
+        } finally {
+            Arrays.fill(password, '\0');
         }
     }
 
@@ -148,8 +160,8 @@ public final class KeyStoreUtil {
      */
     public static void storeSecretKey(KeyStore keyStore, String alias, SecretKey key, char[] password) throws GeneralSecurityException {
         try {
-            KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(key);
-            KeyStore.PasswordProtection protection = new KeyStore.PasswordProtection(password);
+            KeyStore.Entry entry = new KeyStore.SecretKeyEntry(key);
+            KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password);
             keyStore.setEntry(alias, entry, protection);
         } finally {
             Arrays.fill(password, '\0');
@@ -159,11 +171,11 @@ public final class KeyStoreUtil {
     /**
      * Stores a KeyPair with a certificate chain in the KeyStore.
      *
-     * @param keyStore the KeyStore to store the key pair in
-     * @param alias the alias for the key pair
-     * @param keyPair the KeyPair to store
-     * @param certificateChain the certificate chain for the public key
-     * @param password the password to protect the private key
+     * @param keyStore            the KeyStore to store the key pair in
+     * @param alias               the alias for the key pair
+     * @param keyPair             the KeyPair to store
+     * @param certificateChain    the certificate chain for the public key
+     * @param password            the password to protect the private key
      * @throws GeneralSecurityException if storing the key pair fails
      */
     public static void storeKeyPair(KeyStore keyStore, String alias, KeyPair keyPair, Certificate[] certificateChain, char[] password) throws GeneralSecurityException {
@@ -185,7 +197,7 @@ public final class KeyStoreUtil {
      */
     public static SecretKey loadSecretKey(KeyStore keyStore, String alias, char[] password) throws GeneralSecurityException {
         try {
-            KeyStore.PasswordProtection protection = new KeyStore.PasswordProtection(password);
+            KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password);
             KeyStore.Entry entry = keyStore.getEntry(alias, protection);
 
             if (entry == null) {
@@ -251,7 +263,7 @@ public final class KeyStoreUtil {
      * @throws GeneralSecurityException if loading the key pair fails or keys are not found
      */
     public static KeyPair loadKeyPair(KeyStore keyStore, String alias, char[] password) throws GeneralSecurityException {
-        PrivateKey privateKey = loadPrivateKey(keyStore, alias, password);
+        PrivateKey privateKey = loadPrivateKey(keyStore, alias, password); // also clears password
         PublicKey publicKey = loadPublicKey(keyStore, alias);
         return new KeyPair(publicKey, privateKey);
     }
@@ -357,25 +369,29 @@ public final class KeyStoreUtil {
      * @throws GeneralSecurityException if key generation or storage fails
      */
     public static void generateAndStoreSecretKey(KeyStore keyStore, String alias, SymmetricAlgorithm algorithm, int keySize, char[] password) throws GeneralSecurityException {
-        SecretKey secretKey = KeyUtil.generateSecretKey(keySize, algorithm);
-        storeSecretKey(keyStore, alias, secretKey, password);
+        try {
+            SecretKey secretKey = KeyUtil.generateSecretKey(keySize, algorithm);
+            storeSecretKey(keyStore, alias, secretKey, password);
+        } finally {
+            Arrays.fill(password, '\0');
+        }
     }
 
     /**
      * Generates a key pair and stores it in the KeyStore with a proper self-signed X.509 certificate.
      * This method creates a standards-compliant X.509 certificate using available security providers.
      *
-     * @param keyStore the KeyStore to store the key pair in
-     * @param alias the alias for the key pair
-     * @param algorithm the asymmetric algorithm
-     * @param keySize the key size in bits
-     * @param password the password to protect the private key
-     * @param subject the certificate subject (e.g., "CN=MyApp, O=MyOrg, C=US")
-     * @param validityDays number of days the certificate should be valid
-     * @throws GeneralSecurityException if key generation or storage fails
+     * @param keyStore            the KeyStore to store the key pair in
+     * @param alias               the alias for the key pair
+     * @param algorithm           the asymmetric algorithm
+     * @param keySize             the key size in bits
+     * @param subject             the certificate subject (e.g., "CN=MyApp, O=MyOrg, C=US")
+     * @param validityDays        number of days the certificate should be valid
+     * @param password            the password to protect the private key
+     * @throws GeneralSecurityException      if key generation or storage fails
      * @throws UnsupportedOperationException if no suitable provider for X.509 certificate generation is available
      */
-    public static void generateAndStoreKeyPairWithX509Certificate(KeyStore keyStore, String alias, AsymmetricAlgorithm algorithm, int keySize, char[] password, String subject, int validityDays) throws GeneralSecurityException {
+    public static void generateAndStoreKeyPairWithX509Certificate(KeyStore keyStore, String alias, AsymmetricAlgorithm algorithm, int keySize, String subject, int validityDays, char[] password) throws GeneralSecurityException {
         KeyPair keyPair = KeyUtil.generateKeyPair(algorithm, keySize);
         Certificate[] certificateChain = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, validityDays, false);
         storeKeyPair(keyStore, alias, keyPair, certificateChain, password);

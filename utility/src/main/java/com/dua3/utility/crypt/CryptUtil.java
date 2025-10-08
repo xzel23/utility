@@ -129,9 +129,9 @@ public final class CryptUtil {
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Failed to encrypt", e);
         } finally {
+            Arrays.fill(password, '\0');
             if (inputBufferHandling != com.dua3.utility.crypt.InputBufferHandling.PRESERVE) {
                 Arrays.fill(input, (byte) 0);
-                Arrays.fill(password, '\0');
             }
         }
     }
@@ -147,12 +147,11 @@ public final class CryptUtil {
      *
      * @param input               the encrypted string, which should contain a salt and encrypted data separated by a '$' character
      * @param password            the password to derive the decryption key
-     * @param inputBufferHandling the strategy to handle the input buffer, affecting whether the password buffer is preserved or cleared
      * @return the decrypted data as a byte array
      * @throws IllegalArgumentException if the input string is invalid in format or there is no '$' delimiter
      * @throws IllegalStateException    if decryption fails due to cryptographic errors
      */
-    public static byte[] decrypt(String input, char[] password, InputBufferHandling inputBufferHandling) {
+    public static byte[] decrypt(String input, char[] password) {
         try {
             int splitIndex = input.indexOf('$');
             LangUtil.checkArg(splitIndex > 0, "Invalid input");
@@ -163,14 +162,15 @@ public final class CryptUtil {
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Failed to decrypt", e);
         } finally {
-            if (inputBufferHandling != com.dua3.utility.crypt.InputBufferHandling.PRESERVE) {
-                Arrays.fill(password, '\0');
-            }
+            Arrays.fill(password, '\0');
         }
     }
 
     /**
      * Symmetrically decrypt data using a Key object with the specified algorithm.
+     * <p>
+     * <strong>Note:</strong> decryption methods to not take an {@link InputBufferHandling} argument
+     * since the encrypted data is not considered security sensitive.
      *
      * @param algorithm     the symmetric algorithm that was used for encryption
      * @param key           the encryption key (must be compatible with the algorithm)
@@ -211,6 +211,9 @@ public final class CryptUtil {
      * Symmetrically decrypt data using a Key object with the default algorithm.
      * <p>
      * The data is decrypted using AES-GCM.
+     * <p>
+     * <strong>Note:</strong> decryption methods to not take an {@link InputBufferHandling} argument
+     * since the encrypted data is not considered security sensitive.
      *
      * @param key           the encryption key (must be compatible with the algorithm)
      * @param cipherMessage the encrypted data
@@ -379,6 +382,9 @@ public final class CryptUtil {
      * <p>
      * This method reverses the hybrid encryption process by first extracting and decrypting
      * the AES key using the private key, then using that AES key to decrypt the actual data.
+     * <p>
+     * <strong>Note:</strong> decryption methods to not take an {@link InputBufferHandling} argument
+     * since the encrypted data is not considered security sensitive.
      *
      * @param privateKey the private key corresponding to the public key used for encryption
      * @param cipherData the hybrid encrypted data as a byte array
@@ -412,6 +418,9 @@ public final class CryptUtil {
 
     /**
      * Asymmetrically decrypt data using a private key.
+     * <p>
+     * <strong>Note:</strong> decryption methods to not take an {@link InputBufferHandling} argument
+     * since the encrypted data is not considered security sensitive.
      *
      * @param privateKey the private key for decryption
      * @param cipherData the encrypted data
@@ -429,7 +438,7 @@ public final class CryptUtil {
     }
 
     /**
-     * Computes an HMAC using the SHA-256 algorithm of the provided text.
+     * Computes an HMAC using the SHA-256 algorithm of the provided input.
      * <p>
      * This method normalizes the text before creating the HMAC like this:
      * - unicode normalization
@@ -441,13 +450,13 @@ public final class CryptUtil {
      * <p>
      * <strong>Note:</strong> The key size must be at least 256 bits.
      *
-     * @param s   the text
      * @param key the secret key to use for HMAC generation
+     * @param s   the input data
      * @return the computed HMAC as a hexadecimal string
      * @throws NoSuchAlgorithmException if the SHA-256 algorithm is not supported
      * @throws InvalidKeyException      if the provided secret key is invalid
      */
-    public static String hmacSha256(CharSequence s, SecretKey key) throws NoSuchAlgorithmException, InvalidKeyException {
+    public static String hmacSha256(SecretKey key, CharSequence s) throws NoSuchAlgorithmException, InvalidKeyException {
         String normalizedText = TextUtil.normalize(s);
 
         if (key.getEncoded().length < 32) {
@@ -460,6 +469,21 @@ public final class CryptUtil {
         byte[] hmacBytes = hmacSha256.doFinal(normalizedText.getBytes(StandardCharsets.UTF_8));
 
         return HexFormat.of().formatHex(hmacBytes);
+    }
+
+    /**
+     * Computes an HMAC using the SHA-256 algorithm of the provided input.
+     * <p>
+     * This method calls {@link #hmacSha256(SecretKey, CharSequence)}.
+     *
+     * @param key the secret key to use for HMAC generation
+     * @param s   the input data
+     * @return the computed HMAC as a hexadecimal string
+     * @throws NoSuchAlgorithmException if the SHA-256 algorithm is not supported
+     * @throws InvalidKeyException      if the provided secret key is invalid
+     */
+    public static String hmacSha256(SecretKey key, char[] s) throws NoSuchAlgorithmException, InvalidKeyException {
+        return hmacSha256(key, TextUtil.asCharSequence(s));
     }
 
     /**

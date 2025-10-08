@@ -50,8 +50,8 @@ class CryptUtilTest {
         SecretKey key = new SecretKeySpec("0123456789abcdef0123456789abcdef".getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         String input = "Test message";
 
-        String hmac1 = CryptUtil.hmacSha256(input, key);
-        String hmac2 = CryptUtil.hmacSha256(input, key);
+        String hmac1 = CryptUtil.hmacSha256(key, input);
+        String hmac2 = CryptUtil.hmacSha256(key, input);
 
         assertNotNull(hmac1);
         assertNotNull(hmac2);
@@ -64,8 +64,8 @@ class CryptUtilTest {
         String input1 = "Test message 1";
         String input2 = "Test message 2";
 
-        String hmac1 = CryptUtil.hmacSha256(input1, key);
-        String hmac2 = CryptUtil.hmacSha256(input2, key);
+        String hmac1 = CryptUtil.hmacSha256(key, input1);
+        String hmac2 = CryptUtil.hmacSha256(key, input2);
 
         assertNotNull(hmac1);
         assertNotNull(hmac2);
@@ -78,7 +78,7 @@ class CryptUtilTest {
         String input = "Test message";
 
         // Test that invalid key size throws an InvalidKeyException
-        assertThrows(InvalidKeyException.class, () -> CryptUtil.hmacSha256(input, invalidKey));
+        assertThrows(InvalidKeyException.class, () -> CryptUtil.hmacSha256(invalidKey, input));
     }
 
     // Tests for PasswordUtil moved to PasswordUtilTest
@@ -853,18 +853,13 @@ class CryptUtilTest {
         // Convert input string to bytes
         byte[] inputBytes = input.getBytes(StandardCharsets.UTF_8);
 
-        // Make a copy of the password for each step to avoid issues with buffer clearing
-        char[] passwordCopy1 = Arrays.copyOf(password, password.length);
-        char[] passwordCopy2 = Arrays.copyOf(password, password.length);
-        char[] passwordCopy3 = Arrays.copyOf(password, password.length);
-
         // Step 1: First encryption
-        String encrypted1 = CryptUtil.encrypt(inputBytes, passwordCopy1, InputBufferHandling.PRESERVE);
+        String encrypted1 = CryptUtil.encrypt(inputBytes, password.clone(), InputBufferHandling.PRESERVE);
         assertNotNull(encrypted1, "Encrypted result should not be null");
         assertTrue(encrypted1.contains("$"), "Encrypted result should contain delimiter");
 
         // Step 2: Decrypt the encrypted data
-        byte[] decrypted = CryptUtil.decrypt(encrypted1, passwordCopy2, InputBufferHandling.PRESERVE);
+        byte[] decrypted = CryptUtil.decrypt(encrypted1, password.clone());
         assertNotNull(decrypted, "Decrypted result should not be null");
 
         // Verify the decrypted data matches the original input
@@ -872,14 +867,14 @@ class CryptUtilTest {
         assertEquals(input, decryptedString, "Decrypted data should match original input");
 
         // Step 3: Encrypt the decrypted data again
-        String encrypted2 = CryptUtil.encrypt(decrypted, passwordCopy3, InputBufferHandling.PRESERVE);
+        String encrypted2 = CryptUtil.encrypt(decrypted, password.clone(), InputBufferHandling.PRESERVE);
         assertNotNull(encrypted2, "Second encrypted result should not be null");
 
         // Verify the second encryption is different from the first (due to random salt)
         assertNotEquals(encrypted1, encrypted2, "Second encryption should differ from first due to random salt");
 
         // Step 4: Decrypt the second encryption to verify it works
-        byte[] decrypted2 = CryptUtil.decrypt(encrypted2, Arrays.copyOf(password, password.length), InputBufferHandling.PRESERVE);
+        byte[] decrypted2 = CryptUtil.decrypt(encrypted2, Arrays.copyOf(password, password.length));
         String decryptedString2 = new String(decrypted2, StandardCharsets.UTF_8);
         assertEquals(input, decryptedString2, "Second round decryption should match original input");
     }

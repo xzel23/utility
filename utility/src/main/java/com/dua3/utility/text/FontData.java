@@ -50,7 +50,26 @@ public record FontData(
         double spaceWidth
 ) {
 
-    @SuppressWarnings("MissingJavadoc")
+    /**
+     * Canonical record constructor..
+     *
+     * @param families      the list of font family names;
+     *                      it is always guaranteed to contain at least one entry with the family name at index 0
+     *                      and alternative names following
+     * @param size          the font size in points
+     * @param monospaced    if the font is monospaced
+     * @param bold          whether the font style is bold
+     * @param italic        whether the font style is italicized
+     * @param underline     whether the font style includes an underline
+     * @param strikeThrough whether the font style includes a strike-through
+     * @param fontDef       the {@link FontDef} object defining extended font properties
+     * @param fontspec      the font specification string without color information
+     * @param cssStyle      the CSS representation of the font's style
+     * @param ascent        the distance above the baseline for the highest ascender
+     * @param descent       the distance below the baseline for the lowest descender
+     * @param height        the overall height of the font, including ascent and descent
+     * @param spaceWidth    the width of the space character in the font
+     */
     public FontData {
         assert !families.isEmpty() : "family is the empty string";
         assert size >= 0 : "size is negative";

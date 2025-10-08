@@ -23,7 +23,15 @@ import java.util.Properties;
  */
 public record BuildInfo(Version version, ZonedDateTime buildTime, String key, String commit, String system) {
 
-    @SuppressWarnings("MissingJavadoc")
+    /**
+     * Canonical record constructor.
+     *
+     * @param version   the version
+     * @param buildTime the build timestamp
+     * @param key       the key associated with the build information
+     * @param commit    the commit information
+     * @param system    the system information
+     */
     public BuildInfo {
         LOG.debug("BuildInfo: {}", this);
     }
