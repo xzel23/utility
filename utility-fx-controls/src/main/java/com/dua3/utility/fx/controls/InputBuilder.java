@@ -117,11 +117,10 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param args the formatting arguments
      * @return {@code this}
      */
-    B text(String text
-    );
+    B description(String fmt, Object... args);
 
     /**
-     * Add a static text without label.
+     * Add a static text without a label.
      *
      * <p>
      * Arguments are shared for both patterns

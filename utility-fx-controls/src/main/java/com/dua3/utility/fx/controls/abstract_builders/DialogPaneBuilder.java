@@ -93,7 +93,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @param args the arguments to be inserted into the format string's placeholders
      * @return the formatted string after inserting the provided arguments
      */
-    protected String format(String fmt, Object... args) {
+    public String format(String fmt, Object... args) {
         return formatter.format(fmt, args);
     }
 
