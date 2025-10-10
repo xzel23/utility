@@ -4,7 +4,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "20.0.0-beta25"
+val projectVersion = "20.0.0-beta26-SNAPSHOT"
 
 // define subprojects
 include("utility")
@@ -110,7 +110,7 @@ dependencyResolutionManagement {
         // Sonatype Releases
         maven {
             name = "central.sonatype.com-releases"
-            url = java.net.URI("https://central.sonatype.com/content/repositories/releases/")
+            url = java.net.URI("https://oss.sonatype.org/content/repositories/releases/")
             mavenContent {
                 releasesOnly()
             }
