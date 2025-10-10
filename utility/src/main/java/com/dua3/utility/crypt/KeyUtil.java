@@ -501,7 +501,7 @@ public final class KeyUtil {
      * @throws GeneralSecurityException if there is an issue with generating the key (e.g., unsupported algorithm)
      * @throws IOException if the byte array cannot be parsed as a valid ASN.1 structure
      */
-    public static Key readDer(byte[] bytes) throws GeneralSecurityException, IOException {
+    public static Key parseDer(byte[] bytes) throws GeneralSecurityException, IOException {
         if (!(ASN1Primitive.fromByteArray(bytes) instanceof ASN1Sequence asn1Sequence)) {
             throw new InvalidKeyException("Invalid DER: expected ASN.1 sequence");
         }
@@ -540,6 +540,28 @@ public final class KeyUtil {
             case "1.2.840.10045.2.1" -> AsymmetricAlgorithm.EC;
             case "1.2.840.10040.4.1" -> AsymmetricAlgorithm.DSA;
             default -> throw new InvalidKeyException("Unknown public key algorithm OID: " + oid);
+        };
+    }
+
+    /**
+     * Converts a given {@link Key} to its encoded form using DER (Distinguished Encoding Rules).
+     * Supports X.509 encoding for public keys, PKCS#8 encoding for private keys,
+     * and raw byte encoding for symmetric keys.
+     *
+     * @param key the key to be converted to DER encoding. This can be an instance of
+     *            {@link PublicKey}, {@link PrivateKey}, or {@link SecretKey}.
+     * @return the DER-encoded byte array representation of the specified key.
+     * @throws GeneralSecurityException if the key type is unsupported or an encoding error occurs.
+     */
+    public static byte[] toDer(Key key) throws GeneralSecurityException {
+        return switch (key) {
+            // X.509 DER encoding for public keys
+            case PublicKey publicKey -> new X509EncodedKeySpec(publicKey.getEncoded()).getEncoded();
+            // PKCS#8 DER encoding for private keys
+            case PrivateKey privateKey -> new PKCS8EncodedKeySpec(privateKey.getEncoded()).getEncoded();
+            // raw bytes for symmetric keys
+            case SecretKey secretKey -> secretKey.getEncoded();
+            default -> throw new InvalidKeyException("Unsupported key type: " + key.getClass());
         };
     }
 }
