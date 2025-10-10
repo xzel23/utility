@@ -3,6 +3,13 @@ package com.dua3.utility.crypt;
 import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
@@ -483,5 +490,56 @@ public final class KeyUtil {
             app.append('\n');
         }
         app.append("-----END ").append(type).append("-----\n");
+    }
+
+    /**
+     * Parses a DER-encoded key and returns the corresponding key object, either a public or private key,
+     * based on the provided byte array.
+     *
+     * @param bytes the byte array containing the DER-encoded key
+     * @return the parsed key object, either a {@link PublicKey} or {@link PrivateKey}
+     * @throws GeneralSecurityException if there is an issue with generating the key (e.g., unsupported algorithm)
+     * @throws IOException if the byte array cannot be parsed as a valid ASN.1 structure
+     */
+    public static Key readDer(byte[] bytes) throws GeneralSecurityException, IOException {
+        if (!(ASN1Primitive.fromByteArray(bytes) instanceof ASN1Sequence asn1Sequence)) {
+            throw new InvalidKeyException("Invalid DER: expected ASN.1 sequence");
+        }
+
+        if (asn1Sequence.size() == 2 && asn1Sequence.getObjectAt(1) instanceof DERBitString) {
+            // Public key
+            SubjectPublicKeyInfo spki = SubjectPublicKeyInfo.getInstance(asn1Sequence);
+            AsymmetricAlgorithm algorithm = getAlgorithmFromOid(spki.getAlgorithm().getAlgorithm().getId());
+            return KeyFactory
+                    .getInstance(algorithm.keyFactoryAlgorithm())
+                    .generatePublic(new X509EncodedKeySpec(bytes));
+        } else if (asn1Sequence.size() >= 3 && asn1Sequence.getObjectAt(0) instanceof ASN1Integer
+                && asn1Sequence.getObjectAt(1) instanceof ASN1Sequence
+                && asn1Sequence.getObjectAt(2) instanceof ASN1OctetString) {
+            // Private key
+            PrivateKeyInfo pki = PrivateKeyInfo.getInstance(asn1Sequence);
+            AsymmetricAlgorithm algorithm = getAlgorithmFromOid(pki.getPrivateKeyAlgorithm().getAlgorithm().getId());
+            return KeyFactory
+                    .getInstance(algorithm.keyFactoryAlgorithm())
+                    .generatePrivate(new PKCS8EncodedKeySpec(bytes));
+        } else {
+            throw new InvalidKeyException("Unknown DER key format");
+        }
+    }
+
+    /**
+     * Retrieves the corresponding asymmetric algorithm based on the provided OID.
+     *
+     * @param oid the object identifier (OID) that specifies the asymmetric algorithm
+     * @return the {@link AsymmetricAlgorithm} associated with the specified OID
+     * @throws InvalidKeyException if the provided OID does not correspond to a known algorithm
+     */
+    private static AsymmetricAlgorithm getAlgorithmFromOid(String oid) throws InvalidKeyException {
+        return switch (oid) {
+            case "1.2.840.113549.1.1.1" -> AsymmetricAlgorithm.RSA;
+            case "1.2.840.10045.2.1" -> AsymmetricAlgorithm.EC;
+            case "1.2.840.10040.4.1" -> AsymmetricAlgorithm.DSA;
+            default -> throw new InvalidKeyException("Unknown public key algorithm OID: " + oid);
+        };
     }
 }
