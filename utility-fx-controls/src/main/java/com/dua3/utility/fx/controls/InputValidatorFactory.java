@@ -40,7 +40,7 @@ public class InputValidatorFactory {
      * @return a function that takes a string and returns an {@code Optional<String>} containing
      *         the error message if the string is empty, or an empty {@code Optional} if it is valid
      */
-    Function<String, Optional<String>> nonEmpty(String fmt, Object... args) {
+    public Function<String, Optional<String>> nonEmpty(String fmt, Object... args) {
         return s -> validate(Predicate.not(String::isEmpty), s, fmt, args);
     }
 
@@ -56,7 +56,7 @@ public class InputValidatorFactory {
      *         a validation error message if the input does not match the regular expression;
      *         otherwise {@code Optional.empty()} is returned
      */
-    Function<String, Optional<String>> regexp(String pattern, String fmt, Object... args) {
+    public Function<String, Optional<String>> regexp(String pattern, String fmt, Object... args) {
         return s -> validate(Pattern.compile(pattern).asMatchPredicate(), s, fmt, args);
     }
 
