@@ -20,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.text.FieldPosition;
 import java.text.Format;
@@ -135,7 +136,6 @@ public interface InputControl<T> {
             }
 
             @Override
-            @SuppressWarnings("unchecked")
             public @Nullable T fromString(String string) {
                 if (string.isEmpty()) {
                     setErrorMessage.accept("");
@@ -152,24 +152,44 @@ public interface InputControl<T> {
                     }
 
                     if (result instanceof Number n && !cls.isAssignableFrom(result.getClass())) {
-                        if (cls.isAssignableFrom(Integer.class)) {
-                            result = n.intValue();
-                        } else if (cls.isAssignableFrom(Long.class)) {
-                            result = n.longValue();
-                        } else if (cls.isAssignableFrom(Double.class)) {
-                            result = n.doubleValue();
-                        } else if (cls.isAssignableFrom(Float.class)) {
-                            result = n.floatValue();
-                        }
+                        result = convertNumber(n, cls);
                     }
 
                     return cls.cast(result);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     setErrorMessage.accept(INVALID_VALUE);
                     return null;
                 }
             }
         };
+    }
+
+    /**
+     * Converts a given number to a specified type, if possible.
+     * The method supports conversions to Integer, Long, Double, Float, and BigDecimal.
+     * If the target type is not supported, the original number is returned.
+     *
+     * @param <T> the target type to which the number is to be converted
+     * @param x the number to be converted
+     * @param cls the class of the target type
+     * @return the number converted to the specified type, or the original number if conversion is not supported
+     */
+    private static <T> Number convertNumber(Number x, Class<T> cls) {
+        Number result;
+        if (cls.isAssignableFrom(Integer.class)) {
+            result = x.intValue();
+        } else if (cls.isAssignableFrom(Long.class)) {
+            result = x.longValue();
+        } else if (cls.isAssignableFrom(Double.class)) {
+            result = x.doubleValue();
+        } else if (cls.isAssignableFrom(Float.class)) {
+            result = x.floatValue();
+        } else if (cls.isAssignableFrom(BigDecimal.class)) {
+            result = x instanceof BigDecimal ? x : new BigDecimal(x.toString());
+        } else {
+            result = x;
+        }
+        return result;
     }
 
     /**
@@ -367,6 +387,9 @@ public interface InputControl<T> {
             this.value.addListener((v, o, n) -> updateValidState(n));
             this.dflt = dflt;
             this.validate = validate;
+
+            this.valid.set(validate.apply(value.getValue()).isEmpty());
+            this.error.setValue("");
 
             this.value.addListener((v, o, n) -> updateValidState(n));
         }
