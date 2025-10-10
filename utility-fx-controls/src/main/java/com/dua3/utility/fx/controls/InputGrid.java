@@ -4,6 +4,7 @@ import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.TextUtil;
+import javafx.scene.control.Tooltip;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.FxUtil;
 import javafx.beans.binding.Bindings;
@@ -43,7 +44,7 @@ public class InputGrid extends GridPane {
     protected static final Logger LOG = LogManager.getLogger(InputGrid.class);
 
     private static final String MARKER_INITIAL = "";
-    private static final String MARKER_ERROR = "❌";
+    private static final String MARKER_ERROR = "⚠";
     private static final String MARKER_OK = "";
 
     private static final Font LABEL_FONT = FxFontUtil.getInstance().convert(new Label().getFont());
@@ -193,8 +194,10 @@ public class InputGrid extends GridPane {
     private static void updateMarker(Meta<?> entry) {
         if (entry.control.isValid()) {
             entry.marker.setText(MARKER_OK);
+            entry.marker.setTooltip(null);
         } else {
             entry.marker.setText(MARKER_ERROR);
+            entry.marker.setTooltip(new Tooltip(entry.control.errorProperty().get()));
         }
     }
 
