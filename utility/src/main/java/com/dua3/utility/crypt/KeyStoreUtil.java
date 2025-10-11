@@ -101,7 +101,7 @@ public final class KeyStoreUtil {
      * @throws GeneralSecurityException if KeyStore loading fails
      * @throws IOException if file I/O fails
      */
-    public static KeyStore loadKeyStoreFromFile(Path keystoreFile, char[] password) throws GeneralSecurityException, IOException {
+    public static KeyStore loadKeyStore(Path keystoreFile, char[] password) throws GeneralSecurityException, IOException {
         try {
             KeyStoreType type = KeyStoreType.forExtension(IoUtil.getExtension(keystoreFile));
             try (InputStream inputStream = Files.newInputStream(keystoreFile)) {

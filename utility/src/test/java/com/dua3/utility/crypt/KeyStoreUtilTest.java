@@ -179,7 +179,7 @@ class KeyStoreUtilTest {
         KeyStoreUtil.saveKeyStoreToFile(originalKeyStore, keystoreFile, password());
 
         // Load the KeyStore from the file
-        KeyStore loadedKeyStore = KeyStoreUtil.loadKeyStoreFromFile(keystoreFile, password());
+        KeyStore loadedKeyStore = KeyStoreUtil.loadKeyStore(keystoreFile, password());
 
         // Verify the loaded KeyStore contains the expected entries
         assertTrue(KeyStoreUtil.containsKey(loadedKeyStore, SECRET_KEY_ALIAS));
