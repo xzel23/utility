@@ -8562,7 +8562,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Loads a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html" title="class or interface in java.security" class="external-link"><code>KeyStore</code></a> from an InputStream.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#loadKeyStoreFromFile(java.nio.file.Path,char%5B%5D)" class="member-name-link">loadKeyStoreFromFile(Path, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#loadKeyStore(java.nio.file.Path,char%5B%5D)" class="member-name-link">loadKeyStore(Path, char[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
 <dd>
 <div class="block">Loads a KeyStore from a file.</div>
 </dd>
@@ -10207,6 +10207,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/text/FontDef.html#parseCssFontDef(java.lang.String)" class="member-name-link">parseCssFontDef(String)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/FontDef.html" title="class in com.dua3.utility.text">FontDef</a></dt>
 <dd>
 <div class="block">Parse fontspec.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/KeyUtil.html#parseDer(byte%5B%5D)" class="member-name-link">parseDer(byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></dt>
+<dd>
+<div class="block">Parses a DER-encoded key and returns the corresponding key object, either a public or private key,
+ based on the provided byte array.</div>
 </dd>
 <dt><a href="com/dua3/utility/text/FontDef.html#parseFontspec(java.lang.String)" class="member-name-link">parseFontspec(String)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/FontDef.html" title="class in com.dua3.utility.text">FontDef</a></dt>
 <dd>
@@ -13515,6 +13520,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/data/Color.html#toCss()" class="member-name-link">toCss()</a> - Method in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">Get CSS compatible string representation of this color.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/KeyUtil.html#toDer(java.security.Key)" class="member-name-link">toDer(Key)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></dt>
+<dd>
+<div class="block">Converts a given <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/Key.html" title="class or interface in java.security" class="external-link"><code>Key</code></a> to its encoded form using DER (Distinguished Encoding Rules).</div>
 </dd>
 <dt><a href="com/dua3/utility/text/Font.html#toFontDef()" class="member-name-link">toFontDef()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/Font.html" title="class in com.dua3.utility.text">Font</a></dt>
 <dd>
