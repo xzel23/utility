@@ -12,6 +12,7 @@ javafx {
 dependencies {
     implementation(project(":utility"))
     compileOnly(project(":utility-logging"))
+    compileOnly(project(":utility-logging-log4j"))
 
     // Add dependency on javaTestUtil for tests
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
