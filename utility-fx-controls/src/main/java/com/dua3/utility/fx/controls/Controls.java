@@ -7,6 +7,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.icons.Icon;
 import com.dua3.utility.fx.icons.IconUtil;
@@ -101,11 +105,12 @@ public final class Controls {
     /**
      * Creates a new FileInputBuilder instance with the given mode.
      *
+     * @param parentWinndw the parent window
      * @param mode the {@link FileDialogMode} of the file dialog
      * @return a new FileInputBuilder instance
      */
-    public static FileInputBuilder fileInput(FileDialogMode mode) {
-        return new FileInputBuilder(mode);
+    public static FileInputBuilder fileInput(@Nullable Window parentWinndw, FileDialogMode mode) {
+        return new FileInputBuilder(parentWinndw, mode);
     }
 
     /**
@@ -609,5 +614,27 @@ public final class Controls {
      */
     public static Background background(Color color) {
         return new Background(new BackgroundFill(FxUtil.convert(color), null, null));
+    }
+
+    /**
+     * Creates a spacer node with a default growth priority.
+     *
+     * @return a Region object configured as a spacer with the default Priority.ALWAYS.
+     */
+    public static Region spacer() {
+        return spacer(Priority.ALWAYS);
+    }
+
+    /**
+     * Creates a spacer region with the specified priority for horizontal and vertical growth.
+     *
+     * @param priority the growth priority to set for the spacer in horizontal and vertical layouts
+     * @return a spacer region configured with the specified growth priority
+     */
+    public static Region spacer(Priority priority) {
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, priority);
+        VBox.setVgrow(spacer, priority);
+        return spacer;
     }
 }
