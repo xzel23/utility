@@ -1,7 +1,9 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.text.MessageFormatter;
+import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -58,6 +60,20 @@ public class InputValidatorFactory {
      */
     public Function<String, Optional<String>> regexp(String pattern, String fmt, Object... args) {
         return s -> validate(Pattern.compile(pattern).asMatchPredicate(), s, fmt, args);
+    }
+
+    /**
+     * Creates a validation function that checks if an input value is non-null.
+     * If the input is null, the provided error message format and arguments are used to create an error message.
+     *
+     * @param fmt  the format string for the error message if validation fails
+     * @param args optional arguments for formatting the error message
+     * @param <T>  the type of the input value being validated, which may be nullable
+     * @return a function that takes an input value and returns an {@code Optional<String>}
+     *         containing a validation error message if the input is null, or an empty {@code Optional} otherwise
+     */
+    public <T extends @Nullable Object> Function<T, Optional<String>> nonNull(String fmt, Object... args) {
+        return t -> validate(Objects::nonNull, t, fmt, args);
     }
 
     /**
