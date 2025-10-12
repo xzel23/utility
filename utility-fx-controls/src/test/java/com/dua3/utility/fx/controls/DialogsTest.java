@@ -24,7 +24,7 @@ class DialogsTest extends FxTestBase {
     void testWarning() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a warning alert builder
-            AlertBuilder builder = Dialogs.warning(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.WARNING, MessageFormatter.standard());
 
             // Verify builder was created
             assertNotNull(builder);
@@ -45,7 +45,7 @@ class DialogsTest extends FxTestBase {
     void testWarningPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a warning alert pane builder
-            AlertPaneBuilder builder = Dialogs.warningPane(MessageFormatter.standard());
+            AlertPaneBuilder builder = Dialogs.alertPane(AlertType.WARNING);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -59,7 +59,7 @@ class DialogsTest extends FxTestBase {
     void testError() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an error alert builder
-            AlertBuilder builder = Dialogs.error(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.ERROR);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -80,7 +80,7 @@ class DialogsTest extends FxTestBase {
     void testErrorPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an error alert pane builder
-            AlertPaneBuilder builder = Dialogs.errorPane(MessageFormatter.standard());
+            AlertPaneBuilder builder = Dialogs.alertPane(AlertType.ERROR);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -94,7 +94,7 @@ class DialogsTest extends FxTestBase {
     void testInformation() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an information alert builder
-            AlertBuilder builder = Dialogs.information(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.INFORMATION);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -115,7 +115,7 @@ class DialogsTest extends FxTestBase {
     void testInformationPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an information alert pane builder
-            AlertPaneBuilder builder = Dialogs.informationPane(MessageFormatter.standard());
+            AlertPaneBuilder builder = Dialogs.alertPane(AlertType.INFORMATION);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -129,7 +129,7 @@ class DialogsTest extends FxTestBase {
     void testConfirmation() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a confirmation alert builder
-            AlertBuilder builder = Dialogs.confirmation(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.CONFIRMATION);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -150,7 +150,7 @@ class DialogsTest extends FxTestBase {
     void testConfirmationPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a confirmation alert pane builder
-            AlertPaneBuilder builder = Dialogs.confirmationPane(MessageFormatter.standard());
+            AlertPaneBuilder builder = Dialogs.alertPane(AlertType.CONFIRMATION);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -164,7 +164,7 @@ class DialogsTest extends FxTestBase {
     void testChooseFile() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a file chooser builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -178,7 +178,7 @@ class DialogsTest extends FxTestBase {
     void testChooseDirectory() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a directory chooser builder
-            DirectoryChooserBuilder builder = Dialogs.chooseDirectory();
+            DirectoryChooserBuilder builder = Dialogs.chooseDirectory(null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -206,7 +206,7 @@ class DialogsTest extends FxTestBase {
     void testPrompt() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a prompt dialog builder
-            PromptBuilder builder = Dialogs.prompt(MessageFormatter.standard(), null);
+            PromptBuilder builder = Dialogs.prompt(null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -234,7 +234,7 @@ class DialogsTest extends FxTestBase {
     void testInput() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an input dialog builder
-            InputDialogBuilder builder = Dialogs.input(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = Dialogs.input(null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -262,7 +262,7 @@ class DialogsTest extends FxTestBase {
     void testInputGrid() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an input grid builder
-            InputGridBuilder builder = Dialogs.inputGrid();
+            InputGridBuilder builder = Dialogs.inputGrid(null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -276,7 +276,7 @@ class DialogsTest extends FxTestBase {
     void testOptions() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an options dialog builder
-            OptionsDialogBuilder builder = Dialogs.options(MessageFormatter.standard(), null);
+            OptionsDialogBuilder builder = Dialogs.options(null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -290,7 +290,7 @@ class DialogsTest extends FxTestBase {
     void testWizard() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a wizard dialog builder
-            WizardDialogBuilder builder = Dialogs.wizard();
+            WizardDialogBuilder builder = Dialogs.wizard(null);
 
             // Verify builder was created
             assertNotNull(builder);

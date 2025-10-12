@@ -25,7 +25,7 @@ class DirectoryChooserBuilderTest extends FxTestBase {
     void testCreateBuilder() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            DirectoryChooserBuilder builder = Dialogs.chooseDirectory();
+            DirectoryChooserBuilder builder = Dialogs.chooseDirectory(null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -39,7 +39,7 @@ class DirectoryChooserBuilderTest extends FxTestBase {
     void testInitialDir() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            DirectoryChooserBuilder builder = Dialogs.chooseDirectory();
+            DirectoryChooserBuilder builder = Dialogs.chooseDirectory(null);
 
             // Set initial directory
             builder.initialDir(tempDir);
@@ -57,7 +57,7 @@ class DirectoryChooserBuilderTest extends FxTestBase {
     void testInitialDirNull() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            DirectoryChooserBuilder builder = Dialogs.chooseDirectory();
+            DirectoryChooserBuilder builder = Dialogs.chooseDirectory(null);
 
             // Set initial directory to null
             builder.initialDir(null);
@@ -75,7 +75,7 @@ class DirectoryChooserBuilderTest extends FxTestBase {
     void testMethodChaining() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder and chain methods
-            DirectoryChooserBuilder builder = Dialogs.chooseDirectory().initialDir(tempDir);
+            DirectoryChooserBuilder builder = Dialogs.chooseDirectory(null).initialDir(tempDir);
 
             // Verify builder is valid after chaining
             assertNotNull(builder);

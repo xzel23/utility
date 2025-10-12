@@ -41,11 +41,11 @@ public class AlertBuilder
     /**
      * Constructs an AlertBuilder for creating Alert dialogs.
      *
+     * @param parentWindow the parent window for the alert dialog; can be null
      * @param type         the type of the alert, such as confirmation or error
      * @param formatter    the message formatter used for building formatted messages
-     * @param parentWindow the parent window for the alert dialog; can be null
      */
-    AlertBuilder(AlertType type, MessageFormatter formatter, @Nullable Window parentWindow) {
+    AlertBuilder(@Nullable Window parentWindow, AlertType type, MessageFormatter formatter) {
         super(formatter, parentWindow);
         setDialogSupplier(() -> new Alert(type));
     }

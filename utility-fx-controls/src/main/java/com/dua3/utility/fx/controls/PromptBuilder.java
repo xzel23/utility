@@ -33,7 +33,7 @@ public class PromptBuilder extends DialogBuilder<TextInputDialog, PromptBuilder,
     private String defaultValue = "";
     private Predicate<? super @Nullable String> validate = (@Nullable String s) -> s != null && !s.isEmpty();
 
-    PromptBuilder(MessageFormatter formatter, @Nullable Window parentWindow) {
+    PromptBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         setDialogSupplier(this::createDialog);
         header("");

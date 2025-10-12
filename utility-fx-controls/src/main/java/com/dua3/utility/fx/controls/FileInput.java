@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.FxUtil;
 import javafx.beans.binding.Bindings;
@@ -79,6 +80,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
      * @param validate a function to validate the selected file path, returning an optional error message
      */
     public FileInput(
+            @Nullable Window parentWndow,
             FileDialogMode mode,
             boolean existingOnly,
             Supplier<@Nullable Path> dflt,
@@ -108,19 +110,19 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
             }
 
             switch (this.mode) {
-                case OPEN -> Dialogs.chooseFile()
+                case OPEN -> Dialogs.chooseFile(parentWndow)
                         .initialDir(initialDir)
                         .filter(this.filters)
-                        .showOpenDialog(null)
+                        .showOpenDialog()
                         .ifPresent(value::setValue);
-                case SAVE -> Dialogs.chooseFile()
+                case SAVE -> Dialogs.chooseFile(parentWndow)
                         .initialDir(initialDir)
                         .filter(this.filters)
-                        .showSaveDialog(null)
+                        .showSaveDialog()
                         .ifPresent(value::setValue);
-                case DIRECTORY -> Dialogs.chooseDirectory()
+                case DIRECTORY -> Dialogs.chooseDirectory(parentWndow)
                         .initialDir(initialDir)
-                        .showDialog(null)
+                        .showDialog()
                         .ifPresent(value::setValue);
             }
         });

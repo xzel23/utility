@@ -43,181 +43,67 @@ public final class Dialogs {
     private Dialogs() {}
 
     /**
-     * Start the definition of a new Warning dialog.
-     *
-     * @param formatter the {@link MessageFormatter} to use
-     * @param parentWindow the parent window
-     * @return new {@link AlertBuilder} instance
-     */
-    public static AlertBuilder warning(MessageFormatter formatter, @Nullable Window parentWindow) {
-        return new AlertBuilder(AlertType.WARNING, formatter, parentWindow);
-    }
-
-    /**
-     * Start definition of new Warning dialog using the standard MessageFormatter.
+     * Start the definition of a new alert dialog.
      *
      * @param parentWindow the parent window
+     * @param type         the {@link AlertType}
      * @return new {@link AlertBuilder} instance
      */
-    public static AlertBuilder warning(@Nullable Window parentWindow) {
-        return warning(MessageFormatter.standard(), parentWindow);
+    public static AlertBuilder alert(@Nullable Window parentWindow, AlertType type) {
+        return alert(parentWindow, type, MessageFormatter.standard());
     }
 
     /**
-     * Start the definition of a new warning pane.
-     *
-     * @param formatter the {@link MessageFormatter} to use
-     * @return new {@link AlertPaneBuilder} instance
-     */
-    public static AlertPaneBuilder warningPane(MessageFormatter formatter) {
-        return new AlertPaneBuilder(formatter, AlertType.WARNING);
-    }
-
-    /**
-     * Start the definition of a new warning pane using the standard MessageFormatter.
-     *
-     * @return new {@link AlertPaneBuilder} instance
-     */
-    public static AlertPaneBuilder warningPane() {
-        return warningPane(MessageFormatter.standard());
-    }
-
-    /**
-     * Start the definition of a new Error dialog.
-     *
-     * @param formatter the {@link MessageFormatter} to use
-     * @param parentWindow the parent window
-     * @return new {@link AlertBuilder} instance
-     */
-    public static AlertBuilder error(MessageFormatter formatter, @Nullable Window parentWindow) {
-        return new AlertBuilder(AlertType.ERROR, formatter, parentWindow);
-    }
-
-    /**
-     * Start definition of new Error dialog using the standard MessageFormatter.
+     * Start the definition of a new alert dialog.
      *
      * @param parentWindow the parent window
-     * @return new {@link AlertBuilder} instance
-     */
-    public static AlertBuilder error(@Nullable Window parentWindow) {
-        return error(MessageFormatter.standard(), parentWindow);
-    }
-
-    /**
-     * Start the definition of a new Error pane.
-     *
-     * @param formatter the {@link MessageFormatter} to use
-     * @return new {@link AlertPaneBuilder} instance
-     */
-    public static AlertPaneBuilder errorPane(MessageFormatter formatter) {
-        return new AlertPaneBuilder(formatter, AlertType.ERROR);
-    }
-
-    /**
-     * Start the definition of a new Error pane using the standard MessageFormatter.
-     *
-     * @return new {@link AlertPaneBuilder} instance
-     */
-    public static AlertPaneBuilder errorPane() {
-        return errorPane(MessageFormatter.standard());
-    }
-
-    /**
-     * Start the definition of a new Information dialog.
-     *
+     * @param type         the {@link AlertType}
      * @param formatter    the {@link MessageFormatter} to use
-     * @param parentWindow the parent window
      * @return new {@link AlertBuilder} instance
      */
-    public static AlertBuilder information(MessageFormatter formatter, @Nullable Window parentWindow) {
-        return new AlertBuilder(AlertType.INFORMATION, formatter, parentWindow);
+    public static AlertBuilder alert(@Nullable Window parentWindow, AlertType type, MessageFormatter formatter) {
+        return new AlertBuilder(parentWindow, type, formatter);
     }
 
     /**
-     * Start the definition of a new Information dialog using the standard MessageFormatter.
+     * Start the definition of a new alert dialog.
      *
-     * @param parentWindow the parent window
+     * @param type the {@link AlertType}
      * @return new {@link AlertBuilder} instance
      */
-    public static AlertBuilder information(@Nullable Window parentWindow) {
-        return information(MessageFormatter.standard(), parentWindow);
+    public static AlertPaneBuilder alertPane(AlertType type) {
+        return alertPane(type, MessageFormatter.standard());
     }
 
     /**
-     * Start the definition of a new Information pane.
+     * Start the definition of a new alert dialog.
      *
-     * @param formatter    the {@link MessageFormatter} to use
-     * @return new {@link AlertPaneBuilder} instance
-     */
-    public static AlertPaneBuilder informationPane(MessageFormatter formatter) {
-        return new AlertPaneBuilder(formatter, AlertType.INFORMATION);
-    }
-
-    /**
-     * Start the definition of a new Information pane using the standard MessageFormatter.
-     *
-     * @return new {@link AlertPaneBuilder} instance
-     */
-    public static AlertPaneBuilder informationPane() {
-        return informationPane(MessageFormatter.standard());
-    }
-
-    /**
-     * Start the definition of a new confirmation dialog.
-     *
-     * @param formatter    the {@link MessageFormatter} to use
-     * @param parentWindow the parent window
+     * @param type the {@link AlertType}
+     * @param formatter the {@link MessageFormatter} to use
      * @return new {@link AlertBuilder} instance
      */
-    public static AlertBuilder confirmation(MessageFormatter formatter, @Nullable Window parentWindow) {
-        return new AlertBuilder(AlertType.CONFIRMATION, formatter, parentWindow);
-    }
-
-    /**
-     * Start the definition of a new confirmation dialog using the standard MessageFormatter.
-     *
-     * @param parentWindow the parent window
-     * @return new {@link AlertBuilder} instance
-     */
-    public static AlertBuilder confirmation(@Nullable Window parentWindow) {
-        return confirmation(MessageFormatter.standard(), parentWindow);
-    }
-
-    /**
-     * Start the definition of a new Confirmation pane.
-     *
-     * @param formatter    the {@link MessageFormatter} to use
-     * @return new {@link AlertPaneBuilder} instance
-     */
-    public static AlertPaneBuilder confirmationPane(MessageFormatter formatter) {
-        return new AlertPaneBuilder(formatter, AlertType.CONFIRMATION);
-    }
-
-    /**
-     * Start the definition of a new Confirmation pane using the standard MessageFormatter.
-     *
-     * @return new {@link AlertPaneBuilder} instance
-     */
-    public static AlertPaneBuilder confirmationPane() {
-        return confirmationPane(MessageFormatter.standard());
+    public static AlertPaneBuilder alertPane(AlertType type, MessageFormatter formatter) {
+        return new AlertPaneBuilder(type, formatter);
     }
 
     /**
      * Start the definition of a new FileChooser.
      *
+     * @param parentWindow the parent window
      * @return new {@link FileChooserBuilder} instance
      */
-    public static FileChooserBuilder chooseFile() {
-        return new FileChooserBuilder();
+    public static FileChooserBuilder chooseFile(@Nullable Window parentWindow) {
+        return new FileChooserBuilder(parentWindow);
     }
 
     /**
      * Start the definition of a new DirectoryChooser.
      *
+     * @param parentWindow the parent window
      * @return new {@link DirectoryChooserBuilder} instance
      */
-    public static DirectoryChooserBuilder chooseDirectory() {
-        return new DirectoryChooserBuilder();
+    public static DirectoryChooserBuilder chooseDirectory(@Nullable Window parentWindow) {
+        return new DirectoryChooserBuilder(parentWindow);
     }
 
     /**
@@ -233,12 +119,12 @@ public final class Dialogs {
     /**
      * Start the definition of a new prompt dialog.
      *
-     * @param formatter    the {@link MessageFormatter} to use
      * @param parentWindow the parent window
+     * @param formatter    the {@link MessageFormatter} to use
      * @return new {@link PromptBuilder} instance
      */
-    public static PromptBuilder prompt(MessageFormatter formatter, @Nullable Window parentWindow) {
-        return new PromptBuilder(formatter, parentWindow);
+    public static PromptBuilder prompt(@Nullable Window parentWindow, MessageFormatter formatter) {
+        return new PromptBuilder(parentWindow, formatter);
     }
 
     /**
@@ -248,7 +134,7 @@ public final class Dialogs {
      * @return new {@link PromptBuilder} instance
      */
     public static PromptBuilder prompt(@Nullable Window parentWindow) {
-        return prompt(MessageFormatter.standard(), parentWindow);
+        return prompt(parentWindow, MessageFormatter.standard());
     }
 
     /**
@@ -273,12 +159,12 @@ public final class Dialogs {
     /**
      * Start definition of a new input dialog.
      *
-     * @param formatter    the {@link MessageFormatter} to use
      * @param parentWindow the parent window
+     * @param formatter    the {@link MessageFormatter} to use
      * @return new {@link InputDialogBuilder} instance
      */
-    public static InputDialogBuilder input(MessageFormatter formatter, @Nullable Window parentWindow) {
-        return new InputDialogBuilder(formatter, parentWindow);
+    public static InputDialogBuilder input(@Nullable Window parentWindow, MessageFormatter formatter) {
+        return new InputDialogBuilder(parentWindow, formatter);
     }
 
     /**
@@ -288,7 +174,7 @@ public final class Dialogs {
      * @return new {@link InputDialogBuilder} instance
      */
     public static InputDialogBuilder input(@Nullable Window parentWindow) {
-        return input(MessageFormatter.standard(), parentWindow);
+        return input(parentWindow, MessageFormatter.standard());
     }
 
     /**
@@ -316,8 +202,8 @@ public final class Dialogs {
      * @param formatter the {@link MessageFormatter} to use
      * @return new {@link InputDialogBuilder} instance
      */
-    public static InputGridBuilder inputGrid(MessageFormatter formatter) {
-        return new InputGridBuilder(formatter);
+    public static InputGridBuilder inputGrid(@Nullable Window parentWindow, MessageFormatter formatter) {
+        return new InputGridBuilder(parentWindow, formatter);
     }
 
     /**
@@ -325,19 +211,19 @@ public final class Dialogs {
      *
      * @return new {@link InputDialogBuilder} instance
      */
-    public static InputGridBuilder inputGrid() {
-        return inputGrid(MessageFormatter.standard());
+    public static InputGridBuilder inputGrid(@Nullable Window parentWindow) {
+        return inputGrid(parentWindow, MessageFormatter.standard());
     }
 
     /**
      * Start the definition of a new {@link OptionsDialog}.
      *
-     * @param formatter    the {@link MessageFormatter} to use
      * @param parentWindow the parent window
+     * @param formatter    the {@link MessageFormatter} to use
      * @return new {@link OptionsDialogBuilder} instance
      */
-    public static OptionsDialogBuilder options(MessageFormatter formatter, @Nullable Window parentWindow) {
-        return new OptionsDialogBuilder(formatter, parentWindow);
+    public static OptionsDialogBuilder options(@Nullable Window parentWindow, MessageFormatter formatter) {
+        return new OptionsDialogBuilder(parentWindow, formatter);
     }
 
     /**
@@ -347,7 +233,7 @@ public final class Dialogs {
      * @return new {@link OptionsDialogBuilder} instance
      */
     public static OptionsDialogBuilder options(@Nullable Window parentWindow) {
-        return options(MessageFormatter.standard(), parentWindow);
+        return options(parentWindow, MessageFormatter.standard());
     }
 
     /**
@@ -356,17 +242,18 @@ public final class Dialogs {
      * @param formatter the {@link MessageFormatter} to use
      * @return new {@link WizardDialogBuilder} instance
      */
-    public static WizardDialogBuilder wizard(MessageFormatter formatter) {
-        return new WizardDialogBuilder(formatter);
+    public static WizardDialogBuilder wizard(@Nullable Window parentWindow, MessageFormatter formatter) {
+        return new WizardDialogBuilder(parentWindow, formatter);
     }
 
     /**
      * Start the definition of a new wizard dialog.
      *
+     * @param parentWindow the parent window
      * @return new {@link WizardDialogBuilder} instance
      */
-    public static WizardDialogBuilder wizard() {
-        return new WizardDialogBuilder(MessageFormatter.standard());
+    public static WizardDialogBuilder wizard(@Nullable Window parentWindow) {
+        return new WizardDialogBuilder(parentWindow, MessageFormatter.standard());
     }
 
     /**
@@ -502,7 +389,7 @@ public final class Dialogs {
             Stage stage, T object,
             @Nullable FileType<? extends T> defaultFileType,
             @Nullable Path defaultPath
-    ) throws IOException {
+    ) throws IOException, UnsupportedFileTypeException {
         FileChooser fileChooser = new FileChooser();
 
         @SuppressWarnings("unchecked")

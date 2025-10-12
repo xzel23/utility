@@ -41,7 +41,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testConstructor() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Verify initial state
             assertNotNull(builder);
@@ -55,7 +55,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testBuildDialog() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -78,7 +78,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testDescription() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add text
             builder.description("Test text");
@@ -102,7 +102,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testTextWithLabel() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add text with label
             builder.text("Label", "Test text");
@@ -126,7 +126,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testString() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add string input
             builder.string("id", "Label", () -> "Default", s -> Optional.empty());
@@ -150,7 +150,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testInteger() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add integer input
             builder.integer("id", "Label", () -> 42L, i -> Optional.empty());
@@ -174,7 +174,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testDecimal() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add decimal input
             builder.decimal("id", "Label", () -> 3.14, d -> Optional.empty());
@@ -198,7 +198,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testCheckBox() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add checkbox
             builder.checkBox("id", "Label", () -> true, "Check this", b -> Optional.empty());
@@ -222,7 +222,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testComboBox() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add combo box
             List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
@@ -247,7 +247,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testComboBoxEx() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add extended combo box
             List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
@@ -272,7 +272,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testRadioList() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add radio list
             List<String> items = Arrays.asList("Option 1", "Option 2", "Option 3");
@@ -297,7 +297,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testSlider() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add slider
             builder.slider("id", "Label", () -> 50.0, 0.0, 100.0);
@@ -321,7 +321,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testChooseFile() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add file chooser
             builder.chooseFile("id", "Label", () -> Paths.get(System.getProperty("user.home")), FileDialogMode.OPEN, true, Collections.emptyList(), p -> Optional.empty());
@@ -345,7 +345,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testNode() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add node
             Node node = new Label("Custom node");
@@ -370,7 +370,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testNodeWithLabel() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add node with label
             Node node = new Label("Custom node");
@@ -395,7 +395,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testColumns() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Set columns
             builder.columns(3);
@@ -419,7 +419,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testConstant() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add constant
             builder.constant("id", "Label", () -> "Constant value", String.class);
@@ -443,7 +443,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testConstantWithValue() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add constant with direct value
             builder.constant("id", "Label", "Constant value");
@@ -467,7 +467,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testHidden() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add hidden value
             builder.hidden("id", () -> "Hidden value", String.class);
@@ -491,7 +491,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testHiddenWithValue() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add hidden with direct value
             builder.hidden("id", "Hidden value");
@@ -515,7 +515,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testAdd() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add custom input control
             InputControl<String> control = new TestInputControl();
@@ -540,7 +540,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testAddWithoutLabel() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add custom input control without label
             InputControl<String> control = new TestInputControl();
@@ -565,7 +565,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testAddNode() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add node
             Node node = new Label("Custom node");
@@ -590,7 +590,7 @@ class InputDialogBuilderTest extends FxTestBase {
     void testAddNodeWithoutLabel() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            InputDialogBuilder builder = new InputDialogBuilder(MessageFormatter.standard(), null);
+            InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add node without label
             Node node = new Label("Custom node");

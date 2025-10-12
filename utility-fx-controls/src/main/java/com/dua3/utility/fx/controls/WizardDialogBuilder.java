@@ -3,6 +3,8 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
 import com.dua3.utility.text.MessageFormatter;
+import javafx.stage.Window;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,11 +18,13 @@ import java.util.Optional;
 public class WizardDialogBuilder {
 
     final LinkedHashMap<String, WizardDialog.Page<?, ?>> pages = new LinkedHashMap<>();
+    private final @Nullable Window parentWindow;
     private final MessageFormatter formatter;
     private String title = "";
     private String startPage = "";
 
-    WizardDialogBuilder(MessageFormatter formatter) {
+    WizardDialogBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
+        this.parentWindow = parentWindow;
         this.formatter = formatter;
     }
 
@@ -80,7 +84,7 @@ public class WizardDialogBuilder {
      * @return A new {@link WizardDialog} instance with the configured title and pages.
      */
     public WizardDialog build() {
-        WizardDialog dlg = new WizardDialog();
+        WizardDialog dlg = new WizardDialog(parentWindow);
 
         WizardDialog.Page<?, ?> prev = null;
         for (var entry : pages.entrySet()) {

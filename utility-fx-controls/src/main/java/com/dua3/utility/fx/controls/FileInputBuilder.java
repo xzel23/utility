@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.value.ObservableValue;
 import javafx.stage.FileChooser;
@@ -20,6 +21,7 @@ import java.util.function.Supplier;
  */
 public final class FileInputBuilder {
 
+    private final @Nullable Window parentWindow;
     private final FileDialogMode mode;
     private final List<FileChooser.ExtensionFilter> extensionFilters = new ArrayList<>();
     private Supplier<@Nullable Path> initialPath = () -> null;
@@ -32,7 +34,8 @@ public final class FileInputBuilder {
      *
      * @param mode the {@link FileDialogMode} indicating the type of file dialog (OPEN, SAVE, or DIRECTORY)
      */
-    FileInputBuilder(FileDialogMode mode) {
+    FileInputBuilder(@Nullable Window parentWindow, FileDialogMode mode) {
+        this.parentWindow = parentWindow;
         this.mode = mode;
         this.validate = this::defaultValidate;
     }
@@ -112,7 +115,7 @@ public final class FileInputBuilder {
      * @return a constructed {@link FileInput} control based on the current configuration.
      */
     public FileInput build() {
-        FileInput control = new FileInput(mode, existingOnly, initialPath, extensionFilters, validate);
+        FileInput control = new FileInput(parentWindow, mode, existingOnly, initialPath, extensionFilters, validate);
         if (disabled != null) {
             control.disableProperty().bind(disabled);
         }

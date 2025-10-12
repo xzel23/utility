@@ -44,7 +44,7 @@ public class InputPaneBuilder
 
     InputPaneBuilder(MessageFormatter formatter) {
         super(formatter);
-        pb = new InputGridBuilder(formatter);
+        pb = new InputGridBuilder(null, formatter);
         setDialogSupplier(() -> {
             InputPane inputPane = new InputPane(pb.build());
             inputPane.init();

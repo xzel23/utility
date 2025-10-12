@@ -17,6 +17,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.InputGrid.Meta;
 import com.dua3.utility.lang.LangUtil;
@@ -51,10 +52,18 @@ public class InputGridBuilder
 
     private static final String INPUT_WITH_ID_ALREADY_DEFINED = "Input with id '%s' already defined";
     private final LinkedHashMap<String, InputGrid.Meta<?>> data = new LinkedHashMap<>();
+    private final @Nullable Window parentWindow;
     private final MessageFormatter formatter;
     private int columns = 1;
 
-    InputGridBuilder(MessageFormatter formatter) {
+    /**
+     * Creates a new {@code InputGridBuilder} instance.
+     *
+     * @param parentWindow the parent window to which the input grid will be associated; can be {@code null}
+     * @param formatter the {@code MessageFormatter} used for formatting messages
+     */
+    InputGridBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
+        this.parentWindow = parentWindow;
         this.formatter = formatter;
     }
 
@@ -137,7 +146,6 @@ public class InputGridBuilder
 
     @Override
     public InputGridBuilder addNode(String id, @Nullable String label, Node node) {
-        //noinspection DataFlowIssue - false positive; parameter is defined as Supplier<T extends @Nullable Object>
         Meta<Void> meta = new Meta<>(id, label, Void.class, () -> null, new ControlWrapper(node), false);
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, INPUT_WITH_ID_ALREADY_DEFINED, id);
@@ -146,7 +154,6 @@ public class InputGridBuilder
 
     @Override
     public InputGridBuilder addNode(String id, Node node) {
-        //noinspection DataFlowIssue - false positive; parameter is defined as Supplier<T extends @Nullable Object>
         Meta<Void> meta = new Meta<>(id, null, Void.class, () -> null, new ControlWrapper(node), false);
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, INPUT_WITH_ID_ALREADY_DEFINED, id);
@@ -267,7 +274,7 @@ public class InputGridBuilder
 
     @Override
     public InputGridBuilder chooseFile(String id, String label, Supplier<Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<Path, Optional<String>> validate) {
-        return add(id, label, Path.class, dflt, new FileInput(mode, existingOnly, dflt, filter, validate), false);
+        return add(id, label, Path.class, dflt, new FileInput(parentWindow, mode, existingOnly, dflt, filter, validate), false);
     }
 
     @Override

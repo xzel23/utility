@@ -34,7 +34,7 @@ public class OptionsDialogBuilder extends DialogBuilder<OptionsDialog, OptionsDi
     private Collection<Option<?>> options = new ArrayList<>();
     private Arguments currentValues = Arguments.empty();
 
-    OptionsDialogBuilder(MessageFormatter formatter, @Nullable Window parentWindow) {
+    OptionsDialogBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         setDialogSupplier(OptionsDialog::new);
     }

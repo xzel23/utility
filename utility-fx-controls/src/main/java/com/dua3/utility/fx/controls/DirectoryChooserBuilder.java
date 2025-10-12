@@ -36,20 +36,21 @@ public class DirectoryChooserBuilder {
 
     private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
 
+    private final @Nullable Window parentWindow;
     private Path initialDir = USER_HOME;
 
-    DirectoryChooserBuilder() {
+    DirectoryChooserBuilder(@Nullable Window parentWindow) {
+        this.parentWindow = parentWindow;
     }
 
     /**
      * Show "Open" dialog.
      *
-     * @param parent the parent window
      * @return an Optional containing the selected file.
      */
-    public Optional<Path> showDialog(@Nullable Window parent) {
+    public Optional<Path> showDialog() {
         DirectoryChooser chooser = build();
-        return Optional.ofNullable(chooser.showDialog(parent)).map(File::toPath);
+        return Optional.ofNullable(chooser.showDialog(parentWindow)).map(File::toPath);
     }
 
     private DirectoryChooser build() {

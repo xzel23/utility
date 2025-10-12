@@ -4,6 +4,7 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.Alert;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
@@ -214,7 +215,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
      * @return true if the user confirms the removal, false otherwise
      */
     public boolean askBeforeRemoveSelectedItem(T item) {
-        return Dialogs.confirmation(MessageFormatter.standard(), Optional.ofNullable(getScene()).map(Scene::getWindow).orElse(null))
+        return Dialogs.alert(Optional.ofNullable(getScene()).map(Scene::getWindow).orElse(null), Alert.AlertType.CONFIRMATION, MessageFormatter.standard())
                 .header("Remove %s?", format.apply(item))
                 .defaultButton(ButtonType.YES)
                 .build()

@@ -1,11 +1,15 @@
 package com.dua3.utility.data;
 
 import com.dua3.utility.awt.AwtImageUtil;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.spi.SpiLoader;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
 
 /**
  * Interface for Image handling utility classes. The concrete implementation is automatically chosen at runtime.
@@ -41,6 +45,45 @@ public interface ImageUtil<I> {
      * @throws IOException if loading fails
      */
     Image load(InputStream in) throws IOException;
+
+    /**
+     * Load image.
+     *
+     * @param path the image path
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default Image load(Path path) throws IOException {
+        try (InputStream in = java.nio.file.Files.newInputStream(path)) {
+            return load(in);
+        }
+    }
+
+    /**
+     * Load image.
+     *
+     * @param uri the image URI
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default Image load(URI uri) throws IOException {
+        try (InputStream in = IoUtil.openInputStream(uri)) {
+            return load(in);
+        }
+    }
+
+    /**
+     * Load image.
+     *
+     * @param url the image URL
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default Image load(URL url) throws IOException {
+        try (InputStream in = url.openStream()) {
+            return load(in);
+        }
+    }
 
     /**
      * Create image from pixel data.

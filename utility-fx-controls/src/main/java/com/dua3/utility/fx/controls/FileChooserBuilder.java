@@ -40,23 +40,24 @@ public class FileChooserBuilder {
 
     private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
 
+    private final @Nullable Window parentWindow;
     private Path initialDir = USER_HOME;
     private String initialFileName = "";
     private List<ExtensionFilter> filters = new ArrayList<>();
     private @Nullable ExtensionFilter selectedFilter = null;
 
-    FileChooserBuilder() {
+    FileChooserBuilder(@Nullable Window parentWindow) {
+        this.parentWindow = parentWindow;
     }
 
     /**
      * Show "Open" dialog.
      *
-     * @param parent the parent window
      * @return an Optional containing the selected file.
      */
-    public Optional<Path> showOpenDialog(@Nullable Window parent) {
+    public Optional<Path> showOpenDialog() {
         FileChooser chooser = build();
-        return Optional.ofNullable(chooser.showOpenDialog(parent)).map(File::toPath);
+        return Optional.ofNullable(chooser.showOpenDialog(parentWindow)).map(File::toPath);
     }
 
     private FileChooser build() {
@@ -78,24 +79,22 @@ public class FileChooserBuilder {
     /**
      * Show "Open multiple" dialog.
      *
-     * @param parent the parent window
      * @return a List containing the selected files, or an empty list if no files were selected
      */
-    public List<Path> showOpenMultipleDialog(@Nullable Window parent) {
+    public List<Path> showOpenMultipleDialog() {
         FileChooser chooser = build();
-        List<File> files = chooser.showOpenMultipleDialog(parent);
+        List<File> files = chooser.showOpenMultipleDialog(parentWindow);
         return files == null ? Collections.emptyList() : files.stream().map(File::toPath).toList();
     }
 
     /**
      * Show "Save" dialog.
      *
-     * @param parent the parent window
      * @return an Optional containing the selected file.
      */
-    public Optional<Path> showSaveDialog(@Nullable Window parent) {
+    public Optional<Path> showSaveDialog() {
         FileChooser chooser = build();
-        return Optional.ofNullable(chooser.showSaveDialog(parent)).map(File::toPath);
+        return Optional.ofNullable(chooser.showSaveDialog(parentWindow)).map(File::toPath);
     }
 
     /**

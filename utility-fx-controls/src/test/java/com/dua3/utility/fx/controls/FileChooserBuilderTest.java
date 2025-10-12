@@ -28,7 +28,7 @@ class FileChooserBuilderTest extends FxTestBase {
     void testCreateBuilder() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Verify builder was created
             assertNotNull(builder);
@@ -42,7 +42,7 @@ class FileChooserBuilderTest extends FxTestBase {
     void testInitialDir() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Set initial directory
             builder.initialDir(tempDir);
@@ -60,7 +60,7 @@ class FileChooserBuilderTest extends FxTestBase {
     void testInitialFileName() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Set initial filename
             String filename = "test-file.txt";
@@ -79,7 +79,7 @@ class FileChooserBuilderTest extends FxTestBase {
     void testInitialFile() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Set initial file
             Path file = tempDir.resolve("test-file.txt");
@@ -98,7 +98,7 @@ class FileChooserBuilderTest extends FxTestBase {
     void testAddFilter() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Add a filter
             builder.addFilter("Text Files", "*.txt");
@@ -116,7 +116,7 @@ class FileChooserBuilderTest extends FxTestBase {
     void testFilterVarargs() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Create filters
             ExtensionFilter textFilter = new ExtensionFilter("Text Files", "*.txt");
@@ -138,7 +138,7 @@ class FileChooserBuilderTest extends FxTestBase {
     void testFilterCollection() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Create filters
             ExtensionFilter textFilter = new ExtensionFilter("Text Files", "*.txt");
@@ -161,7 +161,7 @@ class FileChooserBuilderTest extends FxTestBase {
     void testSelectedFilter() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Create filters
             ExtensionFilter textFilter = new ExtensionFilter("Text Files", "*.txt");
@@ -184,7 +184,7 @@ class FileChooserBuilderTest extends FxTestBase {
     void testSelectedFilterNotInList() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            FileChooserBuilder builder = Dialogs.chooseFile();
+            FileChooserBuilder builder = Dialogs.chooseFile(null);
 
             // Create filters
             ExtensionFilter textFilter = new ExtensionFilter("Text Files", "*.txt");

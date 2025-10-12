@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -257,9 +258,9 @@ public interface InputControl<T> {
      * @param validate      a {@link Function} that validates the selected file path.
      * @return An {@code InputControl} instance for file selection.
      */
-    static InputControl<Path> chooseFile(Supplier<Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filters,
+    static InputControl<Path> chooseFile(@Nullable Window parentWindow, Supplier<Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filters,
                                          Function<Path, Optional<String>> validate) {
-        return new FileInput(mode, existingOnly, dflt, filters, validate);
+        return new FileInput(parentWindow, mode, existingOnly, dflt, filters, validate);
     }
 
     /**

@@ -28,10 +28,10 @@ class AlertBuilderTest extends FxTestBase {
     void testConstructor() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder for each alert type
-            AlertBuilder infoBuilder = Dialogs.information(MessageFormatter.standard(), null);
-            AlertBuilder warningBuilder = Dialogs.warning(MessageFormatter.standard(), null);
-            AlertBuilder errorBuilder = Dialogs.error(MessageFormatter.standard(), null);
-            AlertBuilder confirmBuilder = Dialogs.confirmation(MessageFormatter.standard(), null);
+            AlertBuilder infoBuilder = Dialogs.alert(null, AlertType.INFORMATION, MessageFormatter.standard());
+            AlertBuilder warningBuilder = Dialogs.alert(null, AlertType.WARNING, MessageFormatter.standard());
+            AlertBuilder errorBuilder = Dialogs.alert(null, AlertType.ERROR, MessageFormatter.standard());
+            AlertBuilder confirmBuilder = Dialogs.alert(null, AlertType.CONFIRMATION, MessageFormatter.standard());
 
             // Verify initial state
             assertNotNull(infoBuilder);
@@ -48,7 +48,7 @@ class AlertBuilderTest extends FxTestBase {
     void testBuildAlert() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            AlertBuilder builder = Dialogs.information(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.INFORMATION, MessageFormatter.standard());
 
             // Build an alert
             Alert alert = builder.build();
@@ -67,7 +67,7 @@ class AlertBuilderTest extends FxTestBase {
     void testText() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            AlertBuilder builder = Dialogs.information(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.INFORMATION, MessageFormatter.standard());
 
             // Set text
             String text = "Test alert message";
@@ -89,7 +89,7 @@ class AlertBuilderTest extends FxTestBase {
     void testTextWithFormatting() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            AlertBuilder builder = Dialogs.information(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.INFORMATION, MessageFormatter.standard());
 
             // Set text with formatting
             builder.text("Hello, %s! You have %d new messages.", "User", 5);
@@ -110,7 +110,7 @@ class AlertBuilderTest extends FxTestBase {
     void testButtons() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            AlertBuilder builder = Dialogs.confirmation(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.CONFIRMATION, MessageFormatter.standard());
 
             // Set custom buttons
             builder.buttons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
@@ -134,7 +134,7 @@ class AlertBuilderTest extends FxTestBase {
     void testDefaultButton() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            AlertBuilder builder = Dialogs.confirmation(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.CONFIRMATION, MessageFormatter.standard());
 
             // Set custom buttons and default button
             builder.buttons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
@@ -165,7 +165,7 @@ class AlertBuilderTest extends FxTestBase {
     void testTitle() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            AlertBuilder builder = Dialogs.information(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.INFORMATION, MessageFormatter.standard());
 
             // Set title
             String title = "Test Alert Title";
@@ -187,7 +187,7 @@ class AlertBuilderTest extends FxTestBase {
     void testHeader() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            AlertBuilder builder = Dialogs.information(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.INFORMATION, MessageFormatter.standard());
 
             // Set header text
             String headerText = "Test Header Text";
@@ -209,7 +209,7 @@ class AlertBuilderTest extends FxTestBase {
     void testCss() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
-            AlertBuilder builder = Dialogs.information(MessageFormatter.standard(), null);
+            AlertBuilder builder = Dialogs.alert(null, AlertType.INFORMATION, MessageFormatter.standard());
 
             // Set CSS
             String css = "test-style.css";

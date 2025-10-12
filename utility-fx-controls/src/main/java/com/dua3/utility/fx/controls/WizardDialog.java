@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.beans.binding.BooleanExpression;
+import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler;
 import com.dua3.utility.data.Pair;
@@ -56,7 +57,9 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
      * WizardDialog initializes a new dialog that handles the navigation and data collection
      * of a sequence of wizard pages.
      */
-    public WizardDialog() {
+    public WizardDialog(@Nullable Window parentWindow) {
+        initOwner(parentWindow);
+
         setResultConverter(btn -> {
             if (btn != ButtonType.FINISH) {
                 return null;

@@ -29,7 +29,7 @@ public class AlertPaneBuilder
         extends PaneBuilder<InputDialogPane<Void>, AlertPaneBuilder, Void> {
     private @Nullable String text;
 
-    AlertPaneBuilder(MessageFormatter formatter, AlertType type) {
+    AlertPaneBuilder(AlertType type, MessageFormatter formatter) {
         super(formatter);
         setDialogSupplier(() -> createPane(type));
     }

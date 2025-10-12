@@ -46,7 +46,7 @@ public class InputDialogBuilder
 
     private final InputPaneBuilder pb;
 
-    InputDialogBuilder(MessageFormatter formatter, @Nullable Window parentWindow) {
+    InputDialogBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         this.pb = new InputPaneBuilder(formatter);
         setDialogSupplier(this::createDialog);
