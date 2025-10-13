@@ -36,7 +36,7 @@ jobs:
           echo "$GRADLE_VERSION" > build/gradle-version/version.txt
 
       - name: 'Setup Gradle'
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: ${{ steps.gradle-version.outputs.gradle_version }}
           gradle-home-cache-includes: |
@@ -112,7 +112,7 @@ jobs:
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: ${{ steps.gradle-version.outputs.gradle_version }}
           gradle-home-cache-includes: |
@@ -173,7 +173,7 @@ jobs:
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: ${{ steps.gradle-version.outputs.gradle_version }}
           gradle-home-cache-includes: |
@@ -220,7 +220,7 @@ jobs:
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: ${{ steps.gradle-version.outputs.gradle_version }}
           gradle-home-cache-includes: |
@@ -285,7 +285,7 @@ jobs:
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: ${{ steps.gradle-version.outputs.gradle_version }}
           gradle-home-cache-includes: |
@@ -348,7 +348,7 @@ jobs:
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: ${{ steps.gradle-version.outputs.gradle_version }}
           gradle-home-cache-includes: |
