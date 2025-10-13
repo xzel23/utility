@@ -1,6 +1,5 @@
 package com.dua3.utility.fx;
 
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogLevel;
@@ -59,7 +58,7 @@ public final class FxLauncher {
     static boolean showLogWindow = false;
     static boolean showLogPane = false;
 
-    private static class PlatformGuard {
+    private static final class PlatformGuard {
         private static final AtomicBoolean launched = new AtomicBoolean(false);
 
         static {
@@ -163,10 +162,7 @@ public final class FxLauncher {
      *
      * @param args the command line arguments
      * @return the reparsed argument array
-     * @deprecated this method is a workaround that will be removed once the underlying issue is fixed in the JDK.
      */
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated
     private static List<String> reparseCommandLine(String[] args) {
         if (!Platform.isWindows() || args.length < 2) {
             return List.of(args);
