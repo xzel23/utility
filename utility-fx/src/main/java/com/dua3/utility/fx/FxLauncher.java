@@ -45,8 +45,8 @@ public final class FxLauncher {
     static {
         Method initialiser = null;
         try {
-            Class<?> clazz = Class.forName("com.dua3.utiliy.log.log4j.LogUtilLog4J");
-            initialiser = clazz.getDeclaredMethod("init", null, LogLevel.class);
+            Class<?> clazz = Class.forName("com.dua3.utility.logging.log4j.LogUtilLog4J");
+            initialiser = clazz.getDeclaredMethod("init", LogLevel.class);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             // do nothing
         }
@@ -54,9 +54,11 @@ public final class FxLauncher {
     }
 
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
+    static LogLevel logLevel = LogLevel.INFO;
     static @Nullable LogBuffer logBuffer = null;
     static boolean showLogWindow = false;
-    static boolean showLogPane = false;
+    static boolean debug = false;
+    static boolean enableAssertions = false;
 
     private static final class PlatformGuard {
         private static final AtomicBoolean launched = new AtomicBoolean(false);
@@ -237,17 +239,12 @@ public final class FxLauncher {
         var flagEnableAssertions = agp.addFlag(
                 "Runtime Checks",
                 "Enable runtime checks.",
+                v -> enableAssertions = v,
                 "--enable-assertions", "-ea"
         );
 
         if (LOGUTIL_INITIALISER != null) {
-            Consumer<LogLevel> setLogLevel = level -> {
-                try {
-                    LOGUTIL_INITIALISER.invoke(null, level);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new IllegalStateException(e);
-                }
-            };
+            Consumer<LogLevel> setLogLevel = level -> logLevel = level;
 
             agp.addEnumOption(
                     "Log Level",
@@ -265,13 +262,13 @@ public final class FxLauncher {
                     "--log-window", "-lw"
             );
             agp.addFlag(
-                    "Show Log Messages",
-                    "Show Log Messages in Main Window.",
-                    v -> showLogPane = v,
-                    "--log-pane", "-lp"
+                    "Enable debugging features",
+                    "Enable debugging features.",
+                    v -> debug = v,
+                    "--debug"
             );
             agp.addStringOption(
-                    "Log Filfter",
+                    "Log Filter",
                     "Set global Filter for Logger Names.",
                     Repetitions.ZERO_OR_ONE,
                     "regex",
@@ -305,9 +302,14 @@ public final class FxLauncher {
             return RC_SUCCESS;
         }
 
-        boolean enableAssertions = arguments.isSet(flagEnableAssertions);
+        arguments.handle();
 
-        if (showLogWindow || showLogPane) {
+        if ((showLogWindow || debug) && LOGUTIL_INITIALISER != null) {
+            try {
+                LOGUTIL_INITIALISER.invoke(null, logLevel);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalStateException(e);
+            }
             if (logBuffer == null) {
                 logBuffer = new LogBuffer();
             }
@@ -327,6 +329,7 @@ public final class FxLauncher {
             @SuppressWarnings("unchecked")
             Class<? extends Application> applicationClass = (Class<? extends Application>) loader.loadClass(applicationClassName);
             log.info("starting application: {}", applicationClass.getName());
+            showLogWindow(null);
             launch(applicationClass, args);
             rc = RC_SUCCESS;
         } catch (Exception e) {
@@ -352,8 +355,8 @@ public final class FxLauncher {
      *
      * @return true if the log pane is set to be displayed, false otherwise.
      */
-    public static boolean isShowLogPane() {
-        return showLogPane;
+    public static boolean isDebug() {
+        return debug;
     }
 
     /**
@@ -368,18 +371,21 @@ public final class FxLauncher {
     /**
      * Displays a log window for the application, if configured to do so.
      *
-     * @param stage the owner window for the log window; can be null if no parent stage is specified.
+     * @param owner the owner window for the log window; can be null if no parent stage is specified.
      * @param title the title of the log window to be displayed.
      * @return an {@link Optional} containing the {@link FxLogWindow} instance if the log window is displayed,
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
-    public static Optional<FxLogWindow> showLogWindow(Window stage, String title) {
+    public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner, String title) {
         return PlatformGuard.run(() -> {
-            if (showLogWindow) {
-                FxLogWindow logWindow = new FxLogWindow(title, getLogBuffer().orElseThrow());
-                logWindow.initOwner(stage);
-                logWindow.show();
-                return Optional.of(logWindow);
+            if (logBuffer != null) {
+                FxLogWindow logWindow = PlatformHelper.runAndWait(() -> {
+                    FxLogWindow window = new FxLogWindow(title, getLogBuffer().orElseThrow());
+                    window.initOwner(owner);
+                    window.show();
+                    return window;
+                });
+                return Optional.ofNullable(logWindow);
             } else {
                 return Optional.empty();
             }
@@ -389,12 +395,12 @@ public final class FxLauncher {
     /**
      * Displays a log window for the application, if configured to do so.
      *
-     * @param stage the owner window for the log window; can be null if no parent stage is specified.
+     * @param owner the owner window for the log window; can be null if no parent stage is specified.
      * @return an {@link Optional} containing the {@link FxLogWindow} instance if the log window is displayed,
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
-    public static Optional<FxLogWindow> showLogWindow(Window stage) {
-        return PlatformGuard.run(() -> showLogWindow(stage, "Log Messages"));
+    public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner) {
+        return showLogWindow(owner, "Log Messages");
     }
 
     /**
@@ -405,7 +411,7 @@ public final class FxLauncher {
      */
     public static Optional<FxLogPane> getLogPane() {
         return PlatformGuard.run( () -> {
-            if (!showLogPane) {
+            if (!debug) {
                 return Optional.empty();
             }
 
