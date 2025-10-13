@@ -1,5 +1,7 @@
 package com.dua3.utility.fx;
 
+import javafx.scene.layout.Background;
+import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.DefaultLogEntryFilter;
@@ -37,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -54,11 +57,12 @@ public class FxLogPane extends BorderPane {
     private static final double COLUMN_WIDTH_MAX = Double.MAX_VALUE;
     private static final double COLUMN_WIDTH_LARGE = 10000.0;
     private final LogBuffer logBuffer;
-    private final Function<? super LogEntry, ? extends Color> colorize;
     private final TextArea details;
     private final TableView<@Nullable LogEntry> tableView;
+    private Function<? super LogEntry, ? extends Color> colorize;
+    private final Background cellBackground = Background.fill(Paint.valueOf("white"));
 
-    private volatile @Nullable LogEntry selectedItem;
+    private final AtomicReference<@Nullable LogEntry> selectedItem = new AtomicReference<>();
 
     private boolean autoScroll = true;
 
@@ -90,6 +94,7 @@ public class FxLogPane extends BorderPane {
                     setText(item == null ? "" : item.toString());
                     Color textColor = colorize.apply(row.getItem());
                     setTextFill(FxUtil.convert(textColor));
+                    setBackground(cellBackground);
                 }
                 super.updateItem(item, empty);
             }
@@ -124,7 +129,7 @@ public class FxLogPane extends BorderPane {
      * @throws NullPointerException if logBuffer is null
      */
     public FxLogPane(LogBuffer logBuffer) {
-        this(logBuffer, FxLogPane::defaultColorize);
+        this(logBuffer, FxLogPane::colorizeLight);
     }
 
     /**
@@ -218,7 +223,7 @@ public class FxLogPane extends BorderPane {
                 details.clear();
                 autoScroll = autoScroll || isScrolledToBottom();
             } else {
-                this.selectedItem = newSelection;
+                selectedItem.set(newSelection);
                 autoScroll = false;
                 details.setText(newSelection.toString());
             }
@@ -244,6 +249,28 @@ public class FxLogPane extends BorderPane {
     }
 
     /**
+     * Sets the colorization function for determining the color of a log entry.
+     * The function takes a {@link LogEntry} as input and returns a {@link Color}
+     * based on the specific attributes of the log entry.
+     *
+     * @param colorize a function that maps a {@link LogEntry} to a {@link Color}
+     */
+    public void setColorize(Function<? super LogEntry, ? extends Color> colorize) {
+        this.colorize = colorize;
+    }
+
+    /**
+     * Retrieves the colorization function used to determine the color of log entries.
+     * The function maps a {@link LogEntry} to a {@link Color}, typically based on the attributes
+     * of the log entry such as level, message, or other properties.
+     *
+     * @return a {@link Function} that maps a {@link LogEntry} to a {@link Color}
+     */
+    public Function<? super LogEntry, ? extends Color> getColorize() {
+        return colorize;
+    }
+
+    /**
      * Searches within the provided list of log entries for a log entry containing the specified text.
      * The search direction is determined by the `up` parameter and wraps around the list if necessary.
      *
@@ -254,7 +281,7 @@ public class FxLogPane extends BorderPane {
     private void searchAction(String text, Boolean up, FilteredList<LogEntry> entries) {
         String lowercaseText = text.toLowerCase(Locale.ROOT);
         int step = up ? -1 : 1;
-        LogEntry current = selectedItem;
+        LogEntry current = selectedItem.get();
         List<LogEntry> items = List.copyOf(entries);
         int n = items.size();
         int pos = current != null ? Math.max(0, items.indexOf(current)) : 0;
@@ -297,12 +324,25 @@ public class FxLogPane extends BorderPane {
         entries.setPredicate(new DefaultLogEntryFilter(level, predicateLoggerName, predicateContent));
     }
 
+    /**
+     * Selects a specific log entry in the TableView, scrolls to it, and ensures
+     * the selection is updated appropriately. This method must be executed on the
+     * JavaFX Application thread.
+     *
+     * @param logEntry the {@link LogEntry} to select and scroll to
+     */
     private void selectLogEntry(LogEntry logEntry) {
         PlatformHelper.checkApplicationThread();
         tableView.getSelectionModel().select(logEntry);
         tableView.scrollTo(logEntry);
     }
 
+    /**
+     * Handles the scroll event for the log pane. Updates the {@code autoScroll}
+     * property based on the current scroll position and selection state.
+     *
+     * @param evt the {@link ScrollEvent} representing the scroll action
+     */
     private void onScrollEvent(ScrollEvent evt) {
         PlatformHelper.checkApplicationThread();
         if (autoScroll) {
@@ -331,7 +371,7 @@ public class FxLogPane extends BorderPane {
     private void clearSelection() {
         PlatformHelper.checkApplicationThread();
         tableView.getSelectionModel().clearSelection();
-        selectedItem = null;
+        selectedItem.set(null);
     }
 
     private void onEntries(ListChangeListener.Change<? extends LogEntry> change) {
@@ -345,7 +385,7 @@ public class FxLogPane extends BorderPane {
         }
         if (!isSelectionEmpty()) {
             // update selection
-            Platform.runLater(() -> tableView.getSelectionModel().select(selectedItem));
+            Platform.runLater(() -> tableView.getSelectionModel().select(selectedItem.get()));
         }
     }
 
@@ -373,18 +413,36 @@ public class FxLogPane extends BorderPane {
     }
 
     /**
-     * Default colorize method used in the FxLogPane class to determine the color of log entries.
+     * Determines the color associated with the given log entry based on its log level.
+     * This method applies a color scheme suitable for light themes.
      *
-     * @param entry the log entry to be colorized
-     * @return the Color object representing the color for the given log entry
+     * @param entry the log entry whose level will be analyzed to determine the color
+     * @return the color corresponding to the log entry's level
      */
-    private static Color defaultColorize(LogEntry entry) {
+    public static Color colorizeLight(LogEntry entry) {
         return switch (entry.level()) {
             case ERROR -> Color.DARKRED;
             case WARN -> Color.RED;
             case INFO -> Color.DARKBLUE;
             case DEBUG -> Color.BLACK;
             case TRACE -> Color.DARKGRAY;
+        };
+    }
+
+    /**
+     * Determines the color associated with the given log entry based on its log level.
+     * This method applies a color scheme suitable for dark themes.
+     *
+     * @param entry the log entry whose level will be analyzed to determine the color
+     * @return the color corresponding to the log entry's level
+     */
+    public static Color colorizeDark(LogEntry entry) {
+        return switch (entry.level()) {
+            case ERROR -> Color.RED;
+            case WARN -> Color.ORANGERED;
+            case INFO -> Color.LIGHTBLUE;
+            case DEBUG -> Color.WHITE;
+            case TRACE -> Color.LIGHTGRAY;
         };
     }
 
