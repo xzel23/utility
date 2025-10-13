@@ -27,7 +27,40 @@ import java.util.regex.Pattern;
 
 
 /**
- * Application launcher class.
+ * The FxLauncher class is responsible for managing the launch and runtime behavior of JavaFX applications.
+ * It provides utility methods for executing tasks, launching applications, reparsing command line arguments,
+ * managing log views, and handling debug behavior and assertions.
+ * <p>
+ * The FxLauncher utility class enhances standard the JavaFX launching process by adding this functionality:
+ * <ul>
+ *     <li>Better compatibility for jpackaged/jlinked applications on Windows: The standard JavaFX launcher
+ *         determines arguments by splitting the text passed on the command line on whitespace. When the
+ *         application is using registered file associations, the file path is passed unescaped to the
+ *         application. When the path contains spaces, this leads to incorrect arguments being passed to
+ *         the application, i.e. "C:\program files\foo.txt" will be passed as ["C:\program", "files\foo.txt"].
+ *         {@link FxLauncher#launch(Class, String...)} will fix up the command line so that instead
+ *         ["C:\program files\foo.txt"] is passed to the application.
+ *     <li>Automatically add command line help and default options when
+ *         {@link #launchApplication(String, String[], String, String, String, String, String, Consumer[])} is used:
+ *         <ul>
+ *         <li><strong>{@code --help}:</strong>
+ *             show command line help.
+ *         <li><strong>{@code --enable-assertions}:</strong>
+ *             Enable assertions.
+ *         <li><strong>{@code --debug}:</strong>
+ *             Enable debug mode. Use {@link #isDebug()} in your application code to test for debug mode.
+ *         <li><strong>{@code --log-window}:</strong>
+ *             show a window containing the application's logging messages
+ *             is added without needing any application code. Make sure you either use Log4J or have the required
+ *             bridge implementations on your classpath, and make sure the logging system is not initialized
+ *             before the {@code launchApplication()} is called.
+ *             This option is only added when {@link com.dua3.utility.logging.log4j.LogUtilLog4J} is on the classpath.
+ *         <li><strong>{@code --log-level}:</strong>
+ *             Set the global log level. Only messages with at least the given level are logged.
+ *         <li><strong>Application-specific options:</strong>
+ *             Use the {@code addOptions}parameter to pass application-specific options.
+ *     </ul>
+ * </ul>
  */
 public final class FxLauncher {
 
@@ -54,7 +87,7 @@ public final class FxLauncher {
     }
 
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
-    static LogLevel logLevel = LogLevel.INFO;
+    static @Nullable LogLevel logLevel = null;
     static @Nullable LogBuffer logBuffer = null;
     static boolean showLogWindow = false;
     static boolean debug = false;
@@ -236,7 +269,8 @@ public final class FxLauncher {
                 "Show Help and quit.",
                 "--help", "-h"
         );
-        var flagEnableAssertions = agp.addFlag(
+
+        agp.addFlag(
                 "Runtime Checks",
                 "Enable runtime checks.",
                 v -> enableAssertions = v,
@@ -264,7 +298,12 @@ public final class FxLauncher {
             agp.addFlag(
                     "Enable debugging features",
                     "Enable debugging features.",
-                    v -> debug = v,
+                    v -> {
+                        debug = v;
+                        if (logLevel == null) {
+                            logLevel = LogLevel.DEBUG;
+                        }
+                    },
                     "--debug"
             );
             agp.addStringOption(
@@ -306,7 +345,8 @@ public final class FxLauncher {
 
         if ((showLogWindow || debug) && LOGUTIL_INITIALISER != null) {
             try {
-                LOGUTIL_INITIALISER.invoke(null, logLevel);
+                LogLevel level = logLevel != null ? logLevel : LogLevel.DEBUG;
+                LOGUTIL_INITIALISER.invoke(null, level);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalStateException(e);
             }

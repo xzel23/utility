@@ -241,17 +241,26 @@ could not be loaded.
 
 ### 20.0.0 (work in progress)
 
-- CI workflow and deployment
-    - The CI workflow has been completely rewritten.
-    - The Project has been migrated from OSS-RH to Maven Central Publish Portal.
-    - Deployments are done through GitHub actions using JReleaser, snapshots are published to Maven snapshots.
-    - Javadoc is automatically published to GitHub Pages after each succesfull CI build.
+- Many breaking changes and additions to the JavaFX related API. The API is now more consistent and
+  much functionality has been added as well as many bug fixes and improvements were implemented.
+
+- The minimum Java version is 21, except for the StreamGathererUtil class that now requires Java 25
+  instead of Java 24.
+
 
 - Introduce a BOM artifact
     - A new artefact `utility-bom` has been introduced that specifies the version for all modules.
 
 - Run tasks for samples
     - Run tasks have been added for the sample applications.
+
+- CI workflow and deployment
+    - The CI workflow has been completely rewritten.
+    - The Project has been migrated from OSS-RH to Maven Central Publish Portal.
+    - Deployments are done through GitHub actions using JReleaser, snapshots are published to Maven snapshots.
+    - Javadoc is automatically published to GitHub Pages after each succesfull CI build.
+
+#### Changes per package
 
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
@@ -270,6 +279,7 @@ could not be loaded.
 - Package `utility.data`
     - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
     - `DataUtil.convert()` now supports converting between array types.
+    - Added `Color.luminance()`.
 
 - Package `utility.db`
     - Fixed a bug that prevented parsing of command line options to specify a JDBC connection
@@ -280,7 +290,15 @@ could not be loaded.
     - Fixed validation of numeric fields in Dialogs created using `Dialogs.input()`.
     - Show markers vor invalid input in Dialogs created using `Dialogs.input()`.
     - Small fixes and improvements.
-    - Dialog builders support the new `MessageFormatter` class, making creating localized dialogs less verbose
+    - Dialog builders support the new `MessageFormatter` class, making creating localized dialogs less verbose.
+      The `MessageFormatter` class can be used with either the standard Java `MessageFormat` or `String.format()`
+      conventions.
+    - `Dialogs.information()`, `Dialogs.warning()` etc. have been replaced by `Dialogs.alert()` which takes a parameter
+      of type Àlert.AlertType`.
+    - Added new class `InputValidatorFactory` to make input validation implementation less verbose.
+    - Added error message tooltips for input fields with invalid data.
+    - Fixed input dialog validation not detecting invalid data when the user clicked 'OK' or 'Next'
+      before the relevant fields obtained focus.
 
 - Package `utility.io`
     - Fix a race condition that sometimes would lead to a failure of the `IoUtil.testRedirectStandardStreams()`
