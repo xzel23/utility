@@ -940,6 +940,29 @@ public interface Color {
      * @return a darker version of this color
      */
     Color darker();
+
+    /**
+     * Calculates the relative luminance of the color based on its RGB components.
+     * The formula used is a weighted sum of the linearized RGB components
+     * following the ITU-R BT.709 standard.
+     *
+     * @return the relative luminance of the color, a double value in the range [0..1]
+     */
+    default double luminance() {
+        RGBColor rgb = toRGBColor();
+        return 0.2126 * linear(rgb.rf()) + 0.7152 * linear(rgb.gf()) + 0.0722 * linear(rgb.bf());
+    }
+
+    /**
+     * Computes the linearized value of the input color component based on the
+     * sRGB color space transformation rules.
+     *
+     * @param c the input color component, a double value in the range [0..1]
+     * @return the linearized color component, a double value
+     */
+    private double linear(double c) {
+        return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    }
 }
 
 
