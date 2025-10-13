@@ -110,7 +110,8 @@ the order they are declared.</div>
 <div class="block">Add a file chooser dialog to allow the user to select a file.</div>
 </div>
 <div class="col-first even-row-color"><code>static <a href="../InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">InputControl.</span><code><a href="../InputControl.html#chooseFile(java.util.function.Supplier,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.Collection,java.util.function.Function)" class="member-name-link">chooseFile</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dflt,
+<div class="col-second even-row-color"><span class="type-name-label">InputControl.</span><code><a href="../InputControl.html#chooseFile(javafx.stage.Window,java.util.function.Supplier,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.Collection,java.util.function.Function)" class="member-name-link">chooseFile</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dflt,
  <a href="../FileDialogMode.html" title="enum class in com.dua3.utility.fx.controls">FileDialogMode</a>&nbsp;mode,
  boolean&nbsp;existingOnly,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;javafx.stage.FileChooser.ExtensionFilter&gt;&nbsp;filters,
@@ -153,7 +154,8 @@ the order they are declared.</div>
  only existing files or directories are allowed.</div>
 </div>
 <div class="col-first odd-row-color"><code>static <a href="../FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">Controls.</span><code><a href="../Controls.html#fileInput(com.dua3.utility.fx.controls.FileDialogMode)" class="member-name-link">fileInput</a><wbr>(<a href="../FileDialogMode.html" title="enum class in com.dua3.utility.fx.controls">FileDialogMode</a>&nbsp;mode)</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Controls.</span><code><a href="../Controls.html#fileInput(javafx.stage.Window,com.dua3.utility.fx.controls.FileDialogMode)" class="member-name-link">fileInput</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWinndw,
+ <a href="../FileDialogMode.html" title="enum class in com.dua3.utility.fx.controls">FileDialogMode</a>&nbsp;mode)</code></div>
 <div class="col-last odd-row-color">
 <div class="block">Creates a new FileInputBuilder instance with the given mode.</div>
 </div>
@@ -164,7 +166,8 @@ the order they are declared.</div>
 <div class="table-header col-second">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="../FileInput.html#%3Cinit%3E(com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.function.Supplier,java.util.Collection,java.util.function.Function)" class="member-name-link">FileInput</a><wbr>(<a href="../FileDialogMode.html" title="enum class in com.dua3.utility.fx.controls">FileDialogMode</a>&nbsp;mode,
+<div class="col-second even-row-color"><code><a href="../FileInput.html#%3Cinit%3E(javafx.stage.Window,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.function.Supplier,java.util.Collection,java.util.function.Function)" class="member-name-link">FileInput</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWndow,
+ <a href="../FileDialogMode.html" title="enum class in com.dua3.utility.fx.controls">FileDialogMode</a>&nbsp;mode,
  boolean&nbsp;existingOnly,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dflt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;javafx.stage.FileChooser.ExtensionFilter&gt;&nbsp;filters,

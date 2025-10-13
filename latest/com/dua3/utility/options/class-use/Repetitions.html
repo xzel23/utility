@@ -157,7 +157,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;T&gt;&gt;<br><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;@Nullable T&gt;</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addEnumOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Supplier,java.lang.Class,java.lang.String,java.lang.String...)" class="member-name-link">addEnumOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addEnumOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Consumer,java.lang.Class,java.lang.String,java.lang.String...)" class="member-name-link">addEnumOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
+ <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;handler,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;targetClass,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Adds an enumerated option to the current context.</div>
+</div>
+<div class="col-first odd-row-color"><code>&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;T&gt;&gt;<br><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;@Nullable T&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addEnumOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Supplier,java.lang.Class,java.lang.String,java.lang.String...)" class="member-name-link">addEnumOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
@@ -165,8 +177,19 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;targetClass,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last odd-row-color">
 <div class="block">Adds an enumerated option to the current context.</div>
+</div>
+<div class="col-first even-row-color"><code><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addIntegerOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Consumer,java.lang.String,java.lang.String...)" class="member-name-link">addIntegerOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
+ <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;handler,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Adds an integer option to the ArgumentsParserBuilder with specified configuration options.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
 <div class="col-second odd-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addIntegerOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.String...)" class="member-name-link">addIntegerOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
@@ -180,7 +203,20 @@ loadScripts(document, 'script');</script>
 <div class="block">Adds an integer option to the ArgumentsParserBuilder with specified configuration options.</div>
 </div>
 <div class="col-first even-row-color"><code>&lt;T&gt;&nbsp;<a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addObjectOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Supplier,java.lang.Class,com.dua3.utility.data.Converter,java.lang.String,java.lang.String...)" class="member-name-link">addObjectOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addObjectOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Consumer,java.lang.Class,com.dua3.utility.data.Converter,java.lang.String,java.lang.String...)" class="member-name-link">addObjectOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
+ <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;handler,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;targetClass,
+ <a href="../../data/Converter.html" title="interface in com.dua3.utility.data">Converter</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;&nbsp;converter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Adds an object option to be parsed with specific parameters and switches.</div>
+</div>
+<div class="col-first odd-row-color"><code>&lt;T&gt;&nbsp;<a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addObjectOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Supplier,java.lang.Class,com.dua3.utility.data.Converter,java.lang.String,java.lang.String...)" class="member-name-link">addObjectOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
@@ -189,8 +225,19 @@ loadScripts(document, 'script');</script>
  <a href="../../data/Converter.html" title="interface in com.dua3.utility.data">Converter</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;&nbsp;converter,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last odd-row-color">
 <div class="block">Adds an object option to be parsed with specific parameters and switches.</div>
+</div>
+<div class="col-first even-row-color"><code><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addPathOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Consumer,java.lang.String,java.lang.String...)" class="member-name-link">addPathOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
+ <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;handler,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Adds a <code>Path</code>-based option to the ArgumentsParserBuilder with the specified configuration.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
 <div class="col-second odd-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addPathOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.String...)" class="member-name-link">addPathOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
@@ -204,15 +251,37 @@ loadScripts(document, 'script');</script>
 <div class="block">Adds a <code>Path</code>-based option to the ArgumentsParserBuilder with the specified configuration.</div>
 </div>
 <div class="col-first even-row-color"><code>&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>&gt;<br><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;@Nullable T&gt;</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addRecordOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.util.function.Supplier,java.lang.Class,java.lang.String,java.lang.String...)" class="member-name-link">addRecordOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addRecordOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.util.function.Consumer,java.lang.Class,java.lang.String,java.lang.String...)" class="member-name-link">addRecordOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
+ <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;handler,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;targetClass,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Adds a new record option with the specified configuration parameters.</div>
+</div>
+<div class="col-first odd-row-color"><code>&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>&gt;<br><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;@Nullable T&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addRecordOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.util.function.Supplier,java.lang.Class,java.lang.String,java.lang.String...)" class="member-name-link">addRecordOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable T&gt;&nbsp;defaultSupplier,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;targetClass,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last odd-row-color">
 <div class="block">Adds a new record option with the specified configuration parameters.</div>
+</div>
+<div class="col-first even-row-color"><code><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addStringOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Consumer,java.lang.String,java.lang.String...)" class="member-name-link">addStringOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
+ <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;handler,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Adds a string-based option to the ArgumentsParserBuilder with various configuration options.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addStringOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.String...)" class="member-name-link">addStringOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
@@ -226,46 +295,57 @@ loadScripts(document, 'script');</script>
 <div class="block">Adds a string-based option to the ArgumentsParserBuilder with various configuration options.</div>
 </div>
 <div class="col-first even-row-color"><code><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&gt;</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addUriOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.String...)" class="member-name-link">addUriOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+<div class="col-second even-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addUriOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Consumer,java.lang.String,java.lang.String...)" class="member-name-link">addUriOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
+ <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&gt;&nbsp;handler,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Adds a new URI option to the configuration.</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="../Option.html" title="class in com.dua3.utility.options">Option</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">ArgumentsParserBuilder.</span><code><a href="../ArgumentsParserBuilder.html#addUriOption(java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.String...)" class="member-name-link">addUriOption</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&gt;&nbsp;defaultSupplier,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstSwitch,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;moreSwitches)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last odd-row-color">
 <div class="block">Adds a new URI option to the configuration.</div>
 </div>
-<div class="col-first odd-row-color"><code>static &lt;T&gt;&nbsp;<a href="../Param.html" title="class in com.dua3.utility.options">Param</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;T&gt;&gt;</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">Param.</span><code><a href="../Param.html#ofList(java.lang.String,java.lang.String,java.lang.String,com.dua3.utility.data.Converter,com.dua3.utility.options.Repetitions)" class="member-name-link">ofList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+<div class="col-first even-row-color"><code>static &lt;T&gt;&nbsp;<a href="../Param.html" title="class in com.dua3.utility.options">Param</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;T&gt;&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Param.</span><code><a href="../Param.html#ofList(java.lang.String,java.lang.String,java.lang.String,com.dua3.utility.data.Converter,com.dua3.utility.options.Repetitions)" class="member-name-link">ofList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
  <a href="../../data/Converter.html" title="interface in com.dua3.utility.data">Converter</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;&nbsp;elementConverter,
  <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions)</code></div>
-<div class="col-last odd-row-color">
+<div class="col-last even-row-color">
 <div class="block">Creates a <a href="../Param.html" title="class in com.dua3.utility.options"><code>Param</code></a> instance that represents a parameter expecting a list
  of values with specified validation constraints.</div>
 </div>
-<div class="col-first even-row-color"><code>static <a href="../Param.html" title="class in com.dua3.utility.options">Param</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">Param.</span><code><a href="../Param.html#ofStrings(java.lang.String,java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions)" class="member-name-link">ofStrings</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
+<div class="col-first odd-row-color"><code>static <a href="../Param.html" title="class in com.dua3.utility.options">Param</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Param.</span><code><a href="../Param.html#ofStrings(java.lang.String,java.lang.String,java.lang.String,com.dua3.utility.options.Repetitions)" class="member-name-link">ofStrings</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;displayName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;argName,
  <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last odd-row-color">
 <div class="block">Creates a parameter for a list of strings, taking in display name, description,
  argument name, and repetition rules.</div>
 </div>
-<div class="col-first odd-row-color"><code>protected <a href="../AbstractOptionBuilder.html" title="type parameter in AbstractOptionBuilder">B</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">AbstractOptionBuilder.</span><code><a href="../AbstractOptionBuilder.html#repetitions(com.dua3.utility.options.Repetitions)" class="member-name-link">repetitions</a><wbr>(<a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions)</code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>protected <a href="../AbstractOptionBuilder.html" title="type parameter in AbstractOptionBuilder">B</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">AbstractOptionBuilder.</span><code><a href="../AbstractOptionBuilder.html#repetitions(com.dua3.utility.options.Repetitions)" class="member-name-link">repetitions</a><wbr>(<a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions)</code></div>
+<div class="col-last even-row-color">
 <div class="block">Sets the repetitions constraint for this option.</div>
 </div>
-<div class="col-first even-row-color"><code><a href="../FlagBuilder.html" title="class in com.dua3.utility.options">FlagBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">FlagBuilder.</span><code><a href="../FlagBuilder.html#repetitions(com.dua3.utility.options.Repetitions)" class="member-name-link">repetitions</a><wbr>(<a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code><a href="../OptionBuilder.html" title="class in com.dua3.utility.options">OptionBuilder</a><wbr>&lt;<a href="../OptionBuilder.html" title="type parameter in OptionBuilder">T</a>&gt;</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">OptionBuilder.</span><code><a href="../OptionBuilder.html#repetitions(com.dua3.utility.options.Repetitions)" class="member-name-link">repetitions</a><wbr>(<a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions)</code></div>
+<div class="col-first odd-row-color"><code><a href="../FlagBuilder.html" title="class in com.dua3.utility.options">FlagBuilder</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">FlagBuilder.</span><code><a href="../FlagBuilder.html#repetitions(com.dua3.utility.options.Repetitions)" class="member-name-link">repetitions</a><wbr>(<a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions)</code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code><a href="../OptionBuilder.html" title="class in com.dua3.utility.options">OptionBuilder</a><wbr>&lt;<a href="../OptionBuilder.html" title="type parameter in OptionBuilder">T</a>&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">OptionBuilder.</span><code><a href="../OptionBuilder.html#repetitions(com.dua3.utility.options.Repetitions)" class="member-name-link">repetitions</a><wbr>(<a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a>&nbsp;repetitions)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
 </div>
 <div class="caption"><span>Constructors in <a href="../package-summary.html">com.dua3.utility.options</a> with parameters of type <a href="../Repetitions.html" title="class in com.dua3.utility.options">Repetitions</a></span></div>
 <div class="summary-table three-column-summary">
