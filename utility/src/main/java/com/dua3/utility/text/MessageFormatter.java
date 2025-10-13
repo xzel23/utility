@@ -1,6 +1,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.i18n.I18N;
+import org.jspecify.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -66,7 +67,7 @@ public interface MessageFormatter {
      * @param args the arguments to replace the placeholders in the format string
      * @return the formatted string where placeholders are replaced with the corresponding arguments
      */
-    String format(String fmt, Object... args);
+    String format(String fmt, @Nullable Object... args);
 
     /**
      * Returns the input string as is, without any formatting applied.
@@ -154,7 +155,7 @@ public interface MessageFormatter {
         }
 
         @Override
-        public String format(String fmt, Object... args) {
+        public String format(String fmt, @Nullable Object... args) {
             return String.format(locale, fmt, args);
         }
 
@@ -185,7 +186,7 @@ public interface MessageFormatter {
         private MessageFormatterMessageFormat() {}
 
         @Override
-        public String format(String fmt, Object... args) {
+        public String format(String fmt, @Nullable Object... args) {
             return MessageFormat.format(fmt, args);
         }
 
@@ -218,7 +219,7 @@ public interface MessageFormatter {
         }
 
         @Override
-        public String format(String key, Object... args) {
+        public String format(String key, @Nullable Object... args) {
             return i18n.format(key, args);
         }
 
