@@ -55,7 +55,7 @@ import java.util.stream.Stream;
 public class FxLogPane extends BorderPane {
 
     private static final double COLUMN_WIDTH_MAX = Double.MAX_VALUE;
-    private static final double COLUMN_WIDTH_LARGE = 10000.0;
+    private static final double COLUMN_WIDTH_LARGE = 2000.0;
     private final LogBuffer logBuffer;
     private final TextArea details;
     private final TableView<@Nullable LogEntry> tableView;
@@ -214,7 +214,7 @@ public class FxLogPane extends BorderPane {
                 createColumn("Time", LogEntry::time, true, "8888-88-88T88:88:88.8888888"),
                 createColumn("Level", LogEntry::level, true, Arrays.stream(LogLevel.values()).map(Object::toString).toArray(String[]::new)),
                 createColumn("Logger", LogEntry::loggerName, false, "X".repeat(20)),
-                createColumn("Message", LogEntry::message, false, "X".repeat(60))
+                createColumn("Message", LogEntry::message, false)
         );
 
         // disable autoscroll if the selection is not empty, enable when selection is cleared while scrolled to bottom
