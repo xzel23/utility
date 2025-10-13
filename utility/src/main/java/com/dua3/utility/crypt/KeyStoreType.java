@@ -66,6 +66,20 @@ public enum KeyStoreType {
     }
 
     /**
+     * Retrieves the file extension associated with the current {@code KeyStoreType}.
+     *
+     * @return a string representing the file extension for the keystore type.
+     *         Possible values include "p12" for PKCS12, "jks" for JKS, and "jceks" for JCEKS.
+     */
+    public String getExtension() {
+        return switch (this) {
+            case PKCS12 -> "p12";
+            case JKS -> "jks";
+            case JCEKS -> "jceks";
+        };
+    }
+
+    /**
      * Determines the appropriate {@code KeyStoreType} based on the file path provided.
      * This method extracts the file extension from the provided {@code Path} and maps
      * it to the corresponding {@code KeyStoreType}.
