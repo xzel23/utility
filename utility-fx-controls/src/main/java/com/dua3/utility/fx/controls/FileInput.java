@@ -73,14 +73,15 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
     /**
      * Constructs a FileInput instance with specified parameters.
      *
-     * @param mode the mode of the file dialog, which can be OPEN, SAVE, or DIRECTORY
+     * @param parentWindow the parent window
+     * @param mode         the mode of the file dialog, which can be OPEN, SAVE, or DIRECTORY
      * @param existingOnly boolean indicating whether only existing files or directories should be selectable
-     * @param dflt a supplier providing the default path
-     * @param filters collection of file extension filters to apply in the file chooser
-     * @param validate a function to validate the selected file path, returning an optional error message
+     * @param dflt         a supplier providing the default path
+     * @param filters      collection of file extension filters to apply in the file chooser
+     * @param validate     a function to validate the selected file path, returning an optional error message
      */
     public FileInput(
-            @Nullable Window parentWndow,
+            @Nullable Window parentWindow,
             FileDialogMode mode,
             boolean existingOnly,
             Supplier<@Nullable Path> dflt,
@@ -110,17 +111,17 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
             }
 
             switch (this.mode) {
-                case OPEN -> Dialogs.chooseFile(parentWndow)
+                case OPEN -> Dialogs.chooseFile(parentWindow)
                         .initialDir(initialDir)
                         .filter(this.filters)
                         .showOpenDialog()
                         .ifPresent(value::setValue);
-                case SAVE -> Dialogs.chooseFile(parentWndow)
+                case SAVE -> Dialogs.chooseFile(parentWindow)
                         .initialDir(initialDir)
                         .filter(this.filters)
                         .showSaveDialog()
                         .ifPresent(value::setValue);
-                case DIRECTORY -> Dialogs.chooseDirectory(parentWndow)
+                case DIRECTORY -> Dialogs.chooseDirectory(parentWindow)
                         .initialDir(initialDir)
                         .showDialog()
                         .ifPresent(value::setValue);

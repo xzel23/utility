@@ -56,6 +56,8 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
     /**
      * WizardDialog initializes a new dialog that handles the navigation and data collection
      * of a sequence of wizard pages.
+     *
+     * @param parentWindow the parent window
      */
     public WizardDialog(@Nullable Window parentWindow) {
         initOwner(parentWindow);

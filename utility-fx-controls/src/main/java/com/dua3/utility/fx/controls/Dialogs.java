@@ -199,7 +199,8 @@ public final class Dialogs {
     /**
      * Start the definition of a new input dialog.
      *
-     * @param formatter the {@link MessageFormatter} to use
+     * @param parentWindow the parent window
+     * @param formatter    the {@link MessageFormatter} to use
      * @return new {@link InputDialogBuilder} instance
      */
     public static InputGridBuilder inputGrid(@Nullable Window parentWindow, MessageFormatter formatter) {
@@ -209,6 +210,7 @@ public final class Dialogs {
     /**
      * Start the definition of a new input dialog.
      *
+     * @param parentWindow the parent window
      * @return new {@link InputDialogBuilder} instance
      */
     public static InputGridBuilder inputGrid(@Nullable Window parentWindow) {
@@ -239,7 +241,8 @@ public final class Dialogs {
     /**
      * Start the definition of a new wizard dialog.
      *
-     * @param formatter the {@link MessageFormatter} to use
+     * @param parentWindow the parent window
+     * @param formatter    the {@link MessageFormatter} to use
      * @return new {@link WizardDialogBuilder} instance
      */
     public static WizardDialogBuilder wizard(@Nullable Window parentWindow, MessageFormatter formatter) {
