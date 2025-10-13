@@ -25,8 +25,8 @@ dependencies {
         api(rootProject.libs.jspecify)
 
         // Logging dependencies
-        api(rootProject.libs.log4j.api)
-        api(rootProject.libs.slf4j.api)
+        api("org.apache.logging.log4j:log4j-api:${rootProject.libs.versions.log4j.bom.get()}")
+        api("org.slf4j:slf4j-api:${rootProject.libs.versions.slf4j.get()}")
 
         // JavaFX and UI dependencies
         api(rootProject.libs.ikonli.javafx)
