@@ -311,6 +311,7 @@ could not be loaded.
     - Add new field `build.key` and method `digest()` to the `BuildInfo` class.
     - Added `Version` class and refactored BuildInfo class to use it.
     - Added `LangUtil.checkArg()` that throws `IllegalArgumentException`.
+    - Added `LangUtil.getOrThrow()` that throws `NoSuchElementException` when the key is not contained in the map.
     - Check format string matches arguments in `LangUtil.check()` and `LangUtil.checkArg()`.
     - `LangUtil.newUuidV7()` to create UUID v7 instances.
     - `LangUtil.reverseInPlace()` to reverse array contents

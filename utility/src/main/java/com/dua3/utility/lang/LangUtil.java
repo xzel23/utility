@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -2355,4 +2356,22 @@ public final class LangUtil {
         return orNaturalOrder(comparator).compare(a, b);
     }
 
+    /**
+     * Retrieves the value for the specified key from the provided map if it exists and is nnon-null.
+     * If no value is found for the key or the value is null, a {@link NoSuchElementException} is thrown.
+     *
+     * @param <T> the map's key type
+     * @param <U> the map's value type
+     * @param map the map to search for the key-value pair
+     * @param key the key whose presence and associated value are to be checked
+     * @return the key if a value is successfully associated with it in the map
+     * @throws NoSuchElementException if no value is found for the specified key in the map
+     */
+    public static <T, U> U getOrThrow(Map<T, U> map, T key) {
+        U value = map.get(key);
+        if (value == null) {
+            throw new NoSuchElementException("no value for key: " + key);
+        }
+        return value;
+    }
 }
