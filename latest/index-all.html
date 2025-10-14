@@ -3690,7 +3690,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html#EC" class="member-name-link">EC</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a></dt>
 <dd>
-<div class="block">Elliptic Curve Cryptography, requires special provider for encryption (not signatures and key agreement)</div>
+<div class="block">Elliptic Curve Cryptography, requires a special provider for encryption (not signatures and key agreement)</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/Stopwatch.html#elapsed()" class="member-name-link">elapsed()</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/Stopwatch.html" title="class in com.dua3.utility.lang">Stopwatch</a></dt>
 <dd>
@@ -5455,6 +5455,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the default <code>LogEntryHandler</code>.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html#getDefaultKeySize()" class="member-name-link">getDefaultKeySize()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a></dt>
+<dd>
+<div class="block">Retrieves the default key size for the asymmetric algorithm.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/SymmetricAlgorithm.html#getDefaultKeySize()" class="member-name-link">getDefaultKeySize()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a></dt>
 <dd>
 <div class="block">Retrieves the default key size in bits for this algorithm.</div>
@@ -6084,6 +6088,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get value of <a href="com/dua3/utility/options/Option.html" title="class in com.dua3.utility.options"><code>Option</code></a>.</div>
 </dd>
+<dt><a href="com/dua3/utility/lang/LangUtil.html#getOrThrow(java.util.Map,T)" class="member-name-link">getOrThrow(Map&lt;T, U&gt;, T)</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
+<dd>
+<div class="block">Retrieves the value for the specified key from the provided map if it exists and is nnon-null.</div>
+</dd>
 <dt><a href="com/dua3/utility/lang/SystemInfo.html#getOsInfo()" class="member-name-link">getOsInfo()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/SystemInfo.html" title="class in com.dua3.utility.lang">SystemInfo</a></dt>
 <dd>
 <div class="block">Retrieves information about the operating system in a formatted string.</div>
@@ -6311,6 +6319,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/text/Run.html#getStyles()" class="member-name-link">getStyles()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/Run.html" title="class in com.dua3.utility.text">Run</a></dt>
 <dd>
 <div class="block">Get list of styles.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html#getSupportedKeySizes()" class="member-name-link">getSupportedKeySizes()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a></dt>
+<dd>
+<div class="block">Retrieves the supported key sizes for the asymmetric algorithm.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/SystemInfo.html#getSystemInfo()" class="member-name-link">getSystemInfo()</a> - Static method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/SystemInfo.html" title="class in com.dua3.utility.lang">SystemInfo</a></dt>
 <dd>
@@ -7187,6 +7199,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/data/DataUtil.html#ifPresent(java.util.Map,T,java.util.function.Consumer)" class="member-name-link">ifPresent(Map&lt;T, U&gt;, T, Consumer&lt;? super U&gt;)</a> - Static method in class com.dua3.utility.data.<a href="com/dua3/utility/data/DataUtil.html" title="class in com.dua3.utility.data">DataUtil</a></dt>
 <dd>
 <div class="block">Execute action if key is mapped.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/LangUtil.html#ifPresent(java.util.Map,T,java.util.function.Consumer)" class="member-name-link">ifPresent(Map&lt;T, U&gt;, T, Consumer&lt;T&gt;)</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
+<dd>
+<div class="block">Executes the provided consumer if the specified key is present in the given map.</div>
 </dd>
 <dt><a href="com/dua3/utility/text/Style.html#ifPresentOrElse(java.lang.String,T,java.util.function.Consumer)" class="member-name-link">ifPresentOrElse(String, T, Consumer&lt;T&gt;)</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/Style.html" title="class in com.dua3.utility.text">Style</a></dt>
 <dd>
@@ -8926,6 +8942,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Retrieves the major tick unit property of the slider.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/FxUtil.html#makeObservable(java.util.Collection)" class="member-name-link">makeObservable(Collection&lt;? extends T&gt;)</a> - Static method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxUtil.html" title="class in com.dua3.utility.fx">FxUtil</a></dt>
+<dd>
+<div class="block">Creates an observable list from the given collection.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/Controls.html#makeResizable(javafx.scene.layout.Region,int,com.dua3.utility.fx.controls.Position...)" class="member-name-link">makeResizable(Region, int, Position...)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
 <dd>
 <div class="block">Make a region resizable by dragging its edge.</div>
@@ -9572,6 +9592,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/text/FragmentedText.html#NO_WRAP" class="member-name-link">NO_WRAP</a> - Static variable in record class com.dua3.utility.text.<a href="com/dua3/utility/text/FragmentedText.html" title="class in com.dua3.utility.text">FragmentedText</a></dt>
 <dd>
 <div class="block">Value to pass for <code>wrapWidth</code> to disable automatic wrapping.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputValidatorFactory.html#noCheck()" class="member-name-link">noCheck()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputValidatorFactory.html" title="class in com.dua3.utility.fx.controls">InputValidatorFactory</a></dt>
+<dd>
+<div class="block">Creates a validation function that accepts any input as valid.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/ChoiceInputControl.html#node()" class="member-name-link">node()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ChoiceInputControl.html" title="class in com.dua3.utility.fx.controls">ChoiceInputControl</a></dt>
 <dd>&nbsp;</dd>

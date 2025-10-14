@@ -127,7 +127,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color"><code><a href="#EC" class="member-name-link">EC</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Elliptic Curve Cryptography, requires special provider for encryption (not signatures and key agreement)</div>
+<div class="block">Elliptic Curve Cryptography, requires a special provider for encryption (not signatures and key agreement)</div>
 </div>
 <div class="col-first even-row-color"><code><a href="#RSA" class="member-name-link">RSA</a></code></div>
 <div class="col-last even-row-color">
@@ -152,10 +152,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the name of the algorithm represented by this instance.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSignatureAlgorithm()" class="member-name-link">getSignatureAlgorithm</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDefaultKeySize()" class="member-name-link">getDefaultKeySize</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves the default key size for the asymmetric algorithm.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSignatureAlgorithm()" class="member-name-link">getSignatureAlgorithm</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the signature algorithm associated with this asymmetric algorithm, if available.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSupportedKeySizes()" class="member-name-link">getSupportedKeySizes</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves the supported key sizes for the asymmetric algorithm.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTransformation()" class="member-name-link">getTransformation</a>()</code></div>
@@ -214,7 +224,7 @@ the order they are declared.</div>
 <section class="detail" id="EC">
 <h3>EC</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a></span>&nbsp;<span class="element-name">EC</span></div>
-<div class="block">Elliptic Curve Cryptography, requires special provider for encryption (not signatures and key agreement)</div>
+<div class="block">Elliptic Curve Cryptography, requires a special provider for encryption (not signatures and key agreement)</div>
 </section>
 </li>
 <li>
@@ -319,6 +329,30 @@ not permitted.)</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>true if the algorithm supports direct encryption, false otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSupportedKeySizes()">
+<h3>getSupportedKeySizes</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</span>&nbsp;<span class="element-name">getSupportedKeySizes</span>()</div>
+<div class="block">Retrieves the supported key sizes for the asymmetric algorithm.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a list of integers representing the supported key sizes</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getDefaultKeySize()">
+<h3>getDefaultKeySize</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getDefaultKeySize</span>()</div>
+<div class="block">Retrieves the default key size for the asymmetric algorithm.
+ <p>
+ <strong>Note:</strong> Using lower values is possible, but not recommended.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the default key size as an integer</dd>
 </dl>
 </section>
 </li>
