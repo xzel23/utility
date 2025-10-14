@@ -40,6 +40,16 @@ public class InputValidatorFactory {
     }
 
     /**
+     * Creates a validation function that accepts any input as valid.
+     *
+     * @param <T> the type of the input to the function, which can optionally be null
+     * @return a validation function that accepts any input as valid and always returns an empty Optional
+     */
+    public <T extends @Nullable Object> Function<T, Optional<String>> noCheck() {
+        return t -> Optional.empty();
+    }
+
+    /**
      * Creates a validation function that checks if an input value is non-null.
      * If the input is null, the provided error message format and arguments are used to create an error message.
      *
