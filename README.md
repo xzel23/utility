@@ -358,6 +358,7 @@ could not be loaded.
         - Add `TextUtil.asCharSequence(chars[])`.
     - Fix some `RichText.split()` issues; the method should now always produce results consistent with String.split()
     - Add `MessageFormatter` class
+    - Remove generic parameter from FontUtil class
 
 ### 19.2.1
 
