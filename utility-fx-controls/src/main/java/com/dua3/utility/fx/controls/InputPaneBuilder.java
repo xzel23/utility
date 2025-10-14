@@ -119,31 +119,31 @@ public class InputPaneBuilder
     }
 
     @Override
-    public InputPaneBuilder string(String id, String label, Supplier<@Nullable String> dflt, Function<String, Optional<String>> validate) {
+    public InputPaneBuilder string(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         pb.string(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public InputPaneBuilder integer(String id, String label, Supplier<@Nullable Long> dflt, Function<Long, Optional<String>> validate) {
+    public InputPaneBuilder integer(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
         pb.integer(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public InputPaneBuilder decimal(String id, String label, Supplier<@Nullable Double> dflt, Function<Double, Optional<String>> validate) {
+    public InputPaneBuilder decimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
         pb.decimal(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public InputPaneBuilder checkBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<Boolean, Optional<String>> validate) {
+    public InputPaneBuilder checkBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
         pb.checkBox(id, label, dflt, text, validate);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder comboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<T, Optional<String>> validate) {
+    public <T> InputPaneBuilder comboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         pb.comboBox(id, label, dflt, cls, items, validate);
         return this;
     }
@@ -159,13 +159,13 @@ public class InputPaneBuilder
             Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
-            Function<T, Optional<String>> validate) {
+            Function<@Nullable T, Optional<String>> validate) {
         pb.comboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, validate);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder radioList(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<T, Optional<String>> validate) {
+    public <T> InputPaneBuilder radioList(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         pb.radioList(id, label, dflt, cls, items, validate);
         return this;
     }
@@ -189,7 +189,7 @@ public class InputPaneBuilder
     }
 
     @Override
-    public InputPaneBuilder chooseFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<Path, Optional<String>> validate) {
+    public InputPaneBuilder chooseFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
         pb.chooseFile(id, label, dflt, mode, existingOnly, filter, validate);
         return this;
     }

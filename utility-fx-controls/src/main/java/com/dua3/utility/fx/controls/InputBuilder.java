@@ -230,7 +230,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String id,
             String label,
             Supplier<@Nullable String> dflt,
-            Function<String, Optional<String>> validate
+            Function<@Nullable String, Optional<String>> validate
     );
 
     /**
@@ -262,7 +262,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String id,
             String label,
             Supplier<@Nullable Long> dflt,
-            Function<Long, Optional<String>> validate
+            Function<@Nullable Long, Optional<String>> validate
     );
 
     /**
@@ -294,7 +294,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String id,
             String label,
             Supplier<@Nullable Double> dflt,
-            Function<Double, Optional<String>> validate
+            Function<@Nullable Double, Optional<String>> validate
     );
 
     /**
@@ -330,7 +330,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String label,
             Supplier<@Nullable Boolean> dflt,
             String text,
-            Function<Boolean, Optional<String>> validate
+            Function<@Nullable Boolean, Optional<String>> validate
     );
 
     /**
@@ -372,7 +372,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
-            Function<T, Optional<String>> validate
+            Function<@Nullable T, Optional<String>> validate
     );
 
     /**
@@ -430,7 +430,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
-            Function<T, Optional<String>> validate
+            Function<@Nullable T, Optional<String>> validate
     );
 
     /**
@@ -472,7 +472,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
-            Function<T, Optional<String>> validate
+            Function<@Nullable T, Optional<String>> validate
     );
 
     /**
@@ -568,7 +568,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             FileDialogMode mode,
             boolean existingOnly,
             Collection<FileChooser.ExtensionFilter> filter,
-            Function<Path, Optional<String>> validate
+            Function<@Nullable Path, Optional<String>> validate
     );
 
     /**

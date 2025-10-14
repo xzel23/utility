@@ -20,7 +20,7 @@ public enum AsymmetricAlgorithm {
             512, 1024, 2048, 4096
     ),
     /**
-     * Elliptic Curve Cryptography, requires special provider for encryption (not signatures and key agreement)
+     * Elliptic Curve Cryptography, requires a special provider for encryption (not signatures and key agreement)
      */
     EC(
             "ECIES",

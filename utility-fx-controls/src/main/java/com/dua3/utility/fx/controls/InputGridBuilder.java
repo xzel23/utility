@@ -212,27 +212,27 @@ public class InputGridBuilder
     }
 
     @Override
-    public InputGridBuilder string(String id, String label, Supplier<@Nullable String> dflt, Function<String, Optional<String>> validate) {
+    public InputGridBuilder string(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         return add(id, label, String.class, dflt, InputControl.stringInput(dflt, validate), false);
     }
 
     @Override
-    public InputGridBuilder integer(String id, String label, Supplier<@Nullable Long> dflt, Function<Long, Optional<String>> validate) {
+    public InputGridBuilder integer(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
         return add(id, label, Long.class, dflt, InputControl.integerInput(dflt, validate), false);
     }
 
     @Override
-    public InputGridBuilder decimal(String id, String label, Supplier<@Nullable Double> dflt, Function<Double, Optional<String>> validate) {
+    public InputGridBuilder decimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
         return add(id, label, Double.class, dflt, InputControl.decimalInput(dflt, validate), false);
     }
 
     @Override
-    public InputGridBuilder checkBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<Boolean, Optional<String>> validate) {
+    public InputGridBuilder checkBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
         return add(id, label, Boolean.class, dflt, InputControl.checkBoxInput(dflt, text, validate), false);
     }
 
     @Override
-    public <T> InputGridBuilder comboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<T, Optional<String>> validate) {
+    public <T> InputGridBuilder comboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         return add(id, label, cls, dflt, InputControl.comboBoxInput(items, dflt, validate), false);
     }
 
@@ -247,13 +247,13 @@ public class InputGridBuilder
             Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
-            Function<T, Optional<String>> validate) {
+            Function<@Nullable T, Optional<String>> validate) {
         return add(id, label, cls, dflt, InputControl.comboBoxExInput(items, dflt, edit, add, remove, format, validate), false);
     }
 
     @Override
     public <T> InputGridBuilder radioList(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items,
-                                          Function<T, Optional<String>> validate) {
+                                          Function<@Nullable T, Optional<String>> validate) {
         return add(id, label, cls, dflt, new RadioPane<>(items, null, validate), false);
     }
 
@@ -273,7 +273,7 @@ public class InputGridBuilder
     }
 
     @Override
-    public InputGridBuilder chooseFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<Path, Optional<String>> validate) {
+    public InputGridBuilder chooseFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
         return add(id, label, Path.class, dflt, new FileInput(parentWindow, mode, existingOnly, dflt, filter, validate), false);
     }
 
