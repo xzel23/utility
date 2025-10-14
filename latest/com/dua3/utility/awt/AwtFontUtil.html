@@ -93,12 +93,12 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
+<dd><code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">AwtFontUtil</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</span></div>
+implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></span></div>
 <div class="block">Utility class for getting font properties through AWT. This class should normally not be used directly by user code
  as the functionality should be available in the <a href="../text/TextUtil.html" title="class in com.dua3.utility.text"><code>TextUtil</code></a> utility class which
  in turn uses this class via SPI (Java ServiceProvider interface).
@@ -129,12 +129,12 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#convert(com.dua3.utility.text.Font)" class="member-name-link">convert</a><wbr>(<a href="../text/Font.html" title="class in com.dua3.utility.text">Font</a>&nbsp;font)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Convert font.</div>
+<div class="block">Converts a <code>Font</code> object into a <code>java.awt.Font</code> representation.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../text/Font.html" title="class in com.dua3.utility.text">Font</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#convert(java.awt.Font)" class="member-name-link">convert</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&nbsp;awtFont)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Convert font.</div>
+<div class="block">Converts a <code>java.awt.Font</code> object into a corresponding <code>Font</code> representation.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../text/Font.html" title="class in com.dua3.utility.text">Font</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deriveFont(com.dua3.utility.text.Font,com.dua3.utility.text.FontDef)" class="member-name-link">deriveFont</a><wbr>(<a href="../text/Font.html" title="class in com.dua3.utility.text">Font</a>&nbsp;font,
@@ -331,7 +331,7 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <div class="block">Get text bounds.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#getTextDimension(java.lang.CharSequence,com.dua3.utility.text.Font)">getTextDimension</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
+<dd><code><a href="../text/FontUtil.html#getTextDimension(java.lang.CharSequence,com.dua3.utility.text.Font)">getTextDimension</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>s</code> - the text</dd>
 <dd><code>f</code> - the font</dd>
@@ -349,7 +349,7 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <div class="block">Get text height.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#getTextHeight(java.lang.CharSequence,com.dua3.utility.text.Font)">getTextHeight</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
+<dd><code><a href="../text/FontUtil.html#getTextHeight(java.lang.CharSequence,com.dua3.utility.text.Font)">getTextHeight</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>s</code> - the text</dd>
 <dd><code>f</code> - the font</dd>
@@ -367,7 +367,7 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <div class="block">Load font.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#loadFonts(java.io.InputStream)">loadFonts</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
+<dd><code><a href="../text/FontUtil.html#loadFonts(java.io.InputStream)">loadFonts</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>in</code> - the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link"><code>InputStream</code></a> to read the font data from.</dd>
 <dt>Returns:</dt>
@@ -385,7 +385,7 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <div class="block">Get a list of the available font families.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#getFamilies(com.dua3.utility.text.FontUtil.FontTypes)">getFamilies</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
+<dd><code><a href="../text/FontUtil.html#getFamilies(com.dua3.utility.text.FontUtil.FontTypes)">getFamilies</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>types</code> - the font types to return</dd>
 <dt>Returns:</dt>
@@ -402,7 +402,7 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <div class="block">Get text width.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#getTextWidth(java.lang.CharSequence,com.dua3.utility.text.Font)">getTextWidth</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
+<dd><code><a href="../text/FontUtil.html#getTextWidth(java.lang.CharSequence,com.dua3.utility.text.Font)">getTextWidth</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>s</code> - the text</dd>
 <dd><code>f</code> - the font</dd>
@@ -415,15 +415,12 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <section class="detail" id="convert(com.dua3.utility.text.Font)">
 <h3>convert</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a></span>&nbsp;<span class="element-name">convert</span><wbr><span class="parameters">(<a href="../text/Font.html" title="class in com.dua3.utility.text">Font</a>&nbsp;font)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../text/FontUtil.html#convert(com.dua3.utility.text.Font)">FontUtil</a></code></span></div>
-<div class="block">Convert font.</div>
+<div class="block">Converts a <code>Font</code> object into a <code>java.awt.Font</code> representation.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#convert(com.dua3.utility.text.Font)">convert</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>font</code> - the font</dd>
+<dd><code>font</code> - the <code>Font</code> object to be converted</dd>
 <dt>Returns:</dt>
-<dd>the font implementation</dd>
+<dd>the corresponding <code>java.awt.Font</code> instance</dd>
 </dl>
 </section>
 </li>
@@ -431,15 +428,12 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <section class="detail" id="convert(java.awt.Font)">
 <h3>convert</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../text/Font.html" title="class in com.dua3.utility.text">Font</a></span>&nbsp;<span class="element-name">convert</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&nbsp;awtFont)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../text/FontUtil.html#convert(F)">FontUtil</a></code></span></div>
-<div class="block">Convert font.</div>
+<div class="block">Converts a <code>java.awt.Font</code> object into a corresponding <code>Font</code> representation.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#convert(F)">convert</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>awtFont</code> - the font implementation</dd>
+<dd><code>awtFont</code> - the <code>java.awt.Font</code> object to be converted</dd>
 <dt>Returns:</dt>
-<dd>the font</dd>
+<dd>the corresponding <code>Font</code> instance</dd>
 </dl>
 </section>
 </li>
@@ -453,7 +447,7 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <div class="block">Load an embedded font.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#loadFontAs(java.io.InputStream,com.dua3.utility.text.Font)">loadFontAs</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
+<dd><code><a href="../text/FontUtil.html#loadFontAs(java.io.InputStream,com.dua3.utility.text.Font)">loadFontAs</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>in</code> - the stream to read font data from</dd>
 <dd><code>font</code> - the font that is loaded</dd>
@@ -473,7 +467,7 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <div class="block">Derives a new Font object based on a given font and font definition specifications.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#deriveFont(com.dua3.utility.text.Font,com.dua3.utility.text.FontDef)">deriveFont</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
+<dd><code><a href="../text/FontUtil.html#deriveFont(com.dua3.utility.text.Font,com.dua3.utility.text.FontDef)">deriveFont</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>font</code> - the original Font object to be used as a base for deriving the new font</dd>
 <dd><code>fontDef</code> - the font definition detailing the specific attributes to modify or apply</dd>
@@ -490,7 +484,7 @@ implements <a href="../text/FontUtil.html" title="interface in com.dua3.utility.
 <div class="block">Retrieves the default font used by the system or application.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../text/FontUtil.html#getDefaultFont()">getDefaultFont</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Font.html" title="class or interface in java.awt" class="external-link">Font</a>&gt;</code></dd>
+<dd><code><a href="../text/FontUtil.html#getDefaultFont()">getDefaultFont</a></code>&nbsp;in interface&nbsp;<code><a href="../text/FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></dd>
 <dt>Returns:</dt>
 <dd>the default Font instance</dd>
 </dl>

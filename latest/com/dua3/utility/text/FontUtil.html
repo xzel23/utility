@@ -85,19 +85,15 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">com.dua3.utility.text</a></div>
-<h1 title="Interface FontUtil" class="title">Interface FontUtil&lt;F&gt;</h1>
+<h1 title="Interface FontUtil" class="title">Interface FontUtil</h1>
 </div>
 <section class="class-description" id="class-description">
-<dl class="notes">
-<dt>Type Parameters:</dt>
-<dd><code>F</code> - the implementation's underlying Font class</dd>
-</dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
 <dd><code><a href="../awt/AwtFontUtil.html" title="class in com.dua3.utility.awt">AwtFontUtil</a></code>, <code><a href="../fx/FxFontUtil.html" title="class in com.dua3.utility.fx">FxFontUtil</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">FontUtil&lt;F&gt;</span></div>
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">FontUtil</span></div>
 <div class="block">Interface for Font handling utility classes. The concrete implementation is automatically chosen at runtime
  for use by the <a href="TextUtil.html" title="class in com.dua3.utility.text"><code>TextUtil</code></a> class.</div>
 </section>
@@ -131,16 +127,6 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="FontUtil.html" title="type parameter in FontUtil">F</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#convert(com.dua3.utility.text.Font)" class="member-name-link">convert</a><wbr>(<a href="Font.html" title="class in com.dua3.utility.text">Font</a>&nbsp;font)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Convert font.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Font.html" title="class in com.dua3.utility.text">Font</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#convert(F)" class="member-name-link">convert</a><wbr>(<a href="FontUtil.html" title="type parameter in FontUtil">F</a>&nbsp;font)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Convert font.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Font.html" title="class in com.dua3.utility.text">Font</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#deriveFont(com.dua3.utility.text.Font,com.dua3.utility.text.FontDef)" class="member-name-link">deriveFont</a><wbr>(<a href="Font.html" title="class in com.dua3.utility.text">Font</a>&nbsp;font,
  <a href="FontDef.html" title="class in com.dua3.utility.text">FontDef</a>&nbsp;fontDef)</code></div>
@@ -172,7 +158,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Retrieves a Font object by parsing a font specification string.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a><wbr>&lt;?&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#getInstance()" class="member-name-link">getInstance</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Get FontUtil instance.</div>
@@ -229,37 +215,11 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getInstance()">
 <h3>getInstance</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getInstance</span>()</div>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="FontUtil.html" title="interface in com.dua3.utility.text">FontUtil</a></span>&nbsp;<span class="element-name">getInstance</span>()</div>
 <div class="block">Get FontUtil instance.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the default FontUtil instance</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="convert(com.dua3.utility.text.Font)">
-<h3>convert</h3>
-<div class="member-signature"><span class="return-type"><a href="FontUtil.html" title="type parameter in FontUtil">F</a></span>&nbsp;<span class="element-name">convert</span><wbr><span class="parameters">(<a href="Font.html" title="class in com.dua3.utility.text">Font</a>&nbsp;font)</span></div>
-<div class="block">Convert font.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>font</code> - the font</dd>
-<dt>Returns:</dt>
-<dd>the font implementation</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="convert(F)">
-<h3 id="convert(java.lang.Object)">convert</h3>
-<div class="member-signature"><span class="return-type"><a href="Font.html" title="class in com.dua3.utility.text">Font</a></span>&nbsp;<span class="element-name">convert</span><wbr><span class="parameters">(<a href="FontUtil.html" title="type parameter in FontUtil">F</a>&nbsp;font)</span></div>
-<div class="block">Convert font.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>font</code> - the font implementation</dd>
-<dt>Returns:</dt>
-<dd>the font</dd>
 </dl>
 </section>
 </li>
