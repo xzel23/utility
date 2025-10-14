@@ -2,6 +2,7 @@ package com.dua3.utility.crypt;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -11,24 +12,46 @@ public enum AsymmetricAlgorithm {
     /**
      * RSA (Rivest-Shamir-Adleman) algorithm with OAEP padding
      */
-    RSA("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING", "SHA256withRSA", "RSA"),
+    RSA(
+            "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING",
+            "SHA256withRSA",
+            "RSA",
+            2048,
+            512, 1024, 2048, 4096
+    ),
     /**
      * Elliptic Curve Cryptography, requires special provider for encryption (not signatures and key agreement)
      */
-    EC("ECIES", "SHA256withECDSA", "EC"),
+    EC(
+            "ECIES",
+            "SHA256withECDSA",
+            "EC",
+            384,
+            256, 384, 521
+    ),
     /**
      * Digital Signature Algorithm (for signatures only)
      */
-    DSA(null, "SHA256withDSA", "DSA");
+    DSA(
+            null,
+            "SHA256withDSA",
+            "DSA",
+            2048,
+            1024, 2048, 3072
+    );
 
     private final @Nullable String transformation;
     private final @Nullable String signatureAlgorithm;
     private final String keyFactoryAlgorithm;
+    private final int defaultKeySize;
+    private final List<Integer> supportedKySizes;
 
-    AsymmetricAlgorithm(@Nullable String transformation, @Nullable String signatureAlgorithm, String keyFactoryAlgorithm) {
+    AsymmetricAlgorithm(@Nullable String transformation, @Nullable String signatureAlgorithm, String keyFactoryAlgorithm, int defaultKeySize, Integer... supportedKySizes) {
         this.transformation = transformation;
         this.signatureAlgorithm = signatureAlgorithm;
         this.keyFactoryAlgorithm = keyFactoryAlgorithm;
+        this.defaultKeySize = defaultKeySize;
+        this.supportedKySizes = List.of(supportedKySizes);
     }
 
     /**
@@ -78,5 +101,25 @@ public enum AsymmetricAlgorithm {
      */
     public boolean isEncryptionSupported() {
         return transformation != null;
+    }
+
+    /**
+     * Retrieves the supported key sizes for the asymmetric algorithm.
+     *
+     * @return a list of integers representing the supported key sizes
+     */
+    public List<Integer> getSupportedKeySizes() {
+        return supportedKySizes;
+    }
+
+    /**
+     * Retrieves the default key size for the asymmetric algorithm.
+     * <p>
+     * <strong>Note:</strong> Using lower values is possible, but not recommended.
+     *
+     * @return the default key size as an integer
+     */
+    public int getDefaultKeySize() {
+        return defaultKeySize;
     }
 }
