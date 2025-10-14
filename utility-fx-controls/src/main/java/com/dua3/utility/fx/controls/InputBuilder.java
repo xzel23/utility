@@ -62,7 +62,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String id,
             String label,
             Class<T> type,
-            Supplier<T> dflt,
+            Supplier<@Nullable T> dflt,
             InputControl<T> control,
             boolean hidden);
 
@@ -79,7 +79,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     <T> B add(
             String id,
             Class<T> type,
-            Supplier<T> dflt,
+            Supplier<@Nullable T> dflt,
             InputControl<T> control
     );
 
@@ -212,7 +212,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default B string(
             String id,
             String label,
-            Supplier<String> dflt
+            Supplier<@Nullable String> dflt
     ) {
         return string(id, label, dflt, s -> Optional.empty());
     }
@@ -229,7 +229,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B string(
             String id,
             String label,
-            Supplier<String> dflt,
+            Supplier<@Nullable String> dflt,
             Function<String, Optional<String>> validate
     );
 
@@ -244,7 +244,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default B integer(
             String id,
             String label,
-            Supplier<Long> dflt
+            Supplier<@Nullable Long> dflt
     ) {
         return integer(id, label, dflt, i -> Optional.empty());
     }
@@ -261,7 +261,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B integer(
             String id,
             String label,
-            Supplier<Long> dflt,
+            Supplier<@Nullable Long> dflt,
             Function<Long, Optional<String>> validate
     );
 
@@ -276,7 +276,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default B decimal(
             String id,
             String label,
-            Supplier<Double> dflt
+            Supplier<@Nullable Double> dflt
     ) {
         return decimal(id, label, dflt, d -> Optional.empty());
     }
@@ -293,7 +293,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B decimal(
             String id,
             String label,
-            Supplier<Double> dflt,
+            Supplier<@Nullable Double> dflt,
             Function<Double, Optional<String>> validate
     );
 
@@ -309,7 +309,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default B checkBox(
             String id,
             String label,
-            Supplier<Boolean> dflt,
+            Supplier<@Nullable Boolean> dflt,
             String text
     ) {
         return checkBox(id, label, dflt, text, b -> Optional.empty());
@@ -328,7 +328,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B checkBox(
             String id,
             String label,
-            Supplier<Boolean> dflt,
+            Supplier<@Nullable Boolean> dflt,
             String text,
             Function<Boolean, Optional<String>> validate
     );
@@ -347,7 +347,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default <T> B comboBox(
             String id,
             String label,
-            Supplier<T> dflt,
+            Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items
     ) {
@@ -369,7 +369,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     <T> B comboBox(
             String id,
             String label,
-            Supplier<T> dflt,
+            Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
             Function<T, Optional<String>> validate
@@ -427,7 +427,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format,
-            Supplier<T> dflt,
+            Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
             Function<T, Optional<String>> validate
@@ -469,7 +469,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     <T> B radioList(
             String id,
             String label,
-            Supplier<T> dflt,
+            Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
             Function<T, Optional<String>> validate
@@ -488,7 +488,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B slider(
             String id,
             String label,
-            Supplier<Double> dflt,
+            Supplier<@Nullable Double> dflt,
             double min,
             double max
     );
@@ -505,7 +505,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B options(
             String id,
             String label,
-            Supplier<Arguments> dflt,
+            Supplier<@Nullable Arguments> dflt,
             Supplier<Collection<Option<?>>> options
     );
 
@@ -522,7 +522,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     B options(
             String id,
-            Supplier<Arguments> dflt,
+            Supplier<@Nullable Arguments> dflt,
             Supplier<Collection<Option<?>>> options
     );
 
@@ -564,7 +564,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B chooseFile(
             String id,
             String label,
-            Supplier<Path> dflt,
+            Supplier<@Nullable Path> dflt,
             FileDialogMode mode,
             boolean existingOnly,
             Collection<FileChooser.ExtensionFilter> filter,
