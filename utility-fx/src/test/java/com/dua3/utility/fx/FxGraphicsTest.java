@@ -74,7 +74,7 @@ class FxGraphicsTest extends AbstractGraphicsTest {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         // JavaFX operations must be performed on the JavaFX Application Thread
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -94,7 +94,11 @@ class FxGraphicsTest extends AbstractGraphicsTest {
         });
 
         // Wait for JavaFX initialization to complete
-        assertTrue(latch.await(30, TimeUnit.SECONDS), "JavaFX initialization timed out");
+        try {
+            assertTrue(latch.await(30, TimeUnit.SECONDS), "JavaFX initialization timed out");
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @AfterEach

@@ -39,7 +39,6 @@ class SwingGraphicsTest extends AbstractGraphicsTest {
     );
 
     private BufferedImage image;
-    private Graphics2D g2d;
 
     @Override
     protected Path getReferenceImagePath() {
@@ -58,13 +57,13 @@ class SwingGraphicsTest extends AbstractGraphicsTest {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         // Ensure we're in headless mode
         System.setProperty("java.awt.headless", "true");
 
         // Create a BufferedImage with software rendering
         image = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-        g2d = image.createGraphics();
+        Graphics2D g2d = image.createGraphics();
 
         // Enable high quality rendering
         SwingUtil.setRenderingQualityHigh(g2d);
