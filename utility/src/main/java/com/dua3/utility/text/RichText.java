@@ -1055,7 +1055,7 @@ public final class RichText
      * @return the maximum descent value among all derived fonts; returns 0.0 if no runs are present
      */
     public double getBaseline(Font defaultFont) {
-        final FontUtil<?> fu = FontUtil.getInstance();
+        final FontUtil fu = FontUtil.getInstance();
         return runStream()
                 .mapToDouble(r -> fu.deriveFont(defaultFont, r.getFontDef()).getDescent())
                 .max()

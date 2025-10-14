@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * See usage of {@link FontUtil} in {@link com.dua3.utility.text.TextUtil} for details.
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-public final class AwtFontUtil implements FontUtil<java.awt.Font> {
+public final class AwtFontUtil implements FontUtil {
     private static final Logger LOG = LogManager.getLogger(AwtFontUtil.class);
 
     private static final String DEFAULT_FAMILY;
@@ -215,14 +215,24 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
         return stringBounds(s, f).getWidth();
     }
 
-    @Override
+    /**
+     * Converts a {@code Font} object into a {@code java.awt.Font} representation.
+     *
+     * @param font the {@code Font} object to be converted
+     * @return the corresponding {@code java.awt.Font} instance
+     */
     public java.awt.Font convert(Font font) {
         java.awt.Font awtFont = fontData2awtFont.computeIfAbsent(font.getFontData(), fd -> getAwtFont(fd.families(), fd.size(), fd.bold(), fd.italic()));
         awtFont2FontData.putIfAbsent(awtFont, font.getFontData());
         return awtFont;
     }
 
-    @Override
+    /**
+     * Converts a {@code java.awt.Font} object into a corresponding {@code Font} representation.
+     *
+     * @param awtFont the {@code java.awt.Font} object to be converted
+     * @return the corresponding {@code Font} instance
+     */
     public Font convert(java.awt.Font awtFont) {
         FontData fontData = awtFont2FontData.computeIfAbsent(awtFont, this::getFontData);
         fontData2awtFont.putIfAbsent(fontData, awtFont);

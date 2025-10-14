@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class FragmentedTextTest {
 
-    private FontUtil<?> fontUtil;
+    private FontUtil fontUtil;
     private Font defaultFont;
 
     @BeforeEach

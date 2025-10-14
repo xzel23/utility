@@ -66,7 +66,7 @@ public final class TextUtil {
     private static final Pattern PATTERN_SPLIT_PRESERVING_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
     private static final Pattern PATTERN_SPLIT_LINES = Pattern.compile("\\R");
 
-    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
+    private static final FontUtil FONT_UTIL = FontUtil.getInstance();
     private static final double POINTS_PER_MILLIMETER = 720.0 / 254.0;
 
     private TextUtil() {

@@ -121,7 +121,7 @@ class FxGraphicsTest extends AbstractGraphicsTest {
     }
 
     @Override
-    protected FontUtil<?> getFontUtil() {
+    protected FontUtil getFontUtil() {
         return FxFontUtil.getInstance();
     }
 

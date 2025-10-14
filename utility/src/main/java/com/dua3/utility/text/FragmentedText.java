@@ -121,7 +121,7 @@ public record FragmentedText(
      */
     public static FragmentedText generateFragments(
             RichText text,
-            FontUtil<?> fontUtil,
+            FontUtil fontUtil,
             Font font,
             float width,
             float height,

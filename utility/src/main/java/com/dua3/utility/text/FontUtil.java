@@ -13,19 +13,17 @@ import java.util.SequencedCollection;
 /**
  * Interface for Font handling utility classes. The concrete implementation is automatically chosen at runtime
  * for use by the {@link TextUtil} class.
- *
- * @param <F> the implementation's underlying Font class
  */
-public interface FontUtil<F> {
+public interface FontUtil {
 
     /**
      * Get FontUtil instance.
      *
      * @return the default FontUtil instance
      */
-    static FontUtil<?> getInstance() {
+    static FontUtil getInstance() {
         final class SingletonHolder {
-            static final FontUtil<?> INSTANCE = SpiLoader.builder(FontUtilProvider.class)
+            static final FontUtil INSTANCE = SpiLoader.builder(FontUtilProvider.class)
                     .defaultSupplier(() -> AwtFontUtil::getInstance)
                     .build()
                     .load()
@@ -36,22 +34,6 @@ public interface FontUtil<F> {
 
         return SingletonHolder.INSTANCE;
     }
-
-    /**
-     * Convert font.
-     *
-     * @param font the font
-     * @return the font implementation
-     */
-    F convert(Font font);
-
-    /**
-     * Convert font.
-     *
-     * @param font the font implementation
-     * @return the font
-     */
-    Font convert(F font);
 
     /**
      * Get text bounds.

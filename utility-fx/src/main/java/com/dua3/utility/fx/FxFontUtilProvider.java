@@ -14,7 +14,7 @@ public class FxFontUtilProvider implements FontUtilProvider {
     public FxFontUtilProvider() { /* nothing to do */ }
 
     @Override
-    public FontUtil<?> get() {
+    public FontUtil get() {
         return FxFontUtil.getInstance();
     }
 }

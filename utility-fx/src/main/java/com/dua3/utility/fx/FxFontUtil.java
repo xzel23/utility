@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 /**
  * Utility class for working with fonts in JavaFX.
  */
-public final class FxFontUtil implements FontUtil<Font> {
+public final class FxFontUtil implements FontUtil {
 
     private static final String DEFAULT_FAMILY;
     private static final float DEFAULT_SIZE;
@@ -95,7 +95,6 @@ public final class FxFontUtil implements FontUtil<Font> {
      * @param font the com.dua3.utility.text.Font object to be converted
      * @return the converted JavaFX Font object
      */
-    @Override
     public Font convert(com.dua3.utility.text.Font font) {
         if (font instanceof FxFontEmbedded fxf) {
             return fxf.fxFont();

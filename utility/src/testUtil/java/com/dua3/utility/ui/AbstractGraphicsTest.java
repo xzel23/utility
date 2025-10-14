@@ -75,7 +75,7 @@ public abstract class AbstractGraphicsTest {
      * Get the FontUtil instance for testing.
      * @return the FontUtil instance
      */
-    protected abstract FontUtil<?> getFontUtil();
+    protected abstract FontUtil getFontUtil();
 
     /**
      * Convert the rendered graphics to a BufferedImage for comparison.
@@ -87,7 +87,7 @@ public abstract class AbstractGraphicsTest {
      * Set up the test environment.
      * This method should initialize the Graphics instance and clear the background.
      */
-    protected void setUp() throws Exception {
+    protected void setUp() {
         Objects.requireNonNull(graphics, "Graphics instance not set");
         graphics.setFill(Color.WHITE);
         graphics.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);

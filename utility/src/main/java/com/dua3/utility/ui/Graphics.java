@@ -47,7 +47,7 @@ public interface Graphics extends AutoCloseable {
      *
      * @return the FontUtil object
      */
-    FontUtil<?> getFontUtil();
+    FontUtil getFontUtil();
 
     /**
      * Retrieves the default font for the graphics object.

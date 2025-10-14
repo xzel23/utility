@@ -439,7 +439,7 @@ public class SwingGraphics implements Graphics {
     }
 
     @Override
-    public FontUtil<?> getFontUtil() {
+    public FontUtil getFontUtil() {
         assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         return FONT_UTIL;

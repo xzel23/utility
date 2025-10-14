@@ -47,7 +47,7 @@ class SwingGraphicsTest extends AbstractGraphicsTest {
     }
 
     @Override
-    protected FontUtil<?> getFontUtil() {
+    protected FontUtil getFontUtil() {
         return AwtFontUtil.getInstance();
     }
 

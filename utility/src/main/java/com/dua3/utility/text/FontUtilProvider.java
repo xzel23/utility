@@ -6,4 +6,4 @@ import java.util.function.Supplier;
  * This interface represents a provider for FontUtil instances.
  */
 @FunctionalInterface
-public interface FontUtilProvider extends Supplier<FontUtil<?>> {}
+public interface FontUtilProvider extends Supplier<FontUtil> {}
