@@ -2374,4 +2374,20 @@ public final class LangUtil {
         }
         return value;
     }
+
+    /**
+     * Executes the provided consumer if the specified key is present in the given map.
+     *
+     * @param <T> the type of keys maintained by the map
+     * @param <U> the type of mapped values
+     * @param map the map to be checked for the presence of the key
+     * @param key the key whose presence in the map is to be tested
+     * @param consumer the consumer to process the key if it is present in the map
+     */
+    public static <T, U> void ifPresent(Map<T, U> map, T key, Consumer<T> consumer) {
+        U value = map.get(key);
+        if (value != null) {
+            consumer.accept(key);
+        }
+    }
 }
