@@ -196,7 +196,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(javafx.stage.Window,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.function.Supplier,java.util.Collection,java.util.function.Function)" class="member-name-link">FileInput</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWndow,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(javafx.stage.Window,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.function.Supplier,java.util.Collection,java.util.function.Function)" class="member-name-link">FileInput</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
  <a href="FileDialogMode.html" title="enum class in com.dua3.utility.fx.controls">FileDialogMode</a>&nbsp;mode,
  boolean&nbsp;existingOnly,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dflt,
@@ -354,7 +354,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <li>
 <section class="detail" id="&lt;init&gt;(javafx.stage.Window,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.function.Supplier,java.util.Collection,java.util.function.Function)">
 <h3>FileInput</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FileInput</span><wbr><span class="parameters">(@Nullable javafx.stage.Window&nbsp;parentWndow,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FileInput</span><wbr><span class="parameters">(@Nullable javafx.stage.Window&nbsp;parentWindow,
  <a href="FileDialogMode.html" title="enum class in com.dua3.utility.fx.controls">FileDialogMode</a>&nbsp;mode,
  boolean&nbsp;existingOnly,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dflt,
@@ -363,6 +363,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="block">Constructs a FileInput instance with specified parameters.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
+<dd><code>parentWindow</code> - the parent window</dd>
 <dd><code>mode</code> - the mode of the file dialog, which can be OPEN, SAVE, or DIRECTORY</dd>
 <dd><code>existingOnly</code> - boolean indicating whether only existing files or directories should be selectable</dd>
 <dd><code>dflt</code> - a supplier providing the default path</dd>

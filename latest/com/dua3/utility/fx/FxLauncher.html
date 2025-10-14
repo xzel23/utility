@@ -94,7 +94,40 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">FxLauncher</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Application launcher class.</div>
+<div class="block">The FxLauncher class is responsible for managing the launch and runtime behavior of JavaFX applications.
+ It provides utility methods for executing tasks, launching applications, reparsing command line arguments,
+ managing log views, and handling debug behavior and assertions.
+ <p>
+ The FxLauncher utility class enhances standard the JavaFX launching process by adding this functionality:
+ <ul>
+     <li>Better compatibility for jpackaged/jlinked applications on Windows: The standard JavaFX launcher
+         determines arguments by splitting the text passed on the command line on whitespace. When the
+         application is using registered file associations, the file path is passed unescaped to the
+         application. When the path contains spaces, this leads to incorrect arguments being passed to
+         the application, i.e. "C:\program files\foo.txt" will be passed as ["C:\program", "files\foo.txt"].
+         <a href="#launch(java.lang.Class,java.lang.String...)"><code>launch(Class, String...)</code></a> will fix up the command line so that instead
+         ["C:\program files\foo.txt"] is passed to the application.
+     <li>Automatically add command line help and default options when
+         <a href="#launchApplication(java.lang.String,java.lang.String%5B%5D,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.util.function.Consumer...)"><code>launchApplication(String, String[], String, String, String, String, String, Consumer[])</code></a> is used:
+         <ul>
+         <li><strong><code>--help</code>:</strong>
+             show command line help.
+         <li><strong><code>--enable-assertions</code>:</strong>
+             Enable assertions.
+         <li><strong><code>--debug</code>:</strong>
+             Enable debug mode. Use <a href="#isDebug()"><code>isDebug()</code></a> in your application code to test for debug mode.
+         <li><strong><code>--log-window</code>:</strong>
+             show a window containing the application's logging messages
+             is added without needing any application code. Make sure you either use Log4J or have the required
+             bridge implementations on your classpath, and make sure the logging system is not initialized
+             before the <code>launchApplication()</code> is called.
+             This option is only added when <a href="../logging/log4j/LogUtilLog4J.html" title="class in com.dua3.utility.logging.log4j"><code>LogUtilLog4J</code></a> is on the classpath.
+         <li><strong><code>--log-level</code>:</strong>
+             Set the global log level. Only messages with at least the given level are logged.
+         <li><strong>Application-specific options:</strong>
+             Use the <code>addOptions</code>parameter to pass application-specific options.
+     </ul>
+ </ul></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -142,7 +175,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Retrieves an instance of the <a href="FxLogPane.html" title="class in com.dua3.utility.fx"><code>FxLogPane</code></a> if the log pane is configured to be displayed.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isShowLogPane()" class="member-name-link">isShowLogPane</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isDebug()" class="member-name-link">isDebug</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Determines whether the log pane should be displayed.</div>
 </div>
@@ -175,12 +208,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Executes the given Runnable object.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="FxLogWindow.html" title="class in com.dua3.utility.fx">FxLogWindow</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#showLogWindow(javafx.stage.Window)" class="member-name-link">showLogWindow</a><wbr>(javafx.stage.Window&nbsp;stage)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#showLogWindow(javafx.stage.Window)" class="member-name-link">showLogWindow</a><wbr>(@Nullable javafx.stage.Window&nbsp;owner)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Displays a log window for the application, if configured to do so.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="FxLogWindow.html" title="class in com.dua3.utility.fx">FxLogWindow</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#showLogWindow(javafx.stage.Window,java.lang.String)" class="member-name-link">showLogWindow</a><wbr>(javafx.stage.Window&nbsp;stage,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#showLogWindow(javafx.stage.Window,java.lang.String)" class="member-name-link">showLogWindow</a><wbr>(@Nullable javafx.stage.Window&nbsp;owner,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Displays a log window for the application, if configured to do so.</div>
@@ -315,9 +348,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="isShowLogPane()">
-<h3>isShowLogPane</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isShowLogPane</span>()</div>
+<section class="detail" id="isDebug()">
+<h3>isDebug</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isDebug</span>()</div>
 <div class="block">Determines whether the log pane should be displayed.</div>
 <dl class="notes">
 <dt>Returns:</dt>
@@ -339,12 +372,12 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="showLogWindow(javafx.stage.Window,java.lang.String)">
 <h3>showLogWindow</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="FxLogWindow.html" title="class in com.dua3.utility.fx">FxLogWindow</a>&gt;</span>&nbsp;<span class="element-name">showLogWindow</span><wbr><span class="parameters">(javafx.stage.Window&nbsp;stage,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="FxLogWindow.html" title="class in com.dua3.utility.fx">FxLogWindow</a>&gt;</span>&nbsp;<span class="element-name">showLogWindow</span><wbr><span class="parameters">(@Nullable javafx.stage.Window&nbsp;owner,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</span></div>
 <div class="block">Displays a log window for the application, if configured to do so.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>stage</code> - the owner window for the log window; can be null if no parent stage is specified.</dd>
+<dd><code>owner</code> - the owner window for the log window; can be null if no parent stage is specified.</dd>
 <dd><code>title</code> - the title of the log window to be displayed.</dd>
 <dt>Returns:</dt>
 <dd>an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a> containing the <a href="FxLogWindow.html" title="class in com.dua3.utility.fx"><code>FxLogWindow</code></a> instance if the log window is displayed,
@@ -355,11 +388,11 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="showLogWindow(javafx.stage.Window)">
 <h3>showLogWindow</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="FxLogWindow.html" title="class in com.dua3.utility.fx">FxLogWindow</a>&gt;</span>&nbsp;<span class="element-name">showLogWindow</span><wbr><span class="parameters">(javafx.stage.Window&nbsp;stage)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="FxLogWindow.html" title="class in com.dua3.utility.fx">FxLogWindow</a>&gt;</span>&nbsp;<span class="element-name">showLogWindow</span><wbr><span class="parameters">(@Nullable javafx.stage.Window&nbsp;owner)</span></div>
 <div class="block">Displays a log window for the application, if configured to do so.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>stage</code> - the owner window for the log window; can be null if no parent stage is specified.</dd>
+<dd><code>owner</code> - the owner window for the log window; can be null if no parent stage is specified.</dd>
 <dt>Returns:</dt>
 <dd>an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a> containing the <a href="FxLogWindow.html" title="class in com.dua3.utility.fx"><code>FxLogWindow</code></a> instance if the log window is displayed,
          or an empty <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a> if the log window is not configured to be displayed.</dd>
