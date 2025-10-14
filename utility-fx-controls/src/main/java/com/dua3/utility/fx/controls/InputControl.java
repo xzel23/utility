@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxUtil;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
@@ -13,7 +14,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -217,7 +217,7 @@ public interface InputControl<T> {
      * @return a {@link SimpleInputControl} containing the ComboBox and its value property
      */
     static <T> SimpleInputControl<ComboBox<T>, T> comboBoxInput(Collection<? extends T> choices, Supplier<T> dflt, Function<T, Optional<String>> validate) {
-        ComboBox<T> control = new ComboBox<>(FXCollections.observableArrayList(choices));
+        ComboBox<T> control = new ComboBox<>(FxUtil.makeObservable(choices));
         Property<T> value = control.valueProperty();
         return new SimpleInputControl<>(control, value, dflt, validate);
     }
@@ -243,7 +243,7 @@ public interface InputControl<T> {
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format,
             Function<T, Optional<String>> validate) {
-        ComboBoxEx<T> control = new ComboBoxEx<>(edit, add, remove, dflt, format, FXCollections.observableArrayList(choices));
+        ComboBoxEx<T> control = new ComboBoxEx<>(edit, add, remove, dflt, format, FxUtil.makeObservable(choices));
         Property<T> value = control.valueProperty();
         return new SimpleInputControl<>(control, value, dflt, validate);
     }

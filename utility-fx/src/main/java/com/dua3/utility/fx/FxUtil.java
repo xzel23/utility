@@ -10,6 +10,7 @@ import javafx.animation.AnimationTimer;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.collections.FXCollections;
 import javafx.scene.shape.ClosePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1010,5 +1011,19 @@ public final class FxUtil {
                 }
             }
         }.start();
+    }
+
+    /**
+     * Creates an observable list from the given collection. If the collection is already an instance
+     * of ObservableList, it is returned as-is. Otherwise, a new ObservableList is created from
+     * the contents of the given collection.
+     *
+     * @param <T> the type of elements contained in the collection and observable list
+     * @param collection the collection to be converted to an observable list
+     * @return an observable list containing the elements of the supplied collection
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T extends @Nullable Object> ObservableList<T> makeObservable(Collection<? extends T> collection) {
+        return collection instanceof ObservableList ol ? ol : FXCollections.observableArrayList(collection);
     }
 }
