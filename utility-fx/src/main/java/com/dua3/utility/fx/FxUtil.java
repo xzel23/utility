@@ -11,6 +11,7 @@ import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.ClosePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1026,4 +1027,34 @@ public final class FxUtil {
     public static <T extends @Nullable Object> ObservableList<T> makeObservable(Collection<? extends T> collection) {
         return collection instanceof ObservableList ol ? ol : FXCollections.observableArrayList(collection);
     }
+
+    /**
+     * Creates a new {@link Region} with specified horizontal space by setting
+     * its minimum width and preferred width to the provided value.
+     *
+     * @param v the width value to be set as both the minimum width
+     *          and preferred width of the region
+     * @return a new {@link Region} with the specified horizontal space
+     */
+    public static Region hspace(double v) {
+        Region r = new Region();
+        r.setMinWidth(v);
+        r.setPrefWidth(v);
+        return r;
+    }
+
+    /**
+     * Creates a vertical spacer Region with the specified height.
+     * The minimum height and preferred height of the Region are set to the given value.
+     *
+     * @param v the height to set as the minimum and preferred height of the Region
+     * @return a Region with the specified vertical size
+     */
+    public static Region vspace(double v) {
+        Region r = new Region();
+        r.setMinHeight(v);
+        r.setPrefHeight(v);
+        return r;
+    }
+
 }

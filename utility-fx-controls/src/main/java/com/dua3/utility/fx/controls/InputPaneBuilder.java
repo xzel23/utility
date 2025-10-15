@@ -40,11 +40,11 @@ public class InputPaneBuilder
         extends PaneBuilder<InputPane, InputPaneBuilder, Map<String, Object>>
         implements InputBuilder<InputPaneBuilder> {
 
-    private final InputGridBuilder pb;
+    private final GridBuilder pb;
 
     InputPaneBuilder(MessageFormatter formatter) {
         super(formatter);
-        pb = new InputGridBuilder(null, formatter);
+        pb = new GridBuilder(null, formatter);
         setDialogSupplier(() -> {
             InputPane inputPane = new InputPane(pb.build());
             inputPane.init();
@@ -53,26 +53,19 @@ public class InputPaneBuilder
     }
 
     @Override
-    public <T> InputPaneBuilder add(String id, String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control, boolean hidden) {
-        pb.add(id, label, type, dflt, control, hidden);
+    public SectionStyle getSectionStyle(int level) {
+        return pb.getSectionStyle(level);
+    }
+
+    @Override
+    public <T> InputPaneBuilder addInput(String id, String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control, boolean hidden) {
+        pb.addInput(id, label, type, dflt, control, hidden);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder add(String id, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control) {
-        pb.add(id, type, dflt, control);
-        return this;
-    }
-
-    @Override
-    public InputPaneBuilder addNode(String id, String label, Node node) {
-        pb.addNode(id, label, node);
-        return this;
-    }
-
-    @Override
-    public InputPaneBuilder addNode(String id, Node node) {
-        pb.addNode(id, node);
+    public <T> InputPaneBuilder addInput(String id, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control) {
+        pb.addInput(id, type, dflt, control);
         return this;
     }
 
@@ -83,73 +76,91 @@ public class InputPaneBuilder
     }
 
     @Override
-    public InputPaneBuilder description(String fmt, Object... args) {
-        pb.description(fmt, args);
+    public InputPaneBuilder node(Node node) {
+        pb.node(node);
         return this;
     }
 
     @Override
-    public InputPaneBuilder text(String fmtLabel, String fmtText, Object... args) {
-        pb.text(fmtLabel, fmtText, args);
+    public InputPaneBuilder node(String label, Node node) {
+        pb.node(label, node);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder constant(String id, String label, Supplier<@Nullable T> value, Class<T> cls) {
-        pb.constant(id, label, value, cls);
+    public InputPaneBuilder section(int level, String fmt, Object... args) {
+        pb.section(level, fmt, args);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder constant(String id, String label, T value) {
-        pb.constant(id, label, value);
+    public InputPaneBuilder text(String fmt, Object... args) {
+        pb.text(fmt, args);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder hidden(String id, Supplier<T> value, Class<T> cls) {
-        pb.hidden(id, value, cls);
+    public InputPaneBuilder labeledText(String fmtLabel, String fmtText, Object... args) {
+        pb.labeledText(fmtLabel, fmtText, args);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder hidden(String id, T value) {
-        pb.hidden(id, value);
+    public <T> InputPaneBuilder inputConstant(String id, String label, Supplier<@Nullable T> value, Class<T> cls) {
+        pb.inputConstant(id, label, value, cls);
         return this;
     }
 
     @Override
-    public InputPaneBuilder string(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
-        pb.string(id, label, dflt, validate);
+    public <T> InputPaneBuilder inputConstant(String id, String label, T value) {
+        pb.inputConstant(id, label, value);
         return this;
     }
 
     @Override
-    public InputPaneBuilder integer(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
-        pb.integer(id, label, dflt, validate);
+    public <T> InputPaneBuilder inputHidden(String id, Supplier<T> value, Class<T> cls) {
+        pb.inputHidden(id, value, cls);
         return this;
     }
 
     @Override
-    public InputPaneBuilder decimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
-        pb.decimal(id, label, dflt, validate);
+    public <T> InputPaneBuilder inputHidden(String id, T value) {
+        pb.inputHidden(id, value);
         return this;
     }
 
     @Override
-    public InputPaneBuilder checkBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
-        pb.checkBox(id, label, dflt, text, validate);
+    public InputPaneBuilder inputString(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+        pb.inputString(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder comboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
-        pb.comboBox(id, label, dflt, cls, items, validate);
+    public InputPaneBuilder inputInteger(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
+        pb.inputInteger(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder comboBoxEx(
+    public InputPaneBuilder inputDecimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
+        pb.inputDecimal(id, label, dflt, validate);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder inputCheckBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
+        pb.inputCheckBox(id, label, dflt, text, validate);
+        return this;
+    }
+
+    @Override
+    public <T> InputPaneBuilder inputComboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+        pb.inputComboBox(id, label, dflt, cls, items, validate);
+        return this;
+    }
+
+    @Override
+    public <T> InputPaneBuilder inputComboBoxEx(
             String id,
             String label,
             @Nullable UnaryOperator<T> edit,
@@ -160,49 +171,48 @@ public class InputPaneBuilder
             Class<T> cls,
             Collection<T> items,
             Function<@Nullable T, Optional<String>> validate) {
-        pb.comboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, validate);
+        pb.inputComboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, validate);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder radioList(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
-        pb.radioList(id, label, dflt, cls, items, validate);
+    public <T> InputPaneBuilder inputRadioList(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+        pb.inputRadioList(id, label, dflt, cls, items, validate);
         return this;
     }
 
     @Override
-    public InputPaneBuilder slider(String id, String label, Supplier<@Nullable Double> dflt, double min, double max) {
-        pb.slider(id, label, dflt, min, max);
+    public InputPaneBuilder inputSlider(String id, String label, Supplier<@Nullable Double> dflt, double min, double max) {
+        pb.inputSlider(id, label, dflt, min, max);
         return this;
     }
 
     @Override
-    public InputPaneBuilder options(String id, String label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
-        pb.options(id, label, dflt, options);
+    public InputPaneBuilder inputOptions(String id, String label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
+        pb.inputOptions(id, label, dflt, options);
         return this;
     }
 
     @Override
-    public InputPaneBuilder options(String id, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
-        pb.options(id, dflt, options);
+    public InputPaneBuilder inputOptions(String id, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
+        pb.inputOptions(id, dflt, options);
         return this;
     }
 
     @Override
-    public InputPaneBuilder chooseFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
-        pb.chooseFile(id, label, dflt, mode, existingOnly, filter, validate);
+    public InputPaneBuilder inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
+        pb.inputFile(id, label, dflt, mode, existingOnly, filter, validate);
         return this;
     }
 
     @Override
-    public InputPaneBuilder node(String id, Node node) {
-        pb.node(id, node);
-        return this;
+    public <T> InputPaneBuilder inputControl(String id, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt) {
+        return null;
     }
 
     @Override
-    public InputPaneBuilder node(String id, String label, Node node) {
-        pb.node(id, label, node);
-        return this;
+    public <T> InputPaneBuilder inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt) {
+        return null;
     }
+
 }

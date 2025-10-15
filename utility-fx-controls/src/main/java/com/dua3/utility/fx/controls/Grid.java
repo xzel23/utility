@@ -5,6 +5,7 @@ import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.TextUtil;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.ColumnConstraints;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.FxUtil;
 import javafx.beans.binding.Bindings;
@@ -36,12 +37,12 @@ import java.util.stream.Stream;
  * ensures their validation state. It organizes input controls in a grid layout and
  * provides methods for initialization, resetting, and retrieving input values.
  */
-public class InputGrid extends GridPane {
+public class Grid extends GridPane {
 
     /**
      * Logger
      */
-    protected static final Logger LOG = LogManager.getLogger(InputGrid.class);
+    protected static final Logger LOG = LogManager.getLogger(Grid.class);
 
     private static final String MARKER_INITIAL = "";
     private static final String MARKER_ERROR = "⚠";
@@ -77,7 +78,7 @@ public class InputGrid extends GridPane {
     /**
      * Constructs a new instance of the InputGrid class.
      */
-    public InputGrid() { /* nothing to do */ }
+    public Grid() { /* nothing to do */ }
 
     /**
      * Get valid state property.
@@ -94,11 +95,11 @@ public class InputGrid extends GridPane {
      * @return A map containing IDs as keys and their input values as values. The
      * result might contain keys that map to {@code null} values.
      */
-    public Map<String, Object> get() {
+    public Map<String, @Nullable Object> get() {
         Map<String, Object> result = new LinkedHashMap<>();
         //noinspection SimplifyForEach - Collectors.toMap() does not support null values!
         data.forEach(e -> {
-            if (!e.id.startsWith("$ignored$")) {
+            if (e.id != null) {
                 result.put(e.id, e.control.get());
             }
         });
@@ -223,7 +224,7 @@ public class InputGrid extends GridPane {
      * @param <T> the input's value type
      */
     static final class Meta<T extends @Nullable Object> {
-        final String id;
+        final @Nullable String id;
         final Class<T> cls;
         final Supplier<? extends T> dflt;
         final InputControl<? super T> control;
@@ -231,7 +232,7 @@ public class InputGrid extends GridPane {
         final Label marker = new Label();
         final boolean hidden;
 
-        Meta(String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean hidden) {
+        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean hidden) {
             this.id = id;
             this.label = label != null ? new Label(label) : null;
             this.cls = cls;

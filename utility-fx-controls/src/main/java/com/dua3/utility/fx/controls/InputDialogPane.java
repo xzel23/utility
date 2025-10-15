@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import com.dua3.utility.lang.LangUtil;
@@ -36,7 +37,8 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
     /**
      * Constructor.
      */
-    protected InputDialogPane() { /* nothing to do */ }
+    protected InputDialogPane() {
+    }
 
     /**
      * Represents a boolean property that indicates the validity state of the input in the dialog pane.

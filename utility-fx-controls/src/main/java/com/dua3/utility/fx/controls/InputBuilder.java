@@ -29,6 +29,23 @@ import java.util.function.UnaryOperator;
 public interface InputBuilder<B extends InputBuilder<B>> {
 
     /**
+     * Represents the styling attributes for a section or title label, such as spacing,
+     * boldness, and scaling of the font. This style is used to configure the visual
+     * presentation of section titles in a UI layout.
+     *
+     * @param vspaceBefore The vertical space, in units of font height, added before the section.
+     * @param vspaceAfter The vertical space, in units of font height, added after the section.
+     * @param makeBold A flag indicating whether the section title should be bold.
+     * @param scale A scaling factor to adjust the size of the font for the section title.
+     */
+    record SectionStyle(
+            float vspaceBefore,
+            float vspaceAfter,
+            boolean makeBold,
+            float scale
+    ) {}
+
+    /**
      * Retrieves an instance of the MessageFormatter.
      *
      * @return an instance of MessageFormatter that handles the formatting of messages.
@@ -47,6 +64,14 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
+     * Retrieves the style configuration for a specific section level.
+     *
+     * @param level the level of the section for which the style is to be retrieved
+     * @return the SectionStyle associated with the specified section level
+     */
+    SectionStyle getSectionStyle(int level);
+
+    /**
      * Add a labeled input control.
      *
      * @param <T>     the result type
@@ -58,7 +83,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param hidden  flag, indicating whether the input us hidden from the user (no control is visible on the UI)
      * @return {@code this}
      */
-    <T> B add(
+    <T> B addInput(
             String id,
             String label,
             Class<T> type,
@@ -76,31 +101,12 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param control the control
      * @return {@code this}
      */
-    <T> B add(
+    <T> B addInput(
             String id,
             Class<T> type,
             Supplier<@Nullable T> dflt,
             InputControl<T> control
     );
-
-    /**
-     * Add a labeled input control.
-     *
-     * @param id    the node's ID
-     * @param label the label text
-     * @param node  the node
-     * @return {@code this}
-     */
-    B addNode(String id, String label, Node node);
-
-    /**
-     * Add an unlabeled input control.
-     *
-     * @param id   the node's ID
-     * @param node the node
-     * @return {@code this}
-     */
-    B addNode(String id, Node node);
 
     /**
      * Set the number of columns for layout (default is 1).
@@ -111,13 +117,41 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B columns(int columns);
 
     /**
+     * Processes the given node and returns a result of type B.
+     *
+     * @param node the node to be processed
+     * @return the result of processing the given node, of type B
+     */
+    B node(Node node);
+
+    /**
+     * Associates a child node with this node using the specified label.
+     *
+     * @param label the label used to identify the child node
+     * @param node the child node to be associated
+     * @return the updated instance of the current object
+     */
+    B node(String label, Node node);
+
+    /**
+     * Sets the current section level and formats the section heading
+     * using the provided format string and arguments.
+     *
+     * @param level the level of the section
+     * @param fmt the format string used to create the section heading
+     * @param args the arguments referenced by the format specifiers in the format string
+     * @return {@code this}
+     */
+    B section(int level, String fmt, Object... args);
+
+    /**
      * Add a static text without a label.
      *
      * @param fmt  the formatting pattern
      * @param args the formatting arguments
      * @return {@code this}
      */
-    B description(String fmt, Object... args);
+    B text(String fmt, Object... args);
 
     /**
      * Add a static text without a label.
@@ -130,9 +164,9 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param args     the formatting arguments
      * @return {@code this}
      */
-    B text(String fmtLabel,
-           String fmtText,
-           Object... args);
+    B labeledText(String fmtLabel,
+                  String fmtText,
+                  Object... args);
 
     /**
      * Creates a disabled input field with the specified configurations.
@@ -146,7 +180,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls   The class type of the value provided.
      * @return An instance of `B` representing the configured disabled input field.
      */
-    <T> B constant(
+    <T> B inputConstant(
             String id,
             String label,
             Supplier<T> value,
@@ -164,7 +198,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>   the type of the value contained in the input field
      * @return an instance of type B representing the configured disabled input field
      */
-    <T> B constant(
+    <T> B inputConstant(
             String id,
             String label,
             T value);
@@ -180,7 +214,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls   The class type of the value provided.
      * @return An instance of `B` representing the configured disabled input field.
      */
-    <T> B hidden(
+    <T> B inputHidden(
             String id,
             Supplier<T> value,
             Class<T> cls
@@ -196,7 +230,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param value the value to be displayed in the disabled input field
      * @return an instance of type B representing the configured disabled input field
      */
-    <T> B hidden(
+    <T> B inputHidden(
             String id,
             T value
     );
@@ -209,12 +243,12 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B string(
+    default B inputString(
             String id,
             String label,
             Supplier<@Nullable String> dflt
     ) {
-        return string(id, label, dflt, s -> Optional.empty());
+        return inputString(id, label, dflt, s -> Optional.empty());
     }
 
     /**
@@ -226,7 +260,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    B string(
+    B inputString(
             String id,
             String label,
             Supplier<@Nullable String> dflt,
@@ -241,12 +275,12 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B integer(
+    default B inputInteger(
             String id,
             String label,
             Supplier<@Nullable Long> dflt
     ) {
-        return integer(id, label, dflt, i -> Optional.empty());
+        return inputInteger(id, label, dflt, i -> Optional.empty());
     }
 
     /**
@@ -258,7 +292,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    B integer(
+    B inputInteger(
             String id,
             String label,
             Supplier<@Nullable Long> dflt,
@@ -273,12 +307,12 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B decimal(
+    default B inputDecimal(
             String id,
             String label,
             Supplier<@Nullable Double> dflt
     ) {
-        return decimal(id, label, dflt, d -> Optional.empty());
+        return inputDecimal(id, label, dflt, d -> Optional.empty());
     }
 
     /**
@@ -290,7 +324,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    B decimal(
+    B inputDecimal(
             String id,
             String label,
             Supplier<@Nullable Double> dflt,
@@ -306,13 +340,13 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param text  the checkbox text
      * @return {@code this}
      */
-    default B checkBox(
+    default B inputCheckBox(
             String id,
             String label,
             Supplier<@Nullable Boolean> dflt,
             String text
     ) {
-        return checkBox(id, label, dflt, text, b -> Optional.empty());
+        return inputCheckBox(id, label, dflt, text, b -> Optional.empty());
     }
 
     /**
@@ -325,7 +359,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate  a function that takes a Boolean value and returns an optional validation message
      * @return {@code this}
      */
-    B checkBox(
+    B inputCheckBox(
             String id,
             String label,
             Supplier<@Nullable Boolean> dflt,
@@ -344,14 +378,14 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the items to choose from
      * @return {@code this}
      */
-    default <T> B comboBox(
+    default <T> B inputComboBox(
             String id,
             String label,
             Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items
     ) {
-        return comboBox(id, label, dflt, cls, items, t -> Optional.empty());
+        return inputComboBox(id, label, dflt, cls, items, t -> Optional.empty());
     }
 
     /**
@@ -366,7 +400,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>      the type of the comboBox items
      * @return {@code this}
      */
-    <T> B comboBox(
+    <T> B inputComboBox(
             String id,
             String label,
             Supplier<@Nullable T> dflt,
@@ -390,7 +424,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the collection of items to choose from
      * @return {@code this}
      */
-    default <T> B comboBoxEx(
+    default <T> B inputComboBoxEx(
             String id,
             String label,
             @Nullable UnaryOperator<@Nullable T> edit,
@@ -401,7 +435,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Class<T> cls,
             Collection<T> items
     ) {
-        return comboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, t -> Optional.empty());
+        return inputComboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, t -> Optional.empty());
     }
 
     /**
@@ -420,7 +454,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate   a function to validate the items in the combo box and return an optional error message
      * @return {@code this}
      */
-    <T> B comboBoxEx(
+    <T> B inputComboBoxEx(
             String id,
             String label,
             @Nullable UnaryOperator<T> edit,
@@ -444,14 +478,14 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the items to choose from
      * @return {@code this}
      */
-    default <T> B radioList(
+    default <T> B inputRadioList(
             String id,
             String label,
             Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items
     ) {
-        return radioList(id, label, dflt, cls, items, (@Nullable T t) -> t != null ? Optional.empty() : Optional.of("No option selected"));
+        return inputRadioList(id, label, dflt, cls, items, (@Nullable T t) -> t != null ? Optional.empty() : Optional.of("No option selected"));
     }
 
     /**
@@ -466,7 +500,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>       the type of items in the radio list
      * @return {@code this}
      */
-    <T> B radioList(
+    <T> B inputRadioList(
             String id,
             String label,
             Supplier<@Nullable T> dflt,
@@ -485,7 +519,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param max   the maximum value
      * @return {@code this}
      */
-    B slider(
+    B inputSlider(
             String id,
             String label,
             Supplier<@Nullable Double> dflt,
@@ -502,7 +536,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param options supplier of options
      * @return {@code this}
      */
-    B options(
+    B inputOptions(
             String id,
             String label,
             Supplier<@Nullable Arguments> dflt,
@@ -520,7 +554,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param options supplier of options
      * @return {@code this}
      */
-    B options(
+    B inputOptions(
             String id,
             Supplier<@Nullable Arguments> dflt,
             Supplier<Collection<Option<?>>> options
@@ -537,7 +571,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param filter the extension filter to use
      * @return {@code this}
      */
-    default B chooseFile(
+    default B inputFile(
             String id,
             String label,
             Supplier<@Nullable Path> dflt,
@@ -545,7 +579,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             boolean existingOnly,
             Collection<FileChooser.ExtensionFilter> filter
     ) {
-        return chooseFile(id, label, dflt, mode, existingOnly, filter, FileInput.defaultValidate(mode, existingOnly));
+        return inputFile(id, label, dflt, mode, existingOnly, filter, FileInput.defaultValidate(mode, existingOnly));
     }
 
     /**
@@ -561,7 +595,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      *                      It returns an optional error message if the validation fails.
      * @return {@code this}
      */
-    B chooseFile(
+    B inputFile(
             String id,
             String label,
             Supplier<@Nullable Path> dflt,
@@ -572,21 +606,27 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add an unlabeled custom node to the grid.
+     * Associates an input control with the specified identifier, type, and default value provider.
      *
-     * @param id the ID of the node
-     * @param node the node
-     * @return {@code this}
+     * @param <T>      the generic result type
+     * @param id       the unique identifier for the input control
+     * @param control  the input control to be associated
+     * @param type     the class type of the value managed by the input control
+     * @param dflt     a supplier for the default value, which may produce a null value
+     * @return         an instance of type B for method chaining or further configuration
      */
-    B node(String id, Node node);
+    <T> B inputControl(String id, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt);
 
     /**
-     * Add a labeled custom node to the grid.
+     * Configures an input control with the specified parameters.
      *
-     * @param id the ID of the node
-     * @param label the label text
-     * @param node the node
-     * @return {@code this}
+     * @param <T>      the generic result type
+     * @param id       the unique identifier for the input control
+     * @param label    the label to be associated with the input control
+     * @param control  the input control instance to be configured
+     * @param type     the type of the input value
+     * @param dflt     a supplier providing the default value for the input control; may be null
+     * @return an instance of type B, representing the configured input control
      */
-    B node(String id, String label, Node node);
+    <T> B inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt);
 }

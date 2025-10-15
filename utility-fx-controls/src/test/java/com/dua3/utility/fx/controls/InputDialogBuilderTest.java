@@ -81,7 +81,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add text
-            builder.description("Test text");
+            builder.text("Test text");
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -105,7 +105,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add text with label
-            builder.text("Label", "Test text");
+            builder.labeledText("Label", "Test text");
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -129,7 +129,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add string input
-            builder.string("id", "Label", () -> "Default", s -> Optional.empty());
+            builder.inputString("id", "Label", () -> "Default", s -> Optional.empty());
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -153,7 +153,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add integer input
-            builder.integer("id", "Label", () -> 42L, i -> Optional.empty());
+            builder.inputInteger("id", "Label", () -> 42L, i -> Optional.empty());
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -177,7 +177,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add decimal input
-            builder.decimal("id", "Label", () -> 3.14, d -> Optional.empty());
+            builder.inputDecimal("id", "Label", () -> 3.14, d -> Optional.empty());
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -201,7 +201,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add checkbox
-            builder.checkBox("id", "Label", () -> true, "Check this", b -> Optional.empty());
+            builder.inputCheckBox("id", "Label", () -> true, "Check this", b -> Optional.empty());
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -226,7 +226,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add combo box
             List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
-            builder.comboBox("id", "Label", () -> "Item 1", String.class, items, s -> Optional.empty());
+            builder.inputComboBox("id", "Label", () -> "Item 1", String.class, items, s -> Optional.empty());
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -251,7 +251,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add extended combo box
             List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
-            builder.comboBoxEx("id", "Label", s -> s + " (edited)", () -> "New Item", (cb, s) -> true, s -> s, () -> "Item 1", String.class, items, s -> Optional.empty());
+            builder.inputComboBoxEx("id", "Label", s -> s + " (edited)", () -> "New Item", (cb, s) -> true, s -> s, () -> "Item 1", String.class, items, s -> Optional.empty());
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -276,7 +276,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add radio list
             List<String> items = Arrays.asList("Option 1", "Option 2", "Option 3");
-            builder.radioList("id", "Label", () -> "Option 1", String.class, items, s -> Optional.empty());
+            builder.inputRadioList("id", "Label", () -> "Option 1", String.class, items, s -> Optional.empty());
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -300,7 +300,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add slider
-            builder.slider("id", "Label", () -> 50.0, 0.0, 100.0);
+            builder.inputSlider("id", "Label", () -> 50.0, 0.0, 100.0);
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -324,7 +324,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add file chooser
-            builder.chooseFile("id", "Label", () -> Paths.get(System.getProperty("user.home")), FileDialogMode.OPEN, true, Collections.emptyList(), p -> Optional.empty());
+            builder.inputFile("id", "Label", () -> Paths.get(System.getProperty("user.home")), FileDialogMode.OPEN, true, Collections.emptyList(), p -> Optional.empty());
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -374,7 +374,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add node with label
             Node node = new Label("Custom node");
-            builder.node("id", "Label", node);
+            builder.node("Label", node);
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -422,7 +422,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add constant
-            builder.constant("id", "Label", () -> "Constant value", String.class);
+            builder.inputConstant("id", "Label", () -> "Constant value", String.class);
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -446,7 +446,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add constant with direct value
-            builder.constant("id", "Label", "Constant value");
+            builder.inputConstant("id", "Label", "Constant value");
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -470,7 +470,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add hidden value
-            builder.hidden("id", () -> "Hidden value", String.class);
+            builder.inputHidden("id", () -> "Hidden value", String.class);
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -494,7 +494,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add hidden with direct value
-            builder.hidden("id", "Hidden value");
+            builder.inputHidden("id", "Hidden value");
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -512,14 +512,14 @@ class InputDialogBuilderTest extends FxTestBase {
      * Test the add method.
      */
     @Test
-    void testAdd() throws Exception {
+    void testAddInput() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add custom input control
             InputControl<String> control = new TestInputControl();
-            builder.add("id", "Label", String.class, () -> "Default", control, false);
+            builder.addInput("id", "Label", String.class, () -> "Default", control, false);
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -537,14 +537,14 @@ class InputDialogBuilderTest extends FxTestBase {
      * Test the add method without label.
      */
     @Test
-    void testAddWithoutLabel() throws Exception {
+    void testAddInputWithoutLabel() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add custom input control without label
             InputControl<String> control = new TestInputControl();
-            builder.add("id", String.class, () -> "Default", control);
+            builder.addInput("id", String.class, () -> "Default", control);
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -562,14 +562,14 @@ class InputDialogBuilderTest extends FxTestBase {
      * Test the addNode method.
      */
     @Test
-    void testAddNode() throws Exception {
+    void testAddInputNode() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add node
             Node node = new Label("Custom node");
-            builder.addNode("id", "Label", node);
+            builder.node("Label", node);
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();
@@ -587,14 +587,14 @@ class InputDialogBuilderTest extends FxTestBase {
      * Test the addNode method without label.
      */
     @Test
-    void testAddNodeWithoutLabel() throws Exception {
+    void testAddInputNodeWithoutLabel() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add node without label
             Node node = new Label("Custom node");
-            builder.addNode("id", node);
+            builder.node("id", node);
 
             // Build a dialog
             Dialog<Map<String, Object>> dialog = builder.build();

@@ -73,18 +73,18 @@ public class PinBoardSample extends Application {
         BooleanProperty inputValid = new SimpleBooleanProperty(false);
         input = Dialogs.inputPane(MessageFormatter.standard())
                 .header("Input target coordinates.")
-                .integer("item", "item", () -> 0L)
-                .decimal("x", "x", () -> 0.0)
-                .decimal("y", "y", () -> 0.0)
-                .decimal("xrelvp", "x relative in VP", () -> 0.0)
-                .decimal("yrelvp", "y relative in VP", () -> 0.0)
+                .inputInteger("item", "item", () -> 0L)
+                .inputDecimal("x", "x", () -> 0.0)
+                .inputDecimal("y", "y", () -> 0.0)
+                .inputDecimal("xrelvp", "x relative in VP", () -> 0.0)
+                .inputDecimal("yrelvp", "y relative in VP", () -> 0.0)
                 .node("buttons", new HBox(
                         Controls.button().text("scrollToPositionInItem(item, x, y)").action(this::scrollToPositionInItem).build(),
                         Controls.button().text("scrollTo(x, y)").action(this::scrollTo).build(),
                         Controls.button().text("scrollTo(x, y, xRelVP, yRelVP)").action(this::scrollToRelVP).build(),
                         Controls.button().text("scrollIntoView()").action(this::scrollIntoView).build()
                 ))
-                .add("Scale", Double.class, () -> 1.0, Controls.slider().min(0.25).max(2.0).setDefault(pinBoard::getDisplayScale).onChange(pinBoard::setDisplayScale).build())
+                .addInput("Scale", Double.class, () -> 1.0, Controls.slider().min(0.25).max(2.0).setDefault(pinBoard::getDisplayScale).onChange(pinBoard::setDisplayScale).build())
                 .build();
         inputValid.bind(input.validProperty());
         root.setLeft(new VBox(textArea, input));

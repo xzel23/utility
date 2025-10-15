@@ -69,144 +69,19 @@ public class InputDialogBuilder
     }
 
     @Override
-    public <T> InputDialogBuilder add(String id, String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control, boolean hidden) {
-        pb.add(id, format(label), type, dflt, control, hidden);
+    public SectionStyle getSectionStyle(int level) {
+        return null;
+    }
+
+    @Override
+    public <T> InputDialogBuilder addInput(String id, String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control, boolean hidden) {
+        pb.addInput(id, format(label), type, dflt, control, hidden);
         return this;
     }
 
     @Override
-    public <T> InputDialogBuilder add(String id, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control) {
-        pb.add(id, type, dflt, control);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder addNode(String id, String label, Node node) {
-        pb.addNode(id, format(label), node);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder addNode(String id, Node node) {
-        pb.addNode(id, node);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder columns(int columns) {
-        pb.columns(columns);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder description(String fmt, Object... args) {
-        pb.description(fmt, args);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder text(String fmtLabel, String fmtText, Object... args) {
-        pb.text(fmtLabel, fmtText, args);
-        return this;
-    }
-
-    @Override
-    public <T> InputDialogBuilder constant(String id, String label, Supplier<T> value, Class<T> cls) {
-        pb.constant(id, label, value, cls);
-        return this;
-    }
-
-    @Override
-    public <T> InputDialogBuilder constant(String id, String label, T value) {
-        pb.constant(id, label, value);
-        return this;
-    }
-
-    @Override
-    public <T> InputDialogBuilder hidden(String id, Supplier<T> value, Class<T> cls) {
-        pb.hidden(id, value, cls);
-        return this;
-    }
-
-    @Override
-    public <T> InputDialogBuilder hidden(String id, T value) {
-        pb.hidden(id, value);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder string(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
-        pb.string(id, label, dflt, validate);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder integer(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
-        pb.integer(id, label, dflt, validate);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder decimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
-        pb.decimal(id, label, dflt, validate);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder checkBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
-        pb.checkBox(id, label, dflt, text, validate);
-        return this;
-    }
-
-    @Override
-    public <T> InputDialogBuilder comboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
-        pb.comboBox(id, label, dflt, cls, items, validate);
-        return this;
-    }
-
-    @Override
-    public <T> InputDialogBuilder comboBoxEx(
-            String id,
-            String label,
-            @Nullable UnaryOperator<T> edit,
-            @Nullable Supplier<T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Supplier<@Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate) {
-        pb.comboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, validate);
-        return this;
-    }
-
-    @Override
-    public <T> InputDialogBuilder radioList(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
-        pb.radioList(id, label, dflt, cls, items, validate);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder slider(String id, String label, Supplier<@Nullable Double> dflt, double min, double max) {
-        pb.slider(id, label, dflt, min, max);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder options(String id, String label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
-        pb.options(id, label, dflt, options);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder options(String id, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
-        pb.options(id, dflt, options);
-        return this;
-    }
-
-    @Override
-    public InputDialogBuilder chooseFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
-        pb.chooseFile(id, label, dflt, mode, existingOnly, filter, validate);
+    public <T> InputDialogBuilder addInput(String id, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control) {
+        pb.addInput(id, type, dflt, control);
         return this;
     }
 
@@ -217,8 +92,143 @@ public class InputDialogBuilder
     }
 
     @Override
-    public InputDialogBuilder node(String id, String label, Node node) {
-        pb.node(id, label, node);
+    public InputDialogBuilder columns(int columns) {
+        pb.columns(columns);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder node(Node node) {
+        return null;
+    }
+
+    @Override
+    public InputDialogBuilder text(String fmt, Object... args) {
+        pb.text(fmt, args);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder labeledText(String fmtLabel, String fmtText, Object... args) {
+        pb.labeledText(fmtLabel, fmtText, args);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder inputConstant(String id, String label, Supplier<T> value, Class<T> cls) {
+        pb.inputConstant(id, label, value, cls);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder inputConstant(String id, String label, T value) {
+        pb.inputConstant(id, label, value);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder inputHidden(String id, Supplier<T> value, Class<T> cls) {
+        pb.inputHidden(id, value, cls);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder inputHidden(String id, T value) {
+        pb.inputHidden(id, value);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder inputString(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+        pb.inputString(id, label, dflt, validate);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder inputInteger(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
+        pb.inputInteger(id, label, dflt, validate);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder inputDecimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
+        pb.inputDecimal(id, label, dflt, validate);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder inputCheckBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
+        pb.inputCheckBox(id, label, dflt, text, validate);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder inputComboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+        pb.inputComboBox(id, label, dflt, cls, items, validate);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder inputComboBoxEx(
+            String id,
+            String label,
+            @Nullable UnaryOperator<T> edit,
+            @Nullable Supplier<T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            Function<T, String> format,
+            Supplier<@Nullable T> dflt,
+            Class<T> cls,
+            Collection<T> items,
+            Function<@Nullable T, Optional<String>> validate) {
+        pb.inputComboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, validate);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder inputRadioList(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+        pb.inputRadioList(id, label, dflt, cls, items, validate);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder inputSlider(String id, String label, Supplier<@Nullable Double> dflt, double min, double max) {
+        pb.inputSlider(id, label, dflt, min, max);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder inputOptions(String id, String label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
+        pb.inputOptions(id, label, dflt, options);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder inputOptions(String id, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
+        pb.inputOptions(id, dflt, options);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
+        pb.inputFile(id, label, dflt, mode, existingOnly, filter, validate);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder inputControl(String id, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt) {
+        pb.inputControl(id, control, type, dflt);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt) {
+        pb.inputControl(id, label, control, type, dflt);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder section(int level, String fmt, Object... args) {
+        pb.section(level, fmt, args);
         return this;
     }
 }

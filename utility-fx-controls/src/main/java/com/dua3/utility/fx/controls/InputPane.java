@@ -12,25 +12,25 @@ import java.util.Map;
  */
 public class InputPane extends InputDialogPane<Map<String, Object>> {
 
-    private final InputGrid inputGrid;
+    private final Grid grid;
 
     /**
      * Constructs an InputPane with the specified InputGrid.
      * This constructor initializes the InputGrid, binds its validation property,
      * and sets it as the content of the InputPane.
      *
-     * @param inputGrid the InputGrid instance to be used in the InputPane
+     * @param grid the InputGrid instance to be used in the InputPane
      */
-    public InputPane(InputGrid inputGrid) {
-        this.inputGrid = inputGrid;
-        valid.bind(inputGrid.validProperty());
-        setContent(inputGrid);
+    public InputPane(Grid grid) {
+        this.grid = grid;
+        valid.bind(grid.validProperty());
+        setContent(grid);
     }
 
     @Override
     public Map<String, Object> get() {
         Node content = getContent();
-        if (content instanceof InputGrid ig) {
+        if (content instanceof Grid ig) {
             return ig.get();
         } else {
             return Collections.emptyMap();
@@ -39,6 +39,6 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
 
     @Override
     public void init() {
-        inputGrid.init();
+        grid.init();
     }
 }
