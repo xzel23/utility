@@ -203,8 +203,8 @@ public final class Dialogs {
      * @param formatter    the {@link MessageFormatter} to use
      * @return new {@link InputDialogBuilder} instance
      */
-    public static InputGridBuilder inputGrid(@Nullable Window parentWindow, MessageFormatter formatter) {
-        return new InputGridBuilder(parentWindow, formatter);
+    public static GridBuilder inputGrid(@Nullable Window parentWindow, MessageFormatter formatter) {
+        return new GridBuilder(parentWindow, formatter);
     }
 
     /**
@@ -213,7 +213,7 @@ public final class Dialogs {
      * @param parentWindow the parent window
      * @return new {@link InputDialogBuilder} instance
      */
-    public static InputGridBuilder inputGrid(@Nullable Window parentWindow) {
+    public static GridBuilder inputGrid(@Nullable Window parentWindow) {
         return inputGrid(parentWindow, MessageFormatter.standard());
     }
 

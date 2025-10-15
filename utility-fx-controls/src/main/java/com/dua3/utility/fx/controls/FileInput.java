@@ -171,7 +171,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
      * only existing files or directories are allowed.
      *
      * <p>The returned function object is for example used in
-     * {@link InputBuilder#chooseFile(String, String, Supplier, FileDialogMode, boolean, Collection)}
+     * {@link InputBuilder#inputFile(String, String, Supplier, FileDialogMode, boolean, Collection)}
      * to add validation.
      *
      * @param mode the mode of the file dialog; can be OPEN, SAVE, or DIRECTORY

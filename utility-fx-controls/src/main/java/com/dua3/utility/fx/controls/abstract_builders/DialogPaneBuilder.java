@@ -187,17 +187,19 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * "OK" and "Cancel" buttons is returned. The buttons are defined with their respective
      * actions, result handlers, and enablement state.
      *
-     * @return a list of button definitions for this dialog pane builder
+     * @return a modifiable list of button definitions for this dialog pane builder
      */
     public List<InputDialogPane.ButtonDef<R>> buttons() {
         if (buttons.isEmpty()) {
-            return List.of(
+            buttons.add(
                     new InputDialogPane.ButtonDef<>(
                             ButtonType.CANCEL,
                             (btn, r) -> true,
                             dlg -> {},
                             FxUtil.ALWAYS_TRUE
-                    ),
+                    )
+            );
+            buttons.add(
                     new InputDialogPane.ButtonDef<>(
                             ButtonType.OK,
                             (btn, r) -> true,
@@ -205,9 +207,9 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
                             FxUtil.ALWAYS_TRUE
                     )
             );
-        } else {
-            return Collections.unmodifiableList(buttons);
         }
+
+        return buttons;
     }
 
     /**

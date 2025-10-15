@@ -262,7 +262,7 @@ class DialogsTest extends FxTestBase {
     void testInputGrid() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an input grid builder
-            InputGridBuilder builder = Dialogs.inputGrid(null);
+            GridBuilder builder = Dialogs.inputGrid(null);
 
             // Verify builder was created
             assertNotNull(builder);

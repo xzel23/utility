@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls.abstract_builders;
 
+import com.dua3.utility.fx.controls.InputDialogPane;
 import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -91,6 +92,8 @@ public abstract class DialogBuilder<D extends @NonNull Dialog<R>, B extends @Non
 
         // set title
         applyIfNotNull(titleSetter, dlg, title);
+
+        dlg.getDialogPane().getButtonTypes().setAll(buttons().stream().map(InputDialogPane.ButtonDef::type).toList());
 
         return dlg;
     }

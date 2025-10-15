@@ -133,22 +133,22 @@ public class FxDialogSample extends Application {
                 Dialogs.input(primaryStage, MessageFormatter.standard())
                         .title("Input")
                         .header("This is an input dialog.")
-                        .description("This is some text without label.")
-                        .text("static text", "This is some labeled text.")
-                        .constant("readonly", "readonly", "This is the value of the readonly field.")
-                        .constant("readonly2", "readonly date", LocalDate::now, LocalDate.class)
-                        .string("txt", "enter text", () -> "dflt")
-                        .hidden("secret1", "A")
-                        .hidden("secret2", "B")
-                        .integer("integer", "enter number", () -> 0L)
-                        .integer("integer from 4 to 7", "enter number [4-7]", () -> null,
+                        .text("This is some text without label.")
+                        .labeledText("static text", "This is some labeled text.")
+                        .inputConstant("readonly", "readonly", "This is the value of the readonly field.")
+                        .inputConstant("readonly2", "readonly date", LocalDate::now, LocalDate.class)
+                        .inputString("txt", "enter text", () -> "dflt")
+                        .inputHidden("secret1", "A")
+                        .inputHidden("secret2", "B")
+                        .inputInteger("integer", "enter number", () -> 0L)
+                        .inputInteger("integer from 4 to 7", "enter number [4-7]", () -> null,
                                 i -> i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i + " is not between 4 and 7"))
-                        .decimal("decimal", "decimal", () -> null)
-                        .comboBox("list", "choose one", () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
-                        .checkBox("bool", "Yes or No:", () -> false, "yes")
-                        .chooseFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(new FileChooser.ExtensionFilter("all files", "*.*", "*")))
-                        .chooseFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(new FileChooser.ExtensionFilter("all files", "*")))
-                        .comboBoxEx("listEx",
+                        .inputDecimal("decimal", "decimal", () -> null)
+                        .inputComboBox("list", "choose one", () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
+                        .inputCheckBox("bool", "Yes or No:", () -> false, "yes")
+                        .inputFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(new FileChooser.ExtensionFilter("all files", "*.*", "*")))
+                        .inputFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(new FileChooser.ExtensionFilter("all files", "*")))
+                        .inputComboBoxEx("listEx",
                                 "edit items and choose one",
                                 s -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Edit item").defaultValue("%s", Objects.requireNonNullElse(s, "")).build().showAndWait().orElse(null),
                                 () -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Add item").build().showAndWait().orElse(null),
@@ -188,7 +188,7 @@ public class FxDialogSample extends Application {
                         .page("dbms",
                                 Dialogs.inputPane(MessageFormatter.standard())
                                         .header("Choose your Database from the list below.")
-                                        .radioList("rdbms", "Database", () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
+                                        .inputRadioList("rdbms", "Database", () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
                         )
                         .showAndWait()
                         .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
