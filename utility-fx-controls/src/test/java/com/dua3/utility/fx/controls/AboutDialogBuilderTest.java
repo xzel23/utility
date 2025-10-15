@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.Node;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
@@ -30,7 +31,7 @@ class AboutDialogBuilderTest extends FxTestBase {
     @Test
     void testConstructor() throws Exception {
         runOnFxThreadAndWait(() -> {
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             Dialog<Void> dialog = builder.build();
 
             assertNotNull(dialog);
@@ -45,7 +46,7 @@ class AboutDialogBuilderTest extends FxTestBase {
     void testTitle() throws Exception {
         runOnFxThreadAndWait(() -> {
             String testTitle = "Test Title";
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.title(testTitle);
             Dialog<Void> dialog = builder.build();
 
@@ -61,7 +62,7 @@ class AboutDialogBuilderTest extends FxTestBase {
         // The dialog content is actually a StackPane, not a VBox as assumed
         runOnFxThreadAndWait(() -> {
             String testAppName = "Test Application";
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.applicationName(testAppName);
             Dialog<Void> dialog = builder.build();
 
@@ -85,7 +86,7 @@ class AboutDialogBuilderTest extends FxTestBase {
         // The dialog content is actually a StackPane, not a VBox as assumed
         runOnFxThreadAndWait(() -> {
             String testVersion = "1.0.0";
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.version(testVersion);
             Dialog<Void> dialog = builder.build();
 
@@ -108,7 +109,7 @@ class AboutDialogBuilderTest extends FxTestBase {
     void testCopyright() throws Exception {
         runOnFxThreadAndWait(() -> {
             String testCopyright = "© 2025 Test Company";
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.copyright(testCopyright);
             Dialog<Void> dialog = builder.build();
 
@@ -132,7 +133,7 @@ class AboutDialogBuilderTest extends FxTestBase {
         // The dialog content is actually a StackPane, not a VBox as assumed
         runOnFxThreadAndWait(() -> {
             String testMail = "test@example.com";
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.mail(testMail);
             Dialog<Void> dialog = builder.build();
 
@@ -157,7 +158,7 @@ class AboutDialogBuilderTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             String testMailText = "Contact Us";
             String testMailUri = "mailto:test@example.com";
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.mail(testMailText, testMailUri);
             Dialog<Void> dialog = builder.build();
 
@@ -182,7 +183,7 @@ class AboutDialogBuilderTest extends FxTestBase {
         // The dialog content is actually a StackPane, not a VBox as assumed
         runOnFxThreadAndWait(() -> {
             String testLicense = "Test License";
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.licenseText(testLicense);
             Dialog<Void> dialog = builder.build();
 
@@ -207,8 +208,8 @@ class AboutDialogBuilderTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             String testLicense = "Test License";
             boolean[] detailsClicked = {false};
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
-            builder.license(testLicense, () -> detailsClicked[0] = true);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
+            builder.license(() -> detailsClicked[0] = true, testLicense);
             Dialog<Void> dialog = builder.build();
 
             DialogPane dialogPane = dialog.getDialogPane();
@@ -240,7 +241,7 @@ class AboutDialogBuilderTest extends FxTestBase {
     void testGraphicFromUrl() throws Exception {
         runOnFxThreadAndWait(() -> {
             URL testGraphicUrl = AboutDialogBuilder.class.getResource("about.css");
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.graphic(testGraphicUrl);
             Dialog<Void> dialog = builder.build();
 
@@ -256,7 +257,7 @@ class AboutDialogBuilderTest extends FxTestBase {
     void testGraphicFromNode() throws Exception {
         runOnFxThreadAndWait(() -> {
             Label testGraphic = new Label("Test Graphic");
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.graphic(testGraphic);
             Dialog<Void> dialog = builder.build();
 
@@ -275,7 +276,7 @@ class AboutDialogBuilderTest extends FxTestBase {
     void testExpandableContentFromString() throws Exception {
         runOnFxThreadAndWait(() -> {
             String testContent = "Test Expandable Content";
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.expandableContent(testContent);
             Dialog<Void> dialog = builder.build();
 
@@ -293,7 +294,7 @@ class AboutDialogBuilderTest extends FxTestBase {
     void testExpandableContentFromNode() throws Exception {
         runOnFxThreadAndWait(() -> {
             Label testContent = new Label("Test Expandable Content");
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.expandableContent(testContent);
             Dialog<Void> dialog = builder.build();
 
@@ -312,7 +313,7 @@ class AboutDialogBuilderTest extends FxTestBase {
     void testCss() throws Exception {
         runOnFxThreadAndWait(() -> {
             URL testCss = AboutDialogBuilder.class.getResource("about.css");
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.css(testCss);
             Dialog<Void> dialog = builder.build();
 
@@ -330,7 +331,7 @@ class AboutDialogBuilderTest extends FxTestBase {
         // We'll just test that the method doesn't throw an exception when called
         // but we won't actually wait for user interaction
         runOnFxThreadAndWait(() -> {
-            AboutDialogBuilder builder = new AboutDialogBuilder(null);
+            AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
 
             // Instead of calling showAndWait, we'll just build the dialog
             // to avoid blocking the test

@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.text.MessageFormatter;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.ButtonType;
@@ -47,6 +48,9 @@ import java.util.Collection;
 public class AboutDialogBuilder {
     private static final Logger LOG = LogManager.getLogger(AboutDialogBuilder.class);
 
+    private final @Nullable Window parentWindow;
+    private final MessageFormatter messageFormatter;
+
     private String title = "";
     private String applicationName = "";
     private String copyright = "";
@@ -56,7 +60,6 @@ public class AboutDialogBuilder {
     private String licenseText = "";
     private @Nullable Runnable showLicenseDetails;
 
-    private final @Nullable Window parentWindow;
     private @Nullable URL css;
     private @Nullable Node graphic;
     private @Nullable Node expandableContent;
@@ -66,78 +69,88 @@ public class AboutDialogBuilder {
      *
      * @param parentWindow the window that will be the parent of the dialog, or null if there is no parent window.
      */
-    AboutDialogBuilder(@Nullable Window parentWindow) {
+    AboutDialogBuilder(@Nullable Window parentWindow, MessageFormatter messageFormatter) {
         this.parentWindow = parentWindow;
+        this.messageFormatter = messageFormatter;
+    }
+
+    private String format(String fmt, Object... args) {
+        return messageFormatter.format(fmt, args);
     }
 
     /**
-     * Sets the title for the about dialog.
+     * Sets the title for the AboutDialog.
      *
-     * @param title the title to be set for the about dialog
+     * @param fmt the format string for the title
+     * @param args the arguments referenced by the format specifiers in the format string
      * @return the current instance of AboutDialogBuilder for method chaining
      */
-    public AboutDialogBuilder title(String title) {
-        this.title = title;
+    public AboutDialogBuilder title(String fmt, Object... args) {
+        this.title = format(fmt, args);
         return this;
     }
 
     /**
-     * Sets the license text to be used in the AboutDialog.
+     * Sets the license text for the AboutDialog. This method allows you to provide
+     * formatted license text using a format string and associated arguments.
      *
-     * @param licenseText the license text to set
-     * @return the current instance of AboutDialogBuilder
+     * @param fmt  the format string for the license text
+     * @param args the arguments referenced by the format specifiers in the format string
+     * @return the current instance of AboutDialogBuilder for method chaining
      */
-    public AboutDialogBuilder licenseText(String licenseText) {
-        this.licenseText = licenseText;
+    public AboutDialogBuilder licenseText(String fmt, Object... args) {
+        this.licenseText = format(fmt, args);
         this.showLicenseDetails = null;
         return this;
     }
 
     /**
-     * Sets the license information for the AboutDialog, including the license text
-     * and an optional action to show detailed license information.
+     * Configures the license text and action to show license details for the AboutDialog.
      *
-     * @param licenseText the license text to set for the dialog
-     * @param showLicenseDetails a {@link Runnable} that will be invoked to display additional details
-     *                           about the license when requested, or null if no action is needed
-     * @return the current instance of AboutDialogBuilder for method chaining
+     * @param showLicenseDetails a {@code Runnable} action that will be executed to show detailed license information
+     * @param fmt the format string for the license text
+     * @param args the arguments referenced by the format specifiers in the format string
+     * @return the current instance of {@code AboutDialogBuilder} for method chaining
      */
-    public AboutDialogBuilder license(String licenseText, Runnable showLicenseDetails) {
-        this.licenseText = licenseText;
+    public AboutDialogBuilder license(Runnable showLicenseDetails, String fmt, Object... args) {
+        this.licenseText = format(fmt, args);
         this.showLicenseDetails = showLicenseDetails;
         return this;
     }
 
     /**
-     * Sets the name to be used in the AboutDialog.
+     * Sets the application name for the AboutDialog.
      *
-     * @param applicationName the application name to set
-     * @return the current instance of AboutDialogBuilder
-     */
-    public AboutDialogBuilder applicationName(String applicationName) {
-        this.applicationName = applicationName;
-        return this;
-    }
-
-    /**
-     * Sets the version information for the about dialog.
-     *
-     * @param version the version information to be displayed in the dialog.
-     * @return the current instance of AboutDialogBuilder for method chaining.
-     */
-    public AboutDialogBuilder version(String version) {
-        this.version = version;
-        return this;
-    }
-
-    /**
-     * Sets the copyright information for the About dialog.
-     *
-     * @param text the copyright text to be displayed in the About dialog
+     * @param fmt the format string for the application name
+     * @param args the arguments referenced by the format specifiers in the format string
      * @return the current instance of AboutDialogBuilder for method chaining
      */
-    public AboutDialogBuilder copyright(String text) {
-        this.copyright = text;
+    public AboutDialogBuilder applicationName(String fmt, Object... args) {
+        this.applicationName = format(fmt, args);
+        return this;
+    }
+
+    /**
+     * Sets the version information for the AboutDialog.
+     *
+     * @param fmt  the format string for the version information
+     * @param args the arguments referenced by the format specifiers in the format string
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder version(String fmt, Object... args) {
+        this.version = format(fmt, args);
+        return this;
+    }
+
+    /**
+     * Sets the copyright information for the AboutDialog.
+     *
+     * @param fmt  the format string for the copyright text
+     * @param args the arguments referenced by the format specifiers in the format string
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder copyright(String fmt, Object... args) {
+        this.copyright = format(fmt, args);
         return this;
     }
 
@@ -154,14 +167,16 @@ public class AboutDialogBuilder {
     }
 
     /**
-     * Sets the text and mailto URI for the mail link in the About Dialog.
+     * Sets the email address and corresponding email content for the AboutDialog.
+     * The email content is generated using the specified format string and arguments.
      *
-     * @param text the text to be displayed for the mail link
-     * @param mailtoUri the mailto URI to be assigned to the mail link
+     * @param mailtoUri the email address to be displayed and used in the mailto link
+     * @param fmt the format string for the email content
+     * @param args the arguments referenced by the format specifiers in the format string
      * @return the current instance of AboutDialogBuilder for method chaining
      */
-    public AboutDialogBuilder mail(String text, String mailtoUri) {
-        this.mailText = text;
+    public AboutDialogBuilder mail(String mailtoUri, String fmt, Object... args) {
+        this.mailText = format(fmt, args);
         this.mailAddress = mailtoUri;
         return this;
     }
@@ -225,13 +240,16 @@ public class AboutDialogBuilder {
     }
 
     /**
-     * Sets expandable content for the AboutDialog.
+     * Sets the expandable content for the AboutDialog using a formatted string and arguments.
+     * If the resulting text is blank, the expandable content will be set to null.
      *
-     * @param text the text to set as expandable content; if null or blank, the expandable content is set to null
-     * @return the AboutDialogBuilder instance for method chaining
+     * @param fmt  the format string for the expandable content
+     * @param args the arguments referenced by the format specifiers in the format string
+     * @return the current instance of AboutDialogBuilder for method chaining
      */
-    public AboutDialogBuilder expandableContent(@Nullable String text) {
-        if (text == null || text.isBlank()) {
+    public AboutDialogBuilder expandableContent(String fmt, Object... args) {
+        String text = format(fmt, args);
+        if (text.isBlank()) {
             expandableContent = null;
             return this;
         }
@@ -325,7 +343,16 @@ public class AboutDialogBuilder {
         return dlg;
     }
 
-    private static void addLabel(Collection<Node> nodes, String id, String text) {
+    /**
+     * Adds a labeled node to the specified collection if the formatted text is not empty.
+     *
+     * @param nodes the collection of nodes to which the new label will be added
+     * @param id the identifier to assign to the label
+     * @param fmt the format string to generate the label's text
+     * @param args the arguments referenced by the format specifiers in the format string
+     */
+    private void addLabel(Collection<Node> nodes, String id, String fmt, Object... args) {
+        String text = format(fmt, args);
         if (!text.isEmpty()) {
             Label label = new Label(text);
             label.setId(id);
@@ -333,6 +360,13 @@ public class AboutDialogBuilder {
         }
     }
 
+    /**
+     * Opens the default mail application with the specified email address.
+     * If the desktop environment does not support the MAIL action, the method does nothing.
+     * Logs informational messages and warnings as appropriate when attempting to open the mail application.
+     *
+     * @param address the email address to open in the default mail application. This must be properly formatted as a URI.
+     */
     private static void sendMailTo(String address) {
         Desktop desktop = Desktop.getDesktop();
         if (desktop.isSupported(Desktop.Action.MAIL)) {

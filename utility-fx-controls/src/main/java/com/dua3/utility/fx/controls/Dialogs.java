@@ -113,7 +113,19 @@ public final class Dialogs {
      * @return new {@link AboutDialogBuilder} instance
      */
     public static AboutDialogBuilder about(@Nullable Window parentWindow) {
-        return new AboutDialogBuilder(parentWindow);
+        return new AboutDialogBuilder(parentWindow, MessageFormatter.standard());
+    }
+
+    /**
+     * Creates an instance of AboutDialogBuilder with the specified parent window
+     * and message formatter. This method is used to initialize the About dialog.
+     *
+     * @param parentWindow the parent window for the About dialog, or null if no parent window is specified
+     * @param messageFormatter the formatter to handle the formatting of messages displayed in the About dialog
+     * @return a new instance of AboutDialogBuilder configured with the provided parent window and message formatter
+     */
+    public static AboutDialogBuilder about(@Nullable Window parentWindow, MessageFormatter messageFormatter) {
+        return new AboutDialogBuilder(parentWindow, messageFormatter);
     }
 
     /**
