@@ -76,73 +76,87 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Start the definition of a new AboutDialog.</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#applicationName(java.lang.String)" class="member-name-link">applicationName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;applicationName)</code></div>
+<div class="col-first odd-row-color"><code>static <a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../Dialogs.html#about(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">about</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
+ <a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;messageFormatter)</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Sets the name to be used in the AboutDialog.</div>
+<div class="block">Creates an instance of AboutDialogBuilder with the specified parent window
+ and message formatter.</div>
 </div>
 <div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#copyright(java.lang.String)" class="member-name-link">copyright</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#applicationName(java.lang.String,java.lang.Object...)" class="member-name-link">applicationName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Sets the copyright information for the About dialog.</div>
+<div class="block">Sets the application name for the AboutDialog.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#css(java.net.URL)" class="member-name-link">css</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URL.html" title="class or interface in java.net" class="external-link">URL</a>&nbsp;css)</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#copyright(java.lang.String,java.lang.Object...)" class="member-name-link">copyright</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last odd-row-color">
+<div class="block">Sets the copyright information for the AboutDialog.</div>
+</div>
+<div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#css(java.net.URL)" class="member-name-link">css</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URL.html" title="class or interface in java.net" class="external-link">URL</a>&nbsp;css)</code></div>
+<div class="col-last even-row-color">
 <div class="block">Sets the CSS file to be used for styling the dialog.</div>
 </div>
-<div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#expandableContent(java.lang.String)" class="member-name-link">expandableContent</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
-<div class="col-last even-row-color">
-<div class="block">Sets expandable content for the AboutDialog.</div>
-</div>
 <div class="col-first odd-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#expandableContent(javafx.scene.Node)" class="member-name-link">expandableContent</a><wbr>(javafx.scene.Node&nbsp;c)</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#expandableContent(java.lang.String,java.lang.Object...)" class="member-name-link">expandableContent</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last odd-row-color">
+<div class="block">Sets the expandable content for the AboutDialog using a formatted string and arguments.</div>
+</div>
+<div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#expandableContent(javafx.scene.Node)" class="member-name-link">expandableContent</a><wbr>(javafx.scene.Node&nbsp;c)</code></div>
+<div class="col-last even-row-color">
 <div class="block">Sets the expandable content for the AboutDialog.</div>
 </div>
-<div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#graphic(java.net.URL)" class="member-name-link">graphic</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URL.html" title="class or interface in java.net" class="external-link">URL</a>&nbsp;url)</code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#graphic(java.net.URL)" class="member-name-link">graphic</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URL.html" title="class or interface in java.net" class="external-link">URL</a>&nbsp;url)</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Sets the graphic for the about dialog using a URL pointing to the image.</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#graphic(javafx.scene.Node)" class="member-name-link">graphic</a><wbr>(javafx.scene.Node&nbsp;graphic)</code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#graphic(javafx.scene.Node)" class="member-name-link">graphic</a><wbr>(javafx.scene.Node&nbsp;graphic)</code></div>
+<div class="col-last even-row-color">
 <div class="block">Sets the graphic node for the About dialog.</div>
 </div>
+<div class="col-first odd-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#license(java.lang.Runnable,java.lang.String,java.lang.Object...)" class="member-name-link">license</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;showLicenseDetails,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Configures the license text and action to show license details for the AboutDialog.</div>
+</div>
 <div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#license(java.lang.String,java.lang.Runnable)" class="member-name-link">license</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;licenseText,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;showLicenseDetails)</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#licenseText(java.lang.String,java.lang.Object...)" class="member-name-link">licenseText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Sets the license information for the AboutDialog, including the license text
- and an optional action to show detailed license information.</div>
+<div class="block">Sets the license text for the AboutDialog.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#licenseText(java.lang.String)" class="member-name-link">licenseText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;licenseText)</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#mail(java.lang.String)" class="member-name-link">mail</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;address)</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Sets the license text to be used in the AboutDialog.</div>
-</div>
-<div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#mail(java.lang.String)" class="member-name-link">mail</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;address)</code></div>
-<div class="col-last even-row-color">
 <div class="block">Sets the email address for the About dialog.</div>
 </div>
+<div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#mail(java.lang.String,java.lang.String,java.lang.Object...)" class="member-name-link">mail</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mailtoUri,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Sets the email address and corresponding email content for the AboutDialog.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#mail(java.lang.String,java.lang.String)" class="member-name-link">mail</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mailtoUri)</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#title(java.lang.String,java.lang.Object...)" class="member-name-link">title</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Sets the text and mailto URI for the mail link in the About Dialog.</div>
+<div class="block">Sets the title for the AboutDialog.</div>
 </div>
 <div class="col-first even-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#title(java.lang.String)" class="member-name-link">title</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#version(java.lang.String,java.lang.Object...)" class="member-name-link">version</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Sets the title for the about dialog.</div>
-</div>
-<div class="col-first odd-row-color"><code><a href="../AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">AboutDialogBuilder.</span><code><a href="../AboutDialogBuilder.html#version(java.lang.String)" class="member-name-link">version</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;version)</code></div>
-<div class="col-last odd-row-color">
-<div class="block">Sets the version information for the about dialog.</div>
+<div class="block">Sets the version information for the AboutDialog.</div>
 </div>
 </div>
 </section>
