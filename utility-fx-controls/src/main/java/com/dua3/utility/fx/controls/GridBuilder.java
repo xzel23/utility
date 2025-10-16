@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -166,10 +167,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control, boolean hidden) {
         // check for duplicate IDs
-        if (id != null) {
-            if (!ids.add(id)) {
-                throw new IllegalArgumentException(String.format(INPUT_WITH_ID_ALREADY_DEFINED, id));
-            }
+        if (id != null && !ids.add(id)) {
+            throw new IllegalArgumentException(String.format(INPUT_WITH_ID_ALREADY_DEFINED, id));
         }
 
         // add
@@ -240,10 +239,10 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public <T> GridBuilder inputConstant(String id, String label, Supplier<@Nullable T> value, Class<T> cls) {
-        Property<T> property = new SimpleObjectProperty<>(value.get());
+        Property<@Nullable T> property = new SimpleObjectProperty<>(value.get());
         TextField tf = new TextField();
         tf.setDisable(true);
-        tf.textProperty().bind(property.map(String::valueOf));
+        tf.textProperty().bind(property.map(v -> Objects.toString(v, "")));
         InputControl<T> ic = new SimpleInputControl<>(tf, property, value, v -> Optional.empty());
         return addInput(id, label, cls, value, ic, false);
     }
@@ -258,7 +257,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public <T> GridBuilder inputHidden(String id, Supplier<@Nullable T> value, Class<T> cls) {
-        Property<T> property = new SimpleObjectProperty<>(value.get());
+        Property<@Nullable T> property = new SimpleObjectProperty<>(value.get());
         InputControl<T> ic = new SimpleInputControl<>(new Label(), property, value, v -> Optional.empty());
         return addInput(id, "", cls, value, ic, true);
     }
