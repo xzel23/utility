@@ -105,22 +105,21 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public static enum </span><span class="element-name type-name-label">MessageFormatter.FormatStyle</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="MessageFormatter.FormatStyle.html" title="enum class in com.dua3.utility.text">MessageFormatter.FormatStyle</a>&gt;</span></div>
 <div class="block">Defines the style of formatting to be used within the <code>MessageFormatter</code>.
-
+ <p>
  Each enum constant represents a specific formatting style that determines the
  approach for formatting messages or replacing placeholders in a provided text input.
-
+ <p>
  The available format styles are:
-
- - <code>STRING_FORMAT</code>: Utilizes <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.util.Locale,java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(Locale, String, Object...)</code></a>
-   for standard Java-style formatting with locale support.
-
- - <code>MESSAGE_FORMAT</code>: Applies <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/MessageFormat.html" title="class or interface in java.text" class="external-link"><code>MessageFormat</code></a> to perform a structured
-   and localized message formatting process where placeholders are substituted with
-   arguments.
-
- - <code>I18N</code>: Uses a specific <code>I18N</code> instance for internationalized and
-   resource-based message formatting, allowing for localization and context-aware
-   text transformations.</div>
+ <ul>
+ <li> <code>STRING_FORMAT</code>: Utilizes <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.util.Locale,java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(Locale, String, Object...)</code></a>
+      for standard Java-style formatting with locale support.
+ <li> <code>MESSAGE_FORMAT</code>: Applies <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/MessageFormat.html" title="class or interface in java.text" class="external-link"><code>MessageFormat</code></a> to perform a structured
+      and localized message formatting process where placeholders are substituted with
+      arguments.
+ <li> <code>I18N</code>: Uses a specific <code>I18N</code> instance for internationalized and
+      resource-based message formatting, allowing for localization and context-aware
+      text transformations.
+ </ul></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -214,7 +213,7 @@ the order they are declared.</div>
 <h3>MESSAGE_FORMAT</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="MessageFormatter.FormatStyle.html" title="enum class in com.dua3.utility.text">MessageFormatter.FormatStyle</a></span>&nbsp;<span class="element-name">MESSAGE_FORMAT</span></div>
 <div class="block">Specifies a formatting style to be applied for processing messages.
-
+ <p>
  Represents the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/MessageFormat.html" title="class or interface in java.text" class="external-link"><code>MessageFormat</code></a> style of formatting, which is
  used for structured and locale-sensitive message formatting. It defines a way
  to substitute placeholders in a text input with provided arguments, allowing
@@ -228,7 +227,7 @@ the order they are declared.</div>
 <div class="block">A constant representing the usage of a specific internationalization (I18N) instance
  for formatting messages. This format style supports localization and context-aware
  message handling by leveraging resource-based translations or transformations.
-
+ <p>
  Typically chosen when messages need to be dynamically adapted according to locale
  or cultural formatting requirements.</div>
 </section>

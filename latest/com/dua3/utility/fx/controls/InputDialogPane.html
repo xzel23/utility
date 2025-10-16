@@ -134,7 +134,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <div class="col-first even-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
 <div class="col-second even-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Get valid state property.</div>
+<div class="block">Get the valid state property.</div>
 </div>
 </div>
 <div class="inherited-list">
@@ -186,7 +186,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <div class="col-first odd-row-color"><code>protected final javafx.beans.property.BooleanProperty</code></div>
 <div class="col-second odd-row-color"><code><a href="#valid" class="member-name-link">valid</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Represents a boolean property that indicates the validity state of the input in the dialog pane.</div>
+<div class="block">Property holding the valid state.</div>
 </div>
 </div>
 <div class="inherited-list">
@@ -246,7 +246,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Get valid state property.</div>
+<div class="block">Get the valid state property.</div>
 </div>
 </div>
 </div>
@@ -290,7 +290,17 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <section class="detail" id="validProperty">
 <h3>valid</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">validProperty</span></div>
-<div class="block">Get valid state property.</div>
+<div class="block">Get the valid state property.
+ <p>
+ This boolean property indicates the validity state of the input in the dialog pane.
+ It is used to dynamically track and manage whether the input provided by the user
+ meets certain predefined validation criteria.
+ <p>
+ The default value for this property is <code>false</code>, meaning the input is considered invalid
+ until explicitly validated or updated by the dialog's logic.
+ <p>+
+ This property is bound to the validation mechanisms within the dialog pane,
+ allowing it to automatically update based on user interactions or changes in the input fields.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -313,18 +323,15 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <section class="detail" id="valid">
 <h3>valid</h3>
 <div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">javafx.beans.property.BooleanProperty</span>&nbsp;<span class="element-name">valid</span></div>
-<div class="block">Represents a boolean property that indicates the validity state of the input in the dialog pane.
- This property is used to dynamically track and manage whether the input provided by the user
- meets certain predefined validation criteria.
- <p>
- The default value for this property is <code>false</code>, meaning the input is considered invalid
- until explicitly validated or updated by the dialog's logic.
- <p>+
- This property is typically bound to validation mechanisms within the dialog pane,
- allowing it to automatically update based on user interactions or changes in the input fields.
- <p>
- It is marked as <code>protected final</code>, indicating it is immutable after initialization
- and can only be accessed or modified within the class hierarchy.</div>
+<div class="block">Property holding the valid state.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#validProperty()"><code>validProperty()</code></a></li>
+</ul>
+</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -382,10 +389,20 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <section class="detail" id="validProperty()">
 <h3>validProperty</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">validProperty</span>()</div>
-<div class="block">Get valid state property.</div>
+<div class="block">Get the valid state property.
+ <p>
+ This boolean property indicates the validity state of the input in the dialog pane.
+ It is used to dynamically track and manage whether the input provided by the user
+ meets certain predefined validation criteria.
+ <p>
+ The default value for this property is <code>false</code>, meaning the input is considered invalid
+ until explicitly validated or updated by the dialog's logic.
+ <p>+
+ This property is bound to the validation mechanisms within the dialog pane,
+ allowing it to automatically update based on user interactions or changes in the input fields.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the valid state property of the input</dd>
+<dd>the valid property</dd>
 </dl>
 </section>
 </li>

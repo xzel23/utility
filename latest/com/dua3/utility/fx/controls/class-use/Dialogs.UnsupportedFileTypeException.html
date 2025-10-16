@@ -71,12 +71,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static &lt;T&gt;&nbsp;boolean</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../Dialogs.html#saveToFile(javafx.stage.Stage,T,com.dua3.utility.io.FileType,java.nio.file.Path)" class="member-name-link">saveToFile</a><wbr>(javafx.stage.Stage&nbsp;stage,
+<div class="col-first even-row-color"><code>static &lt;T&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../Dialogs.html#openFile(javafx.stage.Stage,java.lang.Class,com.dua3.utility.io.FileType)" class="member-name-link">openFile</a><wbr>(javafx.stage.Stage&nbsp;stage,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
+ @Nullable <a href="../../../io/FileType.html" title="class in com.dua3.utility.io">FileType</a>&lt;? extends T&gt;&nbsp;defaultFileType)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Opens a file selection dialog for the user to choose a file, with support for filtering by file types.</div>
+</div>
+<div class="col-first odd-row-color"><code>static &lt;T&gt;&nbsp;boolean</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../Dialogs.html#saveToFile(javafx.stage.Stage,T,com.dua3.utility.io.FileType,java.nio.file.Path)" class="member-name-link">saveToFile</a><wbr>(javafx.stage.Stage&nbsp;stage,
  T&nbsp;object,
  @Nullable <a href="../../../io/FileType.html" title="class in com.dua3.utility.io">FileType</a>&lt;? extends T&gt;&nbsp;defaultFileType,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;defaultPath)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last odd-row-color">
 <div class="block">Opens a file save dialog to allow the user to save the given object to a file.</div>
 </div>
 </div>
