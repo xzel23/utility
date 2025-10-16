@@ -184,7 +184,7 @@ class AboutDialogBuilderTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             String testLicense = "Test License";
             AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
-            builder.licenseText(testLicense);
+            builder.license(testLicense);
             Dialog<Void> dialog = builder.build();
 
             DialogPane dialogPane = dialog.getDialogPane();
@@ -209,7 +209,8 @@ class AboutDialogBuilderTest extends FxTestBase {
             String testLicense = "Test License";
             boolean[] detailsClicked = {false};
             AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
-            builder.license(() -> detailsClicked[0] = true, testLicense);
+            builder.license(testLicense);
+            builder.onShowLicenseDetails(() -> detailsClicked[0] = true);
             Dialog<Void> dialog = builder.build();
 
             DialogPane dialogPane = dialog.getDialogPane();

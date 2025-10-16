@@ -23,7 +23,6 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import org.jspecify.annotations.Nullable;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -32,13 +31,13 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
-
 
 /**
  * Builder for Alert Dialogs.
@@ -91,29 +90,25 @@ public class AboutDialogBuilder {
     }
 
     /**
-     * Sets the license text for the AboutDialog. This method allows you to provide
-     * formatted license text using a format string and associated arguments.
-     *
-     * @param fmt  the format string for the license text
-     * @param args the arguments referenced by the format specifiers in the format string
-     * @return the current instance of AboutDialogBuilder for method chaining
-     */
-    public AboutDialogBuilder licenseText(String fmt, Object... args) {
-        this.licenseText = format(fmt, args);
-        this.showLicenseDetails = null;
-        return this;
-    }
-
-    /**
      * Configures the license text and action to show license details for the AboutDialog.
      *
-     * @param showLicenseDetails a {@code Runnable} action that will be executed to show detailed license information
      * @param fmt the format string for the license text
      * @param args the arguments referenced by the format specifiers in the format string
      * @return the current instance of {@code AboutDialogBuilder} for method chaining
      */
-    public AboutDialogBuilder license(Runnable showLicenseDetails, String fmt, Object... args) {
+    public AboutDialogBuilder license(String fmt, Object... args) {
         this.licenseText = format(fmt, args);
+        return this;
+    }
+
+    /**
+     * Sets the action to show license details for the AboutDialog.
+     *
+     * @param showLicenseDetails a {@code Runnable} that defines the action to
+     *                           be executed for displaying the license details
+     * @return the current instance of {@code AboutDialogBuilder} for method chaining
+     */
+    public AboutDialogBuilder onShowLicenseDetails(Runnable showLicenseDetails) {
         this.showLicenseDetails = showLicenseDetails;
         return this;
     }

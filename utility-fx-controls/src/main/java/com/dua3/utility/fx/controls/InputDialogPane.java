@@ -41,18 +41,9 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
     }
 
     /**
-     * Represents a boolean property that indicates the validity state of the input in the dialog pane.
-     * This property is used to dynamically track and manage whether the input provided by the user
-     * meets certain predefined validation criteria.
-     * <p>
-     * The default value for this property is {@code false}, meaning the input is considered invalid
-     * until explicitly validated or updated by the dialog's logic.
-     * <p>+
-     * This property is typically bound to validation mechanisms within the dialog pane,
-     * allowing it to automatically update based on user interactions or changes in the input fields.
-     * <p>
-     * It is marked as {@code protected final}, indicating it is immutable after initialization
-     * and can only be accessed or modified within the class hierarchy.
+     * Property holding the valid state.
+     *
+     * @see #validProperty()
      */
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
@@ -142,9 +133,19 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
     public abstract void init();
 
     /**
-     * Get valid state property.
+     * Get the valid state property.
+     * <p>
+     * This boolean property indicates the validity state of the input in the dialog pane.
+     * It is used to dynamically track and manage whether the input provided by the user
+     * meets certain predefined validation criteria.
+     * <p>
+     * The default value for this property is {@code false}, meaning the input is considered invalid
+     * until explicitly validated or updated by the dialog's logic.
+     * <p>+
+     * This property is bound to the validation mechanisms within the dialog pane,
+     * allowing it to automatically update based on user interactions or changes in the input fields.
      *
-     * @return the valid state property of the input
+     * @return the valid property
      */
     public ReadOnlyBooleanProperty validProperty() {
         return valid;

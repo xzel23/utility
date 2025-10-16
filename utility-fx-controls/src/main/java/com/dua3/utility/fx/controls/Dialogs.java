@@ -330,7 +330,7 @@ public final class Dialogs {
      * @throws IOException                  If an I/O error occurs while reading the selected file.
      * @throws UnsupportedFileTypeException If the type of the selected file cannot be determined or is unsupported.
      */
-    public static <T> Optional<T> openFile(Stage stage, Class<T> type, @Nullable FileType<? extends T> defaultFileType) throws IOException {
+    public static <T> Optional<T> openFile(Stage stage, Class<T> type, @Nullable FileType<? extends T> defaultFileType) throws IOException, UnsupportedFileTypeException {
         FileChooser fileChooser = new FileChooser();
 
         var types = FileType.allReadersForType(type).stream()
