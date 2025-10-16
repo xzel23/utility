@@ -73,7 +73,7 @@ public final class FxLauncher {
      */
     public static final int RC_ERROR = 1;
 
-    private static final @Nullable Method LOGUTIL_INITIALISER ;
+    private static final @Nullable Method LOGUTIL_INITIALISER;
 
     static {
         Method initialiser = null;
@@ -450,7 +450,7 @@ public final class FxLauncher {
      *         or an empty {@link Optional} if the log pane is disabled.
      */
     public static Optional<FxLogPane> getLogPane() {
-        return PlatformGuard.run( () -> {
+        return PlatformGuard.run(() -> {
             if (!debug) {
                 return Optional.empty();
             }
