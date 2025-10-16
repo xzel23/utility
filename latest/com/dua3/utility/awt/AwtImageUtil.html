@@ -93,12 +93,12 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a>&lt;<a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a>&gt;</code></dd>
+<dd><code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">AwtImageUtil</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a>&lt;<a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a>&gt;</span></div>
+implements <a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a></span></div>
 <div class="block">An implementation of the ImageUtil interface for working with awt images.</div>
 </section>
 <section class="summary">
@@ -117,12 +117,12 @@ implements <a href="../data/ImageUtil.html" title="interface in com.dua3.utility
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../data/Image.html" title="interface in com.dua3.utility.data">Image</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#convert(com.dua3.utility.awt.AwtImage)" class="member-name-link">convert</a><wbr>(<a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a>&nbsp;img)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Convert image from underlying implementation to <a href="../data/Image.html" title="interface in com.dua3.utility.data"><code>Image</code></a> instance.</div>
+<div class="block">Converts an AwtImage to a generic Image.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#convert(com.dua3.utility.data.Image)" class="member-name-link">convert</a><wbr>(<a href="../data/Image.html" title="interface in com.dua3.utility.data">Image</a>&nbsp;img)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Convert <a href="../data/Image.html" title="interface in com.dua3.utility.data"><code>Image</code></a> instance to underlying implementation.</div>
+<div class="block">Converts an instance of <code>com.dua3.utility.data.Image</code> into an <code>AwtImage</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#convert(java.awt.image.BufferedImage)" class="member-name-link">convert</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/image/BufferedImage.html" title="class or interface in java.awt.image" class="external-link">BufferedImage</a>&nbsp;img)</code></div>
@@ -192,7 +192,7 @@ implements <a href="../data/ImageUtil.html" title="interface in com.dua3.utility
 <div class="block">Load image.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../data/ImageUtil.html#load(java.io.InputStream)">load</a></code>&nbsp;in interface&nbsp;<code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a>&lt;<a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a>&gt;</code></dd>
+<dd><code><a href="../data/ImageUtil.html#load(java.io.InputStream)">load</a></code>&nbsp;in interface&nbsp;<code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>in</code> - the stream to load the image from</dd>
 <dt>Returns:</dt>
@@ -212,7 +212,7 @@ implements <a href="../data/ImageUtil.html" title="interface in com.dua3.utility
 <div class="block">Create image from pixel data.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../data/ImageUtil.html#create(int,int,int%5B%5D)">create</a></code>&nbsp;in interface&nbsp;<code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a>&lt;<a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a>&gt;</code></dd>
+<dd><code><a href="../data/ImageUtil.html#create(int,int,int%5B%5D)">create</a></code>&nbsp;in interface&nbsp;<code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>w</code> - the image width</dd>
 <dd><code>h</code> - the image height</dd>
@@ -231,7 +231,7 @@ implements <a href="../data/ImageUtil.html" title="interface in com.dua3.utility
 <div class="block">Create an empty <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/image/BufferedImage.html" title="class or interface in java.awt.image" class="external-link"><code>BufferedImage</code></a>.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../data/ImageUtil.html#createBufferedImage(int,int)">createBufferedImage</a></code>&nbsp;in interface&nbsp;<code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a>&lt;<a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a>&gt;</code></dd>
+<dd><code><a href="../data/ImageUtil.html#createBufferedImage(int,int)">createBufferedImage</a></code>&nbsp;in interface&nbsp;<code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>w</code> - the image width</dd>
 <dd><code>h</code> - the image height</dd>
@@ -244,15 +244,14 @@ implements <a href="../data/ImageUtil.html" title="interface in com.dua3.utility
 <section class="detail" id="convert(com.dua3.utility.data.Image)">
 <h3>convert</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a></span>&nbsp;<span class="element-name">convert</span><wbr><span class="parameters">(<a href="../data/Image.html" title="interface in com.dua3.utility.data">Image</a>&nbsp;img)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../data/ImageUtil.html#convert(com.dua3.utility.data.Image)">ImageUtil</a></code></span></div>
-<div class="block">Convert <a href="../data/Image.html" title="interface in com.dua3.utility.data"><code>Image</code></a> instance to underlying implementation.</div>
+<div class="block">Converts an instance of <code>com.dua3.utility.data.Image</code> into an <code>AwtImage</code>.
+ If the provided image is already an instance of <code>AwtImage</code>, it is returned directly.
+ Otherwise, a new <code>AwtImage</code> is created based on the dimensions and pixel data of the input image.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="../data/ImageUtil.html#convert(com.dua3.utility.data.Image)">convert</a></code>&nbsp;in interface&nbsp;<code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a>&lt;<a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>img</code> - the image</dd>
+<dd><code>img</code> - the <code>Image</code> to be converted</dd>
 <dt>Returns:</dt>
-<dd>implementation dependent image class</dd>
+<dd>the converted <code>AwtImage</code> instance</dd>
 </dl>
 </section>
 </li>
@@ -260,15 +259,13 @@ implements <a href="../data/ImageUtil.html" title="interface in com.dua3.utility
 <section class="detail" id="convert(com.dua3.utility.awt.AwtImage)">
 <h3>convert</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../data/Image.html" title="interface in com.dua3.utility.data">Image</a></span>&nbsp;<span class="element-name">convert</span><wbr><span class="parameters">(<a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a>&nbsp;img)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../data/ImageUtil.html#convert(I)">ImageUtil</a></code></span></div>
-<div class="block">Convert image from underlying implementation to <a href="../data/Image.html" title="interface in com.dua3.utility.data"><code>Image</code></a> instance.</div>
+<div class="block">Converts an AwtImage to a generic Image.
+ This method accepts an instance of AwtImage and directly returns it as a generic Image.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="../data/ImageUtil.html#convert(I)">convert</a></code>&nbsp;in interface&nbsp;<code><a href="../data/ImageUtil.html" title="interface in com.dua3.utility.data">ImageUtil</a>&lt;<a href="AwtImage.html" title="class in com.dua3.utility.awt">AwtImage</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>img</code> - the implementation dependent image</dd>
+<dd><code>img</code> - the AwtImage to be converted</dd>
 <dt>Returns:</dt>
-<dd>image</dd>
+<dd>the provided AwtImage cast as a generic Image</dd>
 </dl>
 </section>
 </li>
