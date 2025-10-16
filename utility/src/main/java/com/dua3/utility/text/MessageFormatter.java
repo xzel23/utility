@@ -135,6 +135,19 @@ public interface MessageFormatter {
     }
 
     /**
+     * Creates a {@code MessageFormatter} configured with the default {@code I18N} instance,
+     * which allows for internationalized message formatting.
+     * <p>
+     * This implementation will look up texts using the supplied {@link I18N} instance before
+     * formatting.
+     *
+     * @return a {@code MessageFormatter} configured to use the provided {@code I18N} instance
+     */
+    static MessageFormatter i18n() {
+        return i18n(I18N.getInstance());
+    }
+
+    /**
      * The {@code MessageFormatterStringFormat} class is an implementation of the {@code MessageFormatter}
      * interface that uses the {@link String#format(Locale, String, Object...)} method for formatting
      * messages. It allows for localized formatting based on a specified {@link Locale}.
@@ -143,6 +156,8 @@ public interface MessageFormatter {
      * in the format string with the corresponding values of the arguments.
      * <p>
      * This class is immutable and thread-safe.
+     *
+     * @param locale the {@link java.util.Locale} to use
      */
     record MessageFormatterStringFormat(Locale locale) implements MessageFormatter {
         private static final MessageFormatterStringFormat DEFAULT_INSTANCE = new MessageFormatterStringFormat(Locale.getDefault());
@@ -198,6 +213,8 @@ public interface MessageFormatter {
      * to the {@code I18N} implementation.
      * <p>
      * This class is immutable and thread-safe.
+     *
+     * @param i18n the {@link I18N} instance to use
      */
     record MessageFormatterI18n(I18N i18n) implements MessageFormatter {
         @Override
