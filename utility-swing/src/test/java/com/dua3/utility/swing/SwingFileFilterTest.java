@@ -59,7 +59,7 @@ class SwingFileFilterTest {
 
     /**
      * Test the getFilters method.
-     *
+     * <p>
      * Note: This test is modified to use a mock FileType since there might not be any
      * registered FileTypes for String.class with OpenMode.READ.
      */

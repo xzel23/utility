@@ -203,9 +203,7 @@ class CryptUtilTest {
             byte[] testData = "test data".getBytes(StandardCharsets.UTF_8);
 
             // Test that all encryption methods throw InvalidKeyException
-            assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptAsymmetric(publicKey, testData, InputBufferHandling.CLEAR_AFTER_USE);
-            });
+            assertThrows(InvalidKeyException.class, () -> CryptUtil.encryptAsymmetric(publicKey, testData, InputBufferHandling.CLEAR_AFTER_USE));
         }
     }
 
@@ -240,9 +238,7 @@ class CryptUtilTest {
         Arrays.fill(oversizedData, (byte) 'A');
 
         // This should throw an exception
-        assertThrows(GeneralSecurityException.class, () -> {
-            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedData, InputBufferHandling.PRESERVE);
-        });
+        assertThrows(GeneralSecurityException.class, () -> CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedData, InputBufferHandling.PRESERVE));
     }
 
     @Test
@@ -277,9 +273,7 @@ class CryptUtilTest {
         byte[] oversizedByOne = new byte[191];
         Arrays.fill(oversizedByOne, (byte) 'Y');
 
-        assertThrows(GeneralSecurityException.class, () -> {
-            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedByOne, InputBufferHandling.PRESERVE);
-        });
+        assertThrows(GeneralSecurityException.class, () -> CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedByOne, InputBufferHandling.PRESERVE));
     }
 
     @ParameterizedTest
@@ -327,9 +321,7 @@ class CryptUtilTest {
             byte[] testData = "test data for hybrid encryption".getBytes(StandardCharsets.UTF_8);
 
             // Test that all hybrid encryption methods throw InvalidKeyException
-            InvalidKeyException exception1 = assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptHybrid(publicKey, testData, InputBufferHandling.CLEAR_AFTER_USE);
-            });
+            InvalidKeyException exception1 = assertThrows(InvalidKeyException.class, () -> CryptUtil.encryptHybrid(publicKey, testData, InputBufferHandling.CLEAR_AFTER_USE));
 
             // Verify the exception message doesn't suggest using hybrid encryption
             // (since that's what we're already trying to do)
@@ -362,9 +354,7 @@ class CryptUtilTest {
             assertArrayEquals(shortData, decryptedData);
         } else {
             // Algorithm doesn't support direct encryption - should throw exception
-            assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptAsymmetric(publicKey, shortData, InputBufferHandling.PRESERVE);
-            });
+            assertThrows(InvalidKeyException.class, () -> CryptUtil.encryptAsymmetric(publicKey, shortData, InputBufferHandling.PRESERVE));
         }
     }
 
@@ -466,9 +456,7 @@ class CryptUtilTest {
 
     @Test
     void testEmailHashInvalidPepper() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            CryptUtil.emailHash("test@example.com", "123");
-        });
+        assertThrows(IllegalArgumentException.class, () -> CryptUtil.emailHash("test@example.com", "123"));
     }
 
     @Test
@@ -836,7 +824,7 @@ class CryptUtilTest {
      * 1. Encrypt the input
      * 2. Decrypt the encrypted result
      * 3. Encrypt the decrypted result again
-     *
+     * <p>
      * The test verifies:
      * - The decrypted data matches the original input
      * - The second encryption produces a different result (due to random salt)

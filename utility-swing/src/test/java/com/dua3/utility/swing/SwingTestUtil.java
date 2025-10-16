@@ -71,7 +71,7 @@ public class SwingTestUtil {
      * @param builder     the ArgumentsParserBuilder to use
      * @param name        the option name
      * @param displayName the display name for the option
-     * @param dflt
+     * @param dflt        the default value for the option
      * @return the created SimpleOption
      */
     public static Option<String> createStringOption(ArgumentsParserBuilder builder, String name, String displayName, String dflt) {

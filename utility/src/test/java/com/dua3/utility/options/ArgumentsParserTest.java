@@ -267,7 +267,7 @@ class ArgumentsParserTest {
 
         ArgumentsParser cmd = builder.build();
 
-        assertThrows(OptionException.class, () -> cmd.parse());
+        assertThrows(OptionException.class, cmd::parse);
 
         assertEquals("Eve", cmd.parse("-n", "Eve").getOrThrow(optionName));
         assertThrows(OptionException.class, () -> cmd.parse("--age", "30").getOrThrow(optionAge));

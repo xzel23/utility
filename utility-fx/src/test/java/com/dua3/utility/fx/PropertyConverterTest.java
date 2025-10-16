@@ -200,9 +200,7 @@ class PropertyConverterTest extends FxTestBase {
             stringProperty1.bind(stringProperty2);
 
             // Try to convert the bound property
-            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                PropertyConverter.convert(stringProperty1, converter);
-            }, "Should throw an exception for bound property");
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> PropertyConverter.convert(stringProperty1, converter), "Should throw an exception for bound property");
 
             // Verify the exception message
             assertTrue(exception.getMessage().contains("property must not be bound"), "Exception message should mention that property must not be bound");

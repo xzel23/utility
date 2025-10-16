@@ -91,9 +91,7 @@ class ArgumentsDialogTest {
     @Test
     void testArgumentsPanel() {
         // Create a simple ArgumentsParser with one option
-        ArgumentsParser parser = SwingTestUtil.createParser(builder -> {
-            SwingTestUtil.createStringOption(builder, "--test", "Test Option", "");
-        });
+        ArgumentsParser parser = SwingTestUtil.createParser(builder -> SwingTestUtil.createStringOption(builder, "--test", "Test Option", ""));
 
         // Create the panel - this works in headless mode
         ArgumentsDialog.ArgumentsPanel panel = SwingTestUtil.createArgumentsPanel(
@@ -205,9 +203,7 @@ class ArgumentsDialogTest {
     @Test
     void testDialogOkButton() {
         // Create a simple ArgumentsParser
-        ArgumentsParser parser = SwingTestUtil.createParser(builder -> {
-            SwingTestUtil.createStringOption(builder, "--test", "Test Option", "");
-        });
+        ArgumentsParser parser = SwingTestUtil.createParser(builder -> SwingTestUtil.createStringOption(builder, "--test", "Test Option", ""));
 
         // Create counters to track button clicks
         final int[] okClicks = {0};
@@ -234,9 +230,7 @@ class ArgumentsDialogTest {
     @Test
     void testDialogCancelButton() {
         // Create a simple ArgumentsParser
-        ArgumentsParser parser = SwingTestUtil.createParser(builder -> {
-            SwingTestUtil.createStringOption(builder, "--test", "Test Option", "");
-        });
+        ArgumentsParser parser = SwingTestUtil.createParser(builder -> SwingTestUtil.createStringOption(builder, "--test", "Test Option", ""));
 
         // Create counters to track button clicks
         final int[] okClicks = {0};
@@ -271,9 +265,7 @@ class ArgumentsDialogTest {
         }
 
         // Create a simple ArgumentsParser
-        ArgumentsParser parser = SwingTestUtil.createParser(builder -> {
-            SwingTestUtil.createStringOption(builder, "--test", "Test Option", "");
-        });
+        ArgumentsParser parser = SwingTestUtil.createParser(builder -> SwingTestUtil.createStringOption(builder, "--test", "Test Option", ""));
 
         // Mock the showDialog method to return a predefined result
         Optional<Arguments> result = ArgumentsDialog.showDialog(mockWindow, parser);
@@ -351,9 +343,7 @@ class ArgumentsDialogTest {
         assertTrue(GraphicsEnvironment.isHeadless() || !GraphicsEnvironment.isHeadless(),
                 "Test should work in both headless and non-headless modes");
 
-        ArgumentsParser parser = SwingTestUtil.createParser(builder -> {
-            SwingTestUtil.createStringOption(builder, "--test", "Test Option", "");
-        });
+        ArgumentsParser parser = SwingTestUtil.createParser(builder -> SwingTestUtil.createStringOption(builder, "--test", "Test Option", ""));
 
         // This should not throw any exceptions, even in headless mode
         ArgumentsDialog.ArgumentsPanel panel = SwingTestUtil.createArgumentsPanel(
@@ -371,9 +361,7 @@ class ArgumentsDialogTest {
      */
     @Test
     void testPanelComponentsInHeadlessMode() {
-        ArgumentsParser parser = SwingTestUtil.createParser(builder -> {
-            SwingTestUtil.createStringOption(builder, "--test", "Test Option", "default");
-        });
+        ArgumentsParser parser = SwingTestUtil.createParser(builder -> SwingTestUtil.createStringOption(builder, "--test", "Test Option", "default"));
 
         // Create the panel - this should work in headless mode
         ArgumentsDialog.ArgumentsPanel panel = SwingTestUtil.createArgumentsPanel(

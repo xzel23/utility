@@ -272,7 +272,7 @@ class ImmutableListBackedSortedSetTest {
         assertThrows(UnsupportedOperationException.class, reversedSet::clear);
         assertThrows(UnsupportedOperationException.class, () -> reversedSet.set(0, 10));
         assertThrows(UnsupportedOperationException.class, () -> reversedSet.addFirst(10));
-        assertThrows(UnsupportedOperationException.class, () -> reversedSet.removeFirst());
+        assertThrows(UnsupportedOperationException.class, reversedSet::removeFirst);
     }
 
     @Test

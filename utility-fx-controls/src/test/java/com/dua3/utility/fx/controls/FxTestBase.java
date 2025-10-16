@@ -40,9 +40,7 @@ public abstract class FxTestBase {
         synchronized (lock) {
             if (!platformInitialized) {
                 try {
-                    Platform.startup(() -> {
-                        System.out.println("JavaFX Platform initialized");
-                    });
+                    Platform.startup(() -> System.out.println("JavaFX Platform initialized"));
                     platformInitialized = true;
                 } catch (IllegalStateException e) {
                     // Platform already running, which is fine

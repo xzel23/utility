@@ -704,9 +704,7 @@ class NamedParameterStatementTest {
         String sql = "SELECT * FROM test_table WHERE id = :id";
 
         try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
-            Exception exception = assertThrows(NullPointerException.class, () -> {
-                stmt.setInt("nonExistentParam", 1);
-            });
+            Exception exception = assertThrows(NullPointerException.class, () -> stmt.setInt("nonExistentParam", 1));
 
             String expectedMessage = "unknown parameter 'nonExistentParam'";
             String actualMessage = exception.getMessage();

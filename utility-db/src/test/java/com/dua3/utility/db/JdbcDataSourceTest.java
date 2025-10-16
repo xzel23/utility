@@ -63,9 +63,7 @@ class JdbcDataSourceTest {
         assertSame(dataSource, unwrapped);
 
         // Test unwrap with incompatible interface
-        Exception exception = assertThrows(SQLException.class, () -> {
-            dataSource.unwrap(String.class);
-        });
+        Exception exception = assertThrows(SQLException.class, () -> dataSource.unwrap(String.class));
 
         String expectedMessage = "is not assignable from";
         String actualMessage = exception.getMessage();

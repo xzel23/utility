@@ -133,9 +133,7 @@ class DbUtilTest {
         assertEquals(date, DbUtil.toLocalDate(sqlDate));
 
         // Test with unsupported type
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
-            DbUtil.toLocalDate("2023-01-15");
-        });
+        Exception exception = assertThrows(IllegalStateException.class, () -> DbUtil.toLocalDate("2023-01-15"));
         assertTrue(exception.getMessage().contains("cannot be converted to LocalDate"));
     }
 
@@ -153,9 +151,7 @@ class DbUtilTest {
         assertEquals(dateTime, DbUtil.toLocalDateTime(sqlTimestamp));
 
         // Test with unsupported type
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
-            DbUtil.toLocalDateTime("2023-01-15 14:30:15");
-        });
+        Exception exception = assertThrows(IllegalStateException.class, () -> DbUtil.toLocalDateTime("2023-01-15 14:30:15"));
         assertTrue(exception.getMessage().contains("cannot be converted to LocalDateTime"));
     }
 
@@ -173,9 +169,7 @@ class DbUtilTest {
         assertEquals(time, DbUtil.toLocalTime(sqlTime));
 
         // Test with unsupported type
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
-            DbUtil.toLocalTime("14:30:15");
-        });
+        Exception exception = assertThrows(IllegalStateException.class, () -> DbUtil.toLocalTime("14:30:15"));
         assertTrue(exception.getMessage().contains("cannot be converted to LocalTime"));
     }
 
@@ -326,9 +320,7 @@ class DbUtilTest {
 
             // Attempt to create the DataSource with invalid URL
             // This should throw a SQLException
-            SQLException exception = assertThrows(SQLException.class, () -> {
-                DbUtil.createDataSource(driver, url, user, password);
-            });
+            SQLException exception = assertThrows(SQLException.class, () -> DbUtil.createDataSource(driver, url, user, password));
 
             // Verify the exception message
             assertTrue(exception.getMessage().contains("URL not accepted by driver"), "Exception message should indicate URL is not accepted");
