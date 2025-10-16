@@ -14,7 +14,7 @@ public class FxImageUtilProvider implements ImageUtilProvider {
     public FxImageUtilProvider() { /* nothing to do */ }
 
     @Override
-    public ImageUtil<?> get() {
+    public ImageUtil get() {
         return FxImageUtil.getInstance();
     }
 }

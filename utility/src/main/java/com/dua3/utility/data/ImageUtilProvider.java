@@ -6,4 +6,4 @@ import java.util.function.Supplier;
  * A functional interface for a provider of ImageUtil instances.
  */
 @FunctionalInterface
-public interface ImageUtilProvider extends Supplier<ImageUtil<?>> {}
+public interface ImageUtilProvider extends Supplier<ImageUtil> {}

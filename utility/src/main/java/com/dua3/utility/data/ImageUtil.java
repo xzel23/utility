@@ -13,19 +13,17 @@ import java.nio.file.Path;
 
 /**
  * Interface for Image handling utility classes. The concrete implementation is automatically chosen at runtime.
- *
- * @param <I> the implementation's underlying Image class
  */
-public interface ImageUtil<I> {
+public interface ImageUtil {
 
     /**
      * Get FontUtil instance.
      *
      * @return the default FontUtil instance
      */
-    static ImageUtil<?> getInstance() {
+    static ImageUtil getInstance() {
         final class SingletonHolder {
-            static final ImageUtil<?> INSTANCE = SpiLoader.builder(ImageUtilProvider.class)
+            static final ImageUtil INSTANCE = SpiLoader.builder(ImageUtilProvider.class)
                     .defaultSupplier(() -> AwtImageUtil::getInstance)
                     .build()
                     .load()
@@ -98,28 +96,11 @@ public interface ImageUtil<I> {
     /**
      * Create an empty {@link BufferedImage}.
      *
-     * @param <I1> the generic type of the {@link BufferedImage} subclass that is returned
      * @param w the image width
      * @param h the image height
      * @return new {@link BufferedImage}
      */
-    <I1 extends BufferedImage & Image> I1 createBufferedImage(int w, int h);
-
-    /**
-     * Convert {@link Image} instance to underlying implementation.
-     *
-     * @param img the image
-     * @return implementation dependent image class
-     */
-    I convert(Image img);
-
-    /**
-     * Convert image from underlying implementation to {@link Image} instance.
-     *
-     * @param img the implementation dependent image
-     * @return image
-     */
-    Image convert(I img);
+    BufferedImage createBufferedImage(int w, int h);
 
     /**
      * Convert {@link Image} to {@link ImageBuffer}.

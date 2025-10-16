@@ -10,7 +10,7 @@ import java.io.InputStream;
 /**
  * An implementation of the ImageUtil interface for working with awt images.
  */
-public final class AwtImageUtil implements ImageUtil<AwtImage> {
+public final class AwtImageUtil implements ImageUtil {
 
     private static final class SingletonHolder {
         private static final AwtImageUtil INSTANCE = new AwtImageUtil();
@@ -48,7 +48,14 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
         return AwtImage.create(w, h);
     }
 
-    @Override
+    /**
+     * Converts an instance of {@code com.dua3.utility.data.Image} into an {@code AwtImage}.
+     * If the provided image is already an instance of {@code AwtImage}, it is returned directly.
+     * Otherwise, a new {@code AwtImage} is created based on the dimensions and pixel data of the input image.
+     *
+     * @param img the {@code Image} to be converted
+     * @return the converted {@code AwtImage} instance
+     */
     public AwtImage convert(com.dua3.utility.data.Image img) {
         if (img instanceof AwtImage awtImage) {
             return awtImage;
@@ -57,7 +64,13 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
         }
     }
 
-    @Override
+    /**
+     * Converts an AwtImage to a generic Image.
+     * This method accepts an instance of AwtImage and directly returns it as a generic Image.
+     *
+     * @param img the AwtImage to be converted
+     * @return the provided AwtImage cast as a generic Image
+     */
     public Image convert(AwtImage img) {
         return img;
     }

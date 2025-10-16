@@ -11,7 +11,7 @@ import java.io.InputStream;
 /**
  * Utility class for manipulating JavaFX images.
  */
-public final class FxImageUtil implements ImageUtil<Image> {
+public final class FxImageUtil implements ImageUtil {
 
     private static final class SingletonHolder {
         private static final FxImageUtil INSTANCE = new FxImageUtil();
@@ -49,7 +49,16 @@ public final class FxImageUtil implements ImageUtil<Image> {
         return new FxBufferedImage(w, h);
     }
 
-    @Override
+    /**
+     * Converts a general {@link com.dua3.utility.data.Image} to a JavaFX {@link Image}.
+     * If the provided image is already an instance of {@link FxImage},
+     * the underlying JavaFX Image will be returned.
+     * Otherwise, a new JavaFX Image will be created from the input image's
+     * width, height, and ARGB data.
+     *
+     * @param img the input image to be converted
+     * @return the converted JavaFX {@link Image}
+     */
     public Image convert(com.dua3.utility.data.Image img) {
         if (img instanceof FxImage fxImage) {
             return fxImage.fxImage();
@@ -57,7 +66,14 @@ public final class FxImageUtil implements ImageUtil<Image> {
         return convert(create(img.width(), img.height(), img.getArgb()));
     }
 
-    @Override
+    /**
+     * Converts the given {@link Image} instance to an {@link FxImage}.
+     * If the input image is already an instance of {@link FxImage}, it is returned as is.
+     * Otherwise, a new {@link FxStandardImage} is created to wrap the given image.
+     *
+     * @param img the {@link Image} to be converted
+     * @return the converted {@link FxImage} instance
+     */
     public FxImage convert(Image img) {
         if (img instanceof FxImage fxImage) {
             return fxImage;
