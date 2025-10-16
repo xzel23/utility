@@ -88,7 +88,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String id,
             String label,
             Class<T> type,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             InputControl<T> control,
             boolean hidden);
 
@@ -105,7 +105,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     <T> B addInput(
             String id,
             Class<T> type,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             InputControl<T> control
     );
 
@@ -382,7 +382,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default <T> B inputComboBox(
             String id,
             String label,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
             Collection<T> items
     ) {
@@ -404,7 +404,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     <T> B inputComboBox(
             String id,
             String label,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
             Function<@Nullable T, Optional<String>> validate
@@ -432,7 +432,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             @Nullable Supplier<@Nullable T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
             Collection<T> items
     ) {
@@ -462,7 +462,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
             Function<@Nullable T, Optional<String>> validate
@@ -482,7 +482,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default <T> B inputRadioList(
             String id,
             String label,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
             Collection<T> items
     ) {
@@ -504,7 +504,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     <T> B inputRadioList(
             String id,
             String label,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
             Function<@Nullable T, Optional<String>> validate
@@ -616,7 +616,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt     a supplier for the default value, which may produce a null value
      * @return         an instance of type B for method chaining or further configuration
      */
-    <T> B inputControl(String id, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt);
+    <T> B inputControl(String id, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt);
 
     /**
      * Configures an input control with the specified parameters.
@@ -629,5 +629,5 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt     a supplier providing the default value for the input control; may be null
      * @return an instance of type B, representing the configured input control
      */
-    <T> B inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt);
+    <T> B inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt);
 }

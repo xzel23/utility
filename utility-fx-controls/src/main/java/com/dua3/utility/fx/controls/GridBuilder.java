@@ -157,16 +157,16 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder addInput(String id, String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control, boolean hidden) {
+    public <T> GridBuilder addInput(String id, String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
         return doAdd(id, format(label), type, dflt, control, hidden);
     }
 
     @Override
-    public <T> GridBuilder addInput(String id, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control) {
+    public <T> GridBuilder addInput(String id, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
         return doAdd(id, null, type, dflt, control, false);
     }
 
-    private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control, boolean hidden) {
+    private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
         // check for duplicate IDs
         if (id != null && !ids.add(id)) {
             throw new IllegalArgumentException(String.format(INPUT_WITH_ID_ALREADY_DEFINED, id));
@@ -292,7 +292,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder inputComboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+    public <T> GridBuilder inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         return addInput(id, label, cls, dflt, InputControl.comboBoxInput(items, dflt, validate), false);
     }
 
@@ -304,7 +304,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
             Function<@Nullable T, Optional<String>> validate) {
@@ -312,7 +312,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder inputRadioList(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items,
+    public <T> GridBuilder inputRadioList(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items,
                                           Function<@Nullable T, Optional<String>> validate) {
         return addInput(id, label, cls, dflt, new RadioPane<>(items, null, validate), false);
     }
@@ -338,12 +338,12 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder inputControl(String id, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt) {
+    public <T> GridBuilder inputControl(String id, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
         return doAdd(id, null, type, dflt, control, false);
     }
 
     @Override
-    public <T> GridBuilder inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt) {
+    public <T> GridBuilder inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
         return doAdd(null, label, type, dflt, control, false);
     }
 

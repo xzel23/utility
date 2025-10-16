@@ -59,13 +59,13 @@ public class InputPaneBuilder
     }
 
     @Override
-    public <T> InputPaneBuilder addInput(String id, String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control, boolean hidden) {
+    public <T> InputPaneBuilder addInput(String id, String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
         pb.addInput(id, label, type, dflt, control, hidden);
         return this;
     }
 
     @Override
-    public <T> InputPaneBuilder addInput(String id, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control) {
+    public <T> InputPaneBuilder addInput(String id, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
         pb.addInput(id, type, dflt, control);
         return this;
     }
@@ -155,7 +155,7 @@ public class InputPaneBuilder
     }
 
     @Override
-    public <T> InputPaneBuilder inputComboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+    public <T> InputPaneBuilder inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         pb.inputComboBox(id, label, dflt, cls, items, validate);
         return this;
     }
@@ -168,7 +168,7 @@ public class InputPaneBuilder
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
             Collection<T> items,
             Function<@Nullable T, Optional<String>> validate) {
@@ -177,7 +177,7 @@ public class InputPaneBuilder
     }
 
     @Override
-    public <T> InputPaneBuilder inputRadioList(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+    public <T> InputPaneBuilder inputRadioList(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         pb.inputRadioList(id, label, dflt, cls, items, validate);
         return this;
     }
@@ -207,12 +207,12 @@ public class InputPaneBuilder
     }
 
     @Override
-    public <T> InputPaneBuilder inputControl(String id, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt) {
+    public <T> InputPaneBuilder inputControl(String id, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
         return null;
     }
 
     @Override
-    public <T> InputPaneBuilder inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<@Nullable T> dflt) {
+    public <T> InputPaneBuilder inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
         return null;
     }
 
