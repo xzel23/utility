@@ -482,7 +482,7 @@ public interface InputControl<T> {
 
 class FormatWithDefaultValue extends Format {
     final Format baseFormat;
-    final Supplier<?> defaultValue;
+    final transient Supplier<?> defaultValue;
 
     FormatWithDefaultValue(Format baseFormat, Supplier<?> defaultValue) {
         this.baseFormat = baseFormat;
