@@ -278,7 +278,7 @@ public class FxLogPane extends BorderPane {
      * @param up      a boolean indicating the search direction; true for upward search, false for downward search
      * @param entries the list of log entries to search through; must be a FilteredList of LogEntry objects
      */
-    private void searchAction(String text, Boolean up, FilteredList<LogEntry> entries) {
+    private void searchAction(String text, boolean up, FilteredList<LogEntry> entries) {
         String lowercaseText = text.toLowerCase(Locale.ROOT);
         int step = up ? -1 : 1;
         LogEntry current = selectedItem.get();
