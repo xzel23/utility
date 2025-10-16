@@ -28,7 +28,7 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
                  @Nullable Object getValue) implements Map.Entry<String, @Nullable Object>, Comparable<Entry> {
         @Override
         public @Nullable Object setValue(@Nullable Object value) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("setValue() not supported");
         }
 
         @Override

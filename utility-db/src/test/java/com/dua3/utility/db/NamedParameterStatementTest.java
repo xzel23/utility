@@ -671,7 +671,7 @@ class NamedParameterStatementTest {
             // Verify parameter info
             List<NamedParameterStatement.ParameterInfo> params = stmt.getParameterInfo();
             assertEquals(1, params.size());
-            assertEquals("id", params.get(0).getName());
+            assertEquals("id", params.getFirst().getName());
         }
     }
 

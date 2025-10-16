@@ -132,7 +132,7 @@ class RichTextMatcherTest {
         assertEquals("Hi world! Hello universe!", replaced.toString());
 
         // Verify that the style was applied
-        assertTrue(replaced.subSequence(0, 2).runs().get(0).getStyles().contains(Style.BOLD));
+        assertTrue(replaced.subSequence(0, 2).runs().getFirst().getStyles().contains(Style.BOLD));
     }
 
     @Test
@@ -152,7 +152,7 @@ class RichTextMatcherTest {
         assertEquals("Hi world! Hi universe!", replaced.toString());
 
         // Verify that the style was applied to both replacements
-        assertTrue(replaced.subSequence(0, 2).runs().get(0).getStyles().contains(Style.BOLD));
+        assertTrue(replaced.subSequence(0, 2).runs().getFirst().getStyles().contains(Style.BOLD));
 
         // Print the entire replaced text for debugging
         LOG.debug("Replaced text: {}", replaced);
@@ -168,8 +168,8 @@ class RichTextMatcherTest {
 
         // Check if the style was applied to the second replacement
         if (secondReplacement.runs().size() > 0) {
-            LOG.debug("Second replacement styles: {}", secondReplacement.runs().get(0).getStyles());
-            assertTrue(secondReplacement.runs().get(0).getStyles().contains(Style.BOLD));
+            LOG.debug("Second replacement styles: {}", secondReplacement.runs().getFirst().getStyles());
+            assertTrue(secondReplacement.runs().getFirst().getStyles().contains(Style.BOLD));
         } else {
             LOG.debug("Second replacement has no runs");
             fail("Second replacement has no runs");
@@ -208,7 +208,7 @@ class RichTextMatcherTest {
         // Test that rgroup preserves styles
         RichText match = matcher.rgroup();
         assertEquals("Hello", match.toString());
-        assertTrue(match.runs().get(0).getStyles().contains(Style.BOLD));
+        assertTrue(match.runs().getFirst().getStyles().contains(Style.BOLD));
     }
 
     @Test

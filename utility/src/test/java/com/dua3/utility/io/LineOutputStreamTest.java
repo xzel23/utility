@@ -59,7 +59,7 @@ class LineOutputStreamTest {
         out.close();
 
         assertEquals(1, outputLines.size());
-        assertEquals("Hello World", outputLines.get(0));
+        assertEquals("Hello World", outputLines.getFirst());
     }
 
     /**
@@ -74,7 +74,7 @@ class LineOutputStreamTest {
             out.write('A'); // write a single character
         }
         assertEquals(1, outputLines.size());
-        assertEquals("A", outputLines.get(0)); // ensure the single character is captured
+        assertEquals("A", outputLines.getFirst()); // ensure the single character is captured
     }
 
     /**

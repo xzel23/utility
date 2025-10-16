@@ -190,7 +190,7 @@ class RichTextJoinerTest {
         for (int i = 0; i < 4; i++) {
             List<Style> styles = result.stylesAt(i);
             assertEquals(1, styles.size());
-            assertEquals(Style.BOLD, styles.get(0));
+            assertEquals(Style.BOLD, styles.getFirst());
         }
 
         // Check ", " has no style
@@ -203,7 +203,7 @@ class RichTextJoinerTest {
         for (int i = 6; i < 12; i++) {
             List<Style> styles = result.stylesAt(i);
             assertEquals(1, styles.size());
-            assertEquals(Style.ITALIC, styles.get(0));
+            assertEquals(Style.ITALIC, styles.getFirst());
         }
     }
 }

@@ -236,22 +236,22 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
 
     @Override
     public V put(K key, V value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("the collection is immutable");
     }
 
     @Override
     public V remove(Object key) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("the collection is immutable");
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("the collection is immutable");
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("the collection is immutable");
     }
 
     @Override

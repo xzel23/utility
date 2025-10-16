@@ -82,7 +82,7 @@ class SwingLogPaneTest {
         // Get the table from the pane
         List<JTable> tables = SwingTestUtil.findComponentsOfType(pane, JTable.class);
         assertFalse(tables.isEmpty(), "SwingLogPane should contain a JTable");
-        JTable table = tables.get(0);
+        JTable table = tables.getFirst();
 
         // Check if the table has one row
         assertEquals(1, table.getModel().getRowCount(), "Table should have one row after adding an entry");
@@ -111,7 +111,7 @@ class SwingLogPaneTest {
         // Get the table from the pane
         List<JTable> tables = SwingTestUtil.findComponentsOfType(pane, JTable.class);
         assertFalse(tables.isEmpty(), "SwingLogPane should contain a JTable");
-        JTable table = tables.get(0);
+        JTable table = tables.getFirst();
 
         // Check if the table has five rows
         assertEquals(5, table.getModel().getRowCount(), "Table should have five rows after adding 5 entries");

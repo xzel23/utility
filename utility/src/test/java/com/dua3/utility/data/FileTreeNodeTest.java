@@ -153,7 +153,7 @@ class FileTreeNodeTest {
 
         // Verify the listener was called
         assertEquals(1, refreshedNodes.size());
-        assertEquals(tree, refreshedNodes.get(0));
+        assertEquals(tree, refreshedNodes.getFirst());
 
         // Remove the listener
         tree.removeRefreshListener(listener);

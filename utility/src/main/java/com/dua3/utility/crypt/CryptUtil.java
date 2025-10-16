@@ -25,6 +25,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -429,7 +430,7 @@ public final class CryptUtil {
      */
     public static byte[] decryptAsymmetric(PrivateKey privateKey, byte[] cipherData) throws GeneralSecurityException {
         String algorithm = privateKey.getAlgorithm();
-        AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
+        AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase(Locale.ROOT));
         String transformation = getAsymmetricTransformation(asymmAlg);
 
         Cipher cipher = Cipher.getInstance(transformation);

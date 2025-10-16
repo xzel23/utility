@@ -160,7 +160,7 @@ class ArgumentsTest {
 
         List<String> values = args.stream(option).toList();
         assertEquals(1, values.size());
-        assertEquals("value", values.get(0));
+        assertEquals("value", values.getFirst());
 
         Option<String> anotherOption = Option.createSimpleOption("Another Option", "Another test option", Param.ofString("String Param", "A string parameter", "arg", Param.Required.REQUIRED), () -> "default", "--another", "-a");
 

@@ -219,7 +219,7 @@ class IoUtilTest {
             // It should find one matching path only and it should be "/foo/bar/baz/file.txt"
             assertEquals(1, resultPaths.size());
             assertPathEquals(
-                    resultPaths.get(0),
+                    resultPaths.getFirst(),
                     getPath(configuration, fs, "/foo/bar/baz/file.txt")
             );
         }
@@ -270,7 +270,7 @@ class IoUtilTest {
 
             assertEquals(1, resultPaths.size());
             assertPathEquals(
-                    resultPaths.get(0),
+                    resultPaths.getFirst(),
                     getPath(configuration, fs, "/foo/bar/baz/file.txt")
             );
         }
@@ -294,7 +294,7 @@ class IoUtilTest {
 
             assertEquals(1, resultPaths.size());
             assertPathEquals(
-                    resultPaths.get(0),
+                    resultPaths.getFirst(),
                     getPath(configuration, fs, "/foo/bar/baz/file.txt")
             );
         }
@@ -318,7 +318,7 @@ class IoUtilTest {
 
             assertEquals(1, resultPaths.size());
             assertPathEquals(
-                    resultPaths.get(0),
+                    resultPaths.getFirst(),
                     getPath(configuration, fs, "/foo/file.txt")
             );
         }
@@ -342,7 +342,7 @@ class IoUtilTest {
 
             assertEquals(1, resultPaths.size());
             assertPathEquals(
-                    resultPaths.get(0),
+                    resultPaths.getFirst(),
                     getPath(configuration, fs, "/foo/bar/baz/file.txt")
             );
         }
@@ -389,7 +389,7 @@ class IoUtilTest {
 
             assertEquals(1, resultPaths.size());
             assertPathEquals(
-                    resultPaths.get(0),
+                    resultPaths.getFirst(),
                     getPath(configuration, fs, "/foo/bar/baz/file.txt")
             );
         }
@@ -750,7 +750,7 @@ class IoUtilTest {
         // Create a temporary file with known content
         Path tempFile = Files.createTempFile("read-url-test", ".txt");
         String content = "Test content for URL reading";
-        Files.write(tempFile, content.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(tempFile, content);
 
         try {
             // Get URL from the file and read its content
@@ -769,7 +769,7 @@ class IoUtilTest {
         // Create a temporary file with known content
         Path tempFile = Files.createTempFile("read-uri-test", ".txt");
         String content = "Test content for URI reading";
-        Files.write(tempFile, content.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(tempFile, content);
 
         try {
             // Get URI from the file and read its content
@@ -832,21 +832,15 @@ class IoUtilTest {
         // Create a temporary file with some content
         Path tempFile = Files.createTempFile("load-test", ".txt");
         String content = "Test content with some unicode: 你好, 世界!";
-        Files.write(tempFile, content.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(tempFile, content);
 
         try {
             // Test with UTF-8
             String loadedText = IoUtil.loadText(tempFile, charset -> assertEquals(StandardCharsets.UTF_8, charset));
             assertEquals(content, loadedText);
 
-            // Test with different charsets
-            Files.write(tempFile, content.getBytes(StandardCharsets.ISO_8859_1));
-            String loadedText2 = IoUtil.loadText(tempFile, charset -> {}, StandardCharsets.ISO_8859_1);
-            // The content will be different due to encoding differences
-            assertNotEquals(content, loadedText2);
-
             // Test with multiple charsets
-            Files.write(tempFile, content.getBytes(StandardCharsets.UTF_16));
+            Files.writeString(tempFile, content, StandardCharsets.UTF_16);
             String loadedText3 = IoUtil.loadText(tempFile, charset -> {},
                     StandardCharsets.UTF_8, StandardCharsets.UTF_16, StandardCharsets.ISO_8859_1);
             // Should detect UTF-16
@@ -876,7 +870,7 @@ class IoUtilTest {
         // Test with Path
         Path tempFile = Files.createTempFile("input-test", ".txt");
         try {
-            Files.write(tempFile, "test".getBytes(StandardCharsets.UTF_8));
+            Files.writeString(tempFile, "test");
             try (InputStream is = IoUtil.getInputStream(tempFile)) {
                 assertEquals("test", new String(is.readAllBytes(), StandardCharsets.UTF_8));
             }

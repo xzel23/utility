@@ -54,7 +54,7 @@ import java.util.regex.Pattern;
  *             is added without needing any application code. Make sure you either use Log4J or have the required
  *             bridge implementations on your classpath, and make sure the logging system is not initialized
  *             before the {@code launchApplication()} is called.
- *             This option is only added when {@link com.dua3.utility.logging.log4j.LogUtilLog4J} is on the classpath.
+ *             This option is only added when {@code com.dua3.utility.logging.log4j.LogUtilLog4J} is on the classpath.
  *         <li><strong>{@code --log-level}:</strong>
  *             Set the global log level. Only messages with at least the given level are logged.
  *         <li><strong>Application-specific options:</strong>

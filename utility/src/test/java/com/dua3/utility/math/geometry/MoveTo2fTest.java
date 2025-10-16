@@ -27,7 +27,7 @@ class MoveTo2fTest {
         Path2f path = builder.build();
 
         // Get the move to segment
-        Segment2f segment = path.segments().get(0);
+        Segment2f segment = path.segments().getFirst();
         assertInstanceOf(MoveTo2f.class, segment, "Segment should be a MoveTo2f");
 
         MoveTo2f moveTo = (MoveTo2f) segment;
@@ -77,7 +77,7 @@ class MoveTo2fTest {
         Path2f path = builder.build();
 
         // Get the move to segment
-        MoveTo2f moveTo = (MoveTo2f) path.segments().get(0);
+        MoveTo2f moveTo = (MoveTo2f) path.segments().getFirst();
 
         // Test toString
         String str = moveTo.toString();

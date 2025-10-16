@@ -151,16 +151,11 @@ class KeyUtilTest {
     }
 
     private KeyPair generateSecretKeyPairForAlgorithm(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
-        switch (algorithm) {
-            case RSA:
-                return KeyUtil.generateRSAKeyPair();
-            case EC:
-                return KeyUtil.generateECKeyPair("secp256r1");
-            case DSA:
-                return KeyUtil.generateKeyPair(algorithm, 2048);
-            default:
-                throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
-        }
+        return switch (algorithm) {
+            case RSA -> KeyUtil.generateRSAKeyPair();
+            case EC -> KeyUtil.generateECKeyPair("secp256r1");
+            case DSA -> KeyUtil.generateKeyPair(algorithm, 2048);
+        };
     }
 
     @Test

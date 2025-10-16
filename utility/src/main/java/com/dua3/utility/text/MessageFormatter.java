@@ -75,7 +75,7 @@ public interface MessageFormatter {
      * @param s the input string to be returned
      * @return the same input string provided
      */
-    default String text(String s) { return s; }
+    default String text(String s) {return s;}
 
     /**
      * Retrieves the formatting style currently in use by the {@code MessageFormatter}.

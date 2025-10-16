@@ -58,8 +58,8 @@ class SimpleValueTest {
         value.set("updated");
         assertEquals(1, oldValues.size());
         assertEquals(1, newValues.size());
-        assertEquals("initial", oldValues.get(0));
-        assertEquals("updated", newValues.get(0));
+        assertEquals("initial", oldValues.getFirst());
+        assertEquals("updated", newValues.getFirst());
 
         // Change the value again
         value.set("final");

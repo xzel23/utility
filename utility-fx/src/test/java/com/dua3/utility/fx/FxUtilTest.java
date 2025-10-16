@@ -452,9 +452,9 @@ class FxUtilTest extends FxTestBase {
         assertEquals(4, strings.size(), "Mapped list should be updated");
         assertEquals("4", strings.get(3), "New element should be mapped correctly");
 
-        numbers.remove(0);
+        numbers.removeFirst();
         assertEquals(3, strings.size(), "Mapped list should be updated after removal");
-        assertEquals("2", strings.get(0), "First element should now be the second original element");
+        assertEquals("2", strings.getFirst(), "First element should now be the second original element");
     }
 
     @Test

@@ -5,7 +5,6 @@ import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.TextUtil;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.ColumnConstraints;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.FxUtil;
 import javafx.beans.binding.Bindings;

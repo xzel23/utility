@@ -52,8 +52,8 @@ class Path2fTest {
         assertEquals(1, path.vertices().size(), "vertices should have 1 element");
         assertEquals(1, path.segments().size(), "segments should have 1 element");
 
-        assertEquals(point, path.vertices().get(0), "vertex should match the point");
-        assertInstanceOf(MoveTo2f.class, path.segments().get(0), "segment should be a MoveTo2f");
+        assertEquals(point, path.vertices().getFirst(), "vertex should match the point");
+        assertInstanceOf(MoveTo2f.class, path.segments().getFirst(), "segment should be a MoveTo2f");
     }
 
     /**

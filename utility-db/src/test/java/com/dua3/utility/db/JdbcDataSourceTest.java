@@ -229,7 +229,7 @@ class JdbcDataSourceTest {
 
         @Override
         public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            throw new SQLFeatureNotSupportedException();
+            throw new SQLFeatureNotSupportedException("getParentLogger() is not supported");
         }
     }
 

@@ -86,7 +86,7 @@ class SwingProgressViewTest {
         assertFalse(progressBars.isEmpty(), "Progress bar should be added to the view");
 
         // The first progress bar should be for our task
-        JProgressBar progressBar = progressBars.get(0);
+        JProgressBar progressBar = progressBars.getFirst();
         assertEquals(100, progressBar.getMaximum(), "Progress bar maximum should be 100");
         assertEquals(50, progressBar.getValue(), "Progress bar value should be 50");
     }
@@ -118,7 +118,7 @@ class SwingProgressViewTest {
         assertFalse(progressBars.isEmpty(), "Progress bar should be added to the view");
 
         // The first progress bar should be for our task
-        JProgressBar progressBar = progressBars.get(0);
+        JProgressBar progressBar = progressBars.getFirst();
         assertEquals(1000, progressBar.getMaximum(), "Progress bar maximum should be 1000");
         assertEquals(750, progressBar.getValue(), "Progress bar value should be 750 (75%)");
     }
@@ -148,7 +148,7 @@ class SwingProgressViewTest {
         assertFalse(progressBars.isEmpty(), "Progress bar should be added to the view");
 
         // The first progress bar should be for our task
-        JProgressBar progressBar = progressBars.get(0);
+        JProgressBar progressBar = progressBars.getFirst();
         assertEquals(progressBar.getMaximum(), progressBar.getValue(), "Progress bar value should be at maximum after task completion");
     }
 }

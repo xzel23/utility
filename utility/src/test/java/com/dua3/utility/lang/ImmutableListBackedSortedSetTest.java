@@ -30,7 +30,7 @@ class ImmutableListBackedSortedSetTest {
         // Test with one element
         ImmutableListBackedSortedSet<Integer> singletonSet = ImmutableListBackedSortedSet.ofNaturalOrder(42);
         assertEquals(1, singletonSet.size());
-        assertEquals(42, singletonSet.get(0));
+        assertEquals(42, singletonSet.getFirst());
 
         // Test with multiple elements (unsorted)
         ImmutableListBackedSortedSet<Integer> multiSet = ImmutableListBackedSortedSet.ofNaturalOrder(5, 3, 1, 4, 2);
@@ -271,8 +271,8 @@ class ImmutableListBackedSortedSetTest {
         assertThrows(UnsupportedOperationException.class, () -> reversedSet.retainAll(Collections.singletonList(1)));
         assertThrows(UnsupportedOperationException.class, reversedSet::clear);
         assertThrows(UnsupportedOperationException.class, () -> reversedSet.set(0, 10));
-        assertThrows(UnsupportedOperationException.class, () -> reversedSet.add(0, 10));
-        assertThrows(UnsupportedOperationException.class, () -> reversedSet.remove(0));
+        assertThrows(UnsupportedOperationException.class, () -> reversedSet.addFirst(10));
+        assertThrows(UnsupportedOperationException.class, () -> reversedSet.removeFirst());
     }
 
     @Test

@@ -28,52 +28,52 @@ public interface ImmutableSortedListSet<T> extends List<T>, SortedSet<T> {
 
     @Override
     default boolean add(T t) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("add() is not supported");
     }
 
     @Override
     default boolean remove(Object o) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("remove() is not supported");
     }
 
     @Override
     default boolean addAll(Collection<? extends T> c) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("addAll() is not supported");
     }
 
     @Override
     default boolean retainAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("retainAll() is not supported");
     }
 
     @Override
     default boolean removeAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("removeAll() is not supported");
     }
 
     @Override
     default void clear() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("clear() is not supported");
     }
 
     @Override
     default void addFirst(T t) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("addFirst() is not supported");
     }
 
     @Override
     default void addLast(T t) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("addLast() is not supported");
     }
 
     @Override
     default T removeLast() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("removeLast() is not supported");
     }
 
     @Override
     default T removeFirst() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("removeFirst() is not supported");
     }
 
     @Override
