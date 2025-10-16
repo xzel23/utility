@@ -125,7 +125,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Provides a read-only boolean property indicating the validity state.</div>
 </div>
-<div class="col-first even-row-color"><code>javafx.beans.property.Property<wbr>&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</code></div>
+<div class="col-first even-row-color"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Returns the property representing the value managed by this State.</div>
@@ -141,20 +141,20 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(javafx.beans.property.Property)" class="member-name-link">State</a><wbr>(javafx.beans.property.Property&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(javafx.beans.property.Property)" class="member-name-link">State</a><wbr>(javafx.beans.property.Property&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Constructs a State object with the given value.</div>
 </div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(javafx.beans.property.Property,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">State</a><wbr>(javafx.beans.property.Property&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(javafx.beans.property.Property,java.util.function.Supplier)" class="member-name-link">State</a><wbr>(javafx.beans.property.Property&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Constructs a State object with the given value, default value supplier, and validation function.</div>
-</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(javafx.beans.property.Property,java.util.function.Supplier)" class="member-name-link">State</a><wbr>(javafx.beans.property.Property&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</code></div>
-<div class="col-last even-row-color">
 <div class="block">Constructs a State object with the given value and default value supplier.</div>
+</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(javafx.beans.property.Property,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">State</a><wbr>(javafx.beans.property.Property&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Constructs a State object with the given value, default value supplier, and validation function.</div>
 </div>
 </div>
 </section>
@@ -181,12 +181,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Resets the state to its default value.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(java.util.function.Supplier)" class="member-name-link">setDefault</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(java.util.function.Supplier)" class="member-name-link">setDefault</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the default value supplier for this State.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setValidate(java.util.function.Function)" class="member-name-link">setValidate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setValidate(java.util.function.Function)" class="member-name-link">setValidate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the validation function for the State.</div>
 </div>
@@ -195,7 +195,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Provides a read-only boolean property indicating the validity state.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the property representing the value managed by this State.</div>
@@ -220,7 +220,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="valueProperty">
 <h3>value</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.Property&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</span>&nbsp;<span class="element-name">valueProperty</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.Property&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</span>&nbsp;<span class="element-name">valueProperty</span></div>
 <div class="block">Returns the property representing the value managed by this State.</div>
 <dl class="notes">
 <dt>See Also:</dt>
@@ -274,7 +274,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;(javafx.beans.property.Property)">
 <h3>State</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">State</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">State</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value)</span></div>
 <div class="block">Constructs a State object with the given value.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -285,8 +285,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;(javafx.beans.property.Property,java.util.function.Supplier)">
 <h3>State</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">State</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">State</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</span></div>
 <div class="block">Constructs a State object with the given value and default value supplier.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -298,9 +298,9 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;(javafx.beans.property.Property,java.util.function.Supplier,java.util.function.Function)">
 <h3>State</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">State</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">State</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;value,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</span></div>
 <div class="block">Constructs a State object with the given value, default value supplier, and validation function.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -321,7 +321,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="setValidate(java.util.function.Function)">
 <h3>setValidate</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setValidate</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setValidate</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</span></div>
 <div class="block">Sets the validation function for the State.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -332,7 +332,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="valueProperty()">
 <h3>valueProperty</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.Property&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</span>&nbsp;<span class="element-name">valueProperty</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.Property&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</span>&nbsp;<span class="element-name">valueProperty</span>()</div>
 <div class="block">Returns the property representing the value managed by this State.</div>
 <dl class="notes">
 <dt>Returns:</dt>
@@ -366,7 +366,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="setDefault(java.util.function.Supplier)">
 <h3>setDefault</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setDefault</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setDefault</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</span></div>
 <div class="block">Sets the default value supplier for this State.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

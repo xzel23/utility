@@ -160,32 +160,38 @@ loadScripts(document, 'script');</script>
 <div class="block">Retrieves the formatting style currently in use by the <code>MessageFormatter</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#i18n(com.dua3.utility.i18n.I18N)" class="member-name-link">i18n</a><wbr>(<a href="../i18n/I18N.html" title="class in com.dua3.utility.i18n">I18N</a>&nbsp;i18n)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#i18n()" class="member-name-link">i18n</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Creates a <code>MessageFormatter</code> configured with the specified <code>I18N</code> instance,
+<div class="block">Creates a <code>MessageFormatter</code> configured with the default <code>I18N</code> instance,
  which allows for internationalized message formatting.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#localized(java.util.Locale)" class="member-name-link">localized</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#i18n(com.dua3.utility.i18n.I18N)" class="member-name-link">i18n</a><wbr>(<a href="../i18n/I18N.html" title="class in com.dua3.utility.i18n">I18N</a>&nbsp;i18n)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a <code>MessageFormatter</code> configured with the specified <code>I18N</code> instance,
+ which allows for internationalized message formatting.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#localized(java.util.Locale)" class="member-name-link">localized</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Creates an instance of <code>MessageFormatter</code> that uses <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.util.Locale,java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(Locale, String, Object...)</code></a>
  for formatting using the provided locale.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#messageFormat()" class="member-name-link">messageFormat</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#messageFormat()" class="member-name-link">messageFormat</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Returns the instance of <code>MessageFormatter</code> that utilizes <code>MessageFormat</code>
  for formatting messages.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#standard()" class="member-name-link">standard</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#standard()" class="member-name-link">standard</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Returns an instance of <code>MessageFormatter</code> that uses <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.util.Locale,java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(Locale, String, Object...)</code></a>
  for formatting, using <code>Locale.getDefault()</code> as locale.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#text(java.lang.String)" class="member-name-link">text</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#text(java.lang.String)" class="member-name-link">text</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the input string as is, without any formatting applied.</div>
 </div>
 </div>
@@ -299,6 +305,21 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>i18n</code> - the <code>I18N</code> instance providing the localization rules and resources
              to be used for formatting messages</dd>
+<dt>Returns:</dt>
+<dd>a <code>MessageFormatter</code> configured to use the provided <code>I18N</code> instance</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="i18n()">
+<h3>i18n</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></span>&nbsp;<span class="element-name">i18n</span>()</div>
+<div class="block">Creates a <code>MessageFormatter</code> configured with the default <code>I18N</code> instance,
+ which allows for internationalized message formatting.
+ <p>
+ This implementation will look up texts using the supplied <a href="../i18n/I18N.html" title="class in com.dua3.utility.i18n"><code>I18N</code></a> instance before
+ formatting.</div>
+<dl class="notes">
 <dt>Returns:</dt>
 <dd>a <code>MessageFormatter</code> configured to use the provided <code>I18N</code> instance</dd>
 </dl>

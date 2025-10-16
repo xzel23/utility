@@ -1628,7 +1628,7 @@ loadScripts(document, 'script');</script>
 <div class="block">The CheckBoxButtonBuilder class is a utility class for constructing CheckBox instances
  with properties configured using a fluent API.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputControl.html#checkBoxInput(java.util.function.Supplier,java.lang.String,java.util.function.Function)" class="member-name-link">checkBoxInput(Supplier&lt;Boolean&gt;, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.html#checkBoxInput(java.util.function.BooleanSupplier,java.lang.String,java.util.function.Function)" class="member-name-link">checkBoxInput(BooleanSupplier, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
 <div class="block">Creates a <a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>CheckBox</code> with a default value, text, and validation function.</div>
 </dd>
@@ -2033,7 +2033,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A custom JPanel-based ComboBox component with additional functionality for editing, adding, and removing items.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/ComboBoxEx.html#%3Cinit%3E(java.util.function.Function,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Supplier,java.util.function.Function,java.util.Collection)" class="member-name-link">ComboBoxEx(Function&lt;T, T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Supplier&lt;T&gt;, Function&lt;T, String&gt;, Collection&lt;T&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxEx.html" title="class in com.dua3.utility.fx.controls">ComboBoxEx</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxEx.html#%3Cinit%3E(java.util.function.Function,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Supplier,java.util.function.Function,java.util.Collection)" class="member-name-link">ComboBoxEx(Function&lt;T, T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Supplier&lt;? extends T&gt;, Function&lt;T, String&gt;, Collection&lt;T&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxEx.html" title="class in com.dua3.utility.fx.controls">ComboBoxEx</a></dt>
 <dd>
 <div class="block">Constructs a ComboBoxEx with the specified edit, add, remove, format, and items.</div>
 </dd>
@@ -2041,15 +2041,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Constructs a ComboBoxEx with optional editing, adding, and removing functionality.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/ComboBoxEx.html#%3Cinit%3E(java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Supplier,java.util.function.Function,T...)" class="member-name-link">ComboBoxEx(UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Supplier&lt;T&gt;, Function&lt;T, String&gt;, T...)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxEx.html" title="class in com.dua3.utility.fx.controls">ComboBoxEx</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxEx.html#%3Cinit%3E(java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Supplier,java.util.function.Function,T...)" class="member-name-link">ComboBoxEx(UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Supplier&lt;? extends T&gt;, Function&lt;T, String&gt;, T...)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxEx.html" title="class in com.dua3.utility.fx.controls">ComboBoxEx</a></dt>
 <dd>
 <div class="block">Constructs a ComboBoxEx with the specified edit, add, remove, format, and items.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputControl.html#comboBoxExInput(java.util.Collection,java.util.function.Supplier,java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Function)" class="member-name-link">comboBoxExInput(Collection&lt;T&gt;, Supplier&lt;T&gt;, UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.html#comboBoxExInput(java.util.Collection,java.util.function.Supplier,java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Function)" class="member-name-link">comboBoxExInput(Collection&lt;T&gt;, Supplier&lt;? extends T&gt;, UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
 <div class="block">Creates a new <code>SimpleInputControl</code> for a <a href="com/dua3/utility/fx/controls/ComboBoxEx.html" title="class in com.dua3.utility.fx.controls"><code>ComboBoxEx</code></a> with the specified parameters.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputControl.html#comboBoxInput(java.util.Collection,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">comboBoxInput(Collection&lt;? extends T&gt;, Supplier&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.html#comboBoxInput(java.util.Collection,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">comboBoxInput(Collection&lt;? extends T&gt;, Supplier&lt;? extends T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
 <div class="block">Creates a <code>ComboBox</code> input control with specified choices, default value <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a>, and validation <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a>.</div>
 </dd>
@@ -4726,7 +4726,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get stack trace as text</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputControl.html#formattableInput(java.lang.Class,java.text.Format,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">formattableInput(Class&lt;U&gt;, Format, Supplier&lt;U&gt;, Function&lt;U, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.html#formattableInput(java.lang.Class,java.text.Format,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">formattableInput(Class&lt;T&gt;, Format, Supplier&lt;? extends T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
 <div class="block">Creates a <a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>TextField</code> with a formattable input,
  allowing bidirectional binding and validation of the input using a specified <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/Format.html" title="class or interface in java.text" class="external-link"><code>Format</code></a>.</div>
@@ -4904,7 +4904,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Construct a new FxLogPane instance with the given buffer.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/FxLogPane.html#%3Cinit%3E(com.dua3.utility.logging.LogBuffer,java.util.function.Function)" class="member-name-link">FxLogPane(LogBuffer, Function&lt;? super LogEntry, Color&gt;)</a> - Constructor for class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
+<dt><a href="com/dua3/utility/fx/FxLogPane.html#%3Cinit%3E(com.dua3.utility.logging.LogBuffer,java.util.function.Function)" class="member-name-link">FxLogPane(LogBuffer, Function&lt;LogEntry, Color&gt;)</a> - Constructor for class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
 <dd>
 <div class="block">Constructs a new FxLogPane instance with the given LogBuffer and colorize function.</div>
 </dd>
@@ -7002,9 +7002,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Retrieves an instance of the Internationalization (I18N) class.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.html#i18n()" class="member-name-link">i18n()</a> - Static method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
+<dd>
+<div class="block">Creates a <code>MessageFormatter</code> configured with the default <code>I18N</code> instance,
+ which allows for internationalized message formatting.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html#i18n()" class="member-name-link">i18n()</a> - Method in record class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterI18n</a></dt>
 <dd>
-<div class="block">Returns the value of the <code>i18n</code> record component.</div>
+<div class="block">Returns the value of the <a href="./com/dua3/utility/text/MessageFormatter.MessageFormatterI18n.html#param-i18n"><code>i18n</code></a> record component.</div>
 </dd>
 <dt><a href="com/dua3/utility/text/MessageFormatter.html#i18n(com.dua3.utility.i18n.I18N)" class="member-name-link">i18n(I18N)</a> - Static method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
 <dd>
@@ -7413,19 +7418,19 @@ loadScripts(document, 'script');</script>
 <div class="block">Represents the styling attributes for a section or title label, such as spacing,
  boldness, and scaling of the font.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.Supplier,java.lang.String)" class="member-name-link">inputCheckBox(String, String, Supplier&lt;Boolean&gt;, String)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.BooleanSupplier,java.lang.String)" class="member-name-link">inputCheckBox(String, String, BooleanSupplier, String)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
 <div class="block">Add a labeled checkbox.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.Supplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, String, Supplier&lt;Boolean&gt;, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.BooleanSupplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, String, BooleanSupplier, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.Supplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, String, Supplier&lt;Boolean&gt;, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.BooleanSupplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, String, BooleanSupplier, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
 <div class="block">Creates a checkbox with the given parameters.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.Supplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, String, Supplier&lt;Boolean&gt;, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.BooleanSupplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, String, BooleanSupplier, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.Supplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, String, Supplier&lt;Boolean&gt;, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.BooleanSupplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, String, BooleanSupplier, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputComboBox(java.lang.String,java.lang.String,java.util.function.Supplier,java.lang.Class,java.util.Collection)" class="member-name-link">inputComboBox(String, String, Supplier&lt;T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
@@ -8809,7 +8814,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html#locale()" class="member-name-link">locale()</a> - Method in record class com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterStringFormat</a></dt>
 <dd>
-<div class="block">Returns the value of the <code>locale</code> record component.</div>
+<div class="block">Returns the value of the <a href="./com/dua3/utility/text/MessageFormatter.MessageFormatterStringFormat.html#param-locale"><code>locale</code></a> record component.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/IoOptions.html#locale(java.util.function.Supplier)" class="member-name-link">locale(Supplier&lt;Locale&gt;)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoOptions.html" title="class in com.dua3.utility.io">IoOptions</a></dt>
 <dd>
@@ -12085,7 +12090,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Enable/Disable colored output using ANSI codes.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/FxLogPane.html#setColorize(java.util.function.Function)" class="member-name-link">setColorize(Function&lt;? super LogEntry, ? extends Color&gt;)</a> - Method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
+<dt><a href="com/dua3/utility/fx/FxLogPane.html#setColorize(java.util.function.Function)" class="member-name-link">setColorize(Function&lt;LogEntry, Color&gt;)</a> - Method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
 <dd>
 <div class="block">Sets the colorization function for determining the color of a log entry.</div>
 </dd>
@@ -13010,13 +13015,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Constructs a State object with the given value.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.State.html#%3Cinit%3E(javafx.beans.property.Property,java.util.function.Supplier)" class="member-name-link">State(Property&lt;R&gt;, Supplier&lt;? extends R&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.State.html" title="class in com.dua3.utility.fx.controls">InputControl.State</a></dt>
+<dd>
+<div class="block">Constructs a State object with the given value and default value supplier.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputControl.State.html#%3Cinit%3E(javafx.beans.property.Property,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">State(Property&lt;R&gt;, Supplier&lt;? extends R&gt;, Function&lt;? super R, Optional&lt;String&gt;&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.State.html" title="class in com.dua3.utility.fx.controls">InputControl.State</a></dt>
 <dd>
 <div class="block">Constructs a State object with the given value, default value supplier, and validation function.</div>
-</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputControl.State.html#%3Cinit%3E(javafx.beans.property.Property,java.util.function.Supplier)" class="member-name-link">State(Property&lt;R&gt;, Supplier&lt;R&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.State.html" title="class in com.dua3.utility.fx.controls">InputControl.State</a></dt>
-<dd>
-<div class="block">Constructs a State object with the given value and default value supplier.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/StatusBar.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">StatusBar</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -13157,13 +13162,13 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a converter to transform objects of type T to their String representation
  and parse Strings back to objects of type T.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.html#stringInput(java.util.function.Supplier,java.util.function.Function,javafx.util.StringConverter)" class="member-name-link">stringInput(Supplier&lt;? extends T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;, StringConverter&lt;T&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
+<dd>
+<div class="block">Creates a new <a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>TextField</code> with bidirectional binding.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputControl.html#stringInput(java.util.function.Supplier,java.util.function.Function)" class="member-name-link">stringInput(Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
 <div class="block">Creates a <a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a TextField with String input.</div>
-</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputControl.html#stringInput(java.util.function.Supplier,java.util.function.Function,javafx.util.StringConverter)" class="member-name-link">stringInput(Supplier&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;, StringConverter&lt;T&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
-<dd>
-<div class="block">Creates a new <a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>TextField</code> with bidirectional binding.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/IoUtil.html#stringInputStream(java.lang.String)" class="member-name-link">stringInputStream(String)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
 <dd>
