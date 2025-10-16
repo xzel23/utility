@@ -1,6 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import com.dua3.utility.lang.LangUtil;

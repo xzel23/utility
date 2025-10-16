@@ -144,14 +144,8 @@ public interface MessageFormatter {
      * <p>
      * This class is immutable and thread-safe.
      */
-    final class MessageFormatterStringFormat implements MessageFormatter {
+    record MessageFormatterStringFormat(Locale locale) implements MessageFormatter {
         private static final MessageFormatterStringFormat DEFAULT_INSTANCE = new MessageFormatterStringFormat(Locale.getDefault());
-
-        private final Locale locale;
-
-        private MessageFormatterStringFormat(Locale locale) {
-            this.locale = locale;
-        }
 
         @Override
         public String format(String fmt, @Nullable Object... args) {
@@ -193,11 +187,6 @@ public interface MessageFormatter {
         public FormatStyle getFormatStyle() {
             return FormatStyle.MESSAGE_FORMAT;
         }
-
-        @Override
-        public String toString() {
-            return "MessageFormatterMessageFormat{}";
-        }
     }
 
     /**
@@ -210,13 +199,7 @@ public interface MessageFormatter {
      * <p>
      * This class is immutable and thread-safe.
      */
-    final class MessageFormatterI18n implements MessageFormatter {
-        private final I18N i18n;
-
-        private MessageFormatterI18n(I18N i18n) {
-            this.i18n = i18n;
-        }
-
+    record MessageFormatterI18n(I18N i18n) implements MessageFormatter {
         @Override
         public String format(String key, @Nullable Object... args) {
             return i18n.format(key, args);
@@ -225,13 +208,6 @@ public interface MessageFormatter {
         @Override
         public FormatStyle getFormatStyle() {
             return FormatStyle.I18N;
-        }
-
-        @Override
-        public String toString() {
-            return "MessageFormatterI18n{" +
-                    "i18n=" + i18n +
-                    '}';
         }
     }
 }

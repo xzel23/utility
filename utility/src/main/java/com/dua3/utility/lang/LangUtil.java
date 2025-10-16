@@ -1288,7 +1288,7 @@ public final class LangUtil {
      * The formatting is done the first time {@code toString()} is called.
      * Subsequent calls of {@code toString()} will return the same object.
      */
-    private static class LazyFormatter {
+    private static final class LazyFormatter {
         public static final String NULL_STRING = String.valueOf((Object) null);
 
         private volatile @Nullable String s;

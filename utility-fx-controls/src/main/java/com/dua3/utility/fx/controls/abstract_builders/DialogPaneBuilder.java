@@ -21,7 +21,6 @@ import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;

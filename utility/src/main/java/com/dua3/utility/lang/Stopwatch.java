@@ -340,7 +340,7 @@ public class Stopwatch {
         }
     }
 
-    private static class LazyName {
+    private static final class LazyName {
         private final Supplier<String> name;
         @Nullable
         String n;
