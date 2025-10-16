@@ -195,7 +195,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Setup JDK 54 with JavaFX
+      # Setup JDK 25 with JavaFX
       - name: 'Set up JDK 25 with JavaFX'
         uses: actions/setup-java@v5
         with:

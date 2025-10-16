@@ -46,11 +46,11 @@ dependencyResolutionManagement {
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
             plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("1.0.0")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.10")
-            plugin("sonar", "org.sonarqube").version("6.3.1.5724")
+            plugin("sonar", "org.sonarqube").version("7.0.0.6105")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.20.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.4.2")
+            plugin("spotbugs", "com.github.spotbugs").version("6.4.3")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("versions", "com.github.ben-manes.versions").version("0.53.0")
 
@@ -64,7 +64,7 @@ dependencyResolutionManagement {
             version("log4j-bom", "2.25.2")
             version("miglayout", "11.4.2")
             version("slf4j", "2.0.17")
-            version("spotbugs", "4.9.6")
+            version("spotbugs", "4.9.7")
             version("bouncycastle", "1.82")
             version("utility-bom", projectVersion)
 
