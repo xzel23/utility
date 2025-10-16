@@ -96,8 +96,7 @@ public class Grid extends GridPane {
      * result might contain keys that map to {@code null} values.
      */
     public Map<String, @Nullable Object> get() {
-        Map<String, Object> result = new LinkedHashMap<>();
-        //noinspection SimplifyForEach - Collectors.toMap() does not support null values!
+        Map<String, @Nullable Object> result = new LinkedHashMap<>();
         data.forEach(e -> {
             if (e.id != null) {
                 result.put(e.id, e.control.get());
