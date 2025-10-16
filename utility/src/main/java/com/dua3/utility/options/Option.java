@@ -78,7 +78,7 @@ public class Option<T extends @Nullable Object> {
             String firstSwitch,
             String... moreSwitches
     ) {
-        return new OptionBuilder<T>(null, displayName, description, param.targetType())
+        return new OptionBuilder<>(null, displayName, description, param.targetType())
                 .param(param)
                 .defaultSupplier(defaultSupplier)
                 .build(firstSwitch, moreSwitches);
@@ -121,7 +121,7 @@ public class Option<T extends @Nullable Object> {
                 converter,
                 allowedValues
         );
-        return new OptionBuilder<T>(null, displayName, description, targetType)
+        return new OptionBuilder<>(null, displayName, description, targetType)
                 .param(param)
                 .defaultSupplier(defaultSupplier)
                 .build(firstSwitch, moreSwitches);

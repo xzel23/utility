@@ -95,7 +95,7 @@ class ButtonDefTest extends FxTestBase {
     }
 
     private InputDialogPane<String> createMockInputDialogPane() {
-        return new InputDialogPane<String>() {
+        return new InputDialogPane<>() {
             @Override
             public @Nullable String get() {
                 return "";

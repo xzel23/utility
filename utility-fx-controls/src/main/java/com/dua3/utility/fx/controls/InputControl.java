@@ -130,24 +130,24 @@ public interface InputControl<T> {
     }
 
     private static <T> StringConverter<T> createStrictStringConverter(Class<T> cls, Format format, Consumer<String> setErrorMessage) {
-        return new StringConverter<T>() {
+        return new StringConverter<>() {
             @Override
             public String toString(@Nullable T object) {
                 return object == null ? "" : format.format(object);
             }
 
             @Override
-            public @Nullable T fromString(String string) {
-                if (string.isEmpty()) {
+            public @Nullable T fromString(String s) {
+                if (s.isEmpty()) {
                     setErrorMessage.accept("");
                     return null;
                 }
 
                 try {
                     ParsePosition pos = new ParsePosition(0);
-                    Object result = format.parseObject(string, pos);
+                    Object result = format.parseObject(s, pos);
 
-                    if (result == null || pos.getIndex() != string.length()) {
+                    if (result == null || pos.getIndex() != s.length()) {
                         setErrorMessage.accept(INVALID_VALUE);
                         return null;
                     }

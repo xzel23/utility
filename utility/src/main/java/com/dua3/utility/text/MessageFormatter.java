@@ -14,22 +14,21 @@ import java.util.Locale;
 public interface MessageFormatter {
     /**
      * Defines the style of formatting to be used within the {@code MessageFormatter}.
-     *
+     * <p>
      * Each enum constant represents a specific formatting style that determines the
      * approach for formatting messages or replacing placeholders in a provided text input.
-     *
+     * <p>
      * The available format styles are:
-     *
-     * - {@code STRING_FORMAT}: Utilizes {@link String#format(Locale, String, Object...)}
-     *   for standard Java-style formatting with locale support.
-     *
-     * - {@code MESSAGE_FORMAT}: Applies {@link MessageFormat} to perform a structured
-     *   and localized message formatting process where placeholders are substituted with
-     *   arguments.
-     *
-     * - {@code I18N}: Uses a specific {@code I18N} instance for internationalized and
-     *   resource-based message formatting, allowing for localization and context-aware
-     *   text transformations.
+     * <ul>
+     * <li> {@code STRING_FORMAT}: Utilizes {@link String#format(Locale, String, Object...)}
+     *      for standard Java-style formatting with locale support.
+     * <li> {@code MESSAGE_FORMAT}: Applies {@link MessageFormat} to perform a structured
+     *      and localized message formatting process where placeholders are substituted with
+     *      arguments.
+     * <li> {@code I18N}: Uses a specific {@code I18N} instance for internationalized and
+     *      resource-based message formatting, allowing for localization and context-aware
+     *      text transformations.
+     * </ul>
      */
     enum FormatStyle {
         /**
@@ -40,7 +39,7 @@ public interface MessageFormatter {
         STRING_FORMAT,
         /**
          * Specifies a formatting style to be applied for processing messages.
-         *
+         * <p>
          * Represents the {@link MessageFormat} style of formatting, which is
          * used for structured and locale-sensitive message formatting. It defines a way
          * to substitute placeholders in a text input with provided arguments, allowing
@@ -51,7 +50,7 @@ public interface MessageFormatter {
          * A constant representing the usage of a specific internationalization (I18N) instance
          * for formatting messages. This format style supports localization and context-aware
          * message handling by leveraging resource-based translations or transformations.
-         *
+         * <p>
          * Typically chosen when messages need to be dynamically adapted according to locale
          * or cultural formatting requirements.
          */

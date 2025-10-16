@@ -481,26 +481,18 @@ public final class TextUtil {
      * A private implementation of the {@link CharSequence} interface that wraps a portion of a character array.
      * This class provides an immutable, read-only view of a specific range within a given character array.
      */
-    private static final class CharSequenceWrapper implements CharSequence {
-        private final char[] chars;
-        private final int start;
-        private final int end;
-
+    private record CharSequenceWrapper(char[] charArray, int start, int end) implements CharSequence {
         /**
          * Constructs a new {@code CharSequenceWrapper} that wraps a specific portion of a character array.
          *
-         * @param chars the character array to wrap
-         * @param start the starting offset (inclusive) within the character array
-         * @param end the ending offset (exclusive) within the character array
+         * @param charArray the character array to wrap
+         * @param start     the starting offset (inclusive) within the character array
+         * @param end       the ending offset (exclusive) within the character array
          * @throws IllegalArgumentException if the {@code start} or {@code end} indices are out of bounds
          */
-        CharSequenceWrapper(char[] chars, int start, int end) {
-            this.chars = chars;
-            this.start = start;
-            this.end = end;
-
-            LangUtil.checkArg(LangUtil.isBetween(start, 0, chars.length), "start out of bounds: %s", start);
-            LangUtil.checkArg(LangUtil.isBetween(end, start, chars.length), "end out of bounds: %s", end);
+        private CharSequenceWrapper {
+            LangUtil.checkArg(LangUtil.isBetween(start, 0, charArray.length), "start out of bounds: %s", start);
+            LangUtil.checkArg(LangUtil.isBetween(end, start, charArray.length), "end out of bounds: %s", end);
         }
 
         @Override
@@ -510,17 +502,28 @@ public final class TextUtil {
 
         @Override
         public char charAt(int index) {
-            return chars[start + index];
+            return charArray[start + index];
         }
 
         @Override
         public CharSequence subSequence(int start, int end) {
-            return new CharSequenceWrapper(chars, this.start + start, this.start + end);
+            return new CharSequenceWrapper(charArray, this.start + start, this.start + end);
         }
 
         @Override
         public String toString() {
-            return new String(chars, start, end - start);
+            return new String(charArray, start, end - start);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof CharSequenceWrapper that)) return false;
+            return end == that.end && start == that.start && Arrays.equals(charArray, that.charArray);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(Arrays.hashCode(charArray), start, end);
         }
     }
 

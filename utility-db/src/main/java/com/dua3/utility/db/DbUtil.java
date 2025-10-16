@@ -354,7 +354,7 @@ public final class DbUtil {
      */
     public static <T> Stream<T> stream(ResultSet rs, Function<? super ResultSet, ? extends T> mapper) throws SQLException {
         try {
-            return StreamSupport.stream(new Spliterators.AbstractSpliterator<T>(
+            return StreamSupport.stream(new Spliterators.AbstractSpliterator<>(
                     Long.MAX_VALUE, Spliterator.ORDERED) {
                 @Override
                 public boolean tryAdvance(Consumer<? super T> action) {
