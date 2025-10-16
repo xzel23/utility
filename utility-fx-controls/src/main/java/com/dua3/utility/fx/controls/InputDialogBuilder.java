@@ -28,7 +28,6 @@ import javafx.stage.Window;
 
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
@@ -42,7 +41,7 @@ import java.util.function.UnaryOperator;
  * Provides a fluent interface to create Alerts.
  */
 public class InputDialogBuilder
-        extends DialogBuilder<InputDialog, InputDialogBuilder, Map<String, Object>>
+        extends DialogBuilder<InputDialog, InputDialogBuilder, InputResult<ButtonType, String>>
         implements InputBuilder<InputDialogBuilder> {
 
     private final InputPaneBuilder pb;

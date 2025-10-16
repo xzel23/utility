@@ -16,16 +16,13 @@ package com.dua3.utility.fx.controls;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import org.jspecify.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  * A Dialog for inputting values.
  * <p>
  * The dialog consists of labels and input controls laid out in a grid.
  */
-public class InputDialog extends Dialog<@Nullable Map<String, Object>> {
+public class InputDialog extends Dialog<InputResult<ButtonType, String>> {
 
     /**
      * Constructs a new InputDialog instance.
@@ -36,12 +33,7 @@ public class InputDialog extends Dialog<@Nullable Map<String, Object>> {
      * dialog pane. Otherwise, it returns null.
      */
     public InputDialog() {
-        setResultConverter(btn -> {
-            if (btn != ButtonType.OK) {
-                return null;
-            }
-            return ((InputPane) getDialogPane()).get();
-        });
+        setResultConverter(btn -> new InputResult<>(btn, ((InputPane) getDialogPane()).get()));
     }
 
 }

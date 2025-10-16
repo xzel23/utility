@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -58,7 +56,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -84,7 +82,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.text("Test text");
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created with text
             assertNotNull(dialog);
@@ -108,7 +106,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.labeledText("Label", "Test text");
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created with text
             assertNotNull(dialog);
@@ -132,7 +130,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputString("id", "Label", () -> "Default", s -> Optional.empty());
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -156,7 +154,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputInteger("id", "Label", () -> 42L, i -> Optional.empty());
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -180,7 +178,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputDecimal("id", "Label", () -> 3.14, d -> Optional.empty());
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -204,7 +202,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputCheckBox("id", "Label", () -> true, "Check this", b -> Optional.empty());
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -229,7 +227,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputComboBox("id", "Label", () -> "Item 1", String.class, items, s -> Optional.empty());
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -254,7 +252,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputComboBoxEx("id", "Label", s -> s + " (edited)", () -> "New Item", (cb, s) -> true, s -> s, () -> "Item 1", String.class, items, s -> Optional.empty());
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -279,7 +277,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputRadioList("id", "Label", () -> "Option 1", String.class, items, s -> Optional.empty());
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -303,7 +301,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputSlider("id", "Label", () -> 50.0, 0.0, 100.0);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -327,7 +325,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputFile("id", "Label", () -> Paths.get(System.getProperty("user.home")), FileDialogMode.OPEN, true, Collections.emptyList(), p -> Optional.empty());
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -352,7 +350,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.node("id", node);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -377,7 +375,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.node("Label", node);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -401,7 +399,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.columns(3);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -425,7 +423,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputConstant("id", "Label", () -> "Constant value", String.class);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -449,7 +447,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputConstant("id", "Label", "Constant value");
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -473,7 +471,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputHidden("id", () -> "Hidden value", String.class);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -497,7 +495,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.inputHidden("id", "Hidden value");
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -522,7 +520,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.addInput("id", "Label", String.class, () -> "Default", control, false);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -547,7 +545,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.addInput("id", String.class, () -> "Default", control);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -572,7 +570,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.node("Label", node);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
@@ -597,7 +595,7 @@ class InputDialogBuilderTest extends FxTestBase {
             builder.node("id", node);
 
             // Build a dialog
-            Dialog<Map<String, Object>> dialog = builder.build();
+            InputDialog dialog = builder.build();
 
             // Verify dialog was created
             assertNotNull(dialog);
