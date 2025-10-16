@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
@@ -9,6 +10,7 @@ import javafx.stage.FileChooser;
 
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
@@ -369,6 +371,25 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
+     * Add a labeled combobox for selecting a value from an enum.
+     *
+     * @param <T>   the item type
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
+     * @param cls   the enum class
+     * @return {@code this}
+     */
+    default <T extends Enum<T>> B inputComboBox(
+            String id,
+            String label,
+            Supplier<@Nullable T> dflt,
+            Class<T> cls
+    ) {
+        return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls),t -> Optional.empty());
+    }
+
+    /**
      * Add a labeled combobox.
      *
      * @param <T>   the item type
@@ -387,6 +408,48 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Collection<T> items
     ) {
         return inputComboBox(id, label, dflt, cls, items, t -> Optional.empty());
+    }
+
+    /**
+     * Add a labeled combobox.
+     *
+     * @param <T>   the item type
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
+     * @param cls   the result class
+     * @param items the items to choose from
+     * @return {@code this}
+     */
+    default <T> B inputComboBox(
+            String id,
+            String label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            T[] items
+    ) {
+        return inputComboBox(id, label, dflt, cls, List.of(items));
+    }
+
+    /**
+     * Creates a comboBox widget to select an enum value with the given parameters.
+     *
+     * @param id       the unique identifier for the comboBox
+     * @param label    the label to display with the comboBox
+     * @param dflt     the supplier function to provide the default value for the comboBox
+     * @param cls      the class type of enum
+     * @param validate the function to validate the selected item in the comboBox
+     * @param <T>      the type of the comboBox items
+     * @return {@code this}
+     */
+    default <T extends Enum<T>> B inputComboBox(
+            String id,
+            String label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            Function<@Nullable T, Optional<String>> validate
+    ) {
+        return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls), validate);
     }
 
     /**
@@ -409,6 +472,29 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Collection<T> items,
             Function<@Nullable T, Optional<String>> validate
     );
+
+    /**
+     * Creates a comboBox widget with the given parameters.
+     *
+     * @param id       the unique identifier for the comboBox
+     * @param label    the label to display with the comboBox
+     * @param dflt     the supplier function to provide the default value for the comboBox
+     * @param cls      the class type of the comboBox items
+     * @param items    the collection of items to populate the comboBox
+     * @param validate the function to validate the selected item in the comboBox
+     * @param <T>      the type of the comboBox items
+     * @return {@code this}
+     */
+    default <T> B inputComboBox(
+            String id,
+            String label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            T[] items,
+            Function<@Nullable T, Optional<String>> validate
+    ) {
+        return inputComboBox(id, label, dflt, cls, List.of(items), validate);
+    }
 
     /**
      * Adds a labeled combo box control with extended functionality.
