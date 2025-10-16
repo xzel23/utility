@@ -87,8 +87,8 @@ public class InputDialogBuilder
     }
 
     @Override
-    public InputDialogBuilder node(String id, Node node) {
-        pb.node(id, node);
+    public InputDialogBuilder node(String label, Node node) {
+        pb.node(label, node);
         return this;
     }
 
