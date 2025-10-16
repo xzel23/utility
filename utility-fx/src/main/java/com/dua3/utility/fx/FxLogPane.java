@@ -59,7 +59,7 @@ public class FxLogPane extends BorderPane {
     private final LogBuffer logBuffer;
     private final TextArea details;
     private final TableView<@Nullable LogEntry> tableView;
-    private Function<? super LogEntry, ? extends Color> colorize;
+    private Function<LogEntry, Color> colorize;
     private final Background cellBackground = Background.fill(Paint.valueOf("white"));
 
     private final AtomicReference<@Nullable LogEntry> selectedItem = new AtomicReference<>();
@@ -140,7 +140,7 @@ public class FxLogPane extends BorderPane {
      * @throws NullPointerException if logBuffer or colorize is null
      */
     @SuppressWarnings("unchecked")
-    public FxLogPane(LogBuffer logBuffer, Function<? super LogEntry, Color> colorize) {
+    public FxLogPane(LogBuffer logBuffer, Function<LogEntry, Color> colorize) {
         FilteredList<LogEntry> entries = new FilteredList<>(new LogEntriesObservableList(logBuffer), p -> true);
 
         this.logBuffer = logBuffer;
@@ -255,7 +255,7 @@ public class FxLogPane extends BorderPane {
      *
      * @param colorize a function that maps a {@link LogEntry} to a {@link Color}
      */
-    public void setColorize(Function<? super LogEntry, ? extends Color> colorize) {
+    public void setColorize(Function<LogEntry, Color> colorize) {
         this.colorize = colorize;
     }
 
@@ -266,7 +266,7 @@ public class FxLogPane extends BorderPane {
      *
      * @return a {@link Function} that maps a {@link LogEntry} to a {@link Color}
      */
-    public Function<? super LogEntry, ? extends Color> getColorize() {
+    public Function<LogEntry, Color> getColorize() {
         return colorize;
     }
 
