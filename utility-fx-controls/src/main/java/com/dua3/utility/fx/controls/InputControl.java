@@ -246,7 +246,7 @@ public interface InputControl<T> {
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<@Nullable T, String> format,
             Function<@Nullable T, Optional<String>> validate) {
-        ComboBoxEx<T> control = new ComboBoxEx<T>(edit, add, remove, dflt, format, FxUtil.makeObservable(choices));
+        ComboBoxEx<T> control = new ComboBoxEx<>(edit, add, remove, dflt, format, FxUtil.makeObservable(choices));
         Property<T> value = control.valueProperty();
         return new SimpleInputControl<>(control, value, dflt, validate);
     }
