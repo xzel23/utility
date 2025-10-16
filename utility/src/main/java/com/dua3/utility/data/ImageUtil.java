@@ -96,11 +96,12 @@ public interface ImageUtil {
     /**
      * Create an empty {@link BufferedImage}.
      *
+     * @param <I> the image type
      * @param w the image width
      * @param h the image height
      * @return new {@link BufferedImage}
      */
-    BufferedImage createBufferedImage(int w, int h);
+    <I extends BufferedImage & Image> I createBufferedImage(int w, int h);
 
     /**
      * Convert {@link Image} to {@link ImageBuffer}.
