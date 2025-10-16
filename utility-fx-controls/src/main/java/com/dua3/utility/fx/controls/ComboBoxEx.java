@@ -48,7 +48,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
     private final @Nullable Function<T, @Nullable T> edit;
     private final @Nullable Supplier<T> add;
     private final @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
-    private final Supplier<@Nullable T> dflt;
+    private final Supplier<? extends @Nullable T> dflt;
     private final Function<T, String> format;
     private final ObservableList<T> items;
     private final ComboBox<T> comboBox;
@@ -68,7 +68,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
             @Nullable UnaryOperator<T> edit,
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            @Nullable Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Function<T, String> format,
             T... items
     ) {
@@ -88,7 +88,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
     public ComboBoxEx(
             @Nullable Function<T, @Nullable T> edit,
             @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            @Nullable Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             Function<@Nullable T, String> format,
             Collection<T> items
     ) {
@@ -99,7 +99,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
 
         this.format = format;
         this.items = FXCollections.observableArrayList(List.copyOf(items));
-        this.dflt = dflt != null ? dflt : () -> null;
+        this.dflt = dflt;
 
         this.comboBox = new ComboBox<>(this.items);
         ObservableList<Node> children = container.getChildren();

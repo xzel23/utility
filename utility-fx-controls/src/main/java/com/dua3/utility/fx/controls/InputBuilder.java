@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.BiPredicate;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -343,7 +344,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default B inputCheckBox(
             String id,
             String label,
-            Supplier<@Nullable Boolean> dflt,
+            BooleanSupplier dflt,
             String text
     ) {
         return inputCheckBox(id, label, dflt, text, b -> Optional.empty());
@@ -362,7 +363,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B inputCheckBox(
             String id,
             String label,
-            Supplier<@Nullable Boolean> dflt,
+            BooleanSupplier dflt,
             String text,
             Function<@Nullable Boolean, Optional<String>> validate
     );

@@ -46,6 +46,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -286,8 +287,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public GridBuilder inputCheckBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
-        return addInput(id, label, Boolean.class, dflt, InputControl.checkBoxInput(dflt, text, validate), false);
+    public GridBuilder inputCheckBox(String id, String label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
+        return addInput(id, label, Boolean.class, dflt::getAsBoolean, InputControl.checkBoxInput(dflt, text, validate), false);
     }
 
     @Override

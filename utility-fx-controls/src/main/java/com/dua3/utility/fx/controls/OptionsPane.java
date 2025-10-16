@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -171,7 +172,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
 
     @SuppressWarnings("unchecked")
     private <T> InputControl<T> createFlagControl(Arguments values, Option<T> option) {
-        Supplier<@Nullable Boolean> defaultSupplier = option.getTargetType() == Boolean.class
+        BooleanSupplier defaultSupplier = option.getTargetType() == Boolean.class
                 ? () -> values.get(option).map(Boolean.class::cast).orElse(Boolean.FALSE)
                 : () -> values.get(option).isPresent();
         return (InputControl<T>) InputControl.checkBoxInput(

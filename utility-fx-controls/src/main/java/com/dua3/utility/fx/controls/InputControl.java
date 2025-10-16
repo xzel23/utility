@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -57,7 +58,7 @@ public interface InputControl<T> {
      * @param validate a {@link Function} that takes a String and returns an Optional containing a validation error message, if any
      * @return a {@link SimpleInputControl} containing the TextField and associated properties
      */
-    static SimpleInputControl<TextField, String> stringInput(Supplier<String> dflt, Function<String, Optional<String>> validate) {
+    static SimpleInputControl<TextField, String> stringInput(Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         TextField control = new TextField();
         StringProperty value = control.textProperty();
         return new SimpleInputControl<>(control, value, dflt, validate);
@@ -72,7 +73,7 @@ public interface InputControl<T> {
      * @param <T>       The type of the value.
      * @return A {@link SimpleInputControl} containing the {@link TextField} and associated properties.
      */
-    static <T> SimpleInputControl<TextField, T> stringInput(Supplier<T> dflt, Function<@Nullable T, Optional<String>> validate, StringConverter<@Nullable T> converter) {
+    static <T> SimpleInputControl<TextField, T> stringInput(Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate, StringConverter<@Nullable T> converter) {
         TextField control = new TextField();
         ObjectProperty<@Nullable T> value = new SimpleObjectProperty<>();
         Bindings.bindBidirectional(control.textProperty(), value, converter);
@@ -107,7 +108,7 @@ public interface InputControl<T> {
      * Creates a {@link SimpleInputControl} for a {@link TextField} with a formattable input,
      * allowing bidirectional binding and validation of the input using a specified {@link Format}.
      *
-     * @param <U>     The type of the value for the input field.
+     * @param <T>     The type of the value for the input field.
      * @param cls     The class of the value type to be formatted and validated.
      * @param format  The {@link Format} used for converting the value to and from its string representation.
      * @param dflt    A {@link Supplier} providing the default value for the input field.
@@ -116,14 +117,14 @@ public interface InputControl<T> {
      * @return A {@link SimpleInputControl} containing a {@link TextField} for the formattable input and
      *         associated properties, including validation.
      */
-    static <U> SimpleInputControl<TextField, U> formattableInput(Class<U> cls, Format format, Supplier<@Nullable U> dflt, Function<@Nullable U, Optional<String>> validate) {
+    static <T> SimpleInputControl<TextField, T> formattableInput(Class<T> cls, Format format, Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate) {
         TextField control = new TextField();
         StringProperty textProperty = control.textProperty();
-        Property<U> value = new SimpleObjectProperty<>();
+        Property<T> value = new SimpleObjectProperty<>();
         AtomicReference<@Nullable String> err = new AtomicReference<>(null);
         textProperty.bindBidirectional(value, createStrictStringConverter(cls, format, err::set));
 
-        Function<@Nullable U, Optional<String>> strictValidate = d ->
+        Function<@Nullable T, Optional<String>> strictValidate = d ->
                 d != null ? validate.apply(d) : Optional.ofNullable(err.get());
 
         return new SimpleInputControl<>(control, value, dflt, strictValidate);
@@ -175,9 +176,11 @@ public interface InputControl<T> {
      * @param cls the class of the target type
      * @return the number converted to the specified type, or the original number if conversion is not supported
      */
-    private static <T> Number convertNumber(Number x, Class<T> cls) {
+    private static <T> @Nullable Number convertNumber(@Nullable Number x, Class<T> cls) {
         Number result;
-        if (cls.isAssignableFrom(Integer.class)) {
+        if (x == null) {
+            result = null;
+        } else if (cls.isAssignableFrom(Integer.class)) {
             result = x.intValue();
         } else if (cls.isAssignableFrom(Long.class)) {
             result = x.longValue();
@@ -201,10 +204,10 @@ public interface InputControl<T> {
      * @param validate a {@link Function} that takes a Boolean value and returns an {@link Optional} containing an error message if validation fails
      * @return a new instance of {@link SimpleInputControl} configured with a {@link CheckBox} and the provided parameters
      */
-    static SimpleInputControl<CheckBox, Boolean> checkBoxInput(Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
+    static SimpleInputControl<CheckBox, Boolean> checkBoxInput(BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
         CheckBox control = new CheckBox(text);
         BooleanProperty value = control.selectedProperty();
-        return new SimpleInputControl<>(control, value.asObject(), dflt, validate);
+        return new SimpleInputControl<>(control, value.asObject(), dflt::getAsBoolean, validate);
     }
 
     /**
@@ -216,7 +219,7 @@ public interface InputControl<T> {
      * @param validate a {@link Function} to validate the selected item which returns an optional error message
      * @return a {@link SimpleInputControl} containing the ComboBox and its value property
      */
-    static <T> SimpleInputControl<ComboBox<T>, T> comboBoxInput(Collection<? extends T> choices, Supplier<T> dflt, Function<T, Optional<String>> validate) {
+    static <T> SimpleInputControl<ComboBox<T>, T> comboBoxInput(Collection<? extends T> choices, Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate) {
         ComboBox<T> control = new ComboBox<>(FxUtil.makeObservable(choices));
         Property<T> value = control.valueProperty();
         return new SimpleInputControl<>(control, value, dflt, validate);
@@ -237,13 +240,13 @@ public interface InputControl<T> {
      */
     static <T> SimpleInputControl<ComboBoxEx<T>, T> comboBoxExInput(
             Collection<T> choices,
-            Supplier<@Nullable T> dflt,
+            Supplier<? extends @Nullable T> dflt,
             @Nullable UnaryOperator<T> edit,
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Function<T, Optional<String>> validate) {
-        ComboBoxEx<T> control = new ComboBoxEx<>(edit, add, remove, dflt, format, FxUtil.makeObservable(choices));
+            Function<@Nullable T, String> format,
+            Function<@Nullable T, Optional<String>> validate) {
+        ComboBoxEx<T> control = new ComboBoxEx<T>(edit, add, remove, dflt, format, FxUtil.makeObservable(choices));
         Property<T> value = control.valueProperty();
         return new SimpleInputControl<>(control, value, dflt, validate);
     }
@@ -259,7 +262,7 @@ public interface InputControl<T> {
      * @param validate      a {@link Function} that validates the selected file path.
      * @return An {@code InputControl} instance for file selection.
      */
-    static InputControl<Path> chooseFile(@Nullable Window parentWindow, Supplier<Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filters,
+    static InputControl<Path> chooseFile(@Nullable Window parentWindow, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filters,
                                          Function<Path, Optional<String>> validate) {
         return new FileInput(parentWindow, mode, existingOnly, dflt, filters, validate);
     }
@@ -338,20 +341,20 @@ public interface InputControl<T> {
      * @param <R> the type of the value being managed
      */
     class State<R> {
-        private final Property<R> value;
+        private final Property<@Nullable R> value;
         private final BooleanProperty valid = new SimpleBooleanProperty(true);
         private final StringProperty error = new SimpleStringProperty("");
 
-        private Supplier<? extends R> dflt;
+        private Supplier<? extends @Nullable R> dflt;
 
-        private Function<? super R, Optional<String>> validate;
+        private Function<? super @Nullable R, Optional<String>> validate;
 
         /**
          * Constructs a State object with the given value.
          *
          * @param value the property representing the value managed by this State
          */
-        public State(Property<R> value) {
+        public State(Property<@Nullable R> value) {
             this(value, freeze(value));
         }
 
@@ -361,7 +364,7 @@ public interface InputControl<T> {
          * @param value the property representing the value managed by this State
          * @param dflt a supplier that provides the default value for the property
          */
-        public State(Property<R> value, Supplier<R> dflt) {
+        public State(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt) {
             this(value, dflt, s -> Optional.empty());
         }
 
@@ -384,9 +387,9 @@ public interface InputControl<T> {
          * @param dflt a supplier that provides the default value for the property
          * @param validate a function that validates the value and returns an optional error message
          */
-        public State(Property<R> value, Supplier<? extends R> dflt, Function<? super R, Optional<String>> validate) {
+        public State(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate) {
             this.value = value;
-            this.value.addListener((v, o, n) -> updateValidState(n));
+            this.value.addListener((ObservableValue<? extends @Nullable R> v, @Nullable R o, @Nullable R n) -> updateValidState(n));
             this.dflt = dflt;
             this.validate = validate;
 
@@ -407,7 +410,7 @@ public interface InputControl<T> {
          *
          * @param validate a function that validates the value and returns an optional error message
          */
-        public void setValidate(Function<? super R, Optional<String>> validate) {
+        public void setValidate(Function<? super @Nullable R, Optional<String>> validate) {
             this.validate = validate;
             updateValidState(valueProperty().getValue());
         }
@@ -417,7 +420,7 @@ public interface InputControl<T> {
          *
          * @return the property representing the value
          */
-        public Property<R> valueProperty() {
+        public Property<@Nullable R> valueProperty() {
             return value;
         }
 
@@ -445,7 +448,7 @@ public interface InputControl<T> {
          *
          * @param dflt a supplier that provides the default value for the property
          */
-        public void setDefault(Supplier<? extends R> dflt) {
+        public void setDefault(Supplier<? extends @Nullable R> dflt) {
             this.dflt = dflt;
         }
 
@@ -480,11 +483,11 @@ public interface InputControl<T> {
     }
 }
 
-class FormatWithDefaultValue extends Format {
+final class FormatWithDefaultValue extends Format {
     final Format baseFormat;
-    final transient Supplier<?> defaultValue;
+    final Supplier<?> defaultValue;
 
-    FormatWithDefaultValue(Format baseFormat, Supplier<?> defaultValue) {
+    FormatWithDefaultValue(Format baseFormat, Supplier<? extends @Nullable Object> defaultValue) {
         this.baseFormat = baseFormat;
         this.defaultValue = defaultValue;
     }
@@ -503,5 +506,8 @@ class FormatWithDefaultValue extends Format {
     public @Nullable Object parseObject(String source) throws ParseException {
         return source.isEmpty() ? defaultValue.get() : super.parseObject(source);
     }
-}
 
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {throw new java.io.NotSerializableException("com.dua3.utility.fx.controls.FormatWithDefaultValue");}
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {throw new java.io.NotSerializableException("com.dua3.utility.fx.controls.FormatWithDefaultValue");}
+}

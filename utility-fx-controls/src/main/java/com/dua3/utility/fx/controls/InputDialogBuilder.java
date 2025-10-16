@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiPredicate;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -157,7 +158,7 @@ public class InputDialogBuilder
     }
 
     @Override
-    public InputDialogBuilder inputCheckBox(String id, String label, Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
+    public InputDialogBuilder inputCheckBox(String id, String label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
         pb.inputCheckBox(id, label, dflt, text, validate);
         return this;
     }
