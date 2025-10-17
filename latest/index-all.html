@@ -5148,6 +5148,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/ImmutableSortedMap.html#get(java.lang.Object)" class="member-name-link">get(Object)</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/ImmutableSortedMap.html" title="class in com.dua3.utility.lang">ImmutableSortedMap</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputResult.html#get(java.lang.String)" class="member-name-link">get(String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
+<dd>
+<div class="block">Convenience accessor to retrieve a value from the data map by key.</div>
+</dd>
 <dt><a href="com/dua3/utility/i18n/I18N.html#get(java.lang.String)" class="member-name-link">get(String)</a> - Method in class com.dua3.utility.i18n.<a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n">I18N</a></dt>
 <dd>
 <div class="block">Retrieves the localized string for the given key from the resource bundle.</div>
@@ -5175,10 +5179,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/data/Cache.html#get(K)" class="member-name-link">get(K)</a> - Method in class com.dua3.utility.data.<a href="com/dua3/utility/data/Cache.html" title="class in com.dua3.utility.data">Cache</a></dt>
 <dd>
 <div class="block">Gets the value associated with the specified key.</div>
-</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputResult.html#get(K)" class="member-name-link">get(K)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
-<dd>
-<div class="block">Convenience accessor to retrieve a value from the data map by key.</div>
 </dd>
 <dt><a href="com/dua3/utility/data/ObjectCache.html#get(T)" class="member-name-link">get(T)</a> - Method in class com.dua3.utility.data.<a href="com/dua3/utility/data/ObjectCache.html" title="class in com.dua3.utility.data">ObjectCache</a></dt>
 <dd>
@@ -5292,6 +5292,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/i18n/I18N.html#getBundle(java.lang.String)" class="member-name-link">getBundle(String)</a> - Method in class com.dua3.utility.i18n.<a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n">I18N</a></dt>
 <dd>
 <div class="block">Retrieves the ResourceBundle associated with the given key from the bundleMap.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/KeyStoreUtil.html#getCaAliases(java.security.KeyStore)" class="member-name-link">getCaAliases(KeyStore)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyStoreUtil.html" title="class in com.dua3.utility.crypt">KeyStoreUtil</a></dt>
+<dd>
+<div class="block">Retrieves a list of aliases from the provided KeyStore that represent
+ Certificate Authority (CA) certificates.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/WrappedException.html#getCause()" class="member-name-link">getCause()</a> - Method in exception class com.dua3.utility.lang.<a href="com/dua3/utility/lang/WrappedException.html" title="class in com.dua3.utility.lang">WrappedException</a></dt>
 <dd>&nbsp;</dd>
@@ -6449,7 +6454,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Construct URL from URL-scheme and supplied options</div>
 </dd>
-<dt><a href="com/dua3/utility/io/IoUtil.html#getUserDir()" class="member-name-link">getUserDir()</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
+<dt><a href="com/dua3/utility/io/IoUtil.html#getUserHome()" class="member-name-link">getUserHome()</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
 <dd>
 <div class="block">Retrieves the user's home directory as a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link"><code>Path</code></a>.</div>
 </dd>
@@ -7175,7 +7180,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Execute action if key is mapped.</div>
 </dd>
-<dt><a href="com/dua3/utility/lang/LangUtil.html#ifPresent(java.util.Map,T,java.util.function.Consumer)" class="member-name-link">ifPresent(Map&lt;T, U&gt;, T, Consumer&lt;T&gt;)</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
+<dt><a href="com/dua3/utility/lang/LangUtil.html#ifPresent(java.util.Map,T,java.util.function.Consumer)" class="member-name-link">ifPresent(Map&lt;T, U&gt;, T, Consumer&lt;? super U&gt;)</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
 <dd>
 <div class="block">Executes the provided consumer if the specified key is present in the given map.</div>
 </dd>
@@ -7420,11 +7425,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The initial size of the buffer.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/DirectoryChooserBuilder.html#initialDir(java.nio.file.Path)" class="member-name-link">initialDir(Path)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/DirectoryChooserBuilder.html" title="class in com.dua3.utility.fx.controls">DirectoryChooserBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/FileChooserBuilder.html#initialDir(java.nio.file.Path)" class="member-name-link">initialDir(Path)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/FileChooserBuilder.html" title="class in com.dua3.utility.fx.controls">FileChooserBuilder</a></dt>
 <dd>
 <div class="block">Set initial directory.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/FileChooserBuilder.html#initialDir(java.nio.file.Path)" class="member-name-link">initialDir(Path)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/FileChooserBuilder.html" title="class in com.dua3.utility.fx.controls">FileChooserBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/DirectoryChooserBuilder.html#initialDir(java.nio.file.Path)" class="member-name-link">initialDir(Path)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/DirectoryChooserBuilder.html" title="class in com.dua3.utility.fx.controls">DirectoryChooserBuilder</a></dt>
 <dd>
 <div class="block">Set initial directory.</div>
 </dd>
@@ -7729,15 +7734,15 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputRadioList(java.lang.String,java.lang.String,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputRadioList(String, String, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/fx/controls/InputResult.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputResult&lt;T,<wbr>K&gt;</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputResult.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputResult</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
 <div class="block">Represents the result of an input operation along with optional associated data.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputResult.html#%3Cinit%3E(T)" class="member-name-link">InputResult(T)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputResult.html#%3Cinit%3E(javafx.scene.control.ButtonType)" class="member-name-link">InputResult(ButtonType)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
 <dd>
 <div class="block">Constructs an <code>InputResult</code> with the specified result and an empty data map.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputResult.html#%3Cinit%3E(T,java.util.Map)" class="member-name-link">InputResult(T, Map&lt;K, Object&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputResult.html#%3Cinit%3E(javafx.scene.control.ButtonType,java.util.Map)" class="member-name-link">InputResult(ButtonType, Map&lt;String, Object&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
 <dd>
 <div class="block">Constructs an <code>InputResult</code> with the specified result and data map.</div>
 </dd>
@@ -7830,7 +7835,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Utility class for Input/Output.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputResult.html#is(T)" class="member-name-link">is(T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputResult.html#is(javafx.scene.control.ButtonType)" class="member-name-link">is(ButtonType)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
 <dd>
 <div class="block">Checks if the given result matches the stored result.</div>
 </dd>
@@ -7838,7 +7843,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Check active state.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputResult.html#isAny(T...)" class="member-name-link">isAny(T...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputResult.html#isAny(javafx.scene.control.ButtonType...)" class="member-name-link">isAny(ButtonType...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
 <dd>
 <div class="block">Determines if the stored result matches any of the specified results.</div>
 </dd>
@@ -9572,6 +9577,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The color MOCCASIN.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/PromptBuilder.html#mode(com.dua3.utility.fx.controls.PromptMode)" class="member-name-link">mode(PromptMode)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a></dt>
+<dd>
+<div class="block">Sets the prompt mode for the prompt dialog.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html#MODERATE" class="member-name-link">MODERATE</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.StrengthLevel.html" title="enum class in com.dua3.utility.crypt">PasswordUtil.StrengthLevel</a></dt>
 <dd>
 <div class="block">Represents the moderate strength level of a password.</div>
@@ -10196,7 +10205,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The vector (1,0).</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputResult.html#onResult(T,java.util.function.Consumer)" class="member-name-link">onResult(T, Consumer&lt;Map&lt;K, Object&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputResult.html#onResult(javafx.scene.control.ButtonType,java.util.function.Consumer)" class="member-name-link">onResult(ButtonType, Consumer&lt;Map&lt;String, Object&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputResult.html" title="class in com.dua3.utility.fx.controls">InputResult</a></dt>
 <dd>
 <div class="block">Executes the provided consumer if the specified result matches the stored result.</div>
 </dd>
@@ -10559,6 +10568,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Parse fontspec.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/PromptMode.html#PASSWORD" class="member-name-link">PASSWORD</a> - Enum constant in enum class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/PromptMode.html" title="enum class in com.dua3.utility.fx.controls">PromptMode</a></dt>
+<dd>
+<div class="block">Used to represent a mode for masked input, typically for passwords or sensitive information.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.html#passwordInput(java.util.function.Supplier,java.util.function.Function,javafx.util.StringConverter)" class="member-name-link">passwordInput(Supplier&lt;? extends T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;, StringConverter&lt;T&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
+<dd>
+<div class="block">Creates a new <a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>TextField</code> with bidirectional binding.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.html#passwordInput(java.util.function.Supplier,java.util.function.Function)" class="member-name-link">passwordInput(Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
+<dd>
+<div class="block">Creates a <a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a TextField with String input.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html#%3Cinit%3E(double,double,com.dua3.utility.crypt.PasswordUtil.StrengthLevel,java.util.List)" class="member-name-link">PasswordStrength(double, double, PasswordUtil.StrengthLevel, List&lt;String&gt;)</a> - Constructor for record class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PasswordUtil.PasswordStrength.html" title="class in com.dua3.utility.crypt">PasswordUtil.PasswordStrength</a></dt>
 <dd>
 <div class="block">Compact constructor that ensures immutability of the issues list.</div>
@@ -10862,6 +10883,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Builder for Alert Dialogs.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/PromptDialog.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">PromptDialog</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
+<dd>
+<div class="block">A custom dialog for prompting users to input either text or password.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/PromptDialog.html#%3Cinit%3E(com.dua3.utility.fx.controls.PromptMode,java.lang.String)" class="member-name-link">PromptDialog(PromptMode, String)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/PromptDialog.html" title="class in com.dua3.utility.fx.controls">PromptDialog</a></dt>
+<dd>
+<div class="block">Creates a new PromptDialog instance with a specific prompt mode and default input value.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/PromptMode.html" class="type-name-link" title="enum class in com.dua3.utility.fx.controls">PromptMode</a> - Enum Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
+<dd>
+<div class="block">An enumeration representing modes used for displaying prompts.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#promptPane()" class="member-name-link">promptPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
 <div class="block">Start the definition of a new prompt pane using the standard MessageFormatter.</div>
@@ -10911,6 +10944,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/text/RichTextBuilder.html#push(java.lang.String,java.lang.Object)" class="member-name-link">push(String, Object)</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichTextBuilder.html" title="class in com.dua3.utility.text">RichTextBuilder</a></dt>
 <dd>
 <div class="block">Push attribute.</div>
+</dd>
+<dt><a href="com/dua3/utility/application/RecentlyUsedDocuments.html#put(java.net.URI)" class="member-name-link">put(URI)</a> - Method in class com.dua3.utility.application.<a href="com/dua3/utility/application/RecentlyUsedDocuments.html" title="class in com.dua3.utility.application">RecentlyUsedDocuments</a></dt>
+<dd>
+<div class="block">Adds a document to the recently used documents list using the provided URI.</div>
 </dd>
 <dt><a href="com/dua3/utility/application/RecentlyUsedDocuments.html#put(java.net.URI,java.lang.String)" class="member-name-link">put(URI, String)</a> - Method in class com.dua3.utility.application.<a href="com/dua3/utility/application/RecentlyUsedDocuments.html" title="class in com.dua3.utility.application">RecentlyUsedDocuments</a></dt>
 <dd>
@@ -13745,6 +13782,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates and returns a new instance of TextBuilder.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/PromptMode.html#TEXT" class="member-name-link">TEXT</a> - Enum constant in enum class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/PromptMode.html" title="enum class in com.dua3.utility.fx.controls">PromptMode</a></dt>
+<dd>
+<div class="block">Represents the mode used for standard text input in a user input prompt.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/TextFieldType.html#TEXT" class="member-name-link">TEXT</a> - Enum constant in enum class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextFieldType.html" title="enum class in com.dua3.utility.fx.controls">TextFieldType</a></dt>
 <dd>
 <div class="block">Represents plain text input in a text field.</div>
@@ -14943,6 +14984,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/PromptMode.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/PromptMode.html" title="enum class in com.dua3.utility.fx.controls">PromptMode</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/SliderWithButtons.Mode.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/SliderWithButtons.Mode.html" title="enum class in com.dua3.utility.fx.controls">SliderWithButtons.Mode</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -15116,6 +15161,11 @@ the order they are declared.</div>
 the order they are declared.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Position.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Position.html" title="enum class in com.dua3.utility.fx.controls">Position</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/PromptMode.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/PromptMode.html" title="enum class in com.dua3.utility.fx.controls">PromptMode</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>

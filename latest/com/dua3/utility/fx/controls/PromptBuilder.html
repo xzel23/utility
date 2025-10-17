@@ -88,8 +88,8 @@ loadScripts(document, 'script');</script>
 <h1 title="Class PromptBuilder" class="title">Class PromptBuilder</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance"><a href="abstract_builders/DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder</a>&lt;javafx.scene.control.TextInputDialog,<wbr><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;
-<div class="inheritance"><a href="abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">com.dua3.utility.fx.controls.abstract_builders.DialogBuilder</a>&lt;javafx.scene.control.TextInputDialog,<wbr><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;
+<div class="inheritance"><a href="abstract_builders/DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder</a>&lt;<a href="PromptDialog.html" title="class in com.dua3.utility.fx.controls">PromptDialog</a>,<wbr><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;
+<div class="inheritance"><a href="abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">com.dua3.utility.fx.controls.abstract_builders.DialogBuilder</a>&lt;<a href="PromptDialog.html" title="class in com.dua3.utility.fx.controls">PromptDialog</a>,<wbr><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;
 <div class="inheritance">com.dua3.utility.fx.controls.PromptBuilder</div>
 </div>
 </div>
@@ -97,7 +97,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">PromptBuilder</span>
-<span class="extends-implements">extends <a href="abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogBuilder</a>&lt;javafx.scene.control.TextInputDialog,<wbr><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span></div>
+<span class="extends-implements">extends <a href="abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogBuilder</a>&lt;<a href="PromptDialog.html" title="class in com.dua3.utility.fx.controls">PromptDialog</a>,<wbr><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span></div>
 <div class="block">Builder for Alert Dialogs.
  <p>
  Provides a fluent interface to create Alerts.</div>
@@ -124,7 +124,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.scene.control.TextInputDialog</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PromptDialog.html" title="class in com.dua3.utility.fx.controls">PromptDialog</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Create Dialog instance.</div>
@@ -136,8 +136,13 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets the default value for the prompt dialog.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validate(java.util.function.Predicate)" class="member-name-link">validate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;validate)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#mode(com.dua3.utility.fx.controls.PromptMode)" class="member-name-link">mode</a><wbr>(<a href="PromptMode.html" title="enum class in com.dua3.utility.fx.controls">PromptMode</a>&nbsp;promptMode)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the prompt mode for the prompt dialog.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validate(java.util.function.Predicate)" class="member-name-link">validate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;validate)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the validation logic for the input prompt.</div>
 </div>
 </div>
@@ -179,6 +184,19 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="mode(com.dua3.utility.fx.controls.PromptMode)">
+<h3>mode</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a></span>&nbsp;<span class="element-name">mode</span><wbr><span class="parameters">(<a href="PromptMode.html" title="enum class in com.dua3.utility.fx.controls">PromptMode</a>&nbsp;promptMode)</span></div>
+<div class="block">Sets the prompt mode for the prompt dialog.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>promptMode</code> - the mode to be used for the prompt input, such as TEXT or PASSWORD</dd>
+<dt>Returns:</dt>
+<dd>the current instance of PromptBuilder for method chaining</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="validate(java.util.function.Predicate)">
 <h3>validate</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a></span>&nbsp;<span class="element-name">validate</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;validate)</span></div>
@@ -194,12 +212,12 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="build()">
 <h3>build</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.scene.control.TextInputDialog</span>&nbsp;<span class="element-name">build</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PromptDialog.html" title="class in com.dua3.utility.fx.controls">PromptDialog</a></span>&nbsp;<span class="element-name">build</span>()</div>
 <div class="block"><span class="description-from-type-label">Description copied from class:&nbsp;<code><a href="abstract_builders/DialogBuilder.html#build()">DialogBuilder</a></code></span></div>
 <div class="block">Create Dialog instance.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
-<dd><code><a href="abstract_builders/DialogBuilder.html#build()">build</a></code>&nbsp;in class&nbsp;<code><a href="abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogBuilder</a>&lt;javafx.scene.control.TextInputDialog,<wbr><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></dd>
+<dd><code><a href="abstract_builders/DialogBuilder.html#build()">build</a></code>&nbsp;in class&nbsp;<code><a href="abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogBuilder</a>&lt;<a href="PromptDialog.html" title="class in com.dua3.utility.fx.controls">PromptDialog</a>,<wbr><a href="PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>Dialog instance</dd>
 </dl>

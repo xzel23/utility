@@ -255,6 +255,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get the <code>Node</code> for this input element.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a><wbr>&lt;javafx.scene.control.TextField,<wbr>T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#passwordInput(java.util.function.Supplier,java.util.function.Function,javafx.util.StringConverter)" class="member-name-link">passwordInput</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable T&gt;&nbsp;dflt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate,
+ javafx.util.StringConverter&lt;@Nullable T&gt;&nbsp;converter)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a new <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>TextField</code> with bidirectional binding.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a><wbr>&lt;javafx.scene.control.TextField,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#passwordInput(java.util.function.Supplier,java.util.function.Function)" class="member-name-link">passwordInput</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;dflt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a TextField with String input.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -401,6 +414,41 @@ loadScripts(document, 'script');</script>
 <h3>stringInput</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>
 <span class="return-type"><a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a>&lt;javafx.scene.control.TextField,<wbr>T&gt;</span>&nbsp;<span class="element-name">stringInput</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable T&gt;&nbsp;dflt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate,
+ javafx.util.StringConverter&lt;@Nullable T&gt;&nbsp;converter)</span></div>
+<div class="block">Creates a new <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>TextField</code> with bidirectional binding.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the value.</dd>
+<dt>Parameters:</dt>
+<dd><code>dflt</code> - The supplier providing the default value.</dd>
+<dd><code>validate</code> - A function to validate the value, returning an optional error message.</dd>
+<dd><code>converter</code> - The StringConverter to convert between the value and its string representation.</dd>
+<dt>Returns:</dt>
+<dd>A <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> containing the <code>TextField</code> and associated properties.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="passwordInput(java.util.function.Supplier,java.util.function.Function)">
+<h3>passwordInput</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a>&lt;javafx.scene.control.TextField,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">passwordInput</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;dflt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</span></div>
+<div class="block">Creates a <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a TextField with String input.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dflt</code> - a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a> providing the default value for the TextField</dd>
+<dd><code>validate</code> - a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a> that takes a String and returns an Optional containing a validation error message, if any</dd>
+<dt>Returns:</dt>
+<dd>a <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> containing the TextField and associated properties</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="passwordInput(java.util.function.Supplier,java.util.function.Function,javafx.util.StringConverter)">
+<h3>passwordInput</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>
+<span class="return-type"><a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a>&lt;javafx.scene.control.TextField,<wbr>T&gt;</span>&nbsp;<span class="element-name">passwordInput</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable T&gt;&nbsp;dflt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate,
  javafx.util.StringConverter&lt;@Nullable T&gt;&nbsp;converter)</span></div>
 <div class="block">Creates a new <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>TextField</code> with bidirectional binding.</div>
