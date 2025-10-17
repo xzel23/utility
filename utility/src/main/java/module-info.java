@@ -42,6 +42,7 @@ import org.jspecify.annotations.NullMarked;
  */
 @NullMarked
 open module com.dua3.utility {
+    exports com.dua3.utility.application;
     exports com.dua3.utility.concurrent;
     exports com.dua3.utility.data;
     exports com.dua3.utility.io;
@@ -59,6 +60,7 @@ open module com.dua3.utility {
 
     requires java.xml;
     requires static java.desktop;
+    requires static java.prefs;
     requires org.apache.logging.log4j;
     requires org.jspecify;
     requires static org.bouncycastle.provider;

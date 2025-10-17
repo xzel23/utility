@@ -1,4 +1,9 @@
 <FindBugsFilter>
+    <Match>
+        <Class name="com.dua3.utility.application.ApplicationUtil" method="initApplicationPreferences"/>
+        <Bug pattern="EI_EXPOSE_STATIC_REP2"/>
+    </Match>
+
     <!-- do not check these in test code -->
     <Match>
         <Source name="~.*[/\\]test[/\\]java[/\\].*"/>

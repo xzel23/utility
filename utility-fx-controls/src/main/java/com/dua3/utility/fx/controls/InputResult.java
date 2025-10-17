@@ -8,9 +8,10 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
+ * Represents the result of an input operation along with optional associated data.
  *
- * @param <T> the result type, i.e., for JavaFX inputs this would usually be ButtonType.
- * @param <K> the key type for the result map.
+ * @param <T> the type of the result, typically representing an action (e.g., 'OK', 'CANCEL')
+ * @param <K> the key type for the associated data map
  */
 public class InputResult<T,K> {
     /**
