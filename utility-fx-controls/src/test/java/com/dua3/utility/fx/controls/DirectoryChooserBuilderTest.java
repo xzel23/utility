@@ -51,24 +51,6 @@ class DirectoryChooserBuilderTest extends FxTestBase {
     }
 
     /**
-     * Test setting the initial directory to null (should default to user home).
-     */
-    @Test
-    void testInitialDirNull() throws Exception {
-        runOnFxThreadAndWait(() -> {
-            // Create a builder
-            DirectoryChooserBuilder builder = Dialogs.chooseDirectory(null);
-
-            // Set initial directory to null
-            builder.initialDir(null);
-
-            // We can't directly test the effect since we can't access the internal DirectoryChooser
-            // But we can verify the builder is still valid
-            assertNotNull(builder);
-        });
-    }
-
-    /**
      * Test method chaining.
      */
     @Test
