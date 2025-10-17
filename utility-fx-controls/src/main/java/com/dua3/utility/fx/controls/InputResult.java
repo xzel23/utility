@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.scene.control.ButtonType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
@@ -9,26 +10,23 @@ import java.util.function.Consumer;
 
 /**
  * Represents the result of an input operation along with optional associated data.
- *
- * @param <T> the type of the result, typically representing an action (e.g., 'OK', 'CANCEL')
- * @param <K> the key type for the associated data map
  */
-public class InputResult<T,K> {
+public class InputResult {
     /**
      * The result, i.e., 'OK', 'CANCEL', etc..
      */
-    private final T result;
+    private final ButtonType result;
     /**
      * The data input by the user.
      */
-    private final Map<K, @Nullable Object> data;
+    private final Map<String, @Nullable Object> data;
 
     /**
      * Constructs an {@code InputResult} with the specified result and an empty data map.
      *
      * @param result the result value, typically representing an action such as 'OK' or 'CANCEL'
      */
-    public InputResult(T result) {
+    public InputResult(ButtonType result) {
         this.result = result;
         this.data = Collections.emptyMap();
     }
@@ -39,7 +37,7 @@ public class InputResult<T,K> {
      * @param result the result value, typically representing an action such as 'OK' or 'CANCEL'
      * @param data a map containing additional input data, or {@code null} for no data
      */
-    public InputResult(T result, @Nullable Map<K, @Nullable Object> data) {
+    public InputResult(ButtonType result, @Nullable Map<String, @Nullable Object> data) {
         this.result = result;
         this.data = data == null ? Collections.emptyMap() : Collections.unmodifiableMap(data);
     }
@@ -49,7 +47,7 @@ public class InputResult<T,K> {
      *
      * @return the result value of type {@code T}
      */
-    public T result() {
+    public ButtonType result() {
         return result;
     }
 
@@ -59,7 +57,7 @@ public class InputResult<T,K> {
      * @param r the result value to compare with the stored result
      * @return {@code true} if the given result matches the stored result, {@code false} otherwise
      */
-    public boolean is(T r) {
+    public boolean is(ButtonType r) {
         return Objects.equals(r, result);
     }
 
@@ -69,8 +67,8 @@ public class InputResult<T,K> {
      * @param results an array of result values to compare with the stored result
      * @return {@code true} if the stored result matches any of the specified results, {@code false} otherwise
      */
-    public boolean isAny(T... results) {
-        for (T r : results) {
+    public boolean isAny(ButtonType... results) {
+        for (ButtonType r : results) {
             if (is(r)) {
                 return true;
             }
@@ -84,7 +82,7 @@ public class InputResult<T,K> {
      * @param r the result value to compare with the stored result
      * @param consumer the consumer to invoke with the input data map if the result matches
      */
-    public void onResult(T r, Consumer<Map<K, @Nullable Object>> consumer) {
+    public void onResult(ButtonType r, Consumer<Map<String, @Nullable Object>> consumer) {
         if (Objects.equals(result, r)) {
             consumer.accept(Collections.unmodifiableMap(data));
         }
@@ -95,7 +93,7 @@ public class InputResult<T,K> {
      *
      * @return the data map (never null)
      */
-    public Map<K, @Nullable Object> data() {
+    public Map<String, @Nullable Object> data() {
         return Collections.unmodifiableMap(data);
     }
 
@@ -105,7 +103,7 @@ public class InputResult<T,K> {
      * @param key the key
      * @return the value associated with the key, or null if none
      */
-    public @Nullable Object get(K key) {
+    public @Nullable Object get(String key) {
         return data.get(key);
     }
 }

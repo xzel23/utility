@@ -22,7 +22,7 @@ import javafx.scene.control.Dialog;
  * <p>
  * The dialog consists of labels and input controls laid out in a grid.
  */
-public class InputDialog extends Dialog<InputResult<ButtonType, String>> {
+public class InputDialog extends Dialog<InputResult> {
 
     /**
      * Constructs a new InputDialog instance.
@@ -33,7 +33,7 @@ public class InputDialog extends Dialog<InputResult<ButtonType, String>> {
      * dialog pane. Otherwise, it returns null.
      */
     public InputDialog() {
-        setResultConverter(btn -> new InputResult<>(btn, ((InputPane) getDialogPane()).get()));
+        setResultConverter(btn -> new InputResult(btn, ((InputPane) getDialogPane()).get()));
     }
 
 }

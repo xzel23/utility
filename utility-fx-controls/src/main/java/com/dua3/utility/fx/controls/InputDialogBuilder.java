@@ -41,7 +41,7 @@ import java.util.function.UnaryOperator;
  * Provides a fluent interface to create Alerts.
  */
 public class InputDialogBuilder
-        extends DialogBuilder<InputDialog, InputDialogBuilder, InputResult<ButtonType, String>>
+        extends DialogBuilder<InputDialog, InputDialogBuilder, InputResult>
         implements InputBuilder<InputDialogBuilder> {
 
     private final InputPaneBuilder pb;
