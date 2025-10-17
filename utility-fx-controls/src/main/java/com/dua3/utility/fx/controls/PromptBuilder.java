@@ -18,7 +18,6 @@ import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
 import javafx.stage.Window;
 
 import java.util.Optional;
@@ -29,14 +28,20 @@ import java.util.function.Predicate;
  * <p>
  * Provides a fluent interface to create Alerts.
  */
-public class PromptBuilder extends DialogBuilder<TextInputDialog, PromptBuilder, String> {
+public class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuilder, String> {
     private String defaultValue = "";
+    private PromptMode promptMode = PromptMode.TEXT;
     private Predicate<? super @Nullable String> validate = (@Nullable String s) -> s != null && !s.isEmpty();
 
+    /**
+     * Constructs a new PromptBuilder instance for creating prompt dialogs.
+     *
+     * @param parentWindow the parent window of the dialog, or null if there is no parent
+     * @param formatter    the message formatter to format strings for the dialog
+     */
     PromptBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         setDialogSupplier(this::createDialog);
-        header("");
     }
 
     /**
@@ -52,6 +57,17 @@ public class PromptBuilder extends DialogBuilder<TextInputDialog, PromptBuilder,
     }
 
     /**
+     * Sets the prompt mode for the prompt dialog.
+     *
+     * @param promptMode the mode to be used for the prompt input, such as TEXT or PASSWORD
+     * @return the current instance of PromptBuilder for method chaining
+     */
+    public PromptBuilder mode(PromptMode promptMode) {
+        this.promptMode = promptMode;
+        return this;
+    }
+
+    /**
      * Sets the validation logic for the input prompt.
      *
      * @param validate a Predicate to validate the input string
@@ -63,18 +79,27 @@ public class PromptBuilder extends DialogBuilder<TextInputDialog, PromptBuilder,
     }
 
     @Override
-    public TextInputDialog build() {
-        TextInputDialog dlg = super.build();
+    public PromptDialog build() {
+        PromptDialog dlg = super.build();
         dlg.setGraphic(null);
         return dlg;
     }
 
-    private TextInputDialog createDialog() {
-        TextInputDialog dlg = new TextInputDialog(defaultValue);
+    /**
+     * Creates a new instance of {@code PromptDialog} configured with the specified
+     * prompt mode, default value, and validation logic.
+     * <p>
+     * The dialog is initialized with an OK button whose enabled state is dynamically
+     * bound to the validity of the content text based on the provided validation predicate.
+     *
+     * @return a {@code PromptDialog} instance with the applied configurations
+     */
+    private PromptDialog createDialog() {
+        PromptDialog dlg = new PromptDialog(promptMode, defaultValue);
         Optional.ofNullable(dlg.getDialogPane().lookupButton(ButtonType.OK))
                 .ifPresent(btn -> {
-                    btn.setDisable(!validate.test(dlg.getEditor().getText()));
-                    dlg.getEditor().textProperty().addListener((observable, oldValue, newValue) ->
+                    btn.setDisable(!validate.test(dlg.getContentText()));
+                    dlg.contentTextProperty().addListener((observable, oldValue, newValue) ->
                             btn.setDisable(!validate.test(newValue))
                     );
                 });

@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxUtil;
+import javafx.scene.control.PasswordField;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
@@ -75,6 +76,35 @@ public interface InputControl<T> {
      */
     static <T> SimpleInputControl<TextField, T> stringInput(Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate, StringConverter<@Nullable T> converter) {
         TextField control = new TextField();
+        ObjectProperty<@Nullable T> value = new SimpleObjectProperty<>();
+        Bindings.bindBidirectional(control.textProperty(), value, converter);
+        return new SimpleInputControl<>(control, value, dflt, validate);
+    }
+
+    /**
+     * Creates a {@link SimpleInputControl} for a TextField with String input.
+     *
+     * @param dflt a {@link Supplier} providing the default value for the TextField
+     * @param validate a {@link Function} that takes a String and returns an Optional containing a validation error message, if any
+     * @return a {@link SimpleInputControl} containing the TextField and associated properties
+     */
+    static SimpleInputControl<TextField, String> passwordInput(Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+        PasswordField control = new PasswordField();
+        StringProperty value = control.textProperty();
+        return new SimpleInputControl<>(control, value, dflt, validate);
+    }
+
+    /**
+     * Creates a new {@link SimpleInputControl} for a {@link TextField} with bidirectional binding.
+     *
+     * @param dflt      The supplier providing the default value.
+     * @param validate  A function to validate the value, returning an optional error message.
+     * @param converter The StringConverter to convert between the value and its string representation.
+     * @param <T>       The type of the value.
+     * @return A {@link SimpleInputControl} containing the {@link TextField} and associated properties.
+     */
+    static <T> SimpleInputControl<TextField, T> passwordInput(Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate, StringConverter<@Nullable T> converter) {
+        PasswordField control = new PasswordField();
         ObjectProperty<@Nullable T> value = new SimpleObjectProperty<>();
         Bindings.bindBidirectional(control.textProperty(), value, converter);
         return new SimpleInputControl<>(control, value, dflt, validate);

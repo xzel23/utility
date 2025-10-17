@@ -1,5 +1,6 @@
 package com.dua3.utility.samples.fx;
 
+import com.dua3.utility.fx.controls.PromptMode;
 import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.FileDialogMode;
@@ -110,6 +111,16 @@ public class FxDialogSample extends Application {
                 Dialogs.prompt(primaryStage, MessageFormatter.standard())
                         .title("Prompt")
                         .header("This is a prompt dialog.")
+                        .showAndWait()
+                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
+        ));
+
+        // Password
+        container.getChildren().add(createButton("Password", () ->
+                Dialogs.prompt(primaryStage, MessageFormatter.standard())
+                        .mode(PromptMode.PASSWORD)
+                        .title("Password Prompt")
+                        .header("This is a password prompt dialog.")
                         .showAndWait()
                         .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
         ));
