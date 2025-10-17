@@ -52,9 +52,16 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * Builder for Alert Dialogs.
+ * A builder class for constructing a grid-based input form structure. This class provides
+ * methods to add various types of input controls, sections, labels, and other nodes into
+ * a grid layout with specified configuration.
  * <p>
- * Provides a fluent interface to create Alerts.
+ * Implements the {@code InputBuilder} interface to provide a fluent API for defining
+ * inputs and layout properties.
+ * <p>
+ * The grid can include labeled inputs, sections with custom styles, and constant or hidden
+ * inputs. Additional functionalities include text and node additions, along with support
+ * for validation and default values for inputs.
  */
 public class GridBuilder implements InputBuilder<GridBuilder> {
 
