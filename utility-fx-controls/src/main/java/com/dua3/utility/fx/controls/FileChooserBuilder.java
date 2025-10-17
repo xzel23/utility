@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.io.IoUtil;
 import org.jspecify.annotations.Nullable;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -23,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,10 +38,8 @@ import java.util.Optional;
 public class FileChooserBuilder {
     private static final Logger LOG = LogManager.getLogger(FileChooserBuilder.class);
 
-    private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
-
     private final @Nullable Window parentWindow;
-    private Path initialDir = USER_HOME;
+    private Path initialDir = IoUtil.getUserDir();
     private String initialFileName = "";
     private List<ExtensionFilter> filters = new ArrayList<>();
     private @Nullable ExtensionFilter selectedFilter = null;
@@ -130,7 +128,7 @@ public class FileChooserBuilder {
      * @return this instance
      */
     public FileChooserBuilder initialDir(@Nullable Path initialDir) {
-        this.initialDir = initialDir != null ? initialDir : USER_HOME;
+        this.initialDir = initialDir != null ? initialDir : IoUtil.getUserDir();
         return this;
     }
 

@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.io.IoUtil;
 import org.jspecify.annotations.Nullable;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
@@ -22,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 
@@ -34,10 +34,8 @@ import java.util.Optional;
 public class DirectoryChooserBuilder {
     private static final Logger LOG = LogManager.getLogger(DirectoryChooserBuilder.class);
 
-    private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
-
     private final @Nullable Window parentWindow;
-    private Path initialDir = USER_HOME;
+    private Path initialDir = IoUtil.getUserDir();
 
     DirectoryChooserBuilder(@Nullable Window parentWindow) {
         this.parentWindow = parentWindow;
@@ -67,7 +65,7 @@ public class DirectoryChooserBuilder {
      * @return this instance
      */
     public DirectoryChooserBuilder initialDir(@Nullable Path initialDir) {
-        this.initialDir = initialDir != null ? initialDir : USER_HOME;
+        this.initialDir = initialDir != null ? initialDir : IoUtil.getUserDir();
         return this;
     }
 

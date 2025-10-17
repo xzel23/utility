@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -30,7 +29,7 @@ public class RecentlyUsedDocuments {
     public static final int DEFAULT_CAPACITY = 10;
 
     private final int capacity;
-    private final Map<URI, String> items = new LinkedHashMap<>();
+    private final LinkedHashMap<URI, String> items = new LinkedHashMap<>();
     private final Preferences prefs;
 
     // Use copy-on-write to avoid ConcurrentModification during callbacks.
@@ -82,6 +81,16 @@ public class RecentlyUsedDocuments {
         } catch (BackingStoreException e) {
             LOG.warn("error loading preferences", e);
         }
+    }
+
+    /**
+     * Retrieves the URI of the most recently used document in the list.
+     * If the list is empty, it returns the user's home directory as a URI.
+     *
+     * @return the URI of the last used document if present, or the user's home directory URI if the list is empty
+     */
+    public URI getLastUri() {
+        return items.isEmpty() ? IoUtil.getUserDir().toUri() : items.firstEntry().getKey();
     }
 
     /**
