@@ -850,9 +850,9 @@ class IoUtilTest {
     }
 
     @Test
-    void testGetUserDir() {
+    void testGetUserHome() {
         Path expectedUserDir = Paths.get(System.getProperty("user.home", "."));
-        Path actualUserDir = IoUtil.getUserDir();
+        Path actualUserDir = IoUtil.getUserHome();
 
         assertEquals(expectedUserDir, actualUserDir, "getUserDir should return the user's home directory");
         assertTrue(Files.exists(actualUserDir), "The returned user directory path should exist");

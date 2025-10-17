@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +40,7 @@ public class FileChooserBuilder {
     private static final Logger LOG = LogManager.getLogger(FileChooserBuilder.class);
 
     private final @Nullable Window parentWindow;
-    private Path initialDir = IoUtil.getUserDir();
+    private Path initialDir = IoUtil.getUserHome();
     private String initialFileName = "";
     private List<ExtensionFilter> filters = new ArrayList<>();
     private @Nullable ExtensionFilter selectedFilter = null;
@@ -102,9 +103,13 @@ public class FileChooserBuilder {
      * @return this instance
      */
     public FileChooserBuilder initialFile(Path file) {
-        Path fileName = file.getFileName();
-        initialFileName(fileName == null ? null : fileName.toString());
-        initialDir(file.getParent());
+        if (Files.isDirectory(file)) {
+            initialDir(file);
+        } else {
+            Path fileName = file.getFileName();
+            initialFileName(fileName == null ? null : fileName.toString());
+            initialDir(file.getParent());
+        }
         return this;
     }
 
@@ -128,7 +133,7 @@ public class FileChooserBuilder {
      * @return this instance
      */
     public FileChooserBuilder initialDir(@Nullable Path initialDir) {
-        this.initialDir = initialDir != null ? initialDir : IoUtil.getUserDir();
+        this.initialDir = initialDir != null ? initialDir : IoUtil.getUserHome();
         return this;
     }
 

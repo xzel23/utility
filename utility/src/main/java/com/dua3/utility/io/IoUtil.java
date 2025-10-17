@@ -1464,7 +1464,7 @@ public final class IoUtil {
      *
      * @return a {@link Path} representing the user's home directory
      */
-    public static Path getUserDir() {
+    public static Path getUserHome() {
         return USER_HOME;
     }
 }

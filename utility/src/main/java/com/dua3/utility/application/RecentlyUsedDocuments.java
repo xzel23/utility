@@ -90,7 +90,7 @@ public class RecentlyUsedDocuments {
      * @return the URI of the last used document if present, or the user's home directory URI if the list is empty
      */
     public URI getLastUri() {
-        return items.isEmpty() ? IoUtil.getUserDir().toUri() : items.firstEntry().getKey();
+        return items.isEmpty() ? IoUtil.getUserHome().toUri() : items.firstEntry().getKey();
     }
 
     /**

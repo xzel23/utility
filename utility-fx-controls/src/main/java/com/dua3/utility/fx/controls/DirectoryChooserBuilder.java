@@ -35,7 +35,7 @@ public class DirectoryChooserBuilder {
     private static final Logger LOG = LogManager.getLogger(DirectoryChooserBuilder.class);
 
     private final @Nullable Window parentWindow;
-    private Path initialDir = IoUtil.getUserDir();
+    private Path initialDir = IoUtil.getUserHome();
 
     DirectoryChooserBuilder(@Nullable Window parentWindow) {
         this.parentWindow = parentWindow;
@@ -64,8 +64,8 @@ public class DirectoryChooserBuilder {
      * @param initialDir the initial directory
      * @return this instance
      */
-    public DirectoryChooserBuilder initialDir(@Nullable Path initialDir) {
-        this.initialDir = initialDir != null ? initialDir : IoUtil.getUserDir();
+    public DirectoryChooserBuilder initialDir(Path initialDir) {
+        this.initialDir = initialDir;
         return this;
     }
 

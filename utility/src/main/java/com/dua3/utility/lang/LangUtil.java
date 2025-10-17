@@ -2384,10 +2384,10 @@ public final class LangUtil {
      * @param key the key whose presence in the map is to be tested
      * @param consumer the consumer to process the key if it is present in the map
      */
-    public static <T, U> void ifPresent(Map<T, U> map, T key, Consumer<T> consumer) {
+    public static <T, U> void ifPresent(Map<T, U> map, T key, Consumer<? super U> consumer) {
         U value = map.get(key);
         if (value != null) {
-            consumer.accept(key);
+            consumer.accept(value);
         }
     }
 }
