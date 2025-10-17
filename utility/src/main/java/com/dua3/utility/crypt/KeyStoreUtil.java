@@ -1,6 +1,8 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.io.IoUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -18,19 +20,28 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Utility class for KeyStore operations.
  */
 public final class KeyStoreUtil {
+    private static final Logger LOG = LogManager.getLogger(KeyStoreUtil.class);
 
     static {
         // make sure BouncyCastle is loaded
-        BouncyCastle.ensureAvailable();
+        try {
+            BouncyCastle.ensureAvailable();
+            LOG.debug("BouncyCastle successfully loaded");
+        } catch (RuntimeException e) {
+            LOG.error("Failed to load BouncyCastle", e);
+        }
     }
 
     /**
@@ -63,6 +74,7 @@ public final class KeyStoreUtil {
         try {
             KeyStore keyStore = KeyStore.getInstance(type);
             keyStore.load(null, password);
+            LOG.debug("Created new KeyStore of type {}", type);
             return keyStore;
         } catch (IOException e) {
             throw new GeneralSecurityException("Failed to create KeyStore", e);
@@ -84,6 +96,7 @@ public final class KeyStoreUtil {
         try {
             KeyStore keyStore = KeyStore.getInstance(type.name());
             keyStore.load(inputStream, password);
+            LOG.debug("Loaded KeyStore of type {}", type);
             return keyStore;
         } catch (IOException e) {
             throw new GeneralSecurityException("Failed to load KeyStore", e);
@@ -123,6 +136,7 @@ public final class KeyStoreUtil {
     public static void saveKeyStore(KeyStore keyStore, OutputStream outputStream, char[] password) throws GeneralSecurityException {
         try {
             keyStore.store(outputStream, password);
+            LOG.debug("KeyStore data written");
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
             throw new GeneralSecurityException("Failed to save KeyStore", e);
         } finally {
@@ -143,6 +157,7 @@ public final class KeyStoreUtil {
         try {
             try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
                 saveKeyStore(keyStore, outputStream, password);
+                LOG.debug("KeyStore written to file {}", keystoreFile);
             }
         } finally {
             Arrays.fill(password, '\0');
@@ -163,6 +178,7 @@ public final class KeyStoreUtil {
             KeyStore.Entry entry = new KeyStore.SecretKeyEntry(key);
             KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password);
             keyStore.setEntry(alias, entry, protection);
+            LOG.debug("Stored secret key with alias {}", alias);
         } finally {
             Arrays.fill(password, '\0');
         }
@@ -181,6 +197,7 @@ public final class KeyStoreUtil {
     public static void storeKeyPair(KeyStore keyStore, String alias, KeyPair keyPair, Certificate[] certificateChain, char[] password) throws GeneralSecurityException {
         try {
             keyStore.setKeyEntry(alias, keyPair.getPrivate(), password, certificateChain);
+            LOG.debug("Stored key pair with alias {}", alias);
         } finally {
             Arrays.fill(password, '\0');
         }
@@ -208,6 +225,8 @@ public final class KeyStoreUtil {
                 throw new GeneralSecurityException("Entry is not a SecretKey: " + alias);
             }
 
+            LOG.debug("Loaded secret key with alias {}", alias);
+
             return secretKeyEntry.getSecretKey();
         } finally {
             Arrays.fill(password, '\0');
@@ -234,6 +253,8 @@ public final class KeyStoreUtil {
             if (!(key instanceof PrivateKey privateKey)) {
                 throw new GeneralSecurityException("Entry is not a PrivateKey: " + alias);
             }
+
+            LOG.debug("Loaded private key with alias {}", alias);
 
             return privateKey;
         } finally {
@@ -278,6 +299,7 @@ public final class KeyStoreUtil {
      */
     public static void storeCertificate(KeyStore keyStore, String alias, Certificate certificate) throws GeneralSecurityException {
         keyStore.setCertificateEntry(alias, certificate);
+        LOG.debug("Stored certificate with alias {}", alias);
     }
 
     /**
@@ -294,6 +316,8 @@ public final class KeyStoreUtil {
         if (certificate == null) {
             throw new GeneralSecurityException("Certificate not found with alias: " + alias);
         }
+
+        LOG.debug("Loaded certificate with alias {}", alias);
 
         return certificate;
     }
@@ -312,6 +336,8 @@ public final class KeyStoreUtil {
         if (chain == null) {
             throw new GeneralSecurityException("Certificate chain not found with alias: " + alias);
         }
+
+        LOG.debug("Loaded certificate chain containing {} entries with alias {}", chain.length, alias);
 
         return chain;
     }
@@ -340,6 +366,7 @@ public final class KeyStoreUtil {
             throw new GeneralSecurityException("Alias not found: " + alias);
         }
         keyStore.deleteEntry(alias);
+        LOG.debug("Deleted key with alias {}", alias);
     }
 
     /**
@@ -372,6 +399,7 @@ public final class KeyStoreUtil {
         try {
             SecretKey secretKey = KeyUtil.generateSecretKey(keySize, algorithm);
             storeSecretKey(keyStore, alias, secretKey, password);
+            LOG.debug("Stored new secret key with alias {}", alias);
         } finally {
             Arrays.fill(password, '\0');
         }
@@ -395,5 +423,68 @@ public final class KeyStoreUtil {
         KeyPair keyPair = KeyUtil.generateKeyPair(algorithm, keySize);
         Certificate[] certificateChain = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, validityDays, false);
         storeKeyPair(keyStore, alias, keyPair, certificateChain, password);
+        LOG.debug("Stored new key pair with alias {}", alias);
+    }
+
+    /**
+     * Retrieves a list of aliases from the provided KeyStore that represent
+     * Certificate Authority (CA) certificates. Certificates are identified as CA certificates
+     * based on the key usage extension, specifically checking if the keyCertSign bit is set.
+     *
+     * @param ks the KeyStore from which to extract the aliases. It must be properly initialized with certificates and keys.
+     * @return a list of aliases that are associated with CA certificates within the provided KeyStore.
+     *         If no such aliases are found, an empty list is returned.
+     */
+    public static List<String> getCaAliases(KeyStore ks)throws KeyStoreException {
+        List<String> aliases = new ArrayList<>();
+        ks.aliases().asIterator().forEachRemaining(alias -> {
+            LOG.debug("Processing alias: {}", alias);
+            try {
+                // Process both certificate entries and key entries
+                boolean isCertEntry = ks.isCertificateEntry(alias);
+                boolean isKeyEntry = ks.isKeyEntry(alias);
+
+                if (isCertEntry) {
+                    // Get certificate information
+                    LOG.trace("Alias belongs to certificate entry: {}", alias);
+                    java.security.cert.Certificate cert = ks.getCertificate(alias);
+
+                    addCertIfX509(alias, cert, aliases);
+                } else if (isKeyEntry) {
+                    // Get certificate chain for key entry
+                    LOG.debug("[DEBUG_LOG] Processing key entry: {}", alias);
+
+                    Certificate[] certChain = ks.getCertificateChain(alias);
+
+                    if (certChain != null && certChain.length > 0) {
+                        addCertIfX509(alias, certChain[0], aliases);
+                    }
+                } else {
+                    LOG.debug("Alias {} is neither a certificate entry nor a key entry", alias);
+                }
+            } catch (KeyStoreException | RuntimeException  e) {
+                // Skip this alias if there's an error
+                LOG.warn("Error processing alias: {}", alias, e);
+            }
+        });
+
+        return aliases;
+    }
+
+    private static void addCertIfX509(String alias, Certificate cert, List<String> aliases) {
+        if (cert instanceof X509Certificate x509Cert) {
+            // Check if this is a CA certificate - Key usage bit 5 is for keyCertSign
+            boolean[] keyUsage = x509Cert.getKeyUsage();
+            boolean isCA = keyUsage != null && keyUsage.length > 5 && keyUsage[5];
+
+            if (isCA) {
+                LOG.debug(" Adding alias for CA certificate {}", alias);
+                aliases.add(alias);
+            } else {
+                LOG.trace("Not a CA certificate {}", alias);
+            }
+        } else {
+            LOG.debug("Certificate {} is not an X509Certificate", alias);
+        }
     }
 }
