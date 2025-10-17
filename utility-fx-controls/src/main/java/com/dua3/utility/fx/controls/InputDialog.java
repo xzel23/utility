@@ -33,7 +33,12 @@ public class InputDialog extends Dialog<InputResult> {
      * dialog pane. Otherwise, it returns null.
      */
     public InputDialog() {
-        setResultConverter(btn -> new InputResult(btn, ((InputPane) getDialogPane()).get()));
+        setResultConverter(btn -> {
+            if (btn == ButtonType.CANCEL) {
+                return null;
+            }
+            return new InputResult(btn, ((InputPane) getDialogPane()).get());
+        });
     }
 
 }
