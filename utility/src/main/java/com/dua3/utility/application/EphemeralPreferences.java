@@ -164,6 +164,7 @@ public class EphemeralPreferences extends AbstractPreferences {
      * @return the root node of the ephemeral, non-persistent preferences hierarchy
      */
     public static Preferences root() {
-        return new EphemeralPreferences(null, "ephemeral");
+        // NOTE: the root node must be passed the empty string as name
+        return new EphemeralPreferences(null, "");
     }
 }
