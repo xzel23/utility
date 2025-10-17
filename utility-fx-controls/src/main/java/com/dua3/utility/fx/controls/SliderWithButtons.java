@@ -389,6 +389,11 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     }
 
     @Override
+    public ReadOnlyBooleanProperty requiredProperty() {
+        return new SimpleBooleanProperty(false);
+    }
+
+    @Override
     public ReadOnlyBooleanProperty validProperty() {
         SimpleBooleanProperty property = new SimpleBooleanProperty();
         property.bind(

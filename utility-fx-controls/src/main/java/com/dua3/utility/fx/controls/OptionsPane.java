@@ -213,6 +213,11 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
     }
 
     @Override
+    public ReadOnlyBooleanProperty requiredProperty() {
+        return state.requiredProperty();
+    }
+
+    @Override
     public ReadOnlyBooleanProperty validProperty() {
         return state.validProperty();
     }

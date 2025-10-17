@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * @param <C> the type of the control, which must extend from Control
  * @param <R> the type of the value held by the input control
  */
-public class SimpleInputControl<C extends Control, R extends @Nullable Object> implements InputControl<R> {
+public final class SimpleInputControl<C extends Control, R extends @Nullable Object> implements InputControl<R> {
 
     private final C control;
     private final State<R> state;
@@ -35,6 +35,14 @@ public class SimpleInputControl<C extends Control, R extends @Nullable Object> i
         this.control = control;
         this.state = new State<>(value, dflt, validate);
         this.dflt = dflt;
+
+        state.requiredProperty().addListener((v, o, n) -> {
+            if (n) {
+                control.getStyleClass().add(CSS_REQUIRED_INPUT);
+            } else {
+                control.getStyleClass().remove(CSS_REQUIRED_INPUT);
+            }
+        });
 
         reset();
 
@@ -55,6 +63,11 @@ public class SimpleInputControl<C extends Control, R extends @Nullable Object> i
     @Override
     public void reset() {
         state.valueProperty().setValue(dflt.get());
+    }
+
+    @Override
+    public ReadOnlyBooleanProperty requiredProperty() {
+        return state.requiredProperty();
     }
 
     @Override

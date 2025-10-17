@@ -80,7 +80,14 @@ public class ChoiceInputControl<T> implements InputControl<T> {
     }
 
     @Override
+    public ReadOnlyBooleanProperty requiredProperty() {
+        // TODO is using a synthtic property correct here?
+        return new SimpleBooleanProperty(false);
+    }
+
+    @Override
     public ReadOnlyBooleanProperty validProperty() {
+        // TODO is using a synthtic property correct here?
         return new SimpleBooleanProperty(true);
     }
 

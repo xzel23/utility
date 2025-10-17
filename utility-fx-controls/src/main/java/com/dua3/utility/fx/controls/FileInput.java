@@ -51,13 +51,13 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
 
     static class PathConverter extends StringConverter<Path> {
         @Override
-        public String toString(@Nullable Path path) {
-            return path == null ? "" : path.toString();
+        public @Nullable String toString(@Nullable Path path) {
+            return path == null ? null : path.toString();
         }
 
         @Override
-        public Path fromString(@Nullable String s) {
-            return s == null ? Paths.get("") : Paths.get(s);
+        public @Nullable Path fromString(@Nullable String s) {
+            return s == null || s.isEmpty() ? null : Paths.get(s);
         }
     }
 
@@ -68,6 +68,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
     private final Supplier<@Nullable Path> dflt;
 
     private final StringProperty error = new SimpleStringProperty("");
+    private final BooleanProperty required = new SimpleBooleanProperty(false);
     private final BooleanProperty valid = new SimpleBooleanProperty(true);
 
     /**
@@ -132,6 +133,9 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
 
         tfFilename.textProperty().bindBidirectional(valueProperty(), PATH_CONVERTER);
 
+        // required property
+        required.set(validate.apply(null).isPresent());
+
         // error property
         StringExpression errorText = Bindings.createStringBinding(
                 () -> {
@@ -180,7 +184,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
      */
     public static Function<@Nullable Path, Optional<String>> defaultValidate(FileDialogMode mode, boolean existingOnly) {
         return p -> {
-            if (p == null) {
+            if (p == null || p.toString().isBlank()) {
                 return Optional.of("Nothing selected");
             }
 
@@ -229,6 +233,11 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
     @Override
     public Property<@Nullable Path> valueProperty() {
         return value;
+    }
+
+    @Override
+    public ReadOnlyBooleanProperty requiredProperty() {
+        return required;
     }
 
     @Override

@@ -612,6 +612,7 @@ class InputDialogBuilderTest extends FxTestBase {
     private static class TestInputControl implements InputControl<String> {
         private final Label label;
         private final SimpleObjectProperty<String> value;
+        private final SimpleBooleanProperty required;
         private final SimpleBooleanProperty valid;
         private final SimpleStringProperty error;
         private final Supplier<String> defaultValue;
@@ -619,6 +620,7 @@ class InputDialogBuilderTest extends FxTestBase {
         public TestInputControl() {
             this.label = new Label("Test Input");
             this.value = new SimpleObjectProperty<>("");
+            this.required = new SimpleBooleanProperty(false);
             this.valid = new SimpleBooleanProperty(true);
             this.error = new SimpleStringProperty("");
             this.defaultValue = () -> "";
@@ -637,6 +639,11 @@ class InputDialogBuilderTest extends FxTestBase {
         @Override
         public void reset() {
             value.set(defaultValue.get());
+        }
+
+        @Override
+        public ReadOnlyBooleanProperty requiredProperty() {
+            return required;
         }
 
         @Override

@@ -65,7 +65,8 @@ public class Validator {
     private final BooleanProperty validProperty = new SimpleBooleanProperty();
     private final List<Runnable> disposeList = new ArrayList<>();
     private int iconSize = (int) Math.round(Font.getDefault().getSize());
-    private String iconError = "fth-alert-triangle";
+    private String iconError = "fth-anchor";
+//    private String iconError = "fth-alert-triangle";
     private boolean decorateNodes = false;
 
     /**

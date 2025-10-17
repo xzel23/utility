@@ -81,6 +81,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         private final Node node;
 
         private final Property<Void> value = new SimpleObjectProperty<>();
+        private final BooleanProperty required = new SimpleBooleanProperty(false);
         private final BooleanProperty valid = new SimpleBooleanProperty(true);
         private final ReadOnlyStringProperty error = new SimpleStringProperty("");
 
@@ -100,6 +101,11 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
         @Override
         public void reset() { /* nop */ }
+
+        @Override
+        public ReadOnlyBooleanProperty requiredProperty() {
+            return required;
+        }
 
         @Override
         public ReadOnlyBooleanProperty validProperty() {

@@ -53,6 +53,11 @@ public interface InputControl<T> {
     String INVALID_VALUE = "Invalid value";
 
     /**
+     * CSS class to mark required input fields.
+     */
+    String CSS_REQUIRED_INPUT = "required-input";
+
+    /**
      * Creates a {@link SimpleInputControl} for a TextField with String input.
      *
      * @param dflt a {@link Supplier} providing the default value for the TextField
@@ -331,6 +336,15 @@ public interface InputControl<T> {
     }
 
     /**
+     * Determines whether the input is required.
+     *
+     * @return true if input is required, false otherwise
+     */
+    default boolean isRequired() {
+        return requiredProperty().get();
+    }
+
+    /**
      * Test if content is valid.
      * @return true, if content is valid
      */
@@ -349,6 +363,13 @@ public interface InputControl<T> {
      * Reset value to default
      */
     void reset();
+
+    /**
+     * Provides a read-only property representing the required state of the input.
+     *
+     * @return a ReadOnlyBooleanProperty that is true if the input is required and false otherwise
+     */
+    ReadOnlyBooleanProperty requiredProperty();
 
     /**
      * Provides a read-only property representing the validity of the input.
@@ -372,6 +393,7 @@ public interface InputControl<T> {
      * @param <R> the type of the value being managed
      */
     class State<R> {
+        private final BooleanProperty required  = new SimpleBooleanProperty(true);
         private final Property<@Nullable R> value;
         private final BooleanProperty valid = new SimpleBooleanProperty(true);
         private final StringProperty error = new SimpleStringProperty("");
@@ -419,21 +441,28 @@ public interface InputControl<T> {
          * @param validate a function that validates the value and returns an optional error message
          */
         public State(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate) {
+            this.required.set(validate.apply(null).isPresent());
             this.value = value;
             this.value.addListener((ObservableValue<? extends @Nullable R> v, @Nullable R o, @Nullable R n) -> updateValidState(n));
             this.dflt = dflt;
             this.validate = validate;
-
             this.valid.set(validate.apply(value.getValue()).isEmpty());
             this.error.setValue("");
-
-            this.value.addListener((v, o, n) -> updateValidState(n));
         }
 
         private void updateValidState(@Nullable R r) {
             Optional<String> result = validate.apply(r);
             valid.setValue(result.isEmpty());
             error.setValue(result.orElse(""));
+        }
+
+        /**
+         * Provides a read-only boolean property indicating whether this State is marked as required.
+         *
+         * @return a {@link ReadOnlyBooleanProperty} representing the required status of this State
+         */
+        public ReadOnlyBooleanProperty requiredProperty() {
+            return required;
         }
 
         /**

@@ -28,6 +28,7 @@ public class FxDialogSample extends Application {
 
     private static final String ANSWER = "Answer: ";
     private static final String NO_ANSWER = "No answer";
+    private static final FileChooser.ExtensionFilter FILTER_ALL_FILES = new FileChooser.ExtensionFilter("all files", "*.*", "*");
 
     private static void println(Object o) {
         System.out.println(o);
@@ -153,12 +154,12 @@ public class FxDialogSample extends Application {
                         .inputHidden("secret2", "B")
                         .inputInteger("integer", "enter number", () -> 0L)
                         .inputInteger("integer from 4 to 7", "enter number [4-7]", () -> null,
-                                i -> i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i + " is not between 4 and 7"))
+                                i -> i != null && i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i + " is not between 4 and 7"))
                         .inputDecimal("decimal", "decimal", () -> null)
                         .inputComboBox("list", "choose one", () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
                         .inputCheckBox("bool", "Yes or No:", () -> false, "yes")
-                        .inputFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(new FileChooser.ExtensionFilter("all files", "*.*", "*")))
-                        .inputFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(new FileChooser.ExtensionFilter("all files", "*")))
+                        .inputFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(FILTER_ALL_FILES))
+                        .inputFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(FILTER_ALL_FILES))
                         .inputComboBoxEx("listEx",
                                 "edit items and choose one",
                                 s -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Edit item").defaultValue("%s", Objects.requireNonNullElse(s, "")).build().showAndWait().orElse(null),

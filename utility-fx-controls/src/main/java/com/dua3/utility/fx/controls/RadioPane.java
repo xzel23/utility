@@ -87,6 +87,11 @@ public class RadioPane<T> extends VBox implements InputControl<T> {
     }
 
     @Override
+    public ReadOnlyBooleanProperty requiredProperty() {
+        return state.requiredProperty();
+    }
+
+    @Override
     public ReadOnlyBooleanProperty validProperty() {
         return state.validProperty();
     }

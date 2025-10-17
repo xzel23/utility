@@ -43,13 +43,13 @@ public class Grid extends GridPane {
      */
     protected static final Logger LOG = LogManager.getLogger(Grid.class);
 
-    private static final String MARKER_INITIAL = "";
+    private static final String MARKER_OK_OPTIONAL = "";
+    private static final String MARKER_REQUIRED = "✱";
     private static final String MARKER_ERROR = "⚠";
-    private static final String MARKER_OK = "";
 
     private static final Font LABEL_FONT = FxFontUtil.getInstance().convert(new Label().getFont());
-    private static final Dimension2D MARKSER_SIZE = FxUtil.convert(
-            Stream.of(MARKER_INITIAL, MARKER_OK, MARKER_ERROR)
+    private static final Dimension2D MARKER_SIZE = FxUtil.convert(
+            Stream.of(MARKER_OK_OPTIONAL, MARKER_REQUIRED, MARKER_ERROR)
                     .map(m -> TextUtil.getTextDimension(m, LABEL_FONT).getDimension())
                     .reduce(Dimension2f::max)
                     .orElse(Dimension2f.of(0, 0))
@@ -192,12 +192,24 @@ public class Grid extends GridPane {
     }
 
     private static void updateMarker(Meta<?> entry) {
-        if (entry.control.isValid()) {
-            entry.marker.setText(MARKER_OK);
-            entry.marker.setTooltip(null);
+        InputControl<?> control = entry.control;
+
+        if (control.isValid()) {
+            if (control.isRequired()) {
+                entry.marker.setText(MARKER_REQUIRED);
+                entry.marker.setTooltip(null);
+            } else {
+                entry.marker.setText(MARKER_OK_OPTIONAL);
+                entry.marker.setTooltip(null);
+            }
         } else {
-            entry.marker.setText(MARKER_ERROR);
-            entry.marker.setTooltip(new Tooltip(entry.control.errorProperty().get()));
+            if (control.isRequired() && control.get() == null) {
+                entry.marker.setText(MARKER_REQUIRED);
+                entry.marker.setTooltip(null);
+            } else {
+                entry.marker.setText(MARKER_ERROR);
+                entry.marker.setTooltip(new Tooltip(control.errorProperty().get()));
+            }
         }
     }
 
@@ -239,8 +251,8 @@ public class Grid extends GridPane {
             this.control = control;
             this.hidden = hidden;
 
-            marker.setText(MARKER_INITIAL);
-            marker.setMinSize(MARKSER_SIZE.getWidth(), MARKSER_SIZE.getHeight());
+            marker.setText(control.isRequired() ? MARKER_REQUIRED : MARKER_OK_OPTIONAL);
+            marker.setMinSize(MARKER_SIZE.getWidth(), MARKER_SIZE.getHeight());
         }
 
         void reset() {
