@@ -172,6 +172,18 @@ public class RecentlyUsedDocuments {
     }
 
     /**
+     * Adds a document to the recently used documents list using the provided URI.
+     * If the URI is not already present in the list, it is added. If it is already present,
+     * its position in the list is updated. The display name is derived from the URI's path.
+     *
+     * @param uri the document's URI
+     */
+    public void put(URI uri) {
+        String name = uri.getPath().substring(uri.getPath().lastIndexOf('/') + 1);
+        put(uri, name);
+    }
+
+    /**
      * Update preferences and inform listeners about update of list.
      */
     private void changed() {
