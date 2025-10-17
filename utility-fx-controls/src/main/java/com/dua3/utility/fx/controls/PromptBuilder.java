@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
@@ -28,7 +29,7 @@ import java.util.function.Predicate;
  * <p>
  * Provides a fluent interface to create Alerts.
  */
-public class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuilder, String> {
+public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuilder, String> {
     private String defaultValue = "";
     private PromptMode promptMode = PromptMode.TEXT;
     private Predicate<? super @Nullable String> validate = (@Nullable String s) -> s != null && !s.isEmpty();
@@ -42,6 +43,7 @@ public class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuilder, St
     PromptBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         setDialogSupplier(this::createDialog);
+        addButtons(ButtonType.OK, ButtonType.CANCEL);
     }
 
     /**

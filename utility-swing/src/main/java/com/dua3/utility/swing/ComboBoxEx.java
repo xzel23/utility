@@ -172,7 +172,22 @@ public class ComboBoxEx<T> extends JPanel {
         if (idx >= 0) {
             T item = model.getElementAt(idx);
             item = edit.apply(item);
+
+            // check for duplicates
             if (item != null) {
+                for (int i = 0; i < model.getSize(); i++) {
+                    if (i != idx && item.equals(model.getElementAt(i))) {
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "Duplicate item: " + format.apply(item),
+                                "Edit Values",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+                }
+
+                // replace element
                 model.removeElementAt(idx);
                 model.insertElementAt(item, idx);
                 model.setSelectedItem(item);

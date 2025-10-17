@@ -31,7 +31,7 @@ public final class SimpleInputControl<C extends Control, R extends @Nullable Obj
      * @param dflt a supplier that provides the default value for the control's state
      * @param validate a function that validates the value and returns an optional error message
      */
-    protected SimpleInputControl(C control, Property<R> value, Supplier<? extends R> dflt, Function<R, Optional<String>> validate) {
+    SimpleInputControl(C control, Property<R> value, Supplier<? extends R> dflt, Function<R, Optional<String>> validate) {
         this.control = control;
         this.state = new State<>(value, dflt, validate);
         this.dflt = dflt;

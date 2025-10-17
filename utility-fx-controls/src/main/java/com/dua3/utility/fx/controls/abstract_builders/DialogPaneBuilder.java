@@ -189,25 +189,6 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @return a modifiable list of button definitions for this dialog pane builder
      */
     public List<InputDialogPane.ButtonDef<R>> buttons() {
-        if (buttons.isEmpty()) {
-            buttons.add(
-                    new InputDialogPane.ButtonDef<>(
-                            ButtonType.CANCEL,
-                            (btn, r) -> true,
-                            dlg -> {},
-                            FxUtil.ALWAYS_TRUE
-                    )
-            );
-            buttons.add(
-                    new InputDialogPane.ButtonDef<>(
-                            ButtonType.OK,
-                            (btn, r) -> true,
-                            dlg -> {},
-                            FxUtil.ALWAYS_TRUE
-                    )
-            );
-        }
-
         return buttons;
     }
 

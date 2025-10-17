@@ -1170,7 +1170,6 @@ Changes:
 
 - remove bintray support
 - publish builds to GitLab Packages (private access)
-- TODO: publish to Mavencentral
 
 ### 8.2.1
 

@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -41,7 +42,7 @@ import java.util.function.UnaryOperator;
  *
  * @param <T> the type of the items contained in the ComboBox
  */
-public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T> {
+public class ComboBoxEx<T> extends CustomControl<HBox> {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
     private @Nullable Comparator<? super T> comparator = null;
@@ -163,7 +164,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
 
-        valueProperty().setValue(this.dflt.get());
+        comboBox.setValue(this.dflt.get());
     }
 
     private void editItem() {
@@ -177,6 +178,26 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
             T item = items.get(idx);
             item = edit.apply(item);
             if (item != null) {
+                // check for duplicates
+                int idxExisting = items.indexOf(item);
+                if (idxExisting >= 0 && idx != idxExisting) {
+                    Dialogs.alert(getScene().getWindow(), Alert.AlertType.CONFIRMATION, MessageFormatter.standard())
+                            .title("Duplicate item")
+                            .header("There already exists an item with the same name.")
+                            .text("Do you want to remove the item instead?")
+                            .buttons(ButtonType.YES, ButtonType.NO)
+                            .defaultButton(ButtonType.NO)
+                            .showAndWait()
+                            .ifPresent(btn -> {
+                                if (btn == ButtonType.OK || btn == ButtonType.YES) {
+                                    comboBox.getSelectionModel().select(idxExisting);
+                                    items.remove(idx);
+                                }
+                            });
+                    return;
+                }
+
+                // replace item
                 items.remove(idx);
                 items.add(idx, item);
                 comboBox.getSelectionModel().select(idx);
@@ -187,6 +208,16 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
 
     private void addItem() {
         Optional.ofNullable(add).map(Supplier::get).ifPresent((T item) -> {
+            int idxExisting = items.indexOf(item);
+            if (idxExisting >= 0) {
+                Dialogs.alert(getScene().getWindow(), Alert.AlertType.INFORMATION, MessageFormatter.standard())
+                        .title("Duplicate item")
+                        .header("There already exists an item with the same name.")
+                        .text("The existing item will be selected.")
+                        .showAndWait();
+                comboBox.getSelectionModel().select(idxExisting);
+                return;
+            }
             items.add(item);
             comboBox.getSelectionModel().select(item);
             sortItems();
@@ -200,7 +231,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
             items.remove(idx);
             idx = Math.min(idx, items.size() - 1);
             if (idx >= 0) {
-                set(items.get(idx));
+                comboBox.setValue(items.get(idx));
             }
         }
     }
@@ -217,6 +248,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
     public boolean askBeforeRemoveSelectedItem(T item) {
         return Dialogs.alert(Optional.ofNullable(getScene()).map(Scene::getWindow).orElse(null), Alert.AlertType.CONFIRMATION, MessageFormatter.standard())
                 .header("Remove %s?", format.apply(item))
+                .buttons(ButtonType.YES, ButtonType.NO)
                 .defaultButton(ButtonType.YES)
                 .build()
                 .showAndWait()
@@ -289,35 +321,12 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
         selectedItem.ifPresent((T item) -> comboBox.selectionModelProperty().get().select(item));
     }
 
-    @Override
-    public Node node() {
-        return this;
-    }
-
-    @Override
-    public Property<@Nullable T> valueProperty() {
+    /**
+     * Returns the property containing the value of the ComboBoxEx.
+     *
+     * @return the Property representing the value of the ComboBoxEx
+     */
+    public Property<T> valueProperty() {
         return comboBox.valueProperty();
-    }
-
-    @Override
-    public void reset() {
-        valueProperty().setValue(dflt.get());
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty requiredProperty() {
-        // TODO is using a synthtic property correct here?
-        return new SimpleBooleanProperty(false);
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty validProperty() {
-        // TODO is using a synthtic property correct here?
-        return new SimpleBooleanProperty(true);
-    }
-
-    @Override
-    public ReadOnlyStringProperty errorProperty() {
-        return new SimpleStringProperty("");
     }
 }

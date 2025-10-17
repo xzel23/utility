@@ -50,6 +50,7 @@ public class InputDialogBuilder
         super(formatter, parentWindow);
         this.pb = new InputPaneBuilder(formatter);
         setDialogSupplier(this::createDialog);
+        addButtons(ButtonType.OK, ButtonType.CANCEL);
     }
 
     private InputDialog createDialog() {

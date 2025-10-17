@@ -168,7 +168,8 @@ public class FxDialogSample extends Application {
                                 Objects::toString,
                                 () -> null,
                                 String.class,
-                                List.of("1", "2", "3"))
+                                List.of("1", "2", "3"),
+                                v -> v != null ? Optional.empty() : Optional.of("Select an item or enter a new one"))
                         .showAndWait()
                         .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
         ));

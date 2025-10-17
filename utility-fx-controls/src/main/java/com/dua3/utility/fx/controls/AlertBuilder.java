@@ -100,7 +100,7 @@ public class AlertBuilder
      * @return {@code this}
      */
     public AlertBuilder buttons(ButtonType... buttons) {
-        this.buttons = Arrays.copyOf(buttons, buttons.length);
+        this.buttons = buttons.length == 0 ? null : Arrays.copyOf(buttons, buttons.length);
         return this;
     }
 
