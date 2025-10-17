@@ -124,9 +124,9 @@ public final class I18N {
         if (!Objects.equals(locale, bundleLocale)) {
             String bundleLocaleName = String.valueOf(bundleLocale);
             if (!bundleLocaleName.isEmpty()) {
-                LOG.info("requested locale {} not available, falling back to {}", locale, bundleLocaleName);
+                LOG.debug("requested locale {} not available, falling back to {}", locale, bundleLocaleName);
             } else {
-                LOG.warn("requested locale {} not available, falling back to the default bundle", locale);
+                LOG.debug("requested locale {} not available, falling back to the default bundle", locale);
             }
         }
         return bundle;

@@ -155,12 +155,12 @@ public interface InputControl<T> {
         textProperty.bindBidirectional(value, createStrictStringConverter(cls, format, err::set));
 
         Function<@Nullable T, Optional<String>> strictValidate = d ->
-                d != null ? validate.apply(d) : Optional.ofNullable(err.get());
+                Optional.ofNullable(err.get()).or(() -> validate.apply(d));
 
         return new SimpleInputControl<>(control, value, dflt, strictValidate);
     }
 
-    private static <T> StringConverter<T> createStrictStringConverter(Class<T> cls, Format format, Consumer<String> setErrorMessage) {
+    private static <T> StringConverter<T> createStrictStringConverter(Class<T> cls, Format format, Consumer<@Nullable String> setErrorMessage) {
         return new StringConverter<>() {
             @Override
             public String toString(@Nullable T object) {
@@ -169,8 +169,9 @@ public interface InputControl<T> {
 
             @Override
             public @Nullable T fromString(String s) {
+                setErrorMessage.accept(null);
+
                 if (s.isEmpty()) {
-                    setErrorMessage.accept("");
                     return null;
                 }
 

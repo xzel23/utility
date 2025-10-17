@@ -179,7 +179,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         // event handler.
         btn.addEventFilter(ActionEvent.ACTION, evt -> {
             if (resultHandler != null && !resultHandler.handleResult(type, get())) {
-                LOG.debug("Button {}: result conversion failed", bt);
+                LOG.warn("Button {}: result conversion failed", bt);
                 evt.consume();
             }
             action.accept(this);

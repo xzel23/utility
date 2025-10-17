@@ -56,7 +56,7 @@ public final class AwtFontUtil implements FontUtil {
             LOG.warn("The environment is headless, but the property java.awt.headless is not set to \"true\", expect problems!");
         }
         if (isJavaAwtHeadless) {
-            LOG.info("headless mode is enabled");
+            LOG.debug("headless mode is enabled");
         }
     }
 

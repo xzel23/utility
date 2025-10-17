@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Dialog;
@@ -44,5 +45,7 @@ public class PromptDialog extends Dialog<String> {
             ButtonData data = btn == null ? null : btn.getButtonData();
             return data == ButtonData.OK_DONE ? textField.getText() : null;
         });
+
+        Platform.runLater(textField::requestFocus);
     }
 }

@@ -43,7 +43,7 @@ public class IkonliIconProvider implements IconProvider {
             }
         }
 
-        LOG.debug("icon not found: {}", name);
+        LOG.warn("icon not found: {}", name);
         return Optional.empty();
     }
 

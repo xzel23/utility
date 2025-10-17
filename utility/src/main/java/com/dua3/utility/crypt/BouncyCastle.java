@@ -30,7 +30,7 @@ public final class BouncyCastle {
                 try {
                     Class<?> cls = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
                     java.security.Security.addProvider(((org.bouncycastle.jce.provider.BouncyCastleProvider) cls.getConstructor().newInstance()));
-                    LOG.info("BouncyCastle provider registered");
+                    LOG.debug("BouncyCastle provider registered");
                 } catch (ClassNotFoundException e) {
                     LOG.warn("BouncyCastle provider not found on classpath");
                 } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {

@@ -155,7 +155,7 @@ public class Grid extends GridPane {
             Node node = entry.control.node();
             node.focusedProperty().addListener((v, o, n) -> {
                 if (Objects.equals(n, Boolean.FALSE)) {
-                    LOG.info("input control lost focus: {}", entry.id);
+                    LOG.trace("input control lost focus: {}", entry.id);
                     updateMarker(entry);
                 }
             });
@@ -179,7 +179,7 @@ public class Grid extends GridPane {
         valid.bind(Bindings.createBooleanBinding(
                 () -> controls.stream().allMatch(control -> {
                     boolean v = control.isValid();
-                    LOG.info("validate: {} -> {}", control, v);
+                    LOG.debug("validate: {} -> {}", control, v);
                     return v;
                 }),
                 controls.stream().flatMap(control -> Stream.of(control.valueProperty(), control.validProperty())).toArray(ObservableValue[]::new)
