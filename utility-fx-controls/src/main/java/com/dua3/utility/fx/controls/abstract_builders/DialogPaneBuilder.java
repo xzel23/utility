@@ -14,13 +14,11 @@
 
 package com.dua3.utility.fx.controls.abstract_builders;
 
-import com.dua3.utility.fx.FxUtil;
-import com.dua3.utility.fx.controls.InputDialogPane;
+import com.dua3.utility.fx.controls.ButtonDef;
 import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -41,7 +39,6 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     private final MessageFormatter formatter;
     private @Nullable String header = null;
     private ResultHandler<R> resultHandler = (b, r) -> true;
-    private final List<InputDialogPane.ButtonDef<R>> buttons = new ArrayList<>();
 
     /**
      * Constructs an instance of DialogPaneBuilder with the specified header setter.
@@ -175,23 +172,41 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @return the current builder instance with the added button definition
      */
     @SuppressWarnings("unchecked")
-    protected B button(InputDialogPane.ButtonDef<R> button) {
-        this.buttons.add(button);
+    protected B button(ButtonDef<R> button) {
+        getButtonDefs().add(button);
         return (B) this;
     }
 
     /**
      * <strong>Replaces</strong> the buttons for this dialog pane builder with the specified button types.
-     * Each button type provided is added using the {@link #button(InputDialogPane.ButtonDef)} method.
+     * Each button type provided is added using the {@link #button(ButtonDef)} method.
      *
      * @param buttons an array of {@link ButtonType} representing the types of buttons to be added
      * @return the current builder instance with the specified buttons added
      */
     @SuppressWarnings("unchecked")
-    public B setButtons(InputDialogPane.ButtonDef<R>... buttons) {
-        this.buttons.clear();
+    @SafeVarargs
+    public final B setButtons(ButtonDef<R>... buttons) {
+        getButtonDefs().clear();
         for (var btn: buttons) {
             button(btn);
+        }
+        return (B) this;
+    }
+
+    /**
+     * Replaces the current button definitions in the dialog pane builder with the specified button types.
+     * Each {@code ButtonType} in the provided array is converted into a corresponding button definition
+     * and added to the builder using the {@link #button(ButtonDef)} method.
+     *
+     * @param buttons an array of {@link ButtonType} representing the types of buttons to be added
+     * @return the current builder instance with the specified buttons added
+     */
+    @SuppressWarnings("unchecked")
+    public final B setButtons(ButtonType... buttons) {
+        getButtonDefs().clear();
+        for (var btn: buttons) {
+            button(ButtonDef.of(btn));
         }
         return (B) this;
     }
@@ -204,9 +219,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      *
      * @return a modifiable list of button definitions for this dialog pane builder
      */
-    public List<InputDialogPane.ButtonDef<R>> getButtonDefs() {
-        return buttons;
-    }
+    public abstract List<ButtonDef<R>> getButtonDefs();
 
     /**
      * Retrieves the message formatter associated with this instance of {@code DialogPaneBuilder}.

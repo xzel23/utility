@@ -1,16 +1,13 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxUtil;
-import com.dua3.utility.fx.controls.InputDialogPane.ButtonDef;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import javafx.beans.binding.BooleanExpression;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.ButtonType;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

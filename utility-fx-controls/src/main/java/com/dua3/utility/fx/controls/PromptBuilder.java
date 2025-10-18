@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Window;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -32,6 +34,7 @@ import java.util.function.Predicate;
 public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuilder, String> {
     private String defaultValue = "";
     private PromptMode promptMode = PromptMode.TEXT;
+    private final List<ButtonDef<String>> buttons = new ArrayList<>();
     private Predicate<? super @Nullable String> validate = (@Nullable String s) -> s != null && !s.isEmpty();
 
     /**
@@ -40,17 +43,18 @@ public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuild
      * @param parentWindow the parent window of the dialog, or null if there is no parent
      * @param formatter    the message formatter to format strings for the dialog
      */
+    @SuppressWarnings("unchecked")
     PromptBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         setDialogSupplier(this::createDialog);
         setButtons(
-            new InputDialogPane.ButtonDef<>(
+            new ButtonDef<>(
                     ButtonType.OK,
                     (bt, r) -> true,
                     idp -> {},
                     InputDialogPane::validProperty
             ),
-            new InputDialogPane.ButtonDef<>(
+            new ButtonDef<>(
                     ButtonType.CANCEL,
                     (bt, r) -> true,
                     idp -> {},
@@ -98,6 +102,11 @@ public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuild
         PromptDialog dlg = super.build();
         dlg.setGraphic(null);
         return dlg;
+    }
+
+    @Override
+    public final List<ButtonDef<String>> getButtonDefs() {
+        return buttons;
     }
 
     /**

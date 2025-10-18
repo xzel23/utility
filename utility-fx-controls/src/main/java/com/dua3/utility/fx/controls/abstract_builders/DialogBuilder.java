@@ -14,9 +14,8 @@
 
 package com.dua3.utility.fx.controls.abstract_builders;
 
-import com.dua3.utility.fx.controls.InputDialogPane;
+import com.dua3.utility.fx.controls.ButtonDef;
 import com.dua3.utility.text.MessageFormatter;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
@@ -94,7 +93,7 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
         applyIfNotNull(titleSetter, dlg, title);
 
         if (!getButtonDefs().isEmpty()) {
-            dlg.getDialogPane().getButtonTypes().setAll(getButtonDefs().stream().map(InputDialogPane.ButtonDef::type).toList());
+            dlg.getDialogPane().getButtonTypes().setAll(getButtonDefs().stream().map(ButtonDef::type).toList());
         }
 
         return dlg;

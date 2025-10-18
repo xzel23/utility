@@ -23,6 +23,7 @@ import javafx.stage.Window;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Builder for Alert Dialogs.
@@ -33,6 +34,7 @@ public class OptionsDialogBuilder extends DialogBuilder<OptionsDialog, OptionsDi
 
     private Collection<Option<?>> options = new ArrayList<>();
     private Arguments currentValues = Arguments.empty();
+    private final List<ButtonDef<Arguments>> buttons = new ArrayList<>();
 
     OptionsDialogBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
@@ -68,5 +70,10 @@ public class OptionsDialogBuilder extends DialogBuilder<OptionsDialog, OptionsDi
     public OptionsDialogBuilder currentValues(Arguments currentValues) {
         this.currentValues = currentValues;
         return this;
+    }
+
+    @Override
+    public final List<ButtonDef<Arguments>> getButtonDefs() {
+        return buttons;
     }
 }

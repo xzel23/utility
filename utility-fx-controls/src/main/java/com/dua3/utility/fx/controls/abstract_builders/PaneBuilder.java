@@ -1,9 +1,12 @@
 package com.dua3.utility.fx.controls.abstract_builders;
 
+import com.dua3.utility.fx.controls.ButtonDef;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.DialogPane;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -17,6 +20,8 @@ import java.util.function.Supplier;
 public abstract class PaneBuilder<D extends DialogPane & Supplier<R>, B extends PaneBuilder<D, B, R>, R>
         extends DialogPaneBuilder<D, B, R> {
     private @Nullable String next;
+
+    private final List<ButtonDef<R>> buttons = new ArrayList<>();
 
     /**
      * Constructs an instance of the PaneBuilder class.
@@ -51,5 +56,10 @@ public abstract class PaneBuilder<D extends DialogPane & Supplier<R>, B extends 
      */
     public Optional<String> getNext() {
         return Optional.ofNullable(next);
+    }
+
+    @Override
+    public final List<ButtonDef<R>> getButtonDefs() {
+        return buttons;
     }
 }

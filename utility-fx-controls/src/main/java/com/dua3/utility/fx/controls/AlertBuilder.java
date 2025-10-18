@@ -16,6 +16,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import com.dua3.utility.text.MessageFormatter;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -25,7 +26,8 @@ import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Builder for Alert Dialogs.
@@ -35,7 +37,7 @@ public class AlertBuilder
         extends DialogBuilder<Alert, AlertBuilder, ButtonType> {
     private @Nullable String css = null;
     private @Nullable String text = null;
-    private ButtonType @Nullable [] buttons;
+    private final List<ButtonDef<ButtonType>> buttons = new ArrayList<>();
     private @Nullable ButtonType defaultButton;
 
     /**
@@ -63,8 +65,10 @@ public class AlertBuilder
             dlg.getDialogPane().getScene().getStylesheets().add(css);
         }
 
-        if (buttons != null) {
-            dlg.getButtonTypes().setAll(buttons);
+        if (!buttons.isEmpty()) {
+            ObservableList<ButtonType> buttonTypes = dlg.getButtonTypes();
+            buttonTypes.clear();
+            buttons.forEach(bd -> buttonTypes.add(bd.type()));
         }
 
         if (defaultButton != null) {
@@ -81,6 +85,11 @@ public class AlertBuilder
         return dlg;
     }
 
+    @Override
+    public List<ButtonDef<ButtonType>> getButtonDefs() {
+        return buttons;
+    }
+
     /**
      * Set text.
      *
@@ -90,17 +99,6 @@ public class AlertBuilder
      */
     public AlertBuilder text(String fmt, Object... args) {
         this.text = format(fmt, args);
-        return this;
-    }
-
-    /**
-     * Define Alert Buttons.
-     *
-     * @param buttons the buttons to show
-     * @return {@code this}
-     */
-    public AlertBuilder setButtons(ButtonType... buttons) {
-        this.buttons = Arrays.copyOf(buttons, buttons.length);
         return this;
     }
 

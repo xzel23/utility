@@ -28,7 +28,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
@@ -46,19 +48,20 @@ public class InputDialogBuilder
         implements InputBuilder<InputDialogBuilder> {
 
     private final InputPaneBuilder pb;
+    private final List<ButtonDef<InputResult>> buttons = new ArrayList<>();
 
     InputDialogBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         this.pb = new InputPaneBuilder(formatter);
         setDialogSupplier(this::createDialog);
         pb.setButtons(
-                new InputDialogPane.ButtonDef<>(
+                new ButtonDef<>(
                         ButtonType.OK,
                         (bt, r) -> true,
                         idp -> {},
                         InputDialogPane::validProperty
                 ),
-                new InputDialogPane.ButtonDef<>(
+                new ButtonDef<>(
                         ButtonType.CANCEL,
                         (bt, r) -> true,
                         idp -> {},
@@ -246,5 +249,10 @@ public class InputDialogBuilder
     public InputDialogBuilder section(int level, String fmt, Object... args) {
         pb.section(level, fmt, args);
         return this;
+    }
+
+    @Override
+    public final List<ButtonDef<InputResult>> getButtonDefs() {
+        return buttons;
     }
 }
