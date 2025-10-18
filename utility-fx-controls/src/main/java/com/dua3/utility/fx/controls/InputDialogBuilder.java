@@ -71,7 +71,7 @@ public class InputDialogBuilder
 
     @Override
     public SectionStyle getSectionStyle(int level) {
-        return null;
+        return pb.getSectionStyle(level);
     }
 
     @Override
@@ -100,7 +100,8 @@ public class InputDialogBuilder
 
     @Override
     public InputDialogBuilder node(Node node) {
-        return null;
+        pb.node(node);
+        return this;
     }
 
     @Override

@@ -329,7 +329,9 @@ public final class KeyUtil {
             if (inputBufferHandling != InputBufferHandling.PRESERVE) {
                 Arrays.fill(input, (byte) 0);
                 Arrays.fill(salt, (byte) 0);
-                Arrays.fill(info, (byte) 0);
+                if (info != null) {
+                    Arrays.fill(info, (byte) 0);
+                }
             }
         }
     }

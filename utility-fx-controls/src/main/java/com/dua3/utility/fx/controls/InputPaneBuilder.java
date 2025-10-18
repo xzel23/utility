@@ -208,12 +208,14 @@ public class InputPaneBuilder
 
     @Override
     public <T> InputPaneBuilder inputControl(String id, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
-        return null;
+        pb.inputControl(id, control, type, dflt);
+        return this;
     }
 
     @Override
     public <T> InputPaneBuilder inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
-        return null;
+        pb.inputControl(id, label, control, type, dflt);
+        return this;
     }
 
 }

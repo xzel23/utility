@@ -679,7 +679,7 @@ public final class IoUtil {
      */
     @SuppressWarnings("RedundantThrows")
     public static void closeAll(@Nullable AutoCloseable... closeables) throws IOException {
-        doCloseAll(Arrays.asList(closeables));
+        doCloseAll(LangUtil.asUnmodifiableList(closeables));
     }
 
     /**
@@ -1049,10 +1049,12 @@ public final class IoUtil {
                 return 0;
             }
 
-            int c = comparePathRoots(p1, p2, comparator);
-            if (c != 0) {
-                return c;
+            int cmp = comparePathRoots(p1, p2, comparator);
+            if (cmp != 0) {
+                return cmp;
             }
+
+            assert p1 != null && p2 != null; // null is handled in comparePathRoots()
 
             int nc1 = p1.getNameCount();
             int nc2 = p2.getNameCount();
@@ -1060,9 +1062,9 @@ public final class IoUtil {
             for (int i = 0; i < n; i++) {
                 String p1n = p1.getName(i).toString();
                 String p2n = p2.getName(i).toString();
-                c = comparator.compare(p1n, p2n);
-                if (c != 0) {
-                    return c;
+                cmp = comparator.compare(p1n, p2n);
+                if (cmp != 0) {
+                    return cmp;
                 }
             }
 
