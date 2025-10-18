@@ -23,13 +23,13 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of value associated with this Option
  */
-public class Option<T extends @Nullable Object> {
+public class Option<T> {
     private final String displayName;
     private final String description;
     private final Repetitions repetitions;
     private final Class<T> targetType;
     private final String[] switches;
-    private final Function<Object[], T> mapper;
+    private final Function<@Nullable Object[], ? extends @Nullable T> mapper;
     private final Consumer<T> handler;
     private final List<Param<?>> param;
     private final int requiredArgCount;
@@ -292,7 +292,7 @@ public class Option<T extends @Nullable Object> {
      *
      * @return the consumer that handles the option's value
      */
-    public Consumer<T> handler() {
+    public Consumer<@Nullable T> handler() {
         return handler;
     }
 
@@ -439,8 +439,8 @@ public class Option<T extends @Nullable Object> {
      * @param v the value to be formatted; may be {@code null}
      * @return the string representation of the given value
      */
-    public String format(T v) {
-        return String.valueOf(v);
+    public String format(@Nullable T v) {
+        return Objects.toString(v, "");
     }
 
     @Override

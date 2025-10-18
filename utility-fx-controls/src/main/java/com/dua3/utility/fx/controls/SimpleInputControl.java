@@ -4,6 +4,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.control.Control;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
@@ -17,11 +18,11 @@ import java.util.function.Supplier;
  * @param <C> the type of the control, which must extend from Control
  * @param <R> the type of the value held by the input control
  */
-public final class SimpleInputControl<C extends Control, R extends @Nullable Object> implements InputControl<R> {
+public final class SimpleInputControl<C extends Control, R> implements InputControl<R> {
 
     private final C control;
     private final State<R> state;
-    private final Supplier<? extends R> dflt;
+    private final Supplier<? extends @Nullable R> dflt;
 
     /**
      * Constructs a SimpleInputControl instance for managing an input control element and its state.
@@ -31,7 +32,7 @@ public final class SimpleInputControl<C extends Control, R extends @Nullable Obj
      * @param dflt a supplier that provides the default value for the control's state
      * @param validate a function that validates the value and returns an optional error message
      */
-    SimpleInputControl(C control, Property<R> value, Supplier<? extends R> dflt, Function<R, Optional<String>> validate) {
+    SimpleInputControl(C control, Property<R> value, Supplier<? extends @Nullable R> dflt, Function<@Nullable R, Optional<String>> validate) {
         this.control = control;
         this.state = new State<>(value, dflt, validate);
         this.dflt = dflt;
@@ -51,7 +52,7 @@ public final class SimpleInputControl<C extends Control, R extends @Nullable Obj
     }
 
     @Override
-    public C node() {
+    public @NonNull C node() {
         return control;
     }
 

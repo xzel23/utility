@@ -36,7 +36,7 @@ public record Param<T>(
         String argName,
         Class<T> targetType,
         Converter<String[], @Nullable T> converter,
-        List<T> allowedValues,
+        List<@Nullable T> allowedValues,
         Function<T, Optional<String>> validate,
         Repetitions argRepetitions
 ) {
@@ -81,7 +81,7 @@ public record Param<T>(
             String description,
             String argName,
             Class<T> targetType,
-            Converter<String, T> converter,
+            Converter<@Nullable String, @Nullable T> converter,
             List<@Nullable T> allowedValues,
             Function<T, Optional<String>> validate,
             Required required
@@ -599,6 +599,7 @@ public record Param<T>(
             Required required,
             Class<T> targetType
     ) {
+        LangUtil.enumValues(targetType);
         return new Param<>(
                 displayName,
                 description,

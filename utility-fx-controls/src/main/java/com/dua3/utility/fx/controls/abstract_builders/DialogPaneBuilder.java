@@ -187,6 +187,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @param buttons an array of {@link ButtonType} representing the types of buttons to be added
      * @return the current builder instance with the specified buttons added
      */
+    @SuppressWarnings("unchecked")
     public B setButtons(ButtonType... buttons) {
         this.buttons.clear();
         for (ButtonType btn: buttons) {
@@ -202,6 +203,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @param btn the {@link ButtonType} representing the type of button to be added
      * @return the current builder instance with the new button added
      */
+    @SuppressWarnings("unchecked")
     public B button(ButtonType btn) {
         InputDialogPane.ButtonDef<R> bd = new InputDialogPane.ButtonDef<>(
                 btn,

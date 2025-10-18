@@ -7,4 +7,7 @@
  * <li>For generating X509 certificates, Bouncycyastle must be on the classpath at runtime.
  * </ul>
  */
+@NullMarked
 package com.dua3.utility.crypt;
+
+import org.jspecify.annotations.NullMarked;

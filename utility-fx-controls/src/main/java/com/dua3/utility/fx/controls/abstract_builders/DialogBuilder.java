@@ -32,7 +32,7 @@ import java.util.function.BiConsumer;
  * @param <B> the type of the builder class itself
  * @param <R> the type of the result returned by the dialog box
  */
-public abstract class DialogBuilder<D extends @NonNull Dialog<R>, B extends @NonNull DialogBuilder<D, B, R>, R>
+public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder<D, B, R>, R>
         extends DialogPaneBuilder<D, B, R> {
 
     private final BiConsumer<D, String> titleSetter;

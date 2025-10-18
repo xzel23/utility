@@ -240,6 +240,21 @@ public final class LangUtil {
     }
 
     /**
+     * Returns a fixed-size list backed by the specified array. The returned list is immutable and
+     * any attempt to modify it will result in an UnsupportedOperationException.
+     * <p>
+     * In contrast to {@link List#of(Object[])}, this method supports null elements.
+     *
+     * @param <T> the class of the elements in the array
+     * @param args the array by which the list will be backed
+     * @return an immutable list containing the specified elements
+     */
+    @SafeVarargs
+    public static <T extends @Nullable Object> List<T> asUnmodifiableList(T... args) {
+        return new UnmodifiableArrayListWrapper<>(args);
+    }
+
+    /**
      * Test if first argument is equal to one of the other arguments.
      *
      * @param <T>  argument type
@@ -251,7 +266,7 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <T extends @Nullable Object> boolean isOneOf(T arg, T... rest) {
-        return arg != null && List.of(rest).contains(arg);
+        return arg != null && asUnmodifiableList(rest).contains(arg);
     }
 
     /**
@@ -502,7 +517,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(OptionalInt opt, IntFunction<? extends @Nullable T> f) {
+    public static <T> Optional<T> mapOptional(OptionalInt opt, IntFunction<? extends @Nullable T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsInt()));
     }
 
@@ -515,7 +530,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(OptionalLong opt, LongFunction<? extends @Nullable T> f) {
+    public static <T> Optional<T> mapOptional(OptionalLong opt, LongFunction<? extends @Nullable T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsLong()));
     }
 
@@ -528,8 +543,22 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(OptionalDouble opt, DoubleFunction<? extends @Nullable T> f) {
+    public static <T> Optional<T> mapOptional(OptionalDouble opt, DoubleFunction<? extends @Nullable T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsDouble()));
+    }
+
+    /**
+     * Applies a mapping function to the given input and returns the result.
+     * If the input is null, this method will return null without applying the function.
+     *
+     * @param <T> the type of the input
+     * @param <U> the type of the output
+     * @param t the input value, which may be null
+     * @param f the mapping function to apply to the input, must accept and produce possibly nullable values
+     * @return the result of applying the mapping function to the input, or null if the input is null
+     */
+    public static <T,U> @Nullable U map(@Nullable T t, Function<? super @Nullable T, ? extends @Nullable U> f) {
+        return t == null ? null : f.apply(t);
     }
 
     /**
@@ -1908,21 +1937,6 @@ public final class LangUtil {
      * A constant representing an empty array of doubles.
      */
     public static final double[] EMPTY_DOUBLE_ARRAY = {};
-
-    /**
-     * Creates an unmodifiable view of the list passed. The returned list does not allow
-     * modification operations such as adding, removing, or updating elements, and is a fixed-size list.
-     * <p>
-     * The returned List uses less memory than {@code Collections.asUnmodifiableList(ArraysAsList(elements))}.
-     *
-     * @param <T> the type of elements in the list
-     * @param elements the elements to be included in the unmodifiable list
-     * @return an unmodifiable list containing the provided elements
-     */
-    @SafeVarargs
-    public static <T> List<T> asUnmodifiableList(T... elements) {
-        return new UnmodifiableArrayListWrapper<>(elements);
-    }
 
     /**
      * Returns an unmodifiable {@link ImmutableSortedListSet} containing the specified elements.

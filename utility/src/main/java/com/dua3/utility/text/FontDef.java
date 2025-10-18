@@ -299,7 +299,7 @@ public final class FontDef {
      * @throws IllegalArgumentException if the input string contains unmatched quotes
      *                                   or an invalid font declaration
      */
-    private static int readAndAddFontFamilies(@NonNull String s, int idx, int end, List<String> families) {
+    private static int readAndAddFontFamilies(String s, int idx, int end, List<String> families) {
         // skip whitespace
         idx = skipWhitespace(s, idx, end);
 

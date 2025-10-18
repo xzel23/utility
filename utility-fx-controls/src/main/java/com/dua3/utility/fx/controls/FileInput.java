@@ -45,7 +45,7 @@ import java.util.function.Supplier;
  * These properties are updated based on the path selected by the user and the
  * specified validation function.</p>
  */
-public class FileInput extends CustomControl<HBox> implements InputControl<@Nullable Path> {
+public class FileInput extends CustomControl<HBox> implements InputControl<Path> {
 
     private static final StringConverter<Path> PATH_CONVERTER = new PathConverter();
 

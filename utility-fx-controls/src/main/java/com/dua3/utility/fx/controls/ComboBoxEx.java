@@ -43,11 +43,11 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
     private @Nullable Comparator<? super T> comparator = null;
     private final @Nullable Function<T, @Nullable T> edit;
     private final @Nullable Supplier<T> add;
-    private final @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
+    private final @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
     private final Supplier<? extends @Nullable T> dflt;
     private final Function<T, String> format;
     private final ObservableList<T> items;
-    private final ComboBox<T> comboBox;
+    private final ComboBox<@Nullable T> comboBox;
 
     /**
      * Constructs a ComboBoxEx with the specified edit, add, remove, format, and items.

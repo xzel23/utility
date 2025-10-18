@@ -40,7 +40,7 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
      * @param <V> The type of the value, which can be any nullable object.
      */
     @SuppressWarnings("unchecked")
-    record Entry<K, V>(K getKey, @Nullable V getValue, @Nullable Comparator<? super K> comparator)
+    record Entry<K, V extends @Nullable Object>(K getKey, V getValue, @Nullable Comparator<? super K> comparator)
             implements Map.Entry<K, V> {
         @Override
         public @Nullable Object setValue(@Nullable Object value) {

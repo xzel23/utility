@@ -3,6 +3,7 @@ package com.dua3.utility.io;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.LangUtil;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.io.DataInput;
@@ -175,7 +176,7 @@ public class Codecs {
      * @param dec  the decoder for the class
      * @throws IllegalArgumentException if a codec is already registered for the class
      */
-    public <T extends @Nullable Object> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
+    public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
         Object prev = repository.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
         LangUtil.check(prev == null, "Codec already registered for class: " + cls);
     }

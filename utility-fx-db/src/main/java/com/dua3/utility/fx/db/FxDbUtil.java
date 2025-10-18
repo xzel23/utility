@@ -97,7 +97,7 @@ public final class FxDbUtil {
             int scale = meta.getScale(i);
 
             // define the formatting
-            Function<@NonNull Object, @NonNull String> format;
+            Function<Object, String> format;
             switch (sqlType) {
                 case DATE -> //noinspection DataFlowIssue - format is not called for null arguments
                         format = item -> DbUtil.toLocalDate(item).format(dateFormatter);

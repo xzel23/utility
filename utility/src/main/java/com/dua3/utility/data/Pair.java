@@ -75,7 +75,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @return a new Pair
      * @throws NullPointerException if any parameter is {@code null}
      */
-    public static <T1 extends @NonNull Object, T2 extends @NonNull Object> Pair<T1, T2> ofNonNull(T1 first, T2 second) {
+    public static <T1, T2> Pair<T1, T2> ofNonNull(T1 first, T2 second) {
         return new Pair<>(first, second);
     }
 

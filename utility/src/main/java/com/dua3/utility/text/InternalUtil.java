@@ -26,7 +26,7 @@ final class InternalUtil {
     }
 
     static String quoteIfNeeded(String text) {
-        return InternalUtil.IS_QUOTING_NEEDED.test(text) ? quote(text) : text;
+        return IS_QUOTING_NEEDED.test(text) ? quote(text) : text;
     }
 
     static float decodeFontSize(String s) {

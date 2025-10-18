@@ -30,7 +30,7 @@ public class ArgumentsParserBuilder {
     private final SequencedMap<String, Option<?>> options = new LinkedHashMap<>();
     private int minPositionalArgs = 0;
     private int maxPositionalArgs = Integer.MAX_VALUE;
-    private String[] positionalArgDisplayNames = new String[]{DEFAULT_ARG_DISPLAY_NAME};
+    private String[] positionalArgDisplayNames = {DEFAULT_ARG_DISPLAY_NAME};
 
     ArgumentsParserBuilder() {
     }
@@ -421,7 +421,7 @@ public class ArgumentsParserBuilder {
      * @param moreSwitches      additional switches for the option
      * @return an {@link Option} object representing the added enumerated option
      */
-    public <T extends Enum<T>> Option<@Nullable T> addEnumOption(
+    public <T extends Enum<T>> Option<T> addEnumOption(
             String displayName,
             String description,
             Repetitions repetitions,
@@ -452,7 +452,7 @@ public class ArgumentsParserBuilder {
      * @param moreSwitches      additional switches for the option
      * @return an {@link Option} object representing the added enumerated option
      */
-    public <T extends Enum<T>> Option<@Nullable T> addEnumOption(
+    public <T extends Enum<T>> Option<T> addEnumOption(
             String displayName,
             String description,
             Repetitions repetitions,
@@ -561,7 +561,7 @@ public class ArgumentsParserBuilder {
      * @return an {@link Option} representing the configured option for the specified record type
      * @throws IllegalArgumentException if a record component's type is unsupported
      */
-    public <T extends Record> Option<@Nullable T> addRecordOption(
+    public <T extends Record> Option<T> addRecordOption(
             String displayName,
             String description,
             Repetitions repetitions,
@@ -685,7 +685,7 @@ public class ArgumentsParserBuilder {
      * @throws IllegalArgumentException if a record component's type is unsupported
      */
     @SuppressWarnings("unchecked")
-    public <T extends Record> Option<@Nullable T> addRecordOption(
+    public <T extends Record> Option<T> addRecordOption(
             String displayName,
             String description,
             Repetitions repetitions,

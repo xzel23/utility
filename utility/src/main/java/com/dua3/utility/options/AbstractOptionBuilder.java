@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * @param <T> the type of the option value
  * @param <B> the concrete builder type (for fluent interface)
  */
-public abstract class AbstractOptionBuilder<T extends @Nullable Object, B extends AbstractOptionBuilder<T, B>> {
+public abstract class AbstractOptionBuilder<T, B extends AbstractOptionBuilder<T, B>> {
     private final @Nullable ArgumentsParserBuilder parserBuilder;
     private final String displayName;
     private final String description;

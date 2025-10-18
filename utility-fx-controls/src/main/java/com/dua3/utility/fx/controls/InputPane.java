@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.scene.Node;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
     }
 
     @Override
-    public Map<String, Object> get() {
+    public Map<String, @Nullable Object> get() {
         Node content = getContent();
         if (content instanceof Grid ig) {
             return ig.get();

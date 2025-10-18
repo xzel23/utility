@@ -506,35 +506,35 @@ class LangUtilTest {
         assertFalse(nonNullObjectToString.isEmpty());
     }
     @Test
-    void testMapOptionalInt() {
+    void testMapOptionalOptionalInt() {
         OptionalInt opt = OptionalInt.of(2);
-        Optional<String> optResult = LangUtil.map(opt, i -> Integer.toString(i));
+        Optional<String> optResult = LangUtil.mapOptional(opt, i -> Integer.toString(i));
         Assertions.assertEquals("2", optResult.get());
 
         opt = OptionalInt.empty();
-        optResult = LangUtil.map(opt, i -> Integer.toString(i));
+        optResult = LangUtil.mapOptional(opt, i -> Integer.toString(i));
         Assertions.assertEquals(Optional.empty(), optResult);
     }
 
     @Test
-    void testMapOptionalLong() {
+    void testMapOptionalOptionalLong() {
         OptionalLong opt = OptionalLong.of(3L);
-        Optional<String> optResult = LangUtil.map(opt, l -> Long.toString(l));
+        Optional<String> optResult = LangUtil.mapOptional(opt, l -> Long.toString(l));
         Assertions.assertEquals("3", optResult.get());
 
         opt = OptionalLong.empty();
-        optResult = LangUtil.map(opt, l -> Long.toString(l));
+        optResult = LangUtil.mapOptional(opt, l -> Long.toString(l));
         Assertions.assertEquals(Optional.empty(), optResult);
     }
 
     @Test
-    void testMapOptionalDouble() {
+    void testMapOptionalOptionalDouble() {
         OptionalDouble opt = OptionalDouble.of(1.0);
-        Optional<String> optResult = LangUtil.map(opt, d -> Double.toString(d));
+        Optional<String> optResult = LangUtil.mapOptional(opt, d -> Double.toString(d));
         Assertions.assertEquals("1.0", optResult.get());
 
         opt = OptionalDouble.empty();
-        optResult = LangUtil.map(opt, d -> Double.toString(d));
+        optResult = LangUtil.mapOptional(opt, d -> Double.toString(d));
         Assertions.assertEquals(Optional.empty(), optResult);
     }
     @Test
@@ -1144,28 +1144,28 @@ class LangUtilTest {
     }
 
     @Test
-    void testMapNonNullOrElse_WithValuePresent() {
+    void testMapOptionalNonNullOrElse_WithValuePresent() {
         String input = "test";
         String result = LangUtil.mapNonNullOrElse(input, String::toUpperCase, "default");
         assertEquals("TEST", result);
     }
 
     @Test
-    void testMapNonNullOrElse_WithNullValue() {
+    void testMapOptionalNonNullOrElse_WithNullValue() {
         String input = null;
         String result = LangUtil.mapNonNullOrElse(input, String::toUpperCase, "default");
         assertEquals("default", result);
     }
 
     @Test
-    void testMapNonNullElseGet_WithValuePresent() {
+    void testMapOptionalNonNullElseGet_WithValuePresent() {
         String input = "test";
         String result = LangUtil.mapNonNullElseGet(input, String::toUpperCase, () -> "default");
         assertEquals("TEST", result);
     }
 
     @Test
-    void testMapNonNullElseGet_WithNullValue() {
+    void testMapOptionalNonNullElseGet_WithNullValue() {
         String input = null;
         String result = LangUtil.mapNonNullElseGet(input, String::toUpperCase, () -> "default");
         assertEquals("default", result);
@@ -1448,13 +1448,13 @@ class LangUtilTest {
         }
     }
     @Test
-    void testMapNonNullValidInput() {
+    void testMapOptionalNonNullValidInput() {
         String result = LangUtil.mapNonNull("hello", String::toUpperCase);
         assertEquals("HELLO", result, "Expected the input 'hello' to be converted to 'HELLO'");
     }
 
     @Test
-    void testMapNonNullNullInput() {
+    void testMapOptionalNonNullNullInput() {
         String result = LangUtil.mapNonNull((String) null, String::toUpperCase);
         assertNull(result, "Expected null input to result in null output");
     }
@@ -1466,14 +1466,14 @@ class LangUtilTest {
             "'', ''",
             "null, null"
     })
-    void testMapNonNullVariousCases(String input, String expected) {
+    void testMapOptionalNonNullVariousCases(String input, String expected) {
         String actual = LangUtil.mapNonNull("null".equals(input) ? null : input, String::toUpperCase);
         String expectedValue = "null".equals(expected) ? null : expected;
         assertEquals(expectedValue, actual, "Expected mapped value to equal the expected result");
     }
 
     @Test
-    void testMapNonNullWithNullMapper() {
+    void testMapOptionalNonNullWithNullMapper() {
         Throwable t = assertThrows(Throwable.class, () -> LangUtil.mapNonNull("test", null),
                 "Expected an exception when null is passed as the mapper");
         assertTrue(t instanceof NullPointerException || t instanceof AssertionError,

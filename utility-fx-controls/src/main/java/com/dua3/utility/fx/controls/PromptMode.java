@@ -2,7 +2,7 @@ package com.dua3.utility.fx.controls;
 
 /**
  * An enumeration representing modes used for displaying prompts.
- *
+ * <p>
  * This enum provides two modes for user input prompts:
  * - TEXT: Used for standard text input.
  * - PASSWORD: Used for masked input, typically for passwords or sensitive data.

@@ -1024,7 +1024,7 @@ public final class FxUtil {
      * @return an observable list containing the elements of the supplied collection
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T extends @Nullable Object> ObservableList<T> makeObservable(Collection<? extends T> collection) {
+    public static <T extends @Nullable Object> ObservableList<T> makeObservable(Collection<? extends @Nullable T> collection) {
         return collection instanceof ObservableList ol ? ol : FXCollections.observableArrayList(collection);
     }
 

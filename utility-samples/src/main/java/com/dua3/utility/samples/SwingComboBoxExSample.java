@@ -42,7 +42,7 @@ public class SwingComboBoxExSample extends JFrame {
         SwingUtil.setNativeLookAndFeel();
 
         SwingUtilities.invokeLater(() -> {
-            SwingComboBoxExSample instance = ((Supplier<? extends SwingComboBoxExSample>) SwingComboBoxExSample::new).get();
+            SwingComboBoxExSample instance = new SwingComboBoxExSample();
             instance.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             instance.setVisible(true);
         });

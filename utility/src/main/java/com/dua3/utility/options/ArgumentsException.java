@@ -11,7 +11,6 @@ public class ArgumentsException extends IllegalStateException {
      * Constructs an ArgumentsException with no detail message.
      */
     public ArgumentsException() {
-        super();
     }
 
     /**

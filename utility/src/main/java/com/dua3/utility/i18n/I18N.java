@@ -2,6 +2,7 @@ package com.dua3.utility.i18n;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.Enumeration;
@@ -276,7 +277,7 @@ public final class I18N {
      * @see ResourceBundle#getString(String)
      * @see MessageFormat#format(String, Object...)
      */
-    public String format(String key, Object... args) {
+    public String format(String key, @Nullable Object... args) {
         if (key.isEmpty()) {
             return "";
         }

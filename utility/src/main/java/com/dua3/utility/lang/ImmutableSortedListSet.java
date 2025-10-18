@@ -1,5 +1,7 @@
 package com.dua3.utility.lang;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
@@ -16,7 +18,7 @@ import java.util.Spliterator;
  *
  * @param <T> the type of elements in this collection
  */
-public interface ImmutableSortedListSet<T> extends List<T>, SortedSet<T> {
+public interface ImmutableSortedListSet<T extends @Nullable Object> extends List<T>, SortedSet<T> {
     @Override
     ImmutableSortedListSet<T> reversed();
 

@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Param;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
@@ -18,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,7 +43,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
      */
     protected static final Logger LOG = LogManager.getLogger(OptionsPane.class);
     private static final Insets INSETS = new Insets(2);
-    private final InputControl.State<@Nullable Arguments> state;
+    private final InputControl.State<Arguments> state;
     private final Supplier<? extends Collection<Option<?>>> options;
     private final Supplier<@Nullable Arguments> dflt;
     private final Map<Option<?>, InputControl<?>> items = new LinkedHashMap<>();
@@ -139,7 +139,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
         };
     }
 
-    private <T extends @Nullable Object> Optional<String> validateNonNull(Option<T> option, @Nullable Object v) {
+    private static <T> Optional<String> validateNonNull(Option<T> option, @Nullable Object v) {
         if (v == null) {
             return Optional.of("No value for '" + option.displayName() + "'.");
         }
@@ -157,13 +157,13 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
         } else {
             StringConverter<T> converter = new StringConverter<>() {
                 @Override
-                public String toString(@Nullable T v) {
-                    return v == null ? "" : option.format(v);
+                public @Nullable String toString(@Nullable T v) {
+                    return Objects.toString(v, null);
                 }
 
                 @Override
-                public T fromString(String s) {
-                    return option.map(Collections.singletonList(s)).getValue();
+                public @Nullable T fromString(@Nullable String s) {
+                    return option.map(LangUtil.asUnmodifiableList(s)).getValue();
                 }
             };
             return InputControl.stringInput(supplyDefault(option, values), nopValidator(), converter);
@@ -183,7 +183,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> T getValue(Option<T> option, Arguments values) {
+    private static <T> @Nullable T getValue(Option<T> option, Arguments values) {
         return values.get(option).orElseGet(() -> option.getDefault().orElse(null));
     }
 
@@ -191,7 +191,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
         return s -> Optional.empty();
     }
 
-    private static <T> Supplier<T> supplyDefault(Option<? extends T> option, Arguments values) {
+    private static <T> Supplier<@Nullable T> supplyDefault(Option<? extends T> option, Arguments values) {
         return () -> getValue(option, values);
     }
 

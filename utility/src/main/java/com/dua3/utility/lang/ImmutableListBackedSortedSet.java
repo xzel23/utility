@@ -33,7 +33,7 @@ import java.util.SortedSet;
  *
  * @param <T> the element type
  */
-public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> implements ImmutableSortedListSet<T> {
+public final class ImmutableListBackedSortedSet<T extends @Nullable Object> extends AbstractList<T> implements ImmutableSortedListSet<T> {
 
     private static final ImmutableListBackedSortedSet<?> EMPTY_SET = ofNaturalOrder();
 
@@ -253,7 +253,7 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
     }
 
     @Override
-    public Object[] toArray() {
+    public @Nullable Object[] toArray() {
         return elements.clone();
     }
 
@@ -313,7 +313,7 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
      * reversed view is the reversed comparator of the original (or natural order reversed
      * if the original used natural order). Null elements are not permitted.
      */
-    private static final class ReversedImmutableSortedListSet<T> implements ImmutableSortedListSet<T> {
+    private static final class ReversedImmutableSortedListSet<T extends @Nullable Object> implements ImmutableSortedListSet<T> {
         private static final ImmutableSortedListSet<?> EMPTY_SET_REVERSED = EMPTY_SET.reversed();
 
         private final ImmutableListBackedSortedSet<T> original;
@@ -408,12 +408,12 @@ public final class ImmutableListBackedSortedSet<T> extends AbstractList<T> imple
         }
 
         @Override
-        public T remove(int index) {
+        public @Nullable T remove(int index) {
             throw new UnsupportedOperationException("the collection is immutable");
         }
 
         @Override
-        public int indexOf(Object o) {
+        public int indexOf(@Nullable Object o) {
             int originalIndex = original.getIndex(o);
             return originalIndex >= 0 ? original.size() - originalIndex - 1 : -1;
         }

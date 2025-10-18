@@ -21,7 +21,7 @@ import java.util.Arrays;
 public record ImageBuffer(int[] data, int width, int height) implements Image {
 
     @Override
-    public final int[] getArgb() {
+    public int[] getArgb() {
         return data;
     }
 

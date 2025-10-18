@@ -280,7 +280,7 @@ class OptionTest {
 
         // Test formatting a null value
         String formattedNull = option.format(null);
-        assertEquals("null", formattedNull);
+        assertEquals("", formattedNull);
     }
 
     @Test

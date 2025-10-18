@@ -177,7 +177,7 @@ public class ArgumentsParser {
         );
     }
 
-    private static @NonNull String getArgsCountmismatchText(List<String> currentArgs, Option<?> option) {
+    private static String getArgsCountmismatchText(List<String> currentArgs, Option<?> option) {
         if (option.minArgs() == option.maxArgs()) {
             return "expected exactly %d arguments for option '%s', got %d".formatted(
                     option.minArgs(), option.displayName(), currentArgs.size()

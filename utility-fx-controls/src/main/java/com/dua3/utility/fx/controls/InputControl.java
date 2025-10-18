@@ -255,7 +255,7 @@ public interface InputControl<T> {
      * @param validate a {@link Function} to validate the selected item which returns an optional error message
      * @return a {@link SimpleInputControl} containing the ComboBox and its value property
      */
-    static <T> SimpleInputControl<ComboBox<T>, T> comboBoxInput(Collection<? extends T> choices, Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate) {
+    static <T> SimpleInputControl<ComboBox<T>, T> comboBoxInput(Collection<? extends @Nullable T> choices, Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate) {
         ComboBox<T> control = new ComboBox<>(FxUtil.makeObservable(choices));
         Property<T> value = control.valueProperty();
         return new SimpleInputControl<>(control, value, dflt, validate);

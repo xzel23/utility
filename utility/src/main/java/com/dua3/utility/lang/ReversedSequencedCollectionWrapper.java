@@ -2,6 +2,7 @@ package com.dua3.utility.lang;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.SequencedCollection;
@@ -50,7 +51,7 @@ public class ReversedSequencedCollectionWrapper<T extends @Nullable Object> impl
     @SuppressWarnings("unchecked")
     @Override
     public Iterator<T> iterator() {
-        return LangUtil.asUnmodifiableList((T[]) toArray()).iterator();
+        return new ArrayList<>(delegate).reversed().iterator();
     }
 
     @Override

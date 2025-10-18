@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-final class StreamSupplier<V extends @Nullable Object> {
+final class StreamSupplier<V> {
 
     private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
     private static final List<StreamSupplier<?>> streamSuppliers = List.of(

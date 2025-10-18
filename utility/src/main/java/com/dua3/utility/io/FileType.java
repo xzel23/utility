@@ -568,7 +568,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @return if this file type is a compound file type
      */
-    @SuppressWarnings({"SameReturnValue"})
+    @SuppressWarnings("SameReturnValue")
     public boolean isCompound() {
         return false;
     }

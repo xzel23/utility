@@ -434,6 +434,7 @@ public final class KeyStoreUtil {
      * @param ks the KeyStore from which to extract the aliases. It must be properly initialized with certificates and keys.
      * @return a list of aliases that are associated with CA certificates within the provided KeyStore.
      *         If no such aliases are found, an empty list is returned.
+     * @throws KeyStoreException when an error occurs accessing the kestore data
      */
     public static List<String> getCaAliases(KeyStore ks)throws KeyStoreException {
         List<String> aliases = new ArrayList<>();

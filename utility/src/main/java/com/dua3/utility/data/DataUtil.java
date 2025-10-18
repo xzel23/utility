@@ -175,7 +175,7 @@ public final class DataUtil {
      * @return an instance of the target class created using the matched constructor, or null if no matching constructor exists
      * @throws ConversionException if there is an error invoking the constructor
      */
-    private static @Nullable Object convertUsingConstructor(Class<?> targetClass, Class<?> sourceClass, @NonNull Object value) {
+    private static @Nullable Object convertUsingConstructor(Class<?> targetClass, Class<?> sourceClass, Object value) {
         // try exact match
         for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
             if (constructor.getModifiers() == (Modifier.PUBLIC)
@@ -266,7 +266,7 @@ public final class DataUtil {
                 : null;
     }
 
-    private static @Nullable Object convertUsingValueOf(Class<?> targetClass, Class<?> sourceClass, @NonNull Object value) {
+    private static @Nullable Object convertUsingValueOf(Class<?> targetClass, Class<?> sourceClass, Object value) {
         // first try exact match of parameter type
         // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
         for (Method method : targetClass.getDeclaredMethods()) {
@@ -672,7 +672,7 @@ public final class DataUtil {
      * @param <C>            the target collection type
      * @return collection containing the converted elements
      */
-    public static <T, U, C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier, boolean useConstructor) {
+    public static <T, U, C extends Collection<@Nullable U>> C convertCollection(Collection<@Nullable T> data, Class<U> targetClass, Supplier<C> supplier, boolean useConstructor) {
         return data.stream()
                 .map(obj -> convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toCollection(supplier));
@@ -849,7 +849,7 @@ public final class DataUtil {
      * @param <T>    the key type
      * @param <U>    the value type
      */
-    public static <T, U> void ifPresent(Map<T, U> map, T key, Consumer<? super U> action) {
+    public static <T, U extends @Nullable Object> void ifPresent(Map<T, U> map, T key, Consumer<? super U> action) {
         // we need to check using containsKey() since key may be mapped to null
         if (map.containsKey(key)) {
             action.accept(map.get(key));

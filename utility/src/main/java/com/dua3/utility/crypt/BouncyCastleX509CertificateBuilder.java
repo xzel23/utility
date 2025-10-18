@@ -22,6 +22,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -45,7 +46,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
     private int validityDays = 365;
     private String signatureAlgorithm = "SHA256withRSA";
 
-    private @Nullable X509Certificate[] issuerCert = EMPTY_CERTIFICATE_ARRAY;
+    private X509Certificate[] issuerCert = EMPTY_CERTIFICATE_ARRAY;
     private @Nullable PrivateKey issuerKey;
 
     /**
@@ -152,7 +153,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
             // Authority Key Identifier (if issuerCert is provided)
             if (issuerCert.length > 0) {
                 certBuilder.addExtension(Extension.authorityKeyIdentifier, false,
-                        new AuthorityKeyIdentifier(issuerCert[0].getPublicKey().getEncoded()));
+                        new AuthorityKeyIdentifier(LangUtil.map(issuerCert[0].getPublicKey(), PublicKey::getEncoded)));
             }
 
             X509Certificate cert = new JcaX509CertificateConverter()

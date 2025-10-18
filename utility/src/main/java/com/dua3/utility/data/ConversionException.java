@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class ConversionException extends RuntimeException {
 
-    private static @NonNull String getMessage(Class<?> sourceClass, Class<?> targetClass, @Nullable String message) {
+    private static String getMessage(Class<?> sourceClass, Class<?> targetClass, @Nullable String message) {
         return "could not convert from " + sourceClass.getName() +
                 " to " + targetClass.getName()
                 + (message != null ? ": " + message : "");
