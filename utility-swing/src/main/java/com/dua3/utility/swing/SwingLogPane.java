@@ -242,7 +242,7 @@ public class SwingLogPane extends JPanel {
      * @param lsm the {@code ListSelectionModel} that provides the selected row indices in the view
      * @return a list of {@code LogEntry} objects corresponding to the selected rows in the model
      */
-    private @NonNull List<LogEntry> getSelectedLogEntries(ListSelectionModel lsm) {
+    private List<LogEntry> getSelectedLogEntries(ListSelectionModel lsm) {
         final List<LogEntry> newEntries = new ArrayList<>(lsm.getMaxSelectionIndex() - lsm.getMinSelectionIndex() + 1);
         for (int i = lsm.getMinSelectionIndex(); i <= lsm.getMaxSelectionIndex(); i++) {
             if (lsm.isSelectedIndex(i)) {
@@ -261,7 +261,7 @@ public class SwingLogPane extends JPanel {
      *
      * @return a configured {@code JTable} instance for displaying log entries
      */
-    private @NonNull JTable createLogTable() {
+    private JTable createLogTable() {
         JTable t = new JTable(model) {
             @Override
             public void paintComponent(Graphics g) {

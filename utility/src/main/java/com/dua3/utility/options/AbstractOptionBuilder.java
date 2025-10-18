@@ -197,7 +197,9 @@ public abstract class AbstractOptionBuilder<T, B extends AbstractOptionBuilder<T
                 for (int j = 0; j < allParams.size(); j++) {
                     Param<?> p = allParams.get(j);
                     Converter<String[], Object> converter = (Converter<String[], Object>) p.converter();
-                    result.addAll(LangUtil.asUnmodifiableList(converter.convertBack(list[j])));
+                    String[] args = converter.convertBack(list[j]);
+                    assert args != null;
+                    result.addAll(LangUtil.asUnmodifiableList(args));
                 }
 
                 // T is either String or String[]
