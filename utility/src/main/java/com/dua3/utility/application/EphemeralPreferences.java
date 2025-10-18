@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.prefs.AbstractPreferences;
 import java.util.prefs.Preferences;
+
 /**
  * An in-memory, non-persistent implementation of {@link AbstractPreferences}.
  * This class stores preference data in memory using maps and does not persist
@@ -15,16 +16,16 @@ import java.util.prefs.Preferences;
  * node can store key-value pairs and have child nodes.
  * <p>
  * Thread-safety: all state mutations and reads are guarded by the intrinsic
- * monitor provided by {@link AbstractPreferences#lock}. No {@code ReadWriteLock}
- * is used.
+ * monitor provided by {@link AbstractPreferences#lock}. Locks are only ever
+ * acquired in parent-before-child order to avoid deadlocks across the hierarchy.
  * <p>
  * This implementation overrides all abstract methods of {@link AbstractPreferences}
- * to provide in-memory functionality.
+ * to provide in-memory functionality. As with {@link Preferences}, keys and values
+ * must be non-null; validation is performed by {@link AbstractPreferences}.
  */
-public class EphemeralPreferences extends AbstractPreferences {
+public final class EphemeralPreferences extends AbstractPreferences {
     private final Map<String, String> values = new HashMap<>();
     private final Map<String, EphemeralPreferences> children = new HashMap<>();
-
     /**
      * Constructs a new {@code EphemeralPreferences} instance.
      * This is an in-memory, non-persistent implementation of {@link AbstractPreferences}.
@@ -84,7 +85,7 @@ public class EphemeralPreferences extends AbstractPreferences {
         // Snapshot children to avoid holding references while recursing with different locks
         EphemeralPreferences[] snapshot = children.values().toArray(EphemeralPreferences[]::new);
         children.clear();
-        for (EphemeralPreferences child : snapshot) {
+        for (var child : snapshot) {
             // Each child will acquire its own lock internally
             child.clearSubtree();
         }
@@ -124,6 +125,7 @@ public class EphemeralPreferences extends AbstractPreferences {
     /**
      * Returns the root preferences node for the ephemeral, in-memory preference hierarchy.
      * The root node has the empty name "" as required by {@link AbstractPreferences}.
+     * Each invocation returns a fresh, independent hierarchy.
      *
      * @return the root node of the ephemeral, non-persistent preferences hierarchy
      */
