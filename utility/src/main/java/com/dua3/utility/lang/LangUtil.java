@@ -2334,6 +2334,18 @@ public final class LangUtil {
     }
 
     /**
+     * Returns a comparator that compares {@link Comparable} objects in their natural order.
+     * The returned comparator is null-friendly and considers null to be less than non-null elements.
+     *
+     * @param <T> the type of elements to be compared, which must implement {@link Comparable}
+     * @return a comparator that compares objects in their natural order
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Comparator<@Nullable T> naturalOrder() {
+        return (Comparator<@Nullable T>) NullableNaturalOrderComparator.INSTANCE;
+    }
+
+    /**
      * Returns the comparator or if the given comparator is null, return a natural order comparator.
      *
      * @param <T> the type of the elements compared by the comparator
@@ -2342,8 +2354,43 @@ public final class LangUtil {
      *         if the provided comparator is null
      */
     @SuppressWarnings("unchecked")
-    public static <T> Comparator<T> orNaturalOrder(@Nullable Comparator<T> comparator) {
-        return comparator != null ? comparator : (Comparator<T>) Comparator.naturalOrder();
+    public static <T> Comparator<@Nullable T> orNaturalOrder(@Nullable Comparator<T> comparator) {
+        return Objects.requireNonNullElse(comparator, (Comparator<T>) NullableNaturalOrderComparator.INSTANCE);
+    }
+
+    /**
+     * A comparator that provides natural ordering for {@link Comparable} objects,
+     * with support for null values. Null values are treated as less than any non-null value.
+     *
+     * This comparator is implemented as a singleton. Use the static instance
+     * to enforce consistent behavior throughout the application.
+     *
+     * Objects are compared using their {@code compareTo} method when both are non-null.
+     * Null values are considered less than any non-null values.
+     */
+    private static final class NullableNaturalOrderComparator implements Comparator<Comparable<Object>> {
+        private static final NullableNaturalOrderComparator INSTANCE = new NullableNaturalOrderComparator();
+
+        @Override
+        public int compare(@Nullable Comparable<Object> a, @Nullable Comparable<Object> b) {
+            if (a == null) {
+                return b == null ? 0 : -1;
+            } else if (b == null) {
+                return 1;
+            } else {
+                return a.compareTo(b);
+            }
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj != null && obj.getClass() == getClass();
+        }
+
+        @Override
+        public int hashCode() {
+            return getClass().hashCode();
+        }
     }
 
     /**
@@ -2353,7 +2400,7 @@ public final class LangUtil {
      * @return true if the comparator is null or represents natural order, false otherwise
      */
     public static boolean isNaturalOrder(@Nullable Comparator<?> comparator) {
-        return comparator == null || comparator == Comparator.naturalOrder();
+        return comparator == null || comparator == Comparator.naturalOrder() || comparator == NullableNaturalOrderComparator.INSTANCE;
     }
 
     /**
@@ -2366,7 +2413,7 @@ public final class LangUtil {
      * @return a negative integer, zero, or a positive integer as the first key is less than, equal to,
      *         or greater than the second key
      */
-    public static <T> int compare(@Nullable Comparator<T> comparator, @Nullable T a, @Nullable T b) {
+    public static <T extends @Nullable Object> int compare(@Nullable Comparator<T> comparator, T a, T b) {
         return orNaturalOrder(comparator).compare(a, b);
     }
 

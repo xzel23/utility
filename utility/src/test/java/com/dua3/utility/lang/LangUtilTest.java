@@ -1526,18 +1526,10 @@ class LangUtilTest {
 
     @Test
     void testCompareWithNullInputs() {
-        Throwable t = assertThrows(Throwable.class, () -> LangUtil.compare(null, null, null));
-        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
-
-        t = assertThrows(Throwable.class, () -> LangUtil.compare(Comparator.naturalOrder(), (String) null, (String) null));
-        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
-
-        t = assertThrows(Throwable.class, () -> LangUtil.compare(Comparator.naturalOrder(), "a", null));
-        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
-
-        t = assertThrows(Throwable.class, () -> LangUtil.compare(Comparator.naturalOrder(), null, "b"));
-        assertTrue(t instanceof NullPointerException || t instanceof AssertionError);
-
+        assertEquals(0, LangUtil.compare(null, null, null));
+        assertEquals(0, LangUtil.compare(LangUtil.naturalOrder(), (String) null, (String) null));
+        assertTrue(LangUtil.compare(LangUtil.naturalOrder(), "a", null) > 0);
+        assertTrue(LangUtil.compare(LangUtil.naturalOrder(), null, "b") < 0);
         assertTrue(LangUtil.compare(null, "a", "b") < 0);
         assertTrue(LangUtil.compare(null, "b", "a") > 0);
         assertEquals(0, LangUtil.compare(null, "a", "a"));
