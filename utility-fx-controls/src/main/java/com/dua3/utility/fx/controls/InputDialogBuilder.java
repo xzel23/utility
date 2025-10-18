@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
@@ -50,7 +51,20 @@ public class InputDialogBuilder
         super(formatter, parentWindow);
         this.pb = new InputPaneBuilder(formatter);
         setDialogSupplier(this::createDialog);
-        setButtons(ButtonType.OK, ButtonType.CANCEL);
+        pb.setButtons(
+                new InputDialogPane.ButtonDef<>(
+                        ButtonType.OK,
+                        (bt, r) -> true,
+                        idp -> {},
+                        InputDialogPane::validProperty
+                ),
+                new InputDialogPane.ButtonDef<>(
+                        ButtonType.CANCEL,
+                        (bt, r) -> true,
+                        idp -> {},
+                        idp -> FxUtil.ALWAYS_TRUE
+                )
+        );
     }
 
     private InputDialog createDialog() {

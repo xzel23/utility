@@ -89,6 +89,7 @@ public final class FxUtil {
      * commonly for default or unconditional bindings in JavaFX applications.
      */
     public static final BooleanExpression ALWAYS_TRUE = new ReadOnlyBooleanWrapper(true);
+
     /**
      * A constant that represents a boolean expression which always evaluates to false.
      * This can be used in scenarios where an always-false condition is required,

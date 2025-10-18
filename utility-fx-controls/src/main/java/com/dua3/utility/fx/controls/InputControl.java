@@ -22,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.text.FieldPosition;
@@ -567,7 +568,9 @@ final class FormatWithDefaultValue extends Format {
         return source.isEmpty() ? defaultValue.get() : super.parseObject(source);
     }
 
+    @Serial
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {throw new java.io.NotSerializableException("com.dua3.utility.fx.controls.FormatWithDefaultValue");}
 
+    @Serial
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {throw new java.io.NotSerializableException("com.dua3.utility.fx.controls.FormatWithDefaultValue");}
 }

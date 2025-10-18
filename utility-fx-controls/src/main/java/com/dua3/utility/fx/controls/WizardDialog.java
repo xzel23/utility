@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxUtil;
 import javafx.beans.binding.BooleanExpression;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
@@ -20,6 +21,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Represents a wizard dialog that guides the user through a sequence of pages.
@@ -141,7 +144,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
                 page.addButton(
                         ButtonType.FINISH,
                         p -> {},
-                        pane.validProperty()
+                        InputDialogPane::validProperty
                 );
             } else {
                 page.addButton(
@@ -150,7 +153,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
                             addPageToStack(Pair.of(name, page));
                             setPage(page.getNext());
                         },
-                        pane.validProperty()
+                        InputDialogPane::validProperty
                 );
             }
 
@@ -159,7 +162,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
                 page.addButton(
                         ButtonType.PREVIOUS,
                         p -> setPage(pageStack.removeLast().first()),
-                        Bindings.isNotEmpty(pageStack)
+                        p -> Bindings.isNotEmpty(pageStack)
                 );
             }
         }
@@ -257,7 +260,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
          * @param enabled an optional {@code BooleanExpression} that determines whether the
          *                button is enabled or disabled dynamically; can be null
          */
-        public void addButton(ButtonType type, Consumer<InputDialogPane<R>> action, @Nullable BooleanExpression enabled) {
+        public void addButton(ButtonType type, Consumer<InputDialogPane<R>> action, @Nullable Function<InputDialogPane<R>, BooleanExpression> enabled) {
             pane.addButton(type, resultHandler, action, enabled);
         }
     }

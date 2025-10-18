@@ -182,36 +182,17 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
 
     /**
      * <strong>Replaces</strong> the buttons for this dialog pane builder with the specified button types.
-     * Each button type provided is added using the {@link #button(ButtonType)} method.
+     * Each button type provided is added using the {@link #button(InputDialogPane.ButtonDef)} method.
      *
      * @param buttons an array of {@link ButtonType} representing the types of buttons to be added
      * @return the current builder instance with the specified buttons added
      */
     @SuppressWarnings("unchecked")
-    public B setButtons(ButtonType... buttons) {
+    public B setButtons(InputDialogPane.ButtonDef<R>... buttons) {
         this.buttons.clear();
-        for (ButtonType btn: buttons) {
+        for (var btn: buttons) {
             button(btn);
         }
-        return (B) this;
-    }
-
-    /**
-     * Adds a button to the dialog pane builder using the specified button type.
-     * The button is created with default settings and associated behavior.
-     *
-     * @param btn the {@link ButtonType} representing the type of button to be added
-     * @return the current builder instance with the new button added
-     */
-    @SuppressWarnings("unchecked")
-    public B button(ButtonType btn) {
-        InputDialogPane.ButtonDef<R> bd = new InputDialogPane.ButtonDef<>(
-                btn,
-                (bt, r) -> true,
-                idp -> {},
-                FxUtil.ALWAYS_TRUE
-        );
-        button(bd);
         return (B) this;
     }
 

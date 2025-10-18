@@ -8,7 +8,6 @@ import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -22,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -47,22 +48,23 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
     /**
-     * Represents the definition of a button in an {@link InputDialogPane}.
-     * This class encapsulates the details required to configure a button,
-     * including its type, associated action, result handler, and enablement state.
+     * Represents a definition for a button within a dialog pane. The {@code ButtonDef} class
+     * encapsulates the button's type, the result handler to process the action associated with the button,
+     * the action to perform when the button is triggered, and a function to control the enablement state
+     * of the button.
      *
-     * @param <R> the result type associated with the dialog
-     *
-     * @param type          the {@code ButtonType} representing the type of the button
-     * @param resultHandler a {@link DialogPaneBuilder.ResultHandler} to handle the result when the button is pressed
-     * @param action        a {@link Consumer} that specifies the action to be executed when the button is clicked
-     * @param enabled       a {@link BooleanExpression} indicating whether the button is enabled or disabled
+     * @param <R> the type of the result associated with this button
+     * @param type the type of the button (e.g., OK, CANCEL, etc.)
+     * @param resultHandler the handler to process the result when the button is pressed
+     * @param action the action to execute when the button is clicked
+     * @param enabled a function taking the dialog pane as argument and returning a
+     *                BooleanExpression to determine whether the button is enabled
      */
     public record ButtonDef<R>(
             ButtonType type,
             DialogPaneBuilder.ResultHandler<R> resultHandler,
             Consumer<InputDialogPane<R>> action,
-            BooleanExpression enabled
+            Function<InputDialogPane<R>, BooleanExpression> enabled
     ) {
         /**
          * Creates and returns a {@code ButtonDef} instance configured as a cancel button.
@@ -78,7 +80,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
                     ButtonType.CANCEL,
                     (bt, r) -> true,
                     idp -> {},
-                    FxUtil.ALWAYS_TRUE
+                    idp -> FxUtil.ALWAYS_TRUE
             );
         }
 
@@ -96,7 +98,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
                 ButtonType type,
                 DialogPaneBuilder.ResultHandler<Q> resultHandler,
                 Consumer<InputDialogPane<Q>> action,
-                BooleanExpression enabled
+                Function<InputDialogPane<Q>, BooleanExpression> enabled
         ) {
             return new ButtonDef<>(
                     type,
@@ -151,6 +153,18 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
     }
 
     /**
+     * Checks and returns the validity state of the input in the dialog pane.
+     *
+     * This method retrieves the current value of the {@code valid} property,
+     * which indicates whether the user input meets the required validation criteria.
+     *
+     * @return {@code true} if the input is valid, otherwise {@code false}.
+     */
+    public boolean isValid() {
+        return valid.get();
+    }
+
+    /**
      * Adds a button to the dialog pane with the specified type, result handler, action,
      * and enablement state. The button is configured to handle actions, execute
      * specified logic, and optionally bind its enablement state to a BooleanExpression.
@@ -167,7 +181,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
             ButtonType type,
             DialogPaneBuilder.@Nullable ResultHandler<? super @Nullable R> resultHandler,
             Consumer<? super InputDialogPane<R>> action,
-            @Nullable ObservableBooleanValue enabled
+            @Nullable Function<InputDialogPane<R>, BooleanExpression> enabled
     ) {
         ObservableList<ButtonType> bt = getButtonTypes();
 
@@ -186,7 +200,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         });
 
         if (enabled != null) {
-            btn.disableProperty().bind(Bindings.not(enabled));
+            btn.disableProperty().bind(Bindings.not(enabled.apply(this)));
         }
     }
 

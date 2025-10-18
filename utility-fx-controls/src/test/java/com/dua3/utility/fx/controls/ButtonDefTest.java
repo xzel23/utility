@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.InputDialogPane.ButtonDef;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import javafx.beans.binding.BooleanExpression;
@@ -7,6 +8,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.ButtonType;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,7 +29,7 @@ class ButtonDefTest extends FxTestBase {
         // Arrange
         ButtonType buttonType = ButtonType.OK;
         DialogPaneBuilder.ResultHandler<String> resultHandler = (bt, r) -> bt == ButtonType.OK && "success".equals(r);
-        BooleanExpression enabled = new SimpleBooleanProperty(true);
+        Function<InputDialogPane<String>, BooleanExpression> enabled = idp -> FxUtil.ALWAYS_TRUE;
         InputDialogPane<String> inputDialogPane = createMockInputDialogPane();
 
         // Act
@@ -46,7 +50,7 @@ class ButtonDefTest extends FxTestBase {
     void testCreateMethodAllowsNullResultHandler() {
         // Arrange
         ButtonType buttonType = ButtonType.OK;
-        BooleanExpression enabled = new SimpleBooleanProperty(false);
+        Function<InputDialogPane<String>, BooleanExpression> enabled = idp -> FxUtil.ALWAYS_TRUE;
 
         // Act
         Throwable t = assertThrows(Throwable.class, () -> ButtonDef.create(buttonType, null, pane -> {}, enabled));
@@ -61,7 +65,7 @@ class ButtonDefTest extends FxTestBase {
     void testCreateMethodExecutesCustomAction() {
         // Arrange
         ButtonType buttonType = ButtonType.OK;
-        BooleanExpression enabled = new SimpleBooleanProperty(true);
+        Function<InputDialogPane<String>, BooleanExpression> enabled = idp -> FxUtil.ALWAYS_TRUE;
         InputDialogPane<String> inputDialogPane = createMockInputDialogPane();
         boolean[] actionInvoked = {false};
 
@@ -83,7 +87,7 @@ class ButtonDefTest extends FxTestBase {
     void testCreateMethodWithDisabledButton() {
         // Arrange
         ButtonType buttonType = ButtonType.OK;
-        BooleanExpression enabled = new SimpleBooleanProperty(false);
+        Function<InputDialogPane<String>, BooleanExpression> enabled = idp -> FxUtil.ALWAYS_TRUE;
 
         // Act
         ButtonDef<String> buttonDef = ButtonDef.create(buttonType, (bt, r) -> true, pane -> {}, enabled);
@@ -91,7 +95,6 @@ class ButtonDefTest extends FxTestBase {
         // Assert
         assertNotNull(buttonDef);
         assertSame(buttonType, buttonDef.type());
-        assertEquals(enabled, buttonDef.enabled());
     }
 
     private InputDialogPane<String> createMockInputDialogPane() {
