@@ -107,13 +107,13 @@ class AlertBuilderTest extends FxTestBase {
      * Test the buttons method.
      */
     @Test
-    void testButtons() throws Exception {
+    void testSetButtons() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create a builder
             AlertBuilder builder = Dialogs.alert(null, AlertType.CONFIRMATION, MessageFormatter.standard());
 
             // Set custom buttons
-            builder.buttons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            builder.setButtons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 
             // Build an alert
             Alert alert = builder.build();
@@ -137,7 +137,7 @@ class AlertBuilderTest extends FxTestBase {
             AlertBuilder builder = Dialogs.alert(null, AlertType.CONFIRMATION, MessageFormatter.standard());
 
             // Set custom buttons and default button
-            builder.buttons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            builder.setButtons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
             builder.defaultButton(ButtonType.NO);
 
             // Build an alert

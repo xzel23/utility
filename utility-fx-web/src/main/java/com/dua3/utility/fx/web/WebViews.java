@@ -77,7 +77,7 @@ public final class WebViews {
     public static void setConfirmationHandler(WebEngine engine) {
         engine.setConfirmHandler(s -> Dialogs.alert(null, AlertType.CONFIRMATION, MessageFormatter.standard())
                 .header("%s", s)
-                .buttons(ButtonType.YES, ButtonType.NO)
+                .setButtons(ButtonType.YES, ButtonType.NO)
                 .defaultButton(ButtonType.NO)
                 .showAndWait()
                 .filter(b -> b == ButtonType.YES)

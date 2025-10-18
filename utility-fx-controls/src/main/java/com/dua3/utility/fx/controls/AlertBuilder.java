@@ -99,8 +99,8 @@ public class AlertBuilder
      * @param buttons the buttons to show
      * @return {@code this}
      */
-    public AlertBuilder buttons(ButtonType... buttons) {
-        this.buttons = buttons.length == 0 ? null : Arrays.copyOf(buttons, buttons.length);
+    public AlertBuilder setButtons(ButtonType... buttons) {
+        this.buttons = Arrays.copyOf(buttons, buttons.length);
         return this;
     }
 

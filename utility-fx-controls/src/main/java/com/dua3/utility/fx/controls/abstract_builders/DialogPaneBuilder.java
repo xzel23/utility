@@ -181,6 +181,39 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     }
 
     /**
+     * <strong>Replaces</strong> the buttons for this dialog pane builder with the specified button types.
+     * Each button type provided is added using the {@link #button(ButtonType)} method.
+     *
+     * @param buttons an array of {@link ButtonType} representing the types of buttons to be added
+     * @return the current builder instance with the specified buttons added
+     */
+    public B setButtons(ButtonType... buttons) {
+        this.buttons.clear();
+        for (ButtonType btn: buttons) {
+            button(btn);
+        }
+        return (B) this;
+    }
+
+    /**
+     * Adds a button to the dialog pane builder using the specified button type.
+     * The button is created with default settings and associated behavior.
+     *
+     * @param btn the {@link ButtonType} representing the type of button to be added
+     * @return the current builder instance with the new button added
+     */
+    public B button(ButtonType btn) {
+        InputDialogPane.ButtonDef<R> bd = new InputDialogPane.ButtonDef<>(
+                btn,
+                (bt, r) -> true,
+                idp -> {},
+                FxUtil.ALWAYS_TRUE
+        );
+        button(bd);
+        return (B) this;
+    }
+
+    /**
      * Retrieves the list of button definitions associated with this dialog pane builder.
      * If no button definitions have been explicitly provided, a default list containing
      * "OK" and "Cancel" buttons is returned. The buttons are defined with their respective
@@ -188,7 +221,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      *
      * @return a modifiable list of button definitions for this dialog pane builder
      */
-    public List<InputDialogPane.ButtonDef<R>> buttons() {
+    public List<InputDialogPane.ButtonDef<R>> getButtonDefs() {
         return buttons;
     }
 

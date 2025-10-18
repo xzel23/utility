@@ -50,13 +50,13 @@ public class InputDialogBuilder
         super(formatter, parentWindow);
         this.pb = new InputPaneBuilder(formatter);
         setDialogSupplier(this::createDialog);
-        addButtons(ButtonType.OK, ButtonType.CANCEL);
+        setButtons(ButtonType.OK, ButtonType.CANCEL);
     }
 
     private InputDialog createDialog() {
         InputDialog dlg = new InputDialog();
         InputPane dialogPane = pb.build();
-        pb.buttons().forEach(bd -> dialogPane.addButton(bd.type(), bd.resultHandler(), bd.action(), bd.enabled()));
+        pb.getButtonDefs().forEach(bd -> dialogPane.addButton(bd.type(), bd.resultHandler(), bd.action(), bd.enabled()));
         dialogPane.init();
 
         final Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);

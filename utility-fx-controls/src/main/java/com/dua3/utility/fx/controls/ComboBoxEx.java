@@ -1,17 +1,12 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Alert;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -185,7 +180,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
                             .title("Duplicate item")
                             .header("There already exists an item with the same name.")
                             .text("Do you want to remove the item instead?")
-                            .buttons(ButtonType.YES, ButtonType.NO)
+                            .setButtons(ButtonType.YES, ButtonType.NO)
                             .defaultButton(ButtonType.NO)
                             .showAndWait()
                             .ifPresent(btn -> {
@@ -248,7 +243,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
     public boolean askBeforeRemoveSelectedItem(T item) {
         return Dialogs.alert(Optional.ofNullable(getScene()).map(Scene::getWindow).orElse(null), Alert.AlertType.CONFIRMATION, MessageFormatter.standard())
                 .header("Remove %s?", format.apply(item))
-                .buttons(ButtonType.YES, ButtonType.NO)
+                .setButtons(ButtonType.YES, ButtonType.NO)
                 .defaultButton(ButtonType.YES)
                 .build()
                 .showAndWait()

@@ -14,7 +14,6 @@
 
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
@@ -43,7 +42,7 @@ public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuild
     PromptBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         setDialogSupplier(this::createDialog);
-        addButtons(ButtonType.OK, ButtonType.CANCEL);
+        setButtons(ButtonType.OK, ButtonType.CANCEL);
     }
 
     /**

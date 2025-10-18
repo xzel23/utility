@@ -14,10 +14,8 @@
 
 package com.dua3.utility.fx.controls.abstract_builders;
 
-import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.InputDialogPane;
 import com.dua3.utility.text.MessageFormatter;
-import javafx.scene.control.ButtonType;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.Dialog;
@@ -95,23 +93,10 @@ public abstract class DialogBuilder<D extends @NonNull Dialog<R>, B extends @Non
         // set title
         applyIfNotNull(titleSetter, dlg, title);
 
-        if (!buttons().isEmpty()) {
-            dlg.getDialogPane().getButtonTypes().setAll(buttons().stream().map(InputDialogPane.ButtonDef::type).toList());
+        if (!getButtonDefs().isEmpty()) {
+            dlg.getDialogPane().getButtonTypes().setAll(getButtonDefs().stream().map(InputDialogPane.ButtonDef::type).toList());
         }
 
         return dlg;
-    }
-
-    /**
-     * Adds the specified button types to the dialog pane.
-     * This method wraps each provided {@link ButtonType} into a button definition,
-     * which includes default behaviors and enablement logic, and adds them to the dialog.
-     *
-     * @param buttonTypes an array of {@link ButtonType} objects to be added to the dialog pane
-     */
-    protected final void addButtons(ButtonType... buttonTypes) {
-        for (ButtonType bt : buttonTypes) {
-            button(new InputDialogPane.ButtonDef<>(bt, (btn, r) -> true, dlg -> {}, FxUtil.ALWAYS_TRUE));
-        }
     }
 }
