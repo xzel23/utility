@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  * Each page can represent a step in a process, and the wizard dialog allows
  * navigation between these steps.
  */
-public class WizardDialog extends Dialog<Map<String, Object>> {
+public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
 
     /**
      * Logger instance
@@ -71,7 +71,7 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
             addPageToStack(Objects.requireNonNull(current, "no pages"));
 
             // WARNING: do not use collect(Collectors.toMap(...)) because it cannot handle null
-            LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+            LinkedHashMap<String, @Nullable Object> result = new LinkedHashMap<>();
             pageStack.forEach(p -> result.put(p.first(), p.second().result));
 
             return result;
