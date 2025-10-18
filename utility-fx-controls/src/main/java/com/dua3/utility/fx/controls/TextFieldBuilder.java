@@ -49,7 +49,7 @@ public final class TextFieldBuilder {
         this.locale = locale;
 
         this.floatPattern = getFloatPattern();
-        this.floatFilter = change -> floatPattern.matcher(change.getControlNewText()).matches() ? change : null;
+        this.floatFilter = change -> change != null && floatPattern.matcher(change.getControlNewText()).matches() ? change : null;
     }
 
     private Pattern getFloatPattern() {

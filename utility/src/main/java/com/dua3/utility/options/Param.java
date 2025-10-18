@@ -780,6 +780,9 @@ public record Param<T>(
      */
     public String getText(T value, String delimiter, String openQuote, String closeQuote) {
         String[] strings = converter.convertBack(value);
+
+        assert strings != null;
+
         StringBuilder sb = new StringBuilder();
         String d = "";
         for (String s : strings) {

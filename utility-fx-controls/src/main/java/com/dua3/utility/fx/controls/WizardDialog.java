@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  * Each page can represent a step in a process, and the wizard dialog allows
  * navigation between these steps.
  */
-public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
+public class WizardDialog extends Dialog<Map<String, Object>> {
 
     /**
      * Logger instance
