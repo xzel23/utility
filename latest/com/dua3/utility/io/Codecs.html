@@ -164,7 +164,7 @@ V&gt;&nbsp;<a href="Codec.html" title="interface in com.dua3.utility.io">Codec</
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Get <a href="Codec.html" title="interface in com.dua3.utility.io"><code>Codec</code></a> for a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link"><code>Map.Entry</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>void</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerCodec(java.lang.Class,com.dua3.utility.io.Encoder,com.dua3.utility.io.Decoder)" class="member-name-link">registerCodec</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;cls,
  <a href="Encoder.html" title="interface in com.dua3.utility.io">Encoder</a>&lt;? super T&gt;&nbsp;enc,
  <a href="Decoder.html" title="interface in com.dua3.utility.io">Decoder</a>&lt;? extends T&gt;&nbsp;dec)</code></div>
@@ -290,7 +290,7 @@ V&gt;&gt;</span>&nbsp;<span class="return-type"><a href="Codec.html" title="inte
 <li>
 <section class="detail" id="registerCodec(java.lang.Class,com.dua3.utility.io.Encoder,com.dua3.utility.io.Decoder)">
 <h3>registerCodec</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">registerCodec</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;cls,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">registerCodec</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;cls,
  <a href="Encoder.html" title="interface in com.dua3.utility.io">Encoder</a>&lt;? super T&gt;&nbsp;enc,
  <a href="Decoder.html" title="interface in com.dua3.utility.io">Decoder</a>&lt;? extends T&gt;&nbsp;dec)</span></div>
 <div class="block">Register a codec for a specific class.</div>

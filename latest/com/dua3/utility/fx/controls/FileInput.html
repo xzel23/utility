@@ -103,12 +103,12 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code>, <code>javafx.css.Styleable</code>, <code>javafx.event.EventTarget</code>, <code>javafx.scene.control.Skinnable</code></dd>
+<dd><code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code>, <code>javafx.css.Styleable</code>, <code>javafx.event.EventTarget</code>, <code>javafx.scene.control.Skinnable</code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">FileInput</span>
 <span class="extends-implements">extends <a href="CustomControl.html" title="class in com.dua3.utility.fx.controls">CustomControl</a>&lt;javafx.scene.layout.HBox&gt;
-implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span></div>
+implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span></div>
 <div class="block">FileInput is a custom control for selecting files using a FileChooser dialog.
  It is composed of a <code>TextField</code> that contains the file path and a button that
  opens a <code>FileChooser</code> to select a file.
@@ -137,13 +137,18 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="block">Provides a read-only property representing the error message for this input control.</div>
 </div>
 <div class="col-first odd-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second odd-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#requiredProperty" class="member-name-link">required</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Provides a read-only property representing the required state of the input.</div>
+</div>
+<div class="col-first even-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second even-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Provides a read-only property representing the validity of the input.</div>
 </div>
-<div class="col-first even-row-color"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Provides the property representing the value of this input control.</div>
 </div>
 </div>
@@ -185,7 +190,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <code>BASELINE_OFFSET_SAME_AS_HEIGHT</code></div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-com.dua3.utility.fx.controls.InputControl">Fields inherited from interface&nbsp;com.dua3.utility.fx.controls.<a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></h3>
-<code><a href="InputControl.html#INVALID_VALUE">INVALID_VALUE</a></code></div>
+<code><a href="InputControl.html#CSS_REQUIRED_INPUT">CSS_REQUIRED_INPUT</a>, <a href="InputControl.html#INVALID_VALUE">INVALID_VALUE</a></code></div>
 </section>
 </li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -236,19 +241,24 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the <code>Node</code> for this input element.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requiredProperty()" class="member-name-link">requiredProperty</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Provides a read-only property representing the required state of the input.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Reset value to default</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Provides a read-only property representing the validity of the input.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Provides the property representing the value of this input control.</div>
 </div>
 </div>
@@ -274,7 +284,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.InputControl">Methods inherited from interface&nbsp;com.dua3.utility.fx.controls.<a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></h3>
-<code><a href="InputControl.html#get()">get</a>, <a href="InputControl.html#init()">init</a>, <a href="InputControl.html#isValid()">isValid</a>, <a href="InputControl.html#set(T)">set</a></code></div>
+<code><a href="InputControl.html#get()">get</a>, <a href="InputControl.html#init()">init</a>, <a href="InputControl.html#isRequired()">isRequired</a>, <a href="InputControl.html#isValid()">isValid</a>, <a href="InputControl.html#set(T)">set</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-javafx.css.Styleable">Methods inherited from interface&nbsp;javafx.css.Styleable</h3>
 <code>getStyleableNode</code></div>
@@ -295,7 +305,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.Property&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">valueProperty</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#valueProperty()">valueProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dd><code><a href="InputControl.html#valueProperty()">valueProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the property containing the current value</dd>
 <dt>See Also:</dt>
@@ -308,12 +318,30 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 </section>
 </li>
 <li>
+<section class="detail" id="requiredProperty">
+<h3>required</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputControl.html#requiredProperty()">requiredProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd>a ReadOnlyBooleanProperty that is true if the input is required and false otherwise</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#requiredProperty()"><code>requiredProperty()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="validProperty">
 <h3>valid</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">validProperty</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#validProperty()">validProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dd><code><a href="InputControl.html#validProperty()">validProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>a ReadOnlyBooleanProperty that is true if the input is valid and false otherwise</dd>
 <dt>See Also:</dt>
@@ -331,7 +359,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyStringProperty</span>&nbsp;<span class="element-name">errorProperty</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#errorProperty()">errorProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dd><code><a href="InputControl.html#errorProperty()">errorProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>a ReadOnlyStringProperty containing the error message if there is a validation error, otherwise empty</dd>
 <dt>See Also:</dt>
@@ -408,7 +436,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="block">Get the <code>Node</code> for this input element.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#node()">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dd><code><a href="InputControl.html#node()">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the node</dd>
 </dl>
@@ -422,7 +450,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="block">Reset value to default</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#reset()">reset</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dd><code><a href="InputControl.html#reset()">reset</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
 </dl>
 </section>
 </li>
@@ -434,9 +462,23 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="block">Provides the property representing the value of this input control.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#valueProperty()">valueProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dd><code><a href="InputControl.html#valueProperty()">valueProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the <code>value</code> property</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requiredProperty()">
+<h3>requiredProperty</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputControl.html#requiredProperty()">InputControl</a></code></span></div>
+<div class="block">Provides a read-only property representing the required state of the input.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputControl.html#requiredProperty()">requiredProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd>the <code>required</code> property</dd>
 </dl>
 </section>
 </li>
@@ -448,7 +490,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="block">Provides a read-only property representing the validity of the input.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#validProperty()">validProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dd><code><a href="InputControl.html#validProperty()">validProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the <code>valid</code> property</dd>
 </dl>
@@ -464,7 +506,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
  <p>This property contains an error message if the input is invalid, otherwise it is empty.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#errorProperty()">errorProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
+<dd><code><a href="InputControl.html#errorProperty()">errorProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the <code>error</code> property</dd>
 </dl>

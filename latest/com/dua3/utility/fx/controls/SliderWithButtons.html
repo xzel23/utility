@@ -149,39 +149,44 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="col-last odd-row-color">
 <div class="block">Retrieves the minimum value property of the slider.</div>
 </div>
-<div class="col-first even-row-color"><code>javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second even-row-color"><code><a href="#showTickLabelsProperty" class="member-name-link">showTickLabels</a></code></div>
+<div class="col-first even-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second even-row-color"><code><a href="#requiredProperty" class="member-name-link">required</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Provides a read-only property representing the required state of the input.</div>
+</div>
+<div class="col-first odd-row-color"><code>javafx.beans.property.BooleanProperty</code></div>
+<div class="col-second odd-row-color"><code><a href="#showTickLabelsProperty" class="member-name-link">showTickLabels</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Retrieves the property for showing or hiding tick labels on the slider.</div>
 </div>
-<div class="col-first odd-row-color"><code>javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second odd-row-color"><code><a href="#showTickMarksProperty" class="member-name-link">showTickMarks</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>javafx.beans.property.BooleanProperty</code></div>
+<div class="col-second even-row-color"><code><a href="#showTickMarksProperty" class="member-name-link">showTickMarks</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Retrieves the property representing whether tick marks are shown on the slider.</div>
 </div>
-<div class="col-first even-row-color"><code>javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second even-row-color"><code><a href="#snapToTicksProperty" class="member-name-link">snapToTicks</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>javafx.beans.property.BooleanProperty</code></div>
+<div class="col-second odd-row-color"><code><a href="#snapToTicksProperty" class="member-name-link">snapToTicks</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Represents the property that indicates whether the slider will snap to the closest tick mark.</div>
 </div>
-<div class="col-first odd-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second odd-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second even-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Provides a read-only property representing the validity of the input.</div>
 </div>
-<div class="col-first even-row-color"><code>javafx.beans.property.DoubleProperty</code></div>
-<div class="col-second even-row-color"><code><a href="#valueAsDoubleProperty" class="member-name-link">valueAsDouble</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>javafx.beans.property.DoubleProperty</code></div>
+<div class="col-second odd-row-color"><code><a href="#valueAsDoubleProperty" class="member-name-link">valueAsDouble</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Gets the value property of the slider as a DoubleProperty.</div>
 </div>
-<div class="col-first odd-row-color"><code>javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second odd-row-color"><code><a href="#valueChangingProperty" class="member-name-link">valueChanging</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>javafx.beans.property.BooleanProperty</code></div>
+<div class="col-second even-row-color"><code><a href="#valueChangingProperty" class="member-name-link">valueChanging</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Retrieves the value changing property of the slider.</div>
 </div>
-<div class="col-first even-row-color"><code>javafx.beans.property.Property<wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>javafx.beans.property.Property<wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Gets the value property of the slider.</div>
 </div>
 </div>
@@ -228,7 +233,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <code>BASELINE_OFFSET_SAME_AS_HEIGHT</code></div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-com.dua3.utility.fx.controls.InputControl">Fields inherited from interface&nbsp;com.dua3.utility.fx.controls.<a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></h3>
-<code><a href="InputControl.html#INVALID_VALUE">INVALID_VALUE</a></code></div>
+<code><a href="InputControl.html#CSS_REQUIRED_INPUT">CSS_REQUIRED_INPUT</a>, <a href="InputControl.html#INVALID_VALUE">INVALID_VALUE</a></code></div>
 </section>
 </li>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -317,119 +322,124 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the <code>Node</code> for this input element.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requiredProperty()" class="member-name-link">requiredProperty</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Provides a read-only property representing the required state of the input.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Reset value to default</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBlockIncrement(double)" class="member-name-link">setBlockIncrement</a><wbr>(double&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBlockIncrement(double)" class="member-name-link">setBlockIncrement</a><wbr>(double&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the block increment value for the slider.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDecrementGraphic(javafx.scene.Node)" class="member-name-link">setDecrementGraphic</a><wbr>(javafx.scene.Node&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDecrementGraphic(javafx.scene.Node)" class="member-name-link">setDecrementGraphic</a><wbr>(javafx.scene.Node&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the graphical representation for the decrement button of the slider.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDecrementText(java.lang.String)" class="member-name-link">setDecrementText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDecrementText(java.lang.String)" class="member-name-link">setDecrementText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the text of the decrement button in the slider.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(double)" class="member-name-link">setDefault</a><wbr>(double&nbsp;dflt)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(double)" class="member-name-link">setDefault</a><wbr>(double&nbsp;dflt)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the default value for the slider.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(java.util.function.Supplier)" class="member-name-link">setDefault</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;&nbsp;dflt)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(java.util.function.Supplier)" class="member-name-link">setDefault</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;&nbsp;dflt)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the default value supplier for the slider.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setIncrementGraphic(javafx.scene.Node)" class="member-name-link">setIncrementGraphic</a><wbr>(javafx.scene.Node&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setIncrementGraphic(javafx.scene.Node)" class="member-name-link">setIncrementGraphic</a><wbr>(javafx.scene.Node&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the graphic for the increment button on the slider.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setIncrementText(java.lang.String)" class="member-name-link">setIncrementText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setIncrementText(java.lang.String)" class="member-name-link">setIncrementText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the text label for the increment button on the slider.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMajorTickUnit(double)" class="member-name-link">setMajorTickUnit</a><wbr>(double&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMajorTickUnit(double)" class="member-name-link">setMajorTickUnit</a><wbr>(double&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the major tick unit for the slider.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMax(double)" class="member-name-link">setMax</a><wbr>(double&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMax(double)" class="member-name-link">setMax</a><wbr>(double&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the maximum value for the slider.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMin(double)" class="member-name-link">setMin</a><wbr>(double&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMin(double)" class="member-name-link">setMin</a><wbr>(double&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the minimum value for the slider.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setOrientation(javafx.geometry.Orientation)" class="member-name-link">setOrientation</a><wbr>(javafx.geometry.Orientation&nbsp;orientation)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setOrientation(javafx.geometry.Orientation)" class="member-name-link">setOrientation</a><wbr>(javafx.geometry.Orientation&nbsp;orientation)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the orientation of the slider.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setShowTickLabels(boolean)" class="member-name-link">setShowTickLabels</a><wbr>(boolean&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setShowTickLabels(boolean)" class="member-name-link">setShowTickLabels</a><wbr>(boolean&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Configures whether to show the tick labels on the slider.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setShowTickMarks(boolean)" class="member-name-link">setShowTickMarks</a><wbr>(boolean&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setShowTickMarks(boolean)" class="member-name-link">setShowTickMarks</a><wbr>(boolean&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Configures whether the slider should display tick marks.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSnapToTicks(boolean)" class="member-name-link">setSnapToTicks</a><wbr>(boolean&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSnapToTicks(boolean)" class="member-name-link">setSnapToTicks</a><wbr>(boolean&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets whether the slider should snap to the closest tick mark.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setValue(double)" class="member-name-link">setValue</a><wbr>(double&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setValue(double)" class="member-name-link">setValue</a><wbr>(double&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the value of the slider.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showTickLabelsProperty()" class="member-name-link">showTickLabelsProperty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.BooleanProperty</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showTickLabelsProperty()" class="member-name-link">showTickLabelsProperty</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the property for showing or hiding tick labels on the slider.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showTickMarksProperty()" class="member-name-link">showTickMarksProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.BooleanProperty</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showTickMarksProperty()" class="member-name-link">showTickMarksProperty</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the property representing whether tick marks are shown on the slider.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#snapToTicksProperty()" class="member-name-link">snapToTicksProperty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.BooleanProperty</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#snapToTicksProperty()" class="member-name-link">snapToTicksProperty</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Represents the property that indicates whether the slider will snap to the closest tick mark.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Provides a read-only property representing the validity of the input.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.DoubleProperty</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueAsDoubleProperty()" class="member-name-link">valueAsDoubleProperty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.DoubleProperty</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueAsDoubleProperty()" class="member-name-link">valueAsDoubleProperty</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the value property of the slider as a DoubleProperty.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueChangingProperty()" class="member-name-link">valueChangingProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.BooleanProperty</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueChangingProperty()" class="member-name-link">valueChangingProperty</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the value changing property of the slider.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the value property of the slider.</div>
 </div>
 </div>
@@ -449,7 +459,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.InputControl">Methods inherited from interface&nbsp;com.dua3.utility.fx.controls.<a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></h3>
-<code><a href="InputControl.html#get()">get</a>, <a href="InputControl.html#init()">init</a>, <a href="InputControl.html#isValid()">isValid</a>, <a href="InputControl.html#set(T)">set</a></code></div>
+<code><a href="InputControl.html#get()">get</a>, <a href="InputControl.html#init()">init</a>, <a href="InputControl.html#isRequired()">isRequired</a>, <a href="InputControl.html#isValid()">isValid</a>, <a href="InputControl.html#set(T)">set</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-javafx.css.Styleable">Methods inherited from interface&nbsp;javafx.css.Styleable</h3>
 <code>getStyleableNode</code></div>
@@ -495,6 +505,24 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <dd>
 <ul class="tag-list">
 <li><a href="#valueAsDoubleProperty()"><code>valueAsDoubleProperty()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requiredProperty">
+<h3>required</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputControl.html#requiredProperty()">requiredProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd>a ReadOnlyBooleanProperty that is true if the input is required and false otherwise</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#requiredProperty()"><code>requiredProperty()</code></a></li>
 </ul>
 </dd>
 </dl>
@@ -1012,6 +1040,26 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="InputControl.html#reset()">reset</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requiredProperty()">
+<h3>requiredProperty</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputControl.html#requiredProperty()">InputControl</a></code></span></div>
+<div class="block">Provides a read-only property representing the required state of the input.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputControl.html#requiredProperty()">requiredProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd>the <code>required</code> property</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="InputControl.html#isRequired()"><code>InputControl.isRequired()</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>

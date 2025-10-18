@@ -121,13 +121,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns a read-only string property representing the current error message.</div>
 </div>
 <div class="col-first odd-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second odd-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#requiredProperty" class="member-name-link">required</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Provides a read-only boolean property indicating whether this State is marked as required.</div>
+</div>
+<div class="col-first even-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second even-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Provides a read-only boolean property indicating the validity state.</div>
 </div>
-<div class="col-first even-row-color"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Returns the property representing the value managed by this State.</div>
 </div>
 </div>
@@ -175,29 +180,34 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a read-only string property representing the current error message.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requiredProperty()" class="member-name-link">requiredProperty</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Resets the state to its default value.</div>
+<div class="block">Provides a read-only boolean property indicating whether this State is marked as required.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(java.util.function.Supplier)" class="member-name-link">setDefault</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the default value supplier for this State.</div>
+<div class="block">Resets the state to its default value.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setValidate(java.util.function.Function)" class="member-name-link">setValidate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(java.util.function.Supplier)" class="member-name-link">setDefault</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;&nbsp;dflt)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the default value supplier for this State.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setValidate(java.util.function.Function)" class="member-name-link">setValidate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super @Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the validation function for the State.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Provides a read-only boolean property indicating the validity state.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the property representing the value managed by this State.</div>
 </div>
 </div>
@@ -217,6 +227,21 @@ loadScripts(document, 'script');</script>
 <section class="property-details" id="property-detail">
 <h2>Property Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="requiredProperty">
+<h3>required</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span></div>
+<div class="block">Provides a read-only boolean property indicating whether this State is marked as required.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#requiredProperty()"><code>requiredProperty()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="valueProperty">
 <h3>value</h3>
@@ -318,6 +343,17 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="requiredProperty()">
+<h3>requiredProperty</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span>()</div>
+<div class="block">Provides a read-only boolean property indicating whether this State is marked as required.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a <code>ReadOnlyBooleanProperty</code> representing the required status of this State</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="setValidate(java.util.function.Function)">
 <h3>setValidate</h3>

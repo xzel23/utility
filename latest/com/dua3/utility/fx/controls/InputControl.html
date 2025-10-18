@@ -94,7 +94,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="ChoiceInputControl.html" title="class in com.dua3.utility.fx.controls">ChoiceInputControl</a></code>, <code><a href="ComboBoxEx.html" title="class in com.dua3.utility.fx.controls">ComboBoxEx</a></code>, <code><a href="FileInput.html" title="class in com.dua3.utility.fx.controls">FileInput</a></code>, <code><a href="OptionsPane.html" title="class in com.dua3.utility.fx.controls">OptionsPane</a></code>, <code><a href="RadioPane.html" title="class in com.dua3.utility.fx.controls">RadioPane</a></code>, <code><a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a></code>, <code><a href="SliderWithButtons.html" title="class in com.dua3.utility.fx.controls">SliderWithButtons</a></code></dd>
+<dd><code><a href="FileInput.html" title="class in com.dua3.utility.fx.controls">FileInput</a></code>, <code><a href="OptionsPane.html" title="class in com.dua3.utility.fx.controls">OptionsPane</a></code>, <code><a href="RadioPane.html" title="class in com.dua3.utility.fx.controls">RadioPane</a></code>, <code><a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a></code>, <code><a href="SliderWithButtons.html" title="class in com.dua3.utility.fx.controls">SliderWithButtons</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">InputControl&lt;T&gt;</span></div>
@@ -117,13 +117,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Provides a read-only property representing the error message for this input control.</div>
 </div>
 <div class="col-first odd-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second odd-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#requiredProperty" class="member-name-link">required</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Provides a read-only property representing the required state of the input.</div>
+</div>
+<div class="col-first even-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second even-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Provides a read-only property representing the validity of the input.</div>
 </div>
-<div class="col-first even-row-color"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="InputControl.html" title="type parameter in InputControl">T</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>javafx.beans.property.Property<wbr>&lt;@Nullable <a href="InputControl.html" title="type parameter in InputControl">T</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Provides the property representing the value of this input control.</div>
 </div>
 </div>
@@ -156,8 +161,13 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#INVALID_VALUE" class="member-name-link">INVALID_VALUE</a></code></div>
+<div class="col-second even-row-color"><code><a href="#CSS_REQUIRED_INPUT" class="member-name-link">CSS_REQUIRED_INPUT</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">CSS class to mark required input fields.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#INVALID_VALUE" class="member-name-link">INVALID_VALUE</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The constant string "Invalid value".</div>
 </div>
 </div>
@@ -203,7 +213,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a new <code>SimpleInputControl</code> for a <a href="ComboBoxEx.html" title="class in com.dua3.utility.fx.controls"><code>ComboBoxEx</code></a> with the specified parameters.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a><wbr>&lt;javafx.scene.control.ComboBox&lt;T&gt;,<wbr>T&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#comboBoxInput(java.util.Collection,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">comboBoxInput</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;choices,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#comboBoxInput(java.util.Collection,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">comboBoxInput</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends @Nullable T&gt;&nbsp;choices,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable T&gt;&nbsp;dflt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
@@ -246,27 +256,37 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for integer values.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isValid()" class="member-name-link">isValid</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isRequired()" class="member-name-link">isRequired</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Determines whether the input is required.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isValid()" class="member-name-link">isValid</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Test if content is valid.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>javafx.scene.Node</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#node()" class="member-name-link">node</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>javafx.scene.Node</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#node()" class="member-name-link">node</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get the <code>Node</code> for this input element.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a><wbr>&lt;javafx.scene.control.TextField,<wbr>T&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#passwordInput(java.util.function.Supplier,java.util.function.Function,javafx.util.StringConverter)" class="member-name-link">passwordInput</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable T&gt;&nbsp;dflt,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a><wbr>&lt;javafx.scene.control.TextField,<wbr>T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#passwordInput(java.util.function.Supplier,java.util.function.Function,javafx.util.StringConverter)" class="member-name-link">passwordInput</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable T&gt;&nbsp;dflt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate,
  javafx.util.StringConverter&lt;@Nullable T&gt;&nbsp;converter)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Creates a new <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>TextField</code> with bidirectional binding.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a><wbr>&lt;javafx.scene.control.TextField,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#passwordInput(java.util.function.Supplier,java.util.function.Function)" class="member-name-link">passwordInput</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;dflt,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a><wbr>&lt;javafx.scene.control.TextField,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#passwordInput(java.util.function.Supplier,java.util.function.Function)" class="member-name-link">passwordInput</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;dflt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Creates a <a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a TextField with String input.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requiredProperty()" class="member-name-link">requiredProperty</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Provides a read-only property representing the required state of the input.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
@@ -331,6 +351,22 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="requiredProperty">
+<h3>required</h3>
+<div class="member-signature"><span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span></div>
+<div class="block">Provides a read-only property representing the required state of the input.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#isRequired()"><code>isRequired()</code></a></li>
+<li><a href="#requiredProperty()"><code>requiredProperty()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="validProperty">
 <h3>valid</h3>
 <div class="member-signature"><span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">validProperty</span></div>
@@ -381,6 +417,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <ul class="tag-list">
 <li><a href="../../../../../constant-values.html#com.dua3.utility.fx.controls.InputControl.INVALID_VALUE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CSS_REQUIRED_INPUT">
+<h3>CSS_REQUIRED_INPUT</h3>
+<div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">CSS_REQUIRED_INPUT</span></div>
+<div class="block">CSS class to mark required input fields.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.dua3.utility.fx.controls.InputControl.CSS_REQUIRED_INPUT">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
@@ -540,7 +591,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="comboBoxInput(java.util.Collection,java.util.function.Supplier,java.util.function.Function)">
 <h3>comboBoxInput</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>
-<span class="return-type"><a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a>&lt;javafx.scene.control.ComboBox&lt;T&gt;,<wbr>T&gt;</span>&nbsp;<span class="element-name">comboBoxInput</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;choices,
+<span class="return-type"><a href="SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a>&lt;javafx.scene.control.ComboBox&lt;T&gt;,<wbr>T&gt;</span>&nbsp;<span class="element-name">comboBoxInput</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends @Nullable T&gt;&nbsp;choices,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable T&gt;&nbsp;dflt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</span></div>
 <div class="block">Creates a <code>ComboBox</code> input control with specified choices, default value <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a>, and validation <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a>.</div>
@@ -651,6 +702,17 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="isRequired()">
+<h3>isRequired</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isRequired</span>()</div>
+<div class="block">Determines whether the input is required.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if input is required, false otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="isValid()">
 <h3>isValid</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isValid</span>()</div>
@@ -673,6 +735,23 @@ loadScripts(document, 'script');</script>
 <h3>reset</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
 <div class="block">Reset value to default</div>
+</section>
+</li>
+<li>
+<section class="detail" id="requiredProperty()">
+<h3>requiredProperty</h3>
+<div class="member-signature"><span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span>()</div>
+<div class="block">Provides a read-only property representing the required state of the input.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a ReadOnlyBooleanProperty that is true if the input is required and false otherwise</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#isRequired()"><code>isRequired()</code></a></li>
+</ul>
+</dd>
+</dl>
 </section>
 </li>
 <li>

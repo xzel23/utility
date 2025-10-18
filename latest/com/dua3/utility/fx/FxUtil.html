@@ -345,7 +345,7 @@ loadScripts(document, 'script');</script>
  its minimum width and preferred width to the provided value.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.collections.ObservableList<wbr>&lt;T&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeObservable(java.util.Collection)" class="member-name-link">makeObservable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;collection)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeObservable(java.util.Collection)" class="member-name-link">makeObservable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends @Nullable T&gt;&nbsp;collection)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates an observable list from the given collection.</div>
 </div>
@@ -1114,7 +1114,7 @@ B&gt;</span>
 <section class="detail" id="makeObservable(java.util.Collection)">
 <h3>makeObservable</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
-<span class="return-type">javafx.collections.ObservableList&lt;T&gt;</span>&nbsp;<span class="element-name">makeObservable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;collection)</span></div>
+<span class="return-type">javafx.collections.ObservableList&lt;T&gt;</span>&nbsp;<span class="element-name">makeObservable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends @Nullable T&gt;&nbsp;collection)</span></div>
 <div class="block">Creates an observable list from the given collection. If the collection is already an instance
  of ObservableList, it is returned as-is. Otherwise, a new ObservableList is created from
  the contents of the given collection.</div>

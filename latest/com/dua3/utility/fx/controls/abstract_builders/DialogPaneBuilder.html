@@ -174,10 +174,10 @@ D&gt;&nbsp;void</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds a button definition to the dialog pane builder.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../InputDialogPane.ButtonDef.html" title="class in com.dua3.utility.fx.controls">InputDialogPane.ButtonDef</a>&lt;<a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">R</a>&gt;&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#buttons()" class="member-name-link">buttons</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#button(javafx.scene.control.ButtonType)" class="member-name-link">button</a><wbr>(javafx.scene.control.ButtonType&nbsp;btn)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Retrieves the list of button definitions associated with this dialog pane builder.</div>
+<div class="block">Adds a button to the dialog pane builder using the specified button type.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#format(java.lang.String,java.lang.Object...)" class="member-name-link">format</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
@@ -185,26 +185,36 @@ D&gt;&nbsp;void</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Formats the given format string using the provided arguments.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessageFormatter()" class="member-name-link">getMessageFormatter</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../InputDialogPane.ButtonDef.html" title="class in com.dua3.utility.fx.controls">InputDialogPane.ButtonDef</a>&lt;<a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">R</a>&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getButtonDefs()" class="member-name-link">getButtonDefs</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves the list of button definitions associated with this dialog pane builder.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessageFormatter()" class="member-name-link">getMessageFormatter</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the message formatter associated with this instance of <code>DialogPaneBuilder</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a><wbr>&lt;<a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">R</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getResultHandler()" class="member-name-link">getResultHandler</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a><wbr>&lt;<a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">R</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getResultHandler()" class="member-name-link">getResultHandler</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the result handler for this dialog pane builder.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#header(java.lang.String,java.lang.Object...)" class="member-name-link">header</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#header(java.lang.String,java.lang.Object...)" class="member-name-link">header</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set Alert header text.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resultHandler(com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler)" class="member-name-link">resultHandler</a><wbr>(<a href="DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a>&lt;<a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">R</a>&gt;&nbsp;resultHandler)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resultHandler(com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler)" class="member-name-link">resultHandler</a><wbr>(<a href="DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a>&lt;<a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">R</a>&gt;&nbsp;resultHandler)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the result handler for this dialog pane builder.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setButtons(javafx.scene.control.ButtonType...)" class="member-name-link">setButtons</a><wbr>(javafx.scene.control.ButtonType...&nbsp;buttons)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block"><strong>Replaces</strong> the buttons for this dialog pane builder with the specified button types.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDialogSupplier(java.util.function.Supplier)" class="member-name-link">setDialogSupplier</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">D</a>&gt;&nbsp;dialogSupplier)</code></div>
@@ -368,9 +378,37 @@ D&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 </section>
 </li>
 <li>
-<section class="detail" id="buttons()">
-<h3>buttons</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../InputDialogPane.ButtonDef.html" title="class in com.dua3.utility.fx.controls">InputDialogPane.ButtonDef</a>&lt;<a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">R</a>&gt;&gt;</span>&nbsp;<span class="element-name">buttons</span>()</div>
+<section class="detail" id="setButtons(javafx.scene.control.ButtonType...)">
+<h3>setButtons</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">B</a></span>&nbsp;<span class="element-name">setButtons</span><wbr><span class="parameters">(javafx.scene.control.ButtonType...&nbsp;buttons)</span></div>
+<div class="block"><strong>Replaces</strong> the buttons for this dialog pane builder with the specified button types.
+ Each button type provided is added using the <a href="#button(javafx.scene.control.ButtonType)"><code>button(ButtonType)</code></a> method.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>buttons</code> - an array of <code>ButtonType</code> representing the types of buttons to be added</dd>
+<dt>Returns:</dt>
+<dd>the current builder instance with the specified buttons added</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="button(javafx.scene.control.ButtonType)">
+<h3>button</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">B</a></span>&nbsp;<span class="element-name">button</span><wbr><span class="parameters">(javafx.scene.control.ButtonType&nbsp;btn)</span></div>
+<div class="block">Adds a button to the dialog pane builder using the specified button type.
+ The button is created with default settings and associated behavior.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>btn</code> - the <code>ButtonType</code> representing the type of button to be added</dd>
+<dt>Returns:</dt>
+<dd>the current builder instance with the new button added</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getButtonDefs()">
+<h3>getButtonDefs</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../InputDialogPane.ButtonDef.html" title="class in com.dua3.utility.fx.controls">InputDialogPane.ButtonDef</a>&lt;<a href="DialogPaneBuilder.html" title="type parameter in DialogPaneBuilder">R</a>&gt;&gt;</span>&nbsp;<span class="element-name">getButtonDefs</span>()</div>
 <div class="block">Retrieves the list of button definitions associated with this dialog pane builder.
  If no button definitions have been explicitly provided, a default list containing
  "OK" and "Cancel" buttons is returned. The buttons are defined with their respective
