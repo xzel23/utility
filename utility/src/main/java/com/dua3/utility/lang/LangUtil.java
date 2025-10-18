@@ -557,7 +557,7 @@ public final class LangUtil {
      * @param f the mapping function to apply to the input, must accept and produce possibly nullable values
      * @return the result of applying the mapping function to the input, or null if the input is null
      */
-    public static <T,U> @Nullable U map(@Nullable T t, Function<? super @Nullable T, ? extends @Nullable U> f) {
+    public static <T,U extends @Nullable Object> U map(@Nullable T t, Function<? super @Nullable T, U> f) {
         return t == null ? null : f.apply(t);
     }
 
