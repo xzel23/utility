@@ -88,12 +88,14 @@ loadScripts(document, 'script');</script>
 <h1 title="Class SliderBuilder" class="title">Class SliderBuilder</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
+<div class="inheritance"><a href="InputControlBuilder.html" title="class in com.dua3.utility.fx.controls">com.dua3.utility.fx.controls.InputControlBuilder</a>&lt;<a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;
 <div class="inheritance">com.dua3.utility.fx.controls.SliderBuilder</div>
+</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">SliderBuilder</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<span class="extends-implements">extends <a href="InputControlBuilder.html" title="class in com.dua3.utility.fx.controls">InputControlBuilder</a>&lt;<a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;</span></div>
 <div class="block">A builder class for constructing a <code>SliderWithButtons</code> instance with various configuration options.</div>
 </section>
 <section class="summary">
@@ -110,39 +112,30 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bind(javafx.beans.property.Property)" class="member-name-link">bind</a><wbr>(javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;value)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockIncrement(double)" class="member-name-link">blockIncrement</a><wbr>(double&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Binds the slider's value property bidirectionally with the specified number property.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindMax(javafx.beans.value.ObservableNumberValue)" class="member-name-link">bindMax</a><wbr>(javafx.beans.value.ObservableNumberValue&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Binds the maximum value of the slider to the given observable number value.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindMin(javafx.beans.value.ObservableNumberValue)" class="member-name-link">bindMin</a><wbr>(javafx.beans.value.ObservableNumberValue&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Binds the minimum value of the slider to the given <code>ObservableNumberValue</code>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockIncrement(double)" class="member-name-link">blockIncrement</a><wbr>(double&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the block increment value for the slider.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderWithButtons.html" title="class in com.dua3.utility.fx.controls">SliderWithButtons</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderWithButtons.html" title="class in com.dua3.utility.fx.controls">SliderWithButtons</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Builds the configured <code>SliderWithButtons</code> instance.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#decrementGraphic(javafx.scene.Node)" class="member-name-link">decrementGraphic</a><wbr>(javafx.scene.Node&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#decrementGraphic(javafx.scene.Node)" class="member-name-link">decrementGraphic</a><wbr>(javafx.scene.Node&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets a graphical representation for the decrement button of the slider.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#decrementText(java.lang.String)" class="member-name-link">decrementText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#decrementText(java.lang.String)" class="member-name-link">decrementText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the text for the decrement button of the slider.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#formatter(java.util.function.BiFunction)" class="member-name-link">formatter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;formatter)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the formatter for the slider, which determines how the slider's value is
+ formatted and displayed.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#incrementGraphic(javafx.scene.Node)" class="member-name-link">incrementGraphic</a><wbr>(javafx.scene.Node&nbsp;value)</code></div>
@@ -170,24 +163,14 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets the minimum value of the slider.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onChange(java.util.function.DoubleConsumer)" class="member-name-link">onChange</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/DoubleConsumer.html" title="class or interface in java.util.function" class="external-link">DoubleConsumer</a>&nbsp;onChange)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#mode(com.dua3.utility.fx.controls.SliderWithButtons.Mode)" class="member-name-link">mode</a><wbr>(<a href="SliderWithButtons.Mode.html" title="enum class in com.dua3.utility.fx.controls">SliderWithButtons.Mode</a>&nbsp;mode)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets a callback to be invoked when the value of the slider changes.</div>
+<div class="block">Sets the mode of the slider.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#orientation(javafx.geometry.Orientation)" class="member-name-link">orientation</a><wbr>(javafx.geometry.Orientation&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the orientation of the slider.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(double)" class="member-name-link">setDefault</a><wbr>(double&nbsp;dflt)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the default value of the slider.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDefault(java.util.function.Supplier)" class="member-name-link">setDefault</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;&nbsp;dflt)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the default value supplier of the slider.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showTickLabels(boolean)" class="member-name-link">showTickLabels</a><wbr>(boolean&nbsp;value)</code></div>
@@ -213,6 +196,9 @@ loadScripts(document, 'script');</script>
 </div>
 </div>
 <div class="inherited-list">
+<h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.InputControlBuilder">Methods inherited from class&nbsp;com.dua3.utility.fx.controls.<a href="InputControlBuilder.html" title="class in com.dua3.utility.fx.controls">InputControlBuilder</a></h3>
+<code><a href="InputControlBuilder.html#applyIfNonNull(T,java.util.function.Consumer)">applyIfNonNull</a>, <a href="InputControlBuilder.html#applyTo(com.dua3.utility.fx.controls.InputControl)">applyTo</a>, <a href="InputControlBuilder.html#getDefault()">getDefault</a>, <a href="InputControlBuilder.html#getOnChangeListeners()">getOnChangeListeners</a>, <a href="InputControlBuilder.html#onChange(java.util.function.Consumer)">onChange</a>, <a href="InputControlBuilder.html#self()">self</a>, <a href="InputControlBuilder.html#setDefault(V)">setDefault</a>, <a href="InputControlBuilder.html#setDefault(java.util.function.Supplier)">setDefault</a></code></div>
+<div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 </section>
@@ -226,6 +212,37 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="mode(com.dua3.utility.fx.controls.SliderWithButtons.Mode)">
+<h3>mode</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">mode</span><wbr><span class="parameters">(<a href="SliderWithButtons.Mode.html" title="enum class in com.dua3.utility.fx.controls">SliderWithButtons.Mode</a>&nbsp;mode)</span></div>
+<div class="block">Sets the mode of the slider.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>mode</code> - the mode to set for the slider</dd>
+<dt>Returns:</dt>
+<dd>this instance of <code>SliderBuilder</code> for method chaining</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="formatter(java.util.function.BiFunction)">
+<h3>formatter</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">formatter</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;formatter)</span></div>
+<div class="block">Sets the formatter for the slider, which determines how the slider's value is
+ formatted and displayed. The formatter is a function that takes the current
+ minimum and maximum values of the slider, as well as its current value, and
+ returns a formatted string representation.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>formatter</code> - a <code>BiFunction</code> that takes the minimum value, the
+                  maximum value, and the current value of the slider and
+                  returns a formatted string.</dd>
+<dt>Returns:</dt>
+<dd>this instance of <code>SliderBuilder</code> for method chaining.</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="orientation(javafx.geometry.Orientation)">
 <h3>orientation</h3>
@@ -396,84 +413,6 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>value</code> - true to show tick marks, false to hide them</dd>
-<dt>Returns:</dt>
-<dd>this instance of <code>SliderBuilder</code> for method chaining.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="onChange(java.util.function.DoubleConsumer)">
-<h3>onChange</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">onChange</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/DoubleConsumer.html" title="class or interface in java.util.function" class="external-link">DoubleConsumer</a>&nbsp;onChange)</span></div>
-<div class="block">Sets a callback to be invoked when the value of the slider changes.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>onChange</code> - a DoubleConsumer that will be invoked with the new slider value whenever it changes</dd>
-<dt>Returns:</dt>
-<dd>this instance of <code>SliderBuilder</code> for method chaining.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="bind(javafx.beans.property.Property)">
-<h3>bind</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">bind</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;value)</span></div>
-<div class="block">Binds the slider's value property bidirectionally with the specified number property.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>value</code> - the property to be bound bidirectionally with the slider's value property.</dd>
-<dt>Returns:</dt>
-<dd>this instance of <code>SliderBuilder</code> for method chaining.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="bindMin(javafx.beans.value.ObservableNumberValue)">
-<h3>bindMin</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">bindMin</span><wbr><span class="parameters">(javafx.beans.value.ObservableNumberValue&nbsp;value)</span></div>
-<div class="block">Binds the minimum value of the slider to the given <code>ObservableNumberValue</code>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>value</code> - the <code>ObservableNumberValue</code> to bind the minimum value to</dd>
-<dt>Returns:</dt>
-<dd>this instance of <code>SliderBuilder</code> for method chaining.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="bindMax(javafx.beans.value.ObservableNumberValue)">
-<h3>bindMax</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">bindMax</span><wbr><span class="parameters">(javafx.beans.value.ObservableNumberValue&nbsp;value)</span></div>
-<div class="block">Binds the maximum value of the slider to the given observable number value.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>value</code> - the <code>ObservableNumberValue</code> to bind to the slider's maximum property</dd>
-<dt>Returns:</dt>
-<dd>this instance of <code>SliderBuilder</code> for method chaining.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="setDefault(double)">
-<h3>setDefault</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">setDefault</span><wbr><span class="parameters">(double&nbsp;dflt)</span></div>
-<div class="block">Sets the default value of the slider.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>dflt</code> - the default value to set</dd>
-<dt>Returns:</dt>
-<dd>this instance of <code>SliderBuilder</code> for method chaining.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="setDefault(java.util.function.Supplier)">
-<h3>setDefault</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">setDefault</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&gt;&nbsp;dflt)</span></div>
-<div class="block">Sets the default value supplier of the slider.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>dflt</code> - the default value to set</dd>
 <dt>Returns:</dt>
 <dd>this instance of <code>SliderBuilder</code> for method chaining.</dd>
 </dl>

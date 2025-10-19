@@ -40,7 +40,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li><a href="#nested-class-summary">Nested</a></li>
+<li>Nested</li>
 <li><a href="#field-summary">Field</a></li>
 <li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
@@ -60,7 +60,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -118,36 +118,15 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="table-header col-first">Type</div>
 <div class="table-header col-second">Property</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>javafx.beans.property.ReadOnlyStringProperty</code></div>
-<div class="col-second even-row-color"><code><a href="#errorProperty" class="member-name-link">error</a></code></div>
+<div class="col-first even-row-color"><code>javafx.beans.property.Property<wbr>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">R</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Provides a read-only property representing the error message for this input control.</div>
-</div>
-<div class="col-first odd-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second odd-row-color"><code><a href="#requiredProperty" class="member-name-link">required</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">Provides a read-only property representing the required state of the input.</div>
-</div>
-<div class="col-first even-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second even-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Provides a read-only property representing the validity of the input.</div>
-</div>
-<div class="col-first odd-row-color"><code>javafx.beans.property.Property<wbr>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">R</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
-<div class="col-last odd-row-color">
 <div class="block">Provides the property representing the value of this input control.</div>
 </div>
 </div>
-</section>
-</li>
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<li>
-<section class="nested-class-summary" id="nested-class-summary">
-<h2>Nested Class Summary</h2>
 <div class="inherited-list">
-<h2 id="nested-classes-inherited-from-class-com.dua3.utility.fx.controls.InputControl">Nested classes/interfaces inherited from interface&nbsp;com.dua3.utility.fx.controls.<a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></h2>
-<code><a href="InputControl.State.html" title="class in com.dua3.utility.fx.controls">InputControl.State</a>&lt;<a href="InputControl.State.html" title="type parameter in InputControl.State">R</a>&gt;</code></div>
+<h3 id="properties-inherited-from-class-com.dua3.utility.fx.controls.InputControl">Properties inherited from interface&nbsp;com.dua3.utility.fx.controls.<a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></h3>
+<code><a href="InputControl.html#errorProperty">error</a>, <a href="InputControl.html#requiredProperty">required</a>, <a href="InputControl.html#validProperty">valid</a></code></div>
 </section>
 </li>
 <!-- =========== FIELD SUMMARY =========== -->
@@ -170,34 +149,19 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyStringProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#errorProperty()" class="member-name-link">errorProperty</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#node()" class="member-name-link">node</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Provides a read-only property representing the error message for this input control.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#node()" class="member-name-link">node</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the <code>Node</code> for this input element.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requiredProperty()" class="member-name-link">requiredProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Provides a read-only property representing the required state of the input.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a><wbr>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">R</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#state()" class="member-name-link">state</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Reset value to default</div>
+<div class="block">Return the <a href="InputControlState.html" title="class in com.dua3.utility.fx.controls"><code>InputControlState</code></a> instance for this control.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">R</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Provides a read-only property representing the validity of the input.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.Property<wbr>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">R</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Provides the property representing the value of this input control.</div>
 </div>
 </div>
@@ -208,7 +172,7 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.InputControl">Methods inherited from interface&nbsp;com.dua3.utility.fx.controls.<a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></h3>
-<code><a href="InputControl.html#get()">get</a>, <a href="InputControl.html#init()">init</a>, <a href="InputControl.html#isRequired()">isRequired</a>, <a href="InputControl.html#isValid()">isValid</a>, <a href="InputControl.html#set(T)">set</a></code></div>
+<code><a href="InputControl.html#errorProperty()">errorProperty</a>, <a href="InputControl.html#get()">get</a>, <a href="InputControl.html#init()">init</a>, <a href="InputControl.html#isRequired()">isRequired</a>, <a href="InputControl.html#isValid()">isValid</a>, <a href="InputControl.html#requiredProperty()">requiredProperty</a>, <a href="InputControl.html#reset()">reset</a>, <a href="InputControl.html#set(T)">set</a>, <a href="InputControl.html#validProperty()">validProperty</a></code></div>
 </section>
 </li>
 </ul>
@@ -238,60 +202,6 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 </dl>
 </section>
 </li>
-<li>
-<section class="detail" id="requiredProperty">
-<h3>required</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span></div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#requiredProperty()">requiredProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
-<dt>Returns:</dt>
-<dd>a ReadOnlyBooleanProperty that is true if the input is required and false otherwise</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="#requiredProperty()"><code>requiredProperty()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="validProperty">
-<h3>valid</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">validProperty</span></div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#validProperty()">validProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
-<dt>Returns:</dt>
-<dd>a ReadOnlyBooleanProperty that is true if the input is valid and false otherwise</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="#validProperty()"><code>validProperty()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="errorProperty">
-<h3>error</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyStringProperty</span>&nbsp;<span class="element-name">errorProperty</span></div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#errorProperty()">errorProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
-<dt>Returns:</dt>
-<dd>a ReadOnlyStringProperty containing the error message if there is a validation error, otherwise empty</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="#errorProperty()"><code>errorProperty()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
 </ul>
 </section>
 </li>
@@ -301,16 +211,16 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="node()">
-<h3>node</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a></span>&nbsp;<span class="element-name">node</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputControl.html#node()">InputControl</a></code></span></div>
-<div class="block">Get the <code>Node</code> for this input element.</div>
+<section class="detail" id="state()">
+<h3>state</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">R</a>&gt;</span>&nbsp;<span class="element-name">state</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputControl.html#state()">InputControl</a></code></span></div>
+<div class="block">Return the <a href="InputControlState.html" title="class in com.dua3.utility.fx.controls"><code>InputControlState</code></a> instance for this control.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#node()">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
+<dd><code><a href="InputControl.html#state()">state</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
 <dt>Returns:</dt>
-<dd>the node</dd>
+<dd>the State insstance that tracks this control's state</dd>
 </dl>
 </section>
 </li>
@@ -329,70 +239,16 @@ implements <a href="InputControl.html" title="interface in com.dua3.utility.fx.c
 </section>
 </li>
 <li>
-<section class="detail" id="reset()">
-<h3>reset</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputControl.html#reset()">InputControl</a></code></span></div>
-<div class="block">Reset value to default</div>
+<section class="detail" id="node()">
+<h3>node</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a></span>&nbsp;<span class="element-name">node</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputControl.html#node()">InputControl</a></code></span></div>
+<div class="block">Get the <code>Node</code> for this input element.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#reset()">reset</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="requiredProperty()">
-<h3>requiredProperty</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputControl.html#requiredProperty()">InputControl</a></code></span></div>
-<div class="block">Provides a read-only property representing the required state of the input.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#requiredProperty()">requiredProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
+<dd><code><a href="InputControl.html#node()">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
 <dt>Returns:</dt>
-<dd>the <code>required</code> property</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="InputControl.html#isRequired()"><code>InputControl.isRequired()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="validProperty()">
-<h3>validProperty</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyBooleanProperty</span>&nbsp;<span class="element-name">validProperty</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputControl.html#validProperty()">InputControl</a></code></span></div>
-<div class="block">Provides a read-only property representing the validity of the input.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#validProperty()">validProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
-<dt>Returns:</dt>
-<dd>the <code>valid</code> property</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="InputControl.html#isValid()"><code>InputControl.isValid()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="errorProperty()">
-<h3>errorProperty</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ReadOnlyStringProperty</span>&nbsp;<span class="element-name">errorProperty</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputControl.html#errorProperty()">InputControl</a></code></span></div>
-<div class="block">Provides a read-only property representing the error message for this input control.
-
- <p>This property contains an error message if the input is invalid, otherwise it is empty.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputControl.html#errorProperty()">errorProperty</a></code>&nbsp;in interface&nbsp;<code><a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;<a href="SimpleInputControl.html" title="type parameter in SimpleInputControl">C</a> extends javafx.scene.control.Control&gt;</code></dd>
-<dt>Returns:</dt>
-<dd>the <code>error</code> property</dd>
+<dd>the node</dd>
 </dl>
 </section>
 </li>

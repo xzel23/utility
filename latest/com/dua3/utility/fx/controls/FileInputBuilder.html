@@ -88,12 +88,14 @@ loadScripts(document, 'script');</script>
 <h1 title="Class FileInputBuilder" class="title">Class FileInputBuilder</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
+<div class="inheritance"><a href="InputControlBuilder.html" title="class in com.dua3.utility.fx.controls">com.dua3.utility.fx.controls.InputControlBuilder</a>&lt;<a href="FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;
 <div class="inheritance">com.dua3.utility.fx.controls.FileInputBuilder</div>
+</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">FileInputBuilder</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<span class="extends-implements">extends <a href="InputControlBuilder.html" title="class in com.dua3.utility.fx.controls">InputControlBuilder</a>&lt;<a href="FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span></div>
 <div class="block">Builder for creating instances of <a href="FileInput.html" title="class in com.dua3.utility.fx.controls"><code>FileInput</code></a> with customizable options.
  The builder provides methods to configure the file dialog mode, initial path,
  extension filters, validation, and disabled state.</div>
@@ -132,16 +134,6 @@ loadScripts(document, 'script');</script>
 <div class="block">Adds the specified file extension filters to the FileChooser.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#initialPath(java.nio.file.Path)" class="member-name-link">initialPath</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;initialPath)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the initial path for the file input.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#initialPath(java.util.function.Supplier)" class="member-name-link">initialPath</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;initialPath)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the initial path for the FileInputBuilder using the provided <code>Supplier&lt;Path&gt;</code>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validate(java.util.function.Function)" class="member-name-link">validate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the validation function for the file input.</div>
@@ -149,6 +141,9 @@ loadScripts(document, 'script');</script>
 </div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.InputControlBuilder">Methods inherited from class&nbsp;com.dua3.utility.fx.controls.<a href="InputControlBuilder.html" title="class in com.dua3.utility.fx.controls">InputControlBuilder</a></h3>
+<code><a href="InputControlBuilder.html#applyIfNonNull(T,java.util.function.Consumer)">applyIfNonNull</a>, <a href="InputControlBuilder.html#applyTo(com.dua3.utility.fx.controls.InputControl)">applyTo</a>, <a href="InputControlBuilder.html#getDefault()">getDefault</a>, <a href="InputControlBuilder.html#getOnChangeListeners()">getOnChangeListeners</a>, <a href="InputControlBuilder.html#onChange(java.util.function.Consumer)">onChange</a>, <a href="InputControlBuilder.html#self()">self</a>, <a href="InputControlBuilder.html#setDefault(V)">setDefault</a>, <a href="InputControlBuilder.html#setDefault(java.util.function.Supplier)">setDefault</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -188,32 +183,6 @@ loadScripts(document, 'script');</script>
                  validation succeeds</dd>
 <dt>Returns:</dt>
 <dd>the updated FileInputBuilder instance</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="initialPath(java.nio.file.Path)">
-<h3>initialPath</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></span>&nbsp;<span class="element-name">initialPath</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;initialPath)</span></div>
-<div class="block">Sets the initial path for the file input.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>initialPath</code> - the initial path to set, which may be null</dd>
-<dt>Returns:</dt>
-<dd>an instance of FileInputBuilder with the specified initial path</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="initialPath(java.util.function.Supplier)">
-<h3>initialPath</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></span>&nbsp;<span class="element-name">initialPath</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;initialPath)</span></div>
-<div class="block">Sets the initial path for the FileInputBuilder using the provided <code>Supplier&lt;Path&gt;</code>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>initialPath</code> - a Supplier that provides the initial Path</dd>
-<dt>Returns:</dt>
-<dd>the FileInputBuilder instance with the updated initial path</dd>
 </dl>
 </section>
 </li>
