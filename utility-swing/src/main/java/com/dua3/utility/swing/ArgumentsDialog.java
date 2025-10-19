@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * Represents a dialog that allows users to input arguments for a command-line program.
