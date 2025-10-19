@@ -1,11 +1,17 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.PropertyConverter;
 import com.dua3.utility.lang.LangUtil;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ObservableNumberValue;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 /**
  * A builder class for constructing a {@code SliderWithButtons} instance with various configuration options.
@@ -27,6 +33,10 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
     private @Nullable Node decrementGraphic;
     private @Nullable Double blockIncrement = null;
     private @Nullable Double majorTickUnit = null;
+
+    private final List<ObservableNumberValue> valueBindings = new ArrayList<>();
+    private final List<ObservableNumberValue> minBindings = new ArrayList<>();
+    private final List<ObservableNumberValue> maxBindings = new ArrayList<>();
 
     SliderBuilder() {
     }
@@ -200,6 +210,40 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
         return self();
     }
 
+    /**
+     * Binds the slider to the specified {@code ObservableNumberValue}, enabling the slider to react to changes in the bound value.
+     *
+     * @param value the {@code ObservableNumberValue} to bind to the slider
+     * @return this instance of {@code SliderBuilder} for method chaining
+     */
+    public SliderBuilder bind(ObservableNumberValue value) {
+        valueBindings.add(value);
+        return self();
+    }
+
+    /**
+     * Binds the minimum value of the slider to the specified {@code ObservableNumberValue}, ensuring
+     * that the slider will respond dynamically to changes in the bound value.
+     *
+     * @param value the {@code ObservableNumberValue} to bind to the slider's minimum value
+     * @return this instance of {@code SliderBuilder} for method chaining
+     */
+    public SliderBuilder bindMin(ObservableNumberValue value) {
+        minBindings.add(value);
+        return self();
+    }
+
+    /**
+     * Binds the maximum value of the slider to the specified {@code ObservableNumberValue},
+     * allowing the slider's maximum value to dynamically reflect changes in the bound value.
+     *
+     * @param value the {@code ObservableNumberValue} to bind to the slider's maximum value
+     * @return this instance of {@code SliderBuilder} for method chaining
+     */
+    public SliderBuilder bindMax(ObservableNumberValue value) {
+        maxBindings.add(value);
+        return self();
+    }
 
     /**
      * Builds the configured {@code SliderWithButtons} instance.
@@ -227,7 +271,20 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
         slider.setSnapToTicks(snapToTicks);
         slider.setShowTickLabels(showTickLabels);
 
+        addBindings(slider, slider::valueAsDoubleProperty, valueBindings);
+        addBindings(slider, slider::minProperty, minBindings);
+        addBindings(slider, slider::maxProperty, maxBindings);
+
         return slider;
+    }
+
+    private void addBindings(SliderWithButtons slider, Supplier<DoubleProperty> property, List<ObservableNumberValue> bindings) {
+        if (!bindings.isEmpty()) {
+            DoubleProperty prop = property.get();
+            for (var binding : valueBindings) {
+                prop.bind(binding);
+            }
+        }
     }
 
 }

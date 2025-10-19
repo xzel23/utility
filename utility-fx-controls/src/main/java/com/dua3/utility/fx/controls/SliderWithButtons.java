@@ -1,10 +1,12 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.PropertyConverter;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -337,6 +339,16 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     @Override
     public Node node() {
         return slider;
+    }
+
+    /**
+     * Returns the `DoubleProperty` representation of the slider's current value.
+     * The `DoubleProperty` allows for binding and observation of changes to the slider's value.
+     *
+     * @return the `DoubleProperty` representing the slider's value.
+     */
+    public DoubleProperty valueAsDoubleProperty() {
+        return PropertyConverter.convert(valueProperty());
     }
 
     /**

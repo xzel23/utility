@@ -150,4 +150,14 @@ public final class PropertyConverter {
         //noinspection unchecked
         return (Property<Double>) (Property<?>) property;
     }
+
+    /**
+     * Converts a {@code Property<Double>} to a {@code DoubleProperty}.
+     *
+     * @param property the {@code Property<Double>} to be converted
+     * @return a {@code DoubleProperty} representation of the given {@code Property<Double>}
+     */
+    public static DoubleProperty convert(Property<Double> property) {
+        return DoubleProperty.doubleProperty(property);
+    }
 }
