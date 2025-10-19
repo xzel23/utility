@@ -120,7 +120,6 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         for (Entry<String, Page<?, ?>> entry : pages.entrySet()) {
             String name = entry.getKey();
             Page<?, ?> page = entry.getValue();
-            InputDialogPane<?> pane = page.getPane();
 
             // check page names
             String next = page.getNext();

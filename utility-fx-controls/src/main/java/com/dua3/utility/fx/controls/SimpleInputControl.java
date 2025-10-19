@@ -1,6 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Control;
@@ -22,7 +21,6 @@ public final class SimpleInputControl<C extends Control, R> implements InputCont
 
     private final C control;
     private final InputControlState<R> state;
-    private final Supplier<? extends @Nullable R> dflt;
 
     /**
      * Constructs a SimpleInputControl instance for managing an input control element and its state.
@@ -39,7 +37,6 @@ public final class SimpleInputControl<C extends Control, R> implements InputCont
     SimpleInputControl(C control, Property<R> value, Supplier<? extends @Nullable R> dflt, Function<@Nullable R, Optional<String>> validate, ObservableValue<?> contentBase) {
         this.control = control;
         this.state = new InputControlState<>(value, dflt, validate, contentBase);
-        this.dflt = dflt;
 
         state.requiredProperty().addListener((v, o, n) -> {
             if (n) {

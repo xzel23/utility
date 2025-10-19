@@ -55,7 +55,10 @@ import java.util.stream.Collectors;
  * <p>
  * The Validator class is meant to be used in a JavaFX application and should be initialized with a valid
  * ResourceBundle if localized validation messages are required.
+ *
+ * @deprecated
  */
+@Deprecated
 public class Validator {
     private static final Logger LOG = LogManager.getLogger(Validator.class);
 
@@ -66,7 +69,6 @@ public class Validator {
     private final List<Runnable> disposeList = new ArrayList<>();
     private int iconSize = (int) Math.round(Font.getDefault().getSize());
     private String iconError = "fth-anchor";
-//    private String iconError = "fth-alert-triangle";
     private boolean decorateNodes = false;
 
     /**

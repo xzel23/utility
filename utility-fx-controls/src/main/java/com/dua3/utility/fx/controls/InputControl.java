@@ -159,7 +159,7 @@ public interface InputControl<T> {
 
         Function<@Nullable T, Optional<String>> strictValidate = d ->
                 Optional.ofNullable(err.get()).or(() -> validate.apply(d));
-// FIXME
+
         return new SimpleInputControl<>(control, value, dflt, strictValidate, textProperty);
     }
 
