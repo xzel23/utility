@@ -10,16 +10,11 @@ import java.util.function.Consumer;
 
 /**
  * Represents the result of an input operation along with optional associated data.
+ *
+ * @param result The result, i.e., 'OK', 'CANCEL', etc..
+ * @param data   The data input by the user.
  */
-public class InputResult {
-    /**
-     * The result, i.e., 'OK', 'CANCEL', etc..
-     */
-    private final ButtonType result;
-    /**
-     * The data input by the user.
-     */
-    private final Map<String, @Nullable Object> data;
+public record InputResult(ButtonType result, Map<String, @Nullable Object> data) {
 
     /**
      * Constructs an {@code InputResult} with the specified result and an empty data map.
@@ -27,28 +22,7 @@ public class InputResult {
      * @param result the result value, typically representing an action such as 'OK' or 'CANCEL'
      */
     public InputResult(ButtonType result) {
-        this.result = result;
-        this.data = Collections.emptyMap();
-    }
-
-    /**
-     * Constructs an {@code InputResult} with the specified result and data map.
-     *
-     * @param result the result value, typically representing an action such as 'OK' or 'CANCEL'
-     * @param data a map containing additional input data, or {@code null} for no data
-     */
-    public InputResult(ButtonType result, @Nullable Map<String, @Nullable Object> data) {
-        this.result = result;
-        this.data = data == null ? Collections.emptyMap() : Collections.unmodifiableMap(data);
-    }
-
-    /**
-     * Retrieves the result value, which typically represents an action such as 'OK' or 'CANCEL'.
-     *
-     * @return the result value of type {@code T}
-     */
-    public ButtonType result() {
-        return result;
+        this(result, Collections.emptyMap());
     }
 
     /**
@@ -79,22 +53,13 @@ public class InputResult {
     /**
      * Executes the provided consumer if the specified result matches the stored result.
      *
-     * @param r the result value to compare with the stored result
+     * @param r        the result value to compare with the stored result
      * @param consumer the consumer to invoke with the input data map if the result matches
      */
     public void onResult(ButtonType r, Consumer<Map<String, @Nullable Object>> consumer) {
         if (Objects.equals(result, r)) {
             consumer.accept(data);
         }
-    }
-
-    /**
-     * Returns an unmodifiable view of the data map.
-     *
-     * @return the data map (never null)
-     */
-    public Map<String, @Nullable Object> data() {
-        return Collections.unmodifiableMap(data);
     }
 
     /**
