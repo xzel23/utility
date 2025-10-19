@@ -108,6 +108,10 @@ class LangUtilTest {
     void isOneOf() {
         assertTrue(LangUtil.isOneOf(7, 3, 9, 7, 5));
         assertFalse(LangUtil.isOneOf(8, 3, 9, 7, 5));
+        assertTrue(LangUtil.isOneOf(null, 3, 9, null, 5));
+        assertFalse(LangUtil.isOneOf(null, 3, 9, 7, 5));
+        assertTrue(LangUtil.isOneOf(5, 3, 9, null, 5));
+        assertFalse(LangUtil.isOneOf(8, 3, 9, null, 5));
     }
 
     @Test

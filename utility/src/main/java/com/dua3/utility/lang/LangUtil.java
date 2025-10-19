@@ -266,7 +266,7 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <T extends @Nullable Object> boolean isOneOf(T arg, T... rest) {
-        return arg != null && asUnmodifiableList(rest).contains(arg);
+        return asUnmodifiableList(rest).contains(arg);
     }
 
     /**
