@@ -179,12 +179,12 @@ class AboutDialogBuilderTest extends FxTestBase {
      * Test setting the license text.
      */
     @Test
-    void testLicenseText() throws Exception {
+    void testLicenseNoteText() throws Exception {
         // The dialog content is actually a StackPane, not a VBox as assumed
         runOnFxThreadAndWait(() -> {
             String testLicense = "Test License";
             AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
-            builder.license(testLicense);
+            builder.licenseNote(testLicense);
             Dialog<Void> dialog = builder.build();
 
             DialogPane dialogPane = dialog.getDialogPane();
@@ -203,13 +203,13 @@ class AboutDialogBuilderTest extends FxTestBase {
      * Test setting the license with details.
      */
     @Test
-    void testLicenseWithDetails() throws Exception {
+    void testLicenseNoteWithDetails() throws Exception {
         // The dialog content is actually a StackPane, not a VBox as assumed
         runOnFxThreadAndWait(() -> {
             String testLicense = "Test License";
             boolean[] detailsClicked = {false};
             AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
-            builder.license(testLicense);
+            builder.licenseNote(testLicense);
             builder.onShowLicenseDetails(() -> detailsClicked[0] = true);
             Dialog<Void> dialog = builder.build();
 

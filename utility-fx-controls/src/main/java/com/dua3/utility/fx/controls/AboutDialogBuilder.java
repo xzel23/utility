@@ -14,9 +14,11 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.application.LicenseData;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
@@ -56,7 +58,7 @@ public class AboutDialogBuilder {
     private String version = "";
     private String mailText = "";
     private String mailAddress = "";
-    private String licenseText = "";
+    private String licenseNote = "";
     private @Nullable Runnable showLicenseDetails;
 
     private @Nullable URL css;
@@ -90,14 +92,38 @@ public class AboutDialogBuilder {
     }
 
     /**
+     * Configures the license details for the AboutDialog. It sets the license
+     * information including the licensee and validity, and optionally sets the action
+     * to display detailed license information when requested.
+     *
+     * @param licenseData the license data object that contains information
+     *                    about the licensee, validity period, and license text
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder license(LicenseData licenseData) {
+        licenseNote("License-ID {} licensed to {} valid until {}.", licenseData.licenseId(), licenseData.licensee(), licenseData.validUntil());
+        licenseData.licenseText().ifPresent(licenseText -> {
+            onShowLicenseDetails(() ->
+                    Dialogs.alert(parentWindow, Alert.AlertType.INFORMATION)
+                            .title("License Details")
+                            .header("License valid until " + licenseData.validUntil())
+                            .text(licenseText.toString())
+                            .build()
+                            .show()
+            );
+        });
+        return this;
+    }
+
+    /**
      * Configures the license text and action to show license details for the AboutDialog.
      *
      * @param fmt the format string for the license text
      * @param args the arguments referenced by the format specifiers in the format string
      * @return the current instance of {@code AboutDialogBuilder} for method chaining
      */
-    public AboutDialogBuilder license(String fmt, Object... args) {
-        this.licenseText = format(fmt, args);
+    public AboutDialogBuilder licenseNote(String fmt, Object... args) {
+        this.licenseNote = format(fmt, args);
         return this;
     }
 
@@ -287,15 +313,15 @@ public class AboutDialogBuilder {
             children.add(hlMail);
         }
 
-        if (!licenseText.isEmpty()) {
+        if (!licenseNote.isEmpty()) {
             if (showLicenseDetails != null) {
-                Hyperlink hlLicense = new Hyperlink(licenseText);
+                Hyperlink hlLicense = new Hyperlink(licenseNote);
                 hlLicense.setText(mailText.isBlank() ? "Email" : mailText);
                 hlLicense.setId("license");
                 hlLicense.setOnAction(e -> showLicenseDetails.run());
                 children.add(hlLicense);
             } else {
-                addLabel(children, "license", licenseText);
+                addLabel(children, "license", licenseNote);
             }
         }
 
