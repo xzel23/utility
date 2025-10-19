@@ -54,7 +54,7 @@ public class InputDialogBuilder
         super(formatter, parentWindow);
         this.pb = new InputPaneBuilder(formatter);
         setDialogSupplier(this::createDialog);
-        pb.setButtons(
+        pb.buttons(
                 new ButtonDef<>(
                         ButtonType.OK,
                         (bt, r) -> true,

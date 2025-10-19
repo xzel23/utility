@@ -58,6 +58,17 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     }
 
     /**
+     * Returns the current instance of the builder.
+     * This method facilitates method chaining by returning the builder instance
+     * that invokes it.
+     *
+     * @return the current builder instance of type {@code B}
+     */
+    protected B self() {
+        return (B) this;
+    }
+
+    /**
      * Sets the supplier that provides instances of the dialog type.
      * The supplied {@link Supplier} is responsible for creating specific instances of the dialog
      * whenever required by this dialog pane builder.
@@ -120,7 +131,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     @SuppressWarnings("unchecked")
     public B header(String fmt, Object... args) {
         this.header = formatter.format(fmt, args);
-        return (B) this;
+        return self();
     }
 
     /**
@@ -132,7 +143,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     @SuppressWarnings("unchecked")
     public B resultHandler(ResultHandler<R> resultHandler) {
         this.resultHandler = resultHandler;
-        return (B) this;
+        return self();
     }
 
     /**
@@ -172,43 +183,43 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @return the current builder instance with the added button definition
      */
     @SuppressWarnings("unchecked")
-    protected B button(ButtonDef<R> button) {
+    protected B addButton(ButtonDef<R> button) {
         getButtonDefs().add(button);
-        return (B) this;
+        return self();
     }
 
     /**
      * <strong>Replaces</strong> the buttons for this dialog pane builder with the specified button types.
-     * Each button type provided is added using the {@link #button(ButtonDef)} method.
+     * Each button type provided is added using the {@link #addButton(ButtonDef)} method.
      *
      * @param buttons an array of {@link ButtonType} representing the types of buttons to be added
      * @return the current builder instance with the specified buttons added
      */
     @SuppressWarnings("unchecked")
     @SafeVarargs
-    public final B setButtons(ButtonDef<R>... buttons) {
+    public final B buttons(ButtonDef<R>... buttons) {
         getButtonDefs().clear();
         for (var btn: buttons) {
-            button(btn);
+            addButton(btn);
         }
-        return (B) this;
+        return self();
     }
 
     /**
      * Replaces the current button definitions in the dialog pane builder with the specified button types.
      * Each {@code ButtonType} in the provided array is converted into a corresponding button definition
-     * and added to the builder using the {@link #button(ButtonDef)} method.
+     * and added to the builder using the {@link #addButton(ButtonDef)} method.
      *
      * @param buttons an array of {@link ButtonType} representing the types of buttons to be added
      * @return the current builder instance with the specified buttons added
      */
     @SuppressWarnings("unchecked")
-    public final B setButtons(ButtonType... buttons) {
+    public final B buttons(ButtonType... buttons) {
         getButtonDefs().clear();
         for (var btn: buttons) {
-            button(ButtonDef.of(btn));
+            addButton(ButtonDef.of(btn));
         }
-        return (B) this;
+        return self();
     }
 
     /**

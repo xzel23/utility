@@ -113,7 +113,7 @@ class AlertBuilderTest extends FxTestBase {
             AlertBuilder builder = Dialogs.alert(null, AlertType.CONFIRMATION, MessageFormatter.standard());
 
             // Set custom buttons
-            builder.setButtons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            builder.buttons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 
             // Build an alert
             Alert alert = builder.build();
@@ -137,7 +137,7 @@ class AlertBuilderTest extends FxTestBase {
             AlertBuilder builder = Dialogs.alert(null, AlertType.CONFIRMATION, MessageFormatter.standard());
 
             // Set custom buttons and default button
-            builder.setButtons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            builder.buttons(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
             builder.defaultButton(ButtonType.NO);
 
             // Build an alert

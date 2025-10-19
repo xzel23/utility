@@ -45,7 +45,7 @@ public abstract class PaneBuilder<D extends DialogPane & Supplier<R>, B extends 
     @SuppressWarnings("unchecked")
     public B next(String s) {
         this.next = s;
-        return (B) this;
+        return self();
     }
 
     /**

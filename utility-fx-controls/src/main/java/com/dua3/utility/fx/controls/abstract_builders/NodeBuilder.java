@@ -39,7 +39,6 @@ public abstract class NodeBuilder<N extends Node, B extends NodeBuilder<N, B>> {
      */
     @SuppressWarnings("unchecked")
     protected final B self() {
-        //noinspection unchecked
         return (B) this;
     }
 

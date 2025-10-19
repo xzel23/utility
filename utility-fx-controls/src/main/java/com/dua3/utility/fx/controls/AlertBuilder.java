@@ -99,7 +99,7 @@ public class AlertBuilder
      */
     public AlertBuilder text(String fmt, Object... args) {
         this.text = format(fmt, args);
-        return this;
+        return self();
     }
 
     /**
@@ -110,18 +110,18 @@ public class AlertBuilder
      */
     public AlertBuilder defaultButton(ButtonType button) {
         this.defaultButton = button;
-        return this;
+        return self();
     }
 
     /**
      * Set supplemental CSS.
      *
      * @param css the name of the CSS resource to load ({@link URL#toExternalForm()}
-     * @return this
+     * @return self();
      */
     public AlertBuilder css(String css) {
         this.css = css;
-        return this;
+        return self();
     }
 
 }

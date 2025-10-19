@@ -47,7 +47,7 @@ public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuild
     PromptBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         setDialogSupplier(this::createDialog);
-        setButtons(
+        buttons(
             new ButtonDef<>(
                     ButtonType.OK,
                     (bt, r) -> true,

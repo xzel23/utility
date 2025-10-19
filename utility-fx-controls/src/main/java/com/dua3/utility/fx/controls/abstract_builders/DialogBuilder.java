@@ -60,7 +60,7 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
     @SuppressWarnings("unchecked")
     public B title(String fmt, Object... args) {
         this.title = format(fmt, args);
-        return (B) this;
+        return self();
     }
 
     /**

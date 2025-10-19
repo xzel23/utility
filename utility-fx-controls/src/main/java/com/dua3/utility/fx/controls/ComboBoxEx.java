@@ -180,7 +180,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
                             .title("Duplicate item")
                             .header("There already exists an item with the same name.")
                             .text("Do you want to remove the item instead?")
-                            .setButtons(ButtonType.YES, ButtonType.NO)
+                            .buttons(ButtonType.YES, ButtonType.NO)
                             .defaultButton(ButtonType.NO)
                             .showAndWait()
                             .ifPresent(btn -> {
@@ -243,7 +243,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
     public boolean askBeforeRemoveSelectedItem(T item) {
         return Dialogs.alert(Optional.ofNullable(getScene()).map(Scene::getWindow).orElse(null), Alert.AlertType.CONFIRMATION, MessageFormatter.standard())
                 .header("Remove %s?", format.apply(item))
-                .setButtons(ButtonType.YES, ButtonType.NO)
+                .buttons(ButtonType.YES, ButtonType.NO)
                 .defaultButton(ButtonType.YES)
                 .build()
                 .showAndWait()
