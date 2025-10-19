@@ -1,13 +1,17 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.PlatformHelper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -23,6 +27,10 @@ import java.util.function.Supplier;
  * @param <R> the type of the value being managed
  */
 public final class InputControlState<R> {
+    private static final Logger LOG = LogManager.getLogger(InputControlState.class);
+
+    private static final InputControlState<Void> VOID_STATE = new InputControlState<>(new SimpleObjectProperty<>(), freeze(new SimpleObjectProperty<>()));
+
     private final BooleanProperty required = new SimpleBooleanProperty(true);
     private final Property<@Nullable R> value;
     private final BooleanProperty valid = new SimpleBooleanProperty(true);
@@ -30,24 +38,10 @@ public final class InputControlState<R> {
     private final Function<? super @Nullable R, Optional<String>> validate;
     private final List<Runnable> validationListeners = new ArrayList<>();
     private final Supplier<? extends @Nullable R> dflt;
+    private final ObservableValue<?> baseValue;
 
-    /**
-     * Constructs a State object with the given value.
-     *
-     * @param value the property representing the value managed by this State
-     */
-    public InputControlState(Property<@Nullable R> value) {
-        this(value, freeze(value));
-    }
-
-    /**
-     * Constructs a State object with the given value and default value supplier.
-     *
-     * @param value the property representing the value managed by this State
-     * @param dflt  a supplier that provides the default value for the property
-     */
-    public InputControlState(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt) {
-        this(value, dflt, s -> Optional.empty());
+    public static InputControlState<Void> voidState() {
+        return VOID_STATE;
     }
 
     /**
@@ -63,6 +57,16 @@ public final class InputControlState<R> {
     }
 
     /**
+     * Constructs a State object with the given value and default value supplier.
+     *
+     * @param value the property representing the value managed by this State
+     * @param dflt  a supplier that provides the default value for the property
+     */
+    public InputControlState(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt) {
+        this(value, dflt, s -> Optional.empty());
+    }
+
+    /**
      * Constructs a State object with the given value, default value supplier, and validation function.
      *
      * @param value    the property representing the value managed by this State
@@ -70,29 +74,27 @@ public final class InputControlState<R> {
      * @param validate a function that validates the value and returns an optional error message
      */
     public InputControlState(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate) {
+        this (value, dflt, validate, value);
+    }
+
+    public InputControlState(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate, ObservableValue<?> baseValue) {
         this.required.set(validate.apply(null).isPresent());
         this.value = value;
-        this.value.addListener((ObservableValue<? extends @Nullable R> v, @Nullable R o, @Nullable R n) -> updateValidState(n));
         this.dflt = dflt;
+        this.baseValue = baseValue;
         this.validate = validate;
         this.valid.set(validate.apply(value.getValue()).isEmpty());
         this.error.setValue("");
+
+        if (this.baseValue != this.value) {
+            this.baseValue.addListener((ObservableValue<?> v, @Nullable Object o, @Nullable Object n) -> invalidateState());
+        }
+        this.value.addListener((ObservableValue<? extends @Nullable R> v, @Nullable R o, @Nullable R n) -> validate());
     }
 
-    /**
-     * Updates the validity state of the control based on the given value
-     * and the validation function provided during initialization or set later.
-     * It evaluates whether the value is valid and updates the valid and error
-     * properties accordingly.
-     *
-     * @param r the value to be validated, or null if there's no value. If the value
-     *          is invalid according to the validation function, an error message
-     *          will be set.
-     */
-    private void updateValidState(@Nullable R r) {
-        Optional<String> result = validate.apply(r);
-        valid.setValue(result.isEmpty());
-        error.setValue(result.orElse(""));
+    private void invalidateState() {
+        LOG.debug("invalidateState()");
+        PlatformHelper.runLater(this::validate);
     }
 
     /**
@@ -170,12 +172,15 @@ public final class InputControlState<R> {
      * @return true if the current value of the property is valid, otherwise false
      */
     boolean validate() {
+        LOG.trace("validate()");
         Optional<String> result;
         try {
             result = validate.apply(valueProperty().getValue());
         } catch (Exception e) {
             result = Optional.of(InputControl.INVALID_VALUE);
         }
+        LOG.trace("validation result: {}", result);
+
         valid.setValue(result.isEmpty());
         error.setValue(result.orElse(""));
 
@@ -218,5 +223,24 @@ public final class InputControlState<R> {
      */
     public void setValue(@Nullable R arg) {
         value.setValue(arg);
+    }
+
+    /**
+     * Tests if the control's base value is null.
+     * <p>
+     * In most controls, there will be no difference between a control's base value and its actual value.
+     * An example where both differ is an input field for numbers where the base value is the text entered
+     * into the input and the value is the text converted to a number. When conversion fails, the number
+     * value will cleared or at least not updated. To distuigish whether nothingg has been entered at all
+     * or some invalid input was entered that maps to null, we use the base value.
+     *
+     * @return
+     */
+    public boolean isEmpty() {
+        return switch (baseValue.getValue()) {
+            case null -> true;
+            case String s -> s.isEmpty();
+            default -> false;
+        };
     }
 }

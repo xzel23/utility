@@ -159,8 +159,8 @@ public interface InputControl<T> {
 
         Function<@Nullable T, Optional<String>> strictValidate = d ->
                 Optional.ofNullable(err.get()).or(() -> validate.apply(d));
-
-        return new SimpleInputControl<>(control, value, dflt, strictValidate);
+// FIXME
+        return new SimpleInputControl<>(control, value, dflt, strictValidate, textProperty);
     }
 
     private static <T> StringConverter<T> createStrictStringConverter(Class<T> cls, Format format, Consumer<@Nullable String> setErrorMessage) {
@@ -403,6 +403,9 @@ public interface InputControl<T> {
         // nop
     }
 
+    default boolean isEmpty() {
+        return state().isEmpty();
+    }
 }
 
 final class FormatWithDefaultValue extends Format {

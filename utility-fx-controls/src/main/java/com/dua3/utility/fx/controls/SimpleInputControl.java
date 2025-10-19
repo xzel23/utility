@@ -1,6 +1,8 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.beans.Observable;
 import javafx.beans.property.Property;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Control;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -31,8 +33,12 @@ public final class SimpleInputControl<C extends Control, R> implements InputCont
      * @param validate a function that validates the value and returns an optional error message
      */
     SimpleInputControl(C control, Property<R> value, Supplier<? extends @Nullable R> dflt, Function<@Nullable R, Optional<String>> validate) {
+        this(control, value, dflt, validate, value);
+    }
+
+    SimpleInputControl(C control, Property<R> value, Supplier<? extends @Nullable R> dflt, Function<@Nullable R, Optional<String>> validate, ObservableValue<?> contentBase) {
         this.control = control;
-        this.state = new InputControlState<>(value, dflt, validate);
+        this.state = new InputControlState<>(value, dflt, validate, contentBase);
         this.dflt = dflt;
 
         state.requiredProperty().addListener((v, o, n) -> {
@@ -45,8 +51,8 @@ public final class SimpleInputControl<C extends Control, R> implements InputCont
 
         reset();
 
+        // perform a validation when the control receives or looses focus
         control.focusedProperty().addListener((v, o, n) -> state.validate());
-        valueProperty().addListener((v, o, n) -> state.validate());
     }
 
     @Override

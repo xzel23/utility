@@ -180,7 +180,7 @@ public class Grid extends GridPane {
         valid.bind(Bindings.createBooleanBinding(
                 () -> controls.stream().allMatch(control -> {
                     boolean v = control.isValid();
-                    LOG.debug("validate: {} -> {}", control, v);
+                    LOG.trace("validate: {} -> {}", control, v);
                     return v;
                 }),
                 controls.stream().flatMap(control -> Stream.of(control.valueProperty(), control.validProperty())).toArray(ObservableValue[]::new)
@@ -193,8 +193,8 @@ public class Grid extends GridPane {
     }
 
     private static void updateMarker(Meta<?> entry) {
-        LOG.info("updateMarker: {}", entry.id);
         InputControl<?> control = entry.control;
+        LOG.debug("updateMarker: valid={}, required={}, empty={}", control.isValid(), control.isRequired(), control.isEmpty());
 
         if (control.isValid()) {
             if (control.isRequired()) {
@@ -205,7 +205,7 @@ public class Grid extends GridPane {
                 entry.marker.setTooltip(null);
             }
         } else {
-            if (control.isRequired() && control.get() == null) {
+            if (control.isRequired() && control.isEmpty()) {
                 entry.marker.setText(MARKER_REQUIRED);
                 entry.marker.setTooltip(null);
             } else {
