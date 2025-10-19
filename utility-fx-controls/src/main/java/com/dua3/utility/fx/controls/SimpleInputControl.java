@@ -1,8 +1,6 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.control.Control;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -21,7 +19,7 @@ import java.util.function.Supplier;
 public final class SimpleInputControl<C extends Control, R> implements InputControl<R> {
 
     private final C control;
-    private final State<R> state;
+    private final InputControlState<R> state;
     private final Supplier<? extends @Nullable R> dflt;
 
     /**
@@ -34,7 +32,7 @@ public final class SimpleInputControl<C extends Control, R> implements InputCont
      */
     SimpleInputControl(C control, Property<R> value, Supplier<? extends @Nullable R> dflt, Function<@Nullable R, Optional<String>> validate) {
         this.control = control;
-        this.state = new State<>(value, dflt, validate);
+        this.state = new InputControlState<>(value, dflt, validate);
         this.dflt = dflt;
 
         state.requiredProperty().addListener((v, o, n) -> {
@@ -52,8 +50,8 @@ public final class SimpleInputControl<C extends Control, R> implements InputCont
     }
 
     @Override
-    public @NonNull C node() {
-        return control;
+    public InputControlState<R> state() {
+        return state;
     }
 
     @Override
@@ -62,22 +60,7 @@ public final class SimpleInputControl<C extends Control, R> implements InputCont
     }
 
     @Override
-    public void reset() {
-        state.valueProperty().setValue(dflt.get());
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty requiredProperty() {
-        return state.requiredProperty();
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty validProperty() {
-        return state.validProperty();
-    }
-
-    @Override
-    public ReadOnlyStringProperty errorProperty() {
-        return state.errorProperty();
+    public @NonNull C node() {
+        return control;
     }
 }

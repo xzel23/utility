@@ -10,11 +10,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -305,6 +302,50 @@ public interface InputControl<T> {
     }
 
     /**
+     * Return the {@link InputControlState} instance for this control.
+     *
+     * @return the State insstance that tracks this control's state
+     */
+    InputControlState<T> state();
+
+    /**
+     * Resets the current state of the implementing object.
+     * This method delegates the reset operation to the associated state
+     * object, ensuring that any internal state is reinitialized or returned
+     * to its default value.
+     */
+    default void reset() {
+        state().reset();
+    }
+
+    /**
+     * Provides a read-only property that indicates whether this entity is in a required state.
+     *
+     * @return a ReadOnlyBooleanProperty representing the required state
+     */
+    default ReadOnlyBooleanProperty requiredProperty() {
+        return state().requiredProperty();
+    }
+
+    /**
+     * Provides the valid property representing the validity state.
+     *
+     * @return a ReadOnlyBooleanProperty that reflects whether the state is valid.
+     */
+    default ReadOnlyBooleanProperty validProperty() {
+        return state().validProperty();
+    }
+
+    /**
+     * Provides a read-only property that represents an error state.
+     *
+     * @return a ReadOnlyStringProperty containing the error message or null if no error exists
+     */
+    default ReadOnlyStringProperty errorProperty() {
+        return state().errorProperty();
+    }
+
+    /**
      * Get the {@link Node} for this input element.
      *
      * @return the node
@@ -317,7 +358,7 @@ public interface InputControl<T> {
      * @return the current value
      */
     default @Nullable T get() {
-        return valueProperty().getValue();
+        return state().getValue();
     }
 
     /**
@@ -325,7 +366,9 @@ public interface InputControl<T> {
      *
      * @return the property containing the current value
      */
-    Property<@Nullable T> valueProperty();
+    default Property<@Nullable T> valueProperty() {
+        return state().valueProperty();
+    }
 
     /**
      * Set value.
@@ -333,7 +376,7 @@ public interface InputControl<T> {
      * @param arg the value to set
      */
     default void set(@Nullable T arg) {
-        valueProperty().setValue(arg);
+        state().setValue(arg);
     }
 
     /**
@@ -342,7 +385,7 @@ public interface InputControl<T> {
      * @return true if input is required, false otherwise
      */
     default boolean isRequired() {
-        return requiredProperty().get();
+        return state().isRequired();
     }
 
     /**
@@ -350,7 +393,7 @@ public interface InputControl<T> {
      * @return true, if content is valid
      */
     default boolean isValid() {
-        return validProperty().get();
+        return state().isValid();
     }
 
     /**
@@ -360,188 +403,6 @@ public interface InputControl<T> {
         // nop
     }
 
-    /**
-     * Reset value to default
-     */
-    void reset();
-
-    /**
-     * Provides a read-only property representing the required state of the input.
-     *
-     * @return a ReadOnlyBooleanProperty that is true if the input is required and false otherwise
-     */
-    ReadOnlyBooleanProperty requiredProperty();
-
-    /**
-     * Provides a read-only property representing the validity of the input.
-     *
-     * @return a ReadOnlyBooleanProperty that is true if the input is valid and false otherwise
-     */
-    ReadOnlyBooleanProperty validProperty();
-
-    /**
-     * Provides a read-only property representing the error message for this input control.
-     *
-     * <p>This property contains an error message if the input is invalid, otherwise it is empty.
-     *
-     * @return a ReadOnlyStringProperty containing the error message if there is a validation error, otherwise empty
-     */
-    ReadOnlyStringProperty errorProperty();
-
-    /**
-     * State class encapsulates a value, validation logic, error message, and validity state.
-     *
-     * @param <R> the type of the value being managed
-     */
-    class State<R> {
-        private final BooleanProperty required  = new SimpleBooleanProperty(true);
-        private final Property<@Nullable R> value;
-        private final BooleanProperty valid = new SimpleBooleanProperty(true);
-        private final StringProperty error = new SimpleStringProperty("");
-
-        private Supplier<? extends @Nullable R> dflt;
-
-        private Function<? super @Nullable R, Optional<String>> validate;
-
-        /**
-         * Constructs a State object with the given value.
-         *
-         * @param value the property representing the value managed by this State
-         */
-        public State(Property<@Nullable R> value) {
-            this(value, freeze(value));
-        }
-
-        /**
-         * Constructs a State object with the given value and default value supplier.
-         *
-         * @param value the property representing the value managed by this State
-         * @param dflt a supplier that provides the default value for the property
-         */
-        public State(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt) {
-            this(value, dflt, s -> Optional.empty());
-        }
-
-        /**
-         * Creates a supplier that always returns the current value of the given ObservableValue,
-         * capturing its value at the moment this method is called.
-         *
-         * @param value the ObservableValue whose current value is to be captured
-         * @return a Supplier that returns the captured value
-         */
-        private static <R> Supplier<R> freeze(ObservableValue<? extends R> value) {
-            final R frozen = value.getValue();
-            return () -> frozen;
-        }
-
-        /**
-         * Constructs a State object with the given value, default value supplier, and validation function.
-         *
-         * @param value the property representing the value managed by this State
-         * @param dflt a supplier that provides the default value for the property
-         * @param validate a function that validates the value and returns an optional error message
-         */
-        public State(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate) {
-            this.required.set(validate.apply(null).isPresent());
-            this.value = value;
-            this.value.addListener((ObservableValue<? extends @Nullable R> v, @Nullable R o, @Nullable R n) -> updateValidState(n));
-            this.dflt = dflt;
-            this.validate = validate;
-            this.valid.set(validate.apply(value.getValue()).isEmpty());
-            this.error.setValue("");
-        }
-
-        private void updateValidState(@Nullable R r) {
-            Optional<String> result = validate.apply(r);
-            valid.setValue(result.isEmpty());
-            error.setValue(result.orElse(""));
-        }
-
-        /**
-         * Provides a read-only boolean property indicating whether this State is marked as required.
-         *
-         * @return a {@link ReadOnlyBooleanProperty} representing the required status of this State
-         */
-        public ReadOnlyBooleanProperty requiredProperty() {
-            return required;
-        }
-
-        /**
-         * Sets the validation function for the State.
-         *
-         * @param validate a function that validates the value and returns an optional error message
-         */
-        public void setValidate(Function<? super @Nullable R, Optional<String>> validate) {
-            this.validate = validate;
-            updateValidState(valueProperty().getValue());
-        }
-
-        /**
-         * Returns the property representing the value managed by this State.
-         *
-         * @return the property representing the value
-         */
-        public Property<@Nullable R> valueProperty() {
-            return value;
-        }
-
-        /**
-         * Provides a read-only boolean property indicating the validity state.
-         *
-         * @return a {@link ReadOnlyBooleanProperty} representing whether the current state is valid
-         */
-        public ReadOnlyBooleanProperty validProperty() {
-            return valid;
-        }
-
-        /**
-         * Returns a read-only string property representing the current error message.
-         * If the value is valid, the error message will be an empty string.
-         *
-         * @return ReadOnlyStringProperty representing the error message.
-         */
-        public ReadOnlyStringProperty errorProperty() {
-            return error;
-        }
-
-        /**
-         * Sets the default value supplier for this State.
-         *
-         * @param dflt a supplier that provides the default value for the property
-         */
-        public void setDefault(Supplier<? extends @Nullable R> dflt) {
-            this.dflt = dflt;
-        }
-
-        /**
-         * Resets the state to its default value.
-         *
-         * <p>This method sets the current value of the property managed by this
-         * state to the default value supplied during the creation of the state.
-         */
-        public void reset() {
-            value.setValue(dflt.get());
-        }
-
-        /**
-         * Validates the current state based on the value and validation function provided during
-         * the creation of the State object or set later and updates the valid state of the control.
-         *
-         * @return true if the current value of the property is valid, otherwise false
-         */
-        boolean validate() {
-            Optional<String> result;
-            try {
-                result = validate.apply(valueProperty().getValue());
-            } catch (Exception e) {
-                result = Optional.of(INVALID_VALUE);
-            }
-            valid.setValue(result.isEmpty());
-            error.setValue(result.orElse(""));
-            return result.isEmpty();
-        }
-
-    }
 }
 
 final class FormatWithDefaultValue extends Format {

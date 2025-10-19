@@ -78,6 +78,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     private static class ControlWrapper implements InputControl<Void> {
 
+        private static final InputControlState<Void> VOID_STATE = new InputControlState<>(new SimpleObjectProperty<>());
+
         private final Node node;
 
         private final Property<Void> value = new SimpleObjectProperty<>();
@@ -87,6 +89,11 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
         ControlWrapper(Node node) {
             this.node = node;
+        }
+
+        @Override
+        public InputControlState<Void> state() {
+            return VOID_STATE;
         }
 
         @Override
@@ -332,7 +339,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public GridBuilder inputSlider(String id, String label, Supplier<@Nullable Double> dflt, double min, double max) {
-        return addInput(id, label, Double.class, dflt, Controls.slider().min(min).max(max).setDefault(dflt).build(), false);
+        return addInput(id, label, Double.class, dflt, Controls.slider().min(min).max(max).build(), false);
     }
 
     @Override

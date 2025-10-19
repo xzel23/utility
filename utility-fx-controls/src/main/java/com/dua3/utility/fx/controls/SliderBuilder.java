@@ -1,25 +1,64 @@
 package com.dua3.utility.fx.controls;
 
-import javafx.beans.property.Property;
-import javafx.beans.value.ObservableNumberValue;
+import com.dua3.utility.lang.LangUtil;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.stage.Window;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiFunction;
-import java.util.function.DoubleConsumer;
-import java.util.function.Supplier;
 
 /**
  * A builder class for constructing a {@code SliderWithButtons} instance with various configuration options.
  */
-public class SliderBuilder {
-    private final SliderWithButtons slider;
-    private boolean valueSet = false;
+public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
+    private SliderWithButtons.Mode mode = SliderWithButtons.Mode.SLIDER_ONLY;
+    private boolean showTickMarks = false;
+    private boolean snapToTicks = false;
+    private boolean showTickLabels = false;
 
-    SliderBuilder(SliderWithButtons.Mode mode, BiFunction<Double, Double, String> formatter) {
-        slider = new SliderWithButtons(mode, formatter);
+    private @Nullable BiFunction<Double, Double, String> formatter = null;
+    private @Nullable Orientation orientation;
+    private @Nullable Double min = null;
+    private @Nullable Double max = null;
+    private @Nullable Double value = null;
+    private @Nullable String incrementText;
+    private @Nullable Node incrementGraphic;
+    private @Nullable String decrementText;
+    private @Nullable Node decrementGraphic;
+    private @Nullable Double blockIncrement = null;
+    private @Nullable Double majorTickUnit = null;
+
+    SliderBuilder() {
     }
 
+    /**
+     * Sets the mode of the slider.
+     *
+     * @param mode the mode to set for the slider
+     * @return this instance of {@code SliderBuilder} for method chaining
+     */
+    public SliderBuilder mode(SliderWithButtons.Mode mode) {
+        this.mode = mode;
+        return self();
+    }
+
+    /**
+     * Sets the formatter for the slider, which determines how the slider's value is
+     * formatted and displayed. The formatter is a function that takes the current
+     * minimum and maximum values of the slider, as well as its current value, and
+     * returns a formatted string representation.
+     *
+     * @param formatter a {@code BiFunction} that takes the minimum value, the
+     *                  maximum value, and the current value of the slider and
+     *                  returns a formatted string.
+     * @return this instance of {@code SliderBuilder} for method chaining.
+     */
+    public SliderBuilder formatter(BiFunction<Double, Double, String> formatter) {
+        this.formatter = formatter;
+        return self();
+    }
+    
     /**
      * Sets the orientation of the slider.
      *
@@ -28,8 +67,8 @@ public class SliderBuilder {
      * @see Orientation
      */
     public SliderBuilder orientation(Orientation value) {
-        slider.setOrientation(value);
-        return this;
+        this.orientation = value;
+        return self();
     }
 
     /**
@@ -39,8 +78,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder min(double value) {
-        slider.setMin(value);
-        return this;
+        this.min = value;
+        return self();
     }
 
     /**
@@ -50,8 +89,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder max(double value) {
-        slider.setMax(value);
-        return this;
+        this.max = value;
+        return self();
     }
 
     /**
@@ -61,9 +100,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder value(double value) {
-        slider.setValue(value);
-        valueSet = true;
-        return this;
+        this.value = value;
+        return self();
     }
 
     /**
@@ -73,8 +111,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder incrementText(String value) {
-        slider.setIncrementText(value);
-        return this;
+        this.incrementText = value;
+        return self();
     }
 
     /**
@@ -84,8 +122,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder incrementGraphic(Node value) {
-        slider.setIncrementGraphic(value);
-        return this;
+        this.incrementGraphic = value;
+        return self();
     }
 
     /**
@@ -95,8 +133,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder decrementText(String value) {
-        slider.setDecrementText(value);
-        return this;
+        this.decrementText = value;
+        return self();
     }
 
     /**
@@ -106,8 +144,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder decrementGraphic(Node value) {
-        slider.setDecrementGraphic(value);
-        return this;
+        this.decrementGraphic = value;
+        return self();
     }
 
     /**
@@ -117,8 +155,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder blockIncrement(double value) {
-        slider.setBlockIncrement(value);
-        return this;
+        this.blockIncrement = value;
+        return self();
     }
 
     /**
@@ -127,8 +165,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder majorTickUnit(double value) {
-        slider.setMajorTickUnit(value);
-        return this;
+        this.majorTickUnit = value;
+        return self();
     }
 
     /**
@@ -137,8 +175,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder snapToTicks(boolean value) {
-        slider.setSnapToTicks(value);
-        return this;
+        this.snapToTicks = value;
+        return self();
     }
 
     /**
@@ -148,8 +186,8 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder showTickLabels(boolean value) {
-        slider.setShowTickLabels(value);
-        return this;
+        this.showTickLabels = value;
+        return self();
     }
 
     /**
@@ -159,75 +197,10 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder showTickMarks(boolean value) {
-        slider.setShowTickMarks(value);
-        return this;
+        this.showTickMarks = value;
+        return self();
     }
 
-    /**
-     * Sets a callback to be invoked when the value of the slider changes.
-     *
-     * @param onChange a DoubleConsumer that will be invoked with the new slider value whenever it changes
-     * @return this instance of {@code SliderBuilder} for method chaining.
-     */
-    public SliderBuilder onChange(DoubleConsumer onChange) {
-        slider.valueProperty().addListener((v, o, n) -> onChange.accept(n));
-        return this;
-    }
-
-    /**
-     * Binds the slider's value property bidirectionally with the specified number property.
-     *
-     * @param value the property to be bound bidirectionally with the slider's value property.
-     * @return this instance of {@code SliderBuilder} for method chaining.
-     */
-    public SliderBuilder bind(Property<Number> value) {
-        slider.valueAsDoubleProperty().bindBidirectional(value);
-        return this;
-    }
-
-    /**
-     * Binds the minimum value of the slider to the given {@code ObservableNumberValue}.
-     *
-     * @param value the {@code ObservableNumberValue} to bind the minimum value to
-     * @return this instance of {@code SliderBuilder} for method chaining.
-     */
-    public SliderBuilder bindMin(ObservableNumberValue value) {
-        slider.minProperty().bind(value);
-        return this;
-    }
-
-    /**
-     * Binds the maximum value of the slider to the given observable number value.
-     *
-     * @param value the {@code ObservableNumberValue} to bind to the slider's maximum property
-     * @return this instance of {@code SliderBuilder} for method chaining.
-     */
-    public SliderBuilder bindMax(ObservableNumberValue value) {
-        slider.maxProperty().bind(value);
-        return this;
-    }
-
-    /**
-     * Sets the default value of the slider.
-     *
-     * @param dflt the default value to set
-     * @return this instance of {@code SliderBuilder} for method chaining.
-     */
-    public SliderBuilder setDefault(double dflt) {
-        slider.setDefault(dflt);
-        return this;
-    }
-
-    /**
-     * Sets the default value supplier of the slider.
-     *
-     * @param dflt the default value to set
-     * @return this instance of {@code SliderBuilder} for method chaining.
-     */
-    public SliderBuilder setDefault(Supplier<Double> dflt) {
-        slider.setDefault(dflt);
-        return this;
-    }
 
     /**
      * Builds the configured {@code SliderWithButtons} instance.
@@ -235,9 +208,26 @@ public class SliderBuilder {
      * @return the built {@code SliderWithButtons} instance.
      */
     public SliderWithButtons build() {
-        if (!valueSet) {
-            slider.reset();
-        }
+        BiFunction<Double, Double, String> fmtr = LangUtil.orElse(formatter, (a, b) -> "");
+
+        SliderWithButtons slider = new SliderWithButtons(mode, fmtr);
+        applyTo(slider);
+
+        applyIfNonNull(orientation, slider::setOrientation);
+        applyIfNonNull(min, slider::setMin);
+        applyIfNonNull(max, slider::setMax);
+        applyIfNonNull(value, slider::set);
+        applyIfNonNull(incrementText, slider::setIncrementText);
+        applyIfNonNull(incrementGraphic, slider::setIncrementGraphic);
+        applyIfNonNull(decrementText, slider::setDecrementText);
+        applyIfNonNull(decrementGraphic, slider::setDecrementGraphic);
+        applyIfNonNull(blockIncrement, slider::setBlockIncrement);
+        applyIfNonNull(majorTickUnit, slider::setMajorTickUnit);
+
+        slider.setShowTickMarks(showTickMarks);
+        slider.setSnapToTicks(snapToTicks);
+        slider.setShowTickLabels(showTickLabels);
+
         return slider;
     }
 

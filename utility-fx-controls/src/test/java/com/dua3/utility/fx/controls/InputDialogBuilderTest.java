@@ -611,49 +611,21 @@ class InputDialogBuilderTest extends FxTestBase {
      */
     private static class TestInputControl implements InputControl<String> {
         private final Label label;
-        private final SimpleObjectProperty<String> value;
-        private final SimpleBooleanProperty required;
-        private final SimpleBooleanProperty valid;
-        private final SimpleStringProperty error;
-        private final Supplier<String> defaultValue;
+        private final InputControlState<String> state;
 
         public TestInputControl() {
             this.label = new Label("Test Input");
-            this.value = new SimpleObjectProperty<>("");
-            this.required = new SimpleBooleanProperty(false);
-            this.valid = new SimpleBooleanProperty(true);
-            this.error = new SimpleStringProperty("");
-            this.defaultValue = () -> "";
+            this.state = new InputControlState<>(new SimpleObjectProperty<>(""), () -> "", v -> Optional.empty());
+        }
+
+        @Override
+        public InputControlState<String> state() {
+            return state;
         }
 
         @Override
         public Node node() {
             return label;
-        }
-
-        @Override
-        public Property<String> valueProperty() {
-            return value;
-        }
-
-        @Override
-        public void reset() {
-            value.set(defaultValue.get());
-        }
-
-        @Override
-        public ReadOnlyBooleanProperty requiredProperty() {
-            return required;
-        }
-
-        @Override
-        public ReadOnlyBooleanProperty validProperty() {
-            return valid;
-        }
-
-        @Override
-        public ReadOnlyStringProperty errorProperty() {
-            return error;
         }
     }
 }

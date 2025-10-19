@@ -159,7 +159,8 @@ public class Grid extends GridPane {
                     updateMarker(entry);
                 }
             });
-            entry.control.valueProperty().addListener((v, o, n) -> updateMarker(entry));
+
+            entry.control.state().addValidationListener(() -> updateMarker(entry));
 
             addToGrid(node, gridX, gridY, span, insets);
             gridX += span;
@@ -192,6 +193,7 @@ public class Grid extends GridPane {
     }
 
     private static void updateMarker(Meta<?> entry) {
+        LOG.info("updateMarker: {}", entry.id);
         InputControl<?> control = entry.control;
 
         if (control.isValid()) {

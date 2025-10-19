@@ -43,7 +43,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
      */
     protected static final Logger LOG = LogManager.getLogger(OptionsPane.class);
     private static final Insets INSETS = new Insets(2);
-    private final InputControl.State<Arguments> state;
+    private final InputControlState<Arguments> state;
     private final Supplier<? extends Collection<Option<?>>> options;
     private final Supplier<@Nullable Arguments> dflt;
     private final Map<Option<?>, InputControl<?>> items = new LinkedHashMap<>();
@@ -72,7 +72,12 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
         this.options = options;
         this.dflt = dflt;
         Property<@Nullable Arguments> value = new SimpleObjectProperty<>();
-        this.state = new State<>(value, dflt);
+        this.state = new InputControlState<>(value, dflt);
+    }
+
+    @Override
+    public InputControlState<Arguments> state() {
+        return state;
     }
 
     @Override

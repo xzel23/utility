@@ -12,19 +12,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Builder for creating instances of {@link FileInput} with customizable options.
  * The builder provides methods to configure the file dialog mode, initial path,
  * extension filters, validation, and disabled state.
  */
-public final class FileInputBuilder {
+public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder, Path> {
 
-    private final @Nullable Window parentWindow;
+    private final @Nullable Window owner;
     private final FileDialogMode mode;
     private final List<FileChooser.ExtensionFilter> extensionFilters = new ArrayList<>();
-    private Supplier<@Nullable Path> initialPath = () -> null;
     private boolean existingOnly = true;
     private Function<Path, Optional<String>> validate;
     private @Nullable ObservableValue<Boolean> disabled;
@@ -34,8 +32,8 @@ public final class FileInputBuilder {
      *
      * @param mode the {@link FileDialogMode} indicating the type of file dialog (OPEN, SAVE, or DIRECTORY)
      */
-    FileInputBuilder(@Nullable Window parentWindow, FileDialogMode mode) {
-        this.parentWindow = parentWindow;
+    FileInputBuilder(@Nullable Window owner, FileDialogMode mode) {
+        this.owner = owner;
         this.mode = mode;
         this.validate = this::defaultValidate;
     }
@@ -48,7 +46,7 @@ public final class FileInputBuilder {
      */
     public FileInputBuilder disabled(ObservableValue<Boolean> disabled) {
         this.disabled = disabled;
-        return this;
+        return self();
     }
 
     /**
@@ -61,29 +59,7 @@ public final class FileInputBuilder {
      */
     public FileInputBuilder validate(Function<Path, Optional<String>> validate) {
         this.validate = validate;
-        return this;
-    }
-
-    /**
-     * Sets the initial path for the file input.
-     *
-     * @param initialPath the initial path to set, which may be null
-     * @return an instance of FileInputBuilder with the specified initial path
-     */
-    public FileInputBuilder initialPath(@Nullable Path initialPath) {
-        this.initialPath = () -> initialPath;
-        return this;
-    }
-
-    /**
-     * Sets the initial path for the FileInputBuilder using the provided {@code Supplier<Path>}.
-     *
-     * @param initialPath a Supplier that provides the initial Path
-     * @return the FileInputBuilder instance with the updated initial path
-     */
-    public FileInputBuilder initialPath(Supplier<Path> initialPath) {
-        this.initialPath = initialPath;
-        return this;
+        return self();
     }
 
     /**
@@ -95,7 +71,7 @@ public final class FileInputBuilder {
      */
     public FileInputBuilder filter(FileChooser.ExtensionFilter... filter) {
         extensionFilters.addAll(Arrays.asList(filter));
-        return this;
+        return self();
     }
 
     /**
@@ -106,7 +82,7 @@ public final class FileInputBuilder {
      */
     public FileInputBuilder existingOnly(boolean flag) {
         this.existingOnly = flag;
-        return this;
+        return self();
     }
 
     /**
@@ -115,7 +91,8 @@ public final class FileInputBuilder {
      * @return a constructed {@link FileInput} control based on the current configuration.
      */
     public FileInput build() {
-        FileInput control = new FileInput(parentWindow, mode, existingOnly, initialPath, extensionFilters, validate);
+        FileInput control = new FileInput(owner, mode, existingOnly, getDefault(), extensionFilters, validate);
+        applyTo(control);
         if (disabled != null) {
             control.disableProperty().bind(disabled);
         }

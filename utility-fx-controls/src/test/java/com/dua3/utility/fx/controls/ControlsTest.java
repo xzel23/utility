@@ -86,17 +86,20 @@ class ControlsTest extends FxTestBase {
             assertNotNull(slider);
             assertEquals(0.0, slider.getMin());
             assertEquals(100.0, slider.getMax());
-            assertEquals(0.0, slider.getValue());
+            assertEquals(0.0, slider.get());
 
             // Test slider with custom min, max, value
             SliderWithButtons customSlider = Controls.slider().min(10.0).max(50.0).value(25.0).build();
             assertNotNull(customSlider);
             assertEquals(10.0, customSlider.getMin());
             assertEquals(50.0, customSlider.getMax());
-            assertEquals(25.0, customSlider.getValue());
+            assertEquals(25.0, customSlider.get());
 
             // Test slider with formatter
-            SliderWithButtons formattedSlider = Controls.slider(SliderWithButtons.Mode.SLIDER_VALUE, (min, max) -> String.format("%.1f - %.1f", min, max)).build();
+            SliderWithButtons formattedSlider = Controls.slider()
+                    .mode(SliderWithButtons.Mode.SLIDER_VALUE)
+                    .formatter((min, max) -> String.format("%.1f - %.1f", min, max))
+                    .build();
             assertNotNull(formattedSlider);
         });
     }

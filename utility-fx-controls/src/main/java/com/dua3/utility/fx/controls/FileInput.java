@@ -3,17 +3,8 @@ package com.dua3.utility.fx.controls;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.FxUtil;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringExpression;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -48,6 +39,7 @@ import java.util.function.Supplier;
 public class FileInput extends CustomControl<HBox> implements InputControl<Path> {
 
     private static final StringConverter<Path> PATH_CONVERTER = new PathConverter();
+    private final InputControlState<Path> state;
 
     static class PathConverter extends StringConverter<Path> {
         @Override
@@ -65,11 +57,6 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
 
     private final FileDialogMode mode;
     private final FileChooser.ExtensionFilter[] filters;
-    private final Supplier<@Nullable Path> dflt;
-
-    private final StringProperty error = new SimpleStringProperty("");
-    private final BooleanProperty required = new SimpleBooleanProperty(false);
-    private final BooleanProperty valid = new SimpleBooleanProperty(true);
 
     /**
      * Constructs a FileInput instance with specified parameters.
@@ -94,7 +81,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
 
         this.mode = mode;
         this.filters = filters.toArray(FileChooser.ExtensionFilter[]::new);
-        this.dflt = dflt;
+        this.state = new InputControlState<>(value, dflt, validate);
 
         TextField tfFilename = new TextField();
         Button button = new Button("…");
@@ -133,41 +120,12 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
 
         tfFilename.textProperty().bindBidirectional(valueProperty(), PATH_CONVERTER);
 
-        // required property
-        required.set(validate.apply(null).isPresent());
-
-        // error property
-        StringExpression errorText = Bindings.createStringBinding(
-                () -> {
-                    Path file = value.get();
-                    if (file == null) {
-                        return "No file selected.";
-                    }
-                    if (mode == FileDialogMode.OPEN && !Files.exists(file)) {
-                        return "File does not exist: " + file;
-                    }
-                    return "";
-                },
-                value
-        );
-
-        error.bind(errorText);
-
-        // valid property
-        valid.bind(Bindings.createBooleanBinding(() -> validate.apply(getPath()).isEmpty(), value));
-        valueProperty().addListener((v, o, n) -> validate.apply(n));
-
         // enable drag&drop
         Function<List<Path>, List<TransferMode>> acceptPath = list ->
                 list.isEmpty() ? Collections.emptyList() : List.of(TransferMode.MOVE);
         tfFilename.setOnDragOver(FxUtil.dragEventHandler(acceptPath));
         tfFilename.setOnDragDropped(FxUtil.dropEventHandler(list -> valueProperty().setValue(list.getFirst())));
 
-        // set initial path
-        Path p = dflt.get();
-        if (p != null) {
-            set(p);
-        }
     }
 
     /**
@@ -216,38 +174,14 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
         };
     }
 
-    private @Nullable Path getPath() {
-        return value.get();
+    @Override
+    public InputControlState<Path> state() {
+        return state;
     }
 
     @Override
     public Node node() {
         return this;
-    }
-
-    @Override
-    public void reset() {
-        value.setValue(dflt.get());
-    }
-
-    @Override
-    public Property<@Nullable Path> valueProperty() {
-        return value;
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty requiredProperty() {
-        return required;
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty validProperty() {
-        return valid;
-    }
-
-    @Override
-    public ReadOnlyStringProperty errorProperty() {
-        return error;
     }
 
 }

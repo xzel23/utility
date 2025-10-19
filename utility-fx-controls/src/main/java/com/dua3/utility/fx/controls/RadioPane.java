@@ -31,7 +31,7 @@ public class RadioPane<T> extends VBox implements InputControl<T> {
     private static final double SPACING = 4;
     private final LinkedHashMap<T, RadioButton> items = new LinkedHashMap<>();
     private final ToggleGroup group;
-    private final InputControl.State<T> state;
+    private final InputControlState<T> state;
 
     /**
      * Constructs a RadioPane with a given set of items, current value, and validation function.
@@ -61,8 +61,7 @@ public class RadioPane<T> extends VBox implements InputControl<T> {
             property.setValue(toggle != null ? (T) toggle.getUserData() : null);
         });
 
-        this.state = new State<>(property);
-        state.setValidate(validate);
+        this.state = new InputControlState<>(property, () -> null, validate);
 
         // update toggle when state changes
         state.valueProperty().addListener((v, o, n) -> group.selectToggle(this.items.get(n)));
@@ -72,33 +71,13 @@ public class RadioPane<T> extends VBox implements InputControl<T> {
     }
 
     @Override
+    public InputControlState<T> state() {
+        return state;
+    }
+
+    @Override
     public Node node() {
         return this;
-    }
-
-    @Override
-    public void reset() {
-        state.reset();
-    }
-
-    @Override
-    public Property<@Nullable T> valueProperty() {
-        return state.valueProperty();
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty requiredProperty() {
-        return state.requiredProperty();
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty validProperty() {
-        return state.validProperty();
-    }
-
-    @Override
-    public ReadOnlyStringProperty errorProperty() {
-        return state.errorProperty();
     }
 
     @Override

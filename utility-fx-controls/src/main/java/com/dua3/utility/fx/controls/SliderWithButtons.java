@@ -1,6 +1,8 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.PropertyConverter;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -25,8 +27,10 @@ import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -39,6 +43,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
 
     private static final Pattern PATTERN_DIGIT = Pattern.compile("\\d");
     private final Mode mode;
+    private final InputControlState<Double> state;
     private final BiFunction<? super Double, Double, String> formatter;
     private final Slider slider;
     private final Button btnIncrement;
@@ -46,8 +51,6 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     private final List<Node> children = new ArrayList<>();
     private @Nullable TextField tfValue;
     private @Nullable Label label;
-
-    private Supplier<Double> defaultSupplier = this::getMin;
 
     /**
      * Constructor for SliderWithButtons. This class creates a slider
@@ -66,6 +69,12 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         this.slider = new Slider();
         this.btnDecrement = new Button("-");
         this.btnIncrement = new Button("+");
+
+        this.state = new InputControlState<>(
+                slider.valueProperty().asObject(),
+                () -> null,
+                v -> v != null && isValueValid(v) ? Optional.<String>empty() : Optional.of("Value out of range")
+        );
 
         btnDecrement.setOnAction(evt -> slider.decrement());
         btnDecrement.setFocusTraversable(false);
@@ -98,6 +107,15 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         initPane();
     }
 
+    private boolean isValueValid(double v) {
+        return Double.isFinite(v) && LangUtil.isBetween(v, getMin(), getMax());
+    }
+
+    @Override
+    public InputControlState<Double> state() {
+        return state;
+    }
+
     private void valueChanged(Number o, Number n) {
         if (label != null) {
             label.setText(formatter.apply(n.doubleValue(), getMax()));
@@ -112,7 +130,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
             return;
         }
 
-        double v = getValue();
+        double v = LangUtil.orElse(get(), getMin());
         double m = getMax();
 
         String proto = PATTERN_DIGIT.matcher(formatter.apply(m, m)).replaceAll("0");
@@ -152,15 +170,6 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         slider.setMax(value);
     }
 
-    /**
-     * Retrieves the current value of the slider.
-     *
-     * @return The current value of the slider as a double.
-     */
-    public double getValue() {
-        return slider.getValue();
-    }
-
     private static Pane box(Orientation orientation) {
         if (orientation == Orientation.HORIZONTAL) {
             HBox box = new HBox();
@@ -171,15 +180,6 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
             box.setAlignment(Pos.CENTER);
             return box;
         }
-    }
-
-    /**
-     * Sets the value of the slider.
-     *
-     * @param value the value to set for the slider
-     */
-    public void setValue(double value) {
-        slider.setValue(value);
     }
 
     /**
@@ -345,68 +345,6 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     @Override
     public Node node() {
         return slider;
-    }
-
-    /**
-     * Gets the value property of the slider.
-     *
-     * @return the DoubleProperty representing the slider's current value.
-     */
-    public Property<Double> valueProperty() {
-        return PropertyConverter.convert(slider.valueProperty());
-    }
-
-    /**
-     * Gets the value property of the slider as a DoubleProperty.
-     *
-     * @return the DoubleProperty representing the slider's current value.
-     */
-    public DoubleProperty valueAsDoubleProperty() {
-        return slider.valueProperty();
-    }
-
-    /**
-     * Sets the default value for the slider.
-     *
-     * @param dflt the default value to set for the slider.
-     */
-    public void setDefault(double dflt) {
-        this.defaultSupplier = () -> dflt;
-    }
-
-    /**
-     * Sets the default value supplier for the slider.
-     *
-     * @param dflt the default value supplier to set for the slider.
-     */
-    public void setDefault(Supplier<Double> dflt) {
-        this.defaultSupplier = dflt;
-    }
-
-    @Override
-    public void reset() {
-        slider.setValue(Math.clamp(defaultSupplier.get(), getMin(), getMax()));
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty requiredProperty() {
-        return new SimpleBooleanProperty(false);
-    }
-
-    @Override
-    public ReadOnlyBooleanProperty validProperty() {
-        SimpleBooleanProperty property = new SimpleBooleanProperty();
-        property.bind(
-                slider.valueProperty()
-                        .greaterThanOrEqualTo(minProperty())
-                        .and(slider.valueProperty().lessThanOrEqualTo(maxProperty()))
-                        .asObject());
-        return property;
-    }
-
-    @Override
-    public ReadOnlyStringProperty errorProperty() {
-        return PropertyConverter.convertToStringReadOnly(validProperty(), valid -> valid ? "" : "Value out of range");
     }
 
     /**
