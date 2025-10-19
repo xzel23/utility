@@ -84,6 +84,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         private final BooleanProperty required = new SimpleBooleanProperty(false);
         private final BooleanProperty valid = new SimpleBooleanProperty(true);
         private final ReadOnlyStringProperty error = new SimpleStringProperty("");
+        private final InputControlState<Void> state = InputControlState.voidState();
 
         ControlWrapper(Node node) {
             this.node = node;
@@ -91,7 +92,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
         @Override
         public InputControlState<Void> state() {
-            return InputControlState.voidState();
+            return state;
         }
 
         @Override

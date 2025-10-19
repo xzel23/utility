@@ -29,8 +29,6 @@ import java.util.function.Supplier;
 public final class InputControlState<R> {
     private static final Logger LOG = LogManager.getLogger(InputControlState.class);
 
-    private static final InputControlState<Void> VOID_STATE = new InputControlState<>(new SimpleObjectProperty<>(), freeze(new SimpleObjectProperty<>()));
-
     private final BooleanProperty required = new SimpleBooleanProperty(true);
     private final Property<@Nullable R> value;
     private final BooleanProperty valid = new SimpleBooleanProperty(true);
@@ -41,7 +39,7 @@ public final class InputControlState<R> {
     private final ObservableValue<?> baseValue;
 
     public static InputControlState<Void> voidState() {
-        return VOID_STATE;
+        return new InputControlState<>(new SimpleObjectProperty<>(), freeze(new SimpleObjectProperty<>()));
     }
 
     /**
