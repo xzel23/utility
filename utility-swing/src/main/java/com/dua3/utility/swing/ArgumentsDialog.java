@@ -168,7 +168,7 @@ public class ArgumentsDialog extends JDialog {
                                 ? Arguments.Entry.create((Option<Boolean>) oi.option, Boolean.parseBoolean(strings.getFirst()))
                                 : oi.option.map(strings);
                     })
-                    .collect(Collectors.toUnmodifiableList());
+                    .toList();
             return new Arguments(parsedOptions, Collections.emptyList());
         }
     }

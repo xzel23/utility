@@ -69,7 +69,7 @@ public final class StreamUtil {
      */
     @SafeVarargs
     public static <T extends @Nullable Object> Stream<T> concat(Stream<T>... streams) {
-        return Stream.of(streams).<T>mapMulti(Stream::forEach);
+        return Stream.of(streams).mapMulti(Stream::forEach);
     }
 
     /**

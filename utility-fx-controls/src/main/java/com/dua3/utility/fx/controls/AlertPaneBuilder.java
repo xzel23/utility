@@ -20,9 +20,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DialogPane;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Builder for Alert Dialogs.
  * <p>

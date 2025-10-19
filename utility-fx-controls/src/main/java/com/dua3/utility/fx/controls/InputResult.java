@@ -84,7 +84,7 @@ public class InputResult {
      */
     public void onResult(ButtonType r, Consumer<Map<String, @Nullable Object>> consumer) {
         if (Objects.equals(result, r)) {
-            consumer.accept(Collections.unmodifiableMap(data));
+            consumer.accept(data);
         }
     }
 

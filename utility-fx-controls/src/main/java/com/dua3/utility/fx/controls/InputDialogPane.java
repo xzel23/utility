@@ -90,7 +90,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
 
     /**
      * Checks and returns the validity state of the input in the dialog pane.
-     *
+     * <p>
      * This method retrieves the current value of the {@code valid} property,
      * which indicates whether the user input meets the required validation criteria.
      *

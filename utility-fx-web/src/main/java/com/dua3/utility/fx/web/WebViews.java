@@ -14,7 +14,6 @@
 
 package com.dua3.utility.fx.web;
 
-import com.dua3.utility.fx.controls.ButtonDef;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.event.Event;

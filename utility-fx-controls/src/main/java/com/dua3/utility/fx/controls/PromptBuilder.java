@@ -105,7 +105,7 @@ public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuild
     }
 
     @Override
-    public final List<ButtonDef<String>> getButtonDefs() {
+    public List<ButtonDef<String>> getButtonDefs() {
         return buttons;
     }
 

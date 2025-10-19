@@ -14,7 +14,6 @@ import java.awt.Dimension;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

@@ -102,7 +102,7 @@ public final class InputControlState<R> {
      *
      * @param listener the Runnable that will be executed during validation
      */
-    public final void addValidationListener(Runnable listener) {
+    public void addValidationListener(Runnable listener) {
         validationListeners.add(listener);
     }
 
@@ -112,7 +112,7 @@ public final class InputControlState<R> {
      * @param listener the validation listener to be removed
      * @return true if the specified listener was successfully removed, false otherwise
      */
-    public final boolean removeValidationListener(Runnable listener) {
+    public boolean removeValidationListener(Runnable listener) {
         return validationListeners.remove(listener);
     }
 
@@ -198,7 +198,7 @@ public final class InputControlState<R> {
      *
      * @return the current value of the property.
      */
-    public R getValue() {
+    public @Nullable R getValue() {
         return value.getValue();
     }
 
@@ -216,7 +216,7 @@ public final class InputControlState<R> {
      *
      * @param arg the new value to be assigned to the property
      */
-    public void setValue(R arg) {
+    public void setValue(@Nullable R arg) {
         value.setValue(arg);
     }
 }

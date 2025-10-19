@@ -224,7 +224,7 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
     @Override
     public V get(Object key) {
         int idx = keyIndex(key);
-        return idx < 0 ? null : (V) values[idx];
+        return idx < 0 ? null : values[idx];
     }
 
     private int keyIndex(Object key) {

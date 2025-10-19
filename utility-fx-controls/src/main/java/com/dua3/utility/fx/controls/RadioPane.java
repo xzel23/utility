@@ -2,8 +2,6 @@ package com.dua3.utility.fx.controls;
 
 import org.jspecify.annotations.Nullable;
 import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;

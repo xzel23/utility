@@ -72,7 +72,7 @@ public record ButtonDef<R>(
     /**
      * Creates a new {@code ButtonDef} instance with a default configuration
      * based on the given {@code ButtonType}.
-     *
+     * <p>
      * The returned {@code ButtonDef} will have:
      * - A result handler that always returns {@code true}.
      * - An action that performs no operation.

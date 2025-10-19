@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  * @param <V> the type of value handled by the input control being built.
  */
 public abstract class InputControlBuilder<B extends InputControlBuilder<B, V>, V> {
-    private Supplier<@Nullable V> dflt;
+    private Supplier<@Nullable V> dflt = () -> null;
     private final List<Consumer<@Nullable V>> onChangeListeners = new ArrayList<>();
 
     /**

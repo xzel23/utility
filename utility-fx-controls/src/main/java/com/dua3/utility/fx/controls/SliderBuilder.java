@@ -3,7 +3,6 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.lang.LangUtil;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiFunction;

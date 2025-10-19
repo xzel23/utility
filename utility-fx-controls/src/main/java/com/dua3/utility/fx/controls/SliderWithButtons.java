@@ -1,16 +1,10 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.PropertyConverter;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.MathUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -27,12 +21,10 @@ import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -73,7 +65,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         this.state = new InputControlState<>(
                 slider.valueProperty().asObject(),
                 () -> null,
-                v -> v != null && isValueValid(v) ? Optional.<String>empty() : Optional.of("Value out of range")
+                v -> v != null && isValueValid(v) ? Optional.empty() : Optional.of("Value out of range")
         );
 
         btnDecrement.setOnAction(evt -> slider.decrement());

@@ -1,6 +1,5 @@
 package com.dua3.utility.swing;
 
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;

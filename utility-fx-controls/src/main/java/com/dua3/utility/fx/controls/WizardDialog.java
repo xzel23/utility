@@ -1,6 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.FxUtil;
 import javafx.beans.binding.BooleanExpression;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Represents a wizard dialog that guides the user through a sequence of pages.

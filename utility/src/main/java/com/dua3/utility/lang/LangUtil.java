@@ -2360,11 +2360,8 @@ public final class LangUtil {
 
     /**
      * A comparator that provides natural ordering for {@link Comparable} objects,
-     * with support for null values. Null values are treated as less than any non-null value.
-     *
-     * This comparator is implemented as a singleton. Use the static instance
-     * to enforce consistent behavior throughout the application.
-     *
+     * with support for null values.
+     * <p>
      * Objects are compared using their {@code compareTo} method when both are non-null.
      * Null values are considered less than any non-null values.
      */
