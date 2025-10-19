@@ -114,7 +114,7 @@ public final class SoftResource<T extends @Nullable Object> {
      */
     public static final class ResourceHolder<T extends @Nullable Object> implements AutoCloseable {
         private final SoftResource<T> soft;
-        private T strong;
+        private @Nullable T strong;
 
         private ResourceHolder(SoftResource<T> sr) {
             this.strong = sr.get();

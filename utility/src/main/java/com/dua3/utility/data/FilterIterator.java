@@ -20,7 +20,7 @@ public class FilterIterator<T extends @Nullable Object> implements Iterator<T> {
     private final Iterator<? extends T> iterator;
     private final Predicate<? super T> predicate;
     private boolean done;
-    private T current;
+    private @Nullable T current;
 
     /**
      * Construct a new FilterIterator.
@@ -62,7 +62,7 @@ public class FilterIterator<T extends @Nullable Object> implements Iterator<T> {
             throw new NoSuchElementException("there are no elements left");
         }
 
-        T item = current;
+        T item = (T) current; // use cast to remove the explicit @Nullable
         findNext();
         return item;
     }
