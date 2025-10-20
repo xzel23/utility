@@ -158,7 +158,10 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControlState.html" title="type parameter in InputControlState">R</a>&gt;&nbsp;dflt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super @Nullable <a href="InputControlState.html" title="type parameter in InputControlState">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate,
  javafx.beans.value.ObservableValue&lt;?&gt;&nbsp;baseValue)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Creates an InputControlState object with the specified value, default value supplier,
+ validation function, and base value.</div>
+</div>
 </div>
 </section>
 </li>
@@ -235,7 +238,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#voidState()" class="member-name-link">voidState</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates an InputControlState instance configured to manage a property of type Void.</div>
+</div>
 </div>
 </div>
 </div>
@@ -361,6 +366,15 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable <a href="InputControlState.html" title="type parameter in InputControlState">R</a>&gt;&nbsp;dflt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super @Nullable <a href="InputControlState.html" title="type parameter in InputControlState">R</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate,
  javafx.beans.value.ObservableValue&lt;?&gt;&nbsp;baseValue)</span></div>
+<div class="block">Creates an InputControlState object with the specified value, default value supplier,
+ validation function, and base value.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>value</code> - the property representing the value managed by this State</dd>
+<dd><code>dflt</code> - a supplier that provides the default value for the property</dd>
+<dd><code>validate</code> - a function that validates the value and returns an optional error message</dd>
+<dd><code>baseValue</code> - the observable base value, which may differ from the value property in certain contexts</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -375,6 +389,11 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="voidState()">
 <h3>voidState</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</span>&nbsp;<span class="element-name">voidState</span>()</div>
+<div class="block">Creates an InputControlState instance configured to manage a property of type Void.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>an InputControlState instance with a property of type Void and default value supplier</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -534,6 +553,7 @@ loadScripts(document, 'script');</script>
  or some invalid input was entered that maps to null, we use the base value.</div>
 <dl class="notes">
 <dt>Returns:</dt>
+<dd>true, if the base value is null or the empty string</dd>
 </dl>
 </section>
 </li>
