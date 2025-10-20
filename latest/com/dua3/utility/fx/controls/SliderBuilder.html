@@ -114,16 +114,17 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindBidirectional(javafx.beans.property.Property)" class="member-name-link">bindBidirectional</a><wbr>(javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Binds the slider to the specified <code>ObservableNumberValue</code>, enabling the slider to react to changes in the bound value.</div>
+<div class="block">Bidirectionally inds the slider value to the specified <code>Property&lt;Number&gt;</code>, enabling
+ the slider to react to changes in the bound value.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindMax(javafx.beans.property.Property)" class="member-name-link">bindMax</a><wbr>(javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;value)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindMax(javafx.beans.value.ObservableNumberValue)" class="member-name-link">bindMax</a><wbr>(javafx.beans.value.ObservableNumberValue&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Binds the maximum value of the slider to the specified <code>ObservableNumberValue</code>,
  allowing the slider's maximum value to dynamically reflect changes in the bound value.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindMin(javafx.beans.property.Property)" class="member-name-link">bindMin</a><wbr>(javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;value)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindMin(javafx.beans.value.ObservableNumberValue)" class="member-name-link">bindMin</a><wbr>(javafx.beans.value.ObservableNumberValue&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Binds the minimum value of the slider to the specified <code>ObservableNumberValue</code>, ensuring
  that the slider will respond dynamically to changes in the bound value.</div>
@@ -439,19 +440,20 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="bindBidirectional(javafx.beans.property.Property)">
 <h3>bindBidirectional</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">bindBidirectional</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;value)</span></div>
-<div class="block">Binds the slider to the specified <code>ObservableNumberValue</code>, enabling the slider to react to changes in the bound value.</div>
+<div class="block">Bidirectionally inds the slider value to the specified <code>Property&lt;Number&gt;</code>, enabling
+ the slider to react to changes in the bound value.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>value</code> - the <code>ObservableNumberValue</code> to bind to the slider</dd>
+<dd><code>value</code> - the <code>Property&lt;Number&gt;</code> to bind to the slider</dd>
 <dt>Returns:</dt>
 <dd>this instance of <code>SliderBuilder</code> for method chaining</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="bindMin(javafx.beans.property.Property)">
+<section class="detail" id="bindMin(javafx.beans.value.ObservableNumberValue)">
 <h3>bindMin</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">bindMin</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;value)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">bindMin</span><wbr><span class="parameters">(javafx.beans.value.ObservableNumberValue&nbsp;value)</span></div>
 <div class="block">Binds the minimum value of the slider to the specified <code>ObservableNumberValue</code>, ensuring
  that the slider will respond dynamically to changes in the bound value.</div>
 <dl class="notes">
@@ -463,9 +465,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="bindMax(javafx.beans.property.Property)">
+<section class="detail" id="bindMax(javafx.beans.value.ObservableNumberValue)">
 <h3>bindMax</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">bindMax</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;value)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SliderBuilder.html" title="class in com.dua3.utility.fx.controls">SliderBuilder</a></span>&nbsp;<span class="element-name">bindMax</span><wbr><span class="parameters">(javafx.beans.value.ObservableNumberValue&nbsp;value)</span></div>
 <div class="block">Binds the maximum value of the slider to the specified <code>ObservableNumberValue</code>,
  allowing the slider's maximum value to dynamically reflect changes in the bound value.</div>
 <dl class="notes">
