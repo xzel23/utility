@@ -87,27 +87,34 @@ B&gt;&nbsp;<a href="../Converter.html" title="interface in com.dua3.utility.data
 <div class="col-last even-row-color">
 <div class="block">Creates a bidirectional converter between two types A and B.</div>
 </div>
-<div class="col-first odd-row-color"><code>static &lt;T&gt;&nbsp;<a href="../Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;T,<wbr>T&gt;</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">Converter.</span><code><a href="../Converter.html#identity()" class="member-name-link">identity</a>()</code></div>
+<div class="col-first odd-row-color"><code>static &lt;A,<wbr>
+B&gt;&nbsp;<a href="../Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;@Nullable A,<wbr>@Nullable B&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Converter.</span><code><a href="../Converter.html#createNullAware(java.util.function.Function,java.util.function.Function)" class="member-name-link">createNullAware</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;a2b,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>A&gt;&nbsp;b2a)</code></div>
 <div class="col-last odd-row-color">
+<div class="block">Creates a bidirectional converter between two nullable types A and B.</div>
+</div>
+<div class="col-first even-row-color"><code>static &lt;T&gt;&nbsp;<a href="../Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;T,<wbr>T&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Converter.</span><code><a href="../Converter.html#identity()" class="member-name-link">identity</a>()</code></div>
+<div class="col-last even-row-color">
 <div class="block">Provides a converter that performs an identity transformation, where the input object
  is returned as-is without any modifications.</div>
 </div>
-<div class="col-first even-row-color"><code>default <a href="../Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;<a href="../Converter.html" title="type parameter in Converter">B</a>,<wbr><a href="../Converter.html" title="type parameter in Converter">A</a>&gt;</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">Converter.</span><code><a href="../Converter.html#inverse()" class="member-name-link">inverse</a>()</code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>default <a href="../Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;<a href="../Converter.html" title="type parameter in Converter">B</a>,<wbr><a href="../Converter.html" title="type parameter in Converter">A</a>&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Converter.</span><code><a href="../Converter.html#inverse()" class="member-name-link">inverse</a>()</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Returns the inverse of this converter, swapping the source and target types.</div>
 </div>
-<div class="col-first odd-row-color"><code>static &lt;T&gt;&nbsp;<a href="../Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">Converter.</span><code><a href="../Converter.html#stringConverter(java.lang.Class)" class="member-name-link">stringConverter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static &lt;T&gt;&nbsp;<a href="../Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Converter.</span><code><a href="../Converter.html#stringConverter(java.lang.Class)" class="member-name-link">stringConverter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
+<div class="col-last even-row-color">
 <div class="block">Creates a converter to transform objects of type T to their String representation
  and parse Strings back to objects of type T using either the method <code>public static T valueOf(String)</code>
  in the specified class (preferred) or the constructor <code>public T(String)</code> of the class.</div>
 </div>
-<div class="col-first even-row-color"><code>static &lt;T&gt;&nbsp;<a href="../Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">Converter.</span><code><a href="../Converter.html#stringConverter(java.util.function.Function)" class="member-name-link">stringConverter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;&nbsp;parse)</code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static &lt;T&gt;&nbsp;<a href="../Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Converter.</span><code><a href="../Converter.html#stringConverter(java.util.function.Function)" class="member-name-link">stringConverter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;&nbsp;parse)</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Creates a converter to transform objects of type T to their String representation
  and parse Strings back to objects of type T.</div>
 </div>
