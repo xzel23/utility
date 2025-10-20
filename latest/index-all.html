@@ -606,7 +606,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Remove the selected item without showing a confirmation dialog.</div>
 </dd>
-<dt><a href="com/dua3/utility/swing/ComboBoxEx.html#alwaysRemoveSelectedItem(com.dua3.utility.swing.ComboBoxEx,T)" class="member-name-link">alwaysRemoveSelectedItem(ComboBoxEx&lt;T&gt;, T)</a> - Static method in class com.dua3.utility.swing.<a href="com/dua3/utility/swing/ComboBoxEx.html" title="class in com.dua3.utility.swing">ComboBoxEx</a></dt>
+<dt><a href="com/dua3/utility/swing/ComboBoxEx.html#alwaysRemoveSelectedItem(com.dua3.utility.swing.ComboBoxEx,java.lang.Object)" class="member-name-link">alwaysRemoveSelectedItem(ComboBoxEx&lt;T&gt;, Object)</a> - Static method in class com.dua3.utility.swing.<a href="com/dua3/utility/swing/ComboBoxEx.html" title="class in com.dua3.utility.swing">ComboBoxEx</a></dt>
 <dd>
 <div class="block">Method to be passed as a method reference in the <code>remove</code> parameter to the ComboBoxEx constructor.</div>
 </dd>
@@ -2072,7 +2072,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Constructs a ComboBoxEx with the specified edit, add, remove, format, and items.</div>
 </dd>
-<dt><a href="com/dua3/utility/swing/ComboBoxEx.html#%3Cinit%3E(java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,T...)" class="member-name-link">ComboBoxEx(UnaryOperator&lt;T&gt;, Supplier&lt;? extends T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, T...)</a> - Constructor for class com.dua3.utility.swing.<a href="com/dua3/utility/swing/ComboBoxEx.html" title="class in com.dua3.utility.swing">ComboBoxEx</a></dt>
+<dt><a href="com/dua3/utility/swing/ComboBoxEx.html#%3Cinit%3E(java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,T...)" class="member-name-link">ComboBoxEx(UnaryOperator&lt;T&gt;, Supplier&lt;? extends T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, ? super T&gt;, Function&lt;T, String&gt;, T...)</a> - Constructor for class com.dua3.utility.swing.<a href="com/dua3/utility/swing/ComboBoxEx.html" title="class in com.dua3.utility.swing">ComboBoxEx</a></dt>
 <dd>
 <div class="block">Constructs a ComboBoxEx with optional editing, adding, and removing functionality.</div>
 </dd>
@@ -7573,6 +7573,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Add a labeled combobox for selecting a value from an enum.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputComboBoxEx(java.lang.String,java.lang.String,java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputComboBoxEx(String, String, UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputComboBoxEx(java.lang.String,java.lang.String,java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Supplier,java.lang.Class,java.util.Collection)" class="member-name-link">inputComboBoxEx(String, String, UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
 <div class="block">Adds a labeled combo box control with extended functionality.</div>
@@ -7583,8 +7585,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a custom combo box with the specified parameters.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputComboBoxEx(java.lang.String,java.lang.String,java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputComboBoxEx(String, String, UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputComboBoxEx(java.lang.String,java.lang.String,java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputComboBoxEx(String, String, UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#inputConstant(java.lang.String,java.lang.String,java.util.function.Supplier,java.lang.Class)" class="member-name-link">inputConstant(String, String, Supplier&lt;T&gt;, Class&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
