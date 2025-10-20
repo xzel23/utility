@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.data.ConversionException;
 import com.dua3.utility.data.Converter;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
@@ -13,6 +14,7 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,6 +56,70 @@ class PropertyConverterTest extends FxTestBase {
 
             stringProperty.setValue("not a number");
             assertNull(intProperty.getValue(), "Invalid input should be mapped to null");
+        });
+    }
+
+    /**
+     * Test for handling null values with {@link PropertyConverter#convert(Property, Converter)}.
+     */
+    @Test
+    void testConvertWithNullValues() throws Throwable {
+        FxTestBase.runOnFxThreadAndWait(() -> {
+            // Create a converter from String to Integer
+            Converter<String, Integer> converter = Converter.createNullAware(Integer::valueOf, String::valueOf);
+
+            // Create a property to convert with null value
+            Property<String> stringProperty = new SimpleObjectProperty<>(null);
+
+            // Convert the property
+            Property<Integer> intProperty = PropertyConverter.convert(stringProperty, converter);
+
+            // Test that null conversion works as expected
+            assertNull(intProperty.getValue(), "Conversion of null should yield null");
+
+            // Test updating the original property to null
+            stringProperty.setValue(null);
+            assertNull(intProperty.getValue(), "Changes to null in the original property should be reflected as null");
+
+            // Test updating the converted property to null
+            intProperty.setValue(null);
+            assertNull(stringProperty.getValue(), "Changes to null in the converted property should be reflected as null");
+        });
+    }
+
+    /**
+     * Test for handling conversion exceptions with {@link PropertyConverter#convert(Property, Converter)}.
+     */
+    @Test
+    void testConvertWithConversionException() throws Throwable {
+        FxTestBase.runOnFxThreadAndWait(() -> {
+            // Create a converter from String to Integer that throws a ConversionException
+            Converter<String, Integer> converter = Converter.create(
+                s -> {
+                    if ("exception".equals(s)) {
+                        throw new ConversionException("Forced exception");
+                    }
+                    return Integer.valueOf(s);
+                },
+                integer -> Objects.toString(integer, null)
+            );
+
+            // Create a property to convert
+            Property<String> stringProperty = new SimpleObjectProperty<>("123");
+
+            // Convert the property
+            Property<Integer> intProperty = PropertyConverter.convert(stringProperty, converter);
+
+            // Test successful conversion
+            assertEquals(123, intProperty.getValue(), "Successful conversion should work");
+
+            // Test forward conversion exception
+            stringProperty.setValue("exception");
+            assertNull(intProperty.getValue(), "ConversionException should result in null in the converted property");
+
+            // Test backward conversion exception
+            intProperty.setValue(null);
+            assertNull(stringProperty.getValue(), "Backward ConversionException should result in null in the original property");
         });
     }
 
