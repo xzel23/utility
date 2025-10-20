@@ -14,6 +14,10 @@
         </Or>
     </Match>
     <Match>
+        <Class name="com.dua3.utility.lang.SortedSetTest"/>
+        <Bug pattern="NP_NONNULL_PARAM_VIOLATION"/>
+    </Match>
+    <Match>
         <!-- Bugs reported by SpotBugs for automatic injected null checks -->
         <Or>
             <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
