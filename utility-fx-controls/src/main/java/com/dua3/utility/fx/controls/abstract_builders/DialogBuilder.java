@@ -37,6 +37,7 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
     private final BiConsumer<D, String> titleSetter;
     private final @Nullable Window parentWindow;
     private @Nullable String title;
+    private boolean resizable = false;
 
     /**
      * Constructs a DialogBuilder with an optional parent window.
@@ -60,6 +61,18 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
     @SuppressWarnings("unchecked")
     public B title(String fmt, Object... args) {
         this.title = format(fmt, args);
+        return self();
+    }
+
+    /**
+     * Sets whether the dialog should be resizable.
+     *
+     * @param flag a boolean indicating whether the dialog should be resizable.
+     *             {@code true} makes the dialog resizable, while {@code false} makes it non-resizable.
+     * @return the current builder instance of type {@code B}, to allow method chaining
+     */
+    public B resizable(boolean flag) {
+        this.resizable = flag;
         return self();
     }
 
@@ -92,6 +105,10 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
         // set title
         applyIfNotNull(titleSetter, dlg, title);
 
+        // make resizable
+        dlg.setResizable(resizable);
+
+        // set buttons
         if (!getButtonDefs().isEmpty()) {
             dlg.getDialogPane().getButtonTypes().setAll(getButtonDefs().stream().map(ButtonDef::type).toList());
         }
