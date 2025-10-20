@@ -24,6 +24,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
@@ -109,7 +110,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         return state;
     }
 
-    private void valueChanged(Double n) {
+    private void valueChanged(@Nullable Double n) {
         if (label != null) {
             label.setText(formatter.apply(n, getMax()));
         }
@@ -123,7 +124,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
             return;
         }
 
-        double v = LangUtil.orElse(get(), getMin());
+        double v = Objects.requireNonNullElseGet(get(), this::getMin);
         double m = getMax();
 
         String proto = PATTERN_DIGIT.matcher(formatter.apply(m, m)).replaceAll("0");
