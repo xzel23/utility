@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
+import javafx.beans.value.ObservableNumberValue;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import org.jspecify.annotations.Nullable;
@@ -34,8 +35,8 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
     private @Nullable Double majorTickUnit = null;
 
     private final List<Property<Number>> valueBindings = new ArrayList<>();
-    private final List<Property<Number>> minBindings = new ArrayList<>();
-    private final List<Property<Number>> maxBindings = new ArrayList<>();
+    private final List<ObservableNumberValue> minBindings = new ArrayList<>();
+    private final List<ObservableNumberValue> maxBindings = new ArrayList<>();
 
     SliderBuilder() {
     }
@@ -210,9 +211,10 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
     }
 
     /**
-     * Binds the slider to the specified {@code ObservableNumberValue}, enabling the slider to react to changes in the bound value.
+     * Bidirectionally inds the slider value to the specified {@code Property<Number>}, enabling
+     * the slider to react to changes in the bound value.
      *
-     * @param value the {@code ObservableNumberValue} to bind to the slider
+     * @param value the {@code Property<Number>} to bind to the slider
      * @return this instance of {@code SliderBuilder} for method chaining
      */
     public SliderBuilder bindBidirectional(Property<Number> value) {
@@ -227,7 +229,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      * @param value the {@code ObservableNumberValue} to bind to the slider's minimum value
      * @return this instance of {@code SliderBuilder} for method chaining
      */
-    public SliderBuilder bindMin(Property<Number> value) {
+    public SliderBuilder bindMin(ObservableNumberValue value) {
         minBindings.add(value);
         return self();
     }
@@ -239,7 +241,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      * @param value the {@code ObservableNumberValue} to bind to the slider's maximum value
      * @return this instance of {@code SliderBuilder} for method chaining
      */
-    public SliderBuilder bindMax(Property<Number> value) {
+    public SliderBuilder bindMax(ObservableNumberValue value) {
         maxBindings.add(value);
         return self();
     }
@@ -270,18 +272,43 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
         slider.setSnapToTicks(snapToTicks);
         slider.setShowTickLabels(showTickLabels);
 
-        addBindings(slider::valueAsDoubleProperty, valueBindings);
+        addBidirectionalBindings(slider::valueAsDoubleProperty, valueBindings);
         addBindings(slider::minProperty, minBindings);
         addBindings(slider::maxProperty, maxBindings);
 
         return slider;
     }
 
-    private void addBindings(Supplier<DoubleProperty> property, List<Property<Number>> bindings) {
+    /**
+     * Adds bidirectional bindings between a {@code DoubleProperty} and a list of {@code Property<Number>} bindings.
+     * This method makes the specified {@code DoubleProperty} and each {@code Property<Number>} in the list
+     * synchronize their values in both directions.
+     *
+     * @param property a {@code Supplier<DoubleProperty>} that supplies the {@code DoubleProperty} to bind.
+     * @param bindings a {@code List<Property<Number>>} containing the bindings to be bidirectionally linked with the supplied {@code DoubleProperty}.
+     */
+    private void addBidirectionalBindings(Supplier<DoubleProperty> property, List<Property<Number>> bindings) {
         if (!bindings.isEmpty()) {
             DoubleProperty prop = property.get();
-            for (var binding : valueBindings) {
+            for (var binding : bindings) {
                 prop.bindBidirectional(binding);
+            }
+        }
+    }
+
+    /**
+     * Adds bindings between a {@code DoubleProperty} and a list of {@code ObservableNumberValue} instances.
+     * This ensures that the supplied {@code DoubleProperty} observes and dynamically updates based on
+     * the values of the provided bindings list.
+     *
+     * @param property a {@code Supplier<DoubleProperty>} that supplies the {@code DoubleProperty} to bind.
+     * @param bindings a {@code List<ObservableNumberValue>} containing the bindings to be linked with the supplied {@code DoubleProperty}.
+     */
+    private void addBindings(Supplier<DoubleProperty> property, List<ObservableNumberValue> bindings) {
+        if (!bindings.isEmpty()) {
+            DoubleProperty prop = property.get();
+            for (var binding : bindings) {
+                prop.bind(binding);
             }
         }
     }
