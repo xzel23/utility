@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EventListener;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -41,8 +42,8 @@ public class ComboBoxEx<T> extends JPanel {
 
     private transient @Nullable Comparator<? super T> comparator;
     private final transient @Nullable UnaryOperator<@Nullable T> edit;
-    private final transient @Nullable Supplier<? extends T> add;
-    private final transient @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
+    private final transient @Nullable Supplier<? extends @Nullable T> add;
+    private final transient @Nullable BiPredicate<ComboBoxEx<T>, ? super @Nullable T> remove;
     private final transient Function<T, String> format;
     private final DefaultComboBoxModel<T> model;
     private final JComboBox<T> comboBox;
@@ -62,8 +63,8 @@ public class ComboBoxEx<T> extends JPanel {
     @SafeVarargs
     public ComboBoxEx(
             @Nullable UnaryOperator<@Nullable T> edit,
-            @Nullable Supplier<? extends T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            @Nullable Supplier<? extends @Nullable T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, ? super @Nullable T> remove,
             Function<T, String> format, T... items
     ) {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -208,7 +209,7 @@ public class ComboBoxEx<T> extends JPanel {
     private void removeItem() {
         //noinspection unchecked
         T item = (T) model.getSelectedItem();
-        if (Optional.ofNullable(remove).orElse(ComboBoxEx::alwaysRemoveSelectedItem).test(this, item)) {
+        if (Objects.requireNonNullElse(remove, ComboBoxEx::alwaysRemoveSelectedItem).test(this, item)) {
             model.removeElement(item);
         }
     }
@@ -243,7 +244,7 @@ public class ComboBoxEx<T> extends JPanel {
      * @return always returns true to indicate removal is allowed
      */
     @SuppressWarnings("SameReturnValue")
-    public static <T> boolean alwaysRemoveSelectedItem(ComboBoxEx<T> cb, @Nullable T item) {
+    public static <T> boolean alwaysRemoveSelectedItem(ComboBoxEx<T> cb, @Nullable Object item) {
         return true;
     }
 

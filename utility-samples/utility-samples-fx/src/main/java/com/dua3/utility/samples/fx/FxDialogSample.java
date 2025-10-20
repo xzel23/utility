@@ -160,7 +160,8 @@ public class FxDialogSample extends Application {
                         .inputCheckBox("bool", "Yes or No:", () -> false, "yes")
                         .inputFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(FILTER_ALL_FILES))
                         .inputFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(FILTER_ALL_FILES))
-                        .inputComboBoxEx("listEx",
+                        .inputComboBoxEx(
+                                "listEx",
                                 "edit items and choose one",
                                 s -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Edit item").defaultValue("%s", Objects.requireNonNullElse(s, "")).build().showAndWait().orElse(null),
                                 () -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Add item").build().showAndWait().orElse(null),

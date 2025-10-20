@@ -191,9 +191,9 @@ public class InputDialogBuilder
     public <T> InputDialogBuilder inputComboBoxEx(
             String id,
             String label,
-            @Nullable UnaryOperator<T> edit,
-            @Nullable Supplier<T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            @Nullable UnaryOperator<@Nullable T> edit,
+            @Nullable Supplier<@Nullable T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove,
             Function<T, String> format,
             Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
