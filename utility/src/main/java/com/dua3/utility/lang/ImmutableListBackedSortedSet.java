@@ -477,9 +477,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
                 start++;
             }
 
-            if (start < 0) {
-                return this;
-            } else if (start < size()) {
+            if (start < size()) {
                 return original.tailSet(original.get(start)).reversed();
             } else {
                 return (ImmutableSortedListSet<T>) EMPTY_SET_REVERSED;
@@ -520,6 +518,11 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
         @Override
         public T getLast() {
             return elementList.getLast();
+        }
+
+        @Override
+        public String toString() {
+            return elementList.toString();
         }
     }
 }

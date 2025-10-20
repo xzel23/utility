@@ -712,4 +712,68 @@ class ImmutableListBackedSortedSetTest {
         assertEquals(set.indexOf(1), set.lastIndexOf(1));
         assertEquals(set.indexOf(6), set.lastIndexOf(6));
     }
+
+    @Test
+    void reversedHeadSet_exactMatch() {
+        // original: [1,2,3,4,5]
+        var orig = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2, 3, 4, 5);
+        var rev = orig.reversed(); // order: [5,4,3,2,1]
+
+        var hs = rev.headSet(3);
+        assertEquals(List.of(5, 4), hs, "Expected reversed headSet(3) to be [5, 4]");
+        // Also verify sizes to catch off-by-one
+        assertEquals(2, hs.size(), "Size should be 2 for headSet(3) on reversed [5,4,3,2,1]");
+    }
+
+    @Test
+    void reversedHeadSet_absentElement_boundary() {
+        // original: [10,20,30,40]
+        var orig = ImmutableListBackedSortedSet.ofNaturalOrder(10, 20, 30, 40);
+        var rev = orig.reversed(); // [40,30,20,10]
+
+        var hs = rev.headSet(25);
+        assertEquals(List.of(40, 30), hs, "Expected reversed headSet(25) to be [20,10]");
+        assertEquals(2, hs.size(), "Size should be 2 for headSet(25)");
+    }
+
+    @Test
+    void reversedHeadSet_minElement_returnsEmpty() {
+        var orig = ImmutableListBackedSortedSet.ofNaturalOrder("a", "b", "c");
+        var rev = orig.reversed(); // ["c","b","a"]
+
+        // In reversed order, headSet("c") should be empty.
+        var hs = rev.headSet("c");
+        assertTrue(hs.isEmpty(), "Expected empty headSet for smallest element in reversed order");
+    }
+
+    @Test
+    void reversedHeadSet_maxElement_empty() {
+        var orig = ImmutableListBackedSortedSet.ofNaturalOrder("a", "b", "c");
+        var rev = orig.reversed(); // ["c","b","a"]
+
+        // In reversed order, headSet("c") should be elements strictly less than "c" in reversed comparator -> empty set.
+        var hs = rev.headSet("c");
+        assertEquals(Collections.emptySet(), hs, "Expected headSet(\"c\") to be [\"b\",\"a\"]");
+    }
+
+    @Test
+    void reversedHeadSet_emptySetConsistencyAndType() {
+        var orig = ImmutableListBackedSortedSet.ofNaturalOrder(1, 2);
+        var rev = orig.reversed(); // [2,1]
+
+        var hs = rev.headSet(1); // should
+        assertEquals(List.of(2), hs, "Expected headSet(1) in reversed [2,1] to be [2]");
+    }
+
+    @Test
+    void reversedHeadSet_withCustomComparator_behavior() {
+        // Use reverse natural order as original comparator to ensure reversed-view uses natural order.
+        Comparator<Integer> desc = Comparator.<Integer>naturalOrder().reversed();
+        var orig = ImmutableListBackedSortedSet.of(desc, 1, 2, 3, 4); // original order: 4,3,2,1
+        var rev = orig.reversed(); // natural order: [1,2,3,4]
+
+        // On rev (natural order), headSet(3) should be [1,2].
+        var hs = rev.headSet(3);
+        assertEquals(List.of(1, 2), hs, "Comparator semantics mismatch for custom comparator");
+    }
 }
