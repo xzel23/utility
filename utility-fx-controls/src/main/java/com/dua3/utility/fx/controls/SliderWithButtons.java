@@ -6,7 +6,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -38,7 +37,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     private static final Pattern PATTERN_DIGIT = Pattern.compile("\\d");
     private final Mode mode;
     private final InputControlState<Double> state;
-    private final BiFunction<? super Double, Double, String> formatter;
+    private final BiFunction<? super Double, ? super Double, String> formatter;
     private final Slider slider;
     private final Button btnIncrement;
     private final Button btnDecrement;
@@ -56,7 +55,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
      * @param formatter A formatter function to format the display values
      *                  of the slider.
      */
-    SliderWithButtons(Mode mode, BiFunction<? super Double, Double, String> formatter) {
+    SliderWithButtons(Mode mode, BiFunction<? super Double, ? super Double, String> formatter) {
         this.mode = mode;
         this.formatter = formatter;
 
@@ -65,7 +64,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         this.btnIncrement = new Button("+");
 
         this.state = new InputControlState<>(
-                slider.valueProperty().asObject(),
+                PropertyConverter.convert(slider.valueProperty()),
                 () -> null,
                 v -> v != null && isValueValid(v) ? Optional.empty() : Optional.of("Value out of range")
         );
@@ -95,7 +94,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
             }
         }
 
-        slider.valueProperty().addListener((v, o, n) -> valueChanged(o, n));
+        state.valueProperty().addListener((v, o, n) -> valueChanged(n));
         slider.maxProperty().addListener((v, o, n) -> updateLabel());
 
         initPane();
@@ -110,9 +109,9 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         return state;
     }
 
-    private void valueChanged(Number o, Number n) {
+    private void valueChanged(Double n) {
         if (label != null) {
-            label.setText(formatter.apply(n.doubleValue(), getMax()));
+            label.setText(formatter.apply(n, getMax()));
         }
         if (tfValue != null) {
             tfValue.setText(String.valueOf(n));
@@ -137,7 +136,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         label.setMinWidth(w + paddingLeft + paddingRight);
         label.setPadding(new Insets(0, paddingRight, 0, paddingLeft));
 
-        valueChanged(v, v);
+        valueChanged(v);
     }
 
     private void initPane() {

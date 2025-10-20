@@ -158,6 +158,10 @@ public final class PropertyConverter {
      * @return a {@code DoubleProperty} representation of the given {@code Property<Double>}
      */
     public static DoubleProperty convert(Property<Double> property) {
+        Property<?> objectProperty = property;
+        if (objectProperty  instanceof DoubleProperty dp) {
+            return dp;
+        }
         return DoubleProperty.doubleProperty(property);
     }
 }

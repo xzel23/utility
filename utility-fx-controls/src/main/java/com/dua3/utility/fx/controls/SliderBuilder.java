@@ -1,9 +1,8 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.PropertyConverter;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.ObservableNumberValue;
+import javafx.beans.property.Property;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import org.jspecify.annotations.Nullable;
@@ -22,7 +21,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
     private boolean snapToTicks = false;
     private boolean showTickLabels = false;
 
-    private @Nullable BiFunction<Double, Double, String> formatter = null;
+    private @Nullable BiFunction<? super Double, ? super Double, String> formatter = null;
     private @Nullable Orientation orientation;
     private @Nullable Double min = null;
     private @Nullable Double max = null;
@@ -34,9 +33,9 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
     private @Nullable Double blockIncrement = null;
     private @Nullable Double majorTickUnit = null;
 
-    private final List<ObservableNumberValue> valueBindings = new ArrayList<>();
-    private final List<ObservableNumberValue> minBindings = new ArrayList<>();
-    private final List<ObservableNumberValue> maxBindings = new ArrayList<>();
+    private final List<Property<Number>> valueBindings = new ArrayList<>();
+    private final List<Property<Number>> minBindings = new ArrayList<>();
+    private final List<Property<Number>> maxBindings = new ArrayList<>();
 
     SliderBuilder() {
     }
@@ -216,7 +215,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      * @param value the {@code ObservableNumberValue} to bind to the slider
      * @return this instance of {@code SliderBuilder} for method chaining
      */
-    public SliderBuilder bind(ObservableNumberValue value) {
+    public SliderBuilder bindBidirectional(Property<Number> value) {
         valueBindings.add(value);
         return self();
     }
@@ -228,7 +227,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      * @param value the {@code ObservableNumberValue} to bind to the slider's minimum value
      * @return this instance of {@code SliderBuilder} for method chaining
      */
-    public SliderBuilder bindMin(ObservableNumberValue value) {
+    public SliderBuilder bindMin(Property<Number> value) {
         minBindings.add(value);
         return self();
     }
@@ -240,7 +239,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      * @param value the {@code ObservableNumberValue} to bind to the slider's maximum value
      * @return this instance of {@code SliderBuilder} for method chaining
      */
-    public SliderBuilder bindMax(ObservableNumberValue value) {
+    public SliderBuilder bindMax(Property<Number> value) {
         maxBindings.add(value);
         return self();
     }
@@ -251,7 +250,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      * @return the built {@code SliderWithButtons} instance.
      */
     public SliderWithButtons build() {
-        BiFunction<Double, Double, String> fmtr = LangUtil.orElse(formatter, (a, b) -> "");
+        BiFunction<? super Double, ? super Double, String> fmtr = LangUtil.orElse(formatter, (a, b) -> "");
 
         SliderWithButtons slider = new SliderWithButtons(mode, fmtr);
         applyTo(slider);
@@ -271,18 +270,18 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
         slider.setSnapToTicks(snapToTicks);
         slider.setShowTickLabels(showTickLabels);
 
-        addBindings(slider, slider::valueAsDoubleProperty, valueBindings);
-        addBindings(slider, slider::minProperty, minBindings);
-        addBindings(slider, slider::maxProperty, maxBindings);
+        addBindings(slider::valueAsDoubleProperty, valueBindings);
+        addBindings(slider::minProperty, minBindings);
+        addBindings(slider::maxProperty, maxBindings);
 
         return slider;
     }
 
-    private void addBindings(SliderWithButtons slider, Supplier<DoubleProperty> property, List<ObservableNumberValue> bindings) {
+    private void addBindings(Supplier<DoubleProperty> property, List<Property<Number>> bindings) {
         if (!bindings.isEmpty()) {
             DoubleProperty prop = property.get();
             for (var binding : valueBindings) {
-                prop.bind(binding);
+                prop.bindBidirectional(binding);
             }
         }
     }
