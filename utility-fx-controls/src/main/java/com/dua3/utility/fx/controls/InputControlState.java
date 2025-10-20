@@ -38,6 +38,11 @@ public final class InputControlState<R> {
     private final Supplier<? extends @Nullable R> dflt;
     private final ObservableValue<?> baseValue;
 
+    /**
+     * Creates an InputControlState instance configured to manage a property of type Void.
+     *
+     * @return an InputControlState instance with a property of type Void and default value supplier
+     */
     public static InputControlState<Void> voidState() {
         return new InputControlState<>(new SimpleObjectProperty<>(), freeze(new SimpleObjectProperty<>()));
     }
@@ -75,6 +80,15 @@ public final class InputControlState<R> {
         this (value, dflt, validate, value);
     }
 
+    /**
+     * Creates an InputControlState object with the specified value, default value supplier,
+     * validation function, and base value.
+     *
+     * @param value    the property representing the value managed by this State
+     * @param dflt     a supplier that provides the default value for the property
+     * @param validate a function that validates the value and returns an optional error message
+     * @param baseValue the observable base value, which may differ from the value property in certain contexts
+     */
     public InputControlState(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate, ObservableValue<?> baseValue) {
         this.required.set(validate.apply(null).isPresent());
         this.value = value;
@@ -232,7 +246,7 @@ public final class InputControlState<R> {
      * value will cleared or at least not updated. To distuigish whether nothingg has been entered at all
      * or some invalid input was entered that maps to null, we use the base value.
      *
-     * @return
+     * @return true, if the base value is null or the empty string
      */
     public boolean isEmpty() {
         return switch (baseValue.getValue()) {

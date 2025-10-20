@@ -223,7 +223,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
      *         otherwise, a negative value indicating the insertion point
      *         where the element would be added to maintain sorted order
      */
-    private int getIndex(Object element) {
+    private int getIndex(@Nullable Object element) {
         @SuppressWarnings("unchecked")
         Comparator<? super T> cmp = LangUtil.orNaturalOrder(comparator);
         @SuppressWarnings("unchecked")
@@ -232,18 +232,18 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
     }
 
     @Override
-    public int indexOf(Object o) {
+    public int indexOf(@Nullable Object o) {
         int index = getIndex(o);
         return index >= 0 ? index : -1;
     }
 
     @Override
-    public int lastIndexOf(Object o) {
+    public int lastIndexOf(@Nullable Object o) {
         return indexOf(o); // elememts are unique
     }
 
     @Override
-    public boolean contains(Object o) {
+    public boolean contains(@Nullable Object o) {
         return getIndex(o) >= 0;
     }
 
@@ -259,7 +259,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
 
     @SuppressWarnings({"unchecked", "SuspiciousSystemArraycopy"})
     @Override
-    public <T1> T1[] toArray(T1[] a) {
+    public <T1 extends @Nullable Object> T1[] toArray(T1[] a) {
         T1[] r = a.length >= elements.length ? a :
                 (T1[]) java.lang.reflect.Array
                         .newInstance(a.getClass().getComponentType(), elements.length);
@@ -278,7 +278,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
     }
 
     @Override
-    public boolean containsAll(Collection<?> c) {
+    public boolean containsAll(Collection<? extends @Nullable Object> c) {
         for (Object o : c) {
             if (getIndex(o) < 0) {
                 return false;
@@ -358,7 +358,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
         }
 
         @Override
-        public boolean contains(Object o) {
+        public boolean contains(@Nullable Object o) {
             return original.contains(o);
         }
 
@@ -368,12 +368,12 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
         }
 
         @Override
-        public Object[] toArray() {
+        public @Nullable Object[] toArray() {
             return elementList.toArray();
         }
 
         @Override
-        public <T1> T1[] toArray(T1[] a) {
+        public <T1 extends @Nullable Object> T1[] toArray(T1[] a) {
             return elementList.toArray(a);
         }
 
@@ -383,7 +383,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
         // so introducing a temporary Set would be counter-productive.
         @SuppressWarnings("SlowListContainsAll")
         @Override
-        public boolean containsAll(Collection<?> c) {
+        public boolean containsAll(Collection<? extends @Nullable Object> c) {
             return original.containsAll(c);
         }
 
@@ -408,7 +408,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
         }
 
         @Override
-        public @Nullable T remove(int index) {
+        public T remove(int index) {
             throw new UnsupportedOperationException("the collection is immutable");
         }
 
@@ -419,7 +419,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
         }
 
         @Override
-        public int lastIndexOf(Object o) {
+        public int lastIndexOf(@Nullable Object o) {
             return indexOf(o); // elements are unique
         }
 
@@ -439,8 +439,10 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
         }
 
         @Override
-        public @Nullable Comparator<? super T> comparator() {
-            return LangUtil.orNaturalOrder(original.comparator()).reversed();
+        public Comparator<? super T> comparator() {
+            Comparator<? super T> cmp = LangUtil.orNaturalOrder(original.comparator());
+            assert cmp != null : "the comparator should never be null; if the original comparator was null, a natural order comparator would be returned";
+            return cmp.reversed();
         }
 
         @Override

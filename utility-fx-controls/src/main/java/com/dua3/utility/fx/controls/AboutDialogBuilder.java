@@ -75,7 +75,7 @@ public class AboutDialogBuilder {
         this.messageFormatter = messageFormatter;
     }
 
-    private String format(String fmt, Object... args) {
+    private String format(String fmt, @Nullable Object... args) {
         return messageFormatter.format(fmt, args);
     }
 

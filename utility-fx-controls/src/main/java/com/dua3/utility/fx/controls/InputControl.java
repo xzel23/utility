@@ -403,6 +403,11 @@ public interface InputControl<T> {
         // nop
     }
 
+    /**
+     * Checks if the current state is empty.
+     *
+     * @return true if the current state is empty, false otherwise
+     */
     default boolean isEmpty() {
         return state().isEmpty();
     }

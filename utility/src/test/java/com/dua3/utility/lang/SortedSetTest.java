@@ -81,7 +81,7 @@ class SortedSetTest {
         // Test elements that are not in the set
         assertFalse(set.contains(0));
         assertFalse(set.contains(6));
-        assertThrows(Throwable.class, () -> set.contains(null));
+        assertFalse(set.contains(null));
     }
 
     @ParameterizedTest

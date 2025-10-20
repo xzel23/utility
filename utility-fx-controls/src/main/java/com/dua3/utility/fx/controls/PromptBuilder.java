@@ -70,7 +70,7 @@ public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuild
      * @param args optional arguments for formatting the default value string
      * @return the current instance of PromptBuilder for method chaining
      */
-    public PromptBuilder defaultValue(String fmt, Object... args) {
+    public PromptBuilder defaultValue(String fmt, @Nullable Object... args) {
         this.defaultValue = format(fmt, args);
         return this;
     }
