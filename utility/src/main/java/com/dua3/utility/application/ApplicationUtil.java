@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.prefs.Preferences;
 
 /**
@@ -24,16 +25,7 @@ public final class ApplicationUtil {
         // utility class
     }
 
-    /**
-     * A synchronization lock used to ensure thread safety when accessing and
-     * modifying shared resources within the class.
-     * <p>
-     * This lock is used in synchronized blocks to coordinate access to critical
-     * sections, preventing race conditions and inconsistent states among threads.
-     */
-    private static final Object LOCK = new Object();
-
-    private static volatile @Nullable Preferences applicationPreferences;
+    private static final AtomicReference<@Nullable Preferences> applicationPreferences = new AtomicReference<>(null);
 
     /**
      * Initializes the application preferences exactly once.
@@ -44,11 +36,8 @@ public final class ApplicationUtil {
      * @throws IllegalStateException if already initialized
      */
     public static void initApplicationPreferences(Preferences prefs) {
-        synchronized (LOCK) {
-            if (applicationPreferences != null) {
-                throw new IllegalStateException("application preferences already set");
-            }
-            applicationPreferences = prefs;
+        if (!applicationPreferences.compareAndSet(null, prefs)) {
+            LOG.warn("application preferences already initialized, ignoring second call to initApplicationPreferences(...)");
         }
     }
 
@@ -62,19 +51,18 @@ public final class ApplicationUtil {
      * @return the application's preferences (never null)
      */
     public static Preferences preferences() {
-        Preferences prefs = applicationPreferences;
-        if (prefs == null) {
-            synchronized (LOCK) {
-                prefs = applicationPreferences;
-                if (prefs == null) {
-                    LOG.warn("Application preferences not initialized; using ephemeral, non-persistent preferences. "
-                            + "Call ApplicationUtil.initApplicationPreferences(...) during startup to enable persistence.");
-                    prefs = EphemeralPreferences.root();
-                    applicationPreferences = prefs;
-                }
+        Preferences preferences = applicationPreferences.updateAndGet(prefs -> {
+            if (prefs == null) {
+                LOG.warn("Application preferences not initialized; using ephemeral, non-persistent preferences. "
+                        + "Call ApplicationUtil.initApplicationPreferences(...) during startup to enable persistence.");
+                prefs = EphemeralPreferences.createRoot();
             }
-        }
-        return prefs;
+            return prefs;
+        });
+
+        assert preferences != null : "internal error, an ephemeral instance should have been created";
+
+        return preferences;
     }
 
     /**

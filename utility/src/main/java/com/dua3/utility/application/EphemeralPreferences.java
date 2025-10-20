@@ -34,7 +34,7 @@ public final class EphemeralPreferences extends AbstractPreferences {
      * @param parent the parent {@code AbstractPreferences} node, or {@code null} for the root node
      * @param name   the name of this preference node, relative to its parent; for the root, use ""
      */
-    public EphemeralPreferences(@Nullable AbstractPreferences parent, String name) {
+    private EphemeralPreferences(@Nullable AbstractPreferences parent, String name) {
         super(parent, Objects.requireNonNull(name, "name"));
     }
 
@@ -46,7 +46,7 @@ public final class EphemeralPreferences extends AbstractPreferences {
     }
 
     @Override
-    protected String getSpi(String key) {
+    protected @Nullable String getSpi(String key) {
         synchronized (lock) {
             return values.get(key);
         }
@@ -129,7 +129,7 @@ public final class EphemeralPreferences extends AbstractPreferences {
      *
      * @return the root node of the ephemeral, non-persistent preferences hierarchy
      */
-    public static Preferences root() {
+    public static Preferences createRoot() {
         // NOTE: the root node must be passed the empty string as name
         return new EphemeralPreferences(null, "");
     }

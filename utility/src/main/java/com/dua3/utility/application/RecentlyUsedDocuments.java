@@ -135,7 +135,7 @@ public class RecentlyUsedDocuments {
 
         // remove before put to force update the entry's position in the list.
         items.remove(uri);
-        items.put(uri, name);
+        items.putFirst(uri, name);
 
         return true;
     }
