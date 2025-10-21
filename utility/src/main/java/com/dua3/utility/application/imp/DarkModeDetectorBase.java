@@ -1,11 +1,11 @@
 package com.dua3.utility.application.imp;
 
 import com.dua3.utility.application.DarkModeDetector;
-import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 public abstract class DarkModeDetectorBase implements DarkModeDetector {
     private static final Logger LOG = LogManager.getLogger(DarkModeDetectorBase.class);
 
-    private final Set<Consumer<Boolean>> listeners = LangUtil.newWeakHashSet();
+    private final Collection<Consumer<Boolean>> listeners = new ArrayList<>();
 
     /**
      * Adds a listener for dark mode state changes.
