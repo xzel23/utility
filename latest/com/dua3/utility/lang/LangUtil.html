@@ -579,6 +579,16 @@ U&gt;&nbsp;U</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Generates a new UUID version 7 (UUIDv7) according to RFC 9562 with the specified timestamp.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newWeakHashSet()" class="member-name-link">newWeakHashSet</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link"><code>Set</code></a> backed by a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/WeakHashMap.html" title="class or interface in java.util" class="external-link"><code>WeakHashMap</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newWeakHashSet(int)" class="member-name-link">newWeakHashSet</a><wbr>(int&nbsp;numEntries)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <code>Set</code> backed by a <code>WeakHashMap</code> that holds weak references to its keys.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>T</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#orElse(T,T)" class="member-name-link">orElse</a><wbr>(T&nbsp;a,
  T&nbsp;b)</code></div>
@@ -3266,6 +3276,35 @@ U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <dd><code>map</code> - the map to be checked for the presence of the key</dd>
 <dd><code>key</code> - the key whose presence in the map is to be tested</dd>
 <dd><code>consumer</code> - the consumer to process the key if it is present in the map</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newWeakHashSet()">
+<h3>newWeakHashSet</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;T&gt;</span>&nbsp;<span class="element-name">newWeakHashSet</span>()</div>
+<div class="block">Creates a new <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link"><code>Set</code></a> backed by a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/WeakHashMap.html" title="class or interface in java.util" class="external-link"><code>WeakHashMap</code></a>.
+ This set allows for entries to be garbage collected when they are no longer referenced elsewhere.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of elements in the set</dd>
+<dt>Returns:</dt>
+<dd>a new weakly-referenced hash set</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newWeakHashSet(int)">
+<h3>newWeakHashSet</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;T&gt;</span>&nbsp;<span class="element-name">newWeakHashSet</span><wbr><span class="parameters">(int&nbsp;numEntries)</span></div>
+<div class="block">Creates a new <code>Set</code> backed by a <code>WeakHashMap</code> that holds weak references to its keys.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of elements in the set</dd>
+<dt>Parameters:</dt>
+<dd><code>numEntries</code> - the initial capacity for the backing <code>WeakHashMap</code></dd>
+<dt>Returns:</dt>
+<dd>a new <code>Set</code> instance that is backed by a <code>WeakHashMap</code></dd>
 </dl>
 </section>
 </li>

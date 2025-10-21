@@ -343,6 +343,12 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/RingBuffer.html#addLast(T)" class="member-name-link">addLast(T)</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/RingBuffer.html" title="class in com.dua3.utility.lang">RingBuffer</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/DarkModeDetector.html#addListener(java.util.function.Consumer)" class="member-name-link">addListener(Consumer&lt;Boolean&gt;)</a> - Method in interface com.dua3.utility.application.<a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html#addListener(java.util.function.Consumer)" class="member-name-link">addListener(Consumer&lt;Boolean&gt;)</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorBase</a></dt>
+<dd>
+<div class="block">Adds a listener for dark mode state changes.</div>
+</dd>
 <dt><a href="com/dua3/utility/logging/LogBuffer.html#addLogBufferListener(com.dua3.utility.logging.LogBuffer.LogBufferListener)" class="member-name-link">addLogBufferListener(LogBuffer.LogBufferListener)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
 <dd>
 <div class="block">Add LogBufferListener.</div>
@@ -1941,6 +1947,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">This package contains classes supporting application development.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/imp/package-summary.html">com.dua3.utility.application.imp</a> - package com.dua3.utility.application.imp</dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/awt/package-summary.html">com.dua3.utility.awt</a> - package com.dua3.utility.awt</dt>
 <dd>
 <div class="block">This package contains AWT related classes.</div>
@@ -3074,6 +3082,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/math/geometry/AffineTransformation2f.html#param-d"><code>d</code></a> record component.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/UiMode.html#DARK" class="member-name-link">DARK</a> - Enum constant in enum class com.dua3.utility.application.<a href="com/dua3/utility/application/UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a></dt>
+<dd>
+<div class="block">Represents the dark UI mode.</div>
+</dd>
 <dt><a href="com/dua3/utility/data/Color.html#DARKBLUE" class="member-name-link">DARKBLUE</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">The color DARKBLUE.</div>
@@ -3117,6 +3129,26 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/data/Color.html#DARKMAGENTA" class="member-name-link">DARKMAGENTA</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">The color DARKMAGENTA.</div>
+</dd>
+<dt><a href="com/dua3/utility/application/ApplicationUtil.html#darkModeDetector()" class="member-name-link">darkModeDetector()</a> - Static method in class com.dua3.utility.application.<a href="com/dua3/utility/application/ApplicationUtil.html" title="class in com.dua3.utility.application">ApplicationUtil</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/DarkModeDetector.html" class="type-name-link" title="interface in com.dua3.utility.application">DarkModeDetector</a> - Interface in <a href="com/dua3/utility/application/package-summary.html">com.dua3.utility.application</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" class="type-name-link" title="class in com.dua3.utility.application.imp">DarkModeDetectorBase</a> - Class in <a href="com/dua3/utility/application/imp/package-summary.html">com.dua3.utility.application.imp</a></dt>
+<dd>
+<div class="block">An abstract base class for detecting and handling dark mode status.</div>
+</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html#%3Cinit%3E()" class="member-name-link">DarkModeDetectorBase()</a> - Constructor for class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorBase</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html" class="type-name-link" title="class in com.dua3.utility.application.imp">DarkModeDetectorImpUnsupported</a> - Class in <a href="com/dua3/utility/application/imp/package-summary.html">com.dua3.utility.application.imp</a></dt>
+<dd>
+<div class="block">A concrete implementation of the <a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" title="class in com.dua3.utility.application.imp"><code>DarkModeDetectorBase</code></a> class.</div>
+</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html#%3Cinit%3E()" class="member-name-link">DarkModeDetectorImpUnsupported()</a> - Constructor for class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorImpUnsupported</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorInstance.html" class="type-name-link" title="class in com.dua3.utility.application.imp">DarkModeDetectorInstance</a> - Class in <a href="com/dua3/utility/application/imp/package-summary.html">com.dua3.utility.application.imp</a></dt>
+<dd>
+<div class="block">Singleton access point for obtaining an instance of the <a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a>.</div>
 </dd>
 <dt><a href="com/dua3/utility/data/Color.html#DARKOLIVEGREEN" class="member-name-link">DARKOLIVEGREEN</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
@@ -5105,6 +5137,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Generate SecretKey for the specified algorithm.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorInstance.html#get()" class="member-name-link">get()</a> - Static method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorInstance.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorInstance</a></dt>
+<dd>
+<div class="block">Retrieves the instance of the <a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a>.</div>
+</dd>
 <dt><a href="com/dua3/utility/concurrent/ReadOnlyValue.html#get()" class="member-name-link">get()</a> - Method in interface com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/ReadOnlyValue.html" title="interface in com.dua3.utility.concurrent">ReadOnlyValue</a></dt>
 <dd>
 <div class="block">Retrieves the value of type T.</div>
@@ -5823,6 +5859,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get InputStream.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html#getInstance()" class="member-name-link">getInstance()</a> - Static method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorImpUnsupported</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/awt/AwtFontUtil.html#getInstance()" class="member-name-link">getInstance()</a> - Static method in class com.dua3.utility.awt.<a href="com/dua3/utility/awt/AwtFontUtil.html" title="class in com.dua3.utility.awt">AwtFontUtil</a></dt>
 <dd>
 <div class="block">Retrieves an instance of the AwtFontUtil class.</div>
@@ -7982,6 +8020,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Determines if the data held in this instance is in a compressed state.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/DarkModeDetector.html#isDarkMode()" class="member-name-link">isDarkMode()</a> - Method in interface com.dua3.utility.application.<a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html#isDarkMode()" class="member-name-link">isDarkMode()</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorImpUnsupported</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/DarkModeDetector.html#isDarkModeDetectionSupported()" class="member-name-link">isDarkModeDetectionSupported()</a> - Method in interface com.dua3.utility.application.<a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html#isDarkModeDetectionSupported()" class="member-name-link">isDarkModeDetectionSupported()</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorImpUnsupported</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/FxLauncher.html#isDebug()" class="member-name-link">isDebug()</a> - Static method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLauncher.html" title="class in com.dua3.utility.fx">FxLauncher</a></dt>
 <dd>
 <div class="block">Determines whether the log pane should be displayed.</div>
@@ -8712,6 +8758,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/application/LicenseData.html#licenseText()" class="member-name-link">licenseText()</a> - Method in record class com.dua3.utility.application.<a href="com/dua3/utility/application/LicenseData.html" title="class in com.dua3.utility.application">LicenseData</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/application/LicenseData.html#param-licenseText"><code>licenseText</code></a> record component.</div>
+</dd>
+<dt><a href="com/dua3/utility/application/UiMode.html#LIGHT" class="member-name-link">LIGHT</a> - Enum constant in enum class com.dua3.utility.application.<a href="com/dua3/utility/application/UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a></dt>
+<dd>
+<div class="block">Represents the light UI mode.</div>
 </dd>
 <dt><a href="com/dua3/utility/data/Color.html#LIGHTBLUE" class="member-name-link">LIGHTBLUE</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
@@ -9713,6 +9763,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Represents the moderate strength level of a password.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html#monitorSystemChanges(boolean)" class="member-name-link">monitorSystemChanges(boolean)</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorBase</a></dt>
+<dd>
+<div class="block">Monitors system changes for dark mode state.</div>
+</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html#monitorSystemChanges(boolean)" class="member-name-link">monitorSystemChanges(boolean)</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorImpUnsupported</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/text/Style.html#MONOSPACE" class="member-name-link">MONOSPACE</a> - Static variable in class com.dua3.utility.text.<a href="com/dua3/utility/text/Style.html" title="class in com.dua3.utility.text">Style</a></dt>
 <dd>
 <div class="block">Default Monospace font.</div>
@@ -9910,6 +9966,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/text/TagBasedConverter.AttributeChange.html#newValue()" class="member-name-link">newValue()</a> - Method in record class com.dua3.utility.text.<a href="com/dua3/utility/text/TagBasedConverter.AttributeChange.html" title="class in com.dua3.utility.text">TagBasedConverter.AttributeChange</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/text/TagBasedConverter.AttributeChange.html#param-newValue"><code>newValue</code></a> record component.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/LangUtil.html#newWeakHashSet()" class="member-name-link">newWeakHashSet()</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
+<dd>
+<div class="block">Creates a new <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link"><code>Set</code></a> backed by a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/WeakHashMap.html" title="class or interface in java.util" class="external-link"><code>WeakHashMap</code></a>.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/LangUtil.html#newWeakHashSet(int)" class="member-name-link">newWeakHashSet(int)</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
+<dd>
+<div class="block">Creates a new <code>Set</code> backed by a <code>WeakHashMap</code> that holds weak references to its keys.</div>
 </dd>
 <dt><a href="com/dua3/utility/data/FilterIterator.html#next()" class="member-name-link">next()</a> - Method in class com.dua3.utility.data.<a href="com/dua3/utility/data/FilterIterator.html" title="class in com.dua3.utility.data">FilterIterator</a></dt>
 <dd>&nbsp;</dd>
@@ -10321,6 +10385,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/fx/controls/InputControlBuilder.html#onChange(java.util.function.Consumer)" class="member-name-link">onChange(Consumer&lt;V&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControlBuilder.html" title="class in com.dua3.utility.fx.controls">InputControlBuilder</a></dt>
 <dd>
 <div class="block">Sets a callback to be invoked when the value of the slider changes.</div>
+</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html#onChangeDetected(boolean)" class="member-name-link">onChangeDetected(boolean)</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorBase</a></dt>
+<dd>
+<div class="block">Notifies all registered listeners of a detected change in the dark mode status.</div>
 </dd>
 <dt><a href="com/dua3/utility/math/geometry/Vector2f.html#ONE_MINUS_ONE" class="member-name-link">ONE_MINUS_ONE</a> - Static variable in record class com.dua3.utility.math.geometry.<a href="com/dua3/utility/math/geometry/Vector2f.html" title="class in com.dua3.utility.math.geometry">Vector2f</a></dt>
 <dd>
@@ -11407,6 +11475,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Removes elements from the beginning and the end of the specified list
  that match the given predicate.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/DarkModeDetector.html#removeListener(java.util.function.Consumer)" class="member-name-link">removeListener(Consumer&lt;Boolean&gt;)</a> - Method in interface com.dua3.utility.application.<a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html#removeListener(java.util.function.Consumer)" class="member-name-link">removeListener(Consumer&lt;Boolean&gt;)</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorBase</a></dt>
+<dd>
+<div class="block">Removes a previously added listener for dark mode state changes.</div>
+</dd>
 <dt><a href="com/dua3/utility/logging/LogBuffer.html#removeLogBufferListener(com.dua3.utility.logging.LogBuffer.LogBufferListener)" class="member-name-link">removeLogBufferListener(LogBuffer.LogBufferListener)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
 <dd>
 <div class="block">Remove LogBufferListener.</div>
@@ -11745,6 +11819,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/ui/Graphics.html#resetClip()" class="member-name-link">resetClip()</a> - Method in interface com.dua3.utility.ui.<a href="com/dua3/utility/ui/Graphics.html" title="interface in com.dua3.utility.ui">Graphics</a></dt>
 <dd>
 <div class="block">Resets the clipping area to the default state.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogBuilder.html#resizable(boolean)" class="member-name-link">resizable(boolean)</a> - Method in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogBuilder</a></dt>
+<dd>
+<div class="block">Sets whether the dialog should be resizable.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/FileSystemView.html#resolve(java.lang.String)" class="member-name-link">resolve(String)</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/FileSystemView.html" title="class in com.dua3.utility.io">FileSystemView</a></dt>
 <dd>
@@ -13764,6 +13842,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/lang/BuildInfo.html#param-system"><code>system</code></a> record component.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/UiMode.html#SYSTEM_DEFAULT" class="member-name-link">SYSTEM_DEFAULT</a> - Enum constant in enum class com.dua3.utility.application.<a href="com/dua3/utility/application/UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a></dt>
+<dd>
+<div class="block">Represents the default UI mode that follows the system's UI mode setting.</div>
+</dd>
 <dt><a href="com/dua3/utility/lang/SystemInfo.html" class="type-name-link" title="class in com.dua3.utility.lang">SystemInfo</a> - Record Class in <a href="com/dua3/utility/lang/package-summary.html">com.dua3.utility.lang</a></dt>
 <dd>
 <div class="block">A record that stores detailed system information, including operating system details,
@@ -14729,6 +14811,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:U">U</h2>
 <dl class="index">
+<dt><a href="com/dua3/utility/application/UiMode.html" class="type-name-link" title="enum class in com.dua3.utility.application">UiMode</a> - Enum Class in <a href="com/dua3/utility/application/package-summary.html">com.dua3.utility.application</a></dt>
+<dd>
+<div class="block">Enum representing the UI mode of an application.</div>
+</dd>
 <dt><a href="com/dua3/utility/lang/LangUtil.html#uncheckedConsumer(com.dua3.utility.lang.LangUtil.ConsumerThrows)" class="member-name-link">uncheckedConsumer(LangUtil.ConsumerThrows&lt;T, E&gt;)</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
 <dd>
 <div class="block">Helper method that converts checked <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link"><code>IOException</code></a> to
@@ -15068,6 +15154,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get styled RichText containing an object's string representation.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/UiMode.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.dua3.utility.application.<a href="com/dua3/utility/application/UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="com/dua3/utility/concurrent/ProgressTracker.State.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/ProgressTracker.State.html" title="enum class in com.dua3.utility.concurrent">ProgressTracker.State</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -15232,6 +15322,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/SimpleInputControl.html#valueProperty()" class="member-name-link">valueProperty()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls">SimpleInputControl</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/UiMode.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.application.<a href="com/dua3/utility/application/UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
+</dd>
 <dt><a href="com/dua3/utility/concurrent/ProgressTracker.State.html#values()" class="member-name-link">values()</a> - Static method in enum class com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/ProgressTracker.State.html" title="enum class in com.dua3.utility.concurrent">ProgressTracker.State</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in

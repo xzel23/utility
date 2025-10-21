@@ -153,15 +153,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Create Dialog instance.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="DialogBuilder.html" title="type parameter in DialogBuilder">R</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showAndWait()" class="member-name-link">showAndWait</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogBuilder.html" title="type parameter in DialogBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resizable(boolean)" class="member-name-link">resizable</a><wbr>(boolean&nbsp;flag)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets whether the dialog should be resizable.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="DialogBuilder.html" title="type parameter in DialogBuilder">R</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showAndWait()" class="member-name-link">showAndWait</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Build and show the dialog.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogBuilder.html" title="type parameter in DialogBuilder">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#title(java.lang.String,java.lang.Object...)" class="member-name-link">title</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogBuilder.html" title="type parameter in DialogBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#title(java.lang.String,java.lang.Object...)" class="member-name-link">title</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set dialog title.</div>
 </div>
 </div>
@@ -217,6 +222,20 @@ loadScripts(document, 'script');</script>
 <dd><code>args</code> - the arguments passed to the formatter</dd>
 <dt>Returns:</dt>
 <dd><code>this</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="resizable(boolean)">
+<h3>resizable</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DialogBuilder.html" title="type parameter in DialogBuilder">B</a></span>&nbsp;<span class="element-name">resizable</span><wbr><span class="parameters">(boolean&nbsp;flag)</span></div>
+<div class="block">Sets whether the dialog should be resizable.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>flag</code> - a boolean indicating whether the dialog should be resizable.
+             <code>true</code> makes the dialog resizable, while <code>false</code> makes it non-resizable.</dd>
+<dt>Returns:</dt>
+<dd>the current builder instance of type <code>B</code>, to allow method chaining</dd>
 </dl>
 </section>
 </li>
