@@ -1647,4 +1647,83 @@ class LangUtilTest {
 
         assertEquals(0, counter.get(), "consumer should not be invoked for null value");
     }
+
+    @Test
+    void newWeakHashSet_basicOperations() {
+        var set = LangUtil.newWeakHashSet();
+        String a = new String("a");
+        String b = new String("b");
+
+        assertTrue(set.add(a));
+        assertTrue(set.contains(a));
+        assertFalse(set.contains(b));
+        assertEquals(1, set.size());
+
+        assertFalse(set.add(a), "adding same element again should not change set");
+        assertEquals(1, set.size());
+
+        assertTrue(set.remove(a));
+        assertFalse(set.contains(a));
+        assertEquals(0, set.size());
+    }
+
+    @Test
+    void newWeakHashSet_allowsGarbageCollection() {
+        var set = LangUtil.newWeakHashSet();
+
+        Object obj = new Object();
+        java.lang.ref.WeakReference<Object> ref = new java.lang.ref.WeakReference<>(obj);
+
+        set.add(obj);
+        assertEquals(1, set.size());
+        assertNotNull(ref.get());
+
+        // Drop strong reference and encourage GC
+        obj = null;
+
+        // Loop a few times to give GC a chance; WeakHashMap cleans on access
+        boolean cleared = false;
+        for (int i = 0; i < 100; i++) {
+            System.gc();
+            // touch the set so that stale entries are expunged
+            set.contains(new Object());
+            if (ref.get() == null) {
+                cleared = true;
+                if (set.size() == 0) {
+                    break;
+                }
+            }
+            try { Thread.sleep(10); } catch (InterruptedException ignored) { }
+        }
+
+        assertTrue(cleared, "referent should be collected eventually");
+        assertEquals(0, set.size(), "stale entry should be removed from weak set");
+    }
+
+    @Test
+    void newWeakHashSet_withInitialCapacity_behavesLikeWeakSet() {
+        var set = LangUtil.newWeakHashSet(16);
+        String s = new String("x");
+        assertTrue(set.add(s));
+        assertTrue(set.contains(s));
+        assertEquals(1, set.size());
+
+        // Now allow it to be GC'd like above
+        java.lang.ref.WeakReference<String> ref = new java.lang.ref.WeakReference<>(s);
+        s = null;
+        boolean cleared = false;
+        for (int i = 0; i < 100; i++) {
+            System.gc();
+            set.size(); // touch
+            if (ref.get() == null) {
+                cleared = true;
+                if (set.size() == 0) {
+                    break;
+                }
+            }
+            try { Thread.sleep(10); } catch (InterruptedException ignored) { }
+        }
+        assertTrue(cleared, "referent should be collected eventually");
+        assertEquals(0, set.size(), "stale entry should be removed from weak set");
+    }
 }
