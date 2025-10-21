@@ -1651,8 +1651,8 @@ class LangUtilTest {
     @Test
     void newWeakHashSet_basicOperations() {
         var set = LangUtil.newWeakHashSet();
-        String a = new String("a");
-        String b = new String("b");
+        Long a = 123456789012L;
+        Long b = 123456789013L;
 
         assertTrue(set.add(a));
         assertTrue(set.contains(a));
@@ -1703,14 +1703,14 @@ class LangUtilTest {
     @Test
     void newWeakHashSet_withInitialCapacity_behavesLikeWeakSet() {
         var set = LangUtil.newWeakHashSet(16);
-        String s = new String("x");
-        assertTrue(set.add(s));
-        assertTrue(set.contains(s));
+        Long x = 12345678901234L;
+        assertTrue(set.add(x));
+        assertTrue(set.contains(x));
         assertEquals(1, set.size());
 
         // Now allow it to be GC'd like above
-        java.lang.ref.WeakReference<String> ref = new java.lang.ref.WeakReference<>(s);
-        s = null;
+        java.lang.ref.WeakReference<Long> ref = new java.lang.ref.WeakReference<>(x);
+        x = null;
         boolean cleared = false;
         for (int i = 0; i < 100; i++) {
             System.gc();

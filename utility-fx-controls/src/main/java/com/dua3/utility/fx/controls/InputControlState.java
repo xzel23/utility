@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -34,7 +34,7 @@ public final class InputControlState<R> {
     private final BooleanProperty valid = new SimpleBooleanProperty(true);
     private final StringProperty error = new SimpleStringProperty("");
     private final Function<? super @Nullable R, Optional<String>> validate;
-    private final List<Runnable> validationListeners = new ArrayList<>();
+    private final Collection<Runnable> validationListeners = new ArrayList<>();
     private final Supplier<? extends @Nullable R> dflt;
     private final ObservableValue<?> baseValue;
 

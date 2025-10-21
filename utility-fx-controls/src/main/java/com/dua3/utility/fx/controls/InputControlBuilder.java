@@ -3,7 +3,7 @@ package com.dua3.utility.fx.controls;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  */
 public abstract class InputControlBuilder<B extends InputControlBuilder<B, V>, V> {
     private Supplier<@Nullable V> dflt = () -> null;
-    private final List<Consumer<@Nullable V>> onChangeListeners = new ArrayList<>();
+    private final Collection<Consumer<@Nullable V>> onChangeListeners = new ArrayList<>();
 
     /**
      * Constructor for the InputControlBuilder class.
@@ -100,7 +100,7 @@ public abstract class InputControlBuilder<B extends InputControlBuilder<B, V>, V
      * @return a list of {@code Consumer} instances that handle value change events,
      *         or an empty list if no listeners have been added.
      */
-    protected List<Consumer<@Nullable V>> getOnChangeListeners() {
+    protected Collection<Consumer<@Nullable V>> getOnChangeListeners() {
         return onChangeListeners;
     }
 
