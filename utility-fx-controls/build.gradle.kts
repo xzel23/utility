@@ -1,12 +1,21 @@
 project.description = "JavaFX utilities (controls)"
 
 plugins {
-    alias(libs.plugins.javafx)
+    alias(libs.plugins.javafx) apply false
 }
 
-javafx {
-    version = libs.versions.javafx.get()
-    modules = listOf("javafx.controls", "javafx.graphics")
+val isWindowsArm = System.getProperty("os.name").startsWith("Windows", ignoreCase = true) &&
+        (System.getProperty("os.arch").equals("aarch64", ignoreCase = true) || System.getProperty("os.arch").equals("arm64", ignoreCase = true))
+
+if (!isWindowsArm) {
+    apply(plugin = libs.plugins.javafx.get().pluginId)
+
+    extensions.configure<org.openjfx.gradle.JavaFXOptions>("javafx") {
+        version = libs.versions.javafx.get()
+        modules = listOf("javafx.controls", "javafx.graphics")
+    }
+} else {
+    logger.lifecycle("Windows ARM detected: skipping JavaFX Gradle plugin. Assuming JDK provides JavaFX modules.")
 }
 
 dependencies {

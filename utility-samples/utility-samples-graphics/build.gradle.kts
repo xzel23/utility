@@ -2,12 +2,22 @@ project.description = "Java utilities (samples)"
 
 plugins {
     id("application")
-    alias(libs.plugins.javafx)
+    alias(libs.plugins.javafx) apply false
 }
 
-javafx {
-    version = libs.versions.javafx.get()
-    modules = listOf("javafx.base", "javafx.controls", "javafx.graphics")
+val isWindowsArm = System.getProperty("os.name").startsWith("Windows", ignoreCase = true) &&
+        (System.getProperty("os.arch").equals("aarch64", ignoreCase = true) || System.getProperty("os.arch").equals("arm64", ignoreCase = true))
+val useJavaFxPlugin = !isWindowsArm
+
+if (useJavaFxPlugin) {
+    apply(plugin = libs.plugins.javafx.get().pluginId)
+}
+
+if (useJavaFxPlugin) {
+    extensions.configure<org.openjfx.gradle.JavaFXOptions>("javafx") {
+        version = libs.versions.javafx.get()
+        modules = listOf("javafx.base", "javafx.controls", "javafx.graphics")
+    }
 }
 
 application {
@@ -39,10 +49,16 @@ fun createJavaFxRunTask(taskName: String, mainClassName: String, description: St
 
         doFirst {
             val javaFxModules = listOf("javafx.base", "javafx.controls", "javafx.graphics")
-            jvmArgs = listOf(
-                "--module-path", classpath.asPath,
-                "--add-modules", javaFxModules.joinToString(",")
-            )
+            jvmArgs = if (useJavaFxPlugin) {
+                listOf(
+                    "--module-path", classpath.asPath,
+                    "--add-modules", javaFxModules.joinToString(",")
+                )
+            } else {
+                listOf(
+                    "--add-modules", javaFxModules.joinToString(",")
+                )
+            }
         }
     }
 }
