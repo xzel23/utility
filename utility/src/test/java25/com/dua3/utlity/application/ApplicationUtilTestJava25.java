@@ -5,6 +5,7 @@ import com.dua3.utility.application.DarkModeDetector;
 import com.dua3.utility.application.imp.DarkModeDetectorImpUnsupported;
 import com.dua3.utility.lang.Platform;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestReporter;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -17,19 +18,29 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 class ApplicationUtilTestJava25 {
 
     @Test
-    void darkModeDetector_returnsInstanceOnJava25() {
+    void darkModeDetector_returnsInstanceOnJava25(TestReporter reporter) {
         DarkModeDetector detector = ApplicationUtil.darkModeDetector();
         assertNotNull(detector, "ApplicationUtil.darkModeDetector() should return a non-null instance");
+
+        List<Platform> supportedPlatforms = List.of(Platform.MACOS);
+        boolean isSupported = !(detector instanceof DarkModeDetectorImpUnsupported);
+        assertEquals(
+                supportedPlatforms.contains(Platform.currentPlatform()), isSupported,
+                "ApplicationUtil.darkModeDetector() should return an instance for the current platform if it is supported"
+        );
+        System.out.format(
+                "%-20s: %s%n%-20s: %s%n%-20s: %s%n%-20s: %s%n",
+                "Platform", Platform.currentPlatform(),
+                "isSuppored", isSupported,
+                "implementing class", detector.getClass(),
+                "dark mode enabled", detector.isDarkMode()
+        );
     }
 
     @Test
     void darkModeDetector_methodsCallableWithoutExceptionsOnJava25() {
         DarkModeDetector detector = ApplicationUtil.darkModeDetector();
         assertNotNull(detector);
-
-        List<Platform> supportedPlatforms = List.of(Platform.MACOS);
-        boolean isSupported = !(detector instanceof DarkModeDetectorImpUnsupported);
-        assertEquals(supportedPlatforms.contains(Platform.currentPlatform()), isSupported);
 
         // simple listener
         Consumer<Boolean> listener = b -> { /* no-op */ };

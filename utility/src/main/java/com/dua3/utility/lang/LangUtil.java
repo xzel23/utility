@@ -2466,6 +2466,7 @@ public final class LangUtil {
     /**
      * Creates a new {@code Set} backed by a {@code WeakHashMap} that holds weak references to its keys.
      *
+     * @param <T> the type of elements in the set
      * @param numEntries the initial capacity for the backing {@code WeakHashMap}
      * @return a new {@code Set} instance that is backed by a {@code WeakHashMap}
      */

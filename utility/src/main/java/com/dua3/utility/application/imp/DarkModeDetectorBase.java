@@ -5,11 +5,7 @@ import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -18,7 +14,7 @@ import java.util.function.Consumer;
  * managing listeners and notifying them of dark mode state changes.
  *
  * Subclasses should implement the specific logic for detecting dark mode and invoking
- * {@link #notifyListeners(boolean)} when a change is detected.
+ * {@link #onChangeDetected(boolean)} when a change is detected.
  *
  * The class handles:
  * - Adding and removing listeners for dark mode state changes.
@@ -42,6 +38,7 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
     public final void addListener(Consumer<Boolean> listener) {
         LOG.debug("addListener(): {}", System.identityHashCode(listener));
         listeners.add(listener);
+        monitorSystemChanges( true);
     }
 
     /**
@@ -54,6 +51,7 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
     public final void removeListener(Consumer<Boolean> listener) {
         boolean removed = listeners.remove(listener);
         LOG.debug("removeListener(): {} - removed={}", () -> System.identityHashCode(listener), () -> removed);
+        monitorSystemChanges(!listeners.isEmpty());
     }
 
     /**
@@ -65,4 +63,14 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
         LOG.debug("onChangeDetected(): informing listeners, darkMode={}", darkMode);
         listeners.forEach(l -> l.accept(darkMode));
     }
+
+    /**
+     * Monitors system changes for dark mode state.
+     * This method is invoked to enable or disable the monitoring of system-level events
+     * that indicate a change in dark mode status.
+     *
+     * Subclasses must implement this method to define the specific behavior for starting
+     * or stopping the monitoring functionality.
+     */
+    protected abstract void monitorSystemChanges(boolean enable);
 }

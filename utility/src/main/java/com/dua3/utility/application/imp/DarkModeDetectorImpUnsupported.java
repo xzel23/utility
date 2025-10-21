@@ -25,4 +25,9 @@ public class DarkModeDetectorImpUnsupported extends DarkModeDetectorBase {
     public boolean isDarkMode() {
         return false;
     }
+
+    @Override
+    protected void monitorSystemChanges(boolean enable) {
+        // nothing to do
+    }
 }

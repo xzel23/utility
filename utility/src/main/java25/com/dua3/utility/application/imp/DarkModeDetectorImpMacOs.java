@@ -6,6 +6,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.foreign.ValueLayout.ADDRESS;
 
@@ -51,14 +54,16 @@ public class DarkModeDetectorImpMacOs extends DarkModeDetectorBase {
     }
 
     /**
-         * Returns the lazily initialized singleton instance of the macOS dark mode detector.
-         * If initialization fails, an {@link DarkModeDetectorImpUnsupported} instance is returned.
-         *
-         * @return the dark mode detector instance
-         */
-        public static DarkModeDetector getInstance() {
+     * Returns the lazily initialized singleton instance of the macOS dark mode detector.
+     * If initialization fails, an {@link DarkModeDetectorImpUnsupported} instance is returned.
+     *
+     * @return the dark mode detector instance
+     */
+    public static DarkModeDetector getInstance() {
         return Holder.INSTANCE;
     }
+
+    private static final int CF_STRING_ENCODING_UTF8 = 0x08000100;
 
     private final Linker linker = Linker.nativeLinker();
     private final Arena sharedArena = Arena.ofShared();
@@ -69,9 +74,17 @@ public class DarkModeDetectorImpMacOs extends DarkModeDetectorBase {
     private final MethodHandle cfStringCreateWithCString;
     private final MethodHandle cfRelease;
 
-    private static final int CF_STRING_ENCODING_UTF8 = 0x08000100;
+    // CFNotificationCenter handles (for distributed notifications)
+    private final MethodHandle cfNotificationCenterGetDistributedCenter;
+    private final MethodHandle cfNotificationCenterAddObserver;
+    private final MethodHandle cfNotificationCenterRemoveObserver;
 
-    /** Defer all CF calls until first isDarkMode() invocation */
+    // State for observer registration
+    private MemorySegment distributedCenter = MemorySegment.NULL;
+    private MemorySegment notificationNameCF = MemorySegment.NULL;
+    private final AtomicBoolean observerRegistered = new AtomicBoolean(false);
+
+    /** Initialize CoreFoundation symbols and register for dark mode change notifications */
     private DarkModeDetectorImpMacOs() {
         try {
             SymbolLookup cf = SymbolLookup.libraryLookup(
@@ -99,7 +112,25 @@ public class DarkModeDetectorImpMacOs extends DarkModeDetectorBase {
                     FunctionDescriptor.ofVoid(ADDRESS)
             );
 
-        } catch (Throwable e) {
+            // CFNotificationCenter
+            cfNotificationCenterGetDistributedCenter = linker.downcallHandle(
+                    cf.findOrThrow("CFNotificationCenterGetDistributedCenter"),
+                    FunctionDescriptor.of(ADDRESS)
+            );
+            cfNotificationCenterAddObserver = linker.downcallHandle(
+                    cf.findOrThrow("CFNotificationCenterAddObserver"),
+                    // void CFNotificationCenterAddObserver(CFNotificationCenterRef center, const void *observer, CFNotificationCallback callBack, CFStringRef name, const void *object, CFNotificationSuspensionBehavior suspensionBehavior)
+                    FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ValueLayout.JAVA_INT)
+            );
+            cfNotificationCenterRemoveObserver = linker.downcallHandle(
+                    cf.findOrThrow("CFNotificationCenterRemoveObserver"),
+                    // void CFNotificationCenterRemoveObserver(CFNotificationCenterRef center, const void *observer, CFStringRef name, const void *object)
+                    FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, ADDRESS)
+            );
+
+            // Register for notifications immediately
+            registerForAppearanceChanges();
+        } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize DarkModeDetectorImpMacOs", e);
         }
     }
@@ -107,6 +138,85 @@ public class DarkModeDetectorImpMacOs extends DarkModeDetectorBase {
     @Override
     public boolean isDarkModeDetectionSupported() {
         return true;
+    }
+
+    private void registerForAppearanceChanges() {
+        if (observerRegistered.compareAndSet(false, true)) {
+            try {
+                // Create CFString for notification name in shared arena (persist across lifetime)
+                notificationNameCF = (MemorySegment) cfStringCreateWithCString.invoke(
+                        MemorySegment.NULL,
+                        sharedArena.allocateFrom("AppleInterfaceThemeChangedNotification"),
+                        CF_STRING_ENCODING_UTF8
+                );
+
+                // Obtain distributed center
+                distributedCenter = (MemorySegment) cfNotificationCenterGetDistributedCenter.invoke();
+
+                // Bind instance method as callback and create upcall stub
+                MethodHandle cb = MethodHandles.lookup().bind(this,
+                        "notificationCallback",
+                        MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class, MemorySegment.class, MemorySegment.class));
+                MemorySegment notificationCallbackStub = linker.upcallStub(
+                        cb,
+                        FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS),
+                        sharedArena
+                );
+
+                // Register observer with DeliverImmediately (4)
+                cfNotificationCenterAddObserver.invoke(
+                        distributedCenter,
+                        MemorySegment.NULL,
+                        notificationCallbackStub,
+                        notificationNameCF,
+                        MemorySegment.NULL,
+                        4
+                );
+            } catch (Throwable e) {
+                LOG.warn("Failed to register dark mode notifications", e);
+            }
+        }
+
+        // Ensure we remove the observer on shutdown
+        Runtime.getRuntime().addShutdownHook(new Thread(this::safeRemoveObserver, "DarkModeNotificationCleanup"));
+    }
+
+    private void safeRemoveObserver() {
+        try {
+            removeObserver();
+        } catch (Throwable t) {
+            LOG.debug("Ignoring error while removing dark mode observer", t);
+        }
+    }
+
+    private void removeObserver() throws Throwable {
+        if (observerRegistered.compareAndSet(true, false)) {
+            if (!distributedCenter.equals(MemorySegment.NULL) && !notificationNameCF.equals(MemorySegment.NULL)) {
+                cfNotificationCenterRemoveObserver.invoke(
+                        distributedCenter,
+                        MemorySegment.NULL,
+                        notificationNameCF,
+                        MemorySegment.NULL
+                );
+            }
+            // CF objects created with Create should be released
+            if (!notificationNameCF.equals(MemorySegment.NULL)) {
+                cfRelease.invoke(notificationNameCF);
+                notificationNameCF = MemorySegment.NULL;
+            }
+            // distributedCenter is not owned, do not release
+        }
+    }
+
+    // CFNotification callback signature: void callback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* object, CFDictionaryRef userInfo)
+    @SuppressWarnings("unused")
+    private void notificationCallback(MemorySegment center, MemorySegment observer, MemorySegment name, MemorySegment object, MemorySegment userInfo) {
+        try {
+            boolean dark = isDarkMode();
+            onChangeDetected(dark);
+        } catch (Exception t) {
+            LOG.error("Error handling dark mode notification", t);
+        }
     }
 
     /** Returns true if macOS is currently in Dark Mode */
@@ -149,38 +259,16 @@ public class DarkModeDetectorImpMacOs extends DarkModeDetectorBase {
 
             return dark;
         } catch (Throwable e) {
-            throw new RuntimeException("Failed to detect Dark Mode", e);
+            LOG.warn("Failed to detect Dark Mode", e);
+            return false;
         }
     }
 
-/**
-     * Starts a daemon thread that periodically checks the system appearance and
-     * notifies listeners when a change is detected via {@link #onChangeDetected(boolean)}.
-     *
-     * @param intervalMs polling interval in milliseconds
-     */
-    public void startPolling(long intervalMs) {
-        Thread t = new Thread(() -> {
-            boolean last = isDarkMode();
-            while (true) {
-                try {
-                    Thread.sleep(intervalMs);
-                    boolean current = isDarkMode();
-                    if (current != last) {
-                        last = current;
-                        onChangeDetected(current);
-                    }
-                } catch (InterruptedException e) {
-                    LOG.debug("DarkModePoller interrupted", e);
-                    Thread.currentThread().interrupt();
-                    return;
-                } catch (Throwable e) {
-                    LOG.error("Error detecting Dark Mode", e);
-                }
-            }
-        }, "DarkModePoller");
-
-        t.setDaemon(true);
-        t.start();
+    @Override
+    protected void monitorSystemChanges(boolean enable) {
+        if (enable) {
+            registerForAppearanceChanges();
+        }
+        // In this non-polling implementation, we do not deregister. This is done on shutdown.
     }
 }
