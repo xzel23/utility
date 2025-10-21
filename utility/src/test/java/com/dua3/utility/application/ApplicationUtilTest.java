@@ -1,15 +1,10 @@
 package com.dua3.utility.application;
 
-import com.dua3.utility.application.imp.DarkModeDetectorImpUnsupported;
-import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.lang.Platform;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
