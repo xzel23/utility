@@ -1,7 +1,8 @@
-package com.dua3.utility.application;
+package com.dua3.utlity.application;
 
+import com.dua3.utility.application.ApplicationUtil;
+import com.dua3.utility.application.DarkModeDetector;
 import com.dua3.utility.application.imp.DarkModeDetectorImpUnsupported;
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;
 import org.junit.jupiter.api.Test;
 
@@ -13,31 +14,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-class ApplicationUtilTest {
+class ApplicationUtilTestJava25 {
 
     @Test
-    void testPreferencesShouldNotBeNull() {
-        // Initialize with a valid Preferences instance
-        assertNotNull(ApplicationUtil.preferences());
-    }
-
-    @Test
-    void testRecentlyUsedDocumentsShouldReturnSameInstance() {
-        var first = ApplicationUtil.recentlyUsedDocuments();
-        var second = ApplicationUtil.recentlyUsedDocuments();
-        assertSame( first, second);
-    }
-
-    @Test
-    void darkModeDetector_returnsInstance() {
+    void darkModeDetector_returnsInstanceOnJava25() {
         DarkModeDetector detector = ApplicationUtil.darkModeDetector();
         assertNotNull(detector, "ApplicationUtil.darkModeDetector() should return a non-null instance");
     }
 
     @Test
-    void darkModeDetector_methodsCallableWithoutExceptions() {
+    void darkModeDetector_methodsCallableWithoutExceptionsOnJava25() {
         DarkModeDetector detector = ApplicationUtil.darkModeDetector();
         assertNotNull(detector);
+
+        List<Platform> supportedPlatforms = List.of(Platform.MACOS);
+        boolean isSupported = !(detector instanceof DarkModeDetectorImpUnsupported);
+        assertEquals(supportedPlatforms.contains(Platform.currentPlatform()), isSupported);
 
         // simple listener
         Consumer<Boolean> listener = b -> { /* no-op */ };

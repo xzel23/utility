@@ -42,6 +42,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.IllegalFormatException;
@@ -57,8 +58,10 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Properties;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -2447,5 +2450,26 @@ public final class LangUtil {
         if (value != null) {
             consumer.accept(value);
         }
+    }
+
+    /**
+     * Creates a new {@link Set} backed by a {@link WeakHashMap}.
+     * This set allows for entries to be garbage collected when they are no longer referenced elsewhere.
+     *
+     * @param <T> the type of elements in the set
+     * @return a new weakly-referenced hash set
+     */
+    public static <T extends @Nullable Object> Set<T> newWeakHashSet() {
+        return Collections.newSetFromMap(new WeakHashMap<>());
+    }
+
+    /**
+     * Creates a new {@code Set} backed by a {@code WeakHashMap} that holds weak references to its keys.
+     *
+     * @param numEntries the initial capacity for the backing {@code WeakHashMap}
+     * @return a new {@code Set} instance that is backed by a {@code WeakHashMap}
+     */
+    public static <T extends @Nullable Object> Set<T> newWeakHashSet(int numEntries) {
+        return Collections.newSetFromMap(WeakHashMap.newWeakHashMap(numEntries));
     }
 }

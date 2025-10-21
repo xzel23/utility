@@ -1,5 +1,6 @@
 package com.dua3.utility.application;
 
+import com.dua3.utility.application.imp.DarkModeDetectorInstance;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -25,7 +26,11 @@ public final class ApplicationUtil {
         // utility class
     }
 
-    private static final AtomicReference<@Nullable Preferences> applicationPreferences = new AtomicReference<>(null);
+    private static final AtomicReference<@Nullable Preferences> APPLICATION_PREFERENCES = new AtomicReference<>(null);
+
+    private static final class DarkModeDetectorHolder {
+        private static final DarkModeDetector INSTANCE = DarkModeDetectorInstance.get();
+    }
 
     /**
      * Initializes the application preferences exactly once.
@@ -36,7 +41,7 @@ public final class ApplicationUtil {
      * @throws IllegalStateException if already initialized
      */
     public static void initApplicationPreferences(Preferences prefs) {
-        if (!applicationPreferences.compareAndSet(null, prefs)) {
+        if (!APPLICATION_PREFERENCES.compareAndSet(null, prefs)) {
             LOG.warn("application preferences already initialized, ignoring second call to initApplicationPreferences(...)");
         }
     }
@@ -51,7 +56,7 @@ public final class ApplicationUtil {
      * @return the application's preferences (never null)
      */
     public static Preferences preferences() {
-        Preferences preferences = applicationPreferences.updateAndGet(prefs -> {
+        Preferences preferences = APPLICATION_PREFERENCES.updateAndGet(prefs -> {
             if (prefs == null) {
                 LOG.warn("Application preferences not initialized; using ephemeral, non-persistent preferences. "
                         + "Call ApplicationUtil.initApplicationPreferences(...) during startup to enable persistence.");
@@ -80,5 +85,9 @@ public final class ApplicationUtil {
      */
     public static RecentlyUsedDocuments recentlyUsedDocuments() {
         return RecentlyUsedDocumentsHolder.RECENTLY_USED_DOCUMENTS;
+    }
+
+    public static DarkModeDetector darkModeDetector() {
+        return DarkModeDetectorHolder.INSTANCE;
     }
 }
