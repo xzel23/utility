@@ -4,6 +4,7 @@ import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.math.MathUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -97,6 +99,17 @@ class LangUtilTest {
     void testCheckWithFormatter() {
         assertDoesNotThrow(() -> LangUtil.check(true, "test %s", "succeeded"));
         assertThrows(LangUtil.FailedCheckException.class, () -> LangUtil.check(false, "test %s", "succeeded"), "test succeeded");
+    }
+
+    @Test
+    void testCheckWithInvalidFormatter() {
+        boolean assertionsEnabled = false;
+        assert (assertionsEnabled = true);
+        Assumptions.assumeTrue(assertionsEnabled, "Assertions are enabled, format string should be checked against arguments");
+
+        // make sure the format is checked for both passed and failed conditions
+        assertThrows(AssertionError.class, () -> LangUtil.check(true, "test %f", "succeeded"));
+        assertThrows(AssertionError.class, () -> LangUtil.check(false, "test %f", "succeeded"));
     }
 
     @Test
@@ -186,6 +199,8 @@ class LangUtilTest {
 
     @Test
     void trimWithByteOrderMark() {
+        assertEquals("", LangUtil.trimWithByteOrderMark(""));
+        assertEquals("", LangUtil.trimWithByteOrderMark(new String(new char[]{0xfeff})));
         assertEquals("test", LangUtil.trimWithByteOrderMark(new String(new char[]{0xfeff, 't', 'e', 's', 't'})));
         assertEquals("test\n" + (char) 0xfeff + "test", LangUtil.trimWithByteOrderMark(new String(new char[]{0xfeff, 't', 'e', 's', 't', '\n', 0xfeff, 't', 'e', 's', 't', '\n'})));
     }
@@ -1565,5 +1580,71 @@ class LangUtilTest {
         assertEquals(-1, LangUtil.compare(reverseComparator, "b", "a"));
         assertEquals(1, LangUtil.compare(reverseComparator, "a", "b"));
         assertEquals(0, LangUtil.compare(reverseComparator, "c", "c"));
+    }
+
+    @Test
+    void getOrThrow_returnsExistingNonNullValue() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("a", 1);
+
+        Integer result = LangUtil.getOrThrow(map, "a");
+        assertEquals(1, result);
+    }
+
+    @Test
+    void getOrThrow_throwsWhenKeyMissing() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("a", 1);
+
+        NoSuchElementException ex = assertThrows(NoSuchElementException.class,
+                () -> LangUtil.getOrThrow(map, "b"));
+        assertTrue(ex.getMessage().contains("no value for key: b"));
+    }
+
+    @Test
+    void getOrThrow_throwsWhenValueIsNull() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("a", null);
+
+        NoSuchElementException ex = assertThrows(NoSuchElementException.class,
+                () -> LangUtil.getOrThrow(map, "a"));
+        assertTrue(ex.getMessage().contains("no value for key: a"));
+    }
+
+    // --- ifPresent ---
+
+    @Test
+    void ifPresent_invokesConsumerWhenKeyPresentWithNonNullValue() {
+        Map<String, String> map = new HashMap<>();
+        map.put("k", "v");
+        AtomicReference<String> received = new AtomicReference<>();
+
+        LangUtil.ifPresent(map, "k", received::set);
+
+        assertEquals("v", received.get());
+    }
+
+    @Test
+    void ifPresent_doesNothingWhenKeyMissing() {
+        Map<String, String> map = new HashMap<>();
+        map.put("k", "v");
+        AtomicInteger counter = new AtomicInteger();
+        Consumer<String> consumer = s -> counter.incrementAndGet();
+
+        LangUtil.ifPresent(map, "missing", consumer);
+
+        assertEquals(0, counter.get(), "consumer should not be invoked for missing key");
+    }
+
+    @Test
+    void ifPresent_doesNothingWhenValueIsNull() {
+        Map<String, String> map = new HashMap<>();
+        map.put("k", null);
+        AtomicInteger counter = new AtomicInteger();
+        Consumer<String> consumer = s -> counter.incrementAndGet();
+
+        LangUtil.ifPresent(map, "k", consumer);
+
+        assertEquals(0, counter.get(), "consumer should not be invoked for null value");
     }
 }
