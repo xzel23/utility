@@ -221,6 +221,18 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Adds the given non-null items to the collection.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&gt;<br>@Nullable T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#applyIfNotEmpty(T,java.util.function.Consumer)" class="member-name-link">applyIfNotEmpty</a><wbr>(@Nullable T&nbsp;cs,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super T&gt;&nbsp;consumer)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Applies the given consumer to the CharSequence if it is not null and not empty.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;@Nullable T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#applyIfNotNull(T,java.util.function.Consumer)" class="member-name-link">applyIfNotNull</a><wbr>(@Nullable T&nbsp;v,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super T&gt;&nbsp;consumer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Executes the provided consumer if the given value is not null.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T,<wbr>
 U extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a><wbr>&lt;T,<wbr>U&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#asFunction(java.util.Map)" class="member-name-link">asFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? super T,<wbr>? extends U&gt;&nbsp;map)</code></div>
@@ -3305,6 +3317,40 @@ U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <dd><code>numEntries</code> - the initial capacity for the backing <code>WeakHashMap</code></dd>
 <dt>Returns:</dt>
 <dd>a new <code>Set</code> instance that is backed by a <code>WeakHashMap</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="applyIfNotNull(T,java.util.function.Consumer)">
+<h3 id="applyIfNotNull(java.lang.Object,java.util.function.Consumer)">applyIfNotNull</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">@Nullable T</span>&nbsp;<span class="element-name">applyIfNotNull</span><wbr><span class="parameters">(@Nullable T&nbsp;v,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super T&gt;&nbsp;consumer)</span></div>
+<div class="block">Executes the provided consumer if the given value is not null.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the value to be checked and consumed</dd>
+<dt>Parameters:</dt>
+<dd><code>v</code> - the value to be checked for null</dd>
+<dd><code>consumer</code> - the action to be performed on the value if it is not null</dd>
+<dt>Returns:</dt>
+<dd>true if the value is not null and the consumer is executed, false if the value is null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="applyIfNotEmpty(T,java.util.function.Consumer)">
+<h3 id="applyIfNotEmpty(java.lang.CharSequence,java.util.function.Consumer)">applyIfNotEmpty</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&gt;</span>&nbsp;<span class="return-type">@Nullable T</span>&nbsp;<span class="element-name">applyIfNotEmpty</span><wbr><span class="parameters">(@Nullable T&nbsp;cs,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super T&gt;&nbsp;consumer)</span></div>
+<div class="block">Applies the given consumer to the CharSequence if it is not null and not empty.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the CharSequence</dd>
+<dt>Parameters:</dt>
+<dd><code>cs</code> - the CharSequence to be checked and processed; may be null</dd>
+<dd><code>consumer</code> - the consumer to be applied if the CharSequence is not empty</dd>
+<dt>Returns:</dt>
+<dd>the original CharSequence, whether modified or not</dd>
 </dl>
 </section>
 </li>
