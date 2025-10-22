@@ -95,7 +95,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">DarkModeDetectorInstance</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Singleton access point for obtaining an instance of the <a href="../DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a>.
-
+ <p>
  This class provides access to a default implementation of the <a href="../DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a> interface.
  This class is the fallback for pre-Java 25 codebases and returns an instance that cannot detect
  whether dark mode is enabled on the system. For Java 25+, a system specific class is returned
@@ -141,7 +141,7 @@ loadScripts(document, 'script');</script>
 <h3>get</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="../DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></span>&nbsp;<span class="element-name">get</span>()</div>
 <div class="block">Retrieves the instance of the <a href="../DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a>.
-
+ <p>
  This method provides access to a the implementation of the <a href="../DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a> interface.
  The implementation returned by this method is system dependent and may or may not support dark mode detection.</div>
 <dl class="notes">
