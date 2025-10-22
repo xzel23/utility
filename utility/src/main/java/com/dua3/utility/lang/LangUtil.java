@@ -2473,4 +2473,34 @@ public final class LangUtil {
     public static <T extends @Nullable Object> Set<T> newWeakHashSet(int numEntries) {
         return Collections.newSetFromMap(WeakHashMap.newWeakHashMap(numEntries));
     }
+
+    /**
+     * Executes the provided consumer if the given value is not null.
+     *
+     * @param <T> the type of the value to be checked and consumed
+     * @param v the value to be checked for null
+     * @param consumer the action to be performed on the value if it is not null
+     * @return true if the value is not null and the consumer is executed, false if the value is null
+     */
+    public static <T> @Nullable T applyIfNotNull(@Nullable T v, Consumer<? super T> consumer) {
+        if (v != null) {
+            consumer.accept(v);
+        }
+        return v;
+    }
+
+    /**
+     * Applies the given consumer to the CharSequence if it is not null and not empty.
+     *
+     * @param <T>      the type of the CharSequence
+     * @param cs       the CharSequence to be checked and processed; may be null
+     * @param consumer the consumer to be applied if the CharSequence is not empty
+     * @return the original CharSequence, whether modified or not
+     */
+    public static <T extends CharSequence> @Nullable T applyIfNotEmpty(@Nullable T cs, Consumer<? super T> consumer) {
+        if (cs != null && !cs.isEmpty()) {
+            consumer.accept(cs);
+        }
+        return cs;
+    }
 }
