@@ -13,7 +13,9 @@ import com.dua3.utility.lang.Platform;
  * <p>
  * The actual instance returned by this class is managed by the {@link DarkModeDetectorImpUnsupported} class.
  */
-public class DarkModeDetectorInstance {
+public final class DarkModeDetectorInstance {
+
+    private DarkModeDetectorInstance() {}
 
     /**
      * Retrieves an instance of {@link DarkModeDetector} appropriate for the current platform.

@@ -28,6 +28,14 @@ public final class DarkModeSample {
         // no instances
     }
 
+    /**
+     * The main method initializes and displays the application's UI for switching between
+     * different UI modes (System Default, Light, and Dark). It sets up the UI components,
+     * configures the look and feel, and handles user interactions to toggle the application's
+     * UI mode.
+     *
+     * @param args the command-line arguments passed to the program, not used in this implementation
+     */
     public static void main(String[] args) {
         // Use system L&F where possible to keep it minimalistic
         try {
