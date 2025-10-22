@@ -5,7 +5,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.prefs.Preferences;
 
 /**
@@ -87,7 +90,86 @@ public final class ApplicationUtil {
         return RecentlyUsedDocumentsHolder.RECENTLY_USED_DOCUMENTS;
     }
 
+    /**
+     * Returns the singleton instance of {@link DarkModeDetector}.
+     *
+     * @return the singleton instance of {@link DarkModeDetector}
+     */
     public static DarkModeDetector darkModeDetector() {
         return DarkModeDetectorHolder.INSTANCE;
     }
+
+    private static final AtomicReference<UiMode> applicationUiMode = new AtomicReference<>(UiMode.LIGHT);
+    private static final AtomicBoolean applicationDarkMode = new AtomicBoolean(false);
+
+    public static UiMode getApplicationUiMode() {
+        return applicationUiMode.get();
+    }
+
+    private static class DarkModeUpdater {
+        private static final DarkModeUpdater INSTANCE = new DarkModeUpdater();
+
+        DarkModeUpdater() {
+            DarkModeDetector dmd = darkModeDetector();
+            if (dmd.isDarkModeDetectionSupported()) {
+                LOG.debug("system dark mode detection supported, adding listener");
+                dmd.addListener(dark -> onSystemDarkModeChange(dark));
+            } else {
+                LOG.debug("system dark mode detection not supported");
+            }
+        }
+    }
+
+    private static void onSystemDarkModeChange(boolean dark) {
+        LOG.debug("system dark mode changed to {}", dark);
+        if (getApplicationUiMode() == UiMode.SYSTEM_DEFAULT) {
+            LOG.debug("setting application dark mode to {}", dark);
+            setApplicationDarkMode(dark);
+        } else {
+            LOG.debug("ignoring application dark mode change, ui mode is {}", getApplicationUiMode());
+        }
+    }
+
+    public static void setApplicationUiMode(UiMode mode) {
+        UiMode previousMode = applicationUiMode.getAndSet(mode);
+        if (previousMode != mode) {
+            boolean dark = switch (getApplicationUiMode()) {
+                case DARK -> true;
+                case LIGHT -> false;
+                case SYSTEM_DEFAULT -> darkModeDetector().isDarkMode();
+            };
+            boolean previousDark = applicationDarkMode.getAndSet(dark);
+            if (previousDark != dark) {
+                onUpdateApplicationDarkMode(dark);
+            }
+        }
+    }
+
+    private static void onUpdateApplicationDarkMode(boolean dark) {
+        applicationDarkModeListeners.forEach(listener -> {
+            try {
+                listener.accept(dark);
+            } catch (Exception ex) {
+                LOG.warn("Ignoring exception while notifying listener", ex);
+            }
+        });
+    }
+
+    private static boolean setApplicationDarkMode(boolean darkMode) {
+        return applicationDarkMode.getAndSet(darkMode);
+    }
+    public static boolean isApplicationDarkMode() {
+        return applicationDarkMode.get();
+    }
+
+    private static final CopyOnWriteArrayList<Consumer<Boolean>> applicationDarkModeListeners = new CopyOnWriteArrayList<>();
+
+    public static void addApplicationDarkModeListener(Consumer<Boolean> listener) {
+        applicationDarkModeListeners.add(listener);
+    }
+
+    public static void removeApplicationDarkModeListener(Consumer<Boolean> listener) {
+        applicationDarkModeListeners.remove(listener);
+    }
+
 }
