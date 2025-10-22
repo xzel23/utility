@@ -212,6 +212,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/ReversedSequencedCollectionWrapper.html#addAll(java.util.Collection)" class="member-name-link">addAll(Collection&lt;? extends T&gt;)</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/ReversedSequencedCollectionWrapper.html" title="class in com.dua3.utility.lang">ReversedSequencedCollectionWrapper</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/ApplicationUtil.html#addApplicationDarkModeListener(java.util.function.Consumer)" class="member-name-link">addApplicationDarkModeListener(Consumer&lt;Boolean&gt;)</a> - Static method in class com.dua3.utility.application.<a href="com/dua3/utility/application/ApplicationUtil.html" title="class in com.dua3.utility.application">ApplicationUtil</a></dt>
+<dd>
+<div class="block">Adds a listener to receive updates when the application's dark mode status changes.</div>
+</dd>
 <dt><a href="com/dua3/utility/db/NamedParameterStatement.html#addBatch()" class="member-name-link">addBatch()</a> - Method in class com.dua3.utility.db.<a href="com/dua3/utility/db/NamedParameterStatement.html" title="class in com.dua3.utility.db">NamedParameterStatement</a></dt>
 <dd>
 <div class="block">Adds the current set of parameters as a batch entry.</div>
@@ -344,7 +348,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/lang/RingBuffer.html#addLast(T)" class="member-name-link">addLast(T)</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/RingBuffer.html" title="class in com.dua3.utility.lang">RingBuffer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/application/DarkModeDetector.html#addListener(java.util.function.Consumer)" class="member-name-link">addListener(Consumer&lt;Boolean&gt;)</a> - Method in interface com.dua3.utility.application.<a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Registers a listener to observe changes in the dark mode state.</div>
+</dd>
 <dt><a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html#addListener(java.util.function.Consumer)" class="member-name-link">addListener(Consumer&lt;Boolean&gt;)</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorBase</a></dt>
 <dd>
 <div class="block">Adds a listener for dark mode state changes.</div>
@@ -1925,14 +1931,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates and returns a converter between com.dua3.utility.data.Color and javafx.scene.paint.Color.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/FxLogPane.html#colorizeDark(com.dua3.utility.logging.LogEntry)" class="member-name-link">colorizeDark(LogEntry)</a> - Static method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
-<dd>
-<div class="block">Determines the color associated with the given log entry based on its log level.</div>
-</dd>
-<dt><a href="com/dua3/utility/fx/FxLogPane.html#colorizeLight(com.dua3.utility.logging.LogEntry)" class="member-name-link">colorizeLight(LogEntry)</a> - Static method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
-<dd>
-<div class="block">Determines the color associated with the given log entry based on its log level.</div>
-</dd>
 <dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#columns(int)" class="member-name-link">columns(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#columns(int)" class="member-name-link">columns(int)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
@@ -2995,6 +2993,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the CSS file to be used for styling the dialog.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/FxLogPane.html#CSS_CLASS_LOGTABLE_ROW" class="member-name-link">CSS_CLASS_LOGTABLE_ROW</a> - Static variable in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/FxLogPane.html#CSS_PREFIX_LOGLEVEL" class="member-name-link">CSS_PREFIX_LOGLEVEL</a> - Static variable in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputControl.html#CSS_REQUIRED_INPUT" class="member-name-link">CSS_REQUIRED_INPUT</a> - Static variable in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
 <div class="block">CSS class to mark required input fields.</div>
@@ -3131,9 +3133,13 @@ loadScripts(document, 'script');</script>
 <div class="block">The color DARKMAGENTA.</div>
 </dd>
 <dt><a href="com/dua3/utility/application/ApplicationUtil.html#darkModeDetector()" class="member-name-link">darkModeDetector()</a> - Static method in class com.dua3.utility.application.<a href="com/dua3/utility/application/ApplicationUtil.html" title="class in com.dua3.utility.application">ApplicationUtil</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the singleton instance of <a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a>.</div>
+</dd>
 <dt><a href="com/dua3/utility/application/DarkModeDetector.html" class="type-name-link" title="interface in com.dua3.utility.application">DarkModeDetector</a> - Interface in <a href="com/dua3/utility/application/package-summary.html">com.dua3.utility.application</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Interface for detecting and handling dark mode state changes.</div>
+</dd>
 <dt><a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" class="type-name-link" title="class in com.dua3.utility.application.imp">DarkModeDetectorBase</a> - Class in <a href="com/dua3/utility/application/imp/package-summary.html">com.dua3.utility.application.imp</a></dt>
 <dd>
 <div class="block">An abstract base class for detecting and handling dark mode status.</div>
@@ -5010,10 +5016,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Construct a new FxLogPane instance with the given buffer.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/FxLogPane.html#%3Cinit%3E(com.dua3.utility.logging.LogBuffer,java.util.function.Function)" class="member-name-link">FxLogPane(LogBuffer, Function&lt;LogEntry, Color&gt;)</a> - Constructor for class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
-<dd>
-<div class="block">Constructs a new FxLogPane instance with the given LogBuffer and colorize function.</div>
-</dd>
 <dt><a href="com/dua3/utility/fx/FxLogWindow.html" class="type-name-link" title="class in com.dua3.utility.fx">FxLogWindow</a> - Class in <a href="com/dua3/utility/fx/package-summary.html">com.dua3.utility.fx</a></dt>
 <dd>
 <div class="block">The FxLogWindow class represents a JavaFX window that displays log entries in a table view.</div>
@@ -5263,6 +5265,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Ensures the existence of a data directory for the specified application.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/ApplicationUtil.html#getApplicationUiMode()" class="member-name-link">getApplicationUiMode()</a> - Static method in class com.dua3.utility.application.<a href="com/dua3/utility/application/ApplicationUtil.html" title="class in com.dua3.utility.application">ApplicationUtil</a></dt>
+<dd>
+<div class="block">Retrieves the current UI mode of the application.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/PinBoard.html#getArea()" class="member-name-link">getArea()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/PinBoard.html" title="class in com.dua3.utility.fx.controls">PinBoard</a></dt>
 <dd>
 <div class="block">Returns the area of the PinBoard.</div>
@@ -5402,10 +5408,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/text/FontDef.html#getColor()" class="member-name-link">getColor()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/FontDef.html" title="class in com.dua3.utility.text">FontDef</a></dt>
 <dd>
 <div class="block">Retrieves the color attribute associated with this instance.</div>
-</dd>
-<dt><a href="com/dua3/utility/fx/FxLogPane.html#getColorize()" class="member-name-link">getColorize()</a> - Method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
-<dd>
-<div class="block">Retrieves the colorization function used to determine the color of log entries.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/CsvReader.html#getColumnName(int)" class="member-name-link">getColumnName(int)</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/CsvReader.html" title="class in com.dua3.utility.io">CsvReader</a></dt>
 <dd>
@@ -7956,6 +7958,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Determines if the stored result matches any of the specified results.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/ApplicationUtil.html#isApplicationDarkMode()" class="member-name-link">isApplicationDarkMode()</a> - Static method in class com.dua3.utility.application.<a href="com/dua3/utility/application/ApplicationUtil.html" title="class in com.dua3.utility.application">ApplicationUtil</a></dt>
+<dd>
+<div class="block">Checks whether the application is currently in dark mode.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/SymmetricAlgorithm.html#isAuthenticated()" class="member-name-link">isAuthenticated()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/SymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">SymmetricAlgorithm</a></dt>
 <dd>
 <div class="block">Checks if this algorithm provides authenticated encryption.</div>
@@ -8021,11 +8027,15 @@ loadScripts(document, 'script');</script>
 <div class="block">Determines if the data held in this instance is in a compressed state.</div>
 </dd>
 <dt><a href="com/dua3/utility/application/DarkModeDetector.html#isDarkMode()" class="member-name-link">isDarkMode()</a> - Method in interface com.dua3.utility.application.<a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Checks if the application is currently in dark mode.</div>
+</dd>
 <dt><a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html#isDarkMode()" class="member-name-link">isDarkMode()</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorImpUnsupported</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/application/DarkModeDetector.html#isDarkModeDetectionSupported()" class="member-name-link">isDarkModeDetectionSupported()</a> - Method in interface com.dua3.utility.application.<a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Checks if dark mode detection is supported on the current platform.</div>
+</dd>
 <dt><a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html#isDarkModeDetectionSupported()" class="member-name-link">isDarkModeDetectionSupported()</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorImpUnsupported.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorImpUnsupported</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/FxLauncher.html#isDebug()" class="member-name-link">isDebug()</a> - Static method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLauncher.html" title="class in com.dua3.utility.fx">FxLauncher</a></dt>
@@ -11442,6 +11452,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/RingBuffer.html#removeAll(java.util.Collection)" class="member-name-link">removeAll(Collection&lt;?&gt;)</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/RingBuffer.html" title="class in com.dua3.utility.lang">RingBuffer</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/ApplicationUtil.html#removeApplicationDarkModeListener(java.util.function.Consumer)" class="member-name-link">removeApplicationDarkModeListener(Consumer&lt;Boolean&gt;)</a> - Static method in class com.dua3.utility.application.<a href="com/dua3/utility/application/ApplicationUtil.html" title="class in com.dua3.utility.application">ApplicationUtil</a></dt>
+<dd>
+<div class="block">Removes a listener for dark mode changes in the application.</div>
+</dd>
 <dt><a href="com/dua3/utility/concurrent/ReadOnlyValue.html#removeChangeListener(java.util.function.BiConsumer)" class="member-name-link">removeChangeListener(BiConsumer&lt;? super T, ? super T&gt;)</a> - Method in interface com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/ReadOnlyValue.html" title="interface in com.dua3.utility.concurrent">ReadOnlyValue</a></dt>
 <dd>
 <div class="block">Removes a change listener for the given method.</div>
@@ -11476,7 +11490,9 @@ loadScripts(document, 'script');</script>
  that match the given predicate.</div>
 </dd>
 <dt><a href="com/dua3/utility/application/DarkModeDetector.html#removeListener(java.util.function.Consumer)" class="member-name-link">removeListener(Consumer&lt;Boolean&gt;)</a> - Method in interface com.dua3.utility.application.<a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Removes a previously registered listener for dark mode state changes.</div>
+</dd>
 <dt><a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html#removeListener(java.util.function.Consumer)" class="member-name-link">removeListener(Consumer&lt;Boolean&gt;)</a> - Method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorBase.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorBase</a></dt>
 <dd>
 <div class="block">Removes a previously added listener for dark mode state changes.</div>
@@ -12419,6 +12435,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the alert handler for the given WebEngine.</div>
 </dd>
+<dt><a href="com/dua3/utility/application/ApplicationUtil.html#setApplicationUiMode(com.dua3.utility.application.UiMode)" class="member-name-link">setApplicationUiMode(UiMode)</a> - Static method in class com.dua3.utility.application.<a href="com/dua3/utility/application/ApplicationUtil.html" title="class in com.dua3.utility.application">ApplicationUtil</a></dt>
+<dd>
+<div class="block">Sets the application's UI mode and updates the dark mode setting accordingly.</div>
+</dd>
 <dt><a href="com/dua3/utility/db/NamedParameterStatement.html#setArray(java.lang.String,java.sql.Array)" class="member-name-link">setArray(String, Array)</a> - Method in class com.dua3.utility.db.<a href="com/dua3/utility/db/NamedParameterStatement.html" title="class in com.dua3.utility.db">NamedParameterStatement</a></dt>
 <dd>
 <div class="block">Set a parameter.</div>
@@ -12493,10 +12513,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Enable/Disable colored output using ANSI codes.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/FxLogPane.html#setColorize(java.util.function.Function)" class="member-name-link">setColorize(Function&lt;LogEntry, Color&gt;)</a> - Method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
-<dd>
-<div class="block">Sets the colorization function for determining the color of a log entry.</div>
-</dd>
 <dt><a href="com/dua3/utility/io/CsvReader.html#setColumnNames(java.util.List)" class="member-name-link">setColumnNames(List&lt;String&gt;)</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/CsvReader.html" title="class in com.dua3.utility.io">CsvReader</a></dt>
 <dd>
 <div class="block">Sets the column names for the CSV reader.</div>
@@ -12512,6 +12528,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/fx/web/WebViews.html#setConfirmationHandler(javafx.scene.web.WebEngine)" class="member-name-link">setConfirmationHandler(WebEngine)</a> - Static method in class com.dua3.utility.fx.web.<a href="com/dua3/utility/fx/web/WebViews.html" title="class in com.dua3.utility.fx.web">WebViews</a></dt>
 <dd>
 <div class="block">Sets the confirmation handler for the given WebEngine.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/FxLogPane.html#setDarkMode(boolean)" class="member-name-link">setDarkMode(boolean)</a> - Method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxLogPane.html" title="class in com.dua3.utility.fx">FxLogPane</a></dt>
+<dd>
+<div class="block">Set dark mode stylesheet for this pane.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Validator.html#setDecorateNodes(boolean)" class="member-name-link">setDecorateNodes(boolean)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Validator.html" title="class in com.dua3.utility.fx.controls">Validator</a></dt>
 <dd>

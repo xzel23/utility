@@ -94,6 +94,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">DarkModeDetector</span></div>
+<div class="block">Interface for detecting and handling dark mode state changes.
+ <p>
+ This interface provides methods to query dark mode support and status,
+ as well as to register and unregister listeners for dark mode state changes.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -110,16 +114,24 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#addListener(java.util.function.Consumer)" class="member-name-link">addListener</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;listener)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Registers a listener to observe changes in the dark mode state.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isDarkMode()" class="member-name-link">isDarkMode</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if the application is currently in dark mode.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isDarkModeDetectionSupported()" class="member-name-link">isDarkModeDetectionSupported</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if dark mode detection is supported on the current platform.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#removeListener(java.util.function.Consumer)" class="member-name-link">removeListener</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;listener)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Removes a previously registered listener for dark mode state changes.</div>
+</div>
 </div>
 </div>
 </div>
@@ -138,24 +150,49 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="isDarkModeDetectionSupported()">
 <h3>isDarkModeDetectionSupported</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isDarkModeDetectionSupported</span>()</div>
+<div class="block">Checks if dark mode detection is supported on the current platform.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if the platform supports detecting dark mode state, false otherwise</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="isDarkMode()">
 <h3>isDarkMode</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isDarkMode</span>()</div>
+<div class="block">Checks if the application is currently in dark mode.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if the application is in dark mode, otherwise false.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="addListener(java.util.function.Consumer)">
 <h3>addListener</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">addListener</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;listener)</span></div>
+<div class="block">Registers a listener to observe changes in the dark mode state.
+
+ This method allows adding a listener that will be notified whenever the
+ dark mode state changes. The listener receives a Boolean parameter indicating
+ whether dark mode is active.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>listener</code> - the listener to be notified of dark mode state changes;
+                 the parameter is true if dark mode is active, false otherwise</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="removeListener(java.util.function.Consumer)">
 <h3>removeListener</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">removeListener</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;listener)</span></div>
+<div class="block">Removes a previously registered listener for dark mode state changes.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>listener</code> - the Consumer to remove, which was previously registered to listen for dark mode state changes</dd>
+</dl>
 </section>
 </li>
 </ul>

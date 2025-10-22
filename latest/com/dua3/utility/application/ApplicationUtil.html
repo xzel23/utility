@@ -116,23 +116,50 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#darkModeDetector()" class="member-name-link">darkModeDetector</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addApplicationDarkModeListener(java.util.function.Consumer)" class="member-name-link">addApplicationDarkModeListener</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;listener)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Adds a listener to receive updates when the application's dark mode status changes.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#darkModeDetector()" class="member-name-link">darkModeDetector</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns the singleton instance of <a href="DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getApplicationUiMode()" class="member-name-link">getApplicationUiMode</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves the current UI mode of the application.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#initApplicationPreferences(java.util.prefs.Preferences)" class="member-name-link">initApplicationPreferences</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.prefs/java/util/prefs/Preferences.html" title="class or interface in java.util.prefs" class="external-link">Preferences</a>&nbsp;prefs)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Initializes the application preferences exactly once.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.prefs/java/util/prefs/Preferences.html" title="class or interface in java.util.prefs" class="external-link">Preferences</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#preferences()" class="member-name-link">preferences</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isApplicationDarkMode()" class="member-name-link">isApplicationDarkMode</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Checks whether the application is currently in dark mode.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.prefs/java/util/prefs/Preferences.html" title="class or interface in java.util.prefs" class="external-link">Preferences</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#preferences()" class="member-name-link">preferences</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the application's <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.prefs/java/util/prefs/Preferences.html" title="class or interface in java.util.prefs" class="external-link"><code>Preferences</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="RecentlyUsedDocuments.html" title="class in com.dua3.utility.application">RecentlyUsedDocuments</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#recentlyUsedDocuments()" class="member-name-link">recentlyUsedDocuments</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="RecentlyUsedDocuments.html" title="class in com.dua3.utility.application">RecentlyUsedDocuments</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#recentlyUsedDocuments()" class="member-name-link">recentlyUsedDocuments</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the singleton instance of <a href="RecentlyUsedDocuments.html" title="class in com.dua3.utility.application"><code>RecentlyUsedDocuments</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#removeApplicationDarkModeListener(java.util.function.Consumer)" class="member-name-link">removeApplicationDarkModeListener</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;listener)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Removes a listener for dark mode changes in the application.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setApplicationUiMode(com.dua3.utility.application.UiMode)" class="member-name-link">setApplicationUiMode</a><wbr>(<a href="UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a>&nbsp;mode)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Sets the application's UI mode and updates the dark mode setting accordingly.</div>
 </div>
 </div>
 </div>
@@ -193,9 +220,79 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getApplicationUiMode()">
+<h3>getApplicationUiMode</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a></span>&nbsp;<span class="element-name">getApplicationUiMode</span>()</div>
+<div class="block">Retrieves the current UI mode of the application.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the current application UI mode, which is an instance of <a href="UiMode.html" title="enum class in com.dua3.utility.application"><code>UiMode</code></a></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setApplicationUiMode(com.dua3.utility.application.UiMode)">
+<h3>setApplicationUiMode</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setApplicationUiMode</span><wbr><span class="parameters">(<a href="UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a>&nbsp;mode)</span></div>
+<div class="block">Sets the application's UI mode and updates the dark mode setting accordingly.
+ If the specified UI mode differs from the previous mode, any necessary adjustments are made,
+ including determining whether the application should utilize dark mode and invoking appropriate listeners.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>mode</code> - the desired UI mode for the application. Must be one of <a href="UiMode.html#DARK"><code>UiMode.DARK</code></a>, <a href="UiMode.html#LIGHT"><code>UiMode.LIGHT</code></a>,
+             or <a href="UiMode.html#SYSTEM_DEFAULT"><code>UiMode.SYSTEM_DEFAULT</code></a>.</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="darkModeDetector()">
 <h3>darkModeDetector</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="DarkModeDetector.html" title="interface in com.dua3.utility.application">DarkModeDetector</a></span>&nbsp;<span class="element-name">darkModeDetector</span>()</div>
+<div class="block">Returns the singleton instance of <a href="DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a>.
+ <p>
+ <strong>Note:</strong> The returned <a href="DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a> instance tracks the system dark mode setting.
+ To track the application setting, use <a href="#isApplicationDarkMode()"><code>isApplicationDarkMode()</code></a> and
+ <a href="#addApplicationDarkModeListener(java.util.function.Consumer)"><code>addApplicationDarkModeListener(Consumer)</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the singleton instance of <a href="DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isApplicationDarkMode()">
+<h3>isApplicationDarkMode</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isApplicationDarkMode</span>()</div>
+<div class="block">Checks whether the application is currently in dark mode.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd><code>true</code> if the application is in dark mode, <code>false</code> otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addApplicationDarkModeListener(java.util.function.Consumer)">
+<h3>addApplicationDarkModeListener</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addApplicationDarkModeListener</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;listener)</span></div>
+<div class="block">Adds a listener to receive updates when the application's dark mode status changes.
+ The listener is a consumer that takes a boolean, where <code>true</code> indicates that
+ dark mode is enabled, and <code>false</code> indicates that dark mode is disabled.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>listener</code> - the listener to be notified of dark mode changes (non-null)</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="removeApplicationDarkModeListener(java.util.function.Consumer)">
+<h3>removeApplicationDarkModeListener</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeApplicationDarkModeListener</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;listener)</span></div>
+<div class="block">Removes a listener for dark mode changes in the application.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>listener</code> - the listener to be removed; typically a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link"><code>Consumer</code></a> that processes
+                 a <code>Boolean</code> indicating the dark mode state (true if dark mode is enabled, false otherwise)</dd>
+</dl>
 </section>
 </li>
 </ul>
