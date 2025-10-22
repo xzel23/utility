@@ -73,6 +73,7 @@ public class InputDialogBuilder
     private InputDialog createDialog() {
         InputDialog dlg = new InputDialog();
         InputPane dialogPane = pb.build();
+
         pb.getButtonDefs().forEach(bd -> dialogPane.addButton(bd.type(), bd.resultHandler(), bd.action(), bd.enabled()));
         dialogPane.init();
 
@@ -82,6 +83,8 @@ public class InputDialogBuilder
         }
 
         dlg.setDialogPane(dialogPane);
+        dlg.getDialogPane().applyCss();
+        dlg.getDialogPane().layout();
 
         return dlg;
     }

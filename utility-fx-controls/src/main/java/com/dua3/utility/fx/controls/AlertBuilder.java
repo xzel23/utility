@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -61,9 +62,8 @@ public class AlertBuilder
     public Alert build() {
         Alert dlg = super.build();
 
-        if (css != null) {
-            dlg.getDialogPane().getScene().getStylesheets().add(css);
-        }
+        LangUtil.applyIfNotEmpty(css, dlg.getDialogPane().getScene().getStylesheets()::add);
+        LangUtil.applyIfNotEmpty(text, dlg::setContentText);
 
         if (!buttons.isEmpty()) {
             ObservableList<ButtonType> buttonTypes = dlg.getButtonTypes();
@@ -76,10 +76,6 @@ public class AlertBuilder
             for (ButtonType t : dlg.getButtonTypes()) {
                 ((Button) pane.lookupButton(t)).setDefaultButton(t == defaultButton);
             }
-        }
-
-        if (text != null) {
-            dlg.setContentText(text);
         }
 
         return dlg;

@@ -16,8 +16,6 @@ package com.dua3.utility.fx.controls.abstract_builders;
 
 import com.dua3.utility.fx.controls.ButtonDef;
 import com.dua3.utility.text.MessageFormatter;
-import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
@@ -109,17 +107,6 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
 
         // make resizable
         dlg.setResizable(resizable);
-
-        // Put the content inside a ScrollPane
-        Node content = dlg.getDialogPane().getContent();
-        ScrollPane scrollPane = new ScrollPane(content);
-        scrollPane.setFitToWidth(false);   // make content expand horizontally
-        scrollPane.setFitToHeight(false); // allow vertical scrolling
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-        // Set the ScrollPane as the dialog's content
-        dlg.getDialogPane().setContent(scrollPane);
 
         // set buttons
         if (!getButtonDefs().isEmpty()) {

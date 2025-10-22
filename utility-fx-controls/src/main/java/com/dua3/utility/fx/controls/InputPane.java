@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
@@ -25,7 +26,14 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
     public InputPane(Grid grid) {
         this.grid = grid;
         valid.bind(grid.validProperty());
-        setContent(grid);
+
+        ScrollPane scrollPane = new ScrollPane(grid);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(false); // allow vertical scrolling
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        setContent(scrollPane);
     }
 
     @Override
