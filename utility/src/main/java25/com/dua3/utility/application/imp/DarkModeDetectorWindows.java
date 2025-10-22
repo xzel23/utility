@@ -12,7 +12,6 @@ import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.time.Duration;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.foreign.ValueLayout.ADDRESS;
@@ -38,7 +37,6 @@ public class DarkModeDetectorWindows extends DarkModeDetectorBase {
     private static final String VALUE_SYSTEM = "SystemUsesLightTheme";
 
     // Access rights and flags
-    private static final int KEY_QUERY_VALUE = 0x0001;
     private static final int KEY_NOTIFY = 0x0010;
     private static final int KEY_READ = 0x20019; // STANDARD_RIGHTS_READ | KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS | KEY_NOTIFY
     private static final int RRF_RT_REG_DWORD = 0x00000010;
@@ -66,7 +64,7 @@ public class DarkModeDetectorWindows extends DarkModeDetectorBase {
         private static DarkModeDetector createInstance() {
             try {
                 return new DarkModeDetectorWindows();
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 LOG.error("DarkModeDetectorWindows initialization failed", t);
                 return new DarkModeDetectorImpUnsupported();
             }
@@ -101,7 +99,7 @@ public class DarkModeDetectorWindows extends DarkModeDetectorBase {
                     advapi.findOrThrow("RegCloseKey"),
                     FunctionDescriptor.of(ValueLayout.JAVA_INT, ADDRESS)
             );
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throw new IllegalStateException("Failed to initialize Windows registry FFM handles", t);
         }
     }
@@ -192,14 +190,17 @@ public class DarkModeDetectorWindows extends DarkModeDetectorBase {
                     Thread.sleep(RESTART_BACKOFF.toMillis());
                 }
                 // Loop and wait again as long as watcherRunning
-            } catch (InterruptedException ie) {
+            } catch (InterruptedException _) {
+                LOG.debug("Watcher interrupted");
                 // Exit gracefully
+                Thread.currentThread().interrupt();
                 break;
             } catch (Throwable t) {
                 LOG.debug("Watcher error: {}", t.toString());
                 try {
                     Thread.sleep(RESTART_BACKOFF.toMillis());
-                } catch (InterruptedException ignored) {
+                } catch (InterruptedException _) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
             }
@@ -237,8 +238,7 @@ public class DarkModeDetectorWindows extends DarkModeDetectorBase {
                     pcbData
             );
             if (rc == 0) {
-                int v = pvData.get(ValueLayout.JAVA_INT, 0);
-                return v;
+                return pvData.get(ValueLayout.JAVA_INT, 0);
             } else {
                 return null;
             }
@@ -252,7 +252,7 @@ public class DarkModeDetectorWindows extends DarkModeDetectorBase {
         char[] chars = (s + "\0").toCharArray();
         MemorySegment seg = arena.allocate(ValueLayout.JAVA_CHAR, chars.length);
         for (int i = 0; i < chars.length; i++) {
-            seg.set(ValueLayout.JAVA_CHAR, (long) i * ValueLayout.JAVA_CHAR.byteSize(), chars[i]);
+            seg.set(ValueLayout.JAVA_CHAR, i * ValueLayout.JAVA_CHAR.byteSize(), chars[i]);
         }
         return seg;
     }
@@ -262,7 +262,8 @@ public class DarkModeDetectorWindows extends DarkModeDetectorBase {
             if (hKey != null && !hKey.equals(MemorySegment.NULL)) {
                 regCloseKey.invokeExact(hKey);
             }
-        } catch (Throwable ignored) {
+        } catch (Throwable _) {
+            LOG.debug("Failed to close Windows registry key: {}", hKey);
             // ignore
         }
     }

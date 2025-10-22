@@ -27,9 +27,6 @@ import static java.lang.foreign.ValueLayout.ADDRESS;
  * depending on the runtime configuration. This class resides in the Java 25 sourceset
  * and relies on the FFM API available in modern Java versions.</p>
  *
- * <p>You can optionally call startPolling(long) to receive change notifications via the
- * base class callback onChangeDetected(boolean). The polling thread is a daemon thread.</p>
- *
  * <p>Thread-safety: isDarkMode() uses a confined Arena per call; CoreFoundation symbol
  * handles are initialized once and reused, making it safe to call concurrently.</p>
  *
