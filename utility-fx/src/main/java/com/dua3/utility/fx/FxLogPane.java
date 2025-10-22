@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.logging.DefaultLogEntryFilter;
@@ -153,8 +154,9 @@ public class FxLogPane extends BorderPane {
             }
         });
 
-        // install default stylesheet (light mode by default)
-        setDarkMode(false);
+        // install default stylesheet
+        setDarkMode(ApplicationUtil.isApplicationDarkMode());
+        ApplicationUtil.addApplicationDarkModeListener(this::setDarkMode);
 
         entries.addListener(this::onEntries);
 
@@ -270,8 +272,7 @@ public class FxLogPane extends BorderPane {
      * @param dark true to use dark.css, false to use light.css
      */
     public void setDarkMode(boolean dark) {
-        getStylesheets().clear();
-        getStylesheets().add(dark ? darkCss : lightCss);
+        getStylesheets().setAll(dark ? darkCss : lightCss);
     }
 
 

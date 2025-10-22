@@ -104,23 +104,6 @@ public final class ApplicationUtil {
     }
 
     /**
-     * Updates the application dark mode setting in response to a system dark mode change event.
-     * If the current UI mode is {@code SYSTEM_DEFAULT}, the application's dark mode setting is updated to match the system's setting.
-     * If the current UI mode is not {@code SYSTEM_DEFAULT}, the event is ignored.
-     *
-     * @param dark {@code true} if the system dark mode is enabled; {@code false} otherwise
-     */
-    private static void onSystemDarkModeChange(boolean dark) {
-        LOG.debug("system dark mode changed to {}", dark);
-        if (getApplicationUiMode() == UiMode.SYSTEM_DEFAULT) {
-            LOG.debug("setting application dark mode to {}", dark);
-            setApplicationDarkMode(dark);
-        } else {
-            LOG.debug("ignoring application dark mode change, ui mode is {}", getApplicationUiMode());
-        }
-    }
-
-    /**
      * Retrieves the current UI mode of the application.
      *
      * @return the current application UI mode, which is an instance of {@link UiMode}
@@ -145,10 +128,7 @@ public final class ApplicationUtil {
                 case LIGHT -> false;
                 case SYSTEM_DEFAULT -> darkModeDetector().isDarkMode();
             };
-            boolean previousDark = applicationDarkMode.getAndSet(dark);
-            if (previousDark != dark) {
-                onUpdateApplicationDarkMode(dark);
-            }
+            setApplicationDarkMode(dark);
         }
     }
 
@@ -190,8 +170,11 @@ public final class ApplicationUtil {
      * @return the previous dark mode state; {@code true} if dark mode was previously enabled,
      * {@code false} if it was disabled
      */
-    private static boolean setApplicationDarkMode(boolean darkMode) {
-        return applicationDarkMode.getAndSet(darkMode);
+    private static void setApplicationDarkMode(boolean dark) {
+        boolean previousDark = applicationDarkMode.getAndSet(dark);
+        if (previousDark != dark) {
+            onUpdateApplicationDarkMode(dark);
+        }
     }
 
     /**
@@ -211,6 +194,8 @@ public final class ApplicationUtil {
      * @param listener the listener to be notified of dark mode changes (non-null)
      */
     public static void addApplicationDarkModeListener(Consumer<Boolean> listener) {
+        LOG.debug("Ensure DarkModeUpdater is initialised");
+        DarkModeUpdater.INSTANCE.ensureRunning();
         applicationDarkModeListeners.add(listener);
     }
 
@@ -259,6 +244,28 @@ public final class ApplicationUtil {
                 dmd.addListener(dark -> onSystemDarkModeChange(dark));
             } else {
                 LOG.debug("system dark mode detection not supported");
+            }
+        }
+
+        public void ensureRunning() {
+            LOG.trace("DarkModeUpdater is initialised");
+            // There is nothing more to do here, the instance is created when the clas is loaded.
+        }
+
+        /**
+         * Updates the application dark mode setting in response to a system dark mode change event.
+         * If the current UI mode is {@code SYSTEM_DEFAULT}, the application's dark mode setting is updated to match the system's setting.
+         * If the current UI mode is not {@code SYSTEM_DEFAULT}, the event is ignored.
+         *
+         * @param dark {@code true} if the system dark mode is enabled; {@code false} otherwise
+         */
+        private static void onSystemDarkModeChange(boolean dark) {
+            LOG.debug("system dark mode changed to {}", dark);
+            if (getApplicationUiMode() == UiMode.SYSTEM_DEFAULT) {
+                LOG.debug("setting application dark mode to {}", dark);
+                setApplicationDarkMode(dark);
+            } else {
+                LOG.debug("ignoring application dark mode change, ui mode is {}", getApplicationUiMode());
             }
         }
     }
