@@ -1,59 +1,122 @@
 package com.dua3.utility.samples;
 
 import com.dua3.utility.application.ApplicationUtil;
-import com.dua3.utility.application.DarkModeDetector;
+import com.dua3.utility.application.UiMode;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JRadioButton;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
- * Small text-mode program that prints the current dark mode setting and
- * registers a listener to print whenever the setting changes.
- *
- * Note: If you run on Java 22+ with FFM-based platform detectors (macOS/Windows),
- * you may need to enable native access, e.g. by using:
- *   --enable-native-access=ALL-UNNAMED
+ * Minimal Swing application that shows three radio buttons to choose the UiMode
+ * and renders in light/dark according to ApplicationUtil's active dark mode.
  */
 public final class DarkModeSample {
-
-    private static final DateTimeFormatter TS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private DarkModeSample() {
         // no instances
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        DarkModeDetector detector = ApplicationUtil.darkModeDetector();
-
-        System.out.println("Dark Mode Sample");
-        System.out.println("=================");
-        System.out.println("Detector class    : " + detector.getClass().getName());
-        System.out.println("Supported         : " + detector.isDarkModeDetectionSupported());
-
-        boolean dark = detector.isDarkMode();
-        System.out.println(now() + " Current dark mode: " + (dark ? "Dark" : "Light"));
-
-        detector.addListener(isDark -> {
-            System.out.println(now() + " Dark mode changed: " + (isDark ? "Dark" : "Light"));
-        });
-
-        System.out.println();
-        System.out.println("Listening for changes. Press Ctrl+C to exit.");
-
-        // Keep process alive until killed. Use a latch to wait indefinitely but remain interruptible.
-        CountDownLatch latch = new CountDownLatch(1);
-        Runtime.getRuntime().addShutdownHook(new Thread(latch::countDown));
-        // Wait essentially forever, but allow interruption to terminate cleanly.
-        while (!Thread.currentThread().isInterrupted()) {
-            if (latch.await(365, TimeUnit.DAYS)) {
-                break;
-            }
+    public static void main(String[] args) {
+        // Use system L&F where possible to keep it minimalistic
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {
+            // keep defaults
         }
+
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Dark Mode Sample");
+            frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+            JPanel content = new JPanel();
+            content.setLayout(new BorderLayout());
+
+            JPanel buttons = new JPanel();
+            buttons.setOpaque(true);
+
+            ButtonGroup group = new ButtonGroup();
+
+            // Create radio buttons for each UiMode
+            JRadioButton rbSystem = new JRadioButton("System default");
+            JRadioButton rbLight = new JRadioButton("Light");
+            JRadioButton rbDark = new JRadioButton("Dark");
+
+            // Minimal, readable font
+            Font f = rbSystem.getFont().deriveFont(Font.PLAIN, Math.max(12f, rbSystem.getFont().getSize2D()));
+            rbSystem.setFont(f);
+            rbLight.setFont(f);
+            rbDark.setFont(f);
+
+            group.add(rbSystem);
+            group.add(rbLight);
+            group.add(rbDark);
+
+            buttons.add(rbSystem);
+            buttons.add(rbLight);
+            buttons.add(rbDark);
+
+            content.add(buttons, BorderLayout.CENTER);
+            frame.setContentPane(content);
+
+            // Reflect current UiMode selection
+            UiMode currentMode = ApplicationUtil.getApplicationUiMode();
+            switch (currentMode) {
+                case SYSTEM_DEFAULT -> rbSystem.setSelected(true);
+                case LIGHT -> rbLight.setSelected(true);
+                case DARK -> rbDark.setSelected(true);
+            }
+
+            // Apply initial dark/light based on application state
+            applyTheme(ApplicationUtil.isApplicationDarkMode(), frame.getContentPane());
+
+            // Update when application dark mode changes
+            ApplicationUtil.addApplicationDarkModeListener(dark -> SwingUtilities.invokeLater(
+                    () -> applyTheme(dark, frame.getContentPane())));
+
+            // Change UiMode when user toggles
+            rbSystem.addActionListener(e -> ApplicationUtil.setApplicationUiMode(UiMode.SYSTEM_DEFAULT));
+            rbLight.addActionListener(e -> ApplicationUtil.setApplicationUiMode(UiMode.LIGHT));
+            rbDark.addActionListener(e -> ApplicationUtil.setApplicationUiMode(UiMode.DARK));
+
+            frame.setSize(360, 120);
+            frame.setLocationByPlatform(true);
+            frame.setVisible(true);
+
+            // Ensure JVM exits when window is closed if this sample is run alone
+            frame.addWindowListener(new WindowAdapter() {
+                @Override public void windowClosed(WindowEvent e) { System.exit(0); }
+            });
+        });
     }
 
-    private static String now() {
-        return "[" + LocalDateTime.now().format(TS) + "]";
+    private static void applyTheme(boolean dark, Container root) {
+        // Minimal theming: toggle background/foreground for readability
+        Color bg = dark ? new Color(0x1E1E1E) : Color.white;
+        Color fg = dark ? new Color(0xE6E6E6) : Color.black;
+        setColorsRecursive(root, bg, fg);
+        // Optionally tweak panel background to match
+        root.repaint();
+    }
+
+    private static void setColorsRecursive(Component c, Color bg, Color fg) {
+        c.setBackground(bg);
+        c.setForeground(fg);
+        if (c instanceof Container ct) {
+            for (Component child : ct.getComponents()) {
+                setColorsRecursive(child, bg, fg);
+            }
+        }
     }
 }
