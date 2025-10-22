@@ -1,0 +1,6 @@
+/* Dark theme colors for log levels */
+.logtable-row.log-error .table-cell { -fx-text-fill: red; }
+.logtable-row.log-warn  .table-cell { -fx-text-fill: orangered; }
+.logtable-row.log-info  .table-cell { -fx-text-fill: lightblue; }
+.logtable-row.log-debug .table-cell { -fx-text-fill: white; }
+.logtable-row.log-trace .table-cell { -fx-text-fill: lightgray; }

@@ -1,9 +1,7 @@
 package com.dua3.utility.fx;
 
-import javafx.scene.layout.Background;
-import javafx.scene.paint.Paint;
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
-import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.DefaultLogEntryFilter;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
@@ -38,11 +36,13 @@ import javafx.scene.text.Text;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -56,13 +56,18 @@ public class FxLogPane extends BorderPane {
 
     private static final double COLUMN_WIDTH_MAX = Double.MAX_VALUE;
     private static final double COLUMN_WIDTH_LARGE = 2000.0;
+
+    public static final String CSS_CLASS_LOGTABLE_ROW = "logtable-row";
+    public static final String CSS_PREFIX_LOGLEVEL = "log-";
+
     private final LogBuffer logBuffer;
     private final TextArea details;
     private final TableView<@Nullable LogEntry> tableView;
-    private Function<LogEntry, Color> colorize;
-    private final Background cellBackground = Background.fill(Paint.valueOf("white"));
 
     private final AtomicReference<@Nullable LogEntry> selectedItem = new AtomicReference<>();
+
+    private String darkCss;
+    private String lightCss;
 
     private boolean autoScroll = true;
 
@@ -92,9 +97,6 @@ public class FxLogPane extends BorderPane {
                     setStyle(null);
                 } else {
                     setText(item == null ? "" : item.toString());
-                    Color textColor = colorize.apply(row.getItem());
-                    setTextFill(FxUtil.convert(textColor));
-                    setBackground(cellBackground);
                 }
                 super.updateItem(item, empty);
             }
@@ -129,25 +131,30 @@ public class FxLogPane extends BorderPane {
      * @throws NullPointerException if logBuffer is null
      */
     public FxLogPane(LogBuffer logBuffer) {
-        this(logBuffer, FxLogPane::colorizeLight);
-    }
-
-    /**
-     * Constructs a new FxLogPane instance with the given LogBuffer and colorize function.
-     *
-     * @param logBuffer the LogBuffer to use for storing log entries
-     * @param colorize  the function used to determine the color of log entries
-     * @throws NullPointerException if logBuffer or colorize is null
-     */
-    @SuppressWarnings("unchecked")
-    public FxLogPane(LogBuffer logBuffer, Function<LogEntry, Color> colorize) {
         FilteredList<LogEntry> entries = new FilteredList<>(new LogEntriesObservableList(logBuffer), p -> true);
 
         this.logBuffer = logBuffer;
-        this.colorize = colorize;
+        this.darkCss = LangUtil.getResourceURL(getClass(), "dark.css").toExternalForm();
+        this.lightCss = LangUtil.getResourceURL(getClass(), "light.css").toExternalForm();
         ToolBar toolBar = new ToolBar();
         this.tableView = new TableView<>(entries);
         this.details = new TextArea();
+
+        // colorize table rows via CSS classes
+        tableView.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(@Nullable LogEntry item, boolean empty) {
+                super.updateItem(item, empty);
+                // clear previous style classes
+                getStyleClass().removeIf(s -> s.startsWith(CSS_PREFIX_LOGLEVEL));
+                if (!empty && item != null) {
+                    getStyleClass().addAll(CSS_CLASS_LOGTABLE_ROW, cssClassForLogEntry(item.level()));
+                }
+            }
+        });
+
+        // install default stylesheet (light mode by default)
+        setDarkMode(false);
 
         entries.addListener(this::onEntries);
 
@@ -248,27 +255,25 @@ public class FxLogPane extends BorderPane {
         setCenter(splitPane);
     }
 
-    /**
-     * Sets the colorization function for determining the color of a log entry.
-     * The function takes a {@link LogEntry} as input and returns a {@link Color}
-     * based on the specific attributes of the log entry.
-     *
-     * @param colorize a function that maps a {@link LogEntry} to a {@link Color}
-     */
-    public void setColorize(Function<LogEntry, Color> colorize) {
-        this.colorize = colorize;
+    private static final Map<LogLevel, String> CSS_CLASS_BY_LOG_LEVEL = Arrays.stream(LogLevel.values())
+            .collect(Collectors.toMap(
+                    Function.identity(),
+                    level -> CSS_PREFIX_LOGLEVEL + level.name().toLowerCase(Locale.ROOT)
+            ));
+
+    private static String cssClassForLogEntry(LogLevel level) {
+        return CSS_CLASS_BY_LOG_LEVEL.get(level);
     }
 
     /**
-     * Retrieves the colorization function used to determine the color of log entries.
-     * The function maps a {@link LogEntry} to a {@link Color}, typically based on the attributes
-     * of the log entry such as level, message, or other properties.
-     *
-     * @return a {@link Function} that maps a {@link LogEntry} to a {@link Color}
+     * Set dark mode stylesheet for this pane.
+     * @param dark true to use dark.css, false to use light.css
      */
-    public Function<LogEntry, Color> getColorize() {
-        return colorize;
+    public void setDarkMode(boolean dark) {
+        getStylesheets().clear();
+        getStylesheets().add(dark ? darkCss : lightCss);
     }
+
 
     /**
      * Searches within the provided list of log entries for a log entry containing the specified text.
@@ -412,39 +417,6 @@ public class FxLogPane extends BorderPane {
         return buffer;
     }
 
-    /**
-     * Determines the color associated with the given log entry based on its log level.
-     * This method applies a color scheme suitable for light themes.
-     *
-     * @param entry the log entry whose level will be analyzed to determine the color
-     * @return the color corresponding to the log entry's level
-     */
-    public static Color colorizeLight(LogEntry entry) {
-        return switch (entry.level()) {
-            case ERROR -> Color.DARKRED;
-            case WARN -> Color.RED;
-            case INFO -> Color.DARKBLUE;
-            case DEBUG -> Color.BLACK;
-            case TRACE -> Color.DARKGRAY;
-        };
-    }
-
-    /**
-     * Determines the color associated with the given log entry based on its log level.
-     * This method applies a color scheme suitable for dark themes.
-     *
-     * @param entry the log entry whose level will be analyzed to determine the color
-     * @return the color corresponding to the log entry's level
-     */
-    public static Color colorizeDark(LogEntry entry) {
-        return switch (entry.level()) {
-            case ERROR -> Color.RED;
-            case WARN -> Color.ORANGERED;
-            case INFO -> Color.LIGHTBLUE;
-            case DEBUG -> Color.WHITE;
-            case TRACE -> Color.LIGHTGRAY;
-        };
-    }
 
     /**
      * Retrieves the LogBuffer associated with this FxLogPane instance.

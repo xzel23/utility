@@ -1,8 +1,6 @@
 package com.dua3.utility.fx;
 
-import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.LogBuffer;
-import com.dua3.utility.logging.LogEntry;
 import javafx.scene.Node;
 import javafx.scene.control.ToolBar;
 import org.junit.jupiter.api.Test;
@@ -10,7 +8,6 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -56,20 +53,6 @@ class FxLogPaneTest extends FxTestBase {
             LogBuffer buffer = new LogBuffer(150);
             FxLogPane pane = new FxLogPane(buffer);
             assertNotNull(pane, "FxLogPane should be created successfully with custom LogBuffer");
-
-            // Verify that the pane uses the provided LogBuffer
-            assertSame(buffer, pane.getLogBuffer(), "The LogBuffer in the pane should be the same as the one provided");
-        });
-    }
-
-    @Test
-    void testConstructorWithLogBufferAndColorize() throws Throwable {
-        FxTestBase.runOnFxThreadAndWait(() -> {
-            LogBuffer buffer = new LogBuffer(150);
-            Function<LogEntry, Color> colorize = entry -> Color.RED; // Simple colorize function that always returns red
-
-            FxLogPane pane = new FxLogPane(buffer, colorize);
-            assertNotNull(pane, "FxLogPane should be created successfully with custom LogBuffer and colorize function");
 
             // Verify that the pane uses the provided LogBuffer
             assertSame(buffer, pane.getLogBuffer(), "The LogBuffer in the pane should be the same as the one provided");
