@@ -108,8 +108,7 @@ public class DarkModeDetectorWindows extends DarkModeDetectorBase {
 
     @Override
     public boolean isDarkModeDetectionSupported() {
-        String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
-        return os.contains("win");
+        return true;
     }
 
     @Override
