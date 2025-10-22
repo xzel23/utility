@@ -58,7 +58,19 @@ public class FxLogPane extends BorderPane {
     private static final double COLUMN_WIDTH_MAX = Double.MAX_VALUE;
     private static final double COLUMN_WIDTH_LARGE = 2000.0;
 
+    /**
+     * A CSS class constant representing the style applied to rows in the log table.
+     * This class name is used to customize the appearance of log table rows within
+     * the FxLogPane.
+     */
     public static final String CSS_CLASS_LOGTABLE_ROW = "logtable-row";
+    /**
+     * A string constant representing the prefix "log-" used for CSS classes
+     * associated with log level styling within the {@code FxLogPane} component.
+     * This prefix can be appended to specific log level names to create dynamic
+     * CSS class names (e.g., "log-info" or "log-error"), allowing customization
+     * of the appearance of log entries based on their log level.
+     */
     public static final String CSS_PREFIX_LOGLEVEL = "log-";
 
     private final LogBuffer logBuffer;

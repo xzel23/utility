@@ -2,7 +2,7 @@ package com.dua3.utility.application;
 
 /**
  * Enum representing the UI mode of an application.
- *
+ * <p>
  * The UI mode can be one of the following:
  * - SYSTEM_DEFAULT: Automatically follows the system's UI mode setting.
  * - LIGHT: Explicitly sets the application to use a light UI theme.

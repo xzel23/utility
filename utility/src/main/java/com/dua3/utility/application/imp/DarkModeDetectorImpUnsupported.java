@@ -2,7 +2,7 @@ package com.dua3.utility.application.imp;
 
 /**
  * A concrete implementation of the {@link DarkModeDetectorBase} class.
- *
+ * <p>
  * This implementation does not support dark mode detection and always returns
  * {@code false} for both detection capability and dark mode state.
  */

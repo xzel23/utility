@@ -167,13 +167,11 @@ public final class ApplicationUtil {
      *
      * @param darkMode the new dark mode state to be set; {@code true} for enabling dark mode,
      *                 {@code false} for disabling it
-     * @return the previous dark mode state; {@code true} if dark mode was previously enabled,
-     * {@code false} if it was disabled
      */
-    private static void setApplicationDarkMode(boolean dark) {
-        boolean previousDark = applicationDarkMode.getAndSet(dark);
-        if (previousDark != dark) {
-            onUpdateApplicationDarkMode(dark);
+    private static void setApplicationDarkMode(boolean darkMode) {
+        boolean previousDark = applicationDarkMode.getAndSet(darkMode);
+        if (previousDark != darkMode) {
+            onUpdateApplicationDarkMode(darkMode);
         }
     }
 
@@ -229,8 +227,8 @@ public final class ApplicationUtil {
      * <p>
      * The class relies on {@link DarkModeDetector} to check if dark mode detection
      * is supported and to register listeners for monitoring the system dark mode state.
-     *
-     * It triggers the {@link ApplicationUtil#onSystemDarkModeChange(boolean)} method
+     * <p>
+     * It automatically calls {@link ApplicationUtil#setApplicationDarkMode(boolean)}
      * when a dark mode change is detected, allowing the application to update its
      * dark mode setting appropriately.
      */
