@@ -91,7 +91,7 @@ public class FxLogPane extends BorderPane {
             column.setPrefWidth(COLUMN_WIDTH_LARGE);
             column.setMaxWidth(COLUMN_WIDTH_MAX);
         } else {
-            double w = 8 + Stream.of(sampleTexts).mapToDouble(FxLogPane::getDisplayWidth).max().orElse(200);
+            double w = 24 + Stream.of(sampleTexts).mapToDouble(FxLogPane::getDisplayWidth).max().orElse(200);
             column.setPrefWidth(w);
             if (fixedWidth) {
                 column.setMinWidth(w);

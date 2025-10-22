@@ -1,8 +1,15 @@
 package com.dua3.utility.samples.fx;
 
+import atlantafx.base.theme.PrimerDark;
+import atlantafx.base.theme.PrimerLight;
+import atlantafx.base.theme.Theme;
+import com.dua3.utility.application.ApplicationUtil;
+import com.dua3.utility.application.UiMode;
 import com.dua3.utility.fx.FxLogPane;
+import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.log4j.LogUtilLog4J;
+import com.dua3.utility.math.MathUtil;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -12,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.security.SecureRandom;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 /**
@@ -23,14 +31,17 @@ public class FxLogPaneSample extends Application {
     static {
         // this has to be done before the first logger is initialized!
         LogUtilLog4J.init(LogLevel.TRACE);
+
+        ApplicationUtil.setApplicationUiMode(UiMode.SYSTEM_DEFAULT);
     }
 
     private static final int AVERAGE_SLEEP_MILLIS = 5;
-    private static final int LOG_BUFFER_SIZE = 100000;
+    private static final int LOG_BUFFER_SIZE = 10000;
     private static final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + FxLogPaneSample.class.getName());
     private static final Log JCL_LOGGER = LogFactory.getLog("JCL." + FxLogPaneSample.class.getName());
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + FxLogPaneSample.class.getName());
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + FxLogPaneSample.class.getName());
+    private final FxLogPane logPane;
     private final SecureRandom random = new SecureRandom();
     private final AtomicInteger n = new AtomicInteger();
 
@@ -47,13 +58,24 @@ public class FxLogPaneSample extends Application {
     /**
      * Constructor.
      */
-    public FxLogPaneSample() { /* nothing to do */ }
+    public FxLogPaneSample() {
+        logPane = new FxLogPane(LOG_BUFFER_SIZE);
+
+        setDarkMode(ApplicationUtil.isApplicationDarkMode());
+        ApplicationUtil.addApplicationDarkModeListener(this::setDarkMode);
+    }
+
+    private void setDarkMode(boolean enabled) {
+        Supplier<Theme> themeSupplier = enabled ? PrimerDark::new : PrimerLight::new;
+        PlatformHelper.runAndWait(() -> {
+            setUserAgentStylesheet(themeSupplier.get().getUserAgentStylesheet());
+        });
+    }
 
     @Override
     public void start(Stage primaryStage) {
-        FxLogPane logPane = new FxLogPane(LOG_BUFFER_SIZE);
-
-        Scene scene = new Scene(logPane, 1200, 600);
+        int width = 1280;
+        Scene scene = new Scene(logPane, width, width / MathUtil.GOLDEN_RATIO);
 
         primaryStage.setTitle(getClass().getSimpleName());
         primaryStage.setScene(scene);

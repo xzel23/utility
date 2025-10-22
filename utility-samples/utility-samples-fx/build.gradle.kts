@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":utility-fx-icons-ikonli"))
     implementation(project(":utility-logging"))
     implementation(project(":utility-logging-log4j"))
+    implementation(rootProject.libs.atlantafx)
     implementation(rootProject.libs.log4j.core)
     implementation(rootProject.libs.log4j.jcl)
     implementation(rootProject.libs.log4j.jul)

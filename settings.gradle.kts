@@ -55,6 +55,7 @@ dependencyResolutionManagement {
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("versions", "com.github.ben-manes.versions").version("0.53.0")
 
+            version("atlantafx", "2.1.0")
             version("h2database", "2.4.240")
             version("ikonli", "12.4.0")
             version("javafx", "23.0.2") // IMPORTANT: JavaFX 23 is the last version to support Java 21!
@@ -68,6 +69,8 @@ dependencyResolutionManagement {
             version("spotbugs", "4.9.7")
             version("bouncycastle", "1.82")
             version("utility-bom", projectVersion)
+
+            library("atlantafx", "io.github.mkpaz", "atlantafx-base").versionRef("atlantafx")
 
             library("jspecify", "org.jspecify", "jspecify").versionRef("jspecify")
 

@@ -12,6 +12,7 @@ import org.jspecify.annotations.NullMarked;
 open module com.dua3.utility.samples.fx {
     exports com.dua3.utility.samples.fx;
 
+    requires atlantafx.base;
     requires com.dua3.utility;
     requires com.dua3.utility.fx;
     requires com.dua3.utility.fx.controls;
@@ -25,5 +26,6 @@ open module com.dua3.utility.samples.fx {
     requires java.logging;
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.jul;
-    requires org.jspecify; // DO NOT REMOVE! this adds the JUL bridge.
+    requires org.jspecify;
+    requires java.prefs; // DO NOT REMOVE! this adds the JUL bridge.
 }
