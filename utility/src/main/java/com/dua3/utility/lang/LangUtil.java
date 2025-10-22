@@ -2482,7 +2482,7 @@ public final class LangUtil {
      * @param consumer the action to be performed on the value if it is not null
      * @return true if the value is not null and the consumer is executed, false if the value is null
      */
-    public static <T> @Nullable T applyIfNotNull(@Nullable T v, Consumer<? super T> consumer) {
+    public static <T> @Nullable T applyIfNonNull(@Nullable T v, Consumer<? super T> consumer) {
         if (v != null) {
             consumer.accept(v);
         }

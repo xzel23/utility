@@ -67,9 +67,7 @@ public class FxLogPaneSample extends Application {
 
     private void setDarkMode(boolean enabled) {
         Supplier<Theme> themeSupplier = enabled ? PrimerDark::new : PrimerLight::new;
-        PlatformHelper.runAndWait(() -> {
-            setUserAgentStylesheet(themeSupplier.get().getUserAgentStylesheet());
-        });
+        PlatformHelper.runAndWait(() -> setUserAgentStylesheet(themeSupplier.get().getUserAgentStylesheet()));
     }
 
     @Override
