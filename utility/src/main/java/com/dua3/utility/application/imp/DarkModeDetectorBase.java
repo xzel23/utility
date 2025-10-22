@@ -12,10 +12,10 @@ import java.util.function.Consumer;
  * An abstract base class for detecting and handling dark mode status.
  * This class provides a foundational implementation of the {@link DarkModeDetector} interface,
  * managing listeners and notifying them of dark mode state changes.
- *
+ * <p>
  * Subclasses should implement the specific logic for detecting dark mode and invoking
  * {@link #onChangeDetected(boolean)} when a change is detected.
- *
+ * <p>
  * The class handles:
  * - Adding and removing listeners for dark mode state changes.
  * - Logging state changes and listener actions.
@@ -68,7 +68,7 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
      * Monitors system changes for dark mode state.
      * This method is invoked to enable or disable the monitoring of system-level events
      * that indicate a change in dark mode status.
-     *
+     * <p>
      * Subclasses must implement this method to define the specific behavior for starting
      * or stopping the monitoring functionality.
      */

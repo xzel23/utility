@@ -23,7 +23,7 @@ public interface DarkModeDetector {
     boolean isDarkMode();
     /**
      * Registers a listener to observe changes in the dark mode state.
-     *
+     * <p>
      * This method allows adding a listener that will be notified whenever the
      * dark mode state changes. The listener receives a Boolean parameter indicating
      * whether dark mode is active.
