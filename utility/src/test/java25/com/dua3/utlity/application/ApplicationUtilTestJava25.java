@@ -22,7 +22,7 @@ class ApplicationUtilTestJava25 {
         DarkModeDetector detector = ApplicationUtil.darkModeDetector();
         assertNotNull(detector, "ApplicationUtil.darkModeDetector() should return a non-null instance");
 
-        List<Platform> supportedPlatforms = List.of(Platform.MACOS, Platform.WINDOWS);
+        List<Platform> supportedPlatforms = List.of(Platform.MACOS, Platform.WINDOWS, Platform.LINUX);
         boolean isSupported = !(detector instanceof DarkModeDetectorImpUnsupported);
         assertEquals(
                 supportedPlatforms.contains(Platform.currentPlatform()), isSupported,

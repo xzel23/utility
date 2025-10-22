@@ -19,6 +19,7 @@ public class DarkModeDetectorInstance {
         return switch (Platform.currentPlatform()) {
             case MACOS -> DarkModeDetectorImpMacOs.getInstance();
             case WINDOWS -> DarkModeDetectorWindows.getInstance();
+            case LINUX -> DarkModeDetectorLinux.getInstance();
             default -> DarkModeDetectorImpUnsupported.getInstance();
         };
     }
