@@ -241,26 +241,40 @@ could not be loaded.
 
 ### 20.0.0 (work in progress)
 
-- Many breaking changes and additions to the JavaFX related API. The API is now more consistent and
-  much functionality has been added as well as many bug fixes and improvements were implemented.
+- **Minimum Java version**: Java 21. Java 25 is required for `StreamGathererUtil` and dark mode detection.
+  If your project uses Java 24, please upgrade.
 
-- The minimum Java version is 21, except for the StreamGathererUtil class that now requires Java 25
-  instead of Java 24.
+- **IBOM artifact:** A new artefact `utility-bom` has been introduced that specifies the version for all 
+  modules.
 
+- **Fixes and improvements:** Many small improvements and bug fixes across the board, both for correctness and 
+  performance.
 
-- Introduce a BOM artifact
-    - A new artefact `utility-bom` has been introduced that specifies the version for all modules.
+- **JavaFX overhaul:** Much of the code has been rewritten or undergone major refactorings to make the interface
+  more consistent and easier to use. 
 
-- Run tasks for samples
-    - Run tasks have been added for the sample applications.
+- **New package `com.dua3.utility.application`:** adds utilities and classes to support application dvelopment:
+    - A standard way to access the application Preferences. 
+    - Managing the applications user interface mode (light/dark/system default) and track the system setting.
+      Look at the `FxLogPaneSample` or `DarkModeSample` to see how to use this in JavaFX or Swing applications.
+    - A recently used documents implementation that automatically persists the list of recently used documents
+      between application runs.
+  
+- **Run tasks for samples:** To make running the samples easier, run tasks have been added to the build files.
 
-- CI workflow and deployment
+- **CI workflow and deployment:**
     - The CI workflow has been completely rewritten.
     - The Project has been migrated from OSS-RH to Maven Central Publish Portal.
     - Deployments are done through GitHub actions using JReleaser, snapshots are published to Maven snapshots.
     - Javadoc is automatically published to GitHub Pages after each succesfull CI build.
 
 #### Changes per package
+
+- Package `utility.application`
+    - New utility class `ApplicationUtil`.
+    - New class `DarkModeDetector`.
+    - New record `LicenseData`.
+    - New class `RecentlyUsedDocuments`.
 
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
@@ -316,7 +330,7 @@ could not be loaded.
     - `LangUtil.newUuidV7()` to create UUID v7 instances.
     - `LangUtil.reverseInPlace()` to reverse array contents
     - `LangUtil.isWrapperFor()` to test if a class is a primitive wrapper for another class
-    - Added `LangUtil.addIf()` and `LangUtil.addIfNonNull()`.
+    - Added `addIf()`, `addIfNonNull()`, `applyIfNonNull()`, `applyIfNotEmpty()`, `newWeakHashSet()`.
     - `RingBuffer` implements `SequencedCollection`
     - Added `ReversedSequencedCollectionWrapper` to facilitate implementing `reversed()` for `SequencedCollection`
       implementations
