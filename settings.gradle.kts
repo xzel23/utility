@@ -27,6 +27,7 @@ include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
 
 plugins {
+    id("org.gradle.toolchains.foojay-resolver") version "1.0.0"
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
@@ -45,7 +46,6 @@ dependencyResolutionManagement {
             version("projectVersion", projectVersion)
 
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
-            plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("1.0.0")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.10")
             plugin("sonar", "org.sonarqube").version("7.0.0.6105")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
