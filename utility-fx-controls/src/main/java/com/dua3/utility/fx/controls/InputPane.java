@@ -1,7 +1,15 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxUtil;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Region;
+import javafx.stage.Screen;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
@@ -27,13 +35,41 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
         this.grid = grid;
         valid.bind(grid.validProperty());
 
+        // get the screen the window will be on (fallback to primary)
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
         ScrollPane scrollPane = new ScrollPane(grid);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(false); // allow vertical scrolling
+        scrollPane.setFitToWidth(true);  // allow content to expand horizontally
+        scrollPane.setFitToHeight(false);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
+        // Allow the grid to expand naturally
+        grid.setMaxWidth(Double.MAX_VALUE);
+
+        // Set the scroll pane max width to screen width
+        scrollPane.setMaxWidth(screenBounds.getWidth() * 0.9);
+
+        // Set content in dialog
         setContent(scrollPane);
+
+        // Make dialog width adapt to content
+        setMinWidth(Region.USE_PREF_SIZE);
+        setPrefWidth(Region.USE_COMPUTED_SIZE);
+        setMaxWidth(screenBounds.getWidth() * 0.9);
+
+        // After showing, force the dialog window to resize to fit content
+        ChangeListener<Parent> listener = new ChangeListener<Parent>() {
+            @Override
+            public void changed(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
+                if (newValue != null) {
+                    getScene().getWindow().sizeToScene();
+                    scrollPane.parentProperty().removeListener(this);
+                }
+            }
+        };
+
+        scrollPane.parentProperty().addListener(listener);
     }
 
     @Override
