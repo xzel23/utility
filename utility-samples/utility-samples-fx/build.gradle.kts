@@ -15,7 +15,8 @@ if (useJavaFxPlugin) {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        // Java 25 is needed for dark mode detection
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 
     withJavadocJar()
