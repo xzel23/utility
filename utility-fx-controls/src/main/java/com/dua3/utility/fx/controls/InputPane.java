@@ -1,7 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.FxUtil;
-import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Rectangle2D;
