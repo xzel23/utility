@@ -59,6 +59,104 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class LangUtilTest {
 
     @Test
+    void testAsUnmodifiableSortedListSet_basicProperties() {
+        ImmutableSortedListSet<Integer> set = LangUtil.asUnmodifiableSortedListSet(3, 1, 2, 2);
+        // sorted and unique
+        assertEquals(List.of(1,2,3), set);
+        // implements both List and SortedSet
+        assertTrue(set instanceof List);
+        assertTrue(set instanceof java.util.SortedSet);
+        // unmodifiable
+        assertThrows(UnsupportedOperationException.class, () -> set.add(4));
+        assertThrows(UnsupportedOperationException.class, () -> set.addAll(List.of(4,5)));
+    }
+
+    @Test
+    void testTriStateSelect_variants() {
+        String whenTrue = "T";
+        String whenFalse = "F";
+        String otherwise = "N";
+        assertEquals("T", LangUtil.triStateSelect(Boolean.TRUE, whenTrue, whenFalse, otherwise));
+        assertEquals("F", LangUtil.triStateSelect(Boolean.FALSE, whenTrue, whenFalse, otherwise));
+        assertEquals("N", LangUtil.triStateSelect(null, whenTrue, whenFalse, otherwise));
+
+        // also works with null payloads
+        assertNull(LangUtil.triStateSelect(Boolean.TRUE, null, "x", "y"));
+        assertNull(LangUtil.triStateSelect(Boolean.FALSE, "x", null, "y"));
+        assertNull(LangUtil.triStateSelect(null, "x", "y", null));
+    }
+
+    @Test
+    void testMap_nullableOverload() {
+        // non-null input applies mapping
+        Integer len = LangUtil.map("abc", s -> s == null ? null : s.length());
+        assertEquals(3, len);
+        // null input yields null without applying function
+        AtomicInteger calls = new AtomicInteger();
+        Integer res = LangUtil.map(null, s -> { calls.incrementAndGet(); return 42; });
+        assertNull(res);
+        assertEquals(0, calls.get(), "Mapper must not be called for null input");
+    }
+
+    @Test
+    void testCheckArg_predicateOverload() {
+        // valid
+        assertDoesNotThrow(() -> LangUtil.checkArg("x", (Integer i) -> i > 0, 5));
+        // invalid -> message contains arg name and value
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> LangUtil.checkArg("x", (Integer i) -> i > 0, -1));
+        assertTrue(ex.getMessage().contains("invalid argument 'x': -1"));
+    }
+
+    @Test
+    void testCheckArg_supplierOverload() {
+        AtomicInteger supplied = new AtomicInteger(0);
+        Supplier<String> supplier = () -> { supplied.incrementAndGet(); return "bad"; };
+        // true -> no exception and supplier not evaluated
+        assertDoesNotThrow(() -> LangUtil.checkArg(true, supplier));
+        assertEquals(0, supplied.get());
+        // false -> exception with supplied message and supplier evaluated exactly once
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.checkArg(false, supplier));
+        assertEquals("bad", ex.getMessage());
+        assertEquals(1, supplied.get());
+    }
+
+    @Test
+    void testCheckArg_formatOverload() {
+        assertDoesNotThrow(() -> LangUtil.checkArg(true, "value=%d", 1));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.checkArg(false, "value=%d", 2));
+        assertEquals("value=2", ex.getMessage());
+    }
+
+    @Test
+    void testCheckArg_formatOverload_invalidFormatCheckedWhenAssertionsEnabled() {
+        boolean assertionsEnabled = false;
+        assert (assertionsEnabled = true);
+        Assumptions.assumeTrue(assertionsEnabled, "Assertions are enabled, format string should be checked against arguments");
+        assertThrows(AssertionError.class, () -> LangUtil.checkArg(true, "value=%f", "x"));
+    }
+
+    @Test
+    void testRequireNegativeShort_withMessage() {
+        short v = -5;
+        assertEquals(v, LangUtil.requireNegative(v, "msg %d", v));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative((short)0, "not neg: %d", 0));
+        assertEquals("not neg: 0", ex.getMessage());
+        ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative((short)1, "not neg: %d", 1));
+        assertEquals("not neg: 1", ex.getMessage());
+    }
+
+    @Test
+    void testRequirePositiveShort_withMessage() {
+        short v = 5;
+        assertEquals(v, LangUtil.requirePositive(v, "msg %d", v));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive((short)0, "not pos: %d", 0));
+        assertEquals("not pos: 0", ex.getMessage());
+        ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive((short)-1, "not pos: %d", -1));
+        assertEquals("not pos: -1", ex.getMessage());
+    }
+
+    @Test
     void testRemoveLeadingAndTrailing() {
         List<Integer> list = new ArrayList<>(List.of(1, 1, 2, 3, 1, 1));
         LangUtil.removeLeadingAndTrailing(list, i -> i == 1);
@@ -1725,5 +1823,65 @@ class LangUtilTest {
         }
         assertTrue(cleared, "referent should be collected eventually");
         assertEquals(0, set.size(), "stale entry should be removed from weak set");
+    }
+
+    // --- applyIfNonNull ---
+
+    @Test
+    void applyIfNonNull_whenValueNonNull_executesConsumerAndReturnsSame() {
+        AtomicReference<String> received = new AtomicReference<>();
+        String input = "value";
+
+        String result = LangUtil.applyIfNonNull(input, received::set);
+
+        assertEquals("value", received.get());
+        assertSame(input, result);
+    }
+
+    @Test
+    void applyIfNonNull_whenValueNull_doesNotExecuteConsumerAndReturnsNull() {
+        AtomicInteger counter = new AtomicInteger();
+        Consumer<Object> consumer = o -> counter.incrementAndGet();
+
+        Object result = LangUtil.applyIfNonNull(null, consumer);
+
+        assertNull(result);
+        assertEquals(0, counter.get());
+    }
+
+    // --- applyIfNotEmpty ---
+
+    @Test
+    void applyIfNotEmpty_withNonEmptyString_executesConsumerAndReturnsSame() {
+        AtomicReference<CharSequence> received = new AtomicReference<>();
+        String input = "abc";
+
+        String result = LangUtil.applyIfNotEmpty(input, received::set);
+
+        assertEquals("abc", received.get().toString());
+        assertSame(input, result);
+    }
+
+    @Test
+    void applyIfNotEmpty_withEmptyString_doesNotExecuteConsumerAndReturnsSame() {
+        AtomicInteger counter = new AtomicInteger();
+        Consumer<CharSequence> consumer = cs -> counter.incrementAndGet();
+
+        String input = "";
+        String result = LangUtil.applyIfNotEmpty(input, consumer);
+
+        assertEquals(0, counter.get());
+        assertSame(input, result);
+    }
+
+    @Test
+    void applyIfNotEmpty_withNull_doesNotExecuteConsumerAndReturnsNull() {
+        AtomicInteger counter = new AtomicInteger();
+        Consumer<CharSequence> consumer = cs -> counter.incrementAndGet();
+
+        CharSequence result = LangUtil.applyIfNotEmpty(null, consumer);
+
+        assertNull(result);
+        assertEquals(0, counter.get());
     }
 }
