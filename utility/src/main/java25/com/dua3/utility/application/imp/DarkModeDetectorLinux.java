@@ -52,7 +52,6 @@ public class DarkModeDetectorLinux extends DarkModeDetectorBase {
 
     private final AtomicBoolean watcherRunning = new AtomicBoolean(false);
     private Thread watcherThread;
-    private Process monitorProcess;
 
     private static class Holder {
         private static final DarkModeDetector INSTANCE = create();
@@ -111,34 +110,54 @@ public class DarkModeDetectorLinux extends DarkModeDetectorBase {
         }
     }
 
-    private synchronized void startWatcher() {
-        if (watcherRunning.get()) {
-            return;
+    private final Object lock = new Object();
+    private volatile Process monitorProcess;
+
+    private void startWatcher() {
+        synchronized (lock) {
+            if (watcherRunning.compareAndSet(false, true)) {
+                watcherThread = new Thread(this::watchLoop, "DarkModeLinuxWatcher");
+                watcherThread.setDaemon(true);
+                watcherThread.start();
+            }
         }
-        watcherRunning.set(true);
-        watcherThread = new Thread(this::watchLoop, "DarkModeLinuxWatcher");
-        watcherThread.setDaemon(true);
-        watcherThread.start();
     }
 
-    private synchronized void stopWatcher() {
-        watcherRunning.set(false);
-        if (monitorProcess != null) {
-            monitorProcess.destroy();
-            monitorProcess = null;
+    private void stopWatcher() {
+        Process processToDestroy = null;
+        Thread threadToInterrupt = null;
+
+        synchronized (lock) {
+            if (watcherRunning.compareAndSet(true, false)) {
+                threadToInterrupt = watcherThread;
+                processToDestroy = monitorProcess;
+            }
+        }
+
+        // Interrupt and destroy outside synchronized block to avoid holding lock during I/O
+        if (threadToInterrupt != null) {
+            threadToInterrupt.interrupt();
+        }
+        if (processToDestroy != null) {
+            processToDestroy.destroy();
         }
     }
 
     private void watchLoop() {
+        Process process = null;
         try {
             ProcessBuilder pb = new ProcessBuilder(MONITOR_CMD);
             pb.redirectErrorStream(true);
-            monitorProcess = pb.start();
+            process = pb.start();
 
-            try (InputStream is = monitorProcess.getInputStream();
+            synchronized (lock) {
+                monitorProcess = process;
+            }
+
+            try (InputStream is = process.getInputStream();
                  BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 String line;
-                while (watcherRunning.get() && (line = br.readLine()) != null) {
+                while (watcherRunning.get() && !Thread.currentThread().isInterrupted() && (line = br.readLine()) != null) {
                     // Expect lines containing: org.freedesktop.portal.Settings::SettingChanged
                     if (!line.contains("org.freedesktop.portal.Settings::SettingChanged")) {
                         continue;
@@ -169,7 +188,12 @@ public class DarkModeDetectorLinux extends DarkModeDetectorBase {
                 LOG.warn("gdbus monitor failed", ioe);
             }
         } finally {
-            stopWatcher();
+            synchronized (lock) {
+                monitorProcess = null;
+            }
+            if (process != null) {
+                process.destroy();
+            }
         }
     }
 
@@ -178,7 +202,7 @@ public class DarkModeDetectorLinux extends DarkModeDetectorBase {
         if (m.find()) {
             try {
                 return Integer.parseInt(m.group(1));
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException _) {
                 // fall through
             }
         }
@@ -187,7 +211,7 @@ public class DarkModeDetectorLinux extends DarkModeDetectorBase {
         if (d.find()) {
             try {
                 return Integer.parseInt(d.group(1));
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException _) {
                 return null;
             }
         }
