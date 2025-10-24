@@ -113,7 +113,7 @@ public final class FileSystemView implements AutoCloseable {
         List<Flags> flagList = List.of(flags);
 
         Map<String, String> env = new HashMap<>();
-        boolean exists = Files.notExists(root);
+        boolean exists = Files.exists(root);
         boolean create = flagList.contains(Flags.CREATE_IF_MISSING) && !exists;
         env.put("create", String.valueOf(create));
 
