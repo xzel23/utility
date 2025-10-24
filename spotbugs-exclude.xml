@@ -33,7 +33,14 @@
     </Match>
 
     <Match class="com.dua3.utility.lang.LangUtilTest">
-        <Bug pattern="DM_GC"/>
+        <Or>
+            <Bug pattern="DM_GC"/>
+            <Bug pattern="BC_VACUOUS_INSTANCEOF"/>
+        </Or>
+    </Match>
+
+    <Match class="com.dua3.utility.io.FileSystemViewTest">
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
 
     <Match class="com.dua3.utility.text.SharedStringTest">

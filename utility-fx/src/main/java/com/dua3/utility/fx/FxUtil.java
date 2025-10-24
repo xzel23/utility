@@ -877,7 +877,7 @@ public final class FxUtil {
      * @param window the Window to get the Screen for
      * @return the Screen where the window is located or the primary screen if the screen could not be determined
      */
-    public static Screen getScreen(Window window) {
+    public static Screen getScreen(@Nullable Window window) {
         if (window == null) {
             return Screen.getPrimary();
         }
