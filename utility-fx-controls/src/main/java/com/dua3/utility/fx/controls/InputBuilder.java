@@ -693,6 +693,44 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
+     * Configures an input field for selecting a folder.
+     *
+     * @param id           the unique identifier for this input field
+     * @param label        the display label for the input field
+     * @param dflt         a supplier providing the default selected folder path, which can be null
+     * @param existingOnly a boolean indicating if only existing directories should be selectable
+     * @return an instance of type B after configuring the folder input field
+     */
+    default B inputFolder(
+            String id,
+            String label,
+            Supplier<@Nullable Path> dflt,
+            boolean existingOnly
+    ) {
+        return inputFolder(id, label, dflt, existingOnly, FileInput.defaultValidate(FileDialogMode.DIRECTORY, existingOnly));
+    }
+
+    /**
+     * Configures an input for selecting a folder.
+     *
+     * @param id the identifier for the input
+     * @param label the label text for the input
+     * @param dflt a supplier providing the default folder path
+     * @param existingOnly a flag indicating whether only existing folders are allowed
+     * @param validate a function to validate the selected folder path
+     * @return an instance of the builder configured with the folder input
+     */
+    default B inputFolder(
+            String id,
+            String label,
+            Supplier<@Nullable Path> dflt,
+            boolean existingOnly,
+            Function<@Nullable Path, Optional<String>> validate
+    ) {
+        return inputFile(id, label, dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
+    }
+
+    /**
      * Associates an input control with the specified identifier, type, and default value provider.
      *
      * @param <T>      the generic result type
