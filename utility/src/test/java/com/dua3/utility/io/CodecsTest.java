@@ -253,4 +253,98 @@ class CodecsTest {
      */
     private static class UnregisteredClass {
     }
+
+    private static Codec<String> stringCodecNamed(String name) {
+        return Codecs.createCodec(
+                name,
+                DataOutputStream::writeUTF,
+                DataInput::readUTF
+        );
+    }
+
+    private static Codec<Integer> intCodecNamed(String name) {
+        return Codecs.createCodec(
+                name,
+                DataOutputStream::writeInt,
+                DataInputStream::readInt
+        );
+    }
+
+    @Test
+    void mapEntryCodec_roundTrip_and_name() throws IOException {
+        Codec<String> k = stringCodecNamed("S");
+        Codec<Integer> v = intCodecNamed("I");
+
+        Codec<Map.Entry<String, Integer>> entryCodec = Codecs.mapEntryCodec(k, v);
+
+        // name should include provided codec names
+        assertEquals(
+                Map.Entry.class.getCanonicalName() + "<S,I>",
+                entryCodec.name()
+        );
+
+        Map.Entry<String, Integer> original = Pair.of("alpha", 123);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (DataOutputStream dos = new DataOutputStream(baos)) {
+            entryCodec.encode(dos, original);
+        }
+
+        Map.Entry<String, Integer> decoded;
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(baos.toByteArray()))) {
+            decoded = entryCodec.decode(dis);
+        }
+
+        assertEquals(original.getKey(), decoded.getKey());
+        assertEquals(original.getValue(), decoded.getValue());
+    }
+
+    @Test
+    void mapCodec_roundTrip_and_name() throws IOException {
+        Codec<String> k = stringCodecNamed("S");
+        Codec<Integer> v = intCodecNamed("I");
+
+        Codec<Map<String, Integer>> mapCodec = Codecs.mapCodec(k, v, HashMap::new);
+
+        assertEquals(
+                Map.class.getCanonicalName() + "<S,I>",
+                mapCodec.name()
+        );
+
+        Map<String, Integer> original = new HashMap<>();
+        original.put("one", 1);
+        original.put("two", 2);
+        original.put("three", 3);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (DataOutputStream dos = new DataOutputStream(baos)) {
+            mapCodec.encode(dos, original);
+        }
+
+        Map<String, Integer> decoded;
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(baos.toByteArray()))) {
+            decoded = mapCodec.decode(dis);
+        }
+
+        assertEquals(original, decoded);
+    }
+
+    @Test
+    void mapCodec_throws_on_null_values() {
+        Codec<String> k = stringCodecNamed("S");
+        Codec<Integer> v = intCodecNamed("I");
+
+        Codec<Map<String, Integer>> mapCodec = Codecs.mapCodec(k, v, HashMap::new);
+
+        Map<String, Integer> mapWithNull = new HashMap<>();
+        mapWithNull.put("ok", 1);
+        mapWithNull.put("bad", null);
+
+        // Expect a NullPointerException during encoding due to null value in entry
+        assertThrows(NullPointerException.class, () -> {
+            try (DataOutputStream dos = new DataOutputStream(new ByteArrayOutputStream())) {
+                mapCodec.encode(dos, mapWithNull);
+            }
+        });
+    }
 }
