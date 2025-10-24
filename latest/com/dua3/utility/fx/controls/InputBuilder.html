@@ -343,6 +343,23 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Add a file chooser dialog to allow the user to select a file.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="InputBuilder.html" title="type parameter in InputBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#inputFolder(java.lang.String,java.lang.String,java.util.function.Supplier,boolean)" class="member-name-link">inputFolder</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;label,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dflt,
+ boolean&nbsp;existingOnly)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Configures an input field for selecting a folder.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="InputBuilder.html" title="type parameter in InputBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#inputFolder(java.lang.String,java.lang.String,java.util.function.Supplier,boolean,java.util.function.Function)" class="member-name-link">inputFolder</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;label,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dflt,
+ boolean&nbsp;existingOnly,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Configures an input for selecting a folder.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;<a href="InputBuilder.html" title="type parameter in InputBuilder">B</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#inputHidden(java.lang.String,java.util.function.Supplier,java.lang.Class)" class="member-name-link">inputHidden</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;value,
@@ -1244,6 +1261,46 @@ loadScripts(document, 'script');</script>
                       It returns an optional error message if the validation fails.</dd>
 <dt>Returns:</dt>
 <dd><code>this</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="inputFolder(java.lang.String,java.lang.String,java.util.function.Supplier,boolean)">
+<h3>inputFolder</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="InputBuilder.html" title="type parameter in InputBuilder">B</a></span>&nbsp;<span class="element-name">inputFolder</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;label,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dflt,
+ boolean&nbsp;existingOnly)</span></div>
+<div class="block">Configures an input field for selecting a folder.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - the unique identifier for this input field</dd>
+<dd><code>label</code> - the display label for the input field</dd>
+<dd><code>dflt</code> - a supplier providing the default selected folder path, which can be null</dd>
+<dd><code>existingOnly</code> - a boolean indicating if only existing directories should be selectable</dd>
+<dt>Returns:</dt>
+<dd>an instance of type B after configuring the folder input field</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="inputFolder(java.lang.String,java.lang.String,java.util.function.Supplier,boolean,java.util.function.Function)">
+<h3>inputFolder</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="InputBuilder.html" title="type parameter in InputBuilder">B</a></span>&nbsp;<span class="element-name">inputFolder</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;label,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dflt,
+ boolean&nbsp;existingOnly,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;validate)</span></div>
+<div class="block">Configures an input for selecting a folder.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - the identifier for the input</dd>
+<dd><code>label</code> - the label text for the input</dd>
+<dd><code>dflt</code> - a supplier providing the default folder path</dd>
+<dd><code>existingOnly</code> - a flag indicating whether only existing folders are allowed</dd>
+<dd><code>validate</code> - a function to validate the selected folder path</dd>
+<dt>Returns:</dt>
+<dd>an instance of the builder configured with the folder input</dd>
 </dl>
 </section>
 </li>
