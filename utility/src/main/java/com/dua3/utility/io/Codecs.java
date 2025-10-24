@@ -121,10 +121,13 @@ public class Codecs {
      * @param codecV  the codec for values
      * @return the map entry codec
      */
-    public static <K, V> Codec<Map.Entry<K, V>> mapEntryCodec(Codec<K> codecK, Codec<? extends V> codecV) {
+    public static <K, V> Codec<Map.Entry<K, V>> mapEntryCodec(Codec<K> codecK, Codec<V> codecV) {
         return createCodec(
                 Map.Entry.class.getCanonicalName() + "<" + codecK.name() + "," + codecV.name() + ">",
-                (DataOutputStream os, Map.Entry<K, V> entry) -> codecK.encode(os, entry.getKey()),
+                (DataOutputStream os, Map.Entry<K, V> entry) -> {
+                    codecK.encode(os, Objects.requireNonNull(entry.getKey(), "null keys in map entries are not supported"));
+                    codecV.encode(os, Objects.requireNonNull(entry.getValue(), "null values in map entries are not supported"));
+                },
                 (DataInputStream is) -> Pair.of(codecK.decode(is), codecV.decode(is))
         );
     }
