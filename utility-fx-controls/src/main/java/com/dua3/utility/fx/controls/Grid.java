@@ -246,7 +246,7 @@ public class Grid extends GridPane {
         final boolean hidden;
 
         Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean hidden) {
-            this.id = id;
+            this.id = id == null || id.isEmpty() ? null : id;
             this.label = label != null ? new Label(label) : null;
             this.cls = cls;
             this.dflt = dflt;

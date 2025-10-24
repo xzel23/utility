@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.crypt.PasswordUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
@@ -11,7 +12,9 @@ import javafx.stage.FileChooser;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
@@ -269,6 +272,72 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Supplier<@Nullable String> dflt,
             Function<@Nullable String, Optional<String>> validate
     );
+
+    /**
+     * Add a labeled password input.
+     *
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
+     * @return {@code this}
+     */
+    default B inputPassword(
+            String id,
+            String label,
+            Supplier<@Nullable String> dflt
+    ) {
+        return inputPassword(id, label, dflt, s -> Optional.empty());
+    }
+
+    /**
+     * Add a labeled string input.
+     *
+     * @param id       the ID
+     * @param label    the label text
+     * @param dflt     supplier of default value
+     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @return {@code this}
+     */
+    B inputPassword(
+            String id,
+            String label,
+            Supplier<@Nullable String> dflt,
+            Function<@Nullable String, Optional<String>> validate
+    );
+
+    /**
+     * Allows user to input a password along with a verification step where the password
+     * is repeated and validated for strength and consistency.
+     *
+     * @param id the identifier for the password input field
+     * @param label the label displayed for the initial password input field
+     * @param labelRepeat the label displayed for the repeated password input field
+     * @return an instance of the builder type B after the password input process
+     */
+    default B inputPasswordWithVerification(
+            String id,
+            String label,
+            String labelRepeat
+    ) {
+        AtomicReference<String> passwordRef = new AtomicReference<>(null);
+        return inputPassword(id, label, () -> "", s -> {
+            if (s == null) {
+                s = "";
+            }
+            passwordRef.set(s);
+            PasswordUtil.PasswordStrength strength = PasswordUtil.evaluatePasswordStrength(s.toCharArray());
+            if (strength.strengthLevel().compareTo(PasswordUtil.StrengthLevel.MODERATE) < 0) {
+                return Optional.of("Password is too weak: " + strength.strengthLevel());
+            } else {
+                return Optional.empty();
+            }
+        })
+        .inputPassword("", "Repeat Password", () -> "",
+            s -> Objects.equals(s, passwordRef.get())
+                    ? Optional.empty()
+                    : Optional.of("Passwords do not match.")
+        );
+    }
 
     /**
      * Add a labeled integer input.

@@ -187,7 +187,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
         // check for duplicate IDs
-        if (id != null && !ids.add(id)) {
+        if (id != null && !id.isEmpty() && !ids.add(id)) {
             throw new IllegalArgumentException(String.format(INPUT_WITH_ID_ALREADY_DEFINED, id));
         }
 
@@ -293,6 +293,11 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     @Override
     public GridBuilder inputString(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         return addInput(id, label, String.class, dflt, InputControl.stringInput(dflt, validate), false);
+    }
+
+    @Override
+    public GridBuilder inputPassword(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+        return addInput(id, label, String.class, dflt, InputControl.passwordInput(dflt, validate), false);
     }
 
     @Override
