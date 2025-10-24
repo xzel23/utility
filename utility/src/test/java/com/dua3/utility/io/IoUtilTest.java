@@ -862,9 +862,10 @@ class IoUtilTest {
     @Test
     void testGetInputStream() throws Exception {
         // Test with InputStream
-        InputStream originalStream = new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8));
-        InputStream resultStream = IoUtil.getInputStream(originalStream);
-        assertEquals(originalStream, resultStream);
+        try (InputStream originalStream = new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8));
+            InputStream resultStream = IoUtil.getInputStream(originalStream)) {
+            assertEquals(originalStream, resultStream);
+        }
 
         // Test with Path
         Path tempFile = Files.createTempFile("input-test", ".txt");
@@ -893,8 +894,9 @@ class IoUtilTest {
             }
 
             // Test with null
-            InputStream nullStream = IoUtil.getInputStream(null);
-            assertEquals(0, nullStream.available());
+            try (InputStream nullStream = IoUtil.getInputStream(null)) {
+                assertEquals(0, nullStream.available());
+            }
 
         } finally {
             Files.deleteIfExists(tempFile);
@@ -904,9 +906,10 @@ class IoUtilTest {
     @Test
     void testGetOutputStream() throws Exception {
         // Test with OutputStream
-        ByteArrayOutputStream originalStream = new ByteArrayOutputStream();
-        OutputStream resultStream = IoUtil.getOutputStream(originalStream);
-        assertEquals(originalStream, resultStream);
+        try (ByteArrayOutputStream originalStream = new ByteArrayOutputStream();
+            OutputStream resultStream = IoUtil.getOutputStream(originalStream)) {
+            assertEquals(originalStream, resultStream);
+        }
 
         // Test with Path
         Path tempFile = Files.createTempFile("output-test", ".txt");
