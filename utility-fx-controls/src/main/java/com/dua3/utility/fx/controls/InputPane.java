@@ -59,7 +59,7 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
         // After showing, force the dialog window to resize to fit content
         ChangeListener<Parent> listener = new ChangeListener<Parent>() {
             @Override
-            public void changed(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
+            public void changed(ObservableValue<? extends @Nullable Parent> observable, @Nullable Parent oldValue, @Nullable Parent newValue) {
                 if (newValue != null) {
                     getScene().getWindow().sizeToScene();
                     scrollPane.parentProperty().removeListener(this);
