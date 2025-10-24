@@ -269,25 +269,10 @@ jobs:
           java-package: 'jdk+fx'
           cache: 'gradle'
 
-      # Download build artifacts first to get the Gradle version file
-      - name: Download build artifacts
-        uses: actions/download-artifact@v5
-        with:
-          name: build-artifacts
-          path: ${{ github.workspace }}
-
-      # Read Gradle version from the file created in the build job
-      - name: 'Read Gradle Version'
-        id: gradle-version
-        run: |
-          GRADLE_VERSION=$(cat build/gradle-version/version.txt)
-          echo "Detected Gradle version: $GRADLE_VERSION"
-          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
-
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v5
+        # Remove the gradle-version parameter or use wrapper
         with:
-          gradle-version: ${{ steps.gradle-version.outputs.gradle_version }}
           gradle-home-cache-includes: |
             caches
             notifications
@@ -310,7 +295,7 @@ jobs:
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2025.2
         with:
-          args: --property,idea.kotlin.plugin.use.k2=false --baseline ${{ github.workspace }}/qodana-baseline.sarif.json
+          args: --property,idea.kotlin.plugin.use.k2=false --baseline,qodana-baseline.sarif.json
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
