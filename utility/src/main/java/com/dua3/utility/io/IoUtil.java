@@ -566,21 +566,32 @@ public final class IoUtil {
     }
 
     /**
-     * Get InputStream.
+     * Get an {@link InputStream} for a variety of source objects.
      * <p>
      * Supported classes:
      * <ul>
-     *     <li>{@link InputStream}
-     *     <li>{@link URI}
-     *     <li>{@link URL}
-     *     <li>{@link Path}
-     *     <li>{@link File}
+     *     <li>{@link java.io.InputStream}</li>
+     *     <li>{@link java.io.Reader} (wrapped and encoded as UTF-8)</li>
+     *     <li>{@link java.net.URI}</li>
+     *     <li>{@link java.net.URL}</li>
+     *     <li>{@link java.nio.file.Path}</li>
+     *     <li>{@link java.io.File}</li>
      * </ul>
+     * <p>
+     * Notes for Reader sources:
+     * <ul>
+     *     <li>Characters are encoded to bytes using UTF-8.</li>
+     *     <li>Surrogate pairs are preserved across buffer boundaries.</li>
+     *     <li>An unpaired trailing high surrogate at end of input is replaced by the UTF-8 encoder with '?' (0x3F).</li>
+     *     <li>Closing the returned stream also closes the underlying reader.</li>
+     * </ul>
+     * <p>
+     * If {@code o} is {@code null}, {@link InputStream#nullInputStream()} is returned.
      *
-     * @param o object
-     * @return InputStream
+     * @param o the source object
+     * @return the input stream for the given source
      * @throws UnsupportedOperationException if the object type is not supported
-     * @throws IOException                   if the type is supported but an IOException occurs during stream creation
+     * @throws IOException if the type is supported but an I/O error occurs during stream creation
      */
     public static InputStream getInputStream(@Nullable Object o) throws IOException {
         return o == null ? InputStream.nullInputStream() : StreamSupplier.getInputStream(o);
