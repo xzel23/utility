@@ -1059,4 +1059,98 @@ class IoUtilTest {
             Files.deleteIfExists(tempFile);
         }
     }
+
+    @ParameterizedTest
+    @MethodSource("jimFsConfigurations")
+    void testZip_withFilter(com.google.common.jimfs.Configuration configuration) throws java.io.IOException {
+        URL zipUrl = LangUtil.getResourceURL(getClass(), "test.zip");
+        String rootPath = "/testZipWithFilter";
+        try (FileSystem fs = createFileSystemForZipTest(configuration, rootPath, zipUrl)) {
+            Path root = fs.getPath(normalize(configuration, rootPath));
+            Path source = root.resolve("test");
+
+            // Exclude hidden files starting with '.'
+            Path destinationZip = root.resolve("filtered.zip");
+            IoUtil.zip(destinationZip, source, p -> !p.getFileName().toString().startsWith("."));
+
+            Path destinationFolder = root.resolve("unzipped");
+            Files.createDirectories(destinationFolder);
+            IoUtil.unzip(destinationZip.toUri().toURL(), destinationFolder);
+
+            Map<String, String> expected = Map.of(
+                    "test", "",
+                    "test/1", "",
+                    "test/1/file.txt", "b4e448e8600fa63f41cc30e5e784f75c",
+                    "test/1/empty_directory", "",
+                    // hidden file .hidden_file should be excluded
+                    "test/README.md", "46f8fd89ede71401240d2ba07dda83d5"
+            );
+
+            Map<String, String> destinationHashes = createHashes(destinationFolder.resolve("test"));
+            assertEquals(expected, destinationHashes);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("jimFsConfigurations")
+    void testZip_withCustomZipRoot_and_Filter(com.google.common.jimfs.Configuration configuration) throws java.io.IOException {
+        URL zipUrl = LangUtil.getResourceURL(getClass(), "test.zip");
+        String rootPath = "/testZipWithCustomRoot";
+        try (FileSystem fs = createFileSystemForZipTest(configuration, rootPath, zipUrl)) {
+            Path root = fs.getPath(normalize(configuration, rootPath));
+            Path source = root.resolve("test");
+
+            Path destinationZip = root.resolve("customroot.zip");
+            IoUtil.zip(destinationZip, source, "MYROOT", p -> !p.getFileName().toString().startsWith("."));
+
+            Path destinationFolder = root.resolve("unzipped2");
+            Files.createDirectories(destinationFolder);
+            IoUtil.unzip(destinationZip.toUri().toURL(), destinationFolder);
+
+            Map<String, String> expected = Map.of(
+                    "MYROOT", "",
+                    "MYROOT/1", "",
+                    "MYROOT/1/file.txt", "b4e448e8600fa63f41cc30e5e784f75c",
+                    "MYROOT/1/empty_directory", "",
+                    "MYROOT/README.md", "46f8fd89ede71401240d2ba07dda83d5"
+            );
+
+            Map<String, String> destinationHashes = createHashes(destinationFolder.resolve("MYROOT"));
+            assertEquals(expected, destinationHashes);
+        }
+    }
+
+    @Test
+    void testCreateSecureTempDirectoryAndDeleteOnExit_prefixOnly() throws Exception {
+        Path tempDir = IoUtil.createSecureTempDirectoryAndDeleteOnExit("delonexit-");
+        try {
+            assertTrue(Files.exists(tempDir));
+            assertTrue(Files.isDirectory(tempDir));
+            assertTrue(tempDir.getFileName().toString().startsWith("delonexit-"));
+            assertTrue(Files.isReadable(tempDir));
+            assertTrue(Files.isWritable(tempDir));
+            assertTrue(Files.isExecutable(tempDir));
+        } finally {
+            // although scheduled for deletion on JVM exit, clean up within test run as well
+            IoUtil.deleteRecursive(tempDir);
+        }
+    }
+
+    @Test
+    void testCreateSecureTempDirectoryAndDeleteOnExit_withParent() throws Exception {
+        Path parentDir = Files.createTempDirectory("parent-delonexit-");
+        try {
+            Path child = IoUtil.createSecureTempDirectoryAndDeleteOnExit(parentDir, "child-");
+            try {
+                assertTrue(Files.exists(child));
+                assertTrue(Files.isDirectory(child));
+                assertEquals(parentDir, child.getParent());
+                assertTrue(child.getFileName().toString().startsWith("child-"));
+            } finally {
+                IoUtil.deleteRecursive(child);
+            }
+        } finally {
+            Files.deleteIfExists(parentDir);
+        }
+    }
 }
