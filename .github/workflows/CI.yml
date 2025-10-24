@@ -286,6 +286,8 @@ jobs:
           version: "1.0"
           profile:
             name: qodana.starter
+          baseline:
+            path: qodana-baseline.sarif.json
           exclude:
             - name: All
               paths:
@@ -295,7 +297,7 @@ jobs:
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2025.2
         with:
-          args: --property,idea.kotlin.plugin.use.k2=false --baseline,qodana-baseline.sarif.json
+          args: --property,idea.kotlin.plugin.use.k2=false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
