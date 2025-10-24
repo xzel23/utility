@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import org.jspecify.annotations.Nullable;
 
@@ -36,7 +37,7 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
         // get the screen the window will be on (fallback to primary)
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
-        ScrollPane scrollPane = new ScrollPane(grid);
+        ScrollPane scrollPane = new ScrollPane(new StackPane(grid));
         scrollPane.setFitToWidth(true);  // allow content to expand horizontally
         scrollPane.setFitToHeight(false);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
