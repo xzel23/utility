@@ -319,7 +319,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String label,
             String labelRepeat
     ) {
-        AtomicReference<String> passwordRef = new AtomicReference<>(null);
+        AtomicReference<@Nullable String> passwordRef = new AtomicReference<>(null);
         return inputPassword(id, label, () -> "", s -> {
             if (s == null) {
                 s = "";
