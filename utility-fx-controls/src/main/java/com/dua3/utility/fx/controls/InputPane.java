@@ -72,12 +72,7 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
 
     @Override
     public Map<String, @Nullable Object> get() {
-        Node content = getContent();
-        if (content instanceof Grid ig) {
-            return ig.get();
-        } else {
-            return Collections.emptyMap();
-        }
+        return grid.get();
     }
 
     @Override
