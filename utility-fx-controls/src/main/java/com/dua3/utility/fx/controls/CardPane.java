@@ -163,10 +163,35 @@ public class CardPane extends Pane {
 
     @Override
     protected double computePrefWidth(double height) {
-        // If we are vertical-biased and height is -1, compute a reasonable height first.
-        if (getContentBias() == Orientation.VERTICAL && height == -1) {
-            height = computePrefHeight(-1) - snappedTopInset() - snappedBottomInset();
+        LOG.trace("computePrefWidth({})", height);
+
+        // To avoid parent<->child feedback (when a card's pref depends on the parent's pref),
+        // compute based on each card's unconstrained preferred width.
+        double max = 0;
+        for (Node card : cards.values()) {
+            max = Math.max(max, card.prefWidth(-1));
         }
+        return snappedLeftInset() + max + snappedRightInset();
+    }
+
+    @Override
+    protected double computePrefHeight(double width) {
+        LOG.trace("computePrefHeight({})", width);
+
+        // Similarly, use unconstrained preferred height to avoid cycles.
+        double max = 0;
+        for (Node card : cards.values()) {
+            max = Math.max(max, card.prefHeight(-1));
+        }
+        return snappedTopInset() + max + snappedBottomInset();
+    }
+
+    @Override
+    protected double computeMinWidth(double height) {
+        LOG.trace("computeMinWidth({})", height);
+
+        // Avoid querying cards' minWidth to prevent feedback loops when a card's min depends on parent pref.
+        // Use the maximum preferred width across all cards as a conservative minimum.
         double max = 0;
         for (Node card : cards.values()) {
             max = Math.max(max, card.prefWidth(height));
@@ -175,11 +200,11 @@ public class CardPane extends Pane {
     }
 
     @Override
-    protected double computePrefHeight(double width) {
-        // If horizontal bias (height depends on width) and width is -1, compute width first.
-        if (getContentBias() == Orientation.HORIZONTAL && width == -1) {
-            width = computePrefWidth(-1) - snappedLeftInset() - snappedRightInset();
-        }
+    protected double computeMinHeight(double width) {
+        LOG.trace("computeMinHeight({})", width);
+
+        // Avoid querying cards' minHeight to prevent feedback loops when a card's min depends on parent pref.
+        // Use the maximum preferred height across all cards as a conservative minimum.
         double max = 0;
         for (Node card : cards.values()) {
             max = Math.max(max, card.prefHeight(width));
@@ -188,51 +213,56 @@ public class CardPane extends Pane {
     }
 
     @Override
-    protected double computeMinWidth(double height) {
-        double max = 0;
-        for (Node card : cards.values()) {
-            max = Math.max(max, card.minWidth(height));
-        }
-        return snappedLeftInset() + max + snappedRightInset();
-    }
-
-    @Override
-    protected double computeMinHeight(double width) {
-        double max = 0;
-        for (Node card : cards.values()) {
-            max = Math.max(max, card.minHeight(width));
-        }
-        return snappedTopInset() + max + snappedBottomInset();
-    }
-
-    @Override
     protected double computeMaxWidth(double height) {
-        double minOfMax = Double.MAX_VALUE;
+        LOG.trace("computeMaxWidth({})", height);
+
+        // Avoid consulting child maxWidth(height) when it depends on parent's pref and causes cycles.
+        // Strategy: if any card reports an unbounded max (Double.MAX_VALUE) unconstrained, propagate it;
+        // otherwise use the maximum of unconstrained preferred widths as a practical max.
+        boolean unbounded = false;
+        double maxPref = 0;
         for (Node card : cards.values()) {
-            minOfMax = Math.min(minOfMax, card.maxWidth(height));
+            double childMax = card.maxWidth(-1);
+            if (Double.isInfinite(childMax) || childMax == Double.MAX_VALUE) {
+                unbounded = true;
+            }
+            maxPref = Math.max(maxPref, card.prefWidth(-1));
         }
-        double result = (minOfMax == Double.MAX_VALUE ? Double.MAX_VALUE : snappedLeftInset() + minOfMax + snappedRightInset());
-        return result;
+        if (unbounded) {
+            return Double.MAX_VALUE;
+        }
+        return snappedLeftInset() + maxPref + snappedRightInset();
     }
 
     @Override
     protected double computeMaxHeight(double width) {
-        double minOfMax = Double.MAX_VALUE;
+        LOG.trace("computeMaxHeight({})", width);
+
+        // Same logic for height: favor unbounded if any child is unbounded; otherwise cap at max pref.
+        boolean unbounded = false;
+        double maxPref = 0;
         for (Node card : cards.values()) {
-            minOfMax = Math.min(minOfMax, card.maxHeight(width));
+            double childMax = card.maxHeight(-1);
+            if (Double.isInfinite(childMax) || childMax == Double.MAX_VALUE) {
+                unbounded = true;
+            }
+            maxPref = Math.max(maxPref, card.prefHeight(-1));
         }
-        double result = (minOfMax == Double.MAX_VALUE ? Double.MAX_VALUE : snappedTopInset() + minOfMax + snappedBottomInset());
-        return result;
+        if (unbounded) {
+            return Double.MAX_VALUE;
+        }
+        return snappedTopInset() + maxPref + snappedBottomInset();
     }
 
     @Override
     protected void layoutChildren() {
+        LOG.trace("layoutChildren()");
+
         double x = snappedLeftInset();
         double y = snappedTopInset();
         double w = Math.max(0, getWidth() - snappedLeftInset() - snappedRightInset());
         double h = Math.max(0, getHeight() - snappedTopInset() - snappedBottomInset());
 
         content.resizeRelocate(x, y, w, h);
-        LOG.trace("layoutChildren()");
     }
 }
