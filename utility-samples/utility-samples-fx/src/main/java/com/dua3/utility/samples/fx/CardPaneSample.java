@@ -11,6 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -29,12 +30,14 @@ public class CardPaneSample extends Application {
 
     @Override
     public void start(Stage stage) {
-        // Create the CardPane and three basic cards
+        // Create the CardPane and three cards with different preferred sizes
         CardPane cardPane = new CardPane();
+        cardPane.setStyle("-fx-background-color: -fx-background; -fx-border-color: -fx-accent; -fx-border-width: 1;");
+        cardPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        StackPane redCard = coloredCard("Red Card", Color.rgb(220, 80, 80));
-        StackPane greenCard = coloredCard("Green Card", Color.rgb(80, 180, 120));
-        StackPane blueCard = coloredCard("Blue Card", Color.rgb(80, 120, 220));
+        StackPane redCard = coloredCard("Red Card 300x180", Color.rgb(220, 80, 80), 300, 180);
+        StackPane greenCard = coloredCard("Green Card 220x260", Color.rgb(80, 180, 120), 220, 260);
+        StackPane blueCard = coloredCard("Blue Card 420x200", Color.rgb(80, 120, 220), 420, 200);
 
         cardPane.getStyleClass().add("card-pane-sample");
         cardPane.addCard("red", redCard);
@@ -58,20 +61,27 @@ public class CardPaneSample extends Application {
 
         ToolBar toolBar = new ToolBar(showRed, showGreen, showBlue);
 
+        // Wrap CardPane so it won't be stretched to fill all available space
+        StackPane center = new StackPane(cardPane);
+        StackPane.setAlignment(cardPane, Pos.TOP_LEFT);
+        center.setPadding(new Insets(10));
+
         BorderPane root = new BorderPane();
         root.setTop(toolBar);
-        root.setCenter(cardPane);
+        root.setCenter(center);
         root.setPadding(new Insets(10));
 
-        Scene scene = new Scene(root, 500, 350);
-        stage.setTitle("CardPane Sample");
+        Scene scene = new Scene(root, 640, 480);
+        stage.setTitle("CardPane Sample – Different Card Sizes");
         stage.setScene(scene);
         stage.show();
     }
 
-    private static StackPane coloredCard(String title, Color color) {
+    private static StackPane coloredCard(String title, Color color, double prefW, double prefH) {
         StackPane pane = new StackPane();
         pane.setPadding(new Insets(20));
+        pane.setPrefSize(prefW, prefH);
+        pane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         pane.setStyle("-fx-background-color: " + toRgb(color) + "; " +
                 "-fx-background-radius: 8; " +
                 "-fx-border-color: rgba(0,0,0,0.2); " +
