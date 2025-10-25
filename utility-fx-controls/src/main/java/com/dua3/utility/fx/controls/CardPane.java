@@ -1,0 +1,238 @@
+package com.dua3.utility.fx.controls;
+
+import com.dua3.utility.lang.LangUtil;
+import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
+
+import java.util.LinkedHashMap;
+import java.util.Optional;
+
+/**
+ * CardPane is a custom layout component that manages a collection of "cards" (Node elements)
+ * and allows switching between them by name. It utilizes a {@link StackPane} to display the cards,
+ * ensuring only the desired card is visible at a time.
+ */
+public class CardPane extends Pane {
+
+    /**
+     * Logger instance
+     */
+    private static final Logger LOG = LogManager.getLogger(CardPane.class);
+
+    /**
+     * A {@link StackPane} used as the central container to manage and display
+     * a collection of card-like {@link Node} elements. It ensures only one card
+     * is visible at a time.
+     * <p>
+     * This variable serves as the primary visual layout component for the
+     * {@link CardPane} class.
+     */
+    private final StackPane content;
+    /**
+     * A map that stores card names as keys and their associated {@link Node} objects as values.
+     * The cards are stored in insertion order, facilitating predictable iteration.
+     */
+    private final LinkedHashMap<String, Node> cards = new LinkedHashMap<>();
+
+    /**
+     * Constructs a new CardPane instance.
+     *
+     * Initializes the CardPane with a {@link StackPane} as its content container.
+     * The content pane is used to hold all child nodes (cards) and manages their visibility,
+     * ensuring only the intended card is shown at a time.
+     */
+    public CardPane() {
+        super();
+        this.content = new StackPane();
+        getChildren().setAll(content);
+
+        LOG.trace("CardPane created");
+    }
+
+    /**
+     * Adds a new card to the collection of cards managed by the CardPane.
+     * If a card with the specified name already exists, the method will throw an exception
+     * and no modification to the existing cards will occur.
+     *
+     * @param name the unique name to associate with the card being added
+     * @param card the Node representing the card to add
+     * @throws IllegalArgumentException if a card with the specified name already exists
+     */
+    public void addCard(String name, Node card) {
+        LOG.trace("addCard({}, {})", name, card);
+
+        Node child = cards.compute(name, (s, old) -> old != null ? old : card);
+        LangUtil.check(child == card, "card with name %s already exists", name);
+
+        // Start inactive; they won’t affect layout until shown
+        card.setManaged(false);
+        card.setVisible(false);
+
+        content.getChildren().add(card);
+        card.toBack();
+    }
+
+    /**
+     * Displays the card associated with the specified name by bringing it
+     * to the front of the content container. If the card exists, it becomes
+     * the currently active card.
+     *
+     * @param name the unique name of the card to display
+     * @return {@code true} if the card with the specified name exists and
+     *         is successfully shown, {@code false} otherwise
+     */
+    public boolean show(String name) {
+        LOG.debug("show('{}'): active={}, total children={}", name,
+                content.getChildren().stream().filter(Node::isManaged).count(),
+                content.getChildren().size());
+
+        Node card = cards.get(name);
+        if (card == null) {
+            return false;
+        }
+        for (Node n : content.getChildren()) {
+            boolean active = n == card;
+            n.setManaged(active);
+            n.setVisible(active);
+        }
+        card.toFront();
+
+        return true;
+    }
+    /**
+     * Returns the currently displayed card if one exists. The current card is the last node
+     * in the internal {@code StackPane}'s children list.
+     *
+     * @return an {@code Optional} containing the currently visible {@code Node}, or an empty {@code Optional}
+     *         if no cards are present in the {@code StackPane}.
+     */
+    public Optional<Node> getCurrentCard() {
+        ObservableList<Node> children = content.getChildren();
+        Optional<Node> currentCard = children.isEmpty() ? Optional.empty() : Optional.of(children.getLast());
+        LOG.trace("getCurrentCard(): {}", currentCard);
+        return currentCard;
+    }
+
+    /**
+     * Retrieves the name of the currently displayed card, if one is present.
+     *
+     * @return an {@code Optional<String>} containing the name of the currently active card,
+     *         or an empty {@code Optional} if no card is currently displayed.
+     */
+    public Optional<String> getCurrentCardName() {
+        Optional<String> currentCardName = getCurrentCard().map(card -> {
+            for (var entry : cards.entrySet()) {
+                if (entry.getValue() == card) {
+                    return entry.getKey();
+                }
+            }
+            return null;
+        });
+        LOG.trace("getCurrentCardName(): {}", currentCardName);
+        return currentCardName;
+    }
+
+    /**
+     * Removes a card with the specified name from the collection of cards managed by the CardPane.
+     * This method removes the card both from the internal map and from the content container.
+     *
+     * @param name the unique name of the card to remove
+     * @return {@code true} if the card was successfully removed, {@code false} if no card with the specified name exists
+     */
+    public boolean removeCard(String name) {
+        Node card = cards.remove(name);
+        boolean removed = card != null && content.getChildren().remove(card);
+        LOG.trace("removeCard({}) -> {}", name, removed);
+        return removed;
+    }
+
+    @Override
+    public @Nullable Orientation getContentBias() {
+        // If any card has VERTICAL bias (pref width depends on height), favor that.
+        boolean vertical = cards.values().stream()
+                .map(Node::getContentBias)
+                .anyMatch(bias -> bias == Orientation.VERTICAL);
+        return vertical ? Orientation.VERTICAL : null; // null = no bias
+    }
+
+    @Override
+    protected double computePrefWidth(double height) {
+        // If we are vertical-biased and height is -1, compute a reasonable height first.
+        if (getContentBias() == Orientation.VERTICAL && height == -1) {
+            height = computePrefHeight(-1) - snappedTopInset() - snappedBottomInset();
+        }
+        double max = 0;
+        for (Node card : cards.values()) {
+            max = Math.max(max, card.prefWidth(height));
+        }
+        return snappedLeftInset() + max + snappedRightInset();
+    }
+
+    @Override
+    protected double computePrefHeight(double width) {
+        // If horizontal bias (height depends on width) and width is -1, compute width first.
+        if (getContentBias() == Orientation.HORIZONTAL && width == -1) {
+            width = computePrefWidth(-1) - snappedLeftInset() - snappedRightInset();
+        }
+        double max = 0;
+        for (Node card : cards.values()) {
+            max = Math.max(max, card.prefHeight(width));
+        }
+        return snappedTopInset() + max + snappedBottomInset();
+    }
+
+    @Override
+    protected double computeMinWidth(double height) {
+        double max = 0;
+        for (Node card : cards.values()) {
+            max = Math.max(max, card.minWidth(height));
+        }
+        return snappedLeftInset() + max + snappedRightInset();
+    }
+
+    @Override
+    protected double computeMinHeight(double width) {
+        double max = 0;
+        for (Node card : cards.values()) {
+            max = Math.max(max, card.minHeight(width));
+        }
+        return snappedTopInset() + max + snappedBottomInset();
+    }
+
+    @Override
+    protected double computeMaxWidth(double height) {
+        double minOfMax = Double.MAX_VALUE;
+        for (Node card : cards.values()) {
+            minOfMax = Math.min(minOfMax, card.maxWidth(height));
+        }
+        double result = (minOfMax == Double.MAX_VALUE ? Double.MAX_VALUE : snappedLeftInset() + minOfMax + snappedRightInset());
+        return result;
+    }
+
+    @Override
+    protected double computeMaxHeight(double width) {
+        double minOfMax = Double.MAX_VALUE;
+        for (Node card : cards.values()) {
+            minOfMax = Math.min(minOfMax, card.maxHeight(width));
+        }
+        double result = (minOfMax == Double.MAX_VALUE ? Double.MAX_VALUE : snappedTopInset() + minOfMax + snappedBottomInset());
+        return result;
+    }
+
+    @Override
+    protected void layoutChildren() {
+        double x = snappedLeftInset();
+        double y = snappedTopInset();
+        double w = Math.max(0, getWidth() - snappedLeftInset() - snappedRightInset());
+        double h = Math.max(0, getHeight() - snappedTopInset() - snappedBottomInset());
+
+        content.resizeRelocate(x, y, w, h);
+        LOG.trace("layoutChildren()");
+    }
+}
