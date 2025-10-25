@@ -22,6 +22,8 @@ import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Window;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.Grid.Meta;
 import com.dua3.utility.lang.LangUtil;
@@ -64,6 +66,8 @@ import java.util.function.UnaryOperator;
  * for validation and default values for inputs.
  */
 public class GridBuilder implements InputBuilder<GridBuilder> {
+
+    private static final Logger LOG = LogManager.getLogger(GridBuilder.class);
 
     private static final FxFontUtil FU = FxFontUtil.getInstance();
     private static final String INPUT_WITH_ID_ALREADY_DEFINED = "Input with id '%s' already defined";
@@ -167,6 +171,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
      * @return the constructed InputGrid
      */
     public Grid build() {
+        LOG.debug("building grid with {} rows and {} columns", data.size(), columns);
+
         Grid grid = new Grid();
 
         grid.setContent(data, columns);

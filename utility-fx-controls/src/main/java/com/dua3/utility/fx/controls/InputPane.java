@@ -11,7 +11,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.Map;
 
 

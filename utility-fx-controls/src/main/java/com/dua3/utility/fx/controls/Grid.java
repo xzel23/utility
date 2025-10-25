@@ -122,6 +122,8 @@ public class Grid extends GridPane {
      * - Sets the initial focus to the first input control in the grid.
      */
     public void init() {
+        LOG.debug("init: {}", data);
+
         getChildren().clear();
 
         List<InputControl<?>> controls = new ArrayList<>();
