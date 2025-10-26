@@ -1,7 +1,6 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.lang.LangUtil;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -39,6 +38,10 @@ public class CardPane extends Pane {
      * The cards are stored in insertion order, facilitating predictable iteration.
      */
     private final LinkedHashMap<String, Node> cards = new LinkedHashMap<>();
+    /**
+     * Stores the name of the currently active card in the {@code CardPane}.
+     */
+    private @Nullable String current = null;
 
     /**
      * Constructs a new CardPane instance.
@@ -67,15 +70,8 @@ public class CardPane extends Pane {
     public void addCard(String name, Node card) {
         LOG.trace("addCard({}, {})", name, card);
 
-        Node child = cards.compute(name, (s, old) -> old != null ? old : card);
-        LangUtil.check(child == card, "card with name %s already exists", name);
-
-        // Start inactive; they won’t affect layout until shown
-        card.setManaged(false);
-        card.setVisible(false);
-
-        content.getChildren().add(card);
-        card.toBack();
+        Node old = cards.putIfAbsent(name, card);
+        LangUtil.check(old == null, "card with name %s already exists", name);
     }
 
     /**
@@ -96,12 +92,9 @@ public class CardPane extends Pane {
         if (card == null) {
             return false;
         }
-        for (Node n : content.getChildren()) {
-            boolean active = n == card;
-            n.setManaged(active);
-            n.setVisible(active);
-        }
-        card.toFront();
+
+        current = name;
+        content.getChildren().setAll(card);
 
         return true;
     }
@@ -113,10 +106,7 @@ public class CardPane extends Pane {
      *         if no cards are present in the {@code StackPane}.
      */
     public Optional<Node> getCurrentCard() {
-        ObservableList<Node> children = content.getChildren();
-        Optional<Node> currentCard = children.isEmpty() ? Optional.empty() : Optional.of(children.getLast());
-        LOG.trace("getCurrentCard(): {}", currentCard);
-        return currentCard;
+        return Optional.ofNullable(cards.get(current));
     }
 
     /**
@@ -126,30 +116,7 @@ public class CardPane extends Pane {
      *         or an empty {@code Optional} if no card is currently displayed.
      */
     public Optional<String> getCurrentCardName() {
-        Optional<String> currentCardName = getCurrentCard().map(card -> {
-            for (var entry : cards.entrySet()) {
-                if (entry.getValue() == card) {
-                    return entry.getKey();
-                }
-            }
-            return null;
-        });
-        LOG.trace("getCurrentCardName(): {}", currentCardName);
-        return currentCardName;
-    }
-
-    /**
-     * Removes a card with the specified name from the collection of cards managed by the CardPane.
-     * This method removes the card both from the internal map and from the content container.
-     *
-     * @param name the unique name of the card to remove
-     * @return {@code true} if the card was successfully removed, {@code false} if no card with the specified name exists
-     */
-    public boolean removeCard(String name) {
-        Node card = cards.remove(name);
-        boolean removed = card != null && content.getChildren().remove(card);
-        LOG.trace("removeCard({}) -> {}", name, removed);
-        return removed;
+        return Optional.ofNullable(current);
     }
 
     @Override
@@ -265,4 +232,19 @@ public class CardPane extends Pane {
 
         content.resizeRelocate(x, y, w, h);
     }
+
+    @Override
+    public void resize(double width, double height) {
+        if (width != getWidth() || height != getHeight()) {
+            super.resize(width, height);
+        }
+    }
+
+    @Override
+    public void relocate(double x, double y) {
+        if (x != getLayoutX() || y != getLayoutY()) {
+            super.relocate(x, y);
+        }
+    }
+
 }
