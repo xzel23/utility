@@ -35,7 +35,7 @@ public final class EphemeralPreferences extends AbstractPreferences {
      * @param name   the name of this preference node, relative to its parent; for the root, use ""
      */
     private EphemeralPreferences(@Nullable AbstractPreferences parent, String name) {
-        super(parent, Objects.requireNonNull(name, "name"));
+        super(parent, name);
     }
 
     @Override
