@@ -36,31 +36,38 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
         // get the screen the window will be on (fallback to primary)
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
-        ScrollPane scrollPane = new ScrollPane(new StackPane(grid));
-        scrollPane.setFitToWidth(true);  // allow content to expand horizontally
-        scrollPane.setFitToHeight(false);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
         // Allow the grid to expand naturally
         grid.setMaxWidth(Double.MAX_VALUE);
 
-        // Set the scroll pane max width to screen width
+        ScrollPane scrollPane = new ScrollPane(grid);
+        scrollPane.setFitToWidth(true);  // allow content to expand horizontally
+        scrollPane.setFitToHeight(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        // Set the scroll pane max dimensions to screen bounds
         scrollPane.setMaxWidth(screenBounds.getWidth() * 0.9);
+        scrollPane.setMaxHeight(screenBounds.getHeight() * 0.9);
+
+        // Let the scroll pane compute its preferred size based on content
+        scrollPane.setPrefViewportWidth(Region.USE_COMPUTED_SIZE);
+        scrollPane.setPrefViewportHeight(Region.USE_COMPUTED_SIZE);
 
         // Set content in dialog
         setContent(scrollPane);
 
         // Make dialog width adapt to content
         setMinWidth(Region.USE_PREF_SIZE);
-        setPrefWidth(Region.USE_COMPUTED_SIZE);
         setMaxWidth(screenBounds.getWidth() * 0.9);
+        setMaxHeight(screenBounds.getHeight() * 0.9);
 
         // After showing, force the dialog window to resize to fit content
         ChangeListener<Parent> listener = new ChangeListener<Parent>() {
             @Override
             public void changed(ObservableValue<? extends @Nullable Parent> observable, @Nullable Parent oldValue, @Nullable Parent newValue) {
                 if (newValue != null) {
+                    // Request layout first to ensure proper size calculation
+                    scrollPane.requestLayout();
                     getScene().getWindow().sizeToScene();
                     scrollPane.parentProperty().removeListener(this);
                 }
