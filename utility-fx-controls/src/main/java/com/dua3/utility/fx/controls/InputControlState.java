@@ -102,6 +102,8 @@ public final class InputControlState<R> {
             this.baseValue.addListener((ObservableValue<?> v, @Nullable Object o, @Nullable Object n) -> invalidateState());
         }
         this.value.addListener((ObservableValue<? extends @Nullable R> v, @Nullable R o, @Nullable R n) -> validate());
+
+        reset();
     }
 
     private void invalidateState() {

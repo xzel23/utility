@@ -46,8 +46,6 @@ public final class SimpleInputControl<C extends Control, R> implements InputCont
             }
         });
 
-        reset();
-
         // perform a validation when the control receives or looses focus
         control.focusedProperty().addListener((v, o, n) -> state.validate());
     }
