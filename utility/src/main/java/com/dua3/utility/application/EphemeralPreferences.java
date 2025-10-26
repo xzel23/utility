@@ -2,7 +2,6 @@ package com.dua3.utility.application;
 import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.prefs.AbstractPreferences;
 import java.util.prefs.Preferences;
 

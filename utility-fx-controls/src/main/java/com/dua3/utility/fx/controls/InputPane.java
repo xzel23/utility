@@ -3,11 +3,9 @@ package com.dua3.utility.fx.controls;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import org.jspecify.annotations.Nullable;
 

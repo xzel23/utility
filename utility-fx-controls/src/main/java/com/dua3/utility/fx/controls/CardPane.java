@@ -184,8 +184,6 @@ public class CardPane extends Pane {
         LOG.trace("computeMaxWidth({})", height);
 
         // Avoid consulting child maxWidth(height) when it depends on parent's pref and causes cycles.
-        // Strategy: if any card reports an unbounded max (Double.MAX_VALUE) unconstrained, propagate it;
-        // otherwise use the maximum of unconstrained preferred widths as a practical max.
         boolean unbounded = false;
         double maxPref = 0;
         for (Node card : cards.values()) {
