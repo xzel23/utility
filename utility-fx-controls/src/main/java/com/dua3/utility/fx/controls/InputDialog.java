@@ -34,7 +34,7 @@ public class InputDialog extends Dialog<InputResult> {
      */
     public InputDialog() {
         setResultConverter(btn -> {
-            if (btn == ButtonType.CANCEL) {
+            if (btn.getButtonData().isCancelButton()) {
                 return null;
             }
             return new InputResult(btn, ((InputPane) getDialogPane()).get());
