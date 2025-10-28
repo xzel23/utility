@@ -39,13 +39,9 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
 
         ScrollPane scrollPane = new ScrollPane(grid);
         scrollPane.setFitToWidth(true);  // allow content to expand horizontally
-        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToHeight(false);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-        // Set the scroll pane max dimensions to screen bounds
-        scrollPane.setMaxWidth(screenBounds.getWidth() * 0.9);
-        scrollPane.setMaxHeight(screenBounds.getHeight() * 0.9);
 
         // Let the scroll pane compute its preferred size based on content
         scrollPane.setPrefViewportWidth(Region.USE_COMPUTED_SIZE);
