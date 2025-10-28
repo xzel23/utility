@@ -14,7 +14,6 @@
 
 package com.dua3.utility.fx.controls;
 
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 
 /**

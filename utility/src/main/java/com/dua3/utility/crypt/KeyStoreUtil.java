@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.crypto.SecretKey;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,7 +30,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.ZipOutputStream;
 
 /**
  * Utility class for KeyStore operations.
@@ -222,27 +220,23 @@ public final class KeyStoreUtil {
                             if (chain != null) {
                                 // Export private key
                                 String keyFileName = alias + ".private.pem";
-                                byte[] pemKey = KeyUtil.toPem(key, password).getBytes();
-                                zip.add(keyFileName, new ByteArrayInputStream(pemKey));
+                                zip.add(keyFileName, KeyUtil.toPem(key, password));
 
                                 // Export certificate chain
                                 for (int i = 0; i < chain.length; i++) {
                                     String certFileName = String.format("%s.%d.cert.pem", alias, i);
-                                    byte[] pemCert = CertificateUtil.toPem(chain[i]).getBytes();
-                                    zip.add(certFileName, new ByteArrayInputStream(pemCert));
+                                    zip.add(certFileName, CertificateUtil.toPem(chain[i]));
                                 }
                             } else if (key instanceof SecretKey) {
                                 // Export secret key
                                 String keyFileName = alias + ".secret.pem";
-                                byte[] pemKey = KeyUtil.toPem(key, password).getBytes();
-                                zip.add(keyFileName, new ByteArrayInputStream(pemKey));
+                                zip.add(keyFileName, KeyUtil.toPem(key, password));
                             }
                         } else if (keyStore.isCertificateEntry(alias)) {
                             // Export certificate
                             Certificate cert = keyStore.getCertificate(alias);
                             String certFileName = alias + ".cert.pem";
-                            byte[] pemCert = CertificateUtil.toPem(cert).getBytes();
-                            zip.add(certFileName, new ByteArrayInputStream(pemCert));
+                            zip.add(certFileName, CertificateUtil.toPem(cert));
                         }
                     } catch (GeneralSecurityException e) {
                         LOG.warn("Failed to export entry: {}", alias, e);
@@ -287,11 +281,7 @@ public final class KeyStoreUtil {
                         // This is a secret key entry
                         KeyStore.SecretKeyEntry skEntry = new KeyStore.SecretKeyEntry(secretKey);
                         KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password);
-                        try {
-                            newKeyStore.setEntry(alias, skEntry, protection);
-                        } catch (KeyStoreException e) {
-                            throw new GeneralSecurityException("Keystore of type " + targetType + " does not support storing secret keys", e);
-                        }
+                        storeSecretKey(targetType, newKeyStore, alias, skEntry, protection);
                     }
                 } else if (keyStore.isCertificateEntry(alias)) {
                     // Handle certificate entries
@@ -307,6 +297,14 @@ public final class KeyStoreUtil {
             throw new GeneralSecurityException("Failed to copy KeyStore", e);
         } finally {
             Arrays.fill(password, '\0');
+        }
+    }
+
+    private static void storeSecretKey(KeyStoreType targetType, KeyStore newKeyStore, String alias, KeyStore.SecretKeyEntry skEntry, KeyStore.ProtectionParameter protection) throws GeneralSecurityException {
+        try {
+            newKeyStore.setEntry(alias, skEntry, protection);
+        } catch (KeyStoreException e) {
+            throw new GeneralSecurityException("Keystore of type " + targetType + " does not support storing secret keys", e);
         }
     }
 

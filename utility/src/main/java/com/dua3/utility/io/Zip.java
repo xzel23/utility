@@ -6,6 +6,7 @@ import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -16,7 +17,7 @@ import java.util.zip.ZipOutputStream;
  * For zipping the contents of a directory, use {@link IoUtil#zip(Path, Path)} instead.
  */
 @SuppressWarnings("MagicCharacter")
-public class Zip implements AutoCloseable, Flushable {
+public final class Zip implements AutoCloseable, Flushable {
 
     private final ZipOutputStream zout;
     private String path = "";
@@ -42,6 +43,19 @@ public class Zip implements AutoCloseable, Flushable {
     public void add(String filename, byte[] data) throws IOException {
         addFileEntry(filename);
         zout.write(data);
+    }
+
+    /**
+     * Add non-binary (text) file to zip.
+     * <p>
+     * text will be written as UTF-8 encoded data and the file will be placed under the last created directory.
+     *
+     * @param filename the filename
+     * @param data     the data
+     * @throws IOException on error
+     */
+    public void add(String filename, String data) throws IOException {
+        add(filename, data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
