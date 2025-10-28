@@ -66,7 +66,7 @@ public class DarkModeDetectorWindows extends DarkModeDetectorBase {
                 return new DarkModeDetectorWindows();
             } catch (Exception t) {
                 LOG.error("DarkModeDetectorWindows initialization failed", t);
-                return new DarkModeDetectorImpUnsupported();
+                return DarkModeDetectorImpUnsupported.getInstance();
             }
         }
     }

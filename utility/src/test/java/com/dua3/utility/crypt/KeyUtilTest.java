@@ -320,4 +320,50 @@ class KeyUtilTest {
         Key unsupportedKey = new SecretKeySpec(new byte[16], "AES"); // SecretKey not supported for PEM
         assertThrows(IllegalStateException.class, () -> KeyUtil.toPem(unsupportedKey));
     }
+
+    @ParameterizedTest
+    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA", "EC"})
+    void testAppendPemAndLoadPrivateKeyRoundTrip_Unencrypted(AsymmetricAlgorithm algorithm) throws Exception {
+        KeyPair kp = generateSecretKeyPairForAlgorithm(algorithm);
+        StringBuilder sb = new StringBuilder();
+        KeyUtil.appendPem(kp.getPrivate(), sb);
+        String pem = sb.toString();
+
+        PrivateKey loaded = KeyUtil.loadPrivateKeyFromPem(pem);
+        assertArrayEquals(kp.getPrivate().getEncoded(), loaded.getEncoded());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA", "EC"})
+    void testAppendPemAndLoadPrivateKeyRoundTrip_Encrypted(AsymmetricAlgorithm algorithm) throws Exception {
+        KeyPair kp = generateSecretKeyPairForAlgorithm(algorithm);
+        StringBuilder sb = new StringBuilder();
+        char[] password = "changeit".toCharArray();
+        KeyUtil.appendPem(kp.getPrivate(), password.clone(), sb);
+        String pem = sb.toString();
+
+        PrivateKey loaded = KeyUtil.loadPrivateKeyFromPem(pem, password.clone());
+        assertArrayEquals(kp.getPrivate().getEncoded(), loaded.getEncoded());
+    }
+
+    @Test
+    void testAppendPemAndLoadSecretKeyRoundTrip_Encrypted() throws Exception {
+        SecretKey sk = KeyUtil.generateSecretKey(256);
+        StringBuilder sb = new StringBuilder();
+        char[] password = "top-secret".toCharArray();
+        KeyUtil.appendPem(sk, password.clone(), sb);
+        String pem = sb.toString();
+
+        SecretKey loaded = KeyUtil.loadSecretKeyFromPem(pem, password.clone());
+        assertArrayEquals(sk.getEncoded(), loaded.getEncoded());
+    }
+
+    @Test
+    void testLoadSecretKeyRoundTrip_Unencrypted_ManualPem() throws Exception {
+        // appendPem() does not support unencrypted SecretKey; create plain PEM manually for round-trip
+        SecretKey sk = KeyUtil.generateSecretKey(256);
+        String pem = toPem("SECRET KEY", sk.getEncoded());
+        SecretKey loaded = KeyUtil.loadSecretKeyFromPem(pem);
+        assertArrayEquals(sk.getEncoded(), loaded.getEncoded());
+    }
 }

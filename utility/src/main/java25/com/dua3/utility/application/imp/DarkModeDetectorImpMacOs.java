@@ -45,7 +45,7 @@ public class DarkModeDetectorImpMacOs extends DarkModeDetectorBase {
                 return new DarkModeDetectorImpMacOs();
             } catch (Exception e) {
                 LOG.error("DarkModeDetectorImpMacOs initialization failed", e);
-                return new DarkModeDetectorImpUnsupported();
+                return DarkModeDetectorImpUnsupported.getInstance();
             }
         }
     }

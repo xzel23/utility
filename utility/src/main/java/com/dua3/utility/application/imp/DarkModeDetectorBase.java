@@ -26,6 +26,11 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
     private final Collection<Consumer<Boolean>> listeners = new ArrayList<>();
 
     /**
+     * Constructs an instance of {@code DarkModeDetectorBase}.
+     */
+    protected DarkModeDetectorBase() {}
+
+    /**
      * Adds a listener for dark mode state changes.
      * The listener is a {@link Consumer} that accepts a {@code Boolean} value representing
      * the dark mode state. A value of {@code true} indicates that dark mode is enabled,
@@ -71,6 +76,8 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
      * <p>
      * Subclasses must implement this method to define the specific behavior for starting
      * or stopping the monitoring functionality.
+     *
+     * @param enable {@code true} enables and {@code false} disables monitoring
      */
     protected abstract void monitorSystemChanges(boolean enable);
 }

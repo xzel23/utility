@@ -1,10 +1,13 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.io.Zip;
+import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.crypto.SecretKey;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,6 +21,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -27,6 +31,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Utility class for KeyStore operations.
@@ -60,6 +65,22 @@ public final class KeyStoreUtil {
      */
     public static KeyStore createKeyStore(KeyStoreType type, char[] password) throws GeneralSecurityException {
         return createKeyStore(type.name(), password);
+    }
+
+    /**
+     * Retrieves the KeyStoreType corresponding to the provided KeyStore instance.
+     *
+     * @param keyStore the KeyStore instance from which the type is to be derived
+     * @return the KeyStoreType that matches the type of the provided KeyStore instance
+     * @throws IllegalArgumentException if the KeyStore type is not supported
+     */
+    public static KeyStoreType getKeyStoreType(KeyStore keyStore) {
+        String type = keyStore.getType();
+        try {
+            return KeyStoreType.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unsupported KeyStore type: " + type);
+        }
     }
 
     /**
@@ -155,10 +176,137 @@ public final class KeyStoreUtil {
      */
     public static void saveKeyStoreToFile(KeyStore keyStore, Path keystoreFile, char[] password) throws GeneralSecurityException, IOException {
         try {
-            try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
-                saveKeyStore(keyStore, outputStream, password);
-                LOG.debug("KeyStore written to file {}", keystoreFile);
+            KeyStoreType sourceType = getKeyStoreType(keyStore);
+            KeyStoreType targetType = KeyStoreType.forExtension(IoUtil.getExtension(keystoreFile));
+
+            if (sourceType == targetType) {
+                // write directly to file
+                try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
+                    saveKeyStore(keyStore, outputStream, password);
+                    LOG.debug("KeyStore written to file {}", keystoreFile);
+                }
+            } else {
+                // export to another type
+                if (targetType.isExportOnly()) {
+                    LangUtil.check(targetType == KeyStoreType.ZIP, "Target type is not supported: %s", targetType);
+                    exportAsZip(keyStore, keystoreFile, password);
+                } else {
+                    // target type is fully supported; convert and then write the keystore
+                    KeyStore newKeyStore = copyKeyStore(keyStore, targetType, password.clone());
+                    try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
+                        saveKeyStore(newKeyStore, outputStream, password);
+                        LOG.debug("KeyStore written to file {}", keystoreFile);
+                    }
+                }
             }
+        } finally {
+            Arrays.fill(password, '\0');
+        }
+    }
+
+    private static void exportAsZip(KeyStore keyStore, Path keystoreFile, char[] password) throws IOException {
+        try (OutputStream out = Files.newOutputStream(keystoreFile);
+             Zip zip = new Zip(out)) {
+
+            try {
+                Enumeration<String> aliases = keyStore.aliases();
+                while (aliases.hasMoreElements()) {
+                    String alias = aliases.nextElement();
+
+                    try {
+                        if (keyStore.isKeyEntry(alias)) {
+                            // Handle private key entries
+                            Key key = keyStore.getKey(alias, password);
+                            Certificate[] chain = keyStore.getCertificateChain(alias);
+
+                            if (chain != null) {
+                                // Export private key
+                                String keyFileName = alias + ".private.pem";
+                                byte[] pemKey = KeyUtil.toPem(key, password).getBytes();
+                                zip.add(keyFileName, new ByteArrayInputStream(pemKey));
+
+                                // Export certificate chain
+                                for (int i = 0; i < chain.length; i++) {
+                                    String certFileName = String.format("%s.%d.cert.pem", alias, i);
+                                    byte[] pemCert = CertificateUtil.toPem(chain[i]).getBytes();
+                                    zip.add(certFileName, new ByteArrayInputStream(pemCert));
+                                }
+                            } else if (key instanceof SecretKey) {
+                                // Export secret key
+                                String keyFileName = alias + ".secret.pem";
+                                byte[] pemKey = KeyUtil.toPem(key, password).getBytes();
+                                zip.add(keyFileName, new ByteArrayInputStream(pemKey));
+                            }
+                        } else if (keyStore.isCertificateEntry(alias)) {
+                            // Export certificate
+                            Certificate cert = keyStore.getCertificate(alias);
+                            String certFileName = alias + ".cert.pem";
+                            byte[] pemCert = CertificateUtil.toPem(cert).getBytes();
+                            zip.add(certFileName, new ByteArrayInputStream(pemCert));
+                        }
+                    } catch (GeneralSecurityException e) {
+                        LOG.warn("Failed to export entry: {}", alias, e);
+                    }
+                }
+            } catch (KeyStoreException e) {
+                throw new IOException("Failed to access KeyStore entries", e);
+            }
+        } catch (Exception e) {
+            throw new IOException("Failed to export KeyStore to ZIP", e);
+        }
+    }
+
+    /**
+     * Copies the contents of the provided KeyStore into a new KeyStore of the specified target type.
+     * This method handles private key entries, secret key entries, and certificate entries.
+     * Passwords provided for accessing entries are also used for protecting the new KeyStore and its entries.
+     *
+     * @param keyStore   the source KeyStore to be copied
+     * @param targetType the desired type for the new KeyStore
+     * @param password   the password for accessing the source KeyStore and protecting the new KeyStore
+     * @return a new KeyStore of the specified type containing the copied entries from the source KeyStore
+     * @throws GeneralSecurityException if any error occurs during the copy operation, such as access failure or unexpected KeyStore type
+     */
+    public static KeyStore copyKeyStore(KeyStore keyStore, KeyStoreType targetType, char[] password) throws GeneralSecurityException {
+        try {
+            // Create new KeyStore of target type
+            KeyStore newKeyStore = createKeyStore(targetType, password.clone());
+
+            // Iterate through all aliases in the source KeyStore
+            Enumeration<String> aliases = keyStore.aliases();
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+
+                if (keyStore.isKeyEntry(alias)) {
+                    // Handle key entries (private keys or secret keys)
+                    Key key = keyStore.getKey(alias, password);
+                    Certificate[] chain = keyStore.getCertificateChain(alias);
+
+                    if (chain != null) {
+                        // This is a private key entry with certificate chain
+                        newKeyStore.setKeyEntry(alias, key, password, chain);
+                    } else if (key instanceof SecretKey secretKey) {
+                        // This is a secret key entry
+                        KeyStore.SecretKeyEntry skEntry = new KeyStore.SecretKeyEntry(secretKey);
+                        KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password);
+                        try {
+                            newKeyStore.setEntry(alias, skEntry, protection);
+                        } catch (KeyStoreException e) {
+                            throw new GeneralSecurityException("Keystore of type " + targetType + " does not support storing secret keys", e);
+                        }
+                    }
+                } else if (keyStore.isCertificateEntry(alias)) {
+                    // Handle certificate entries
+                    Certificate cert = keyStore.getCertificate(alias);
+                    newKeyStore.setCertificateEntry(alias, cert);
+                }
+            }
+
+            LOG.debug("KeyStore successfully copied to type {}", targetType);
+            return newKeyStore;
+
+        } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException e) {
+            throw new GeneralSecurityException("Failed to copy KeyStore", e);
         } finally {
             Arrays.fill(password, '\0');
         }

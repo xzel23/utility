@@ -1,9 +1,11 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.lang.LangUtil;
 
 import java.nio.file.Path;
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.function.Predicate;
 
 /**
  * KeyStoreType defines a set of constants representing different types of keystores.
@@ -26,13 +28,13 @@ public enum KeyStoreType {
      * between various cryptographic systems and software. It supports strong encryption and is commonly used
      * in SSL/TLS implementations.
      */
-    PKCS12,
+    PKCS12(false, "p12"),
     /**
      * Represents the Java KeyStore (JKS) type, a proprietary keystore format used in Java applications
      * for managing cryptographic keys, certificates, and trusted certificate chains.
      * Commonly utilized in Java environments for secure storage and cryptographic operations.
      */
-    JKS,
+    JKS(false, "jks"),
     /**
      * Represents the Java Cryptography Extension KeyStore (JCEKS) format,
      * an extended version of the Java KeyStore (JKS) providing support
@@ -41,7 +43,22 @@ public enum KeyStoreType {
      * JCEKS is commonly used when enhanced security features are required
      * for storing cryptographic keys and certificates.
      */
-    JCEKS;
+    JCEKS(false, "jceks"),
+    /**
+     * A Zip file containing one file per alias.
+     * <p>
+     * Use ZIP for exporting KeyStore entries to be used by systems lacking proper KeyStore support (LESS SECURE).
+     */
+    ZIP(true, "zip");
+
+    private final boolean isExportOnly;
+    private final String[] extensions;
+
+    KeyStoreType(boolean isExportOnly, String... extensions) {
+        LangUtil.check(extensions.length > 0, "no extensions provided");
+        this.isExportOnly = isExportOnly;
+        this.extensions = extensions;
+    }
 
     /**
      * Determines the appropriate {@code KeyStoreType} for the provided file extension.
@@ -57,26 +74,22 @@ public enum KeyStoreType {
             extension = extension.substring(1);
         }
 
-        return switch (extension.toLowerCase(Locale.ROOT)) {
-            case "pfx", "p12" -> PKCS12;
-            case "jks" -> JKS;
-            case "jceks" -> JCEKS;
-            default -> throw new IllegalArgumentException("unsupported keystore extension: " + extension);
-        };
+        for (KeyStoreType type : values()) {
+            if (LangUtil.isOneOf(extension, type.extensions)) {
+                return type;
+            }
+        }
+
+        throw new IllegalArgumentException("unsupported keystore extension: " + extension);
     }
 
     /**
-     * Retrieves the file extension associated with the current {@code KeyStoreType}.
+     * Retrieves the (standard) file extension associated with the current {@code KeyStoreType}.
      *
      * @return a string representing the file extension for the keystore type.
-     *         Possible values include "p12" for PKCS12, "jks" for JKS, and "jceks" for JCEKS.
      */
     public String getExtension() {
-        return switch (this) {
-            case PKCS12 -> "p12";
-            case JKS -> "jks";
-            case JCEKS -> "jceks";
-        };
+        return extensions[0];
     }
 
     /**
@@ -106,5 +119,33 @@ public enum KeyStoreType {
      */
     public static KeyStoreType forPath(String path) {
         return forExtension(IoUtil.getExtension(path));
+    }
+
+    /**
+     * Retrieves an array of {@code KeyStoreType} values that support writing operations.
+     *
+     * @return an array of {@code KeyStoreType} instances that support writing.
+     */
+    public static KeyStoreType[] valuesWriteable() {
+        return values();
+    }
+
+    /**
+     * Retrieves an array of {@code KeyStoreType} values that support reading operations.
+     *
+     * @return an array of {@code KeyStoreType} instances that support reading.
+     */
+    public static KeyStoreType[] valuesReadble() {
+        return Arrays.stream(values()).filter(Predicate.not(KeyStoreType::isExportOnly)).toArray(KeyStoreType[]::new);
+    }
+
+    /**
+     * Indicates whether reading operations are supported for this {@code KeyStoreType}.
+     *
+     * @return {@code true} if reading is supported for this keystore type,
+     *         {@code false} otherwise.
+     */
+    public boolean isExportOnly() {
+        return isExportOnly;
     }
 }

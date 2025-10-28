@@ -12,9 +12,18 @@ public class DarkModeDetectorImpUnsupported extends DarkModeDetectorBase {
         private static final DarkModeDetectorImpUnsupported INSTANCE = new DarkModeDetectorImpUnsupported();
     }
 
+    /**
+     * Returns the singleton instance of the {@code DarkModeDetectorImpUnsupported} class.
+     * This implementation does not support dark mode detection and always returns {@code false}
+     * for both the detection capability and the dark mode state.
+     *
+     * @return the singleton instance of {@code DarkModeDetectorImpUnsupported}
+     */
     public static DarkModeDetectorImpUnsupported getInstance() {
         return Holder.INSTANCE;
     }
+
+    private DarkModeDetectorImpUnsupported() {}
 
     @Override
     public boolean isDarkModeDetectionSupported() {

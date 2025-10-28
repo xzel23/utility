@@ -5,11 +5,13 @@
 
 package com.dua3.utility.crypt;
 
+import org.bouncycastle.jcajce.provider.keystore.PKCS12;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.crypto.SecretKey;
 import java.nio.file.Path;
@@ -26,6 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KeyStoreUtilTest {
+
+    @TempDir
+    Path tempDir;
 
     @BeforeAll
     static void setUp() {
@@ -45,12 +50,26 @@ class KeyStoreUtilTest {
     @ParameterizedTest
     @EnumSource(KeyStoreType.class)
     void testCreateKeyStoreWithType(KeyStoreType type) throws GeneralSecurityException {
-        // Create a KeyStore with specified type
-        KeyStore keyStore = KeyStoreUtil.createKeyStore(type, password());
+        if (!type.isExportOnly()) {
+            // Create a KeyStore with specified type
+            KeyStore keyStore = KeyStoreUtil.createKeyStore(type, password());
 
-        // Verify the KeyStore was created
-        assertNotNull(keyStore);
-        assertFalse(keyStore.aliases().hasMoreElements(), "New KeyStore should be empty");
+            // Verify the KeyStore was created
+            assertNotNull(keyStore);
+            assertFalse(keyStore.aliases().hasMoreElements(), "New KeyStore should be empty");
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(KeyStoreType.class)
+    void testGetKeyStoreType(KeyStoreType type) throws GeneralSecurityException {
+        if (!type.isExportOnly()) {
+            // Create a KeyStore with specified type
+            KeyStore keyStore = KeyStoreUtil.createKeyStore(type, password());
+
+            // assert the type can be extracted correctly
+            assertEquals(type, KeyStoreUtil.getKeyStoreType(keyStore));
+        }
     }
 
     @Test
@@ -165,8 +184,11 @@ class KeyStoreUtilTest {
         assertTrue(aliases.isEmpty());
     }
 
-    @Test
-    void testSaveAndLoadKeyStore(@TempDir Path tempDir) throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"JCEKS", "PKCS12", "ZIP"}) // JCS does ot support storing secret keys
+    void testSaveAndLoadKeyStore(String targetTypeName) throws Exception {
+        KeyStoreType targetType = KeyStoreType.valueOf(targetTypeName);
+
         // Create a KeyStore
         KeyStore originalKeyStore = KeyStoreUtil.createKeyStore(KeyStoreType.PKCS12, password());
 
@@ -174,22 +196,24 @@ class KeyStoreUtilTest {
         SecretKey secretKey = KeyUtil.generateSecretKey(256);
         KeyStoreUtil.storeSecretKey(originalKeyStore, SECRET_KEY_ALIAS, secretKey, password());
 
-        // Save the KeyStore to a file
-        Path keystoreFile = tempDir.resolve("keystore.jks");
+        // Save the KeyStore to a file (use PKSC#12 because JKS doe
+        Path keystoreFile = tempDir.resolve("keystore." + targetType.getExtension());
         KeyStoreUtil.saveKeyStoreToFile(originalKeyStore, keystoreFile, password());
 
-        // Load the KeyStore from the file
-        KeyStore loadedKeyStore = KeyStoreUtil.loadKeyStore(keystoreFile, password());
+        if (!targetType.isExportOnly()) {
+            // Load the KeyStore from the file
+            KeyStore loadedKeyStore = KeyStoreUtil.loadKeyStore(keystoreFile, password());
 
-        // Verify the loaded KeyStore contains the expected entries
-        assertTrue(KeyStoreUtil.containsKey(loadedKeyStore, SECRET_KEY_ALIAS));
+            // Verify the loaded KeyStore contains the expected entries
+            assertTrue(KeyStoreUtil.containsKey(loadedKeyStore, SECRET_KEY_ALIAS));
 
-        // Load the secret key from the loaded KeyStore
-        SecretKey loadedKey = KeyStoreUtil.loadSecretKey(loadedKeyStore, SECRET_KEY_ALIAS, password());
+            // Load the secret key from the loaded KeyStore
+            SecretKey loadedKey = KeyStoreUtil.loadSecretKey(loadedKeyStore, SECRET_KEY_ALIAS, password());
 
-        // Verify the loaded key matches the original
-        assertNotNull(loadedKey);
-        assertArrayEquals(secretKey.getEncoded(), loadedKey.getEncoded());
+            // Verify the loaded key matches the original
+            assertNotNull(loadedKey);
+            assertArrayEquals(secretKey.getEncoded(), loadedKey.getEncoded());
+        }
     }
 
     @Test
