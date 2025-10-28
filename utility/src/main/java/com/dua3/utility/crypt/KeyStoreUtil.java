@@ -190,7 +190,7 @@ public final class KeyStoreUtil {
                     exportAsZip(keyStore, keystoreFile, password);
                 } else {
                     // target type is fully supported; convert and then write the keystore
-                    KeyStore newKeyStore = copyKeyStore(keyStore, targetType, password.clone());
+                    KeyStore newKeyStore = copyKeyStore(keyStore, password.clone(), targetType, password.clone());
                     try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
                         saveKeyStore(newKeyStore, outputStream, password);
                         LOG.debug("KeyStore written to file {}", keystoreFile);
@@ -253,16 +253,17 @@ public final class KeyStoreUtil {
      * This method handles private key entries, secret key entries, and certificate entries.
      * Passwords provided for accessing entries are also used for protecting the new KeyStore and its entries.
      *
-     * @param keyStore   the source KeyStore to be copied
-     * @param targetType the desired type for the new KeyStore
-     * @param password   the password for accessing the source KeyStore and protecting the new KeyStore
+     * @param keyStore    the source KeyStore to be copied
+     * @param password    the password for accessing the source KeyStore
+     * @param targetType  the desired type for the new KeyStore
+     * @param newPassword the password for protecting the new KeyStore
      * @return a new KeyStore of the specified type containing the copied entries from the source KeyStore
      * @throws GeneralSecurityException if any error occurs during the copy operation, such as access failure or unexpected KeyStore type
      */
-    public static KeyStore copyKeyStore(KeyStore keyStore, KeyStoreType targetType, char[] password) throws GeneralSecurityException {
+    public static KeyStore copyKeyStore(KeyStore keyStore, char[] password, KeyStoreType targetType, char[] newPassword) throws GeneralSecurityException {
         try {
             // Create new KeyStore of target type
-            KeyStore newKeyStore = createKeyStore(targetType, password.clone());
+            KeyStore newKeyStore = createKeyStore(targetType, newPassword.clone());
 
             // Iterate through all aliases in the source KeyStore
             Enumeration<String> aliases = keyStore.aliases();
@@ -271,16 +272,16 @@ public final class KeyStoreUtil {
 
                 if (keyStore.isKeyEntry(alias)) {
                     // Handle key entries (private keys or secret keys)
-                    Key key = keyStore.getKey(alias, password);
+                    Key key = keyStore.getKey(alias, password.clone());
                     Certificate[] chain = keyStore.getCertificateChain(alias);
 
                     if (chain != null) {
                         // This is a private key entry with certificate chain
-                        newKeyStore.setKeyEntry(alias, key, password, chain);
+                        newKeyStore.setKeyEntry(alias, key, newPassword.clone(), chain);
                     } else if (key instanceof SecretKey secretKey) {
                         // This is a secret key entry
                         KeyStore.SecretKeyEntry skEntry = new KeyStore.SecretKeyEntry(secretKey);
-                        KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password);
+                        KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(newPassword);
                         storeSecretKey(targetType, newKeyStore, alias, skEntry, protection);
                     }
                 } else if (keyStore.isCertificateEntry(alias)) {
@@ -297,6 +298,7 @@ public final class KeyStoreUtil {
             throw new GeneralSecurityException("Failed to copy KeyStore", e);
         } finally {
             Arrays.fill(password, '\0');
+            Arrays.fill(newPassword, '\0');
         }
     }
 
