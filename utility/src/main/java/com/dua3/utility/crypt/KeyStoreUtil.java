@@ -251,8 +251,6 @@ public final class KeyStoreUtil {
             } catch (KeyStoreException e) {
                 throw new IOException("Failed to access KeyStore entries", e);
             }
-        } catch (Exception e) {
-            throw new IOException("Failed to export KeyStore to ZIP", e);
         }
     }
 

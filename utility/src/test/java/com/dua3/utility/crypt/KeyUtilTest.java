@@ -366,4 +366,30 @@ class KeyUtilTest {
         SecretKey loaded = KeyUtil.loadSecretKeyFromPem(pem);
         assertArrayEquals(sk.getEncoded(), loaded.getEncoded());
     }
+    
+    @ParameterizedTest
+    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA", "EC"})
+    void testDerRoundTrip_PublicKey(AsymmetricAlgorithm algorithm) throws Exception {
+        KeyPair kp = generateSecretKeyPairForAlgorithm(algorithm);
+        PublicKey original = kp.getPublic();
+
+        byte[] der = KeyUtil.toDer(original);
+        Key parsed = KeyUtil.parseDer(der);
+
+        assertTrue(parsed instanceof PublicKey, "Parsed key should be a PublicKey");
+        assertArrayEquals(original.getEncoded(), ((PublicKey) parsed).getEncoded());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA", "EC"})
+    void testDerRoundTrip_PrivateKey(AsymmetricAlgorithm algorithm) throws Exception {
+        KeyPair kp = generateSecretKeyPairForAlgorithm(algorithm);
+        PrivateKey original = kp.getPrivate();
+
+        byte[] der = KeyUtil.toDer(original);
+        Key parsed = KeyUtil.parseDer(der);
+
+        assertTrue(parsed instanceof PrivateKey, "Parsed key should be a PrivateKey");
+        assertArrayEquals(original.getEncoded(), ((PrivateKey) parsed).getEncoded());
+    }
 }
