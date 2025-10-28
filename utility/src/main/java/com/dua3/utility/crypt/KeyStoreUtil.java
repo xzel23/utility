@@ -220,7 +220,7 @@ public final class KeyStoreUtil {
                             if (chain != null) {
                                 // Export private key
                                 String keyFileName = alias + ".private.pem";
-                                zip.add(keyFileName, KeyUtil.toPem(key, password));
+                                zip.add(keyFileName, KeyUtil.toPem(key, password.clone()));
 
                                 // Export certificate chain
                                 for (int i = 0; i < chain.length; i++) {
@@ -230,7 +230,7 @@ public final class KeyStoreUtil {
                             } else if (key instanceof SecretKey) {
                                 // Export secret key
                                 String keyFileName = alias + ".secret.pem";
-                                zip.add(keyFileName, KeyUtil.toPem(key, password));
+                                zip.add(keyFileName, KeyUtil.toPem(key, password.clone()));
                             }
                         } else if (keyStore.isCertificateEntry(alias)) {
                             // Export certificate
