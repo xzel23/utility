@@ -5,6 +5,8 @@
 
 package com.dua3.utility.crypt;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -28,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class CertificateUtilTest {
+
+    private static final Logger LOG = LogManager.getLogger(CertificateUtilTest.class);
 
     @Test
     void testCreateSelfSignedX509Certificate() throws GeneralSecurityException {
@@ -640,5 +644,66 @@ class CertificateUtilTest {
         assertDoesNotThrow(() -> child.verify(parentCert.getPublicKey()));
         // verify chain
         assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(chain));
+    }
+
+    @Test
+    void testCertificateChainPropagation() throws GeneralSecurityException {
+        // Create root certificate
+        KeyPair rootKeyPair = KeyUtil.generateRSAKeyPair();
+        String rootSubject = "CN=Root,O=Test Organization,C=US";
+        X509Certificate[] rootChain = CertificateUtil.createSelfSignedX509Certificate(
+                rootKeyPair, rootSubject, 730, true);
+
+        assertEquals(1, rootChain.length, "Root chain should contain 1 certificate");
+        LOG.debug("Root chain length: {}", rootChain.length);
+
+        // Create certificate 1 signed by root
+        KeyPair keyPair1 = KeyUtil.generateRSAKeyPair();
+        String subject1 = "CN=Certificate-1,O=Test Organization,C=US";
+        X509Certificate[] chain1 = CertificateUtil.createX509Certificate(
+                keyPair1, subject1, 365, true,
+                rootKeyPair.getPrivate(), rootChain);
+
+        assertEquals(2, chain1.length, "Chain-1 should contain 2 certificates (cert-1 + root)");
+        assertEquals("CN=Certificate-1,O=Test Organization,C=US", chain1[0].getSubjectX500Principal().getName());
+        assertEquals("CN=Root,O=Test Organization,C=US", chain1[1].getSubjectX500Principal().getName());
+        assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(chain1));
+        LOG.debug("Chain-1 length: {}", chain1.length);
+
+        // Create certificate 2 signed by certificate 1
+        KeyPair keyPair2 = KeyUtil.generateRSAKeyPair();
+        String subject2 = "CN=Certificate-2,O=Test Organization,C=US";
+        X509Certificate[] chain2 = CertificateUtil.createX509Certificate(
+                keyPair2, subject2, 365, true,
+                keyPair1.getPrivate(), chain1);
+
+        assertEquals(3, chain2.length, "Chain-2 should contain 3 certificates (cert-2 + cert-1 + root)");
+        assertEquals("CN=Certificate-2,O=Test Organization,C=US", chain2[0].getSubjectX500Principal().getName());
+        assertEquals("CN=Certificate-1,O=Test Organization,C=US", chain2[1].getSubjectX500Principal().getName());
+        assertEquals("CN=Root,O=Test Organization,C=US", chain2[2].getSubjectX500Principal().getName());
+        assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(chain2));
+        LOG.debug("Chain-2 length: {}", chain2.length);
+
+        // Create certificate 3 signed by certificate 2
+        KeyPair keyPair3 = KeyUtil.generateRSAKeyPair();
+        String subject3 = "CN=Certificate-3,O=Test Organization,C=US";
+        X509Certificate[] chain3 = CertificateUtil.createX509Certificate(
+                keyPair3, subject3, 365, false,
+                keyPair2.getPrivate(), chain2);
+
+        assertEquals(4, chain3.length, "Chain-3 should contain 4 certificates (cert-3 + cert-2 + cert-1 + root)");
+        assertEquals("CN=Certificate-3,O=Test Organization,C=US", chain3[0].getSubjectX500Principal().getName());
+        assertEquals("CN=Certificate-2,O=Test Organization,C=US", chain3[1].getSubjectX500Principal().getName());
+        assertEquals("CN=Certificate-1,O=Test Organization,C=US", chain3[2].getSubjectX500Principal().getName());
+        assertEquals("CN=Root,O=Test Organization,C=US", chain3[3].getSubjectX500Principal().getName());
+        assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain(chain3));
+        LOG.debug("Chain-3 length: {}", chain3.length);
+
+        // Verify all certificates in the final chain
+        for (int i = 0; i < chain3.length - 1; i++) {
+            final int index = i;
+            assertDoesNotThrow(() -> chain3[index].verify(chain3[index + 1].getPublicKey()),
+                    "Certificate at index " + index + " should be signed by certificate at index " + (index + 1));
+        }
     }
 }
