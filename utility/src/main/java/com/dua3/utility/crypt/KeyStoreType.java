@@ -28,13 +28,13 @@ public enum KeyStoreType {
      * between various cryptographic systems and software. It supports strong encryption and is commonly used
      * in SSL/TLS implementations.
      */
-    PKCS12(false, "p12"),
+    PKCS12(false, true, "p12"),
     /**
      * Represents the Java KeyStore (JKS) type, a proprietary keystore format used in Java applications
      * for managing cryptographic keys, certificates, and trusted certificate chains.
      * Commonly utilized in Java environments for secure storage and cryptographic operations.
      */
-    JKS(false, "jks"),
+    JKS(false, false, "jks"),
     /**
      * Represents the Java Cryptography Extension KeyStore (JCEKS) format,
      * an extended version of the Java KeyStore (JKS) providing support
@@ -43,20 +43,22 @@ public enum KeyStoreType {
      * JCEKS is commonly used when enhanced security features are required
      * for storing cryptographic keys and certificates.
      */
-    JCEKS(false, "jceks"),
+    JCEKS(false, false, "jceks"),
     /**
      * A Zip file containing one file per alias.
      * <p>
      * Use ZIP for exporting KeyStore entries to be used by systems lacking proper KeyStore support (LESS SECURE).
      */
-    ZIP(true, "zip");
+    ZIP(true, false, "zip");
 
     private final boolean isExportOnly;
+    private final boolean isDeduplicating;
     private final String[] extensions;
 
-    KeyStoreType(boolean isExportOnly, String... extensions) {
+    KeyStoreType(boolean isExportOnly, boolean isDeduplicating, String... extensions) {
         LangUtil.check(extensions.length > 0, "no extensions provided");
         this.isExportOnly = isExportOnly;
+        this.isDeduplicating = isDeduplicating;
         this.extensions = extensions;
     }
 
@@ -147,5 +149,19 @@ public enum KeyStoreType {
      */
     public boolean isExportOnly() {
         return isExportOnly;
+    }
+
+    /**
+     * Indicates whether this {@code KeyStoreType} uses deduplication.
+     * <p>
+     * PKSC#12 keystores deduplicate certificate chains when saving.
+     * This means, entries that are already stored in the keystore will
+     * automatically be removed from the parent chains of certificates.
+     *
+     * @return {@code true} if this keystore type uses deduplication,
+     *         {@code false} otherwise.
+     */
+    public boolean isDeduplicating() {
+        return isDeduplicating;
     }
 }

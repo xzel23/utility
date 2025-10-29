@@ -5,6 +5,7 @@ import com.dua3.utility.io.Zip;
 import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -115,6 +116,10 @@ public final class KeyStoreUtil {
         try {
             KeyStore keyStore = KeyStore.getInstance(type.name());
             keyStore.load(inputStream, password);
+            // re-deplicate certificates in parent chains
+            if (type.isDeduplicating()) {
+                fixCertificateChains(keyStore, password.clone());
+            }
             LOG.debug("Loaded KeyStore of type {}", type);
             return keyStore;
         } catch (IOException e) {
@@ -142,6 +147,128 @@ public final class KeyStoreUtil {
         } finally {
             Arrays.fill(password, '\0');
         }
+    }
+
+    /**
+     * Fixes certificate chain deduplication issue where certificates that exist
+     * as separate key entries are removed from other certificate chains during save/load.
+     * <p>
+     * This method rebuilds certificate chains by looking for missing parent certificates
+     * in other key entries within the same KeyStore.
+     *
+     * @param keyStore the KeyStore to fix
+     * @param password the password to access key entries
+     * @throws GeneralSecurityException if an error occurs
+     */
+    private static void fixCertificateChains(KeyStore keyStore, char[] password) throws GeneralSecurityException {
+        try {
+            Enumeration<String> aliases = keyStore.aliases();
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+
+                if (keyStore.isKeyEntry(alias)) {
+                    Certificate[] chain = keyStore.getCertificateChain(alias);
+                    if (chain != null && chain.length > 0) {
+                        Certificate[] extendedChain = reconstructFullCertificateChain(keyStore, chain);
+
+                        if (extendedChain.length > chain.length) {
+                            LOG.debug("Extended certificate chain for alias '{}' from {} to {} certificates",
+                                    alias, chain.length, extendedChain.length);
+
+                            // Update the key entry with the extended chain
+                            Key privateKey = keyStore.getKey(alias, password.clone());
+                            keyStore.setKeyEntry(alias, privateKey, password.clone(), extendedChain);
+                        }
+                    }
+                }
+            }
+        } catch (UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException e) {
+            throw new GeneralSecurityException("Failed to fix PKCS12 certificate chains", e);
+        } finally {
+            Arrays.fill(password, '\0');
+        }
+    }
+
+    /**
+     * Reconstructs the full certificate chain by searching the KeyStore for missing parent certificates.
+     * This method is useful for working around keystore implementations that do automatic certificate
+     * deduplication on save where parent certificates that exist as separate key entries are removed from
+     * certificate chains.
+     *
+     * @param keyStore the KeyStore to search for parent certificates
+     * @param chain the certificate chain to extend
+     * @return the extended certificate chain including all parents found in the KeyStore
+     * @throws GeneralSecurityException if an error occurs accessing the KeyStore
+     */
+    public static Certificate[] reconstructFullCertificateChain(KeyStore keyStore, Certificate[] chain)
+            throws GeneralSecurityException {
+        if (chain.length == 0) {
+            return chain;
+        }
+
+        try {
+            List<Certificate> extendedChain = new ArrayList<>(Arrays.asList(chain));
+            X509Certificate lastCert = (X509Certificate) chain[chain.length - 1];
+
+            // Keep extending the chain until we reach a self-signed certificate or can't find parent
+            while (!lastCert.getIssuerX500Principal().equals(lastCert.getSubjectX500Principal())) {
+                X509Certificate parent = findIssuerInKeyStore(keyStore, lastCert);
+                if (parent == null) {
+                    // Parent not found in KeyStore, stop extending
+                    break;
+                }
+
+                // Check if we already have this certificate in the chain (avoid cycles)
+                boolean alreadyInChain = false;
+                for (Certificate cert : extendedChain) {
+                    if (cert.equals(parent)) {
+                        alreadyInChain = true;
+                        break;
+                    }
+                }
+
+                if (alreadyInChain) {
+                    break;
+                }
+
+                extendedChain.add(parent);
+                lastCert = parent;
+            }
+
+            return extendedChain.toArray(new Certificate[0]);
+        } catch (KeyStoreException e) {
+            throw new GeneralSecurityException("Failed to reconstruct certificate chain", e);
+        }
+    }
+
+    /**
+     * Finds the issuer certificate for a given certificate by searching all key entries in the KeyStore.
+     *
+     * @param keyStore the KeyStore to search
+     * @param cert the certificate whose issuer to find
+     * @return the issuer certificate, or null if not found
+     * @throws KeyStoreException if an error occurs accessing the KeyStore
+     */
+    private static @Nullable X509Certificate findIssuerInKeyStore(KeyStore keyStore, X509Certificate cert)
+            throws KeyStoreException {
+        Enumeration<String> aliases = keyStore.aliases();
+        while (aliases.hasMoreElements()) {
+            String searchAlias = aliases.nextElement();
+
+            if (keyStore.isKeyEntry(searchAlias)) {
+                Certificate[] candidateChain = keyStore.getCertificateChain(searchAlias);
+                if (candidateChain != null && candidateChain.length > 0) {
+                    X509Certificate candidate = (X509Certificate) candidateChain[0];
+
+                    // Check if this certificate issued our cert
+                    if (cert.getIssuerX500Principal().equals(candidate.getSubjectX500Principal())) {
+                        return candidate;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

@@ -5,6 +5,7 @@
 
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.data.DataUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,6 +24,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -355,7 +357,7 @@ class KeyStoreUtilTest {
     }
 
     @Test
-    void testCertificateChainPropagationThroughKeyStore() throws GeneralSecurityException {
+    void testCertificateChainPropagationThroughKeyStore() throws Exception {
         // Create a KeyStore
         KeyStore keyStore = KeyStoreUtil.createKeyStore(KeyStoreType.PKCS12, password());
 
@@ -368,6 +370,9 @@ class KeyStoreUtilTest {
         // Store root in keystore
         KeyStoreUtil.storeKeyPair(keyStore, "root", rootKeyPair, rootCertChain, password());
 
+        // Save and reload after root
+        keyStore = saveAndReloadKeyStore(keyStore);
+
         // Verify root chain has 1 certificate
         Certificate[] storedRootChain = KeyStoreUtil.loadCertificateChain(keyStore, "root");
         assertEquals(1, storedRootChain.length, "Root chain should contain 1 certificate");
@@ -375,11 +380,76 @@ class KeyStoreUtilTest {
         // Create and store certificate 1 signed by root
         createAndStoreSignedCertificate(keyStore, "root", "cert-1", 2);
 
+        // Save and reload after cert-1
+        keyStore = saveAndReloadKeyStore(keyStore);
+
+        // Verify cert-1 still has 2 certificates after reload
+        Certificate[] cert1Chain = KeyStoreUtil.loadCertificateChain(keyStore, "cert-1");
+        assertEquals(2, cert1Chain.length, "Cert-1 chain should contain 2 certificates after save/reload");
+
         // Create and store certificate 2 signed by certificate 1
         createAndStoreSignedCertificate(keyStore, "cert-1", "cert-2", 3);
 
+        // Save and reload after cert-2
+        keyStore = saveAndReloadKeyStore(keyStore);
+
+        // Verify cert-2 still has 3 certificates after reload
+        Certificate[] cert2Chain = KeyStoreUtil.loadCertificateChain(keyStore, "cert-2");
+        assertEquals(3, cert2Chain.length, "Cert-2 chain should contain 3 certificates after save/reload");
+
         // Create and store certificate 3 signed by certificate 2
         createAndStoreSignedCertificate(keyStore, "cert-2", "cert-3", 4);
+
+        // Save and reload after cert-3
+        keyStore = saveAndReloadKeyStore(keyStore);
+
+        // Verify cert-3 still has 4 certificates after reload
+        Certificate[] cert3Chain = KeyStoreUtil.loadCertificateChain(keyStore, "cert-3");
+        assertEquals(4, cert3Chain.length, "Cert-3 chain should contain 4 certificates after save/reload");
+    }
+
+    /**
+     * Helper method that saves the KeyStore to a temporary file and loads it back.
+     * This tests the full round-trip through disk persistence.
+     *
+     * @param keyStore the KeyStore to save and reload
+     * @return a new KeyStore instance loaded from disk
+     */
+    private KeyStore saveAndReloadKeyStore(KeyStore keyStore) throws Exception {
+        // Debug: print chain lengths before save
+        LOG.debug("=== BEFORE SAVE ===");
+        Enumeration<String> aliasesBefore = keyStore.aliases();
+        while (aliasesBefore.hasMoreElements()) {
+            String alias = aliasesBefore.nextElement();
+            if (keyStore.isKeyEntry(alias)) {
+                Certificate[] chain = keyStore.getCertificateChain(alias);
+                LOG.debug("Alias '{}' has {} certificates in chain", alias, chain == null ? 0 : chain.length);
+            }
+        }
+
+        // Save to temporary file
+        Path keystoreFile = tempDir.resolve("test-keystore.p12");
+        KeyStoreUtil.saveKeyStoreToFile(keyStore, keystoreFile, password());
+
+        LOG.debug("KeyStore saved to {}", keystoreFile);
+
+        // Load it back
+        KeyStore reloadedKeyStore = KeyStoreUtil.loadKeyStore(keystoreFile, password());
+
+        // Debug: print chain lengths after load
+        LOG.debug("=== AFTER LOAD ===");
+        Enumeration<String> aliasesAfter = reloadedKeyStore.aliases();
+        while (aliasesAfter.hasMoreElements()) {
+            String alias = aliasesAfter.nextElement();
+            if (reloadedKeyStore.isKeyEntry(alias)) {
+                Certificate[] chain = reloadedKeyStore.getCertificateChain(alias);
+                LOG.debug("Alias '{}' has {} certificates in chain", alias, chain == null ? 0 : chain.length);
+            }
+        }
+
+        LOG.debug("KeyStore reloaded from {}", keystoreFile);
+
+        return reloadedKeyStore;
     }
 
     /**
@@ -402,7 +472,10 @@ class KeyStoreUtilTest {
 
         // Retrieve parent private key and certificate chain from keystore
         PrivateKey parentPrivateKey = KeyStoreUtil.loadPrivateKey(keyStore, parentAlias, password());
-        Certificate[] parentChain = KeyStoreUtil.loadCertificateChain(keyStore, parentAlias);
+        X509Certificate[] parentChain = DataUtil.convert(
+                KeyStoreUtil.loadCertificateChain(keyStore, parentAlias),
+                X509Certificate[].class
+        );
 
         LOG.debug("Parent '{}' chain length: {}", parentAlias, parentChain.length);
 
@@ -417,7 +490,7 @@ class KeyStoreUtilTest {
                 365,
                 true,
                 parentPrivateKey,
-                (X509Certificate[]) parentChain);
+                parentChain);
 
         // Verify the chain returned from creation has the expected length
         assertEquals(expectedChainLength, newCertChain.length,
