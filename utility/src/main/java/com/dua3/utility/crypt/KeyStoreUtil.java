@@ -213,21 +213,8 @@ public final class KeyStoreUtil {
             // Keep extending the chain until we reach a self-signed certificate or can't find parent
             while (!CertificateUtil.isSelfSigned(lastCert)) {
                 X509Certificate parent = findIssuerInKeyStore(keyStore, lastCert);
-                if (parent == null) {
-                    // Parent not found in KeyStore, stop extending
-                    break;
-                }
-
-                // Check if we already have this certificate in the chain (avoid cycles)
-                boolean alreadyInChain = false;
-                for (Certificate cert : extendedChain) {
-                    if (cert.equals(parent)) {
-                        alreadyInChain = true;
-                        break;
-                    }
-                }
-
-                if (alreadyInChain) {
+                if (parent == null || extendedChain.contains(parent)) {
+                    // stop extending if parent not found in KeyStore, or already contained
                     break;
                 }
 
