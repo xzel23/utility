@@ -24,9 +24,24 @@ import javafx.stage.Stage;
  */
 public class CardPaneSample extends Application {
 
+    /**
+     * The main entry point for the JavaFX application.
+     * This method is responsible for launching the JavaFX application by passing
+     * the command-line arguments to the JavaFX runtime.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
+
+    /**
+     * Default constructor for the CardPaneSample class.
+     *
+     * This constructor initializes an instance of the CardPaneSample class.
+     * It does not perform any additional operations or initialization logic.
+     */
+    public CardPaneSample() { /* nothing to do */ }
 
     @Override
     public void start(Stage stage) {
