@@ -211,7 +211,7 @@ public final class KeyStoreUtil {
             X509Certificate lastCert = (X509Certificate) chain[chain.length - 1];
 
             // Keep extending the chain until we reach a self-signed certificate or can't find parent
-            while (!lastCert.getIssuerX500Principal().equals(lastCert.getSubjectX500Principal())) {
+            while (!CertificateUtil.isSelfSigned(lastCert)) {
                 X509Certificate parent = findIssuerInKeyStore(keyStore, lastCert);
                 if (parent == null) {
                     // Parent not found in KeyStore, stop extending

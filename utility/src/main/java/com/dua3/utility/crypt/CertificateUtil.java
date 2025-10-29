@@ -18,6 +18,7 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertPath;
 import java.security.cert.Certificate;
@@ -476,5 +477,32 @@ public final class CertificateUtil {
         CertificateFactory cf = CertificateFactory.getInstance(CERT_TYPE_X_509);
         CertPath certPath = cf.generateCertPath(new ByteArrayInputStream(pkcs7Bytes), "PKCS7");
         return certPath.getCertificates().toArray(Certificate[]::new);
+    }
+
+    /**
+     * Checks if the given X509 certificate is self-signed.
+     * <p>
+     * A certificate is considered self-signed if its issuer and subject are the same
+     * and its signature can be verified with its own public key.
+     *
+     * @param cert the X509 certificate to check
+     * @return true if the certificate is self-signed, false otherwise
+     * @throws GeneralSecurityException if an error occurs during the signature verification process
+     */
+    public static boolean isSelfSigned(X509Certificate cert) throws GeneralSecurityException {
+        try {
+            // Check if issuer and subject are the same
+            if (!cert.getSubjectX500Principal().equals(cert.getIssuerX500Principal())) {
+                return false;
+            }
+
+            // Verify the signature with its own public key
+            PublicKey key = cert.getPublicKey();
+            cert.verify(key);
+            return true;
+        } catch (SignatureException | InvalidKeyException e) {
+            // Signature does not verify with its own public key
+            return false;
+        }
     }
 }
