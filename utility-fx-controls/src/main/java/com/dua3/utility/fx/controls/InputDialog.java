@@ -15,13 +15,14 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.scene.control.Dialog;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A Dialog for inputting values.
  * <p>
  * The dialog consists of labels and input controls laid out in a grid.
  */
-public class InputDialog extends Dialog<InputResult> {
+public class InputDialog extends Dialog<@Nullable InputResult> {
 
     /**
      * Constructs a new InputDialog instance.
@@ -33,7 +34,7 @@ public class InputDialog extends Dialog<InputResult> {
      */
     public InputDialog() {
         setResultConverter(btn -> {
-            if (btn.getButtonData().isCancelButton()) {
+            if (btn == null || btn.getButtonData().isCancelButton()) {
                 return null;
             }
             return new InputResult(btn, ((InputPane) getDialogPane()).get());
