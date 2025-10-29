@@ -483,10 +483,9 @@ public final class KeyUtil {
      * @param password The password used to decrypt the key if it is encrypted. Pass an empty array if no password is used.
      *                 The password array will be cleared internally after usage for security purposes.
      * @return A {@link SecretKey} constructed from the provided PEM data.
-     * @throws NoSuchAlgorithmException If the algorithm specified in the PEM header is unsupported.
      * @throws InvalidKeySpecException If the key data is invalid, decryption fails, or key generation is unsuccessful.
      */
-    public static SecretKey loadSecretKeyFromPem(String pem, char[] password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static SecretKey loadSecretKeyFromPem(String pem, char[] password) throws InvalidKeySpecException {
         String algorithm = extractKeyAlgorithmFromPemHeader(pem, SECRET_KEY);
         String clean = PATTERN_CLEAN_PEM.matcher(pem).replaceAll("");
         byte[] bytes = decodeKeyDataBase64(clean);

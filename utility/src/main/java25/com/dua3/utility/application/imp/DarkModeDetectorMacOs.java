@@ -32,9 +32,9 @@ import static java.lang.foreign.ValueLayout.ADDRESS;
  *
  * <p>Platform: macOS only.</p>
  */
-public class DarkModeDetectorImpMacOs extends DarkModeDetectorBase {
+public final class DarkModeDetectorMacOs extends DarkModeDetectorBase {
 
-    private static final Logger LOG = LogManager.getLogger(DarkModeDetectorImpMacOs.class);
+    private static final Logger LOG = LogManager.getLogger(DarkModeDetectorMacOs.class);
 
     /** Lazy-loaded singleton */
     private static class Holder {
@@ -42,7 +42,7 @@ public class DarkModeDetectorImpMacOs extends DarkModeDetectorBase {
 
         private static DarkModeDetector createInstance() {
             try {
-                return new DarkModeDetectorImpMacOs();
+                return new DarkModeDetectorMacOs();
             } catch (Exception e) {
                 LOG.error("DarkModeDetectorImpMacOs initialization failed", e);
                 return DarkModeDetectorImpUnsupported.getInstance();
@@ -82,7 +82,7 @@ public class DarkModeDetectorImpMacOs extends DarkModeDetectorBase {
     private final AtomicBoolean observerRegistered = new AtomicBoolean(false);
 
     /** Initialize CoreFoundation symbols and register for dark mode change notifications */
-    private DarkModeDetectorImpMacOs() {
+    private DarkModeDetectorMacOs() {
         try {
             SymbolLookup cf = SymbolLookup.libraryLookup(
                     "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",

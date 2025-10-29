@@ -337,41 +337,54 @@ public final class KeyStoreUtil {
                 Enumeration<String> aliases = keyStore.aliases();
                 while (aliases.hasMoreElements()) {
                     String alias = aliases.nextElement();
-
-                    try {
-                        if (keyStore.isKeyEntry(alias)) {
-                            // Handle private key entries
-                            Key key = keyStore.getKey(alias, password);
-                            Certificate[] chain = keyStore.getCertificateChain(alias);
-
-                            if (chain != null) {
-                                // Export private key
-                                String keyFileName = alias + ".private.pem";
-                                zip.add(keyFileName, KeyUtil.toPem(key, password.clone()));
-
-                                // Export certificate chain
-                                for (int i = 0; i < chain.length; i++) {
-                                    String certFileName = String.format("%s.%d.cert.pem", alias, i);
-                                    zip.add(certFileName, CertificateUtil.toPem(chain[i]));
-                                }
-                            } else if (key instanceof SecretKey) {
-                                // Export secret key
-                                String keyFileName = alias + ".secret.pem";
-                                zip.add(keyFileName, KeyUtil.toPem(key, password.clone()));
-                            }
-                        } else if (keyStore.isCertificateEntry(alias)) {
-                            // Export certificate
-                            Certificate cert = keyStore.getCertificate(alias);
-                            String certFileName = alias + ".cert.pem";
-                            zip.add(certFileName, CertificateUtil.toPem(cert));
-                        }
-                    } catch (GeneralSecurityException e) {
-                        LOG.warn("Failed to export entry: {}", alias, e);
-                    }
+                    exportKeyStoreEntry(keyStore, password, alias, zip);
                 }
             } catch (KeyStoreException e) {
                 throw new IOException("Failed to access KeyStore entries", e);
             }
+        }
+    }
+
+    /**
+     * Exports a KeyStore entry to a given Zip object. This method handles private keys, secret keys,
+     * and certificate entries, exporting them in PEM format.
+     *
+     * @param keyStore the KeyStore instance containing the entry to be exported
+     * @param password the password for the KeyStore and private key
+     * @param alias the alias of the entry to be exported
+     * @param zip the Zip object where the exported entries will be added
+     * @throws IOException if an I/O error occurs during the export process
+     */
+    private static void exportKeyStoreEntry(KeyStore keyStore, char[] password, String alias, Zip zip) throws IOException {
+        try {
+            if (keyStore.isKeyEntry(alias)) {
+                // Handle private key entries
+                Key key = keyStore.getKey(alias, password);
+                Certificate[] chain = keyStore.getCertificateChain(alias);
+
+                if (chain != null) {
+                    // Export private key
+                    String keyFileName = alias + ".private.pem";
+                    zip.add(keyFileName, KeyUtil.toPem(key, password.clone()));
+
+                    // Export certificate chain
+                    for (int i = 0; i < chain.length; i++) {
+                        String certFileName = String.format("%s.%d.cert.pem", alias, i);
+                        zip.add(certFileName, CertificateUtil.toPem(chain[i]));
+                    }
+                } else if (key instanceof SecretKey) {
+                    // Export secret key
+                    String keyFileName = alias + ".secret.pem";
+                    zip.add(keyFileName, KeyUtil.toPem(key, password.clone()));
+                }
+            } else if (keyStore.isCertificateEntry(alias)) {
+                // Export certificate
+                Certificate cert = keyStore.getCertificate(alias);
+                String certFileName = alias + ".cert.pem";
+                zip.add(certFileName, CertificateUtil.toPem(cert));
+            }
+        } catch (GeneralSecurityException e) {
+            LOG.warn("Failed to export entry: {}", alias, e);
         }
     }
 

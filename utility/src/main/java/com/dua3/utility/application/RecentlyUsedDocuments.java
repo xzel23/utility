@@ -20,7 +20,7 @@ import java.util.prefs.Preferences;
  * The list keeps at most {@code capacity} entries and moves updated/added entries to the most-recent position.
  * The provided Preferences node should be dedicated to this instance because only numeric keys managed by this class are updated on changes.
  */
-public class RecentlyUsedDocuments {
+public final class RecentlyUsedDocuments {
     private static final Logger LOG = LogManager.getLogger(RecentlyUsedDocuments.class);
 
     /**

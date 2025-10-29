@@ -28,7 +28,7 @@ import static java.lang.foreign.ValueLayout.ADDRESS;
  * <p>Change monitoring is implemented using the native RegNotifyChangeKeyValue() API which blocks
  * until a change occurs. A single daemon thread is created only while listeners are registered.</p>
  */
-public class DarkModeDetectorWindows extends DarkModeDetectorBase {
+public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
 
     private static final Logger LOG = LogManager.getLogger(DarkModeDetectorWindows.class);
 

@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  *
  * <p>If gdbus or the portal are unavailable, detection is treated as unsupported.</p>
  */
-public class DarkModeDetectorLinux extends DarkModeDetectorBase {
+public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
     private static final Logger LOG = LogManager.getLogger(DarkModeDetectorLinux.class);
 
     private static final String GD_BUS = "gdbus";

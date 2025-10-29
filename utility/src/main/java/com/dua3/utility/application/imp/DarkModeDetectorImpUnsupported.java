@@ -6,7 +6,7 @@ package com.dua3.utility.application.imp;
  * This implementation does not support dark mode detection and always returns
  * {@code false} for both detection capability and dark mode state.
  */
-public class DarkModeDetectorImpUnsupported extends DarkModeDetectorBase {
+public final class DarkModeDetectorImpUnsupported extends DarkModeDetectorBase {
 
     private static class Holder {
         private static final DarkModeDetectorImpUnsupported INSTANCE = new DarkModeDetectorImpUnsupported();
