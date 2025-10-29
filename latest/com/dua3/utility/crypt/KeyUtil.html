@@ -681,8 +681,7 @@ loadScripts(document, 'script');</script>
 <h3>loadSecretKeyFromPem</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link">SecretKey</a></span>&nbsp;<span class="element-name">loadSecretKeyFromPem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pem,
  char[]&nbsp;password)</span>
-                                      throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/NoSuchAlgorithmException.html" title="class or interface in java.security" class="external-link">NoSuchAlgorithmException</a>,
-<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/spec/InvalidKeySpecException.html" title="class or interface in java.security.spec" class="external-link">InvalidKeySpecException</a></span></div>
+                                      throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/spec/InvalidKeySpecException.html" title="class or interface in java.security.spec" class="external-link">InvalidKeySpecException</a></span></div>
 <div class="block">Loads a secret key from a PEM-formatted string.
  This method supports reading and decrypting PEM-formatted secret keys,
  optionally handling encrypted keys protected with a password.</div>
@@ -694,7 +693,6 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>A <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/SecretKey.html" title="class or interface in javax.crypto" class="external-link"><code>SecretKey</code></a> constructed from the provided PEM data.</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/NoSuchAlgorithmException.html" title="class or interface in java.security" class="external-link">NoSuchAlgorithmException</a></code> - If the algorithm specified in the PEM header is unsupported.</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/spec/InvalidKeySpecException.html" title="class or interface in java.security.spec" class="external-link">InvalidKeySpecException</a></code> - If the key data is invalid, decryption fails, or key generation is unsuccessful.</dd>
 </dl>
 </section>
