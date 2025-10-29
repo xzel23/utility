@@ -5,7 +5,8 @@
 
 package com.dua3.utility.crypt;
 
-import org.bouncycastle.jcajce.provider.keystore.PKCS12;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,16 +19,21 @@ import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyStore;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KeyStoreUtilTest {
+
+    private static final Logger LOG = LogManager.getLogger(KeyStoreUtilTest.class);
 
     @TempDir
     Path tempDir;
@@ -346,5 +352,99 @@ class KeyStoreUtilTest {
 
         // Verify the public key in the certificate matches the one in the key pair
         assertEquals(loadedKeyPair.getPublic(), certChain[0].getPublicKey());
+    }
+
+    @Test
+    void testCertificateChainPropagationThroughKeyStore() throws GeneralSecurityException {
+        // Create a KeyStore
+        KeyStore keyStore = KeyStoreUtil.createKeyStore(KeyStoreType.PKCS12, password());
+
+        // Create root certificate
+        KeyPair rootKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        String rootSubject = "CN=Root,O=Test Organization,C=US";
+        Certificate[] rootCertChain = CertificateUtil.createSelfSignedX509Certificate(
+                rootKeyPair, rootSubject, 730, true);
+
+        // Store root in keystore
+        KeyStoreUtil.storeKeyPair(keyStore, "root", rootKeyPair, rootCertChain, password());
+
+        // Verify root chain has 1 certificate
+        Certificate[] storedRootChain = KeyStoreUtil.loadCertificateChain(keyStore, "root");
+        assertEquals(1, storedRootChain.length, "Root chain should contain 1 certificate");
+
+        // Create and store certificate 1 signed by root
+        createAndStoreSignedCertificate(keyStore, "root", "cert-1", 2);
+
+        // Create and store certificate 2 signed by certificate 1
+        createAndStoreSignedCertificate(keyStore, "cert-1", "cert-2", 3);
+
+        // Create and store certificate 3 signed by certificate 2
+        createAndStoreSignedCertificate(keyStore, "cert-2", "cert-3", 4);
+    }
+
+    /**
+     * Helper method that:
+     * 1. Retrieves the parent key and certificate chain from the keystore
+     * 2. Creates a new certificate signed by the parent
+     * 3. Stores the new certificate in the keystore
+     * 4. Verifies the stored certificate chain has the expected length
+     *
+     * @param keyStore the KeyStore to work with
+     * @param parentAlias the alias of the parent certificate
+     * @param newAlias the alias for the new certificate
+     * @param expectedChainLength the expected length of the certificate chain after storage
+     */
+    private void createAndStoreSignedCertificate(
+            KeyStore keyStore,
+            String parentAlias,
+            String newAlias,
+            int expectedChainLength) throws GeneralSecurityException {
+
+        // Retrieve parent private key and certificate chain from keystore
+        PrivateKey parentPrivateKey = KeyStoreUtil.loadPrivateKey(keyStore, parentAlias, password());
+        Certificate[] parentChain = KeyStoreUtil.loadCertificateChain(keyStore, parentAlias);
+
+        LOG.debug("Parent '{}' chain length: {}", parentAlias, parentChain.length);
+
+        // Create new key pair
+        KeyPair newKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        String newSubject = "CN=" + newAlias + ",O=Test Organization,C=US";
+
+        // Create certificate signed by parent
+        X509Certificate[] newCertChain = CertificateUtil.createX509Certificate(
+                newKeyPair,
+                newSubject,
+                365,
+                true,
+                parentPrivateKey,
+                (X509Certificate[]) parentChain);
+
+        // Verify the chain returned from creation has the expected length
+        assertEquals(expectedChainLength, newCertChain.length,
+                "Certificate chain for '" + newAlias + "' should contain " + expectedChainLength + " certificates after creation");
+
+        LOG.debug("New certificate '{}' chain length after creation: {}", newAlias, newCertChain.length);
+
+        // Store the new certificate in the keystore
+        KeyStoreUtil.storeKeyPair(keyStore, newAlias, newKeyPair, newCertChain, password());
+
+        // Read back the certificate chain from the keystore
+        Certificate[] storedChain = KeyStoreUtil.loadCertificateChain(keyStore, newAlias);
+
+        LOG.debug("Certificate '{}' chain length after storage and retrieval: {}", newAlias, storedChain.length);
+
+        // Verify the stored chain has the expected length
+        assertEquals(expectedChainLength, storedChain.length,
+                "Certificate chain for '" + newAlias + "' should contain " + expectedChainLength + " certificates after storage");
+
+        // Verify the chain structure
+        X509Certificate storedCert = (X509Certificate) storedChain[0];
+        assertEquals("CN=" + newAlias + ",O=Test Organization,C=US",
+                storedCert.getSubjectX500Principal().getName(),
+                "First certificate should be the new certificate");
+
+        // Verify the certificate chain is valid
+        assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain((X509Certificate[]) storedChain),
+                "Certificate chain for '" + newAlias + "' should be valid");
     }
 }
