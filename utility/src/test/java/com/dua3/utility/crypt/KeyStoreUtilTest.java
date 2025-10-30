@@ -452,6 +452,57 @@ class KeyStoreUtilTest {
         return reloadedKeyStore;
     }
 
+    @Test
+    void testGetCaAliases_EmptyKeystore() throws Exception {
+        KeyStore keyStore = KeyStoreUtil.createKeyStore(KeyStoreType.PKCS12, password());
+        var caAliases = KeyStoreUtil.getCaAliases(keyStore);
+        assertNotNull(caAliases);
+        assertTrue(caAliases.isEmpty(), "Empty keystore should yield no CA aliases");
+    }
+
+    @Test
+    void testGetCaAliases_WithCertificateEntries() throws Exception {
+        KeyStore keyStore = KeyStoreUtil.createKeyStore(KeyStoreType.PKCS12, password());
+
+        // Create a CA certificate and a non-CA certificate and store as certificate entries
+        KeyPair caKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        Certificate[] caCertChain = CertificateUtil.createSelfSignedX509Certificate(
+                caKeyPair, "CN=Test CA,O=Org,C=US", 365, true);
+        KeyStoreUtil.storeCertificate(keyStore, "ca-cert", caCertChain[0]);
+
+        KeyPair endEntityKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        Certificate[] endEntityCertChain = CertificateUtil.createSelfSignedX509Certificate(
+                endEntityKeyPair, "CN=End Entity,O=Org,C=US", 365, false);
+        KeyStoreUtil.storeCertificate(keyStore, "end-entity-cert", endEntityCertChain[0]);
+
+        var caAliases = KeyStoreUtil.getCaAliases(keyStore);
+        assertTrue(caAliases.contains("ca-cert"), "CA certificate alias should be returned");
+        assertFalse(caAliases.contains("end-entity-cert"), "Non-CA certificate alias should not be returned");
+        assertEquals(1, caAliases.size(), "Exactly one CA alias expected");
+    }
+
+    @Test
+    void testGetCaAliases_WithKeyEntries() throws Exception {
+        KeyStore keyStore = KeyStoreUtil.createKeyStore(KeyStoreType.PKCS12, password());
+
+        // Store a key entry with a CA certificate (self-signed CA)
+        KeyPair caKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        Certificate[] caCertChain = CertificateUtil.createSelfSignedX509Certificate(
+                caKeyPair, "CN=Key CA,O=Org,C=US", 365, true);
+        KeyStoreUtil.storeKeyPair(keyStore, "ca-key", caKeyPair, caCertChain, password());
+
+        // Store a key entry with a non-CA certificate (end-entity)
+        KeyPair eeKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        Certificate[] eeCertChain = CertificateUtil.createSelfSignedX509Certificate(
+                eeKeyPair, "CN=Key EE,O=Org,C=US", 365, false);
+        KeyStoreUtil.storeKeyPair(keyStore, "ee-key", eeKeyPair, eeCertChain, password());
+
+        var caAliases = KeyStoreUtil.getCaAliases(keyStore);
+        assertTrue(caAliases.contains("ca-key"), "Key alias with CA leaf cert should be returned");
+        assertFalse(caAliases.contains("ee-key"), "Key alias with non-CA leaf cert should not be returned");
+        assertEquals(1, caAliases.size(), "Exactly one CA alias expected");
+    }
+
     /**
      * Helper method that:
      * 1. Retrieves the parent key and certificate chain from the keystore
