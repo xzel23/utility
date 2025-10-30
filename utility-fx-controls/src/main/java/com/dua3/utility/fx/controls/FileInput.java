@@ -98,7 +98,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
             if (initialDir == null) {
                 initialDir = Paths.get(".");
             }
-            if (mode == FileDialogMode.DIRECTORY && Files.exists(path) && !Files.isDirectory(path)) {
+            if (mode == FileDialogMode.DIRECTORY && (path == null || (Files.exists(path) && !Files.isDirectory(path)))) {
                 value.setValue(initialDir);
             }
 
