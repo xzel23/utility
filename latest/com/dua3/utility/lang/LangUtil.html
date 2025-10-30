@@ -208,9 +208,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addIf(java.util.Collection,boolean,T...)" class="member-name-link">addIf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
- boolean&nbsp;condition,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addIf(boolean,java.util.Collection,T...)" class="member-name-link">addIf</a><wbr>(boolean&nbsp;condition,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
  T...&nbsp;items)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Adds the specified items to the collection if the given condition is true.</div>
@@ -2995,49 +2995,6 @@ V extends U&gt;</span>
 </section>
 </li>
 <li>
-<section class="detail" id="addIf(java.util.function.Predicate,java.util.Collection,T...)">
-<h3 id="addIf(java.util.function.Predicate,java.util.Collection,java.lang.Object[])">addIf</h3>
-<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addIf</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super T&gt;&nbsp;predicate,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
- @Nullable T...&nbsp;items)</span></div>
-<div class="block">Adds the specified items to a collection if they satisfy the given predicate.
- This method evaluates each item using the predicate and adds it to the collection
- only if the predicate returns true.
- <p>
- The method returns true if at least one item is successfully added to the collection,
- otherwise returns false.</div>
-<dl class="notes">
-<dt>Type Parameters:</dt>
-<dd><code>T</code> - the type of elements handled by the predicate and collection</dd>
-<dt>Parameters:</dt>
-<dd><code>predicate</code> - a predicate to test each item before adding it to the collection</dd>
-<dd><code>collection</code> - the collection to which items should be added if they satisfy the predicate</dd>
-<dd><code>items</code> - the items to be evaluated and potentially added to the collection</dd>
-<dt>Returns:</dt>
-<dd>true if at least one item was added to the collection; false otherwise</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="addIfNonNull(java.util.Collection,T...)">
-<h3 id="addIfNonNull(java.util.Collection,java.lang.Object[])">addIfNonNull</h3>
-<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addIfNonNull</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
- @Nullable T...&nbsp;items)</span></div>
-<div class="block">Adds the given non-null items to the collection. Items that are null are ignored.</div>
-<dl class="notes">
-<dt>Type Parameters:</dt>
-<dd><code>T</code> - the type of elements in the collection</dd>
-<dt>Parameters:</dt>
-<dd><code>collection</code> - the collection to which non-null items will be added</dd>
-<dd><code>items</code> - the items to add to the collection, some of which may be null</dd>
-<dt>Returns:</dt>
-<dd>true if the collection was modified as a result of the operation, false otherwise</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="newUuidV7()">
 <h3>newUuidV7</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></span>&nbsp;<span class="element-name">newUuidV7</span>()</div>
@@ -3304,10 +3261,10 @@ U&gt;</span>&nbsp;<span class="return-type">U</span>&nbsp;<span class="element-n
 </section>
 </li>
 <li>
-<section class="detail" id="addIf(java.util.Collection,boolean,T...)">
-<h3 id="addIf(java.util.Collection,boolean,java.lang.Object[])">addIf</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addIf</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
- boolean&nbsp;condition,
+<section class="detail" id="addIf(boolean,java.util.Collection,T...)">
+<h3 id="addIf(boolean,java.util.Collection,java.lang.Object[])">addIf</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addIf</span><wbr><span class="parameters">(boolean&nbsp;condition,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
  T...&nbsp;items)</span></div>
 <div class="block">Adds the specified items to the collection if the given condition is true.
  If the condition is false, no items will be added.</div>
@@ -3315,9 +3272,52 @@ U&gt;</span>&nbsp;<span class="return-type">U</span>&nbsp;<span class="element-n
 <dt>Type Parameters:</dt>
 <dd><code>T</code> - the type of elements that can be added to the collection</dd>
 <dt>Parameters:</dt>
-<dd><code>collection</code> - the collection to which the items will be added if the condition is true</dd>
 <dd><code>condition</code> - the condition that determines whether the items will be added</dd>
+<dd><code>collection</code> - the collection to which the items will be added if the condition is true</dd>
 <dd><code>items</code> - the items to be added to the collection if the condition is true</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addIf(java.util.function.Predicate,java.util.Collection,T...)">
+<h3 id="addIf(java.util.function.Predicate,java.util.Collection,java.lang.Object[])">addIf</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addIf</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super T&gt;&nbsp;predicate,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
+ @Nullable T...&nbsp;items)</span></div>
+<div class="block">Adds the specified items to a collection if they satisfy the given predicate.
+ This method evaluates each item using the predicate and adds it to the collection
+ only if the predicate returns true.
+ <p>
+ The method returns true if at least one item is successfully added to the collection,
+ otherwise returns false.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of elements handled by the predicate and collection</dd>
+<dt>Parameters:</dt>
+<dd><code>predicate</code> - a predicate to test each item before adding it to the collection</dd>
+<dd><code>collection</code> - the collection to which items should be added if they satisfy the predicate</dd>
+<dd><code>items</code> - the items to be evaluated and potentially added to the collection</dd>
+<dt>Returns:</dt>
+<dd>true if at least one item was added to the collection; false otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addIfNonNull(java.util.Collection,T...)">
+<h3 id="addIfNonNull(java.util.Collection,java.lang.Object[])">addIfNonNull</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addIfNonNull</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? super T&gt;&nbsp;collection,
+ @Nullable T...&nbsp;items)</span></div>
+<div class="block">Adds the given non-null items to the collection. Items that are null are ignored.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of elements in the collection</dd>
+<dt>Parameters:</dt>
+<dd><code>collection</code> - the collection to which non-null items will be added</dd>
+<dd><code>items</code> - the items to add to the collection, some of which may be null</dd>
+<dt>Returns:</dt>
+<dd>true if the collection was modified as a result of the operation, false otherwise</dd>
 </dl>
 </section>
 </li>
