@@ -2450,6 +2450,25 @@ public final class LangUtil {
     }
 
     /**
+     * Adds the specified items to the collection if the given condition is true.
+     * If the condition is false, no items will be added.
+     *
+     * @param collection the collection to which the items will be added if the condition is true
+     * @param condition the condition that determines whether the items will be added
+     * @param items the items to be added to the collection if the condition is true
+     * @param <T> the type of elements that can be added to the collection
+     */
+    public static <T extends @Nullable Object> void addIf(Collection<? super T> collection, boolean condition, T... items) {
+        if (condition) {
+            switch (items.length) {
+                case 0 -> { /* nothing to do */ }
+                case 1 -> collection.add(items[0]);
+                default -> collection.addAll(asUnmodifiableList(items));
+            }
+        }
+    }
+
+    /**
      * Executes the provided consumer if the specified key is present in the given map.
      *
      * @param <T> the type of keys maintained by the map

@@ -308,62 +308,34 @@ public final class PasswordUtil {
         String passwordStr = new String(password); // For pattern analysis only
 
         // Check for common weaknesses
-        if (password.length < 8) {
-            issues.add(TOO_SHORT);
-        }
-
-        if (password.length < 12 && theoreticalEntropy < 50) {
-            issues.add(TOO_SIMPLE);
-        }
+        LangUtil.addIf(issues, password.length < 8, TOO_SHORT);
+        LangUtil.addIf(issues, password.length < 12 && theoreticalEntropy < 50, TOO_SIMPLE);
 
         // Check for repeated characters
-        if (hasExcessiveRepeats(password)) {
-            issues.add(TOO_MANY_REPEATED_CHARACTERS);
-        }
+        LangUtil.addIf(issues, hasExcessiveRepeats(password), TOO_MANY_REPEATED_CHARACTERS);
 
         // Check for sequential patterns
-        if (hasSequentialPattern(password)) {
-            issues.add(SEQUENTIAL_CHARACTERS);
-        }
+        LangUtil.addIf(issues, hasSequentialPattern(password), SEQUENTIAL_CHARACTERS);
 
         // Check for common patterns
-        if (hasCommonPatterns(passwordStr)) {
-            issues.add(COMMON_PASSWORD_PATTERNS);
-        }
+        LangUtil.addIf(issues, hasCommonPatterns(passwordStr), COMMON_PASSWORD_PATTERNS);
 
         // Check for derived common patterns
-        if (hasDerivedCommonPatterns(passwordStr)) {
-            issues.add(PASSWORD_PATTERNS_WITH_REPLACED_CHARACTERS);
-        }
+        LangUtil.addIf(issues, hasDerivedCommonPatterns(passwordStr), PASSWORD_PATTERNS_WITH_REPLACED_CHARACTERS);
 
         // Check character diversity
         int uniqueChars = calculateUniqueCharacters(password);
-        if (uniqueChars < password.length * 0.6) {
-            issues.add(LOW_CHARACTER_DIVERSITY);
-        }
+        LangUtil.addIf(issues, uniqueChars < password.length * 0.6, LOW_CHARACTER_DIVERSITY);
 
         // Use theoretical entropy (NIST approach) for strength assessment
         // but also consider entropy efficiency (Shannon/Theoretical ratio)
         double entropyEfficiency = theoreticalEntropy > 0 ? (entropy / theoreticalEntropy) * 100 : 0;
 
         // Penalize passwords with very low entropy efficiency (indicates patterns/repetition)
-        if (entropyEfficiency < 50 && !issues.isEmpty()) {
-            issues.add(PREDICTABLE_PATTERNS);
-        }
+        LangUtil.addIf(issues, entropyEfficiency < 50 && !issues.isEmpty(), PREDICTABLE_PATTERNS);
 
         // Calculate base strength level from theoretical entropy and length
-        StrengthLevel baseStrength;
-        if (theoreticalEntropy < 28 || password.length < 8) {
-            baseStrength = StrengthLevel.VERY_WEAK;
-        } else if (theoreticalEntropy < 36 || password.length < 12) {
-            baseStrength = StrengthLevel.WEAK;
-        } else if (theoreticalEntropy < 50 || password.length < 14) {
-            baseStrength = StrengthLevel.MODERATE;
-        } else if (theoreticalEntropy < 64 || password.length < 16) {
-            baseStrength = StrengthLevel.STRONG;
-        } else {
-            baseStrength = StrengthLevel.VERY_STRONG;
-        }
+        StrengthLevel baseStrength = getStrengthLevel(password, theoreticalEntropy);
 
         // Apply penalties based on issues found
         int severePenalty = 0;
@@ -397,6 +369,29 @@ public final class PasswordUtil {
             case 3 -> StrengthLevel.STRONG;
             default -> StrengthLevel.VERY_STRONG;
         };
+    }
+
+    /**
+     * Determines the strength level of a password based on its theoretical entropy and length.
+     *
+     * @param password           the character array representing the password to assess
+     * @param theoreticalEntropy the calculated theoretical entropy of the password
+     * @return the {@link StrengthLevel} indicating the strength of the password
+     */
+    private static StrengthLevel getStrengthLevel(char[] password, double theoreticalEntropy) {
+        StrengthLevel baseStrength;
+        if (theoreticalEntropy < 28 || password.length < 8) {
+            baseStrength = StrengthLevel.VERY_WEAK;
+        } else if (theoreticalEntropy < 36 || password.length < 12) {
+            baseStrength = StrengthLevel.WEAK;
+        } else if (theoreticalEntropy < 50 || password.length < 14) {
+            baseStrength = StrengthLevel.MODERATE;
+        } else if (theoreticalEntropy < 64 || password.length < 16) {
+            baseStrength = StrengthLevel.STRONG;
+        } else {
+            baseStrength = StrengthLevel.VERY_STRONG;
+        }
+        return baseStrength;
     }
 
     /**
