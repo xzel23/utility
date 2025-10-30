@@ -1480,4 +1480,98 @@ public final class IoUtil {
     public static Path getUserHome() {
         return USER_HOME;
     }
+
+    /**
+     * Represents a set of rules governing valid file names depending on the platform.
+     * Each rule defines a condition to test the validity of a file name and specifies
+     * which platforms the rule applies to.
+     */
+    public enum FileNameRule {
+        // allowed nowhere
+        EMPTY_FILENAME(s -> !s.isEmpty(), Platform.values()),
+
+        // formally allowed on MacOS but problematic
+        BLANK_FILENAME(s -> !s.isBlank(), Platform.WINDOWS, Platform.MACOS),
+
+        // technically allowed, but mapped to different filename
+        LEADING_OR_TRAILING_WHITESPACE(s -> s.strip().length() == s.length(), Platform.WINDOWS),
+        TRAILING_DOT(s -> !s.endsWith("."), Platform.WINDOWS),
+
+        // maybe incomplete
+        FORBIDDEN_CHARS_WINDOWS(s -> TextUtil.containsAnyOf(s, "<>:\"/\\|?*\r\n\0"), Platform.WINDOWS),
+        FORBIDDEN_CHARS_MACOS(s -> TextUtil.containsAnyOf(s, "/?*:\\n\0"), Platform.MACOS),
+        FORBIDDEN_CHARS_LINUX(s -> TextUtil.containsAnyOf(s, "/\0"), Platform.LINUX),
+        FORBIDDEN_NAMES_WINDOWS(s ->
+                !IoUtil.stripExtension(s).toLowerCase(Locale.ROOT)
+                        .matches("con|prn|aux|nul|(com|lpt)[1-9]"),
+                Platform.WINDOWS
+        );
+
+        private final Predicate<String> predicate;
+        private final Platform[] appliesTo;
+
+        FileNameRule(Predicate<String> predicate, Platform... appliesTo) {
+            this.predicate = predicate;
+            this.appliesTo = appliesTo;
+        }
+
+        /**
+         * Tests whether a given filename satisfies the rules represented by this instance.
+         *
+         * @param filename the filename to test
+         * @return true if the filename satisfies the rules; otherwise false
+         */
+        public boolean test(String filename) {
+            return predicate.test(filename);
+        }
+
+        /**
+         * Tests whether a given filename satisfies the rules represented by this instance
+         * for a specific platform.
+         *
+         * @param filename the filename to test
+         * @param platform the platform to check the filename against
+         * @return true if the filename satisfies the rules for the specified platform;
+         *         otherwise false
+         */
+        public boolean test(String filename, Platform platform) {
+            return switch (platform) {
+                case UNKNOWN -> test(filename);
+                default -> LangUtil.isNoneOf(platform, appliesTo) || test(filename);
+            };
+        }
+    }
+
+    /**
+     * Validates whether a given file name adheres to all the rules defined for the specified platform.
+     *
+     * @param filename the name of the file to be validated
+     * @param platform the platform for which the file name validation is being performed
+     * @return true if the file name is valid according to all platform-specific rules, false otherwise
+     */
+    public static boolean isValidFileName(String filename, Platform platform) {
+        for (var rule : FileNameRule.values()) {
+            if (!rule.test(filename, platform)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the given filename adheres to all defined portable file name rules.
+     * <p>
+     * Use this method if files are shared between platforms or intended to be stored on network or portable drives.
+     *
+     * @param filename the file name to be validated
+     * @return true if the file name passes all the rules, false otherwise
+     */
+    public static boolean isPortableFileName(String filename) {
+        for (var rule : FileNameRule.values()) {
+            if (!rule.test(filename)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
