@@ -47,7 +47,7 @@ dependencyResolutionManagement {
 
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.10")
-            plugin("sonar", "org.sonarqube").version("7.0.0.6105")
+            plugin("sonar", "org.sonarqube").version("7.0.1.6134")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.20.0")
