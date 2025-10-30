@@ -262,14 +262,27 @@ public final class LangUtil {
      *
      * @param <T>  argument type
      * @param arg  first argument
-     * @param rest remaining arguments, must not contain {@code null} values
+     * @param rest remaining arguments
      * @return true, if {@code rest} contains at least one item that is equal
-     * to
-     * {@code arg}
+     * to {@code arg}
      */
     @SafeVarargs
     public static <T extends @Nullable Object> boolean isOneOf(T arg, T... rest) {
         return asUnmodifiableList(rest).contains(arg);
+    }
+
+    /**
+     * Test if first argument is not equal to any of the other arguments.
+     *
+     * @param <T>  argument type
+     * @param arg  first argument
+     * @param rest remaining arguments
+     * @return true, if {@code rest} does not contain any item that is equal
+     * to {@code arg}
+     */
+    @SafeVarargs
+    public static <T extends @Nullable Object> boolean isNoneOf(T arg, T... rest) {
+        return !asUnmodifiableList(rest).contains(arg);
     }
 
     /**
