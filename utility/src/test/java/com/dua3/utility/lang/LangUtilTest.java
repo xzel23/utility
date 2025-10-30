@@ -223,6 +223,28 @@ class LangUtilTest {
         assertFalse(LangUtil.isOneOf(null, 3, 9, 7, 5));
         assertTrue(LangUtil.isOneOf(5, 3, 9, null, 5));
         assertFalse(LangUtil.isOneOf(8, 3, 9, null, 5));
+        assertFalse(LangUtil.isOneOf(1));
+        assertFalse(LangUtil.isOneOf(null));
+    }
+
+    @Test
+    void isNoneOf_basicAndNullCases() {
+        // basic
+        assertTrue(LangUtil.isNoneOf(8, 3, 9, 7, 5));
+        assertFalse(LangUtil.isNoneOf(7, 3, 9, 7, 5));
+
+        // null arg, null present in rest
+        assertFalse(LangUtil.isNoneOf(null, 3, 9, null, 5));
+        // null arg, null not present
+        assertTrue(LangUtil.isNoneOf(null, 3, 9, 7, 5));
+
+        // non-null arg, null present in rest
+        assertTrue(LangUtil.isNoneOf(8, 3, 9, null, 5));
+        assertFalse(LangUtil.isNoneOf(5, 3, 9, null, 5));
+
+        // empty varargs: nothing to compare to → treated as "none of" → true
+        assertTrue(LangUtil.isNoneOf(1));
+        assertTrue(LangUtil.isNoneOf(null));
     }
 
     @Test
@@ -1326,6 +1348,15 @@ class LangUtilTest {
         boolean changed = LangUtil.addIf(Objects::nonNull, list, "a", null, "b");
         assertTrue(changed);
         assertEquals(List.of("a", "b"), list);
+    }
+
+    @Test
+    void testAddIf_withNullItemsAcceptedByPredicate() {
+        List<String> list = new ArrayList<>();
+        boolean changed = LangUtil.addIf(x -> true, list, "a", null, "b", null);
+        assertTrue(changed);
+        // when predicate allows, null is added as well
+        assertEquals(Arrays.asList("a", null, "b", null), list);
     }
 
     @Test
