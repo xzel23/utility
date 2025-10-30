@@ -467,10 +467,9 @@ public final class KeyUtil {
      *
      * @param pem the PEM-formatted string containing the encoded key
      * @return the {@link SecretKey} object derived from the PEM data
-     * @throws NoSuchAlgorithmException if the specified algorithm is not available
      * @throws InvalidKeySpecException if the key specification is invalid
      */
-    public static SecretKey loadSecretKeyFromPem(String pem) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static SecretKey loadSecretKeyFromPem(String pem) throws InvalidKeySpecException {
         return loadSecretKeyFromPem(pem, "".toCharArray());
     }
 
