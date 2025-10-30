@@ -2095,44 +2095,6 @@ public final class LangUtil {
     }
 
     /**
-     * Adds the specified items to a collection if they satisfy the given predicate.
-     * This method evaluates each item using the predicate and adds it to the collection
-     * only if the predicate returns true.
-     * <p>
-     * The method returns true if at least one item is successfully added to the collection,
-     * otherwise returns false.
-     *
-     * @param <T> the type of elements handled by the predicate and collection
-     * @param predicate a predicate to test each item before adding it to the collection
-     * @param collection the collection to which items should be added if they satisfy the predicate
-     * @param items the items to be evaluated and potentially added to the collection
-     * @return true if at least one item was added to the collection; false otherwise
-     */
-    @SafeVarargs
-    public static <T extends @Nullable Object> boolean addIf(Predicate<? super T> predicate, Collection<? super T> collection, @Nullable T... items) {
-        boolean changed = false;
-        for (T item : items) {
-            if (predicate.test(item)) {
-                changed = collection.add(item) || changed;
-            }
-        }
-        return changed;
-    }
-
-    /**
-     * Adds the given non-null items to the collection. Items that are null are ignored.
-     *
-     * @param <T> the type of elements in the collection
-     * @param collection the collection to which non-null items will be added
-     * @param items the items to add to the collection, some of which may be null
-     * @return true if the collection was modified as a result of the operation, false otherwise
-     */
-    @SafeVarargs
-    public static <T extends @Nullable Object> boolean addIfNonNull(Collection<? super T> collection, @Nullable T... items) {
-        return addIf(Objects::nonNull, collection, items);
-    }
-
-    /**
      * Generates a new UUID version 7 (UUIDv7) according to RFC 9562.
      * UUIDv7 is a time-ordered UUID format that uses Unix timestamp with millisecond precision
      * in the most significant 48 bits, followed by a random component.
@@ -2453,19 +2415,59 @@ public final class LangUtil {
      * Adds the specified items to the collection if the given condition is true.
      * If the condition is false, no items will be added.
      *
+     * @param <T>        the type of elements that can be added to the collection
+     * @param condition  the condition that determines whether the items will be added
      * @param collection the collection to which the items will be added if the condition is true
-     * @param condition the condition that determines whether the items will be added
-     * @param items the items to be added to the collection if the condition is true
-     * @param <T> the type of elements that can be added to the collection
+     * @param items      the items to be added to the collection if the condition is true
      */
-    public static <T extends @Nullable Object> void addIf(Collection<? super T> collection, boolean condition, T... items) {
-        if (condition) {
-            switch (items.length) {
-                case 0 -> { /* nothing to do */ }
-                case 1 -> collection.add(items[0]);
-                default -> collection.addAll(asUnmodifiableList(items));
+    public static <T extends @Nullable Object> boolean addIf(boolean condition, Collection<? super T> collection, T... items) {
+        if (!condition || items.length == 0) {
+            return false;
+        }
+        if (items.length == 1) {
+            collection.add(items[0]);
+        } else {
+            collection.addAll(asUnmodifiableList(items));
+        }
+        return true;
+    }
+
+    /**
+     * Adds the specified items to a collection if they satisfy the given predicate.
+     * This method evaluates each item using the predicate and adds it to the collection
+     * only if the predicate returns true.
+     * <p>
+     * The method returns true if at least one item is successfully added to the collection,
+     * otherwise returns false.
+     *
+     * @param <T> the type of elements handled by the predicate and collection
+     * @param predicate a predicate to test each item before adding it to the collection
+     * @param collection the collection to which items should be added if they satisfy the predicate
+     * @param items the items to be evaluated and potentially added to the collection
+     * @return true if at least one item was added to the collection; false otherwise
+     */
+    @SafeVarargs
+    public static <T extends @Nullable Object> boolean addIf(Predicate<? super T> predicate, Collection<? super T> collection, @Nullable T... items) {
+        boolean changed = false;
+        for (T item : items) {
+            if (predicate.test(item)) {
+                changed = collection.add(item) || changed;
             }
         }
+        return changed;
+    }
+
+    /**
+     * Adds the given non-null items to the collection. Items that are null are ignored.
+     *
+     * @param <T> the type of elements in the collection
+     * @param collection the collection to which non-null items will be added
+     * @param items the items to add to the collection, some of which may be null
+     * @return true if the collection was modified as a result of the operation, false otherwise
+     */
+    @SafeVarargs
+    public static <T extends @Nullable Object> boolean addIfNonNull(Collection<? super T> collection, @Nullable T... items) {
+        return addIf(Objects::nonNull, collection, items);
     }
 
     /**

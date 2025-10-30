@@ -1360,6 +1360,44 @@ class LangUtilTest {
     }
 
     @Test
+    void testAddIf_withBoolean_noItems() {
+        List<String> list = new ArrayList<>();
+        boolean changed = LangUtil.addIf(true, list, new String[0]);
+        assertFalse(changed);
+        assertTrue(list.isEmpty());
+
+        changed = LangUtil.addIf(false, list, new String[0]);
+        assertFalse(changed);
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    void testAddIf_withBoolean_singleItem() {
+        List<String> list = new ArrayList<>();
+        boolean changed = LangUtil.addIf(true, list, "hello");
+        assertTrue(changed);
+        assertEquals(List.of("hello"), list);
+
+        list = new ArrayList<>();
+        changed = LangUtil.addIf(false, list, "hello");
+        assertFalse(changed);
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    void testAddIf_withBoolean_multipleItems() {
+        List<String> list = new ArrayList<>();
+        boolean changed = LangUtil.addIf(true, list, "hello", "world");
+        assertTrue(changed);
+        assertEquals(List.of("hello", "world"), list);
+
+        list = new ArrayList<>();
+        changed = LangUtil.addIf(false, list, "hello", "world");
+        assertFalse(changed);
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
     void testRemoveLeading() {
         List<Integer> list = new ArrayList<>(List.of(1, 1, 2, 3, 1));
         LangUtil.removeLeading(list, i -> i == 1);

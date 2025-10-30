@@ -308,31 +308,31 @@ public final class PasswordUtil {
         String passwordStr = new String(password); // For pattern analysis only
 
         // Check for common weaknesses
-        LangUtil.addIf(issues, password.length < 8, TOO_SHORT);
-        LangUtil.addIf(issues, password.length < 12 && theoreticalEntropy < 50, TOO_SIMPLE);
+        LangUtil.addIf(password.length < 8, issues, TOO_SHORT);
+        LangUtil.addIf(password.length < 12 && theoreticalEntropy < 50, issues, TOO_SIMPLE);
 
         // Check for repeated characters
-        LangUtil.addIf(issues, hasExcessiveRepeats(password), TOO_MANY_REPEATED_CHARACTERS);
+        LangUtil.addIf(hasExcessiveRepeats(password), issues, TOO_MANY_REPEATED_CHARACTERS);
 
         // Check for sequential patterns
-        LangUtil.addIf(issues, hasSequentialPattern(password), SEQUENTIAL_CHARACTERS);
+        LangUtil.addIf(hasSequentialPattern(password), issues, SEQUENTIAL_CHARACTERS);
 
         // Check for common patterns
-        LangUtil.addIf(issues, hasCommonPatterns(passwordStr), COMMON_PASSWORD_PATTERNS);
+        LangUtil.addIf(hasCommonPatterns(passwordStr), issues, COMMON_PASSWORD_PATTERNS);
 
         // Check for derived common patterns
-        LangUtil.addIf(issues, hasDerivedCommonPatterns(passwordStr), PASSWORD_PATTERNS_WITH_REPLACED_CHARACTERS);
+        LangUtil.addIf(hasDerivedCommonPatterns(passwordStr), issues, PASSWORD_PATTERNS_WITH_REPLACED_CHARACTERS);
 
         // Check character diversity
         int uniqueChars = calculateUniqueCharacters(password);
-        LangUtil.addIf(issues, uniqueChars < password.length * 0.6, LOW_CHARACTER_DIVERSITY);
+        LangUtil.addIf(uniqueChars < password.length * 0.6, issues, LOW_CHARACTER_DIVERSITY);
 
         // Use theoretical entropy (NIST approach) for strength assessment
         // but also consider entropy efficiency (Shannon/Theoretical ratio)
         double entropyEfficiency = theoreticalEntropy > 0 ? (entropy / theoreticalEntropy) * 100 : 0;
 
         // Penalize passwords with very low entropy efficiency (indicates patterns/repetition)
-        LangUtil.addIf(issues, entropyEfficiency < 50 && !issues.isEmpty(), PREDICTABLE_PATTERNS);
+        LangUtil.addIf(entropyEfficiency < 50 && !issues.isEmpty(), issues, PREDICTABLE_PATTERNS);
 
         // Calculate base strength level from theoretical entropy and length
         StrengthLevel baseStrength = getStrengthLevel(password, theoreticalEntropy);
