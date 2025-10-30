@@ -411,32 +411,7 @@ public final class KeyUtil {
 
         // Handle encrypted keys
         if (password.length > 0 && pem.contains("ENCRYPTED")) {
-            try {
-                // Extract salt (first 16 bytes) and encrypted data
-                byte[] salt = Arrays.copyOfRange(bytes, 0, 16);
-                byte[] encryptedData = Arrays.copyOfRange(bytes, 16, bytes.length);
-
-                // Derive decryption key from password
-                SecretKey derivedKey = deriveSecretKey(
-                        SymmetricAlgorithm.AES,
-                        salt,
-                        new String(password).getBytes(StandardCharsets.UTF_8),
-                        null,
-                        InputBufferHandling.PRESERVE
-                );
-
-                // Decrypt the key data
-                bytes = CryptUtil.decryptSymmetric(
-                        SymmetricAlgorithm.AES,
-                        derivedKey,
-                        encryptedData
-                );
-            } catch (GeneralSecurityException e) {
-                throw new InvalidKeySpecException("Failed to decrypt private key", e);
-            } finally {
-                // Clean up sensitive data
-                Arrays.fill(password, '\0');
-            }
+            bytes = decryptKey(bytes, password, "private key");
         }
 
         // For standard "PRIVATE KEY" format, let Java determine the algorithm from the key data
@@ -460,6 +435,45 @@ public final class KeyUtil {
 
         KeyFactory kf = KeyFactory.getInstance(algorithm);
         return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
+    }
+
+    /**
+     * Decrypts the provided encrypted key data using a password and returns the decrypted key bytes.
+     *
+     * @param bytes the encrypted key data, with the first 16 bytes being the salt and the rest being the cipher text
+     * @param password the password used for deriving the decryption key
+     * @param keyText a descriptive text for the key, used for error handling purposes
+     * @return the decrypted key bytes
+     * @throws InvalidKeySpecException if the decryption process fails
+     */
+    private static byte[] decryptKey(byte[] bytes, char[] password, String keyText) throws InvalidKeySpecException {
+        try {
+            // Extract salt (first 16 bytes) and encrypted data
+            byte[] salt = Arrays.copyOfRange(bytes, 0, 16);
+            byte[] encryptedData = Arrays.copyOfRange(bytes, 16, bytes.length);
+
+            // Derive decryption key from password
+            SecretKey derivedKey = deriveSecretKey(
+                    SymmetricAlgorithm.AES,
+                    salt,
+                    new String(password).getBytes(StandardCharsets.UTF_8),
+                    null,
+                    InputBufferHandling.PRESERVE
+            );
+
+            // Decrypt the key data
+            bytes = CryptUtil.decryptSymmetric(
+                    SymmetricAlgorithm.AES,
+                    derivedKey,
+                    encryptedData
+            );
+        } catch (GeneralSecurityException e) {
+            throw new InvalidKeySpecException("Failed to decrypt " + keyText, e);
+        } finally {
+            // Clean up sensitive data
+            Arrays.fill(password, '\0');
+        }
+        return bytes;
     }
 
     /**
@@ -491,32 +505,7 @@ public final class KeyUtil {
 
         // Handle encrypted keys
         if (password.length > 0 && pem.contains("ENCRYPTED")) {
-            try {
-                // Extract salt (first 16 bytes) and encrypted data
-                byte[] salt = Arrays.copyOfRange(bytes, 0, 16);
-                byte[] encryptedData = Arrays.copyOfRange(bytes, 16, bytes.length);
-
-                // Derive decryption key from password
-                SecretKey derivedKey = deriveSecretKey(
-                        SymmetricAlgorithm.AES,
-                        salt,
-                        new String(password).getBytes(StandardCharsets.UTF_8),
-                        null,
-                        InputBufferHandling.PRESERVE
-                );
-
-                // Decrypt the key data
-                bytes = CryptUtil.decryptSymmetric(
-                        SymmetricAlgorithm.AES,
-                        derivedKey,
-                        encryptedData
-                );
-            } catch (GeneralSecurityException e) {
-                throw new InvalidKeySpecException("Failed to decrypt secret key", e);
-            } finally {
-                // Clean up sensitive data
-                Arrays.fill(password, '\0');
-            }
+            bytes = decryptKey(bytes, password, "secret key");
         }
 
         // For standard "SECRET KEY" format, use AES as default algorithm
@@ -624,6 +613,20 @@ public final class KeyUtil {
             throw new IllegalArgumentException("Key cannot be encoded");
         }
 
+        appendPemData(app, encoded, type);
+    }
+
+    /**
+     * Appends PEM (Privacy-Enhanced Mail) encoded data to the provided {@code Appendable} instance.
+     * The data is encoded in Base64 format with line breaks every 64 characters
+     * and wrapped with the appropriate PEM header and footer.
+     *
+     * @param app the {@code Appendable} object to which the PEM encoded data will be appended
+     * @param encoded the byte array containing the input data to be Base64 encoded and wrapped in PEM format
+     * @param type the type of the data (e.g., CERTIFICATE, PRIVATE KEY) to be used in the PEM header and footer
+     * @throws IOException if an I/O error occurs while appending data to the {@code Appendable} instance
+     */
+    private static void appendPemData(Appendable app, byte[] encoded, String type) throws IOException {
         // Convert to Base64 with line breaks every 64 characters
         CharSequence base64 = TextUtil.asCharSequence(TextUtil.base64EncodeToChars(encoded));
 
@@ -697,15 +700,7 @@ public final class KeyUtil {
             System.arraycopy(encryptedData, 0, combined, salt.length, encryptedData.length);
 
             // Convert to Base64 with line breaks every 64 characters
-            CharSequence base64 = TextUtil.asCharSequence(TextUtil.base64EncodeToChars(combined));
-
-            // Write PEM format
-            app.append("-----BEGIN ").append(type).append("-----\n");
-            for (int i = 0; i < base64.length(); i += 64) {
-                app.append(base64, i, Math.min(i + 64, base64.length()));
-                app.append('\n');
-            }
-            app.append("-----END ").append(type).append("-----\n");
+            appendPemData(app, combined, type);
         } catch (GeneralSecurityException e) {
             // this should not happen
             throw new IllegalStateException("encryption of then PEM data failed", e);
