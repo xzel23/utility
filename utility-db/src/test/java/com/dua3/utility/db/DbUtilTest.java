@@ -5,6 +5,7 @@
 
 package com.dua3.utility.db;
 
+import com.dua3.utility.lang.LangUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -341,9 +342,7 @@ class DbUtilTest {
                     getClass().getClassLoader(),
                     new Class[]{ResultSet.class},
                     (proxy, method, args) -> {
-                        if ("close".equals(method.getName())) {
-                            log.add("RS");
-                        }
+                        LangUtil.addIf("close".equals(method.getName()), log, "RS");
                         try {
                             return method.invoke(realRs, args);
                         } catch (java.lang.reflect.InvocationTargetException e) {

@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -186,9 +187,7 @@ public class FileChooserBuilder {
      */
     public FileChooserBuilder selectedFilter(@Nullable ExtensionFilter f) {
         this.selectedFilter = f;
-        if (f != null && !filters.contains(f)) {
-            filters.add(f);
-        }
+        LangUtil.addIf(f != null && !filters.contains(f), filters, f);
         return this;
     }
 
