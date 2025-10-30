@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListResourceBundle;
@@ -169,12 +168,9 @@ public final class I18N {
      * @param bundle The resource bundle to merge.
      */
     public void mergeBundle(ResourceBundle bundle) {
-        LOG.debug("merging resource bundle {}", bundle.getBaseBundleName() + "_" + bundle.getLocale());
-        Enumeration<String> keys = bundle.getKeys();
-        while (keys.hasMoreElements()) {
-            String key = keys.nextElement();
-            bundleMap.putIfAbsent(key, bundle);
-        }
+        LOG.debug("merging resource bundle {}_{}", bundle::getBaseBundleName, bundle::getLocale);
+        bundle.getKeys().asIterator()
+                .forEachRemaining(key -> bundleMap.putIfAbsent(key, bundle));
     }
 
     /**
@@ -264,7 +260,7 @@ public final class I18N {
      * @see ResourceBundle#getString(String)
      */
     public String getOrCompute(String key, Function<? super String, String> compute) {
-        return getBundle(key).map(bundle -> bundle.getString(key)).orElse(compute.apply(key));
+        return getBundle(key).map(b -> b.getString(key)).orElseGet(() -> compute.apply(key));
     }
 
     /**

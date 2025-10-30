@@ -468,14 +468,7 @@ public final class PasswordUtil {
      */
     private static boolean hasCommonPatterns(String password) {
         String lower = password.toLowerCase(Locale.ROOT);
-
-        for (String pattern : COMMON_PATTERNS) {
-            if (lower.contains(pattern)) {
-                return true;
-            }
-        }
-
-        return false;
+        return COMMON_PATTERNS.stream().anyMatch(lower::contains);
     }
 
     /**
@@ -495,13 +488,7 @@ public final class PasswordUtil {
                 .replace("4", "a")
                 .replace("@", "a");
 
-        for (String pattern : COMMON_PATTERNS) {
-            if (normalized.contains(pattern)) {
-                return true;
-            }
-        }
-
-        return false;
+        return COMMON_PATTERNS.stream().anyMatch(normalized::contains);
     }
 
     /**

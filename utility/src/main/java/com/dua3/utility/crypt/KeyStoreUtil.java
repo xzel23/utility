@@ -162,10 +162,8 @@ public final class KeyStoreUtil {
      */
     private static void fixCertificateChains(KeyStore keyStore, char[] password) throws GeneralSecurityException {
         try {
-            Enumeration<String> aliases = keyStore.aliases();
-            while (aliases.hasMoreElements()) {
-                String alias = aliases.nextElement();
-
+            for (var it = keyStore.aliases().asIterator(); it.hasNext(); ) {
+                String alias = it.next();
                 if (keyStore.isKeyEntry(alias)) {
                     Certificate[] chain = keyStore.getCertificateChain(alias);
                     if (chain != null && chain.length > 0) {
@@ -238,9 +236,8 @@ public final class KeyStoreUtil {
      */
     private static @Nullable X509Certificate findIssuerInKeyStore(KeyStore keyStore, X509Certificate cert)
             throws KeyStoreException {
-        Enumeration<String> aliases = keyStore.aliases();
-        while (aliases.hasMoreElements()) {
-            String searchAlias = aliases.nextElement();
+        for (var it = keyStore.aliases().asIterator(); it.hasNext(); ) {
+            String searchAlias = it.next();
 
             if (keyStore.isKeyEntry(searchAlias)) {
                 Certificate[] candidateChain = keyStore.getCertificateChain(searchAlias);
@@ -319,16 +316,12 @@ public final class KeyStoreUtil {
     private static void exportAsZip(KeyStore keyStore, Path keystoreFile, char[] password) throws IOException {
         try (OutputStream out = Files.newOutputStream(keystoreFile);
              Zip zip = new Zip(out)) {
-
-            try {
-                Enumeration<String> aliases = keyStore.aliases();
-                while (aliases.hasMoreElements()) {
-                    String alias = aliases.nextElement();
-                    exportKeyStoreEntry(keyStore, password, alias, zip);
-                }
-            } catch (KeyStoreException e) {
-                throw new IOException("Failed to access KeyStore entries", e);
+            for (var it = keyStore.aliases().asIterator(); it.hasNext(); ) {
+                String alias = it.next();
+                exportKeyStoreEntry(keyStore, password, alias, zip);
             }
+        } catch (KeyStoreException e) {
+            throw new IOException("Failed to access KeyStore entries", e);
         }
     }
 
@@ -651,10 +644,7 @@ public final class KeyStoreUtil {
      */
     public static Set<String> listAliases(KeyStore keyStore) throws GeneralSecurityException {
         Set<String> aliases = new HashSet<>();
-        Enumeration<String> aliasEnum = keyStore.aliases();
-        while (aliasEnum.hasMoreElements()) {
-            aliases.add(aliasEnum.nextElement());
-        }
+        keyStore.aliases().asIterator().forEachRemaining(aliases::add);
         return aliases;
     }
 
@@ -712,7 +702,6 @@ public final class KeyStoreUtil {
     public static List<String> getCaAliases(KeyStore ks)throws KeyStoreException {
         List<String> aliases = new ArrayList<>();
         ks.aliases().asIterator().forEachRemaining(alias -> {
-            LOG.debug("Processing alias: {}", alias);
             try {
                 // Process both certificate entries and key entries
                 boolean isCertEntry = ks.isCertificateEntry(alias);
@@ -726,7 +715,7 @@ public final class KeyStoreUtil {
                     addCertIfX509(alias, cert, aliases);
                 } else if (isKeyEntry) {
                     // Get certificate chain for key entry
-                    LOG.debug("[DEBUG_LOG] Processing key entry: {}", alias);
+                    LOG.trace("Processing key entry: {}", alias);
 
                     Certificate[] certChain = ks.getCertificateChain(alias);
 
@@ -734,7 +723,7 @@ public final class KeyStoreUtil {
                         addCertIfX509(alias, certChain[0], aliases);
                     }
                 } else {
-                    LOG.debug("Alias {} is neither a certificate entry nor a key entry", alias);
+                    LOG.trace("Alias {} is neither a certificate entry nor a key entry", alias);
                 }
             } catch (KeyStoreException | RuntimeException  e) {
                 // Skip this alias if there's an error
