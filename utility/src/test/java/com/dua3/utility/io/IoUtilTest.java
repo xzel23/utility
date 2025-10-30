@@ -6,6 +6,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.text.TextUtil;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -1155,5 +1156,105 @@ class IoUtilTest {
         } finally {
             Files.deleteIfExists(parentDir);
         }
+    }
+
+    private static Stream<Arguments> validFileNamesPerPlatform() {
+        return Stream.of(
+                // Windows: no trailing dot, no leading/trailing blanks, not blank, no reserved names,
+                // no forbidden chars
+                Arguments.of(Platform.WINDOWS, List.of(
+                        "file", "file.txt", "A_B-C.D"
+                )),
+                // macOS: not blank; ":" and "/" forbidden; others like leading/trailing blanks are allowed
+                Arguments.of(Platform.MACOS, List.of(
+                        "file", "file.txt", " leading", "trailing ", "A?B", "A*B"
+                )),
+                // Linux: only "/" (and NUL) forbidden; blanks, trailing dot are fine
+                Arguments.of(Platform.LINUX, List.of(
+                        "file", "file.txt", " leading", "trailing ", "file.", "A?B", "A*B"
+                ))
+        );
+    }
+
+    private static Stream<Arguments> invalidFileNamesPerPlatform() {
+        return Stream.of(
+                // Windows forbidden
+                Arguments.of(Platform.WINDOWS, List.of(
+                        "",                // empty
+                        " ",               // blank
+                        " leading",         // leading whitespace
+                        "trailing ",       // trailing whitespace
+                        "file.",           // trailing dot
+                        "a:b",              // ':' forbidden
+                        "con",              // reserved (after stripExtension)
+                        "nul.txt"           // reserved (after stripExtension)
+                )),
+                // macOS forbidden
+                Arguments.of(Platform.MACOS, List.of(
+                        "",                // empty
+                        " ",               // blank
+                        "a:b",              // ':' forbidden
+                        "a/b",              // '/' forbidden
+                        "line\nfeed"        // newline forbidden
+                )),
+                // Linux forbidden
+                Arguments.of(Platform.LINUX, List.of(
+                        "",                // empty
+                        "a/b"               // '/' forbidden
+                        // NUL cannot be represented in a Java String literal here; considered forbidden too
+                ))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("validFileNamesPerPlatform")
+    void testIsValidFileName_valid(Platform platform, List<String> names) {
+        for (String name : names) {
+            assertTrue(IoUtil.isValidFileName(name, platform),
+                    () -> "expected valid on " + platform + ": '" + name + "'");
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidFileNamesPerPlatform")
+    void testIsValidFileName_invalid(Platform platform, List<String> names) {
+        for (String name : names) {
+            assertFalse(IoUtil.isValidFileName(name, platform),
+                    () -> "expected invalid on " + platform + ": '" + name + "'");
+        }
+    }
+
+    private static Stream<String> validPortableNames() {
+        // portable means valid across all platforms; be conservative
+        return Stream.of(
+                "file",
+                "file.txt",
+                "A_B-C.D"
+        );
+    }
+
+    private static Stream<String> invalidPortableNames() {
+        return Stream.of(
+                "",          // empty
+                " ",         // blank
+                " leading",  // leading space
+                "trailing ", // trailing space
+                "file.",     // trailing dot
+                "a:b",       // ':' forbidden at least on Windows/macOS
+                "a/b",       // '/' forbidden everywhere
+                "con"        // reserved on Windows
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("validPortableNames")
+    void testIsPortableFileName_valid(String name) {
+        assertTrue(IoUtil.isPortableFileName(name), () -> "expected portable: '" + name + "'");
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidPortableNames")
+    void testIsPortableFileName_invalid(String name) {
+        assertFalse(IoUtil.isPortableFileName(name), () -> "expected NOT portable: '" + name + "'");
     }
 }
