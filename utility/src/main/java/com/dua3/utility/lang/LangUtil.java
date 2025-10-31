@@ -2412,6 +2412,30 @@ public final class LangUtil {
     }
 
     /**
+     * Retrieves the value for the specified key from the provided map if it exists and is nnon-null.
+     * If no value is found for the key or the value is null, a {@link NoSuchElementException} is thrown.
+     *
+     * @param <T> the map's key type
+     * @param <U> the map's value type
+     * @param <E> the exception type
+     * @param map the map to search for the key-value pair
+     * @param key the key whose presence and associated value are to be checked
+     * @param exceptionBuilder builder for exceptions; the key is passed as argument
+     * @return the key if a value is successfully associated with it in the map
+     * @throws E if no value is found for the specified key in the map
+     */
+    public static <T, U, E extends Exception> U getOrThrow(
+            Map<T, U> map,
+            T key,
+            Function<T, E> exceptionBuilder) throws E {
+        U value = map.get(key);
+        if (value == null) {
+            throw exceptionBuilder.apply(key);
+        }
+        return value;
+    }
+
+    /**
      * Adds the specified items to the collection if the given condition is true.
      * If the condition is false, no items will be added.
      *
