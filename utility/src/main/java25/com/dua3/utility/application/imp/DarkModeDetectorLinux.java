@@ -60,7 +60,7 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
                 return new DarkModeDetectorLinux();
             } catch (Throwable t) {
                 LOG.error("Failed to initialize DarkModeDetectorLinux", t);
-                return DarkModeDetectorImpUnsupported.getInstance();
+                return DarkModeDetectorUnsupported.getInstance();
             }
         }
     }

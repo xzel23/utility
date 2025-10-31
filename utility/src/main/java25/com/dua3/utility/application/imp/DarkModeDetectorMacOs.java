@@ -21,7 +21,7 @@ import static java.lang.foreign.ValueLayout.ADDRESS;
  *
  * <p>Access is provided via getInstance() which lazily initializes a singleton. If initialization
  * fails (for example on non-macOS platforms or when native access is disallowed), a
- * {@link DarkModeDetectorImpUnsupported} instance is returned instead.</p>
+ * {@link DarkModeDetectorUnsupported} instance is returned instead.</p>
  *
  * <p>Note: The implementation performs native calls and may require enabling native access
  * depending on the runtime configuration. This class resides in the Java 25 sourceset
@@ -44,15 +44,15 @@ public final class DarkModeDetectorMacOs extends DarkModeDetectorBase {
             try {
                 return new DarkModeDetectorMacOs();
             } catch (Exception e) {
-                LOG.error("DarkModeDetectorImpMacOs initialization failed", e);
-                return DarkModeDetectorImpUnsupported.getInstance();
+                LOG.error("DarkModeDetectorMacOs initialization failed", e);
+                return DarkModeDetectorUnsupported.getInstance();
             }
         }
     }
 
     /**
      * Returns the lazily initialized singleton instance of the macOS dark mode detector.
-     * If initialization fails, an {@link DarkModeDetectorImpUnsupported} instance is returned.
+     * If initialization fails, an {@link DarkModeDetectorUnsupported} instance is returned.
      *
      * @return the dark mode detector instance
      */
@@ -128,7 +128,7 @@ public final class DarkModeDetectorMacOs extends DarkModeDetectorBase {
             // Register for notifications immediately
             registerForAppearanceChanges();
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to initialize DarkModeDetectorImpMacOs", e);
+            throw new IllegalStateException("Failed to initialize DarkModeDetectorMacOs", e);
         }
     }
 

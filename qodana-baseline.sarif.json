@@ -66751,7 +66751,7 @@
                     "charOffset": 986,
                     "charLength": 182,
                     "snippet": {
-                      "text": "     * @return an instance of the {@link DarkModeDetector}\n     */\n    public static final DarkModeDetector get() {\n        return DarkModeDetectorImpUnsupported.getInstance();\n    }"
+                      "text": "     * @return an instance of the {@link DarkModeDetector}\n     */\n    public static final DarkModeDetector get() {\n        return DarkModeDetectorUnsupported.getInstance();\n    }"
                     },
                     "sourceLanguage": "JAVA"
                   }

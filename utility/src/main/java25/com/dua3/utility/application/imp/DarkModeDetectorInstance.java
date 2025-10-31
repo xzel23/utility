@@ -11,7 +11,7 @@ import com.dua3.utility.lang.Platform;
  * always behaves as if dark mode is not supported, returning {@code false} for detection capability
  * and dark mode status.
  * <p>
- * The actual instance returned by this class is managed by the {@link DarkModeDetectorImpUnsupported} class.
+ * The actual instance returned by this class is managed by the {@link DarkModeDetectorUnsupported} class.
  */
 public final class DarkModeDetectorInstance {
 
@@ -29,7 +29,7 @@ public final class DarkModeDetectorInstance {
             case MACOS -> DarkModeDetectorMacOs.getInstance();
             case WINDOWS -> DarkModeDetectorWindows.getInstance();
             case LINUX -> DarkModeDetectorLinux.getInstance();
-            default -> DarkModeDetectorImpUnsupported.getInstance();
+            default -> DarkModeDetectorUnsupported.getInstance();
         };
     }
 

@@ -2,7 +2,7 @@ package com.dua3.utlity.application;
 
 import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.DarkModeDetector;
-import com.dua3.utility.application.imp.DarkModeDetectorImpUnsupported;
+import com.dua3.utility.application.imp.DarkModeDetectorUnsupported;
 import com.dua3.utility.lang.Platform;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
@@ -22,7 +22,7 @@ class ApplicationUtilTestJava25 {
         assertNotNull(detector, "ApplicationUtil.darkModeDetector() should return a non-null instance");
 
         List<Platform> supportedPlatforms = List.of(Platform.MACOS, Platform.WINDOWS, Platform.LINUX);
-        boolean isSupported = !(detector instanceof DarkModeDetectorImpUnsupported);
+        boolean isSupported = !(detector instanceof DarkModeDetectorUnsupported);
         assertEquals(
                 supportedPlatforms.contains(Platform.currentPlatform()), isSupported,
                 "ApplicationUtil.darkModeDetector() should return an instance for the current platform if it is supported"
