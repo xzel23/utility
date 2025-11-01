@@ -50,14 +50,13 @@ public final class ApplicationUtil {
 
     /**
      * A thread-safe list of listeners to be notified about changes in the application's dark mode state.
-     * <p>
-     * Each listener is a {@link Consumer} that accepts a {@code Boolean}, where {@code true} indicates dark mode is active
-     * and {@code false} indicates light mode. Listeners are invoked whenever the application's dark mode state changes.
-     * The {@link CopyOnWriteArrayList} ensures safe concurrent access and modification of the listener list, making this
-     * suitable for environments with multiple threads.
      */
-
     private static final CopyOnWriteArrayList<Consumer<Boolean>> darkModeListeners = new CopyOnWriteArrayList<>();
+
+    /**
+     * A thread-safe list of listeners to be notified about changes to the application's ui mode.
+     */
+    private static final CopyOnWriteArrayList<Consumer<UiMode>> uiModeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Private utility class constructor.
@@ -138,12 +137,28 @@ public final class ApplicationUtil {
                 case LIGHT -> false;
                 case SYSTEM_DEFAULT -> DarkModeDetectorInstance.get().isDarkMode();
             };
+            onUpdateUiMode(mode);
             setDarkMode(dark);
         }
     }
 
     /**
-     * Updates the application's dark mode status and notifies all registered listeners.
+     * Notifies all registered UI mode listeners.
+     *
+     * @param uiMode the UiMode
+     */
+    private static void onUpdateUiMode(UiMode uiMode) {
+        uiModeListeners.forEach(listener -> {
+            try {
+                listener.accept(uiMode);
+            } catch (Exception ex) {
+                LOG.warn("Ignoring exception while notifying listener", ex);
+            }
+        });
+    }
+
+    /**
+     * Notifies all registered dark mode listeners.
      *
      * @param dark a boolean indicating whether dark mode is enabled (true) or disabled (false)
      */
@@ -178,6 +193,27 @@ public final class ApplicationUtil {
      */
     public static boolean isDarkMode() {
         return darkMode.get();
+    }
+
+    /**
+     * Adds a listener to receive updates when the application's dark mode status changes.
+     * The listener is a consumer that takes a boolean, where {@code true} indicates that
+     * dark mode is enabled, and {@code false} indicates that dark mode is disabled.
+     *
+     * @param listener the listener to be notified of dark mode changes (non-null)
+     */
+    public static void addUiModeListener(Consumer<UiMode> listener) {
+        uiModeListeners.add(listener);
+    }
+
+    /**
+     * Removes a listener for dark mode changes in the application.
+     *
+     * @param listener the listener to be removed; typically a {@link Consumer} that processes
+     *                 a {@code Boolean} indicating the dark mode state (true if dark mode is enabled, false otherwise)
+     */
+    public static void removeUiModeListener(Consumer<UiMode> listener) {
+        uiModeListeners.remove(listener);
     }
 
     /**
