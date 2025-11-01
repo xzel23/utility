@@ -2,6 +2,7 @@ package com.dua3.utlity.application;
 
 import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.DarkModeDetector;
+import com.dua3.utility.application.imp.DarkModeDetectorInstance;
 import com.dua3.utility.application.imp.DarkModeDetectorUnsupported;
 import com.dua3.utility.lang.Platform;
 import org.junit.jupiter.api.Test;
@@ -14,18 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class ApplicationUtilTestJava25 {
+class DarkModeDetectorTestJava25 {
 
     @Test
     void darkModeDetector_returnsInstanceOnJava25(TestReporter reporter) {
-        DarkModeDetector detector = ApplicationUtil.darkModeDetector();
-        assertNotNull(detector, "ApplicationUtil.darkModeDetector() should return a non-null instance");
+        DarkModeDetector detector = DarkModeDetectorInstance.get();
+        assertNotNull(detector, "DarkModeDetectorInstance.get() should return a non-null instance");
 
         List<Platform> supportedPlatforms = List.of(Platform.MACOS, Platform.WINDOWS, Platform.LINUX);
         boolean isSupported = !(detector instanceof DarkModeDetectorUnsupported);
         assertEquals(
                 supportedPlatforms.contains(Platform.currentPlatform()), isSupported,
-                "ApplicationUtil.darkModeDetector() should return an instance for the current platform if it is supported"
+                "DarkModeDetectorInstance.get() should return an instance for the current platform if it is supported"
         );
         System.out.format(
                 "%-20s: %s%n%-20s: %s%n%-20s: %s%n%-20s: %s%n",
@@ -38,7 +39,7 @@ class ApplicationUtilTestJava25 {
 
     @Test
     void darkModeDetector_methodsCallableWithoutExceptionsOnJava25() {
-        DarkModeDetector detector = ApplicationUtil.darkModeDetector();
+        DarkModeDetector detector = DarkModeDetectorInstance.get();
         assertNotNull(detector);
 
         // simple listener

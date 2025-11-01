@@ -167,8 +167,8 @@ public class FxLogPane extends BorderPane {
         });
 
         // install default stylesheet
-        setDarkMode(ApplicationUtil.isApplicationDarkMode());
-        ApplicationUtil.addApplicationDarkModeListener(this::setDarkMode);
+        setDarkMode(ApplicationUtil.isDarkMode());
+        ApplicationUtil.addDarkModeListener(this::setDarkMode);
 
         entries.addListener(this::onEntries);
 

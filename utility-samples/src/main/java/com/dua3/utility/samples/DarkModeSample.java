@@ -79,7 +79,7 @@ public final class DarkModeSample {
             frame.setContentPane(content);
 
             // Reflect current UiMode selection
-            UiMode currentMode = ApplicationUtil.getApplicationUiMode();
+            UiMode currentMode = ApplicationUtil.getUiMode();
             switch (currentMode) {
                 case SYSTEM_DEFAULT -> rbSystem.setSelected(true);
                 case LIGHT -> rbLight.setSelected(true);
@@ -87,16 +87,16 @@ public final class DarkModeSample {
             }
 
             // Apply initial dark/light based on application state
-            applyTheme(ApplicationUtil.isApplicationDarkMode(), frame.getContentPane());
+            applyTheme(ApplicationUtil.isDarkMode(), frame.getContentPane());
 
             // Update when application dark mode changes
-            ApplicationUtil.addApplicationDarkModeListener(dark -> SwingUtilities.invokeLater(
+            ApplicationUtil.addDarkModeListener(dark -> SwingUtilities.invokeLater(
                     () -> applyTheme(dark, frame.getContentPane())));
 
             // Change UiMode when user toggles
-            rbSystem.addActionListener(e -> ApplicationUtil.setApplicationUiMode(UiMode.SYSTEM_DEFAULT));
-            rbLight.addActionListener(e -> ApplicationUtil.setApplicationUiMode(UiMode.LIGHT));
-            rbDark.addActionListener(e -> ApplicationUtil.setApplicationUiMode(UiMode.DARK));
+            rbSystem.addActionListener(e -> ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT));
+            rbLight.addActionListener(e -> ApplicationUtil.setUiMode(UiMode.LIGHT));
+            rbDark.addActionListener(e -> ApplicationUtil.setUiMode(UiMode.DARK));
 
             frame.setSize(360, 120);
             frame.setLocationByPlatform(true);

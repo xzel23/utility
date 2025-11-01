@@ -32,7 +32,7 @@ public class FxLogPaneSample extends Application {
         // this has to be done before the first logger is initialized!
         LogUtilLog4J.init(LogLevel.TRACE);
 
-        ApplicationUtil.setApplicationUiMode(UiMode.SYSTEM_DEFAULT);
+        ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT);
     }
 
     private static final int AVERAGE_SLEEP_MILLIS = 5;
@@ -61,8 +61,8 @@ public class FxLogPaneSample extends Application {
     public FxLogPaneSample() {
         logPane = new FxLogPane(LOG_BUFFER_SIZE);
 
-        setDarkMode(ApplicationUtil.isApplicationDarkMode());
-        ApplicationUtil.addApplicationDarkModeListener(this::setDarkMode);
+        setDarkMode(ApplicationUtil.isDarkMode());
+        ApplicationUtil.addDarkModeListener(this::setDarkMode);
     }
 
     private void setDarkMode(boolean enabled) {

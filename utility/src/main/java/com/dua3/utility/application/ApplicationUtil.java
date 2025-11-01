@@ -24,13 +24,19 @@ import java.util.prefs.Preferences;
 public final class ApplicationUtil {
 
     private static final Logger LOG = LogManager.getLogger(ApplicationUtil.class);
+
+    /**
+     * A thread-safe reference to the application's preferences object, using an {@link AtomicReference}.
+     */
     private static final AtomicReference<@Nullable Preferences> APPLICATION_PREFERENCES = new AtomicReference<>(null);
+
     /**
      * The current user interface (UI) mode of the application.
      * <p>
      * This variable is initialized to {@link UiMode#LIGHT} by default.
      */
-    private static final AtomicReference<UiMode> applicationUiMode = new AtomicReference<>(UiMode.LIGHT);
+    private static final AtomicReference<UiMode> uiMode = new AtomicReference<>(UiMode.LIGHT);
+
     /**
      * An {@link AtomicBoolean} representing whether the application is currently in dark mode.
      * <p>
@@ -38,10 +44,10 @@ public final class ApplicationUtil {
      * It is initialized to {@code false}, indicating that dark mode is off by default.
      * <p>
      * The value is typically updated in response to changes in the application or system UI mode and
-     * should not be modified directly. Use dedicated methods such as {@code setApplicationDarkMode()},
-     * {@code onUpdateApplicationDarkMode(boolean)}, or listeners to handle updates consistently.
+     * cannot be modified directly.
      */
-    private static final AtomicBoolean applicationDarkMode = new AtomicBoolean(false);
+    private static final AtomicBoolean darkMode = new AtomicBoolean(false);
+
     /**
      * A thread-safe list of listeners to be notified about changes in the application's dark mode state.
      * <p>
@@ -50,8 +56,12 @@ public final class ApplicationUtil {
      * The {@link CopyOnWriteArrayList} ensures safe concurrent access and modification of the listener list, making this
      * suitable for environments with multiple threads.
      */
-    private static final CopyOnWriteArrayList<Consumer<Boolean>> applicationDarkModeListeners = new CopyOnWriteArrayList<>();
 
+    private static final CopyOnWriteArrayList<Consumer<Boolean>> darkModeListeners = new CopyOnWriteArrayList<>();
+
+    /**
+     * Private utility class constructor.
+     */
     private ApplicationUtil() {
         // utility class
     }
@@ -108,8 +118,8 @@ public final class ApplicationUtil {
      *
      * @return the current application UI mode, which is an instance of {@link UiMode}
      */
-    public static UiMode getApplicationUiMode() {
-        return applicationUiMode.get();
+    public static UiMode getUiMode() {
+        return uiMode.get();
     }
 
     /**
@@ -120,29 +130,16 @@ public final class ApplicationUtil {
      * @param mode the desired UI mode for the application. Must be one of {@link UiMode#DARK}, {@link UiMode#LIGHT},
      *             or {@link UiMode#SYSTEM_DEFAULT}.
      */
-    public static void setApplicationUiMode(UiMode mode) {
-        UiMode previousMode = applicationUiMode.getAndSet(mode);
+    public static void setUiMode(UiMode mode) {
+        UiMode previousMode = uiMode.getAndSet(mode);
         if (previousMode != mode) {
-            boolean dark = switch (getApplicationUiMode()) {
+            boolean dark = switch (getUiMode()) {
                 case DARK -> true;
                 case LIGHT -> false;
-                case SYSTEM_DEFAULT -> darkModeDetector().isDarkMode();
+                case SYSTEM_DEFAULT -> DarkModeDetectorInstance.get().isDarkMode();
             };
-            setApplicationDarkMode(dark);
+            setDarkMode(dark);
         }
-    }
-
-    /**
-     * Returns the singleton instance of {@link DarkModeDetector}.
-     * <p>
-     * <strong>Note:</strong> The returned {@link DarkModeDetector} instance tracks the system dark mode setting.
-     * To track the application setting, use {@link #isApplicationDarkMode()} and
-     * {@link #addApplicationDarkModeListener(Consumer)}.
-     *
-     * @return the singleton instance of {@link DarkModeDetector}
-     */
-    public static DarkModeDetector darkModeDetector() {
-        return DarkModeDetectorHolder.INSTANCE;
     }
 
     /**
@@ -150,8 +147,8 @@ public final class ApplicationUtil {
      *
      * @param dark a boolean indicating whether dark mode is enabled (true) or disabled (false)
      */
-    private static void onUpdateApplicationDarkMode(boolean dark) {
-        applicationDarkModeListeners.forEach(listener -> {
+    private static void onUpdateDarkMode(boolean dark) {
+        darkModeListeners.forEach(listener -> {
             try {
                 listener.accept(dark);
             } catch (Exception ex) {
@@ -168,10 +165,9 @@ public final class ApplicationUtil {
      * @param darkMode the new dark mode state to be set; {@code true} for enabling dark mode,
      *                 {@code false} for disabling it
      */
-    private static void setApplicationDarkMode(boolean darkMode) {
-        boolean previousDark = applicationDarkMode.getAndSet(darkMode);
-        if (previousDark != darkMode) {
-            onUpdateApplicationDarkMode(darkMode);
+    private static void setDarkMode(boolean darkMode) {
+        if (darkMode != ApplicationUtil.darkMode.compareAndExchange(!darkMode, darkMode)) {
+            onUpdateDarkMode(darkMode);
         }
     }
 
@@ -180,8 +176,8 @@ public final class ApplicationUtil {
      *
      * @return {@code true} if the application is in dark mode, {@code false} otherwise
      */
-    public static boolean isApplicationDarkMode() {
-        return applicationDarkMode.get();
+    public static boolean isDarkMode() {
+        return darkMode.get();
     }
 
     /**
@@ -191,10 +187,10 @@ public final class ApplicationUtil {
      *
      * @param listener the listener to be notified of dark mode changes (non-null)
      */
-    public static void addApplicationDarkModeListener(Consumer<Boolean> listener) {
+    public static void addDarkModeListener(Consumer<Boolean> listener) {
         LOG.debug("Ensure DarkModeUpdater is initialised");
         DarkModeUpdater.INSTANCE.ensureRunning();
-        applicationDarkModeListeners.add(listener);
+        darkModeListeners.add(listener);
     }
 
     /**
@@ -203,12 +199,8 @@ public final class ApplicationUtil {
      * @param listener the listener to be removed; typically a {@link Consumer} that processes
      *                 a {@code Boolean} indicating the dark mode state (true if dark mode is enabled, false otherwise)
      */
-    public static void removeApplicationDarkModeListener(Consumer<Boolean> listener) {
-        applicationDarkModeListeners.remove(listener);
-    }
-
-    private static final class DarkModeDetectorHolder {
-        private static final DarkModeDetector INSTANCE = DarkModeDetectorInstance.get();
+    public static void removeDarkModeListener(Consumer<Boolean> listener) {
+        darkModeListeners.remove(listener);
     }
 
     /**
@@ -228,7 +220,7 @@ public final class ApplicationUtil {
      * The class relies on {@link DarkModeDetector} to check if dark mode detection
      * is supported and to register listeners for monitoring the system dark mode state.
      * <p>
-     * It automatically calls {@link ApplicationUtil#setApplicationDarkMode(boolean)}
+     * It automatically calls {@link ApplicationUtil#setDarkMode(boolean)}
      * when a dark mode change is detected, allowing the application to update its
      * dark mode setting appropriately.
      */
@@ -236,7 +228,7 @@ public final class ApplicationUtil {
         private static final DarkModeUpdater INSTANCE = new DarkModeUpdater();
 
         DarkModeUpdater() {
-            DarkModeDetector dmd = darkModeDetector();
+            DarkModeDetector dmd = DarkModeDetectorInstance.get();
             if (dmd.isDarkModeDetectionSupported()) {
                 LOG.debug("system dark mode detection supported, adding listener");
                 dmd.addListener(dark -> onSystemDarkModeChange(dark));
@@ -259,11 +251,11 @@ public final class ApplicationUtil {
          */
         private static void onSystemDarkModeChange(boolean dark) {
             LOG.debug("system dark mode changed to {}", dark);
-            if (getApplicationUiMode() == UiMode.SYSTEM_DEFAULT) {
+            if (getUiMode() == UiMode.SYSTEM_DEFAULT) {
                 LOG.debug("setting application dark mode to {}", dark);
-                setApplicationDarkMode(dark);
+                setDarkMode(dark);
             } else {
-                LOG.debug("ignoring application dark mode change, ui mode is {}", getApplicationUiMode());
+                LOG.debug("ignoring application dark mode change, ui mode is {}", getUiMode());
             }
         }
     }
