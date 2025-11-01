@@ -56,8 +56,9 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
      *
      * @param parentWindow the parent window
      */
-    public WizardDialog(@Nullable Window parentWindow) {
+    WizardDialog(@Nullable Window parentWindow, boolean cancelable) {
         initOwner(parentWindow);
+        this.cancelable = cancelable;
 
         setResultConverter(btn -> {
             if (btn != ButtonType.FINISH) {

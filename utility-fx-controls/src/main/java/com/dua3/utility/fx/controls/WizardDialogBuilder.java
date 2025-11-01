@@ -22,7 +22,16 @@ public class WizardDialogBuilder {
     private final MessageFormatter formatter;
     private String title = "";
     private String startPage = "";
+    private boolean cancelable = true;
 
+    /**
+     * Constructs a new instance of {@code WizardDialogBuilder} with the specified parent window
+     * and message formatter.
+     *
+     * @param parentWindow the parent window that owns the wizard dialog, or {@code null} if
+     *                     the dialog does not have a parent window
+     * @param formatter    the message formatter used for formatting dialog messages
+     */
     WizardDialogBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         this.parentWindow = parentWindow;
         this.formatter = formatter;
@@ -37,6 +46,18 @@ public class WizardDialogBuilder {
      */
     public WizardDialogBuilder title(String fmt, Object... args) {
         this.title = formatter.format(fmt, args);
+        return this;
+    }
+
+    /**
+     * Sets whether the wizard dialog being built should be cancelable.
+     *
+     * @param flag a boolean value where {@code true} indicates that the wizard
+     *             dialog can be canceled, and {@code false} indicates it cannot.
+     * @return The current instance of {@code WizardDialogBuilder}, allowing method chaining.
+     */
+    public WizardDialogBuilder cancelable(boolean flag) {
+        this.cancelable = flag;
         return this;
     }
 
@@ -84,7 +105,7 @@ public class WizardDialogBuilder {
      * @return A new {@link WizardDialog} instance with the configured title and pages.
      */
     public WizardDialog build() {
-        WizardDialog dlg = new WizardDialog(parentWindow);
+        WizardDialog dlg = new WizardDialog(parentWindow, cancelable);
 
         WizardDialog.Page<?, ?> prev = null;
         for (var entry : pages.entrySet()) {
