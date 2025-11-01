@@ -8,6 +8,7 @@ import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
 import javafx.animation.AnimationTimer;
 import javafx.beans.binding.BooleanExpression;
+import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
@@ -1060,6 +1061,50 @@ public final class FxUtil {
         r.setMinHeight(v);
         r.setPrefHeight(v);
         return r;
+    }
+
+    /**
+     * Creates a bidirectional binding between a JavaFX property and a model property represented by getter and setter methods.
+     * Updates to either the JavaFX property or the model property will be reflected in the other.
+     *
+     * @param <T> The type of the value in the properties, which must be nullable.
+     * @param fxProperty The JavaFX {@code Property} to be bound bidirectionally to the model property.
+     * @param getter A supplier that retrieves the current value of the model property.
+     * @param setter A consumer that sets the value of the model property when the JavaFX property changes.
+     * @param listenerAdder A consumer that accepts a listener, allowing it to observe changes in the model's property.
+     */
+    public static <T extends @Nullable Object> void bindBidirectional(
+            Property<T> fxProperty,
+            Supplier<T> getter,
+            Consumer<T> setter,
+            Consumer<Consumer<T>> listenerAdder) {
+
+        // 1. initialize FX property from model
+        fxProperty.setValue(getter.get());
+
+        // 2. update FX property when model changes
+        listenerAdder.accept(fxProperty::setValue);
+
+        // 3. update model when FX property changes
+        fxProperty.addListener((obs, oldVal, newVal) -> {
+            setter.accept(newVal);
+        });
+    }
+
+    /**
+     * Adds a strong reference to the given property, ensuring that the specified arguments
+     * are retained and not garbage collected as long as the property is active.
+     *
+     * @param <T> the type of the property being referenced
+     * @param a the property to which a strong reference is added
+     * @param args the objects to be retained by the strong reference
+     */
+    public static <T> void addStrongReference(Property<T> a, Object... args) {
+        a.addListener(obj -> noOperation(args));
+    }
+
+    private static void noOperation(Object... args) {
+        // do nothing
     }
 
 }
