@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.fx.FxUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Orientation;
@@ -345,7 +346,7 @@ class ControlsTest extends FxTestBase {
             assertEquals("Test CheckMenuItem", checkMenuItem.getText());
             assertTrue(checkMenuItem.isSelected());
 
-            // TODO: The action is only triggered when the menu item is clicked, not when setSelected() is called programmatically
+            // Note: The action is only triggered when the menu item is clicked, not when setSelected() is called programmatically
             // The Controls.checkMenuItem method sets the action to be triggered on the onAction event, not when the selection state changes
             // To properly test this, we would need to simulate a click on the menu item
             checkMenuItem.setSelected(false);
@@ -368,7 +369,7 @@ class ControlsTest extends FxTestBase {
             assertTrue(selectedProperty.get());
 
             // Test check menu item with enabled state
-            CheckMenuItem disabledCheckMenuItem = Controls.checkMenuItem("Disabled CheckMenuItem", selectedProperty, false);
+            CheckMenuItem disabledCheckMenuItem = Controls.checkMenuItem("Disabled CheckMenuItem", selectedProperty, FxUtil.FALSE);
             assertNotNull(disabledCheckMenuItem);
             assertEquals("Disabled CheckMenuItem", disabledCheckMenuItem.getText());
             assertTrue(disabledCheckMenuItem.isDisable());
