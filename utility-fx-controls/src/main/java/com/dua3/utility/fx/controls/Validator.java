@@ -62,13 +62,14 @@ import java.util.stream.Collectors;
 public class Validator {
     private static final Logger LOG = LogManager.getLogger(Validator.class);
 
+    private static final String ICON_ERROR = "fth-anchor";
+
     private final @Nullable ResourceBundle resources;
     private final LinkedHashMap<Control, List<Supplier<ValidationResult>>> controls = new LinkedHashMap<>();
     private final MapProperty<Control, ValidationResult> validationResultProperty = new SimpleMapProperty<>();
     private final BooleanProperty validProperty = new SimpleBooleanProperty();
     private final List<Runnable> disposeList = new ArrayList<>();
     private int iconSize = (int) Math.round(Font.getDefault().getSize());
-    private String iconError = "fth-anchor";
     private boolean decorateNodes = false;
 
     /**
@@ -265,7 +266,7 @@ public class Validator {
             case OK:
                 break;
             case ERROR:
-                iconId = iconError;
+                iconId = ICON_ERROR;
                 paint = Color.RED;
                 break;
         }

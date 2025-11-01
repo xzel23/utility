@@ -2445,6 +2445,7 @@ public final class LangUtil {
      * @param items      the items to be added to the collection if the condition is true
      * @return {@code true} if elements were added to the collection, {@code  false} otherwise
      */
+    @SafeVarargs
     public static <T extends @Nullable Object> boolean addIf(boolean condition, Collection<? super T> collection, T... items) {
         if (!condition || items.length == 0) {
             return false;

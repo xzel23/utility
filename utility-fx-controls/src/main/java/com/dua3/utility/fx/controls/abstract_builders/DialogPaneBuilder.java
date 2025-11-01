@@ -64,6 +64,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      *
      * @return the current builder instance of type {@code B}
      */
+    @SuppressWarnings("unchecked")
     protected B self() {
         return (B) this;
     }

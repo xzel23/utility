@@ -79,8 +79,8 @@ public class FxLogPane extends BorderPane {
 
     private final AtomicReference<@Nullable LogEntry> selectedItem = new AtomicReference<>();
 
-    private String darkCss;
-    private String lightCss;
+    private final String darkCss;
+    private final String lightCss;
 
     private boolean autoScroll = true;
 

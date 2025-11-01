@@ -42,10 +42,6 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
      */
     private boolean cancelable = true;
     /**
-     * Flag: show 'previous'-button?
-     */
-    private boolean showPreviousButton = true;
-    /**
      * Map {@code <page-name> |-> <page-information>}.
      */
     private @Nullable Map<String, Page<?, ?>> pages;
@@ -88,7 +84,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
     public void setPages(Map<String, Page<?, ?>> pages, String startPage) {
         this.pages = pages;
 
-        checkPages();
+        checkPages(startPage);
 
         setPage(startPage);
     }
@@ -110,7 +106,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
      * </ol>
      * @throws IllegalStateException if any page refers to a 'next' page that does not exist
      */
-    private void checkPages() {
+    private void checkPages(String startPage) {
         if (pages == null) {
             return;
         }
@@ -155,7 +151,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
             }
 
             // prev button
-            if (isShowPreviousButton()) {
+            if (!entry.getKey().equals(startPage)) {
                 page.addButton(
                         ButtonType.PREVIOUS,
                         p -> setPage(pageStack.removeLast().first()),
@@ -189,15 +185,6 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
      */
     public boolean isCancelable() {
         return cancelable;
-    }
-
-    /**
-     * Check if a 'previous' ( or 'navigate-back') button should be displayed.
-     *
-     * @return true if dialog is cancelable
-     */
-    public boolean isShowPreviousButton() {
-        return showPreviousButton;
     }
 
     /**
