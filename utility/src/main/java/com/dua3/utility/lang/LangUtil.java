@@ -2443,6 +2443,7 @@ public final class LangUtil {
      * @param condition  the condition that determines whether the items will be added
      * @param collection the collection to which the items will be added if the condition is true
      * @param items      the items to be added to the collection if the condition is true
+     * @return {@code true} if elements were added to the collection, {@code  false} otherwise
      */
     public static <T extends @Nullable Object> boolean addIf(boolean condition, Collection<? super T> collection, T... items) {
         if (!condition || items.length == 0) {
