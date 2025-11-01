@@ -12,13 +12,24 @@ public enum UiMode {
     /**
      * Represents the default UI mode that follows the system's UI mode setting.
      */
-    SYSTEM_DEFAULT,
+    SYSTEM_DEFAULT("System Default"),
     /**
      * Represents the light UI mode.
      */
-    LIGHT,
+    LIGHT("Light"),
     /**
      * Represents the dark UI mode.
      */
-    DARK;
+    DARK("Dark");
+
+    private final String text;
+
+    UiMode(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return text;
+    }
 }
