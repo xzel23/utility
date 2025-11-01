@@ -26,7 +26,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @param <T> the type of the object being transformed
      * @return a Converter that performs an identity transformation for objects of type T
      */
-    static <T> Converter<T, T> identity() {
+    static <T extends @Nullable Object> Converter<T, T> identity() {
         return new SimpleConverter<>(Function.identity(), Function.identity());
     }
 
@@ -141,7 +141,13 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @param b2a a function that converts from type B to type A
      * @return a Converter that performs conversions between types A and B using the specified functions
      */
-    static <A, B> Converter<A, B> create(Function<A, B> a2b, Function<B, A> b2a) {
+    static <A extends @Nullable Object, B extends @Nullable Object> Converter<A, B>
+    create(Function<A, B> a2b, Function<B, A> b2a) {
+        return new SimpleConverter<>(a2b, b2a);
+    }
+
+    static <A extends @Nullable Object, B extends @Nullable Object> Converter<A, B>
+    createStrong(Function<A, B> a2b, Function<B, A> b2a) {
         return new SimpleConverter<>(a2b, b2a);
     }
 
@@ -156,8 +162,9 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @param b2a a function that converts from type B to type A
      * @return a null-aware Converter that performs conversions between types A and B using the specified functions
      */
-    static <A, B> Converter<@Nullable A, @Nullable B> createNullAware(Function<A, B> a2b, Function<B, A> b2a) {
-        return new SimpleConverter<>(
+    static <A, B> Converter<@Nullable A, @Nullable B>
+    createNullAware(Function<A, B> a2b, Function<B, A> b2a) {
+        return new SimpleConverter<@Nullable A, @Nullable B>(
                 v -> v == null ? null : a2b.apply(v),
                 v -> v == null ? null : b2a.apply(v)
         );
@@ -226,7 +233,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
  * @param inverse the original converter being wrapped, which provides the conversion
  *                methods to be inverted
  */
-record InverseConverter<A, B>(Converter<B, A> inverse) implements Converter<A, B> {
+record InverseConverter<A extends @Nullable Object, B extends @Nullable Object> (Converter<B, A> inverse) implements Converter<A, B> {
 
     @Override
     public Function<A, B> a2b() {
