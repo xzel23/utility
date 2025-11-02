@@ -297,6 +297,11 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
+    public GridBuilder inputText(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+        return addInput(id, label, String.class, dflt, InputControl.textInput(dflt, validate), false);
+    }
+
+    @Override
     public GridBuilder inputString(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         return addInput(id, label, String.class, dflt, InputControl.stringInput(dflt, validate), false);
     }

@@ -116,4 +116,15 @@ public abstract class InputControlBuilder<B extends InputControlBuilder<B, V>, V
             control.valueProperty().addListener((obs, old, val) -> changeListener.accept(val));
         }
     }
+
+    /**
+     * Builds and returns an instance of {@code InputControl<V>} constructed using
+     * the current configuration of the builder. The resulting input control is
+     * initialized with the specified default value and listeners, providing a
+     * customizable user interface element for input handling.
+     *
+     * @return an {@code InputControl<V>} instance configured with the builder's
+     *         settings.
+     */
+    public abstract InputControl<V> build();
 }

@@ -251,6 +251,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      *
      * @return the built {@code SliderWithButtons} instance.
      */
+    @Override
     public SliderWithButtons build() {
         BiFunction<? super Double, ? super Double, String> fmtr = LangUtil.orElse(formatter, (a, b) -> "");
 

@@ -277,6 +277,14 @@ public final class Controls {
     }
 
     /**
+     * Get TextFieldBuilder for creating a TextField.
+     * @return TextFieldBuilder instance
+     */
+    public static TextAreaBuilder textArea() {
+        return new TextAreaBuilder();
+    }
+
+    /**
      * Make a region resizable by dragging its edge.
      *
      * @param region  the region

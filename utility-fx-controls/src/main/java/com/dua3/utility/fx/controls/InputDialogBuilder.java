@@ -161,6 +161,12 @@ public class InputDialogBuilder
     }
 
     @Override
+    public InputDialogBuilder inputText(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+        pb.inputText(id, label, dflt, validate);
+        return this;
+    }
+
+    @Override
     public InputDialogBuilder inputString(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         pb.inputString(id, label, dflt, validate);
         return this;

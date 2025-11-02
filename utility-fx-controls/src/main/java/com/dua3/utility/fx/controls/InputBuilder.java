@@ -243,6 +243,47 @@ public interface InputBuilder<B extends InputBuilder<B>> {
 
     /**
      * Add a labeled string input.
+     * <p>
+     * This control is for inputting a multi-line texts. See {@link #inputString(String, String, Supplier)}
+     * for a control that allows inputting single line texts.
+     *
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
+     * @return {@code this}
+     */
+    default B inputText(
+            String id,
+            String label,
+            Supplier<@Nullable String> dflt
+    ) {
+        return inputText(id, label, dflt, s -> Optional.empty());
+    }
+
+    /**
+     * Add a labeled text input.
+     * <p>
+     * This control is for inputting a multi-line texts. See {@link #inputString(String, String, Supplier, Function)}
+     * for a control that allows inputting single line texts.
+     *
+     * @param id       the ID
+     * @param label    the label text
+     * @param dflt     supplier of default value
+     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @return {@code this}
+     */
+    B inputText(
+            String id,
+            String label,
+            Supplier<@Nullable String> dflt,
+            Function<@Nullable String, Optional<String>> validate
+    );
+
+    /**
+     * Add a labeled string input.
+     * <p>
+     * This control is for inputting a single line of text. See {@link #inputText(String, String, Supplier)}
+     * for a control that allows inputting longer texts.
      *
      * @param id    the ID
      * @param label the label text
@@ -259,6 +300,9 @@ public interface InputBuilder<B extends InputBuilder<B>> {
 
     /**
      * Add a labeled string input.
+     * <p>
+     * This control is for inputting a single line of text. See {@link #inputText(String, String, Supplier, Function)}
+     * for a control that allows inputting longer texts.
      *
      * @param id       the ID
      * @param label    the label text

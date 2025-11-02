@@ -90,6 +90,7 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      *
      * @return a constructed {@link FileInput} control based on the current configuration.
      */
+    @Override
     public FileInput build() {
         FileInput control = new FileInput(owner, mode, existingOnly, getDefault(), extensionFilters, validate);
         applyTo(control);

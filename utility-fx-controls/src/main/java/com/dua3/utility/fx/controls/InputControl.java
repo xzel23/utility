@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxUtil;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextArea;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
@@ -56,6 +57,40 @@ public interface InputControl<T> {
     String CSS_REQUIRED_INPUT = "required-input";
 
     /**
+     * Creates a {@link SimpleInputControl} for a TextArea.
+     *
+     * @param dflt     a {@link Supplier} providing the default value for the TextArea
+     * @param validate a {@link Function} that takes a String and returns an Optional containing a validation error message, if any
+     * @return a {@link SimpleInputControl} containing the TextField and associated properties
+     */
+    static SimpleInputControl<TextArea, String> textInput(Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+        TextArea control = new TextArea();
+        StringProperty value = control.textProperty();
+        return new SimpleInputControl<>(control, value, dflt, validate);
+    }
+
+    /**
+     * Creates a new {@link SimpleInputControl} for a {@link TextArea} with bidirectional binding.
+     *
+     * @param columns  the number of columns (characters per row of text)
+     * @param rows     the number of text rows
+     * @param dflt      The supplier providing the default value.
+     * @param validate  A function to validate the value, returning an optional error message.
+     * @param converter The StringConverter to convert between the value and its string representation.
+     * @param <T>       The type of the value.
+     * @return A {@link SimpleInputControl} containing the {@link TextField} and associated properties.
+     */
+    static <T> SimpleInputControl<TextArea, T> textInput(int columns, int rows,Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate, StringConverter<@Nullable T> converter) {
+        TextArea control = new TextArea();
+        control.setPrefColumnCount(columns);
+        control.setPrefRowCount(rows);
+        ObjectProperty<@Nullable T> value = new SimpleObjectProperty<>();
+        Bindings.bindBidirectional(control.textProperty(), value, converter);
+        FxUtil.addStrongReference(control.textProperty(), value);
+        return new SimpleInputControl<>(control, value, dflt, validate);
+    }
+
+    /**
      * Creates a {@link SimpleInputControl} for a TextField with String input.
      *
      * @param dflt a {@link Supplier} providing the default value for the TextField
@@ -81,6 +116,7 @@ public interface InputControl<T> {
         TextField control = new TextField();
         ObjectProperty<@Nullable T> value = new SimpleObjectProperty<>();
         Bindings.bindBidirectional(control.textProperty(), value, converter);
+        FxUtil.addStrongReference(control.textProperty(), value);
         return new SimpleInputControl<>(control, value, dflt, validate);
     }
 
@@ -110,6 +146,7 @@ public interface InputControl<T> {
         PasswordField control = new PasswordField();
         ObjectProperty<@Nullable T> value = new SimpleObjectProperty<>();
         Bindings.bindBidirectional(control.textProperty(), value, converter);
+        FxUtil.addStrongReference(control.textProperty(), value);
         return new SimpleInputControl<>(control, value, dflt, validate);
     }
 
@@ -156,6 +193,7 @@ public interface InputControl<T> {
         Property<T> value = new SimpleObjectProperty<>();
         AtomicReference<@Nullable String> err = new AtomicReference<>(null);
         textProperty.bindBidirectional(value, createStrictStringConverter(cls, format, err::set));
+        FxUtil.addStrongReference(control.textProperty(), value);
 
         Function<@Nullable T, Optional<String>> strictValidate = d ->
                 Optional.ofNullable(err.get()).or(() -> validate.apply(d));

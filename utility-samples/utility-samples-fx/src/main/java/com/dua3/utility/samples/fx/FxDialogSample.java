@@ -150,6 +150,7 @@ public class FxDialogSample extends Application {
                         .inputConstant("readonly", "readonly", "This is the value of the readonly field.")
                         .inputConstant("readonly2", "readonly date", LocalDate::now, LocalDate.class)
                         .inputString("txt", "enter text", () -> "dflt")
+                        .inputText("longtext", "long text", () -> "")
                         .inputHidden("secret1", "A")
                         .inputHidden("secret2", "B")
                         .inputInteger("integer", "enter number", () -> 0L)
