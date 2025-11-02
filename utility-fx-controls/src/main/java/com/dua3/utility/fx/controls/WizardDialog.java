@@ -245,7 +245,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
          * @param enabled an optional {@code BooleanExpression} that determines whether the
          *                button is enabled or disabled dynamically; can be null
          */
-        public void addButton(ButtonType type, Consumer<InputDialogPane<R>> action, @Nullable Function<InputDialogPane<R>, BooleanExpression> enabled) {
+        public void addButton(ButtonType type, Consumer<InputDialogPane<?>> action, @Nullable Function<InputDialogPane<?>, BooleanExpression> enabled) {
             pane.addButton(type, resultHandler, action, enabled);
         }
     }

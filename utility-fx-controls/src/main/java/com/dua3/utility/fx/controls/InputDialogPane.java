@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
@@ -116,8 +117,8 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
     public void addButton(
             ButtonType type,
             DialogPaneBuilder.@Nullable ResultHandler<? super @Nullable R> resultHandler,
-            Consumer<? super InputDialogPane<R>> action,
-            @Nullable Function<InputDialogPane<R>, BooleanExpression> enabled
+            Consumer<? super InputDialogPane<?>> action,
+            @Nullable Function<InputDialogPane<?>, BooleanExpression> enabled
     ) {
         ObservableList<ButtonType> bt = getButtonTypes();
 
@@ -154,5 +155,16 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         button.setCancelButton(buttonData.isCancelButton());
 
         return button;
+    }
+
+    /**
+     * Closes the dialog window associated with this InputDialogPane.
+     *
+     * This method retrieves the current window of the dialog pane and
+     * triggers its closing operation. Typically used to dismiss the dialog
+     * after the necessary action is performed or when cancelling the dialog.
+     */
+    public void closeDialog() {
+        ((Stage) getScene().getWindow()).close();
     }
 }

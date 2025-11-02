@@ -15,7 +15,11 @@
 package com.dua3.utility.fx.controls.abstract_builders;
 
 import com.dua3.utility.fx.controls.ButtonDef;
+import com.dua3.utility.fx.controls.InputDialogPane;
 import com.dua3.utility.text.MessageFormatter;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
@@ -97,8 +101,9 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
         D dlg = super.build();
 
         // copy stage icons from parent
+        DialogPane dialogPane = dlg.getDialogPane();
         if (parentWindow != null) {
-            Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
+            Stage stage = (Stage) dialogPane.getScene().getWindow();
             stage.getIcons().addAll(((Stage) parentWindow).getIcons());
         }
 
@@ -110,7 +115,15 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
 
         // set buttons
         if (!getButtonDefs().isEmpty()) {
-            dlg.getDialogPane().getButtonTypes().setAll(getButtonDefs().stream().map(ButtonDef::type).toList());
+            dialogPane
+                    .getButtonTypes()
+                    .setAll(getButtonDefs().stream().map(ButtonDef::type).toList());
+            getButtonDefs().forEach(bd -> {
+                Node node = dialogPane.lookupButton(bd.type());
+                if (node instanceof Button btn && dialogPane instanceof InputDialogPane<?> idp) {
+                    btn.setOnAction(evt -> bd.action().accept(idp));
+                }
+            });
         }
 
         return dlg;
