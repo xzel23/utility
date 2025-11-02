@@ -27,7 +27,7 @@ public final class DarkModeDetectorInstance {
      *
      * @return an instance of the {@link DarkModeDetector}
      */
-    public static final DarkModeDetector get() {
+    public static DarkModeDetector get() {
         return DarkModeDetectorUnsupported.getInstance();
     }
 

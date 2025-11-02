@@ -146,11 +146,6 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
         return new SimpleConverter<>(a2b, b2a);
     }
 
-    static <A extends @Nullable Object, B extends @Nullable Object> Converter<A, B>
-    createStrong(Function<A, B> a2b, Function<B, A> b2a) {
-        return new SimpleConverter<>(a2b, b2a);
-    }
-
     /**
      * Creates a bidirectional converter between two nullable types A and B.
      * <p>
@@ -233,7 +228,8 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
  * @param inverse the original converter being wrapped, which provides the conversion
  *                methods to be inverted
  */
-record InverseConverter<A extends @Nullable Object, B extends @Nullable Object> (Converter<B, A> inverse) implements Converter<A, B> {
+record InverseConverter<A extends @Nullable Object, B extends @Nullable Object>(
+        Converter<B, A> inverse) implements Converter<A, B> {
 
     @Override
     public Function<A, B> a2b() {

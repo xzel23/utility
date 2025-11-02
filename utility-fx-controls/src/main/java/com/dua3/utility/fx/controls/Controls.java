@@ -537,7 +537,7 @@ public final class Controls {
         T current = property.getValue();
         for (T value : values) {
             Property<@Nullable Boolean> selected = new SimpleBooleanProperty(Objects.equals(current, value));
-            Converter<@Nullable T, @Nullable Boolean> converter = Converter.createStrong(
+            Converter<@Nullable T, @Nullable Boolean> converter = Converter.create(
                     v -> Objects.equals(v, value),
                     b -> b != null && b ? value : property.getValue()
             );

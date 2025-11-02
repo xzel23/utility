@@ -573,7 +573,7 @@ public final class LangUtil {
      * @param f the mapping function to apply to the input, must accept and produce possibly nullable values
      * @return the result of applying the mapping function to the input, or null if the input is null
      */
-    public static <T,U extends @Nullable Object> U map(@Nullable T t, Function<? super @Nullable T, U> f) {
+    public static <T, U extends @Nullable Object> U map(@Nullable T t, Function<? super @Nullable T, U> f) {
         return t == null ? null : f.apply(t);
     }
 
@@ -2540,7 +2540,7 @@ public final class LangUtil {
      * @param <T> the type of the value to be checked and consumed
      * @param v the value to be checked for null
      * @param consumer the action to be performed on the value if it is not null
-     * @return true if the value is not null and the consumer is executed, false if the value is null
+     * @return the passed value
      */
     public static <T> @Nullable T applyIfNonNull(@Nullable T v, Consumer<? super T> consumer) {
         if (v != null) {

@@ -200,7 +200,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     @SafeVarargs
     public final B buttons(ButtonDef<R>... buttons) {
         getButtonDefs().clear();
-        for (var btn: buttons) {
+        for (var btn : buttons) {
             addButton(btn);
         }
         return self();
@@ -217,7 +217,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     @SuppressWarnings("unchecked")
     public final B buttons(ButtonType... buttons) {
         getButtonDefs().clear();
-        for (var btn: buttons) {
+        for (var btn : buttons) {
             addButton(ButtonDef.of(btn));
         }
         return self();

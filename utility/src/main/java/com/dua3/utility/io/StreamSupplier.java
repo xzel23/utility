@@ -19,7 +19,7 @@ import java.util.List;
  * {@link InputStream} or {@link OutputStream} instances from various object types.
  * This is suitable for objects that represent resources such as files, paths,
  * URIs, and readers.
- *
+ * <p>
  * The specific implementation for each input or output stream operation is
  * determined based on the type of the provided object. Unsupported object
  * types will result in an {@link UnsupportedOperationException} when accessed.
@@ -90,7 +90,7 @@ final class StreamSupplier<V> {
         OutputStream getOutputStream(C connection) throws IOException;
     }
 
-    private static class UnicodeReaderInputStream extends InputStream {
+    private static final class UnicodeReaderInputStream extends InputStream {
         private final Reader reader;
         private byte[] buffer;
         private int bufferPos;

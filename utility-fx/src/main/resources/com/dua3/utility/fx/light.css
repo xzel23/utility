@@ -1,6 +1,20 @@
 /* Light theme colors for log levels */
-.logtable-row.log-error .table-cell { -fx-text-fill: darkred; }
-.logtable-row.log-warn  .table-cell { -fx-text-fill: red; }
-.logtable-row.log-info  .table-cell { -fx-text-fill: darkblue; }
-.logtable-row.log-debug .table-cell { -fx-text-fill: black; }
-.logtable-row.log-trace .table-cell { -fx-text-fill: darkgray; }
+.logtable-row.log-error .table-cell {
+    -fx-text-fill: darkred;
+}
+
+.logtable-row.log-warn .table-cell {
+    -fx-text-fill: red;
+}
+
+.logtable-row.log-info .table-cell {
+    -fx-text-fill: darkblue;
+}
+
+.logtable-row.log-debug .table-cell {
+    -fx-text-fill: black;
+}
+
+.logtable-row.log-trace .table-cell {
+    -fx-text-fill: darkgray;
+}

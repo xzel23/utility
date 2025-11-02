@@ -1,5 +1,7 @@
 package com.dua3.utility.application;
+
 import org.jspecify.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.AbstractPreferences;
@@ -25,6 +27,7 @@ import java.util.prefs.Preferences;
 public final class EphemeralPreferences extends AbstractPreferences {
     private final Map<String, String> values = new HashMap<>();
     private final Map<String, EphemeralPreferences> children = new HashMap<>();
+
     /**
      * Constructs a new {@code EphemeralPreferences} instance.
      * This is an in-memory, non-persistent implementation of {@link AbstractPreferences}.

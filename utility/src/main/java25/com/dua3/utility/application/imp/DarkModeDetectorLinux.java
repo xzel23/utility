@@ -55,6 +55,7 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
 
     private static class Holder {
         private static final DarkModeDetector INSTANCE = create();
+
         private static DarkModeDetector create() {
             try {
                 return new DarkModeDetectorLinux();

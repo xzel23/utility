@@ -104,7 +104,8 @@ public final class DarkModeSample {
 
             // Ensure JVM exits when window is closed if this sample is run alone
             frame.addWindowListener(new WindowAdapter() {
-                @Override public void windowClosed(WindowEvent e) { System.exit(0); }
+                @Override
+                public void windowClosed(WindowEvent e) {System.exit(0);}
             });
         });
     }

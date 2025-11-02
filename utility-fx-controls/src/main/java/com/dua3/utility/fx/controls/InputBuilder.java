@@ -376,11 +376,11 @@ public interface InputBuilder<B extends InputBuilder<B>> {
                 return Optional.empty();
             }
         })
-        .inputPassword("", "Repeat Password", () -> "",
-            s -> Objects.equals(s, passwordRef.get())
-                    ? Optional.empty()
-                    : Optional.of("Passwords do not match.")
-        );
+                .inputPassword("", "Repeat Password", () -> "",
+                        s -> Objects.equals(s, passwordRef.get())
+                                ? Optional.empty()
+                                : Optional.of("Passwords do not match.")
+                );
     }
 
     /**
@@ -499,7 +499,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Supplier<@Nullable T> dflt,
             Class<T> cls
     ) {
-        return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls),t -> Optional.empty());
+        return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls), t -> Optional.empty());
     }
 
     /**

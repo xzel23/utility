@@ -1502,7 +1502,7 @@ public final class IoUtil {
         FORBIDDEN_CHARS_MACOS(s -> !TextUtil.containsAnyOf(s, "/:\n\0"), Platform.MACOS),
         FORBIDDEN_CHARS_LINUX(s -> !TextUtil.containsAnyOf(s, "/\0"), Platform.LINUX),
         FORBIDDEN_NAMES_WINDOWS(s ->
-                !IoUtil.stripExtension(s).toLowerCase(Locale.ROOT)
+                !stripExtension(s).toLowerCase(Locale.ROOT)
                         .matches("con|prn|aux|nul|(com|lpt)[1-9]"),
                 Platform.WINDOWS
         );

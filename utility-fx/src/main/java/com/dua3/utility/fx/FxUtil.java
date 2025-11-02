@@ -1086,9 +1086,7 @@ public final class FxUtil {
         listenerAdder.accept(fxProperty::setValue);
 
         // 3. update model when FX property changes
-        fxProperty.addListener((obs, oldVal, newVal) -> {
-            setter.accept(newVal);
-        });
+        fxProperty.addListener((obs, oldVal, newVal) -> setter.accept(newVal));
     }
 
     /**

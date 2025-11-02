@@ -159,7 +159,7 @@ public final class PropertyConverter {
      */
     public static DoubleProperty convert(Property<Double> property) {
         Property<?> objectProperty = property;
-        if (objectProperty  instanceof DoubleProperty dp) {
+        if (objectProperty instanceof DoubleProperty dp) {
             return dp;
         }
         return DoubleProperty.doubleProperty(property);

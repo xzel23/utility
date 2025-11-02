@@ -43,7 +43,7 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
     public final void addListener(Consumer<Boolean> listener) {
         LOG.debug("addListener(): {}", System.identityHashCode(listener));
         listeners.add(listener);
-        monitorSystemChanges( true);
+        monitorSystemChanges(true);
     }
 
     /**

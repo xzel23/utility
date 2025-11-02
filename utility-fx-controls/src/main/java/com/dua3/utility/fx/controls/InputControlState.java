@@ -77,7 +77,7 @@ public final class InputControlState<R> {
      * @param validate a function that validates the value and returns an optional error message
      */
     public InputControlState(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate) {
-        this (value, dflt, validate, value);
+        this(value, dflt, validate, value);
     }
 
     /**

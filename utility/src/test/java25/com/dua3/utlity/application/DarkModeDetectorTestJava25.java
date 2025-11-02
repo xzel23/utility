@@ -1,6 +1,5 @@
 package com.dua3.utlity.application;
 
-import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.DarkModeDetector;
 import com.dua3.utility.application.imp.DarkModeDetectorInstance;
 import com.dua3.utility.application.imp.DarkModeDetectorUnsupported;

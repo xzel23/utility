@@ -699,7 +699,7 @@ public final class KeyStoreUtil {
      *         If no such aliases are found, an empty list is returned.
      * @throws KeyStoreException when an error occurs accessing the kestore data
      */
-    public static List<String> getCaAliases(KeyStore ks)throws KeyStoreException {
+    public static List<String> getCaAliases(KeyStore ks) throws KeyStoreException {
         List<String> aliases = new ArrayList<>();
         ks.aliases().asIterator().forEachRemaining(alias -> {
             try {
@@ -725,7 +725,7 @@ public final class KeyStoreUtil {
                 } else {
                     LOG.trace("Alias {} is neither a certificate entry nor a key entry", alias);
                 }
-            } catch (KeyStoreException | RuntimeException  e) {
+            } catch (KeyStoreException | RuntimeException e) {
                 // Skip this alias if there's an error
                 LOG.warn("Error processing alias: {}", alias, e);
             }

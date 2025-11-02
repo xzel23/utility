@@ -15,12 +15,14 @@ public interface DarkModeDetector {
      * @return true if the platform supports detecting dark mode state, false otherwise
      */
     boolean isDarkModeDetectionSupported();
+
     /**
      * Checks if the application is currently in dark mode.
      *
      * @return true if the application is in dark mode, otherwise false.
      */
     boolean isDarkMode();
+
     /**
      * Registers a listener to observe changes in the dark mode state.
      * <p>
@@ -32,6 +34,7 @@ public interface DarkModeDetector {
      *                 the parameter is true if dark mode is active, false otherwise
      */
     void addListener(Consumer<Boolean> listener);
+
     /**
      * Removes a previously registered listener for dark mode state changes.
      *

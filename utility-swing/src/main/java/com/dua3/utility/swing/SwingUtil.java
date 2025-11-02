@@ -404,7 +404,7 @@ public final class SwingUtil {
 
     @SafeVarargs
     private static Optional<Path> showFileDialog(@Nullable Component parent, Path current, int selectionMode, BiFunction<? super JFileChooser, ? super Component, Integer> showDialog,
-                                                 Pair<String, String []>... types) {
+                                                 Pair<String, String[]>... types) {
         boolean isFileOnlySelection = selectionMode == JFileChooser.FILES_ONLY;
         File file;
         File directory = null;

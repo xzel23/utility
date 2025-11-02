@@ -103,14 +103,14 @@ public class AboutDialogBuilder {
     public AboutDialogBuilder license(LicenseData licenseData) {
         licenseNote("License-ID {} licensed to {} valid until {}.", licenseData.licenseId(), licenseData.licensee(), licenseData.validUntil());
         licenseData.licenseText().ifPresent(licenseText ->
-            onShowLicenseDetails(() ->
-                    Dialogs.alert(parentWindow, Alert.AlertType.INFORMATION)
-                            .title("License Details")
-                            .header("License valid until " + licenseData.validUntil())
-                            .text(licenseText.toString())
-                            .build()
-                            .show()
-            )
+                onShowLicenseDetails(() ->
+                        Dialogs.alert(parentWindow, Alert.AlertType.INFORMATION)
+                                .title("License Details")
+                                .header("License valid until " + licenseData.validUntil())
+                                .text(licenseText.toString())
+                                .build()
+                                .show()
+                )
         );
         return this;
     }

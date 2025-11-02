@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 
 /**
  * Minimal sample showcasing the CardPane control.
- *
+ * <p>
  * The sample creates three simple cards and a few buttons to switch between them.
  */
 public class CardPaneSample extends Application {
@@ -37,7 +37,7 @@ public class CardPaneSample extends Application {
 
     /**
      * Default constructor for the CardPaneSample class.
-     *
+     * <p>
      * This constructor initializes an instance of the CardPaneSample class.
      * It does not perform any additional operations or initialization logic.
      */

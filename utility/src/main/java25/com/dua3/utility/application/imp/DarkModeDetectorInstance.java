@@ -24,7 +24,7 @@ public final class DarkModeDetectorInstance {
      *
      * @return an instance of {@link DarkModeDetector} specifically suited for the current platform
      */
-    public static final DarkModeDetector get() {
+    public static DarkModeDetector get() {
         return switch (Platform.currentPlatform()) {
             case MACOS -> DarkModeDetectorMacOs.getInstance();
             case WINDOWS -> DarkModeDetectorWindows.getInstance();

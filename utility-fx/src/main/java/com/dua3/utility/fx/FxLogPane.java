@@ -231,6 +231,7 @@ public class FxLogPane extends BorderPane {
         // define table columns
         tableView.setEditable(false);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        //noinspection unchecked
         tableView.getColumns().setAll(
                 createColumn("Time", LogEntry::time, true, "8888-88-88T88:88:88.8888888"),
                 createColumn("Level", LogEntry::level, true, Arrays.stream(LogLevel.values()).map(Object::toString).toArray(String[]::new)),

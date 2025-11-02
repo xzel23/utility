@@ -44,19 +44,19 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         // Let the scroll pane compute its preferred size based on content
-        scrollPane.setPrefViewportWidth(Region.USE_COMPUTED_SIZE);
-        scrollPane.setPrefViewportHeight(Region.USE_COMPUTED_SIZE);
+        scrollPane.setPrefViewportWidth(USE_COMPUTED_SIZE);
+        scrollPane.setPrefViewportHeight(USE_COMPUTED_SIZE);
 
         // Set content in dialog
         setContent(scrollPane);
 
         // Make dialog width adapt to content
-        setMinWidth(Region.USE_PREF_SIZE);
+        setMinWidth(USE_PREF_SIZE);
         setMaxWidth(screenBounds.getWidth() * 0.9);
         setMaxHeight(screenBounds.getHeight() * 0.9);
 
         // After showing, force the dialog window to resize to fit content
-        ChangeListener<Parent> listener = new ChangeListener<Parent>() {
+        ChangeListener<Parent> listener = new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends @Nullable Parent> observable, @Nullable Parent oldValue, @Nullable Parent newValue) {
                 if (newValue != null) {

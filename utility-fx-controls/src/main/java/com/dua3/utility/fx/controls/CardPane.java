@@ -45,13 +45,12 @@ public class CardPane extends Pane {
 
     /**
      * Constructs a new CardPane instance.
-     *
+     * <p>
      * Initializes the CardPane with a {@link StackPane} as its content container.
      * The content pane is used to hold all child nodes (cards) and manages their visibility,
      * ensuring only the intended card is shown at a time.
      */
     public CardPane() {
-        super();
         this.content = new StackPane();
         getChildren().setAll(content);
 
@@ -98,6 +97,7 @@ public class CardPane extends Pane {
 
         return true;
     }
+
     /**
      * Returns the currently displayed card if one exists. The current card is the last node
      * in the internal {@code StackPane}'s children list.

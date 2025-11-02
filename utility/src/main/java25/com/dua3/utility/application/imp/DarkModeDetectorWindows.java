@@ -61,6 +61,7 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
 
     private static class Holder {
         private static final DarkModeDetector INSTANCE = createInstance();
+
         private static DarkModeDetector createInstance() {
             try {
                 return new DarkModeDetectorWindows();

@@ -48,18 +48,18 @@ public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuild
         super(formatter, parentWindow);
         setDialogSupplier(this::createDialog);
         buttons(
-            new ButtonDef<>(
-                    ButtonType.OK,
-                    (bt, r) -> true,
-                    idp -> {},
-                    InputDialogPane::validProperty
-            ),
-            new ButtonDef<>(
-                    ButtonType.CANCEL,
-                    (bt, r) -> true,
-                    idp -> {},
-                    idp -> FxUtil.ALWAYS_TRUE
-            )
+                new ButtonDef<>(
+                        ButtonType.OK,
+                        (bt, r) -> true,
+                        idp -> {},
+                        InputDialogPane::validProperty
+                ),
+                new ButtonDef<>(
+                        ButtonType.CANCEL,
+                        (bt, r) -> true,
+                        idp -> {},
+                        idp -> FxUtil.ALWAYS_TRUE
+                )
         );
     }
 

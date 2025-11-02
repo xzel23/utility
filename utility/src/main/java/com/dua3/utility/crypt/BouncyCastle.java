@@ -33,7 +33,8 @@ public final class BouncyCastle {
                     LOG.debug("BouncyCastle provider registered");
                 } catch (ClassNotFoundException e) {
                     LOG.warn("BouncyCastle provider not found on classpath");
-                } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+                } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                         NoSuchMethodException e) {
                     LOG.warn("BouncyCastle provider could not be registered", e);
                 }
             }

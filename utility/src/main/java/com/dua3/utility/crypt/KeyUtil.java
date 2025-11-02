@@ -711,6 +711,7 @@ public final class KeyUtil {
             Arrays.fill(salt, (byte) 0);
         }
     }
+
     /**
      * Parses a DER-encoded key and returns the corresponding key object, either a public or private key,
      * based on the provided byte array.

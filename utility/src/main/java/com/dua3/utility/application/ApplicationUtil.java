@@ -267,7 +267,7 @@ public final class ApplicationUtil {
             DarkModeDetector dmd = DarkModeDetectorInstance.get();
             if (dmd.isDarkModeDetectionSupported()) {
                 LOG.debug("system dark mode detection supported, adding listener");
-                dmd.addListener(dark -> onSystemDarkModeChange(dark));
+                dmd.addListener(DarkModeUpdater::onSystemDarkModeChange);
             } else {
                 LOG.debug("system dark mode detection not supported");
             }

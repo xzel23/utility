@@ -67,7 +67,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
         this.formatter = formatter;
         return self();
     }
-    
+
     /**
      * Sets the orientation of the slider.
      *
