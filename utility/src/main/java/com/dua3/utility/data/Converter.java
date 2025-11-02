@@ -159,7 +159,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      */
     static <A, B> Converter<@Nullable A, @Nullable B>
     createNullAware(Function<A, B> a2b, Function<B, A> b2a) {
-        return new SimpleConverter<@Nullable A, @Nullable B>(
+        return new SimpleConverter<>(
                 v -> v == null ? null : a2b.apply(v),
                 v -> v == null ? null : b2a.apply(v)
         );

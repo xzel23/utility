@@ -5,7 +5,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Region;
 import javafx.stage.Screen;
 import org.jspecify.annotations.Nullable;
 

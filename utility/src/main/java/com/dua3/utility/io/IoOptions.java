@@ -207,7 +207,7 @@ public final class IoOptions {
                 Character.class,
                 "delimiter",
                 List.of('"', '\''),
-                Converter.create(s -> s.charAt(0), Object::toString),
+                Converter.create(s -> s.charAt(0), obj -> Objects.toString(obj, "")),
                 defaultSupplier,
                 "--text-delimiter", "-d"
         );
