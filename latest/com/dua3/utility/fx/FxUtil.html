@@ -148,6 +148,21 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Attaches a mouse event handler to a given node for a specific event type.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addStrongReference(javafx.beans.property.Property,java.lang.Object...)" class="member-name-link">addStrongReference</a><wbr>(javafx.beans.property.Property&lt;T&gt;&nbsp;a,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Adds a strong reference to the given property, ensuring that the specified arguments
+ are retained and not garbage collected as long as the property is active.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#bindBidirectional(javafx.beans.property.Property,java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer)" class="member-name-link">bindBidirectional</a><wbr>(javafx.beans.property.Property&lt;T&gt;&nbsp;fxProperty,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;getter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;setter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&gt;&nbsp;listenerAdder)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a bidirectional binding between a JavaFX property and a model property represented by getter and setter methods.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../data/Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;<a href="../data/Color.html" title="interface in com.dua3.utility.data">Color</a>,<wbr>javafx.scene.paint.Color&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#colorConverter()" class="member-name-link">colorConverter</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -1154,6 +1169,42 @@ B&gt;</span>
 <dd><code>v</code> - the height to set as the minimum and preferred height of the Region</dd>
 <dt>Returns:</dt>
 <dd>a Region with the specified vertical size</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="bindBidirectional(javafx.beans.property.Property,java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer)">
+<h3>bindBidirectional</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">bindBidirectional</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;T&gt;&nbsp;fxProperty,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;getter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;setter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&gt;&nbsp;listenerAdder)</span></div>
+<div class="block">Creates a bidirectional binding between a JavaFX property and a model property represented by getter and setter methods.
+ Updates to either the JavaFX property or the model property will be reflected in the other.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the value in the properties, which must be nullable.</dd>
+<dt>Parameters:</dt>
+<dd><code>fxProperty</code> - The JavaFX <code>Property</code> to be bound bidirectionally to the model property.</dd>
+<dd><code>getter</code> - A supplier that retrieves the current value of the model property.</dd>
+<dd><code>setter</code> - A consumer that sets the value of the model property when the JavaFX property changes.</dd>
+<dd><code>listenerAdder</code> - A consumer that accepts a listener, allowing it to observe changes in the model's property.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addStrongReference(javafx.beans.property.Property,java.lang.Object...)">
+<h3>addStrongReference</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addStrongReference</span><wbr><span class="parameters">(javafx.beans.property.Property&lt;T&gt;&nbsp;a,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+<div class="block">Adds a strong reference to the given property, ensuring that the specified arguments
+ are retained and not garbage collected as long as the property is active.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the property being referenced</dd>
+<dt>Parameters:</dt>
+<dd><code>a</code> - the property to which a strong reference is added</dd>
+<dd><code>args</code> - the objects to be retained by the strong reference</dd>
 </dl>
 </section>
 </li>

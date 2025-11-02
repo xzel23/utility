@@ -444,6 +444,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds a string-based option to the ArgumentsParserBuilder with various configuration options.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/FxUtil.html#addStrongReference(javafx.beans.property.Property,java.lang.Object...)" class="member-name-link">addStrongReference(Property&lt;T&gt;, Object...)</a> - Static method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxUtil.html" title="class in com.dua3.utility.fx">FxUtil</a></dt>
+<dd>
+<div class="block">Adds a strong reference to the given property, ensuring that the specified arguments
+ are retained and not garbage collected as long as the property is active.</div>
+</dd>
 <dt><a href="com/dua3/utility/swing/StyledDocumentConverter.html#addStyledAttributes(java.lang.Iterable)" class="member-name-link">addStyledAttributes(Iterable&lt;? extends Map.Entry&lt;Object, Object&gt;&gt;)</a> - Static method in class com.dua3.utility.swing.<a href="com/dua3/utility/swing/StyledDocumentConverter.html" title="class in com.dua3.utility.swing">StyledDocumentConverter</a></dt>
 <dd>
 <div class="block">Set default attributes.</div>
@@ -1202,6 +1207,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Bidirectionally inds the slider value to the specified <code>Property&lt;Number&gt;</code>, enabling
  the slider to react to changes in the bound value.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/FxUtil.html#bindBidirectional(javafx.beans.property.Property,java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer)" class="member-name-link">bindBidirectional(Property&lt;T&gt;, Supplier&lt;T&gt;, Consumer&lt;T&gt;, Consumer&lt;Consumer&lt;T&gt;&gt;)</a> - Static method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxUtil.html" title="class in com.dua3.utility.fx">FxUtil</a></dt>
+<dd>
+<div class="block">Creates a bidirectional binding between a JavaFX property and a model property represented by getter and setter methods.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/TextFieldBuilder.html#bindDisabled(javafx.beans.value.ObservableBooleanValue)" class="member-name-link">bindDisabled(ObservableBooleanValue)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextFieldBuilder.html" title="class in com.dua3.utility.fx.controls">TextFieldBuilder</a></dt>
 <dd>
 <div class="block">Bind the control's disabled state to an <code>ObservableValue</code>.</div>
@@ -1432,6 +1441,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Builds and returns an InputGrid with the current data and column configuration.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputControlBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControlBuilder.html" title="class in com.dua3.utility.fx.controls">InputControlBuilder</a></dt>
+<dd>
+<div class="block">Builds and returns an instance of <code>InputControl&lt;V&gt;</code> constructed using
+ the current configuration of the builder.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/LabelBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/LabelBuilder.html" title="class in com.dua3.utility.fx.controls">LabelBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/OptionsDialogBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/OptionsDialogBuilder.html" title="class in com.dua3.utility.fx.controls">OptionsDialogBuilder</a></dt>
@@ -1444,6 +1458,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Builds the configured <code>SliderWithButtons</code> instance.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/TextAreaBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextAreaBuilder.html" title="class in com.dua3.utility.fx.controls">TextAreaBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/TextBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextBuilder.html" title="class in com.dua3.utility.fx.controls">TextBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/TextFieldBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextFieldBuilder.html" title="class in com.dua3.utility.fx.controls">TextFieldBuilder</a></dt>
@@ -1711,10 +1727,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/Controls.html#checkMenuItem(java.lang.String,javafx.scene.Node,javafx.beans.property.Property,boolean)" class="member-name-link">checkMenuItem(String, Node, Property&lt;Boolean&gt;, boolean)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
-<dd>
-<div class="block">Create new <code>CheckMenuItem</code>.</div>
-</dd>
 <dt><a href="com/dua3/utility/fx/controls/Controls.html#checkMenuItem(java.lang.String,javafx.scene.Node,javafx.beans.property.Property,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">checkMenuItem(String, Node, Property&lt;Boolean&gt;, ObservableBooleanValue)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
 <dd>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
@@ -1724,10 +1736,6 @@ loadScripts(document, 'script');</script>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Controls.html#checkMenuItem(java.lang.String,javafx.beans.property.Property)" class="member-name-link">checkMenuItem(String, Property&lt;Boolean&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
-<dd>
-<div class="block">Create new <code>CheckMenuItem</code>.</div>
-</dd>
-<dt><a href="com/dua3/utility/fx/controls/Controls.html#checkMenuItem(java.lang.String,javafx.beans.property.Property,boolean)" class="member-name-link">checkMenuItem(String, Property&lt;Boolean&gt;, boolean)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
 <dd>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
 </dd>
@@ -1752,6 +1760,26 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/data/Color.html#CHOCOLATE" class="member-name-link">CHOCOLATE</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">The color CHOCOLATE.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#choiceMenu(java.lang.String,javafx.scene.Node,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu(String, Node, ObservableBooleanValue, Property&lt;T&gt;, Collection&lt;T&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Creates a choice menu with selectable options based on a property and a collection of possible values.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#choiceMenu(java.lang.String,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu(String, Property&lt;T&gt;, Collection&lt;T&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Creates a menu with selectable choices based on the provided text, property, and values.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#choiceMenu(java.lang.String,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu(String, ObservableBooleanValue, Property&lt;T&gt;, Collection&lt;T&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Creates a menu with a set of selectable choices based on the provided values.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#choiceMenu(javafx.scene.Node,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu(Node, Property&lt;T&gt;, Collection&lt;T&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Creates a menu allowing users to choose from a collection of values and bind the selected value to a property.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#choiceMenu(javafx.scene.Node,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu(Node, ObservableBooleanValue, Property&lt;T&gt;, Collection&lt;T&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Creates and returns a menu with choices derived from the provided collection of values.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#chooseDirectory(javafx.stage.Window)" class="member-name-link">chooseDirectory(Window)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
@@ -1964,6 +1992,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#columns(int)" class="member-name-link">columns(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/TextAreaBuilder.html#columns(int)" class="member-name-link">columns(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextAreaBuilder.html" title="class in com.dua3.utility.fx.controls">TextAreaBuilder</a></dt>
+<dd>
+<div class="block">Sets the number of columns for the text area.</div>
+</dd>
 <dt><a href="com/dua3/utility/application/package-summary.html">com.dua3.utility.application</a> - package com.dua3.utility.application</dt>
 <dd>
 <div class="block">This package contains classes supporting application development.</div>
@@ -7945,6 +7977,20 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputString(java.lang.String,java.lang.String,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputString(String, String, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputText(java.lang.String,java.lang.String,java.util.function.Supplier)" class="member-name-link">inputText(String, String, Supplier&lt;String&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
+<dd>
+<div class="block">Add a labeled string input.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#inputText(java.lang.String,java.lang.String,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputText(String, String, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputText(java.lang.String,java.lang.String,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputText(String, String, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
+<dd>
+<div class="block">Add a labeled text input.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputText(java.lang.String,java.lang.String,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputText(String, String, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputText(java.lang.String,java.lang.String,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputText(String, String, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputValidatorFactory.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputValidatorFactory</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
 <div class="block">A factory class for creating input validation functions.</div>
@@ -12152,6 +12198,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Round to precision.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/TextAreaBuilder.html#rows(int)" class="member-name-link">rows(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextAreaBuilder.html" title="class in com.dua3.utility.fx.controls">TextAreaBuilder</a></dt>
+<dd>
+<div class="block">Sets the number of rows for the text area input control.</div>
+</dd>
 <dt><a href="com/dua3/utility/data/Color.html#ROYALBLUE" class="member-name-link">ROYALBLUE</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">The color ROYALBLUE.</div>
@@ -14130,6 +14180,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Check if texts and style are equal, ignoring other attributes.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#textArea()" class="member-name-link">textArea()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Get TextFieldBuilder for creating a TextField.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/TextAreaBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">TextAreaBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
+<dd>
+<div class="block">A builder class for creating and configuring text area input controls.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/TextAttributes.html" class="type-name-link" title="class in com.dua3.utility.text">TextAttributes</a> - Class in <a href="com/dua3/utility/text/package-summary.html">com.dua3.utility.text</a></dt>
 <dd>
 <div class="block">An immutable set of text attributes.</div>
@@ -14166,6 +14224,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/fx/controls/TextFieldType.html" class="type-name-link" title="enum class in com.dua3.utility.fx.controls">TextFieldType</a> - Enum Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
 <div class="block">A type enum for text fields.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.html#textInput(int,int,java.util.function.Supplier,java.util.function.Function,javafx.util.StringConverter)" class="member-name-link">textInput(int, int, Supplier&lt;? extends T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;, StringConverter&lt;T&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
+<dd>
+<div class="block">Creates a new <a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a <code>TextArea</code> with bidirectional binding.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputControl.html#textInput(java.util.function.Supplier,java.util.function.Function)" class="member-name-link">textInput(Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
+<dd>
+<div class="block">Creates a <a href="com/dua3/utility/fx/controls/SimpleInputControl.html" title="class in com.dua3.utility.fx.controls"><code>SimpleInputControl</code></a> for a TextArea.</div>
 </dd>
 <dt><a href="com/dua3/utility/text/RichTextJoiner.AccumulationType.html#texts()" class="member-name-link">texts()</a> - Method in record class com.dua3.utility.text.<a href="com/dua3/utility/text/RichTextJoiner.AccumulationType.html" title="class in com.dua3.utility.text">RichTextJoiner.AccumulationType</a></dt>
 <dd>
@@ -14465,6 +14531,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
 <dt><a href="com/dua3/utility/application/RecentlyUsedDocuments.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.application.<a href="com/dua3/utility/application/RecentlyUsedDocuments.html" title="class in com.dua3.utility.application">RecentlyUsedDocuments</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/application/UiMode.html#toString()" class="member-name-link">toString()</a> - Method in enum class com.dua3.utility.application.<a href="com/dua3/utility/application/UiMode.html" title="enum class in com.dua3.utility.application">UiMode</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/concurrent/SimpleValue.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/SimpleValue.html" title="class in com.dua3.utility.concurrent">SimpleValue</a></dt>
 <dd>&nbsp;</dd>
@@ -15112,6 +15180,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/options/Arguments.html#validate(java.util.Collection)" class="member-name-link">validate(Collection&lt;? extends Option&lt;?&gt;&gt;)</a> - Method in class com.dua3.utility.options.<a href="com/dua3/utility/options/Arguments.html" title="class in com.dua3.utility.options">Arguments</a></dt>
 <dd>
 <div class="block">Validates a collection of options.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/TextAreaBuilder.html#validate(java.util.function.Function)" class="member-name-link">validate(Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextAreaBuilder.html" title="class in com.dua3.utility.fx.controls">TextAreaBuilder</a></dt>
+<dd>
+<div class="block">Specifies a validation function for the text area's input.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/FileInputBuilder.html#validate(java.util.function.Function)" class="member-name-link">validate(Function&lt;Path, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></dt>
 <dd>
