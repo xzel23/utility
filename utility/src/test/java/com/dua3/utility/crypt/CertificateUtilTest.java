@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -34,7 +33,7 @@ class CertificateUtilTest {
     private static final Logger LOG = LogManager.getLogger(CertificateUtilTest.class);
 
     @Test
-    void testCreateSelfSignedX509Certificate() throws GeneralSecurityException {
+    void testCreateSelfSignedX509Certificate() throws Exception {
         // Generate a key pair for testing
         KeyPair keyPair = KeyUtil.generateRSAKeyPair();
         String subject = "CN=Test Subject, O=Test Organization, C=US";
@@ -68,7 +67,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testCreateX509Certificate() throws GeneralSecurityException {
+    void testCreateX509Certificate() throws Exception {
         // Generate a key pair for the certificate to be tested
         KeyPair childKeyPair = KeyUtil.generateRSAKeyPair();
         String subject = "CN=Child, O=Test Organization, C=US";
@@ -117,7 +116,7 @@ class CertificateUtilTest {
     /**
      * Helper method to create a self-signed parent certificate for testing.
      */
-    private Map<String, Object> createTestParentCertificate() throws GeneralSecurityException {
+    private Map<String, Object> createTestParentCertificate() throws Exception {
         KeyPair parentKeyPair = KeyUtil.generateRSAKeyPair();
         // Use the format that will be used as issuer in the child certificate
         String parentSubject = "C=US, O=Test Organization, CN=Parent";
@@ -140,7 +139,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testToX509Certificate() throws GeneralSecurityException {
+    void testToX509Certificate() throws Exception {
         // Generate a self-signed certificate as bytes
         KeyPair keyPair = KeyUtil.generateRSAKeyPair();
         String subject = "CN=Test To X509 Certificate, O=Test Organization, C=US";
@@ -162,7 +161,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testToX509CertificateFromPemString() throws GeneralSecurityException {
+    void testToX509CertificateFromPemString() throws Exception {
         // Create a self-signed certificate
         KeyPair keyPair = KeyUtil.generateRSAKeyPair();
         String subject = "CN=Test PEM Certificate, O=Test Organization, C=US";
@@ -177,18 +176,18 @@ class CertificateUtilTest {
                 + "\n-----END CERTIFICATE-----";
 
         // Test conversion
-        X509Certificate convertedCertificate = CertificateUtil.toX509Certificate(pemData);
+        X509Certificate convertedCertificate = PemData.parse(pemData).asCertificate();
         assertNotNull(convertedCertificate, "The converted certificate should not be null.");
         assertArrayEquals(originalCertificate.getEncoded(), convertedCertificate.getEncoded(), "The certificate bytes should match.");
         assertTrue(convertedCertificate.toString().contains("CN=Test PEM Certificate"), "The certificate subject should match the original.");
 
         // Test with invalid PEM data
         String invalidPem = "-----BEGIN CERTIFICATE-----\nInvalid PEM Data\n-----END CERTIFICATE-----";
-        assertThrows(CertificateException.class, () -> CertificateUtil.toX509Certificate(invalidPem));
+        assertThrows(IllegalStateException.class, () -> PemData.parse(invalidPem).asCertificate());
     }
 
     @Test
-    void testCreateX509CertificateWithParentChain() throws GeneralSecurityException {
+    void testCreateX509CertificateWithParentChain() throws Exception {
         // Generate a key pair for the certificate to be tested
         KeyPair childKeyPair = KeyUtil.generateRSAKeyPair();
         String childSubject = "CN=Child, O=Test Organization, C=US";
@@ -261,7 +260,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testToX509CertificateChain() throws GeneralSecurityException {
+    void testToX509CertificateChain() throws Exception {
         // Create a root certificate
         KeyPair rootKeyPair = KeyUtil.generateRSAKeyPair();
         String rootSubject = "CN=Root, O=Test Organization, C=US";
@@ -289,7 +288,7 @@ class CertificateUtilTest {
         String concatenatedPem = intermediatePem + "\n" + rootPem;
 
         // Convert PEM string back to certificate chain and validate
-        X509Certificate[] chain = CertificateUtil.toX509CertificateChain(concatenatedPem);
+        X509Certificate[] chain = PemData.parse(concatenatedPem).asCertificateChainArray();
         assertNotNull(chain, "The certificate chain should not be null.");
         assertEquals(2, chain.length, "The certificate chain should contain 2 certificates.");
         assertEquals(intermediateCertificate, chain[0], "The first certificate in the chain should be the intermediate.");
@@ -300,15 +299,15 @@ class CertificateUtilTest {
     void testToX509CertificateChainWithInvalidData() {
         // Invalid PEM data with missing end marker
         String invalidPem = "-----BEGIN CERTIFICATE-----\nInvalid Data";
-        assertThrows(IllegalStateException.class, () -> CertificateUtil.toX509CertificateChain(invalidPem),
+        assertThrows(PemData.PemException.class, () -> PemData.parse(invalidPem).asCertificateChainArray(),
                 "An exception should be thrown for invalid PEM data.");
     }
 
     @Test
-    void testToX509CertificateChainWithEmptyData() throws GeneralSecurityException {
+    void testToX509CertificateChainWithEmptyData() throws Exception {
         // Invalid PEM data does not contain certificates
         String emptyPem = "";
-        assertEquals(0, CertificateUtil.toX509CertificateChain(emptyPem).length, "Chain should have 0 length for empty PEM data.");
+        assertEquals(0, PemData.parse(emptyPem).asCertificateChainArray().length, "Chain should have 0 length for empty PEM data.");
     }
 
     @Test
@@ -389,7 +388,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testToPem() throws GeneralSecurityException {
+    void testToPem() throws Exception {
         // Create a test certificate
         KeyPair keyPair = KeyUtil.generateRSAKeyPair();
         String subject = "CN=Test ToPem, O=Test Organization, C=US";
@@ -432,7 +431,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testRoundTripSingleCertificate() throws GeneralSecurityException {
+    void testRoundTripSingleCertificate() throws Exception {
         // Create a test certificate
         KeyPair keyPair = KeyUtil.generateRSAKeyPair();
         String subject = "CN=Test Round Trip, O=Test Organization, C=US";
@@ -445,7 +444,7 @@ class CertificateUtilTest {
         String pemOutput = CertificateUtil.toPem(certificate);
 
         // Convert back to certificate chain
-        X509Certificate[] roundTripCertificates = CertificateUtil.toX509CertificateChain(pemOutput);
+        X509Certificate[] roundTripCertificates = PemData.parse(pemOutput).asCertificateChainArray();
 
         // Verify the round trip
         assertEquals(1, roundTripCertificates.length, "Should have one certificate after round trip");
@@ -460,7 +459,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testRoundTripCertificateChain() throws GeneralSecurityException {
+    void testRoundTripCertificateChain() throws Exception {
         // Create a root certificate
         KeyPair rootKeyPair = KeyUtil.generateRSAKeyPair();
         String rootSubject = "CN=Root Round Trip, O=Test Organization, C=US";
@@ -485,7 +484,7 @@ class CertificateUtilTest {
         String pemOutput = CertificateUtil.toPem(originalChain);
 
         // Convert back to certificate chain
-        X509Certificate[] roundTripChain = CertificateUtil.toX509CertificateChain(pemOutput);
+        X509Certificate[] roundTripChain = PemData.parse(pemOutput).asCertificateChainArray();
 
         // Verify the round trip
         assertEquals(originalChain.length, roundTripChain.length,
@@ -503,7 +502,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testPkcs7RoundTripSingleCertificate() throws GeneralSecurityException {
+    void testPkcs7RoundTripSingleCertificate() throws Exception {
         // Create a self-signed certificate
         KeyPair keyPair = KeyUtil.generateRSAKeyPair();
         String subject = "CN=PKCS7 Single, O=Test Organization, C=US";
@@ -525,7 +524,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testPkcs7RoundTripCertificateChain() throws GeneralSecurityException {
+    void testPkcs7RoundTripCertificateChain() throws Exception {
         // Create root (self-signed)
         KeyPair rootKeyPair = KeyUtil.generateRSAKeyPair();
         X509Certificate root = CertificateUtil.createSelfSignedX509Certificate(rootKeyPair, "CN=Root PKCS7, O=Test, C=US", 730, true)[0];
@@ -578,7 +577,7 @@ class CertificateUtilTest {
     // New tests for keyType/keySize overloads
 
     @Test
-    void testCreateSelfSignedX509Certificate_WithKeyTypeAndSize_RSA() throws GeneralSecurityException {
+    void testCreateSelfSignedX509Certificate_WithKeyTypeAndSize_RSA() throws Exception {
         String subject = "CN=Self RSA, O=Test Org, C=US";
         X509Certificate[] chain = CertificateUtil.createSelfSignedX509Certificate(AsymmetricAlgorithm.RSA, 2048, subject, 365, true);
         assertNotNull(chain);
@@ -591,7 +590,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testCreateSelfSignedX509Certificate_WithKeyTypeAndSize_EC() throws GeneralSecurityException {
+    void testCreateSelfSignedX509Certificate_WithKeyTypeAndSize_EC() throws Exception {
         String subject = "CN=Self EC, O=Test Org, C=US";
         X509Certificate[] chain = CertificateUtil.createSelfSignedX509Certificate(AsymmetricAlgorithm.EC, 256, subject, 365, true);
         assertNotNull(chain);
@@ -603,7 +602,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testCreateX509Certificate_WithKeyTypeAndSize_RSA_ChildSignedByRSAParent() throws GeneralSecurityException {
+    void testCreateX509Certificate_WithKeyTypeAndSize_RSA_ChildSignedByRSAParent() throws Exception {
         // Parent (RSA)
         Map<String, Object> parentInfo = createTestParentCertificate();
         X509Certificate parentCert = (X509Certificate) parentInfo.get("certificate");
@@ -625,7 +624,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testCreateX509Certificate_WithKeyTypeAndSize_EC_ChildSignedByRSAParent() throws GeneralSecurityException {
+    void testCreateX509Certificate_WithKeyTypeAndSize_EC_ChildSignedByRSAParent() throws Exception {
         // Parent (RSA)
         Map<String, Object> parentInfo = createTestParentCertificate();
         X509Certificate parentCert = (X509Certificate) parentInfo.get("certificate");
@@ -647,7 +646,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testCertificateChainPropagation() throws GeneralSecurityException {
+    void testCertificateChainPropagation() throws Exception {
         // Create root certificate
         KeyPair rootKeyPair = KeyUtil.generateRSAKeyPair();
         String rootSubject = "CN=Root,O=Test Organization,C=US";

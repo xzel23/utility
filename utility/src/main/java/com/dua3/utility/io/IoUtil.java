@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1573,5 +1575,43 @@ public final class IoUtil {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns a Writer instance for the provided Appendable. If the given
+     * Appendable is already of type Writer, it returns it directly. Otherwise,
+     * it wraps the Appendable in an instance of AppendableWriter and returns that.
+     *
+     * @param app the Appendable to be converted or wrapped as a Writer
+     * @return a Writer instance corresponding to the provided Appendable
+     */
+    public static Writer getWriter(Appendable app) {
+        if (app instanceof Writer writer) {
+            return writer;
+        }
+        return new AppendableWriter(app);
+    }
+
+    private static class AppendableWriter extends Writer {
+        private final Appendable appendable;
+
+        AppendableWriter(Appendable appendable) {
+            this.appendable = appendable;
+        }
+
+        @Override
+        public void write(char[] cbuf, int off, int len) throws IOException {
+            appendable.append(new String(cbuf, off, len));
+        }
+
+        @Override
+        public void flush() throws IOException {
+            // No action needed for Appendable
+        }
+
+        @Override
+        public void close() throws IOException {
+            // No action needed for Appendable
+        }
     }
 }

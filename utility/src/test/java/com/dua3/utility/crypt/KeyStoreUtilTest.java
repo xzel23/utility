@@ -193,7 +193,7 @@ class KeyStoreUtilTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"JCEKS", "PKCS12", "ZIP"}) // JCS does ot support storing secret keys
+    @ValueSource(strings = {"JCEKS", "PKCS12"}) // JCS and ZIP do ot support storing secret keys
     void testSaveAndLoadKeyStore(String targetTypeName) throws Exception {
         KeyStoreType targetType = KeyStoreType.valueOf(targetTypeName);
 

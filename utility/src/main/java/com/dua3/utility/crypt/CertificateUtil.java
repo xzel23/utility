@@ -1,8 +1,6 @@
 package com.dua3.utility.crypt;
 
-import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +26,6 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -282,72 +279,6 @@ public final class CertificateUtil {
     public static X509Certificate readX509Certificate(InputStream in) throws GeneralSecurityException {
         CertificateFactory certFactory = CertificateFactory.getInstance(CERT_TYPE_X_509);
         return (X509Certificate) certFactory.generateCertificate(in);
-    }
-
-    /**
-     * Converts a PEM-encoded string containing one or more X.509 certificates into an array
-     * of {@link X509Certificate} instances. This method processes each certificate enclosed
-     * in "BEGIN CERTIFICATE" and "END CERTIFICATE" markers within the PEM data, parses them,
-     * and validates the resulting certificate chain.
-     *
-     * @param pemData the PEM-encoded string containing one or more X.509 certificates to be processed.
-     *                Each certificate should be enclosed between "-----BEGIN CERTIFICATE-----"
-     *                and "-----END CERTIFICATE-----".
-     * @return an array of {@link X509Certificate} objects representing the certificate chain,
-     * ordered from the leaf certificate to the root certificate.
-     * @throws GeneralSecurityException if there is an issue parsing the certificates,
-     *                                  validating the certificate chain, or if the input PEM data
-     *                                  is invalid or improperly formatted.
-     */
-    public static X509Certificate[] toX509CertificateChain(String pemData) throws GeneralSecurityException {
-        List<X509Certificate> certificates = new ArrayList<>();
-        String[] lines = TextUtil.lines(pemData);
-        StringBuilder currentCertPem = new StringBuilder();
-        boolean inCertificate = false;
-
-        for (String line : lines) {
-            if (line.contains("-----BEGIN CERTIFICATE-----")) {
-                inCertificate = true;
-                currentCertPem = new StringBuilder();
-                currentCertPem.append(line).append("\n");
-            } else if (line.contains("-----END CERTIFICATE-----")) {
-                if (!inCertificate) {
-                    throw new IllegalStateException("Found end marker without start marker");
-                }
-                currentCertPem.append(line).append("\n");
-                certificates.add(toX509Certificate(currentCertPem.toString()));
-                inCertificate = false;
-            } else if (inCertificate) {
-                currentCertPem.append(line).append("\n");
-            }
-        }
-
-        if (inCertificate) {
-            throw new IllegalStateException("Certificate data ended without end marker");
-        }
-
-        X509Certificate[] chain = certificates.toArray(X509Certificate[]::new);
-
-        verifyCertificateChain(chain);
-
-        return chain;
-    }
-
-    /**
-     * Reads and parses an X.509 certificate from a PEM-encoded string.
-     *
-     * @param pemData the PEM-encoded string containing the X.509 certificate data
-     * @return an {@link X509Certificate} object representing the parsed certificate
-     * @throws GeneralSecurityException if an error occurs while parsing the certificate
-     *                                  or if the provided data is not a valid X.509 certificate
-     */
-    public static X509Certificate toX509Certificate(String pemData) throws GeneralSecurityException {
-        try (InputStream in = IoUtil.stringInputStream(pemData)) {
-            return readX509Certificate(in);
-        } catch (IOException e) {
-            // this should never happen
-            throw new UncheckedIOException(e);
-        }
     }
 
     /**

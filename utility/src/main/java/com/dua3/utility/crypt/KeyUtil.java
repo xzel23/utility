@@ -1,6 +1,6 @@
 package com.dua3.utility.crypt;
 
-import com.dua3.utility.text.TextUtil;
+import com.dua3.utility.io.IoUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -9,10 +9,18 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
+import org.bouncycastle.openssl.PKCS8Generator;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+import org.bouncycastle.openssl.jcajce.JcaPKCS8Generator;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8EncryptorBuilder;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.OutputEncryptor;
 import org.jspecify.annotations.Nullable;
 
 import javax.crypto.KeyGenerator;
@@ -20,7 +28,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -32,13 +39,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.ECGenParameterSpec;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
-import java.util.Base64;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Utility class for cryptographic key operations.
@@ -148,6 +152,41 @@ public final class KeyUtil {
     }
 
     /**
+     * Converts a {@link PrivateKeyInfo} object into a {@link PrivateKey} instance.
+     *
+     * @param pki the {@link PrivateKeyInfo} containing the private key data and algorithm information.
+     * @return a {@link PrivateKey} created from the provided {@link PrivateKeyInfo}.
+     * @throws IOException if an error occurs during parsing or encoding of the private key.
+     * @throws GeneralSecurityException if an error occurs while generating the private key.
+     */
+    public static PrivateKey toPrivateKey(PrivateKeyInfo pki) throws IOException, GeneralSecurityException {
+        String algOid = pki.getPrivateKeyAlgorithm().getAlgorithm().getId();
+        if (algOid.equals("1.2.840.113549.1.1.1")) { // RSA
+            // Convert PKCS#8 -> PKCS#1 fields
+            RSAPrivateKey rsa = RSAPrivateKey.getInstance(pki.parsePrivateKey());
+            RSAPrivateCrtKeySpec keySpec = new RSAPrivateCrtKeySpec(
+                    rsa.getModulus(),
+                    rsa.getPublicExponent(),
+                    rsa.getPrivateExponent(),
+                    rsa.getPrime1(),
+                    rsa.getPrime2(),
+                    rsa.getExponent1(),
+                    rsa.getExponent2(),
+                    rsa.getCoefficient()
+            );
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePrivate(keySpec);
+        } else {
+            if (algOid.equals("1.2.840.10045.2.1") && pki.getPrivateKeyAlgorithm().getParameters() == null) { // EC
+                    throw new InvalidKeyException("EC domain parameters must be encoded in the algorithm identifier");
+            }
+            // Other algorithms (DSA, etc.)
+            JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+            return converter.getPrivateKey(pki);
+        }
+    }
+
+    /**
      * Converts a given byte array into a {@code PrivateKey} instance using the specified algorithm.
      *
      * @param bytes     the private key in encoded byte format
@@ -229,7 +268,7 @@ public final class KeyUtil {
      * @throws InvalidAlgorithmParameterException if the key generation fails
      */
     public static KeyPair generateRSAKeyPair() throws InvalidAlgorithmParameterException {
-        return generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        return generateKeyPair(com.dua3.utility.crypt.AsymmetricAlgorithm.RSA, 2048);
     }
 
     /**
@@ -331,7 +370,7 @@ public final class KeyUtil {
             // Create SecretKey from derived bytes
             return new SecretKeySpec(keyBytes, algorithm.getKeyAlgorithm());
         } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != com.dua3.utility.crypt.InputBufferHandling.PRESERVE) {
                 Arrays.fill(input, (byte) 0);
                 Arrays.fill(salt, (byte) 0);
                 if (info != null) {
@@ -339,216 +378,6 @@ public final class KeyUtil {
                 }
             }
         }
-    }
-
-    /**
-     * Loads a public key from a PEM formatted string.
-     *
-     * @param pem the PEM formatted string containing the public key.
-     * @return the {@code PublicKey} object representing the loaded public key.
-     * @throws InvalidKeySpecException if the specified key specification is invalid.
-     * @throws NoSuchAlgorithmException if the algorithm is not available in the environment
-     */
-    public static PublicKey loadPublicKeyFromPem(String pem) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        String algorithm = extractKeyAlgorithmFromPemHeader(pem, PUBLIC_KEY);
-        String clean = PATTERN_CLEAN_PEM.matcher(pem).replaceAll("");
-        byte[] bytes = decodeKeyDataBase64(clean);
-
-        // For standard "PUBLIC KEY" format, let Java determine the algorithm from the key data
-        if ("PUBLIC".equals(algorithm)) {
-            for (AsymmetricAlgorithm alg : AsymmetricAlgorithm.values()) {
-                try {
-                    KeyFactory kf = KeyFactory.getInstance(alg.keyFactoryAlgorithm());
-                    return kf.generatePublic(new X509EncodedKeySpec(bytes));
-                } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-                    LOG.debug("Unable to load public key from PEM data using algorithm '{}', trying next: {}", alg, e.getMessage());
-                }
-            }
-            // If all fail, throw with the last exception
-            throw new InvalidKeySpecException("Unable to determine key algorithm from PEM data");
-        }
-
-        KeyFactory kf = KeyFactory.getInstance(algorithm);
-        return kf.generatePublic(new X509EncodedKeySpec(bytes));
-    }
-
-    private static byte[] decodeKeyDataBase64(String clean) throws InvalidKeySpecException {
-        try {
-            return Base64.getDecoder().decode(clean);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidKeySpecException(e);
-        }
-    }
-
-    private static final Pattern PATTERN_CLEAN_PEM = Pattern.compile("-----[^-]*-----|\\s");
-
-    /**
-     * Loads an unencrypted private key from a PEM-formatted PKCS#8 string without encryption.
-     *
-     * @param pem the PEM-formatted private key string, including the header and footer
-     * @return the PrivateKey object reconstructed from the provided PEM string
-     * @throws InvalidKeySpecException  if the provided PEM content cannot be converted to a valid private key
-     * @throws NoSuchAlgorithmException if the algorithm is not available in the environment
-     */
-    public static PrivateKey loadPrivateKeyFromPem(String pem) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return loadPrivateKeyFromPem(pem, "".toCharArray());
-    }
-
-    /**
-     * Loads a private key from a PEM-formatted PKCS#8 string.
-     * Supports multiple algorithms (RSA, EC, DSA) and optional encryption.
-     *
-     * @param pem      the PEM-formatted private key string, including the header and footer
-     * @param password the password for decryption, or empty array for unencrypted keys
-     * @return the PrivateKey object reconstructed from the provided PEM string
-     * @throws InvalidKeySpecException  if the provided PEM content cannot be converted to a valid private key
-     * @throws NoSuchAlgorithmException if the algorithm is not available in the environment
-     */
-    public static PrivateKey loadPrivateKeyFromPem(String pem, char[] password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String algorithm = extractKeyAlgorithmFromPemHeader(pem, PRIVATE_KEY);
-        String clean = PATTERN_CLEAN_PEM.matcher(pem).replaceAll("");
-        byte[] bytes = decodeKeyDataBase64(clean);
-
-        // Handle encrypted keys
-        if (password.length > 0 && pem.contains("ENCRYPTED")) {
-            bytes = decryptKey(bytes, password, "private key");
-        }
-
-        // For standard "PRIVATE KEY" format, let Java determine the algorithm from the key data
-        if ("PRIVATE".equals(algorithm)) {
-            // Try RSA first (most common), then EC, then DSA
-            for (AsymmetricAlgorithm alg : AsymmetricAlgorithm.values()) {
-                try {
-                    KeyFactory kf = KeyFactory.getInstance(alg.keyFactoryAlgorithm());
-                    return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
-                } catch (InvalidKeySpecException e) {
-                    LOG.debug("Unable to load private key from PEM data using {} algorithm '{}', trying next: {}",
-                            alg.getClass().getSimpleName(), alg.keyFactoryAlgorithm(), e.getMessage());
-                } catch (NoSuchAlgorithmException e) {
-                    LOG.debug("Unable to load private key from PEM data - {} algorithm '{}' not available, trying next: {}",
-                            alg.getClass().getSimpleName(), alg.keyFactoryAlgorithm(), e.getMessage());
-                }
-            }
-            // If all fail, throw with the last exception
-            throw new InvalidKeySpecException("Unable to determine key algorithm from PEM data");
-        }
-
-        KeyFactory kf = KeyFactory.getInstance(algorithm);
-        return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
-    }
-
-    /**
-     * Decrypts the provided encrypted key data using a password and returns the decrypted key bytes.
-     *
-     * @param bytes the encrypted key data, with the first 16 bytes being the salt and the rest being the cipher text
-     * @param password the password used for deriving the decryption key
-     * @param keyText a descriptive text for the key, used for error handling purposes
-     * @return the decrypted key bytes
-     * @throws InvalidKeySpecException if the decryption process fails
-     */
-    private static byte[] decryptKey(byte[] bytes, char[] password, String keyText) throws InvalidKeySpecException {
-        try {
-            // Extract salt (first 16 bytes) and encrypted data
-            byte[] salt = Arrays.copyOfRange(bytes, 0, 16);
-            byte[] encryptedData = Arrays.copyOfRange(bytes, 16, bytes.length);
-
-            // Derive decryption key from password
-            SecretKey derivedKey = deriveSecretKey(
-                    SymmetricAlgorithm.AES,
-                    salt,
-                    new String(password).getBytes(StandardCharsets.UTF_8),
-                    null,
-                    InputBufferHandling.PRESERVE
-            );
-
-            // Decrypt the key data
-            bytes = CryptUtil.decryptSymmetric(
-                    SymmetricAlgorithm.AES,
-                    derivedKey,
-                    encryptedData
-            );
-        } catch (GeneralSecurityException e) {
-            throw new InvalidKeySpecException("Failed to decrypt " + keyText, e);
-        } finally {
-            // Clean up sensitive data
-            Arrays.fill(password, '\0');
-        }
-        return bytes;
-    }
-
-    /**
-     * Loads an unencrypted {@link SecretKey} from a PEM-formatted string.
-     *
-     * @param pem the PEM-formatted string containing the encoded key
-     * @return the {@link SecretKey} object derived from the PEM data
-     * @throws InvalidKeySpecException if the key specification is invalid
-     */
-    public static SecretKey loadSecretKeyFromPem(String pem) throws InvalidKeySpecException {
-        return loadSecretKeyFromPem(pem, "".toCharArray());
-    }
-
-    /**
-     * Loads a secret key from a PEM-formatted string.
-     * This method supports reading and decrypting PEM-formatted secret keys,
-     * optionally handling encrypted keys protected with a password.
-     *
-     * @param pem The PEM-formatted secret key string. It may include an encryption header if the key is encrypted.
-     * @param password The password used to decrypt the key if it is encrypted. Pass an empty array if no password is used.
-     *                 The password array will be cleared internally after usage for security purposes.
-     * @return A {@link SecretKey} constructed from the provided PEM data.
-     * @throws InvalidKeySpecException If the key data is invalid, decryption fails, or key generation is unsuccessful.
-     */
-    public static SecretKey loadSecretKeyFromPem(String pem, char[] password) throws InvalidKeySpecException {
-        String algorithm = extractKeyAlgorithmFromPemHeader(pem, SECRET_KEY);
-        String clean = PATTERN_CLEAN_PEM.matcher(pem).replaceAll("");
-        byte[] bytes = decodeKeyDataBase64(clean);
-
-        // Handle encrypted keys
-        if (password.length > 0 && pem.contains("ENCRYPTED")) {
-            bytes = decryptKey(bytes, password, "secret key");
-        }
-
-        // For standard "SECRET KEY" format, use AES as default algorithm
-        if ("SECRET".equals(algorithm)) {
-            algorithm = SymmetricAlgorithm.AES.getKeyAlgorithm();
-        }
-
-        // Create SecretKey from the decoded bytes
-        try {
-            return new SecretKeySpec(bytes, algorithm);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidKeySpecException("Invalid key data", e);
-        }
-    }
-
-    /**
-     * Extracts the algorithm from a PEM header using regex pattern matching.
-     * <p>
-     * This method returns values like "RSA", "EC", "DSA" (key algorithms)
-     * or "PUBLIC", "PRIVATE", "SECRET" (when no algorithm is specified).
-     *
-     * @param pem the PEM formatted string
-     * @param keyType the type of key ("PUBLIC KEY" or "PRIVATE KEY")
-     * @return the algorithm name for KeyFactory, or the keyType if no specific algorithm found
-     * @throws InvalidKeySpecException if the PEM format is invalid or missing required headers
-     */
-    private static String extractKeyAlgorithmFromPemHeader(String pem, String keyType) throws InvalidKeySpecException {
-        // Add size limit for security
-        if (pem.length() > 100_000) { // 100KB limit
-            throw new InvalidKeySpecException("PEM data exceeds maximum allowed size");
-        }
-
-        String pattern = "-----BEGIN\\s+(ENCRYPTED\\s+)?(?:(?<algorithm>\\w+)\\s+)?" + Pattern.quote(keyType) + "-----";
-        Pattern pemPattern = Pattern.compile(pattern);
-        Matcher matcher = pemPattern.matcher(pem);
-
-        if (matcher.find()) {
-            String algorithm = matcher.group("algorithm");
-            return algorithm != null ? algorithm : keyType.split("\\s+")[0]; // Return "PUBLIC" or "PRIVATE" for standard format
-        }
-
-        // Fallback - shouldn't happen with valid PEM
-        throw new InvalidKeySpecException("Invalid PEM format: missing required header");
     }
 
     /**
@@ -602,41 +431,115 @@ public final class KeyUtil {
      * @throws IllegalArgumentException if the provided key cannot be encoded.
      */
     public static void appendPem(Key key, Appendable app) throws IOException {
-        // Determine key type and algorithm prefix
-        String type = switch (key) {
-            case PrivateKey pk -> PRIVATE_KEY;
-            case PublicKey pk -> PUBLIC_KEY;
-            default -> throw new IllegalStateException("Unsupported key type: " + key.getClass().getName());
-        };
-        byte[] encoded = key.getEncoded();
-        if (encoded == null) {
-            throw new IllegalArgumentException("Key cannot be encoded");
+        try (JcaPEMWriter pemWriter = new JcaPEMWriter(IoUtil.getWriter(app))) {
+            switch (key) {
+                case PrivateKey privKey -> pemWriter.writeObject(privKey);
+                case PublicKey pubKey -> pemWriter.writeObject(pubKey);
+                default -> throw new IllegalStateException("Unsupported key type: " + key.getClass().getName());
+            }
         }
-
-        appendPemData(app, encoded, type);
     }
 
     /**
-     * Appends PEM (Privacy-Enhanced Mail) encoded data to the provided {@code Appendable} instance.
-     * The data is encoded in Base64 format with line breaks every 64 characters
-     * and wrapped with the appropriate PEM header and footer.
+     * Appends the PEM-encoded representation of the given {@link KeyPair} to the specified {@link Appendable}.
+     * If the {@link KeyPair} contains both a private and a public key, both are appended.
+     * A newline character is appended after each key.
      *
-     * @param app the {@code Appendable} object to which the PEM encoded data will be appended
-     * @param encoded the byte array containing the input data to be Base64 encoded and wrapped in PEM format
-     * @param type the type of the data (e.g., CERTIFICATE, PRIVATE KEY) to be used in the PEM header and footer
-     * @throws IOException if an I/O error occurs while appending data to the {@code Appendable} instance
+     * @param keyPair the {@link KeyPair} containing the private and/or public key to be encoded and appended
+     * @param app the {@link Appendable} to which the PEM-encoded keys will be appended
+     * @throws IOException if an I/O error occurs while appending the keys
+     * @throws IllegalArgumentException if the {@link KeyPair} does not contain at least one key
      */
-    private static void appendPemData(Appendable app, byte[] encoded, String type) throws IOException {
-        // Convert to Base64 with line breaks every 64 characters
-        CharSequence base64 = TextUtil.asCharSequence(TextUtil.base64EncodeToChars(encoded));
+    public static void appendPem(KeyPair keyPair, Appendable app) throws IOException {
+        appendPem(keyPair, "".toCharArray(), app);
+    }
 
-        // Write PEM format
-        app.append("-----BEGIN ").append(type).append("-----\n");
-        for (int i = 0; i < base64.length(); i += 64) {
-            app.append(base64, i, Math.min(i + 64, base64.length()));
+    /**
+     * Appends the PEM-encoded representation of a key pair to the specified {@code Appendable}.
+     * The private key can be optionally encrypted with a password. The method writes both the
+     * public and private keys in PEM format.
+     *
+     * @param keyPair the {@code KeyPair} containing both the public and private keys.
+     *                Must not be null and must contain both keys.
+     * @param password a character array representing the password for encrypting the private key.
+     *                 If the password is empty (i.e., {@code password.length == 0}), the private
+     *                 key will not be encrypted.
+     * @param app an {@code Appendable} to which the PEM data will be written.
+     *            Must not be null.
+     * @throws IOException if an I/O error occurs during writing.
+     * @throws IllegalArgumentException if the {@code KeyPair} does not contain both private and public keys.
+     */
+
+    public static void appendPem(KeyPair keyPair, char[] password, Appendable app) throws IOException {
+        PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
+
+        if (privateKey == null || publicKey == null) {
+            throw new IllegalArgumentException("KeyPair must contain both private and public keys");
+        }
+
+        if (password.length == 0) {
+            // Write unencrypted KeyPair - JcaPEMWriter can handle KeyPair directly
+            try (JcaPEMWriter pemWriter = new JcaPEMWriter(IoUtil.getWriter(app))) {
+                pemWriter.writeObject(keyPair);
+            }
+        } else {
+            // Write encrypted PKCS#8 private key
+            try (JcaPEMWriter pemWriter = new JcaPEMWriter(IoUtil.getWriter(app))) {
+                OutputEncryptor encryptor = new JceOpenSSLPKCS8EncryptorBuilder(
+                        PKCS8Generator.AES_256_CBC
+                ).setPassword(password).build();
+
+                JcaPKCS8Generator gen = new JcaPKCS8Generator(privateKey, encryptor);
+                pemWriter.writeObject(gen);
+                pemWriter.writeObject(publicKey);
+            } catch (OperatorCreationException e) {
+                throw new IOException("Failed to create PEM encryptor", e);
+            }
+        }
+
+        java.util.Arrays.fill(password, '\0');
+    }
+
+    /**
+     * Appends the PEM-encoded representation of the private and/or public key from the given {@code KeyPair}
+     * to the provided {@code Appendable}. If a password is provided, it is used to encrypt the private key.
+     * The public key, if present, is appended in an unencrypted format.
+     *
+     * @param keyPair the {@code KeyPair} containing the private and/or public key to encode
+     * @param app the {@code Appendable} instance to which the encoded keys are appended
+     * @param password the password to encrypt the private key, or {@code null} if unencrypted
+     * @throws IOException if an I/O error occurs during appending
+     * @throws IllegalArgumentException if the provided {@code KeyPair} contains neither a private nor a public key
+     */
+    public static void appendPem(KeyPair keyPair, Appendable app, char[] password) throws IOException {
+        PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
+
+        if (privateKey == null && publicKey == null) {
+            throw new IllegalArgumentException("KeyPair must contain at least one key");
+        }
+
+        // Write encrypted private key (if present) using the existing appendPem(key, password, app),
+        // and write public key using JcaPEMWriter so we keep consistent output.
+        if (privateKey != null) {
+            appendPem(privateKey, password, app); // this method already uses JcaPKCS8Generator
+            // ensure separation between entries
             app.append('\n');
         }
-        app.append("-----END ").append(type).append("-----\n");
+
+        if (publicKey != null) {
+            // write public key unencrypted (SubjectPublicKeyInfo)
+            try (JcaPEMWriter pemWriter = new JcaPEMWriter(IoUtil.getWriter(app))) {
+                try {
+                    SubjectPublicKeyInfo spki = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
+                    pemWriter.writeObject(spki);
+                } catch (Exception e) {
+                    pemWriter.writeObject(publicKey);
+                }
+            }
+            app.append('\n');
+        }
     }
 
     /**
@@ -650,65 +553,30 @@ public final class KeyUtil {
      */
     public static void appendPem(Key key, char[] password, Appendable app) throws IOException {
         if (password.length == 0) {
-            appendPem(key, app);
+            appendPem(key, app); // write unencrypted PEM
             return;
         }
 
-        // Determine key type and algorithm prefix
-        String type = switch (key) {
-            case PrivateKey pk -> "ENCRYPTED " + PRIVATE_KEY;
-            case PublicKey pk -> PUBLIC_KEY; // Public keys are not typically encrypted
-            case SecretKey sk -> "ENCRYPTED " + SECRET_KEY;
-            default -> throw new IllegalStateException("Unsupported key type: " + key.getClass().getName());
-        };
+        try (JcaPEMWriter pemWriter = new JcaPEMWriter(IoUtil.getWriter(app))) {
+            switch (key) {
+                case PrivateKey privKey -> {
+                    // Build PKCS#8 encryptor (AES-256-CBC)
+                    OutputEncryptor encryptor = new JceOpenSSLPKCS8EncryptorBuilder(
+                            PKCS8Generator.AES_256_CBC
+                    ).setPassword(password).build();
 
-        byte[] encoded = key.getEncoded();
-        if (encoded == null) {
-            throw new IllegalArgumentException("Key cannot be encoded");
-        }
-
-        // For public keys or when no password is provided, use standard PEM format
-        if (key instanceof PublicKey) {
-            appendPem(key, app);
-            return;
-        }
-
-        // Generate a random salt for encryption
-        byte[] salt = generateSalt(16);
-
-        // Derive encryption key from password
-        SecretKey derivedKey = deriveSecretKey(
-                SymmetricAlgorithm.AES,
-                salt,
-                new String(password).getBytes(StandardCharsets.UTF_8),
-                null,
-                InputBufferHandling.PRESERVE
-        );
-
-        try {
-            // Encrypt the key data
-            byte[] encryptedData = CryptUtil.encryptSymmetric(
-                    SymmetricAlgorithm.AES,
-                    derivedKey,
-                    encoded,
-                    InputBufferHandling.PRESERVE
-            );
-
-            // Combine salt and encrypted data
-            byte[] combined = new byte[salt.length + encryptedData.length];
-            System.arraycopy(salt, 0, combined, 0, salt.length);
-            System.arraycopy(encryptedData, 0, combined, salt.length, encryptedData.length);
-
-            // Convert to Base64 with line breaks every 64 characters
-            appendPemData(app, combined, type);
-        } catch (GeneralSecurityException e) {
-            // this should not happen
-            throw new IllegalStateException("encryption of then PEM data failed", e);
+                    // Wrap the PrivateKey in JcaPKCS8Generator and write PEM
+                    JcaPKCS8Generator gen = new JcaPKCS8Generator(privKey, encryptor);
+                    pemWriter.writeObject(gen);
+                }
+                case PublicKey pubKey -> pemWriter.writeObject(pubKey);
+                default -> throw new IllegalStateException("Unsupported key type: " + key.getClass().getName());
+            }
+        } catch (OperatorCreationException e) {
+            throw new IOException("data could not be written to PEM", e);
         } finally {
-            // Clean up sensitive data
-            Arrays.fill(password, '\0');
-            Arrays.fill(encoded, (byte) 0);
-            Arrays.fill(salt, (byte) 0);
+            // clear password
+            java.util.Arrays.fill(password, '\0');
         }
     }
 
