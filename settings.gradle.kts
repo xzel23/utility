@@ -4,7 +4,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "20.0.0-rc-5-SNAPSHOT"
+val projectVersion = "20.0.0-rc-5"
 
 // define subprojects
 include("utility")
@@ -50,7 +50,7 @@ dependencyResolutionManagement {
             plugin("sonar", "org.sonarqube").version("7.0.1.6134")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
-            plugin("jreleaser", "org.jreleaser").version("1.20.0")
+            plugin("jreleaser", "org.jreleaser").version("1.21.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.4.4")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("versions", "com.github.ben-manes.versions").version("0.53.0")
@@ -62,7 +62,7 @@ dependencyResolutionManagement {
             version("jimfs", "1.3.1")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
-            version("junit-bom", "5.13.4")
+            version("junit-bom", "6.0.1")
             version("log4j-bom", "2.25.2")
             version("miglayout", "11.4.2")
             version("slf4j", "2.0.17")

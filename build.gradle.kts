@@ -270,6 +270,10 @@ subprojects {
             implementation(rootProject.libs.jspecify)
             implementation(platform(rootProject.libs.log4j.bom))
             implementation(rootProject.libs.log4j.api)
+
+            testImplementation(platform(rootProject.libs.junit.bom))
+            testImplementation(rootProject.libs.junit.jupiter.api)
+            testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
         }
 
         idea {
