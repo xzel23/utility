@@ -223,7 +223,7 @@ public class PemData implements Iterable<PemData.PemItem> {
         try (PEMParser parser = new PEMParser(reader)) {
             Object obj;
             while ((obj = parser.readObject()) != null) {
-                PemItem PemItem = switch (obj) {
+                PemItem pemItem = switch (obj) {
                     case X509CertificateHolder holder -> {
                         LOG.debug("Found X509CertificateHolder object");
                         CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -274,8 +274,8 @@ public class PemData implements Iterable<PemData.PemItem> {
                     }
                 };
 
-                if (PemItem != null) {
-                    result.addLast(PemItem);
+                if (pemItem != null) {
+                    result.addLast(pemItem);
                 }
             }
         } catch (GeneralSecurityException e) {

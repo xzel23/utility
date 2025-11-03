@@ -48,11 +48,6 @@ import java.util.Arrays;
  * Utility class for cryptographic key operations.
  */
 public final class KeyUtil {
-    private static final Logger LOG = LogManager.getLogger(KeyUtil.class);
-
-    private static final String PUBLIC_KEY = "PUBLIC KEY";
-    private static final String PRIVATE_KEY = "PRIVATE KEY";
-    private static final String SECRET_KEY = "SECRET KEY";
 
     /**
      * Utility class private constructor.
