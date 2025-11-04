@@ -1,8 +1,10 @@
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
@@ -350,7 +352,7 @@ public final class CertificateUtil {
     }
 
     /**
-     * Writes a PEM-encoded representation of a chain of certificates to the provided writer.
+     * Writes a PEM-encoded representation of a certificate chain to the provided {@link Appendable}.
      * Each certificate in the chain is written enclosed between "-----BEGIN CERTIFICATE-----"
      * and "-----END CERTIFICATE-----" markers.
      * <p>
@@ -371,14 +373,13 @@ public final class CertificateUtil {
      */
     @SafeVarargs
     public static <T extends Certificate, U extends Appendable> U writePem(U app, T... certificates) throws IOException, CertificateEncodingException {
-        for (T certificate : certificates) {
-            if (!(certificate instanceof X509Certificate)) {
-                LOG.warn("exporting certificate of non-X509 type {} as PEM", certificate.getType());
+        try (JcaPEMWriter pemWriter = new JcaPEMWriter(IoUtil.getWriter(app))) {
+            for (T certificate : certificates) {
+                if (!(certificate instanceof X509Certificate)) {
+                    LOG.warn("exporting certificate of non-X509 type {} as PEM", certificate.getType());
+                }
+                pemWriter.writeObject(certificate);
             }
-
-            app.append("-----BEGIN CERTIFICATE-----\n")
-                    .append(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded()))
-                    .append("\n-----END CERTIFICATE-----\n");
         }
         return app;
     }

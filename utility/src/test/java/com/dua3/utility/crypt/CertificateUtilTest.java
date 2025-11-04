@@ -357,7 +357,7 @@ class CertificateUtilTest {
         // Verify the PEM format is correct
         assertTrue(pemOutput.startsWith("-----BEGIN CERTIFICATE-----\n"), "PEM should start with BEGIN marker");
         assertTrue(pemOutput.endsWith("-----END CERTIFICATE-----\n"), "PEM should end with END marker");
-        assertTrue(pemOutput.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
+        assertTrue(joinLines(pemOutput).contains(joinLines(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded()))),
                 "PEM should contain Base64 encoded certificate");
 
         // Test writing multiple certificates
@@ -372,9 +372,9 @@ class CertificateUtilTest {
         String pemOutput2 = sb2.toString();
 
         // Verify both certificates are in the output
-        assertTrue(pemOutput2.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
+        assertTrue(joinLines(pemOutput2).contains(joinLines(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded()))),
                 "PEM should contain first certificate");
-        assertTrue(pemOutput2.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate2.getEncoded())),
+        assertTrue(joinLines(pemOutput2).contains(joinLines(java.util.Base64.getMimeEncoder().encodeToString(certificate2.getEncoded()))),
                 "PEM should contain second certificate");
         assertEquals(2, pemOutput2.split("-----BEGIN CERTIFICATE-----").length - 1,
                 "PEM should contain two BEGIN markers");
@@ -383,8 +383,21 @@ class CertificateUtilTest {
 
         // Test with empty array
         StringBuilder sb3 = new StringBuilder();
-        CertificateUtil.writePem(sb3, new X509Certificate[0]);
+        CertificateUtil.writePem(sb3);
         assertEquals("", sb3.toString(), "PEM output should be empty for empty array");
+    }
+
+    /**
+     * Joins multiple lines of the given string into a single line by removing all line break characters.
+     * <p>
+     * This is needed when comparing PEM strings since standard BASE64 uses 76 characters per line
+     * whereas for PEM files often use 64 characters are used.
+     *
+     * @param pemOutput the input string containing line breaks
+     * @return a single-line string with all line breaks removed
+     */
+    private static String joinLines(String pemOutput) {
+        return pemOutput.replaceAll("\\R", "");
     }
 
     @Test
