@@ -357,7 +357,7 @@ class CertificateUtilTest {
         // Verify the PEM format is correct
         assertTrue(pemOutput.startsWith("-----BEGIN CERTIFICATE-----\n"), "PEM should start with BEGIN marker");
         assertTrue(pemOutput.endsWith("-----END CERTIFICATE-----\n"), "PEM should end with END marker");
-        assertTrue(joinLines(pemOutput).contains(joinLines(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded()))),
+        assertTrue(containsIgnoringLines(pemOutput, java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
                 "PEM should contain Base64 encoded certificate");
 
         // Test writing multiple certificates
@@ -372,9 +372,9 @@ class CertificateUtilTest {
         String pemOutput2 = sb2.toString();
 
         // Verify both certificates are in the output
-        assertTrue(joinLines(pemOutput2).contains(joinLines(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded()))),
+        assertTrue(containsIgnoringLines(pemOutput2, java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
                 "PEM should contain first certificate");
-        assertTrue(joinLines(pemOutput2).contains(joinLines(java.util.Base64.getMimeEncoder().encodeToString(certificate2.getEncoded()))),
+        assertTrue(containsIgnoringLines(pemOutput2, java.util.Base64.getMimeEncoder().encodeToString(certificate2.getEncoded())),
                 "PEM should contain second certificate");
         assertEquals(2, pemOutput2.split("-----BEGIN CERTIFICATE-----").length - 1,
                 "PEM should contain two BEGIN markers");
@@ -416,7 +416,7 @@ class CertificateUtilTest {
         // Verify the PEM format is correct
         assertTrue(pemOutput.startsWith("-----BEGIN CERTIFICATE-----\n"), "PEM should start with BEGIN marker");
         assertTrue(pemOutput.endsWith("-----END CERTIFICATE-----\n"), "PEM should end with END marker");
-        assertTrue(pemOutput.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
+        assertTrue(containsIgnoringLines(pemOutput, java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
                 "PEM should contain Base64 encoded certificate");
 
         // Test converting multiple certificates
@@ -429,9 +429,9 @@ class CertificateUtilTest {
         String pemOutput2 = CertificateUtil.toPem(certificate, certificate2);
 
         // Verify both certificates are in the output
-        assertTrue(pemOutput2.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
+        assertTrue(containsIgnoringLines(pemOutput2, java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
                 "PEM should contain first certificate");
-        assertTrue(pemOutput2.contains(java.util.Base64.getMimeEncoder().encodeToString(certificate2.getEncoded())),
+        assertTrue(containsIgnoringLines(pemOutput2, java.util.Base64.getMimeEncoder().encodeToString(certificate2.getEncoded())),
                 "PEM should contain second certificate");
         assertEquals(2, pemOutput2.split("-----BEGIN CERTIFICATE-----").length - 1,
                 "PEM should contain two BEGIN markers");
@@ -717,5 +717,13 @@ class CertificateUtilTest {
             assertDoesNotThrow(() -> chain3[index].verify(chain3[index + 1].getPublicKey()),
                     "Certificate at index " + index + " should be signed by certificate at index " + (index + 1));
         }
+    }
+
+    private static boolean compareIgnoringLines(String a, String b) {
+        return joinLines(a).equals(joinLines(b));
+    }
+
+    private static boolean containsIgnoringLines(String a, String b) {
+        return joinLines(a).contains(joinLines(b));
     }
 }
