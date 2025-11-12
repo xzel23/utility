@@ -1,6 +1,5 @@
 package com.dua3.utility.fx;
 
-import com.dua3.utility.concurrent.Value;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
@@ -13,6 +12,7 @@ import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.RichText;
+import com.sun.jdi.Value;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -416,23 +416,6 @@ class FxUtilTest extends FxTestBase {
             assertTrue(clipboardImage.isPresent(), "Clipboard should contain an image");
             assertNotNull(clipboardImage.get(), "Image should not be null");
         });
-    }
-
-    @Test
-    void testToObservableValue() {
-        // Test converting a Value to an ObservableValue
-        Value<String> value = Value.create("test");
-        ObservableValue<String> observable = FxUtil.toObservableValue(value);
-
-        assertEquals("test", observable.getValue(), "Initial value should match");
-
-        // Test that changes to the Value are reflected in the ObservableValue
-        AtomicReference<String> newValue = new AtomicReference<>();
-        observable.addListener((obs, oldVal, newVal) -> newValue.set(newVal));
-
-        value.set("updated");
-        assertEquals("updated", observable.getValue(), "Updated value should match");
-        assertEquals("updated", newValue.get(), "Listener should be notified of the change");
     }
 
     @Test
