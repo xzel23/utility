@@ -40,7 +40,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
     /**
      * Cancelable flag.
      */
-    private boolean cancelable = true;
+    private boolean cancelable;
     /**
      * Map {@code <page-name> |-> <page-information>}.
      */

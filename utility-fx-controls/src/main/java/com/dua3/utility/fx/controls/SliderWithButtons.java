@@ -450,7 +450,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
          */
         SLIDER_VALUE_TOTAL,
         /**
-         * Mode where the slider, its current value, and the total input value are displayed or utilized.
+         * Mode where the slider, its current value, and the total input value are used.
          */
         SLIDER_INPUT_TOTAL,
     }

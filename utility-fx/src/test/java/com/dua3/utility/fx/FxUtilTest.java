@@ -12,9 +12,7 @@ import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.RichText;
-import com.sun.jdi.Value;
 import javafx.beans.value.ObservableBooleanValue;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
@@ -31,7 +29,6 @@ import java.io.File;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -54,7 +54,7 @@ public class TaskProcessorDelegating<K> extends TaskProcessorBase {
         Instant startWait = Instant.now();
         Instant deadline = startWait.plus(Duration.ofMillis(timeUnit.toMillis(timeout)));
         while (!activeDelegates.isEmpty() && Instant.now().isBefore(deadline)) {
-            for (TaskProcessor delegate : activeDelegates) {
+            for (TaskProcessor delegate : List.copyOf(activeDelegates)) {
                 Instant now = Instant.now();
                 Duration maxWait = Duration.between(now, deadline);
                 if (maxWait.isNegative()) {

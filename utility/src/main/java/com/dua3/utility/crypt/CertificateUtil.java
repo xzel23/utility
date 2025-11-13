@@ -22,7 +22,6 @@ import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertPath;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
@@ -337,11 +336,10 @@ public final class CertificateUtil {
      * @param <T>          the generic certificate type
      * @param certificates one or more X509 certificates to be converted to PEM format
      * @return a string containing the PEM-encoded representation of the provided certificates
-     * @throws CertificateEncodingException if an encoding error occurs while converting the certificates
      * @throws UncheckedIOException         if an unexpected I/O exception happens during the operation
      */
     @SafeVarargs
-    public static <T extends Certificate> String toPem(T... certificates) throws CertificateEncodingException {
+    public static <T extends Certificate> String toPem(T... certificates) {
         StringBuilder sb = new StringBuilder(certificates.length * 1600);
         try {
             return writePem(sb, certificates).toString();
@@ -368,11 +366,9 @@ public final class CertificateUtil {
      *                     in the order specified.
      * @return the appendable used for output
      * @throws IOException                  if an I/O error occurs while writing to the writer.
-     * @throws CertificateEncodingException if an error occurs while encoding a certificate to the
-     *                                      DER format for PEM conversion.
      */
     @SafeVarargs
-    public static <T extends Certificate, U extends Appendable> U writePem(U app, T... certificates) throws IOException, CertificateEncodingException {
+    public static <T extends Certificate, U extends Appendable> U writePem(U app, T... certificates) throws IOException {
         try (JcaPEMWriter pemWriter = new JcaPEMWriter(IoUtil.getWriter(app))) {
             for (T certificate : certificates) {
                 if (!(certificate instanceof X509Certificate)) {

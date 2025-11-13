@@ -304,7 +304,7 @@ public final class KeyStoreUtil {
                     KeyStore newKeyStore = copyKeyStore(keyStore, password.clone(), targetType, password.clone());
                     try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
                         saveKeyStore(newKeyStore, outputStream, password);
-                        LOG.debug("KeyStore written to file {}", keystoreFile);
+                        LOG.debug("KeyStore exported to file {}", keystoreFile);
                     }
                 }
             }
