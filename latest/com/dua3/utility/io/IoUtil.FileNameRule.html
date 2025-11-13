@@ -128,21 +128,37 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Enum Constant</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="#BLANK_FILENAME" class="member-name-link">BLANK_FILENAME</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Blank filenames: disallowed on Windows; formally allowed on MacOS, but problematic.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#EMPTY_FILENAME" class="member-name-link">EMPTY_FILENAME</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Empty filenames: disallowed on all platforms.</div>
+</div>
 <div class="col-first even-row-color"><code><a href="#FORBIDDEN_CHARS_LINUX" class="member-name-link">FORBIDDEN_CHARS_LINUX</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Forbidden characters in filenames on Linux (might be incomplete).</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#FORBIDDEN_CHARS_MACOS" class="member-name-link">FORBIDDEN_CHARS_MACOS</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Forbidden characters in filenames on macOS (might be incomplete).</div>
+</div>
 <div class="col-first even-row-color"><code><a href="#FORBIDDEN_CHARS_WINDOWS" class="member-name-link">FORBIDDEN_CHARS_WINDOWS</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Forbidden characters in filenames on Windows (might be incomplete).</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#FORBIDDEN_NAMES_WINDOWS" class="member-name-link">FORBIDDEN_NAMES_WINDOWS</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Forbidden filenames in Windows; these are reserved by the system.</div>
+</div>
 <div class="col-first even-row-color"><code><a href="#LEADING_OR_TRAILING_WHITESPACE" class="member-name-link">LEADING_OR_TRAILING_WHITESPACE</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Leading or trailing whitespace; technically allowed on Windows, but mapped to a different filename.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#TRAILING_DOT" class="member-name-link">TRAILING_DOT</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Tailing dot; technically allowed on Windows, but mapped to a different filename.</div>
+</div>
 </div>
 </section>
 </li>
@@ -204,48 +220,56 @@ the order they are declared.</div>
 <section class="detail" id="EMPTY_FILENAME">
 <h3>EMPTY_FILENAME</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IoUtil.FileNameRule.html" title="enum class in com.dua3.utility.io">IoUtil.FileNameRule</a></span>&nbsp;<span class="element-name">EMPTY_FILENAME</span></div>
+<div class="block">Empty filenames: disallowed on all platforms.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="BLANK_FILENAME">
 <h3>BLANK_FILENAME</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IoUtil.FileNameRule.html" title="enum class in com.dua3.utility.io">IoUtil.FileNameRule</a></span>&nbsp;<span class="element-name">BLANK_FILENAME</span></div>
+<div class="block">Blank filenames: disallowed on Windows; formally allowed on MacOS, but problematic.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="LEADING_OR_TRAILING_WHITESPACE">
 <h3>LEADING_OR_TRAILING_WHITESPACE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IoUtil.FileNameRule.html" title="enum class in com.dua3.utility.io">IoUtil.FileNameRule</a></span>&nbsp;<span class="element-name">LEADING_OR_TRAILING_WHITESPACE</span></div>
+<div class="block">Leading or trailing whitespace; technically allowed on Windows, but mapped to a different filename.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="TRAILING_DOT">
 <h3>TRAILING_DOT</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IoUtil.FileNameRule.html" title="enum class in com.dua3.utility.io">IoUtil.FileNameRule</a></span>&nbsp;<span class="element-name">TRAILING_DOT</span></div>
+<div class="block">Tailing dot; technically allowed on Windows, but mapped to a different filename.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="FORBIDDEN_CHARS_WINDOWS">
 <h3>FORBIDDEN_CHARS_WINDOWS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IoUtil.FileNameRule.html" title="enum class in com.dua3.utility.io">IoUtil.FileNameRule</a></span>&nbsp;<span class="element-name">FORBIDDEN_CHARS_WINDOWS</span></div>
+<div class="block">Forbidden characters in filenames on Windows (might be incomplete).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="FORBIDDEN_CHARS_MACOS">
 <h3>FORBIDDEN_CHARS_MACOS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IoUtil.FileNameRule.html" title="enum class in com.dua3.utility.io">IoUtil.FileNameRule</a></span>&nbsp;<span class="element-name">FORBIDDEN_CHARS_MACOS</span></div>
+<div class="block">Forbidden characters in filenames on macOS (might be incomplete).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="FORBIDDEN_CHARS_LINUX">
 <h3>FORBIDDEN_CHARS_LINUX</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IoUtil.FileNameRule.html" title="enum class in com.dua3.utility.io">IoUtil.FileNameRule</a></span>&nbsp;<span class="element-name">FORBIDDEN_CHARS_LINUX</span></div>
+<div class="block">Forbidden characters in filenames on Linux (might be incomplete).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="FORBIDDEN_NAMES_WINDOWS">
 <h3>FORBIDDEN_NAMES_WINDOWS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IoUtil.FileNameRule.html" title="enum class in com.dua3.utility.io">IoUtil.FileNameRule</a></span>&nbsp;<span class="element-name">FORBIDDEN_NAMES_WINDOWS</span></div>
+<div class="block">Forbidden filenames in Windows; these are reserved by the system.</div>
 </section>
 </li>
 </ul>
