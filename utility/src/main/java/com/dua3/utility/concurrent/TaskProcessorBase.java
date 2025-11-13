@@ -9,6 +9,7 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -25,6 +26,57 @@ public abstract class TaskProcessorBase implements TaskProcessor {
     private final Phaser phaser = new Phaser(1);
     private final AtomicBoolean isShutDown = new AtomicBoolean(false);
     private final AtomicBoolean isCompleted = new AtomicBoolean(false);
+
+    private final AtomicInteger tasksSubmitted = new AtomicInteger(0);
+    private final AtomicInteger tasksCompleted = new AtomicInteger(0);
+
+    /**
+     * Represents the state of a {@code TaskProcessorBase}.
+     */
+    public enum State {
+        /**
+         * The task processor is active and accepting tasks.
+         */
+        RUNNING,
+        /**
+         * The task processor is shutting down, but tasks are still being completed.
+         */
+        SHUTDOWN,
+        /**
+         * The task processor has finished processing all tasks and is fully shut down.
+         */
+        COMLETED;
+    }
+
+    /**
+     * A record that represents the statistics of tasks processed by a {@code TaskProcessorBase}.
+     *
+     * @param submitted the total number of tasks that have been submitted
+     * @param completed the total number of tasks that have been completed so far
+     * @param state     the current state of the task processor, represented as a {@link State} enum
+     */
+    public record Stats(int submitted, int completed, State state) {}
+
+    /**
+     * Retrieves the statistics of tasks processed by this task processor.
+     * @return a {@code Stats} record containing current stats for this processor
+     */
+    public Stats getStats() {
+        return new Stats(tasksSubmitted.get(), tasksCompleted.get(), getState());
+    }
+
+    /**
+     * Retrieves the current state of the task processor.
+
+     * @return the current state of the task processor as a {@link State} enum value.
+     */
+    public State getState() {
+        if (isShutdown()) {
+            return isCompleted.get() ? State.COMLETED : State.SHUTDOWN;
+        } else {
+            return State.RUNNING;
+        }
+    }
 
     /**
      * Constructor.
@@ -79,6 +131,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
         LOG.info("'{}' - registering ID: {} for phaser {}", name, id, phaser);
         ensureOpen();
         phaser.register();
+        tasksSubmitted.incrementAndGet();
     }
 
     /**
@@ -88,6 +141,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      */
     protected void unregisterId(long id) {
         phaser.arriveAndDeregister();
+        tasksCompleted.incrementAndGet();
         LOG.info("'{}' - unregistered ID: {} for phaser  {}", name, id, phaser);
     }
 
