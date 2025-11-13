@@ -483,6 +483,17 @@ public class PemData implements Iterable<PemData.PemItem> {
         };
     }
 
+    /**
+     * Converts the PEM object to a {@link KeyPair} if it is a valid and single key pair.
+     * This method expects the PEM object to contain exactly one key pair of type
+     * {@code PemType.KEY_PAIR} or {@code PemType.ENCRYPTED_KEY_PAIR}.
+     * If the key pair is encrypted, an exception is thrown to suggest using an alternative method
+     * that accepts a password for decryption.
+     *
+     * @return the {@link KeyPair} contained in the PEM object.
+     * @throws PemException if the PEM object does not contain exactly one key pair,
+     *                      or if the key pair is encrypted.
+     */
     public KeyPair asKeyPair() throws PemException {
         if (size() != 1 || LangUtil.isNoneOf(get(0).type(), PemType.KEY_PAIR, PemType.ENCRYPTED_KEY_PAIR)) {
             throw new PemException("expected a single key pair");
@@ -493,6 +504,20 @@ public class PemData implements Iterable<PemData.PemItem> {
         return (KeyPair) get(0).content();
     }
 
+    /**
+     * Converts the stored PEM content into a {@link KeyPair} object.
+     * <p>
+     * Depending on the content type, this method parses and decrypts (if necessary)
+     * the PEM-encoded keys to create a {@link KeyPair} instance. It supports single-key
+     * configurations and multi-key configurations based on the internal structure.
+     *
+     * @param password the password to decrypt the key pair or private key if it is encrypted.
+     *                 This will be zeroed out (filled with {@code '\0'}) after usage
+     *                 to ensure sensitive data is not retained in memory.
+     * @return the constructed {@link KeyPair} from the PEM data.
+     * @throws PemException if the PEM format is invalid, the required type is not present,
+     *                      the content types are mismatched, or if decryption fails.
+     */
     public KeyPair asKeyPair(char[] password) throws PemException {
         try {
             return switch (size()) {
