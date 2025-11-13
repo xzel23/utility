@@ -5,6 +5,7 @@
 
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
@@ -355,8 +356,8 @@ class CertificateUtilTest {
         String pemOutput = sb.toString();
 
         // Verify the PEM format is correct
-        assertTrue(pemOutput.startsWith("-----BEGIN CERTIFICATE-----\n"), "PEM should start with BEGIN marker");
-        assertTrue(pemOutput.endsWith("-----END CERTIFICATE-----\n"), "PEM should end with END marker");
+        assertTrue(TextUtil.toUnixLineEnds(pemOutput).startsWith("-----BEGIN CERTIFICATE-----\n"), "PEM should start with BEGIN marker");
+        assertTrue(TextUtil.toUnixLineEnds(pemOutput).endsWith("-----END CERTIFICATE-----\n"), "PEM should end with END marker");
         assertTrue(containsIgnoringLines(pemOutput, java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
                 "PEM should contain Base64 encoded certificate");
 
@@ -414,8 +415,8 @@ class CertificateUtilTest {
         String pemOutput = CertificateUtil.toPem(certificate);
 
         // Verify the PEM format is correct
-        assertTrue(pemOutput.startsWith("-----BEGIN CERTIFICATE-----\n"), "PEM should start with BEGIN marker");
-        assertTrue(pemOutput.endsWith("-----END CERTIFICATE-----\n"), "PEM should end with END marker");
+        assertTrue(TextUtil.toUnixLineEnds(pemOutput).startsWith("-----BEGIN CERTIFICATE-----\n"), "PEM should start with BEGIN marker");
+        assertTrue(TextUtil.toUnixLineEnds(pemOutput).endsWith("-----END CERTIFICATE-----\n"), "PEM should end with END marker");
         assertTrue(containsIgnoringLines(pemOutput, java.util.Base64.getMimeEncoder().encodeToString(certificate.getEncoded())),
                 "PEM should contain Base64 encoded certificate");
 
@@ -717,10 +718,6 @@ class CertificateUtilTest {
             assertDoesNotThrow(() -> chain3[index].verify(chain3[index + 1].getPublicKey()),
                     "Certificate at index " + index + " should be signed by certificate at index " + (index + 1));
         }
-    }
-
-    private static boolean compareIgnoringLines(String a, String b) {
-        return joinLines(a).equals(joinLines(b));
     }
 
     private static boolean containsIgnoringLines(String a, String b) {
