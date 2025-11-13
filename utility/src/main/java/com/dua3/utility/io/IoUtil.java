@@ -1488,20 +1488,40 @@ public final class IoUtil {
      * which platforms the rule applies to.
      */
     public enum FileNameRule {
-        // allowed nowhere
+        /**
+         * Empty filenames: disallowed on all platforms.
+         */
         EMPTY_FILENAME(s -> !s.isEmpty(), Platform.values()),
 
-        // formally allowed on MacOS but problematic
+        /**
+         * Blank filenames: disallowed on Windows; formally allowed on MacOS, but problematic.
+         */
         BLANK_FILENAME(s -> !s.isBlank(), Platform.WINDOWS, Platform.MACOS),
 
-        // technically allowed, but mapped to different filename
+        /**
+         * Leading or trailing whitespace; technically allowed on Windows, but mapped to a different filename.
+         */
         LEADING_OR_TRAILING_WHITESPACE(s -> s.strip().length() == s.length(), Platform.WINDOWS),
+        /**
+         * Tailing dot; technically allowed on Windows, but mapped to a different filename.
+         */
         TRAILING_DOT(s -> !s.endsWith("."), Platform.WINDOWS),
 
-        // maybe incomplete
+        /**
+         * Forbidden characters in filenames on Windows (might be incomplete).
+         */
         FORBIDDEN_CHARS_WINDOWS(s -> !TextUtil.containsAnyOf(s, "<>:\"/\\|?*\r\n\0"), Platform.WINDOWS),
+        /**
+         * Forbidden characters in filenames on macOS (might be incomplete).
+         */
         FORBIDDEN_CHARS_MACOS(s -> !TextUtil.containsAnyOf(s, "/:\n\0"), Platform.MACOS),
+        /**
+         * Forbidden characters in filenames on Linux (might be incomplete).
+         */
         FORBIDDEN_CHARS_LINUX(s -> !TextUtil.containsAnyOf(s, "/\0"), Platform.LINUX),
+        /**
+         * Forbidden filenames in Windows; these are reserved by the system.
+         */
         FORBIDDEN_NAMES_WINDOWS(s ->
                 !stripExtension(s).toLowerCase(Locale.ROOT)
                         .matches("con|prn|aux|nul|(com|lpt)[1-9]"),

@@ -15,9 +15,8 @@ import java.util.function.Function;
  * received asynchronously.
  *
  * @param <K> the type of the unique key associated with each task
- * @param <T> the type of the task result
  */
-public class TaskProcessorEventDriven<K, T> extends TaskProcessorBase {
+public class TaskProcessorEventDriven<K> extends TaskProcessorBase {
     private static final Logger LOG = LogManager.getLogger(TaskProcessorEventDriven.class);
 
     private final Function<Callable<?>, K> submitExternal;
@@ -48,26 +47,26 @@ public class TaskProcessorEventDriven<K, T> extends TaskProcessorBase {
      * @param result the result to be set if the task is successfully completed
      * @param isCompleted a flag indicating whether the task is completed
      */
-    public void updateTask(K key, T result, boolean isCompleted) {
+    @SuppressWarnings("unchecked")
+    public void updateTask(K key, Object result, boolean isCompleted) {
         if (isCompleted) {
             // set the result and remove the future
             LOG.debug("task {}: completed", key);
             futures.compute(key, (k, entry) -> {
                 if (entry != null) {
                     LOG.debug("task {} with key {}: completing future", entry.id(), k);
-                    ((CompletableFuture<T>) entry.completableFuture()).complete(result);
-                    return null;
+                    ((CompletableFuture<Object>) entry.completableFuture()).complete(result);
                 } else {
-                    LOG.debug("task {} with key {}: ignoring completion event, task not found", k);
-                    return null;
+                    LOG.debug("task with key {} not found: ignoring completion event", k);
                 }
+                return null;
             });
         } else {
             TaskEntry taskEntry = futures.get(key);
             if (taskEntry != null) {
                 LOG.debug("task {} with key {}: ignoring update, task is not completed", taskEntry.id(), key);
             } else {
-                LOG.debug("task {} with key {}: ignoring update, task not found", key);
+                LOG.debug("task with key {} not found: ignoring update", key);
             }
         }
     }

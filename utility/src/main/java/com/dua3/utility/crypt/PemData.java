@@ -54,6 +54,13 @@ public class PemData implements Iterable<PemData.PemItem> {
     private static final Logger LOG = LogManager.getLogger(PemData.class);
 
     /**
+     * Default constructor.
+     */
+    public PemData() {
+        // nothing to do.
+    }
+
+    /**
      * Exception class representing errors related to PEM (Privacy-Enhanced Mail) data processing.
      */
     public static class PemException extends Exception {

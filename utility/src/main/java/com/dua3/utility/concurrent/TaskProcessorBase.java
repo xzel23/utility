@@ -3,6 +3,7 @@ package com.dua3.utility.concurrent;
 import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.jce.exception.ExtCertificateEncodingException;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -117,7 +118,13 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      */
     private void notifyListeners() {
         for (var listener:listeners) {
-            LangUtil.applyIfNonNull(listener.get(), c -> c.accept(this));
+            LangUtil.applyIfNonNull(listener.get(), c -> {
+                try {
+                    c.accept(this);
+                } catch (Exception e) {
+                    LOG.warn("TaskProcessor {}: listener threw exception, ignoring", getName(), e);
+                }
+            });
         }
     }
 
@@ -175,6 +182,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
         ensureOpen();
         phaser.register();
         tasksSubmitted.incrementAndGet();
+        notifyListeners();
     }
 
     /**
@@ -186,6 +194,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
         phaser.arriveAndDeregister();
         tasksCompleted.incrementAndGet();
         LOG.info("'{}' - unregistered ID: {} for phaser  {}", name, id, phaser);
+        notifyListeners();
     }
 
     @Override
@@ -217,7 +226,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      * @throws IllegalStateException if the processor has been shut down
      */
     public void ensureOpen() {
-        LangUtil.check(!isShutDown.get(), "'%' - is shut down", name);
+        LangUtil.check(!isShutDown.get(), "'%s' - is shut down", name);
     }
 
     /**
