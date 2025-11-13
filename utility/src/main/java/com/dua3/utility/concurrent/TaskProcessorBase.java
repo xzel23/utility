@@ -3,6 +3,7 @@ package com.dua3.utility.concurrent;
 import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.jce.exception.ExtCertificateEncodingException;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
