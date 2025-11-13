@@ -4,6 +4,9 @@ import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +14,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 /**
  * Base class for {@link TaskProcessor} implementations.
@@ -29,6 +33,8 @@ public abstract class TaskProcessorBase implements TaskProcessor {
 
     private final AtomicInteger tasksSubmitted = new AtomicInteger(0);
     private final AtomicInteger tasksCompleted = new AtomicInteger(0);
+
+    private final List<WeakReference<Consumer<TaskProcessor>>> listeners = new ArrayList<>();
 
     /**
      * Represents the state of a {@code TaskProcessorBase}.
@@ -51,23 +57,24 @@ public abstract class TaskProcessorBase implements TaskProcessor {
     /**
      * A record that represents the statistics of tasks processed by a {@code TaskProcessorBase}.
      *
+     * @param owner     the {@link TaskProcessor} instance this belongs to
      * @param submitted the total number of tasks that have been submitted
      * @param completed the total number of tasks that have been completed so far
      * @param state     the current state of the task processor, represented as a {@link State} enum
      */
-    public record Stats(int submitted, int completed, State state) {}
+    public record Stats(TaskProcessor owner, int submitted, int completed, State state) {}
 
     /**
      * Retrieves the statistics of tasks processed by this task processor.
      * @return a {@code Stats} record containing current stats for this processor
      */
     public Stats getStats() {
-        return new Stats(tasksSubmitted.get(), tasksCompleted.get(), getState());
+        return new Stats(this, tasksSubmitted.get(), tasksCompleted.get(), getState());
     }
 
     /**
      * Retrieves the current state of the task processor.
-
+     *
      * @return the current state of the task processor as a {@link State} enum value.
      */
     public State getState() {
@@ -75,6 +82,42 @@ public abstract class TaskProcessorBase implements TaskProcessor {
             return isCompleted.get() ? State.COMLETED : State.SHUTDOWN;
         } else {
             return State.RUNNING;
+        }
+    }
+
+    /**
+     * Adds a listener that will be notified of task processor events.
+     * The listener is stored as a weak reference to prevent memory leaks.
+     *
+     * @param listener a {@link Consumer} that accepts a {@link TaskProcessor}.
+     *                 The listener will be notified when an event occurs in the task processor.
+     */
+    public void addListener(Consumer<TaskProcessor> listener) {
+        listeners.add(new WeakReference<>(listener));
+    }
+
+    /**
+     * Removes the specified listener from the list of listeners.
+     *
+     * @param listener the listener to be removed
+     */
+    public void removeListener(Consumer<TaskProcessor> listener) {
+        listeners.removeIf(r -> LangUtil.isOneOf(r.get(), listener, null));
+    }
+
+    /**
+     * Notifies all registered listeners about a state change or event.
+     *
+     * This method iterates over the list of registered listeners, invoking
+     * each non-null listener's {@code accept} method with the current instance
+     * of the {@link TaskProcessorBase} as an argument.
+     *
+     * Listeners are accessed through weak references, and only non-null listeners
+     * are invoked to avoid potential issues caused by listeners being garbage-collected.
+     */
+    private void notifyListeners() {
+        for (var listener:listeners) {
+            LangUtil.applyIfNonNull(listener.get(), c -> c.accept(this));
         }
     }
 
