@@ -157,7 +157,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      * @see Phaser#register()
      */
     protected void registerParty(String party) {
-        LOG.info("'{}' - registering party: {} for phaser {}", name, party, phaser);
+        LOG.debug("'{}' - registering party: {} for phaser {}", name, party, phaser);
         ensureOpen();
         phaser.register();
     }
@@ -169,7 +169,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      */
     protected void unregisterParty(String party) {
         phaser.arriveAndDeregister();
-        LOG.info("'{}' - unregistered party: {} for phaser {}", name, party, phaser);
+        LOG.debug("'{}' - unregistered party: {} for phaser {}", name, party, phaser);
     }
 
     /**
@@ -178,7 +178,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      * @see Phaser#register()
      */
     protected void registerId(long id) {
-        LOG.info("'{}' - registering ID: {} for phaser {}", name, id, phaser);
+        LOG.debug("'{}' - registering ID: {} for phaser {}", name, id, phaser);
         ensureOpen();
         phaser.register();
         tasksSubmitted.incrementAndGet();
@@ -193,13 +193,13 @@ public abstract class TaskProcessorBase implements TaskProcessor {
     protected void unregisterId(long id) {
         phaser.arriveAndDeregister();
         tasksCompleted.incrementAndGet();
-        LOG.info("'{}' - unregistered ID: {} for phaser  {}", name, id, phaser);
+        LOG.debug("'{}' - unregistered ID: {} for phaser  {}", name, id, phaser);
         notifyListeners();
     }
 
     @Override
     public void shutdown() {
-        LOG.info("'{}' - shutdown(): {}", name, phaser);
+        LOG.debug("'{}' - shutdown(): {}", name, phaser);
 
         ensureOpen();
 
@@ -240,7 +240,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
 
     @Override
     public void shutdownAndAbort() {
-        LOG.info("'{}' - shutdownAndAbort(): {}", name, phaser);
+        LOG.debug("'{}' - shutdownAndAbort(): {}", name, phaser);
         shutdown();
         phaser.forceTermination();
     }
@@ -253,7 +253,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
             if (!isCompleted.compareAndSet(false, true)) {
                 throw new IllegalStateException("'" + name + "' waitForCompletion() called twice");
             }
-            LOG.info("'{}' - completed", name);
+            LOG.debug("'{}' - completed", name);
             return true;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
