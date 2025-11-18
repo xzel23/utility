@@ -92,7 +92,7 @@ public class TaskProcessorDelegating<K> extends TaskProcessorBase {
     public <T> CompletableFuture<T> submit(Callable<? extends T> task) {
         K key = getDelegateKey.apply(task);
         TaskProcessor delegate = getDelegate(key);
-        LOG.debug("submitting callable task to delegate {}", delegate);
+        LOG.trace("'{}' - submitting callable task to delegate {}", getName(), delegate);
         return delegate.submit(task);
     }
 
@@ -100,7 +100,7 @@ public class TaskProcessorDelegating<K> extends TaskProcessorBase {
     public void submit(LangUtil.RunnableThrows<Exception> task) {
         K key = getDelegateKey.apply(task);
         TaskProcessor delegate = getDelegate(key);
-        LOG.debug("submitting runnable task to delegate {}", delegate);
+        LOG.trace("'{}' - submitting runnable task to delegate {}", getName(), delegate);
         delegate.submit(task);
     }
 

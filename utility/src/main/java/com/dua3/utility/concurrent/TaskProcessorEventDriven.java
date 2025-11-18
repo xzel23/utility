@@ -51,22 +51,22 @@ public class TaskProcessorEventDriven<K> extends TaskProcessorBase {
     public void updateTask(K key, Object result, boolean isCompleted) {
         if (isCompleted) {
             // set the result and remove the future
-            LOG.debug("task {}: completed", key);
+            LOG.debug("'{}' - task with key {} completed", getName(), key);
             futures.compute(key, (k, entry) -> {
                 if (entry != null) {
-                    LOG.debug("task {} with key {}: completing future", entry.id(), k);
+                    LOG.trace("'{}' - task {} with key {}: completing future", getName(), entry.id(), k);
                     ((CompletableFuture<Object>) entry.completableFuture()).complete(result);
                 } else {
-                    LOG.debug("task with key {} not found: ignoring completion event", k);
+                    LOG.trace("'{}' - task with key {} not found: ignoring completion event", getName(), k);
                 }
                 return null;
             });
         } else {
             TaskEntry taskEntry = futures.get(key);
             if (taskEntry != null) {
-                LOG.debug("task {} with key {}: ignoring update, task is not completed", taskEntry.id(), key);
+                LOG.trace("'{}' - task {} with key {}: ignoring update, task is not completed", getName(), taskEntry.id(), key);
             } else {
-                LOG.debug("task with key {} not found: ignoring update", key);
+                LOG.trace("'{}' - task with key {} not found: ignoring update", getName(), key);
             }
         }
     }
@@ -74,9 +74,10 @@ public class TaskProcessorEventDriven<K> extends TaskProcessorBase {
     @Override
     public <T> CompletableFuture<T> submit(Callable<? extends T> task) {
         long id = nextId();
+        K key = submitExternal.apply(task);
+        LOG.debug("'{}' - submitting new task {} with key {}", getName(), id, key);
         registerId(id);
         CompletableFuture<T> cf = new CompletableFuture<>();
-        K key = submitExternal.apply(task);
         futures.put(key, new TaskEntry(id, cf));
         return cf;
     }

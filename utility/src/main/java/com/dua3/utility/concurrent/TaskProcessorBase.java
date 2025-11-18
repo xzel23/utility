@@ -3,7 +3,6 @@ package com.dua3.utility.concurrent;
 import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.exception.ExtCertificateEncodingException;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -157,7 +156,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      * @see Phaser#register()
      */
     protected void registerParty(String party) {
-        LOG.debug("'{}' - registering party: {} for phaser {}", name, party, phaser);
+        LOG.trace("'{}' - registering party: {} for phaser {}", name, party, phaser);
         ensureOpen();
         phaser.register();
     }
@@ -169,7 +168,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      */
     protected void unregisterParty(String party) {
         phaser.arriveAndDeregister();
-        LOG.debug("'{}' - unregistered party: {} for phaser {}", name, party, phaser);
+        LOG.trace("'{}' - unregistered party: {} for phaser {}", name, party, phaser);
     }
 
     /**
@@ -178,7 +177,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      * @see Phaser#register()
      */
     protected void registerId(long id) {
-        LOG.debug("'{}' - registering ID: {} for phaser {}", name, id, phaser);
+        LOG.trace("'{}' - registering ID: {} for phaser {}", name, id, phaser);
         ensureOpen();
         phaser.register();
         tasksSubmitted.incrementAndGet();
@@ -193,7 +192,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
     protected void unregisterId(long id) {
         phaser.arriveAndDeregister();
         tasksCompleted.incrementAndGet();
-        LOG.debug("'{}' - unregistered ID: {} for phaser  {}", name, id, phaser);
+        LOG.trace("'{}' - unregistered ID: {} for phaser  {}", name, id, phaser);
         notifyListeners();
     }
 
@@ -247,7 +246,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
 
     @Override
     public boolean waitForCompletion(long timeout, TimeUnit timeUnit) {
-        LOG.debug("'{}' - waiting for completion", name);
+        LOG.trace("'{}' - waiting for completion", name);
         try {
             phaser.awaitAdvanceInterruptibly(-1, timeout, timeUnit);
             if (!isCompleted.compareAndSet(false, true)) {
@@ -259,7 +258,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("'" + name + "' interrupted", e);
         } catch (TimeoutException e) {
-            LOG.debug("'{}' - timeout waiting for completion", name);
+            LOG.trace("'{}' - timeout waiting for completion", name);
             return false;
         }
     }
@@ -274,7 +273,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
             try {
                 task.run();
             } catch (Exception e) {
-                LOG.warn("TaskProcessor {}: failed with exception {}", getName(), e.getMessage(), e);
+                LOG.warn("'{}' - task failed with exception", getName(), e);
             }
             return null;
         });

@@ -43,10 +43,10 @@ public class TaskProcessorAsync extends TaskProcessorBase {
     public boolean waitForCompletion(final long timeout, final TimeUnit timeUnit) {
         boolean rc = super.waitForCompletion(timeout, timeUnit);
         if (rc) {
-            LOG.debug("TaskProcessor {}: shutting down executor", getName());
+            LOG.trace("'{}' - shutting down executor", getName());
             executor.shutdown();
         } else {
-            LOG.debug("TaskProcessor {}: timeout waiting for tasks to complete", getName());
+            LOG.trace("'{}' - timeout waiting for tasks to complete", getName());
         }
         return rc;
     }
@@ -60,7 +60,7 @@ public class TaskProcessorAsync extends TaskProcessorBase {
      */
     public <T> CompletableFuture<T> submit(Callable<? extends T> task) {
         long id = nextId();
-        LOG.debug("TaskProcessor {}: submitting new task {}", getName(), id);
+        LOG.debug("'{}' - submitting new task {}", getName(), id);
         registerId(id);
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -68,7 +68,7 @@ public class TaskProcessorAsync extends TaskProcessorBase {
             } catch (Exception e) {
                 throw new CompletionException(e);
             } finally {
-                LOG.debug("TaskProcessor {}: task {} completed", getName(), id);
+                LOG.debug("'{}' - task {} completed", getName(), id);
                 unregisterId(id);
             }
         }, executor);
