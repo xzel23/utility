@@ -195,7 +195,7 @@ public final class DbUtil {
      */
     public static Optional<java.sql.Driver> loadDriver(URL... urls)
             throws ClassNotFoundException, SQLException {
-        LOG.debug("loadDriver() - URLs: {}", (Object) urls);
+        LOG.trace("loadDriver() - URLs: {}", (Object) urls);
         return loadDriver(new URLClassLoader(urls));
     }
 
@@ -360,13 +360,13 @@ public final class DbUtil {
                 public boolean tryAdvance(Consumer<? super T> action) {
                     try {
                         if (!rs.next()) {
-                            LOG.debug("ResultSet.next() returned false");
+                            LOG.trace("ResultSet.next() returned false");
                             return false;
                         }
                     } catch (SQLException ex) {
                         if (ex.getErrorCode() == 17010) {
                             // ResultSet was closed on the server, ignore the ORA-17010 exception
-                            LOG.debug("Oracle quirk: ResultSet was closed on the server, ignoring exception", ex);
+                            LOG.trace("Oracle quirk: ResultSet was closed on the server, ignoring exception", ex);
                             return false;
                         }
                         try {

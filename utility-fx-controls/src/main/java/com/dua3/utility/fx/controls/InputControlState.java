@@ -107,7 +107,7 @@ public final class InputControlState<R> {
     }
 
     private void invalidateState() {
-        LOG.debug("invalidateState()");
+        LOG.trace("invalidateState()");
         PlatformHelper.runLater(this::validate);
     }
 

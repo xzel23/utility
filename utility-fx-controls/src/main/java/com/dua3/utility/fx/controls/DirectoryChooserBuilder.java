@@ -54,7 +54,7 @@ public class DirectoryChooserBuilder {
     private DirectoryChooser build() {
         DirectoryChooser chooser = new DirectoryChooser();
         Controls.setInitialDirectory(chooser::setInitialDirectory, initialDir);
-        LOG.debug("initial directory: {}", chooser::getInitialDirectory);
+        LOG.trace("initial directory: {}", chooser::getInitialDirectory);
         return chooser;
     }
 

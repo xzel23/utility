@@ -74,7 +74,7 @@ public final class FxRefresh {
      * Loop of the update thread. Waits for incoming requests and calls the update task.
      */
     private void refreshLoop() {
-        LOG.debug("[{}] entering refresh loop", name);
+        LOG.trace("[{}] entering refresh loop", name);
 
         while (true) {
             lock.lock();
@@ -82,7 +82,7 @@ public final class FxRefresh {
                 // Wait for conditions to be met: thread not stopped, active, and new revision requested
                 while (updateThread != null && (!active.get() || requestedRevision.get() <= currentRevision.get())) {
                     if (!trigger.await(MAX_WAIT_MILLISECONDS, TimeUnit.MILLISECONDS)) {
-                        LOG.debug("[{}] timeout, force check", name);
+                        LOG.trace("[{}] timeout, force check", name);
                     }
                 }
 
@@ -96,19 +96,19 @@ public final class FxRefresh {
                     long myRevision = requestedRevision.get();
                     if (myRevision > currentRevision.get()) {
                         try {
-                            LOG.debug("[{}] starting refresh with revision: {}", name, myRevision);
+                            LOG.trace("[{}] starting refresh with revision: {}", name, myRevision);
                             task.run();
-                            LOG.debug("[{}] refreshed to revision: {}", name, myRevision);
+                            LOG.trace("[{}] refreshed to revision: {}", name, myRevision);
                         } catch (Exception e) {
                             LOG.warn("task aborted, exception swallowed, current revision {} might have inconsistent state", myRevision, e);
                         }
                         currentRevision.set(myRevision);
                     } else {
-                        LOG.debug("[{}] already at revision: {}", name, myRevision);
+                        LOG.trace("[{}] already at revision: {}", name, myRevision);
                     }
                 }
             } catch (InterruptedException e) {
-                LOG.debug("[{}] interrupted", name);
+                LOG.trace("[{}] interrupted", name);
                 Thread.currentThread().interrupt();
                 break;
             } finally {
@@ -116,14 +116,14 @@ public final class FxRefresh {
             }
         }
 
-        LOG.debug("[{}] exiting refresh loop", name);
+        LOG.trace("[{}] exiting refresh loop", name);
     }
 
     /**
      * Stop the refresher.
      */
     public void stop() {
-        LOG.debug("[{}] stopping", name);
+        LOG.trace("[{}] stopping", name);
         lock.lock();
         try {
             active.set(false);
@@ -187,7 +187,7 @@ public final class FxRefresh {
     public static FxRefresh create(String name, Runnable task, Node node, boolean active) {
         FxRefresh r = new FxRefresh(name, () -> {
             if (!node.isVisible()) {
-                LOG.debug("node is not visible, update skipped");
+                LOG.trace("node is not visible, update skipped");
                 return;
             }
 
@@ -197,14 +197,14 @@ public final class FxRefresh {
         // stop update thread when node is removed from scene graph
         node.parentProperty().addListener((v, o, n) -> {
             if (n == null) {
-                LOG.debug("node was removed from parent, stopping refresher");
+                LOG.trace("node was removed from parent, stopping refresher");
                 r.stop();
             }
         });
 
         node.sceneProperty().addListener((v, o, n) -> {
             if (n == null) {
-                LOG.debug("node was removed from scene graph, stopping refresher");
+                LOG.trace("node was removed from scene graph, stopping refresher");
                 r.stop();
             }
         });
@@ -244,7 +244,7 @@ public final class FxRefresh {
      * @param flag whether to activate or deactivate the refresher
      */
     public void setActive(boolean flag) {
-        LOG.debug("[{}] setActive({})", name, flag);
+        LOG.trace("[{}] setActive({})", name, flag);
         lock.lock();
         try {
             active.set(flag);
@@ -264,14 +264,14 @@ public final class FxRefresh {
      * </ul>
      */
     public void refresh() {
-        LOG.debug("[{}] refresh requested", name);
+        LOG.trace("[{}] refresh requested", name);
         lock.lock();
         try {
             if (updateThread == null) {
                 return;
             }
             long revision = requestedRevision.incrementAndGet();
-            LOG.debug("[{}] requested revision {}", name, revision);
+            LOG.trace("[{}] requested revision {}", name, revision);
             trigger.signalAll();
         } finally {
             lock.unlock();

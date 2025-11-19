@@ -115,7 +115,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalStateException if the same parameter is used for different types
      */
     public NamedParameterStatement(Connection connection, String query) throws SQLException {
-        LOG.debug("creating NamedParameterStatement: {}", () -> System.identityHashCode(this));
+        LOG.trace("creating NamedParameterStatement: {}", () -> System.identityHashCode(this));
         indexMap = new HashMap<>();
         String parsedQuery = parse(query, indexMap);
         //noinspection JDBCPrepareStatementWithNonConstantString - by design
@@ -134,7 +134,7 @@ public class NamedParameterStatement implements AutoCloseable {
                 LOG.warn("could not determine parameter types");
                 showUnknownParameterTypeAsWarning = false;
             } else {
-                LOG.debug("(REPEAT) could not determine parameter types");
+                LOG.trace("(REPEAT) could not determine parameter types");
             }
             return null;
         }
@@ -932,7 +932,7 @@ public class NamedParameterStatement implements AutoCloseable {
      */
     @Override
     public void close() throws SQLException {
-        LOG.debug("closing NamedParameterStatement: {}", () -> System.identityHashCode(this));
+        LOG.trace("closing NamedParameterStatement: {}", () -> System.identityHashCode(this));
         statement.close();
     }
 

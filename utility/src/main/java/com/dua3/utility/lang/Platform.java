@@ -77,7 +77,7 @@ public enum Platform {
             platform = UNKNOWN;
         }
 
-        LOG.debug("platform identified as: {}", platform);
+        LOG.trace("platform identified as: {}", platform);
 
         return platform;
     }

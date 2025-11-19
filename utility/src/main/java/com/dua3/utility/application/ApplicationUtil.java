@@ -181,6 +181,7 @@ public final class ApplicationUtil {
      *                 {@code false} for disabling it
      */
     private static void setDarkMode(boolean darkMode) {
+        LOG.debug("application dark mode set to {}", darkMode);
         if (darkMode != ApplicationUtil.darkMode.compareAndExchange(!darkMode, darkMode)) {
             onUpdateDarkMode(darkMode);
         }
@@ -224,7 +225,7 @@ public final class ApplicationUtil {
      * @param listener the listener to be notified of dark mode changes (non-null)
      */
     public static void addDarkModeListener(Consumer<Boolean> listener) {
-        LOG.debug("Ensure DarkModeUpdater is initialised");
+        LOG.trace("Ensure DarkModeUpdater is initialised");
         DarkModeUpdater.INSTANCE.ensureRunning();
         darkModeListeners.add(listener);
     }
@@ -266,10 +267,10 @@ public final class ApplicationUtil {
         DarkModeUpdater() {
             DarkModeDetector dmd = DarkModeDetectorInstance.get();
             if (dmd.isDarkModeDetectionSupported()) {
-                LOG.debug("system dark mode detection supported, adding listener");
+                LOG.debug("system dark mode detection is supported, adding listener");
                 dmd.addListener(DarkModeUpdater::onSystemDarkModeChange);
             } else {
-                LOG.debug("system dark mode detection not supported");
+                LOG.debug("system dark mode detection is not supported");
             }
         }
 
@@ -286,12 +287,12 @@ public final class ApplicationUtil {
          * @param dark {@code true} if the system dark mode is enabled; {@code false} otherwise
          */
         private static void onSystemDarkModeChange(boolean dark) {
-            LOG.debug("system dark mode changed to {}", dark);
+            LOG.trace("system dark mode changed to {}", dark);
             if (getUiMode() == UiMode.SYSTEM_DEFAULT) {
-                LOG.debug("setting application dark mode to {}", dark);
+                LOG.trace("setting application dark mode to {}", dark);
                 setDarkMode(dark);
             } else {
-                LOG.debug("ignoring application dark mode change, ui mode is {}", getUiMode());
+                LOG.trace("ignoring application dark mode change, ui mode is {}", getUiMode());
             }
         }
     }

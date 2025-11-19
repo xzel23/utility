@@ -171,7 +171,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
      * @return the constructed InputGrid
      */
     public Grid build() {
-        LOG.debug("building grid with {} rows and {} columns", data.size(), columns);
+        LOG.trace("building grid with {} rows and {} columns", data.size(), columns);
 
         Grid grid = new Grid();
 

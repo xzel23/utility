@@ -68,7 +68,7 @@ public final class FxDbUtil {
      * @throws SQLException if an error occurs while reading from the ResultSet.
      */
     public static int fill(TableView<ObservableList<Object>> tv, ResultSet rs) throws SQLException {
-        LOG.debug("populating TableView with ResultSet data");
+        LOG.trace("populating TableView with ResultSet data");
         ObservableList<TableColumn<ObservableList<Object>, ?>> columns = tv.getColumns();
         var items = tv.getItems();
 

@@ -25,11 +25,11 @@ public final class LogUtil {
                 try {
                     LogEntryDispatcher dispatcher = factory.getDispatcher();
                     if (dispatcher != null) {
-                        LOG.debug("created dispatcher of class {} using factory {}", dispatcher.getClass(), factory.getClass());
+                        LOG.trace("created dispatcher of class {} using factory {}", dispatcher.getClass(), factory.getClass());
                         globalDispatcher = dispatcher;
                         return;
                     }
-                    LOG.debug("factory {} did not return a dispatcher", factory.getClass());
+                    LOG.trace("factory {} did not return a dispatcher", factory.getClass());
                 } catch (Exception e) {
                     LOG.warn("factory {} threw an exception when trying to create a dispatcher", factory.getClass().getName(), e);
                 }

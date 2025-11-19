@@ -176,7 +176,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         pane.layout();
         pane.getScene().getWindow().sizeToScene();
 
-        LOG.debug("current page: {}", pageName);
+        LOG.trace("current page: {}", pageName);
     }
 
     /**

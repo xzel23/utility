@@ -835,7 +835,7 @@ public final class LangUtil {
         for (int i = candidates.size() - 1; i >= 0; i--) {
             URL url = cls.getResource(candidates.get(i));
             if (url != null) {
-                LOG.debug("requested resource '{}', localised resource found: {}", name, url);
+                LOG.trace("requested resource '{}', localised resource found: {}", name, url);
                 return url;
             }
         }

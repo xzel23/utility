@@ -159,7 +159,7 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
             try (Arena arena = Arena.ofConfined()) {
                 MemorySegment hku = openCurrentUser(arena);
                 if (hku.equals(MemorySegment.NULL)) {
-                    LOG.debug("RegOpenCurrentUser returned NULL");
+                    LOG.trace("RegOpenCurrentUser returned NULL");
                     Thread.sleep(RESTART_BACKOFF.toMillis());
                     continue;
                 }
@@ -192,12 +192,12 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
                 }
                 // Loop and wait again as long as watcherRunning
             } catch (InterruptedException _) {
-                LOG.debug("Watcher interrupted");
+                LOG.trace("Watcher interrupted");
                 // Exit gracefully
                 Thread.currentThread().interrupt();
                 break;
             } catch (Throwable t) {
-                LOG.debug("Watcher error: {}", t.toString());
+                LOG.trace("Watcher error: {}", t.toString());
                 try {
                     Thread.sleep(RESTART_BACKOFF.toMillis());
                 } catch (InterruptedException _) {

@@ -83,7 +83,7 @@ public class CardPane extends Pane {
      *         is successfully shown, {@code false} otherwise
      */
     public boolean show(String name) {
-        LOG.debug("show('{}'): active={}, total children={}", name,
+        LOG.trace("show('{}'): active={}, total children={}", name,
                 content.getChildren().stream().filter(Node::isManaged).count(),
                 content.getChildren().size());
 

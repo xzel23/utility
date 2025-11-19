@@ -223,9 +223,10 @@ public final class FxLauncher {
             argL.add(arg.toString());
         }
 
+        // !!! Do NOT use a static Logger instance as that interferes with setting up logging !!!
         Logger log = LogManager.getLogger(FxLauncher.class);
-        log.debug("original arguments: {}", (Object) args);
-        log.debug("re-parsed arguments: {}", argL);
+        log.trace("original arguments: {}", (Object) args);
+        log.trace("re-parsed arguments: {}", argL);
 
         return argL;
     }
@@ -362,10 +363,10 @@ public final class FxLauncher {
             ClassLoader loader = ClassLoader.getSystemClassLoader();
 
             if (enableAssertions) {
-                log.info("enabling assertions");
+                log.debug("enabling assertions");
                 loader.setDefaultAssertionStatus(true);
             }
-            log.info("loading application class: {}", applicationClassName);
+            log.debug("loading application class: {}", applicationClassName);
             @SuppressWarnings("unchecked")
             Class<? extends Application> applicationClass = (Class<? extends Application>) loader.loadClass(applicationClassName);
             log.info("starting application: {}", applicationClass.getName());
@@ -377,7 +378,7 @@ public final class FxLauncher {
             rc = RC_ERROR;
         }
 
-        log.info("finished with rc: {}", rc);
+        log.info("application finished with rc: {}", rc);
         return rc;
     }
 

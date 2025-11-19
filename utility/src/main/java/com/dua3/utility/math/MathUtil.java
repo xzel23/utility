@@ -139,7 +139,7 @@ public final class MathUtil {
                         // keep value of dy
                     }
                 } catch (@SuppressWarnings("unused") Exception e) {
-                    LOG.debug("no root");
+                    LOG.trace("no root");
                 }
             }
             xa = x;

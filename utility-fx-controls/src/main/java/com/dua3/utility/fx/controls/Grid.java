@@ -122,7 +122,7 @@ public class Grid extends GridPane {
      * - Sets the initial focus to the first input control in the grid.
      */
     public void init() {
-        LOG.debug("init: {}", data);
+        LOG.trace("init: {}", data);
 
         getChildren().clear();
 
@@ -196,7 +196,7 @@ public class Grid extends GridPane {
 
     private static void updateMarker(Meta<?> entry) {
         InputControl<?> control = entry.control;
-        LOG.debug("updateMarker: valid={}, required={}, empty={}", control.isValid(), control.isRequired(), control.isEmpty());
+        LOG.trace("updateMarker: valid={}, required={}, empty={}", control.isValid(), control.isRequired(), control.isEmpty());
 
         if (control.isValid()) {
             if (control.isRequired()) {

@@ -76,7 +76,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
         if (s != State.SCHEDULED) {
             LOG.warn("task {} already in state {}", task, s);
         } else {
-            LOG.debug("scheduled task {}", task);
+            LOG.trace("scheduled task {}", task);
         }
     }
 
@@ -85,7 +85,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
         TaskRecord r = getTaskRecord(task);
         r.setState(State.RUNNING);
         update(task, 0, 0);
-        LOG.debug("started task {}", task);
+        LOG.trace("started task {}", task);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
             LOG.warn("task {} cannot be paused in state {}", task, s);
         } else {
             r.pause();
-            LOG.debug("paused task {}", task);
+            LOG.trace("paused task {}", task);
         }
     }
 
@@ -108,7 +108,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
             LOG.warn("task {} cannot be aborted in state {}", task, s);
         } else {
             r.finish(State.ABORTED);
-            LOG.debug("aborted task {}", task);
+            LOG.trace("aborted task {}", task);
         }
     }
 
@@ -122,7 +122,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
             LOG.warn("task {} already finished with state {}", task, oldState);
         } else {
             r.finish(s);
-            LOG.debug("finished task {} with state {}", task, s);
+            LOG.trace("finished task {} with state {}", task, s);
         }
     }
 

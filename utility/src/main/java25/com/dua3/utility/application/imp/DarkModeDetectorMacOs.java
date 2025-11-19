@@ -182,7 +182,7 @@ public final class DarkModeDetectorMacOs extends DarkModeDetectorBase {
         try {
             removeObserver();
         } catch (Throwable t) {
-            LOG.debug("Ignoring error while removing dark mode observer", t);
+            LOG.trace("Ignoring error while removing dark mode observer", t);
         }
     }
 

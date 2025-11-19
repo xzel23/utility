@@ -94,7 +94,7 @@ public final class KeyStoreUtil {
         try {
             KeyStore keyStore = KeyStore.getInstance(type);
             keyStore.load(null, password);
-            LOG.debug("Created new KeyStore of type {}", type);
+            LOG.trace("Created new KeyStore of type {}", type);
             return keyStore;
         } catch (IOException e) {
             throw new GeneralSecurityException("Failed to create KeyStore", e);
@@ -120,7 +120,7 @@ public final class KeyStoreUtil {
             if (type.isDeduplicating()) {
                 fixCertificateChains(keyStore, password.clone());
             }
-            LOG.debug("Loaded KeyStore of type {}", type);
+            LOG.trace("Loaded KeyStore of type {}", type);
             return keyStore;
         } catch (IOException e) {
             throw new GeneralSecurityException("Failed to load KeyStore", e);
@@ -170,7 +170,7 @@ public final class KeyStoreUtil {
                         Certificate[] extendedChain = reconstructFullCertificateChain(keyStore, chain);
 
                         if (extendedChain.length > chain.length) {
-                            LOG.debug("Extended certificate chain for alias '{}' from {} to {} certificates",
+                            LOG.trace("Extended certificate chain for alias '{}' from {} to {} certificates",
                                     alias, chain.length, extendedChain.length);
 
                             // Update the key entry with the extended chain
@@ -266,7 +266,7 @@ public final class KeyStoreUtil {
     public static void saveKeyStore(KeyStore keyStore, OutputStream outputStream, char[] password) throws GeneralSecurityException {
         try {
             keyStore.store(outputStream, password);
-            LOG.debug("KeyStore data written");
+            LOG.trace("KeyStore data written");
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
             throw new GeneralSecurityException("Failed to save KeyStore", e);
         } finally {
@@ -292,7 +292,7 @@ public final class KeyStoreUtil {
                 // write directly to file
                 try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
                     saveKeyStore(keyStore, outputStream, password);
-                    LOG.debug("KeyStore written to file {}", keystoreFile);
+                    LOG.trace("KeyStore written to file {}", keystoreFile);
                 }
             } else {
                 // export to another type
@@ -304,7 +304,7 @@ public final class KeyStoreUtil {
                     KeyStore newKeyStore = copyKeyStore(keyStore, password.clone(), targetType, password.clone());
                     try (OutputStream outputStream = Files.newOutputStream(keystoreFile)) {
                         saveKeyStore(newKeyStore, outputStream, password);
-                        LOG.debug("KeyStore exported to file {}", keystoreFile);
+                        LOG.trace("KeyStore exported to file {}", keystoreFile);
                     }
                 }
             }
@@ -411,7 +411,7 @@ public final class KeyStoreUtil {
                 }
             }
 
-            LOG.debug("KeyStore successfully copied to type {}", targetType);
+            LOG.trace("KeyStore successfully copied to type {}", targetType);
             return newKeyStore;
 
         } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException e) {
@@ -444,7 +444,7 @@ public final class KeyStoreUtil {
             KeyStore.Entry entry = new KeyStore.SecretKeyEntry(key);
             KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password);
             keyStore.setEntry(alias, entry, protection);
-            LOG.debug("Stored secret key with alias {}", alias);
+            LOG.trace("Stored secret key with alias {}", alias);
         } finally {
             Arrays.fill(password, '\0');
         }
@@ -463,7 +463,7 @@ public final class KeyStoreUtil {
     public static void storeKeyPair(KeyStore keyStore, String alias, KeyPair keyPair, Certificate[] certificateChain, char[] password) throws GeneralSecurityException {
         try {
             keyStore.setKeyEntry(alias, keyPair.getPrivate(), password, certificateChain);
-            LOG.debug("Stored key pair with alias {}", alias);
+            LOG.trace("Stored key pair with alias {}", alias);
         } finally {
             Arrays.fill(password, '\0');
         }
@@ -491,7 +491,7 @@ public final class KeyStoreUtil {
                 throw new GeneralSecurityException("Entry is not a SecretKey: " + alias);
             }
 
-            LOG.debug("Loaded secret key with alias {}", alias);
+            LOG.trace("Loaded secret key with alias {}", alias);
 
             return secretKeyEntry.getSecretKey();
         } finally {
@@ -520,7 +520,7 @@ public final class KeyStoreUtil {
                 throw new GeneralSecurityException("Entry is not a PrivateKey: " + alias);
             }
 
-            LOG.debug("Loaded private key with alias {}", alias);
+            LOG.trace("Loaded private key with alias {}", alias);
 
             return privateKey;
         } finally {
@@ -565,7 +565,7 @@ public final class KeyStoreUtil {
      */
     public static void storeCertificate(KeyStore keyStore, String alias, Certificate certificate) throws GeneralSecurityException {
         keyStore.setCertificateEntry(alias, certificate);
-        LOG.debug("Stored certificate with alias {}", alias);
+        LOG.trace("Stored certificate with alias {}", alias);
     }
 
     /**
@@ -583,7 +583,7 @@ public final class KeyStoreUtil {
             throw new GeneralSecurityException("Certificate not found with alias: " + alias);
         }
 
-        LOG.debug("Loaded certificate with alias {}", alias);
+        LOG.trace("Loaded certificate with alias {}", alias);
 
         return certificate;
     }
@@ -603,7 +603,7 @@ public final class KeyStoreUtil {
             throw new GeneralSecurityException("Certificate chain not found with alias: " + alias);
         }
 
-        LOG.debug("Loaded certificate chain containing {} entries with alias {}", chain.length, alias);
+        LOG.trace("Loaded certificate chain containing {} entries with alias {}", chain.length, alias);
 
         return chain;
     }
@@ -632,7 +632,7 @@ public final class KeyStoreUtil {
             throw new GeneralSecurityException("Alias not found: " + alias);
         }
         keyStore.deleteEntry(alias);
-        LOG.debug("Deleted key with alias {}", alias);
+        LOG.trace("Deleted key with alias {}", alias);
     }
 
     /**
@@ -662,7 +662,7 @@ public final class KeyStoreUtil {
         try {
             SecretKey secretKey = KeyUtil.generateSecretKey(keySize, algorithm);
             storeSecretKey(keyStore, alias, secretKey, password);
-            LOG.debug("Stored new secret key with alias {}", alias);
+            LOG.trace("Stored new secret key with alias {}", alias);
         } finally {
             Arrays.fill(password, '\0');
         }
@@ -686,7 +686,7 @@ public final class KeyStoreUtil {
         KeyPair keyPair = KeyUtil.generateKeyPair(algorithm, keySize);
         Certificate[] certificateChain = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, validityDays, false);
         storeKeyPair(keyStore, alias, keyPair, certificateChain, password);
-        LOG.debug("Stored new key pair with alias {}", alias);
+        LOG.trace("Stored new key pair with alias {}", alias);
     }
 
     /**
@@ -741,13 +741,13 @@ public final class KeyStoreUtil {
             boolean isCA = keyUsage != null && keyUsage.length > 5 && keyUsage[5];
 
             if (isCA) {
-                LOG.debug(" Adding alias for CA certificate {}", alias);
+                LOG.trace(" Adding alias for CA certificate {}", alias);
                 aliases.add(alias);
             } else {
                 LOG.trace("Not a CA certificate {}", alias);
             }
         } else {
-            LOG.debug("Certificate {} is not an X509Certificate", alias);
+            LOG.trace("Certificate {} is not an X509Certificate", alias);
         }
     }
 }

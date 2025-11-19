@@ -232,7 +232,7 @@ public class PemData implements Iterable<PemData.PemItem> {
             while ((obj = parser.readObject()) != null) {
                 PemItem pemItem = switch (obj) {
                     case X509CertificateHolder holder -> {
-                        LOG.debug("Found X509CertificateHolder object");
+                        LOG.trace("Found X509CertificateHolder object");
                         CertificateFactory cf = CertificateFactory.getInstance("X.509");
                         X509Certificate cert = (X509Certificate) cf.generateCertificate(
                                 new ByteArrayInputStream(holder.getEncoded()));
@@ -240,39 +240,39 @@ public class PemData implements Iterable<PemData.PemItem> {
                         yield null; // we defer adding certs until the end
                     }
                     case PKCS10CertificationRequest csr -> {
-                        LOG.debug("Found CSR object");
+                        LOG.trace("Found CSR object");
                         yield new PemItem(PemType.CERTIFICATE_REQUEST, csr);
                     }
                     case PEMKeyPair kp when kp.getPublicKeyInfo() == null -> {
-                        LOG.debug("Found KeyPair object with only private key");
+                        LOG.trace("Found KeyPair object with only private key");
                         PrivateKey key = KeyUtil.toPrivateKey(kp.getPrivateKeyInfo());
                         yield new PemItem(PemType.PRIVATE_KEY, key);
                     }
                     case PEMKeyPair kp -> {
-                        LOG.debug("Found KeyPair object");
+                        LOG.trace("Found KeyPair object");
                         KeyPair keyPair = converter.getKeyPair(kp);
                         yield new PemItem(PemType.KEY_PAIR, keyPair);
                     }
                     case PEMEncryptedKeyPair encKP -> {
-                        LOG.debug("Found encrypted KeyPair object");
+                        LOG.trace("Found encrypted KeyPair object");
                         yield new PemItem(PemType.ENCRYPTED_KEY_PAIR, encKP);
                     }
                     case PrivateKeyInfo info -> {
-                        LOG.debug("Found PrivateKeyInfo object");
+                        LOG.trace("Found PrivateKeyInfo object");
                         PrivateKey pk = converter.getPrivateKey(info);
                         yield new PemItem(PemType.PRIVATE_KEY, pk);
                     }
                     case PKCS8EncryptedPrivateKeyInfo enc -> {
-                        LOG.debug("Found encrypted PrivateKeyInfo object");
+                        LOG.trace("Found encrypted PrivateKeyInfo object");
                         yield new PemItem(PemType.ENCRYPTED_PRIVATE_KEY, enc);
                     }
                     case org.bouncycastle.asn1.x509.SubjectPublicKeyInfo pubInfo -> {
-                        LOG.debug("Found SubjectPublicKeyInfo object");
+                        LOG.trace("Found SubjectPublicKeyInfo object");
                         PublicKey pub = converter.getPublicKey(pubInfo);
                         yield new PemItem(PemType.PUBLIC_KEY, pub);
                     }
                     case PemObject po when "PKCS7".equals(po.getType()) -> {
-                        LOG.debug("Found PKCS7 object");
+                        LOG.trace("Found PKCS7 object");
                         yield new PemItem(PemType.PKCS7, po.getContent());
                     }
                     default -> {

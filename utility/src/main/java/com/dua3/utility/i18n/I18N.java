@@ -105,7 +105,7 @@ public final class I18N {
      * @return An instance of the I18N class.
      */
     public static I18N create(String baseName, Locale locale) {
-        LOG.debug("creating instance for {} with requested locale {}", baseName, locale);
+        LOG.trace("creating instance for {} with requested locale {}", baseName, locale);
         ResourceBundle bundle = getResourceBundle(baseName, locale);
         return new I18N(bundle);
     }
@@ -168,7 +168,7 @@ public final class I18N {
      * @param bundle The resource bundle to merge.
      */
     public void mergeBundle(ResourceBundle bundle) {
-        LOG.debug("merging resource bundle {}_{}", bundle::getBaseBundleName, bundle::getLocale);
+        LOG.trace("merging resource bundle {}_{}", bundle::getBaseBundleName, bundle::getLocale);
         bundle.getKeys().asIterator()
                 .forEachRemaining(key -> bundleMap.putIfAbsent(key, bundle));
     }

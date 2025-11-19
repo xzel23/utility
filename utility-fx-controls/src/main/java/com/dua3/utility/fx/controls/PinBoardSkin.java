@@ -282,7 +282,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @param dyVP y-offset in pixels
      */
     public void scrollTo(double x, double y, double dxVP, double dyVP) {
-        LOG.debug("scrollTo({}, {}, {}, {})", x, y, dxVP, dyVP);
+        LOG.trace("scrollTo({}, {}, {}, {})", x, y, dxVP, dyVP);
 
         Rectangle2D boardArea = getSkinnable().getArea();
 
@@ -305,7 +305,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @param yBoard The y-coordinate
      */
     public void scrollIntoView(double xBoard, double yBoard) {
-        LOG.debug("scrollIntoViewInBoardCoordinates({}, {})", xBoard, yBoard);
+        LOG.trace("scrollIntoViewInBoardCoordinates({}, {})", xBoard, yBoard);
 
         Rectangle2D boardArea = getSkinnable().getArea();
 

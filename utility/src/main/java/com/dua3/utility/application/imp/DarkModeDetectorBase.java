@@ -41,7 +41,7 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
      */
     @Override
     public final void addListener(Consumer<Boolean> listener) {
-        LOG.debug("addListener(): {}", System.identityHashCode(listener));
+        LOG.trace("addListener(): {}", System.identityHashCode(listener));
         listeners.add(listener);
         monitorSystemChanges(true);
     }
@@ -55,7 +55,7 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
     @Override
     public final void removeListener(Consumer<Boolean> listener) {
         boolean removed = listeners.remove(listener);
-        LOG.debug("removeListener(): {} - removed={}", () -> System.identityHashCode(listener), () -> removed);
+        LOG.trace("removeListener(): {} - removed={}", () -> System.identityHashCode(listener), () -> removed);
         monitorSystemChanges(!listeners.isEmpty());
     }
 
@@ -65,7 +65,7 @@ public abstract class DarkModeDetectorBase implements DarkModeDetector {
      * @param darkMode a boolean indicating the current state of dark mode; {@code true} if dark mode is enabled, {@code false} otherwise
      */
     protected final void onChangeDetected(boolean darkMode) {
-        LOG.debug("onChangeDetected(): informing listeners, darkMode={}", darkMode);
+        LOG.trace("onChangeDetected(): informing listeners, darkMode={}", darkMode);
         listeners.forEach(l -> l.accept(darkMode));
     }
 

@@ -54,10 +54,10 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
                     boolean hasUpdates = updatesAvailableCondition.await(MAX_UPDATE_MILLISECONDS, TimeUnit.MILLISECONDS);
                     if (!hasUpdates) {
                         if (sequence == buffer.getSequenceNumber()) {
-                            LOG.debug("no updates available");
+                            LOG.trace("no updates available");
                             continue;
                         } else {
-                            LOG.debug("updates detected after timeout");
+                            LOG.trace("updates detected after timeout");
                         }
                     }
 
@@ -75,7 +75,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
                         fireTableRowsInserted(oldSz - remove, sz - 1);
                     }
                 } catch (InterruptedException e) {
-                    LOG.debug("interrupted", e);
+                    LOG.trace("interrupted", e);
                     Thread.currentThread().interrupt();
                 } catch (Exception e) {
                     LOG.warn("unexpected exception in update thread: {}", e.getMessage(), e);

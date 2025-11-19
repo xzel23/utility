@@ -392,7 +392,7 @@ public class AboutDialogBuilder {
         Desktop desktop = Desktop.getDesktop();
         if (desktop.isSupported(Desktop.Action.MAIL)) {
             try {
-                LOG.info("opening mail application");
+                LOG.debug("opening mail application");
                 desktop.mail(URI.create(address));
             } catch (IOException | IllegalArgumentException e) {
                 LOG.warn("could not open mail application", e);

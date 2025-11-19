@@ -74,7 +74,7 @@ final class LogEntriesObservableList extends ObservableListBase<LogEntry> implem
                         }
                     });
                 } catch (InterruptedException e) {
-                    LOG.debug("interrupted", e);
+                    LOG.trace("interrupted", e);
                     Thread.currentThread().interrupt();
                 } catch (Exception e) {
                     LOG.warn("unexpected exception in update thread: {}", e.getMessage(), e);

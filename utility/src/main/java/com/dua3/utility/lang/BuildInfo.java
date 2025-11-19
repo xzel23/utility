@@ -33,7 +33,7 @@ public record BuildInfo(Version version, ZonedDateTime buildTime, String key, St
      * @param system    the system information
      */
     public BuildInfo {
-        LOG.debug("BuildInfo: {}", this);
+        LOG.trace("BuildInfo: {}", this);
     }
 
     /**

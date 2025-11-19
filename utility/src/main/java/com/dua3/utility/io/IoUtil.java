@@ -543,7 +543,7 @@ public final class IoUtil {
                 return text;
             } catch (@SuppressWarnings("unused") CharacterCodingException e) {
                 // ignore exception and try the next encoding
-                LOG.debug("unsuccessfully tried encoding {}", cs.name());
+                LOG.trace("unsuccessfully tried encoding {}", cs.name());
             }
         }
 

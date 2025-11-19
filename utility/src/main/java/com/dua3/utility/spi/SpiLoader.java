@@ -122,7 +122,7 @@ public final class SpiLoader<T> {
      * @throws IllegalStateException if no implementation is found and no default supplier is available
      */
     public T load() {
-        LOG.debug("loading service: {}", type);
+        LOG.trace("loading service: {}", type);
 
         Iterator<T> serviceIterator = ServiceLoader
                 .load(type, cl)
@@ -133,9 +133,9 @@ public final class SpiLoader<T> {
             T current = serviceIterator.next();
             if (predicate.test(current)) {
                 instance = current;
-                LOG.debug("accepted implementation: {}", current);
+                LOG.trace("accepted implementation: {}", current);
             } else {
-                LOG.debug("skipping rejected implementation: {}", current);
+                LOG.trace("skipping rejected implementation: {}", current);
             }
         }
 
@@ -145,7 +145,7 @@ public final class SpiLoader<T> {
             if (instance == null) {
                 throw new IllegalStateException("no implementation found for type: " + type);
             }
-            LOG.debug("using default implementation for type: {}", type);
+            LOG.trace("using default implementation for type: {}", type);
         }
 
         LOG.debug("loaded implementation for type {}: {}", type, instance);

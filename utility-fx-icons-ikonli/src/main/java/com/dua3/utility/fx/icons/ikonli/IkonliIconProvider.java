@@ -37,7 +37,7 @@ public class IkonliIconProvider implements IconProvider {
     public Optional<Icon> forName(String name) {
         for (var handler : ServiceLoader.load(IkonHandler.class)) {
             if (handler.supports(name)) {
-                LOG.debug("using: {}", handler.getClass().getName());
+                LOG.trace("using: {}", handler.getClass().getName());
                 var ikon = handler.resolve(name);
                 return Optional.of(new IkonliIcon(ikon, name));
             }

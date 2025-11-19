@@ -75,7 +75,7 @@ public final class PlatformHelper {
             try {
                 doneLatch.await();
             } catch (InterruptedException e) {
-                LOG.debug("interrupted", e);
+                LOG.trace("interrupted", e);
                 Thread.currentThread().interrupt();
             }
         }

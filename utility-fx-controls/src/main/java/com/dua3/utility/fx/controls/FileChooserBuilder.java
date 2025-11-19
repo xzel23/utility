@@ -69,7 +69,7 @@ public class FileChooserBuilder {
         }
 
         Controls.setInitialDirectory(chooser::setInitialDirectory, initialDir);
-        LOG.debug("initial directory: {}", chooser::getInitialDirectory);
+        LOG.trace("initial directory: {}", chooser::getInitialDirectory);
 
         chooser.setInitialFileName(initialFileName);
 
