@@ -15,12 +15,15 @@
  */
 package com.dua3.utility.data;
 
+import org.jspecify.annotations.Nullable;
+
 import java.lang.ref.Cleaner;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 /**
@@ -63,24 +66,41 @@ public class Cache<K, V> {
      * @return the value to which the specified key is mapped
      */
     public V get(K key) {
-        Reference<V> weak = items.get(key);
-        V item = weak == null ? null : weak.get();
-
-        if (item == null) {
-            synchronized (lock) {
-                // Check again within the synchronized block
-                weak = items.get(key);
-                item = weak == null ? null : weak.get();
-                if (item == null) {
-                    item = compute.apply(key);
-                    Reference<V> ref = newReference.apply(item);
-                    CLEANER.register(item, () -> items.remove(key));
-                    items.put(key, ref);
-                }
-            }
+        // Fast path: optimistic read
+        Reference<V> ref = items.get(key);
+        V item = ref == null ? null : ref.get();
+        if (item != null) {
+            return item;
         }
 
-        return item;
+        // Atomic path: use compute to lock only this key's bucket, not the whole cache
+        AtomicReference<@Nullable V> holder = new AtomicReference<>();
+
+        items.compute(key, (k, currentRef) -> {
+            // 1. Check if another thread already computed it while we were waiting
+            V val = currentRef == null ? null : currentRef.get();
+            if (val != null) {
+                holder.set(val);
+                return currentRef; // Keep existing reference
+            }
+
+            // 2. Compute new value
+            val = compute.apply(k);
+            holder.set(val);
+
+            // 3. Create new reference
+            Reference<V> newRef = newReference.apply(val);
+
+            // 4. Register cleaner with SAFE removal
+            // We capture 'newRef' to ensure we only remove the entry if it still holds THIS reference
+            CLEANER.register(val, () -> items.remove(k, newRef));
+
+            return newRef;
+        });
+
+        V v = holder.get();
+        assert v != null; // safe, because compute().apply(k) returns non null
+        return v;
     }
 
     @Override
