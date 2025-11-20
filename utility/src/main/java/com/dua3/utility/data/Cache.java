@@ -28,10 +28,8 @@ import java.util.function.Function;
 
 /**
  * A simple cache implementation.
- *
  * <p>
  * NOTE: This class is not intended as a replacement for {@code JCache} (JSR 107).
- * </p>
  *
  * @param <K> key class
  * @param <V> value class
@@ -40,7 +38,6 @@ public class Cache<K, V> {
 
     private static final Cleaner CLEANER = Cleaner.create();
 
-    private final Object lock = new Object();
     private final Function<V, Reference<V>> newReference;
     private final Function<? super K, ? extends V> compute;
     private final Map<K, Reference<V>> items = new ConcurrentHashMap<>();
