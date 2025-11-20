@@ -46,6 +46,12 @@ public class TaskProcessorDelegating<K> extends TaskProcessorBase {
     }
 
     @Override
+    public void shutdownAndAbort() {
+        super.shutdownAndAbort();
+        delegates.values().forEach(TaskProcessor::shutdownAndAbort);
+    }
+
+    @Override
     public boolean waitForCompletion(long timeout, TimeUnit timeUnit) {
         ensureClosed();
         List<TaskProcessor> activeDelegates = new ArrayList<>(delegates.values());

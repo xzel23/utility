@@ -30,7 +30,7 @@ public class TaskProcessorAsync extends TaskProcessorBase {
     public TaskProcessorAsync(String name, int maxThreads) {
         super(name);
         LangUtil.checkArg(maxThreads > 0, "maxThreads must be a positive integer: %d", maxThreads);
-        executor = Executors.newFixedThreadPool(maxThreads, this::newThread);
+        executor = Executors.newFixedThreadPool(maxThreads, newThreadFactory());
     }
 
     @Override

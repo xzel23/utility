@@ -26,7 +26,6 @@ import java.util.function.Consumer;
  */
 public abstract class TaskProcessorBase implements TaskProcessor {
     private static final Logger LOG = LogManager.getLogger(TaskProcessorBase.class);
-    private static final ThreadFactory DEFAULT_THREAD_FACTORY = Executors.defaultThreadFactory();
     private static final AtomicLong ID_COUNTER = new AtomicLong(0);
 
     private final String name;
@@ -39,10 +38,29 @@ public abstract class TaskProcessorBase implements TaskProcessor {
 
     private final List<WeakReference<Consumer<TaskProcessor>>> listeners = new ArrayList<>();
 
-    protected Thread newThread(Runnable runnable) {
-        Thread t = DEFAULT_THREAD_FACTORY.newThread(runnable);
-        t.setName(t.getName() + " [" + name + "]");
-        return t;
+    /**
+     * A custom {@link ThreadFactory} that adds the processor name to the thread name.
+     */
+    private final class NamedThreadFactory implements ThreadFactory {
+        ThreadFactory parent = Executors.defaultThreadFactory();
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = parent.newThread(r);
+            t.setName(t.getName() + " [" + name + "]");
+            return t;
+        }
+    }
+
+    /**
+     * Creates a new {@link ThreadFactory} for generating threads with customized names.
+     * This implementation uses an inner {@link NamedThreadFactory} that appends the
+     * task processor's name to each thread's name for easier identification.
+     *
+     * @return a {@link ThreadFactory} instance for creating customized threads
+     */
+    protected final ThreadFactory newThreadFactory() {
+        return new NamedThreadFactory();
     }
 
     /**
