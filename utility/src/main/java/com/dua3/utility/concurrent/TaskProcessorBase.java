@@ -8,7 +8,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,6 +26,7 @@ import java.util.function.Consumer;
  */
 public abstract class TaskProcessorBase implements TaskProcessor {
     private static final Logger LOG = LogManager.getLogger(TaskProcessorBase.class);
+    private static final ThreadFactory DEFAULT_THREAD_FACTORY = Executors.defaultThreadFactory();
     private static final AtomicLong ID_COUNTER = new AtomicLong(0);
 
     private final String name;
@@ -35,6 +38,12 @@ public abstract class TaskProcessorBase implements TaskProcessor {
     private final AtomicInteger tasksCompleted = new AtomicInteger(0);
 
     private final List<WeakReference<Consumer<TaskProcessor>>> listeners = new ArrayList<>();
+
+    protected Thread newThread(Runnable runnable) {
+        Thread t = DEFAULT_THREAD_FACTORY.newThread(runnable);
+        t.setName(t.getName() + " [" + name + "]");
+        return t;
+    }
 
     /**
      * Represents the state of a {@code TaskProcessorBase}.

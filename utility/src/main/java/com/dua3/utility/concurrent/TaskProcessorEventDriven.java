@@ -2,6 +2,7 @@ package com.dua3.utility.concurrent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -22,7 +23,7 @@ public class TaskProcessorEventDriven<K> extends TaskProcessorBase {
     private final Function<Callable<?>, K> submitExternal;
     private final Map<K, TaskEntry> futures = new ConcurrentHashMap<>();
 
-    private record TaskEntry(long id, CompletableFuture<? extends Object> completableFuture) {}
+    private record TaskEntry(long id, CompletableFuture<? extends @Nullable Object> completableFuture) {}
 
     /**
      * Constructs a new instance of TaskProcessorEventDriven.
