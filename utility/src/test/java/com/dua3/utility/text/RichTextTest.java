@@ -156,8 +156,8 @@ class RichTextTest {
         // tests all sorts if equals comparisons
         RichText text = RichText.valueOf("text");
         RichText upper = RichText.valueOf("TEXT");
-        RichText bigger = text.wrap(Style.create("bigger", Map.entry(Style.FONT_SIZE, 20f)));
-        RichText smaller = text.wrap(Style.create("smaller", Map.entry(Style.FONT_SIZE, 8f)));
+        RichText bigger = text.wrap(Style.create("bigger", Map.entry(Style.FONT_SIZE, 20.0f)));
+        RichText smaller = text.wrap(Style.create("smaller", Map.entry(Style.FONT_SIZE, 8.0f)));
         RichText serif = text.wrap(Style.SERIF);
         RichText sans = text.wrap(Style.SANS_SERIF);
         RichText texts = RichText.valueOf("texts");

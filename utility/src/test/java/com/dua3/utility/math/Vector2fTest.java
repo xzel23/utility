@@ -19,7 +19,7 @@ class Vector2fTest {
         Vector2f v2 = Vector2f.ZERO_ONE; // Vector (0, 1)
         double result = Vector2f.angle(v1, v2);
         // The angle between vector (1, 0) and (0, 1) should be 90 degrees or pi/2 radians
-        assertEquals(Math.PI / 2, result, 1e-7);
+        assertEquals(Math.PI / 2, result, 1.0e-7);
     }
 
     /**
@@ -31,7 +31,7 @@ class Vector2fTest {
         Vector2f v2 = Vector2f.MINUS_ONE_ZERO; // Vector (-1, 0)
         double result = Vector2f.angle(v1, v2);
         // The angle between vector (1, 0) and (-1, 0) should be 180 degrees or pi radians
-        assertEquals(Math.PI, result, 1e-7);
+        assertEquals(Math.PI, result, 1.0e-7);
     }
 
     /**
@@ -141,11 +141,11 @@ class Vector2fTest {
         Vector2f result = v.normalized();
 
         // Length of (3, 4) is 5, so normalized vector should be (3/5, 4/5)
-        assertEquals(0.6f, result.x(), 1e-6, "Normalized x should be 3/5 = 0.6");
-        assertEquals(0.8f, result.y(), 1e-6, "Normalized y should be 4/5 = 0.8");
+        assertEquals(0.6f, result.x(), 1.0e-6, "Normalized x should be 3/5 = 0.6");
+        assertEquals(0.8f, result.y(), 1.0e-6, "Normalized y should be 4/5 = 0.8");
 
         // Test that the normalized vector has length 1
-        assertEquals(1.0, result.length(), 1e-6, "Normalized vector should have length 1");
+        assertEquals(1.0, result.length(), 1.0e-6, "Normalized vector should have length 1");
     }
 
     /**
@@ -172,7 +172,7 @@ class Vector2fTest {
         assertEquals(3.0f, result.y(), "Orthogonal y should be 3");
 
         // Test that the result is orthogonal to the original vector
-        assertEquals(0.0f, Vector2f.scalarProduct(v, result), 1e-6, "Vectors should be orthogonal");
+        assertEquals(0.0f, Vector2f.scalarProduct(v, result), 1.0e-6, "Vectors should be orthogonal");
     }
 
     /**
@@ -188,7 +188,7 @@ class Vector2fTest {
         assertEquals(-3.0f, result.y(), "Orthogonal y should be -3");
 
         // Test that the result is orthogonal to the original vector
-        assertEquals(0.0f, Vector2f.scalarProduct(v, result), 1e-6, "Vectors should be orthogonal");
+        assertEquals(0.0f, Vector2f.scalarProduct(v, result), 1.0e-6, "Vectors should be orthogonal");
     }
 
     /**
@@ -199,7 +199,7 @@ class Vector2fTest {
         Vector2f v = Vector2f.of(3.0f, 4.0f);
         double result = v.length();
 
-        assertEquals(5.0, result, 1e-6, "Length of (3, 4) should be 5");
+        assertEquals(5.0, result, 1.0e-6, "Length of (3, 4) should be 5");
     }
 
     /**
@@ -209,19 +209,19 @@ class Vector2fTest {
     void testInstanceAngle() {
         // Test angle of vector (1, 0)
         Vector2f v1 = Vector2f.ONE_ZERO;
-        assertEquals(0.0, v1.angle(), 1e-6, "Angle of (1, 0) should be 0");
+        assertEquals(0.0, v1.angle(), 1.0e-6, "Angle of (1, 0) should be 0");
 
         // Test angle of vector (0, 1)
         Vector2f v2 = Vector2f.ZERO_ONE;
-        assertEquals(Math.PI / 2, v2.angle(), 1e-6, "Angle of (0, 1) should be PI/2");
+        assertEquals(Math.PI / 2, v2.angle(), 1.0e-6, "Angle of (0, 1) should be PI/2");
 
         // Test angle of vector (-1, 0)
         Vector2f v3 = Vector2f.MINUS_ONE_ZERO;
-        assertEquals(Math.PI, v3.angle(), 1e-6, "Angle of (-1, 0) should be PI");
+        assertEquals(Math.PI, v3.angle(), 1.0e-6, "Angle of (-1, 0) should be PI");
 
         // Test angle of vector (0, -1)
         Vector2f v4 = Vector2f.ZERO_MINUS_ONE;
-        assertEquals(-Math.PI / 2, v4.angle(), 1e-6, "Angle of (0, -1) should be -PI/2");
+        assertEquals(-Math.PI / 2, v4.angle(), 1.0e-6, "Angle of (0, -1) should be -PI/2");
     }
 
     /**

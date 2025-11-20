@@ -62,7 +62,7 @@ public final class DarkModeSample {
             JRadioButton rbDark = new JRadioButton("Dark");
 
             // Minimal, readable font
-            Font f = rbSystem.getFont().deriveFont(Font.PLAIN, Math.max(12f, rbSystem.getFont().getSize2D()));
+            Font f = rbSystem.getFont().deriveFont(Font.PLAIN, Math.max(12.0f, rbSystem.getFont().getSize2D()));
             rbSystem.setFont(f);
             rbLight.setFont(f);
             rbDark.setFont(f);

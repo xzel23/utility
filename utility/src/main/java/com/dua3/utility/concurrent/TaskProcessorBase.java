@@ -134,11 +134,11 @@ public abstract class TaskProcessorBase implements TaskProcessor {
 
     /**
      * Notifies all registered listeners about a state change or event.
-     *
+     * <p>
      * This method iterates over the list of registered listeners, invoking
      * each non-null listener's {@code accept} method with the current instance
      * of the {@link TaskProcessorBase} as an argument.
-     *
+     * <p>
      * Listeners are accessed through weak references, and only non-null listeners
      * are invoked to avoid potential issues caused by listeners being garbage-collected.
      */

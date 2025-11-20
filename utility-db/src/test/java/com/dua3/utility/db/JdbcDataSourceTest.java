@@ -47,9 +47,7 @@ class JdbcDataSourceTest {
     @Test
     void testGetParentLogger() {
         // getParentLogger should throw SQLFeatureNotSupportedException
-        Exception exception = assertThrows(SQLFeatureNotSupportedException.class, () -> {
-            dataSource.getParentLogger();
-        });
+        Exception exception = assertThrows(SQLFeatureNotSupportedException.class, () -> dataSource.getParentLogger());
 
         String expectedMessage = "getParentLogger() is not supported";
         String actualMessage = exception.getMessage();

@@ -24,7 +24,7 @@ class PathBuilder2fTest {
     @Test
     void testMoveTo() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f point = new Vector2f(10f, 20f);
+        Vector2f point = new Vector2f(10.0f, 20.0f);
 
         builder.moveTo(point);
 
@@ -38,9 +38,9 @@ class PathBuilder2fTest {
     @Test
     void testMoveRel() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f initialPoint = new Vector2f(10f, 20f);
-        Vector2f offset = new Vector2f(5f, 10f);
-        Vector2f expectedPoint = new Vector2f(15f, 30f);
+        Vector2f initialPoint = new Vector2f(10.0f, 20.0f);
+        Vector2f offset = new Vector2f(5.0f, 10.0f);
+        Vector2f expectedPoint = new Vector2f(15.0f, 30.0f);
 
         builder.moveTo(initialPoint);
         builder.moveRel(offset);
@@ -54,8 +54,8 @@ class PathBuilder2fTest {
     @Test
     void testLineTo() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f startPoint = new Vector2f(10f, 20f);
-        Vector2f endPoint = new Vector2f(30f, 40f);
+        Vector2f startPoint = new Vector2f(10.0f, 20.0f);
+        Vector2f endPoint = new Vector2f(30.0f, 40.0f);
 
         builder.moveTo(startPoint);
         builder.lineTo(endPoint);
@@ -69,9 +69,9 @@ class PathBuilder2fTest {
     @Test
     void testLineRel() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f startPoint = new Vector2f(10f, 20f);
-        Vector2f offset = new Vector2f(20f, 20f);
-        Vector2f expectedPoint = new Vector2f(30f, 40f);
+        Vector2f startPoint = new Vector2f(10.0f, 20.0f);
+        Vector2f offset = new Vector2f(20.0f, 20.0f);
+        Vector2f expectedPoint = new Vector2f(30.0f, 40.0f);
 
         builder.moveTo(startPoint);
         builder.lineRel(offset);
@@ -85,10 +85,10 @@ class PathBuilder2fTest {
     @Test
     void testArcTo() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f startPoint = new Vector2f(10f, 20f);
-        Vector2f endPoint = new Vector2f(30f, 40f);
-        Vector2f radius = new Vector2f(10f, 10f);
-        float angle = 45f;
+        Vector2f startPoint = new Vector2f(10.0f, 20.0f);
+        Vector2f endPoint = new Vector2f(30.0f, 40.0f);
+        Vector2f radius = new Vector2f(10.0f, 10.0f);
+        float angle = 45.0f;
 
         builder.moveTo(startPoint);
         builder.arcTo(endPoint, radius, angle, false, false);
@@ -102,11 +102,11 @@ class PathBuilder2fTest {
     @Test
     void testArcRel() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f startPoint = new Vector2f(10f, 20f);
-        Vector2f offset = new Vector2f(20f, 20f);
-        Vector2f radius = new Vector2f(10f, 10f);
-        float angle = 45f;
-        Vector2f expectedPoint = new Vector2f(30f, 40f);
+        Vector2f startPoint = new Vector2f(10.0f, 20.0f);
+        Vector2f offset = new Vector2f(20.0f, 20.0f);
+        Vector2f radius = new Vector2f(10.0f, 10.0f);
+        float angle = 45.0f;
+        Vector2f expectedPoint = new Vector2f(30.0f, 40.0f);
 
         builder.moveTo(startPoint);
         builder.arcRel(offset, radius, angle, false, false);
@@ -120,9 +120,9 @@ class PathBuilder2fTest {
     @Test
     void testQuadraticCurveTo() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f startPoint = new Vector2f(10f, 20f);
-        Vector2f controlPoint = new Vector2f(20f, 30f);
-        Vector2f endPoint = new Vector2f(30f, 40f);
+        Vector2f startPoint = new Vector2f(10.0f, 20.0f);
+        Vector2f controlPoint = new Vector2f(20.0f, 30.0f);
+        Vector2f endPoint = new Vector2f(30.0f, 40.0f);
 
         builder.moveTo(startPoint);
         builder.curveTo(controlPoint, endPoint);
@@ -136,10 +136,10 @@ class PathBuilder2fTest {
     @Test
     void testCubicCurveTo() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f startPoint = new Vector2f(10f, 20f);
-        Vector2f controlPoint1 = new Vector2f(15f, 25f);
-        Vector2f controlPoint2 = new Vector2f(25f, 35f);
-        Vector2f endPoint = new Vector2f(30f, 40f);
+        Vector2f startPoint = new Vector2f(10.0f, 20.0f);
+        Vector2f controlPoint1 = new Vector2f(15.0f, 25.0f);
+        Vector2f controlPoint2 = new Vector2f(25.0f, 35.0f);
+        Vector2f endPoint = new Vector2f(30.0f, 40.0f);
 
         builder.moveTo(startPoint);
         builder.curveTo(controlPoint1, controlPoint2, endPoint);
@@ -153,9 +153,9 @@ class PathBuilder2fTest {
     @Test
     void testClosePath() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f startPoint = new Vector2f(10f, 20f);
-        Vector2f point2 = new Vector2f(30f, 20f);
-        Vector2f point3 = new Vector2f(20f, 40f);
+        Vector2f startPoint = new Vector2f(10.0f, 20.0f);
+        Vector2f point2 = new Vector2f(30.0f, 20.0f);
+        Vector2f point3 = new Vector2f(20.0f, 40.0f);
 
         builder.moveTo(startPoint);
         builder.lineTo(point2);
@@ -163,7 +163,7 @@ class PathBuilder2fTest {
         builder.closePath();
 
         // After closePath, a new path should be started when adding segments
-        Vector2f newPoint = new Vector2f(50f, 60f);
+        Vector2f newPoint = new Vector2f(50.0f, 60.0f);
         builder.moveTo(newPoint);
 
         assertEquals(newPoint, builder.current(), "Current point should be the new point after closing path");
@@ -175,9 +175,9 @@ class PathBuilder2fTest {
     @Test
     void testBuild() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f point1 = new Vector2f(10f, 20f);
-        Vector2f point2 = new Vector2f(30f, 20f);
-        Vector2f point3 = new Vector2f(20f, 40f);
+        Vector2f point1 = new Vector2f(10.0f, 20.0f);
+        Vector2f point2 = new Vector2f(30.0f, 20.0f);
+        Vector2f point3 = new Vector2f(20.0f, 40.0f);
 
         builder.moveTo(point1);
         builder.lineTo(point2);
@@ -211,9 +211,9 @@ class PathBuilder2fTest {
     @Test
     void testBuildWithoutClosing() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f point1 = new Vector2f(10f, 20f);
-        Vector2f point2 = new Vector2f(30f, 20f);
-        Vector2f point3 = new Vector2f(20f, 40f);
+        Vector2f point1 = new Vector2f(10.0f, 20.0f);
+        Vector2f point2 = new Vector2f(30.0f, 20.0f);
+        Vector2f point3 = new Vector2f(20.0f, 40.0f);
 
         builder.moveTo(point1);
         builder.lineTo(point2);
@@ -232,8 +232,8 @@ class PathBuilder2fTest {
     @Test
     void testVertex() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f point1 = new Vector2f(10f, 20f);
-        Vector2f point2 = new Vector2f(30f, 40f);
+        Vector2f point1 = new Vector2f(10.0f, 20.0f);
+        Vector2f point2 = new Vector2f(30.0f, 40.0f);
 
         builder.moveTo(point1);
         builder.lineTo(point2);
@@ -249,8 +249,8 @@ class PathBuilder2fTest {
     @Test
     void testMoveToWithFloats() {
         PathBuilder2f builder = new PathBuilder2f();
-        float x = 10f;
-        float y = 20f;
+        float x = 10.0f;
+        float y = 20.0f;
         Vector2f expectedPoint = new Vector2f(x, y);
 
         builder.moveTo(x, y);
@@ -265,12 +265,12 @@ class PathBuilder2fTest {
     @Test
     void testMoveRelWithFloats() {
         PathBuilder2f builder = new PathBuilder2f();
-        float initialX = 10f;
-        float initialY = 20f;
-        float offsetX = 5f;
-        float offsetY = 10f;
+        float initialX = 10.0f;
+        float initialY = 20.0f;
+        float offsetX = 5.0f;
+        float offsetY = 10.0f;
         Vector2f initialPoint = new Vector2f(initialX, initialY);
-        Vector2f expectedPoint = new Vector2f(15f, 30f);
+        Vector2f expectedPoint = new Vector2f(15.0f, 30.0f);
 
         builder.moveTo(initialPoint);
         builder.moveRel(offsetX, offsetY);
@@ -284,9 +284,9 @@ class PathBuilder2fTest {
     @Test
     void testLineToWithFloats() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f startPoint = new Vector2f(10f, 20f);
-        float endX = 30f;
-        float endY = 40f;
+        Vector2f startPoint = new Vector2f(10.0f, 20.0f);
+        float endX = 30.0f;
+        float endY = 40.0f;
         Vector2f expectedPoint = new Vector2f(endX, endY);
 
         builder.moveTo(startPoint);
@@ -301,10 +301,10 @@ class PathBuilder2fTest {
     @Test
     void testLineRelWithFloats() {
         PathBuilder2f builder = new PathBuilder2f();
-        Vector2f startPoint = new Vector2f(10f, 20f);
-        float offsetX = 20f;
-        float offsetY = 20f;
-        Vector2f expectedPoint = new Vector2f(30f, 40f);
+        Vector2f startPoint = new Vector2f(10.0f, 20.0f);
+        float offsetX = 20.0f;
+        float offsetY = 20.0f;
+        Vector2f expectedPoint = new Vector2f(30.0f, 40.0f);
 
         builder.moveTo(startPoint);
         builder.lineRel(offsetX, offsetY);

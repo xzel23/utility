@@ -306,14 +306,14 @@ class FxUtilTest extends FxTestBase {
         FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a path with various segment types including Curve2f and Arc2f
             Path2f path2f = Path2f.builder()
-                    .moveTo(10f, 10f)
-                    .lineTo(100f, 10f)
+                    .moveTo(10.0f, 10.0f)
+                    .lineTo(100.0f, 10.0f)
                     // Add a quadratic curve (Curve2f with one control point)
-                    .curveTo(new Vector2f(150f, 50f), new Vector2f(100f, 100f))
+                    .curveTo(new Vector2f(150.0f, 50.0f), new Vector2f(100.0f, 100.0f))
                     // Add a cubic curve (Curve2f with two control points)
-                    .curveTo(new Vector2f(80f, 120f), new Vector2f(40f, 120f), new Vector2f(10f, 100f))
+                    .curveTo(new Vector2f(80.0f, 120.0f), new Vector2f(40.0f, 120.0f), new Vector2f(10.0f, 100.0f))
                     // Add an arc (Arc2f)
-                    .arcTo(new Vector2f(10f, 10f), new Vector2f(50f, 50f), 45f, false, false)
+                    .arcTo(new Vector2f(10.0f, 10.0f), new Vector2f(50.0f, 50.0f), 45.0f, false, false)
                     .closePath()
                     .build();
 

@@ -46,13 +46,13 @@ public class MathUtilBenchmark {
     @Benchmark
     public void findRoot(Blackhole blackhole) {
         // Find the root of x^2 - 4 = 0 (should be 2)
-        blackhole.consume(MathUtil.findRoot(testFunction, 1.0, 3.0, 1e-10));
+        blackhole.consume(MathUtil.findRoot(testFunction, 1.0, 3.0, 1.0e-10));
     }
 
     @Benchmark
     public void findRootsInInterval(Blackhole blackhole) {
         // Find the roots of x^2 - 4 = 0 in [-3, 3] (should be -2 and 2)
-        blackhole.consume(MathUtil.findRootsInInterval(testFunction, -3.0, 3.0, 100, 1e-10));
+        blackhole.consume(MathUtil.findRootsInInterval(testFunction, -3.0, 3.0, 100, 1.0e-10));
     }
 
     @Benchmark

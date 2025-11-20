@@ -605,7 +605,7 @@ class TextUtilTest {
     }
 
     @Test
-    void testGetDigest() throws NoSuchAlgorithmException, IOException {
+    void testGetDigest() throws Exception {
         // Test with byte array input
         String input = "Hello, World!";
         byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
@@ -621,7 +621,7 @@ class TextUtilTest {
     }
 
     @Test
-    void testGetDigestString() throws NoSuchAlgorithmException, IOException {
+    void testGetDigestString() throws Exception {
         // Test with byte array input
         String input = "Hello, World!";
         byte[] bytes = input.getBytes(StandardCharsets.UTF_8);

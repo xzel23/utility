@@ -52,7 +52,7 @@ class FxFontUtilTest extends FxTestBase {
         // Create a font definition
         FontDef fontDef = new FontDef();
         fontDef.setFamily(family);
-        fontDef.setSize(16f);
+        fontDef.setSize(16.0f);
         fontDef.setBold(true);
         fontDef.setItalic(true);
 
@@ -81,7 +81,7 @@ class FxFontUtilTest extends FxTestBase {
         Font font = fontUtil.convert(fxFont);
 
         assertNotNull(font);
-        assertEquals(16f, font.getSizeInPoints(), 0.001);
+        assertEquals(16.0f, font.getSizeInPoints(), 0.001);
         assertTrue(font.isBold());
         assertTrue(font.isItalic());
         assertTrue(font.getFamilies().contains(family));
@@ -132,7 +132,7 @@ class FxFontUtilTest extends FxTestBase {
         FontDef fontDef = fontUtil.getFontDef(fxFont);
 
         assertNotNull(fontDef);
-        assertEquals(16f, fontDef.getSize(), 0.001);
+        assertEquals(16.0f, fontDef.getSize(), 0.001);
         assertTrue(fontDef.getBold());
         assertTrue(fontDef.getItalic());
         assertEquals(family, fontDef.getFamily());
@@ -203,7 +203,7 @@ class FxFontUtilTest extends FxTestBase {
         // Create a font definition with different properties
         FontDef fontDef = new FontDef();
         fontDef.setFamily(family);
-        fontDef.setSize(16f);
+        fontDef.setSize(16.0f);
         fontDef.setBold(true);
         fontDef.setItalic(true);
 
@@ -212,7 +212,7 @@ class FxFontUtilTest extends FxTestBase {
 
         assertNotNull(derivedFont);
         assertEquals(family, derivedFont.getFamily());
-        assertEquals(16f, derivedFont.getSizeInPoints(), 0.001);
+        assertEquals(16.0f, derivedFont.getSizeInPoints(), 0.001);
         assertTrue(derivedFont.isBold());
         assertTrue(derivedFont.isItalic());
     }
@@ -224,7 +224,7 @@ class FxFontUtilTest extends FxTestBase {
         // This is a private method, so we test it indirectly through convert
         FontDef fontDef = new FontDef();
         fontDef.setFamily(family);
-        fontDef.setSize(16f);
+        fontDef.setSize(16.0f);
         fontDef.setBold(true);
         fontDef.setItalic(true);
 

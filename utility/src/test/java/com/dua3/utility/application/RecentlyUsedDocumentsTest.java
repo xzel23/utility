@@ -22,8 +22,8 @@ class RecentlyUsedDocumentsTest {
 
         List<Pair<URI, String>> entries = recentlyUsedDocuments.entries();
         assertEquals(1, entries.size());
-        assertEquals(uri, entries.get(0).first());
-        assertEquals(name, entries.get(0).second());
+        assertEquals(uri, entries.getFirst().first());
+        assertEquals(name, entries.getFirst().second());
     }
 
      void testPut_AddMultipleDocuments() {
@@ -73,8 +73,8 @@ class RecentlyUsedDocumentsTest {
 
         List<Pair<URI, String>> entries = recentlyUsedDocuments.entries();
         assertEquals(1, entries.size());
-        assertEquals(uri, entries.get(0).first());
-        assertEquals("/test/document1.txt", entries.get(0).second()); // Uses full path from URI.
+        assertEquals(uri, entries.getFirst().first());
+        assertEquals("/test/document1.txt", entries.getFirst().second()); // Uses full path from URI.
     }
 
     @Test
@@ -87,8 +87,8 @@ class RecentlyUsedDocumentsTest {
 
         List<Pair<URI, String>> entries = recentlyUsedDocuments.entries();
         assertEquals(1, entries.size());
-        assertEquals(uri, entries.get(0).first());
-        assertEquals("document2.txt", entries.get(0).second()); // Extracts file name from path.
+        assertEquals(uri, entries.getFirst().first());
+        assertEquals("document2.txt", entries.getFirst().second()); // Extracts file name from path.
     }
 
     @Test
@@ -102,7 +102,7 @@ class RecentlyUsedDocumentsTest {
 
         List<Pair<URI, String>> entries = recentlyUsedDocuments.entries();
         assertEquals(1, entries.size());
-        assertEquals(uri, entries.get(0).first());
-        assertEquals("UpdatedName.txt", entries.get(0).second()); // Name is updated.
+        assertEquals(uri, entries.getFirst().first());
+        assertEquals("UpdatedName.txt", entries.getFirst().second()); // Name is updated.
     }
 }

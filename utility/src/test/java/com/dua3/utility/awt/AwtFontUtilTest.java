@@ -111,7 +111,7 @@ class AwtFontUtilTest {
         // Create a font definition with different properties
         FontDef fontDef = new FontDef();
         fontDef.setFamily("Arial");
-        fontDef.setSize(16f);
+        fontDef.setSize(16.0f);
         fontDef.setBold(true);
         fontDef.setItalic(true);
 
@@ -119,7 +119,7 @@ class AwtFontUtilTest {
         Font derivedFont = fontUtil.deriveFont(defaultFont, fontDef);
 
         assertNotNull(derivedFont);
-        assertEquals(16f, derivedFont.getSizeInPoints(), 0.001);
+        assertEquals(16.0f, derivedFont.getSizeInPoints(), 0.001);
         assertTrue(derivedFont.isBold());
         assertTrue(derivedFont.isItalic());
     }
@@ -131,7 +131,7 @@ class AwtFontUtilTest {
         Font font = fontUtil.convert(awtFont);
 
         assertNotNull(font);
-        assertEquals(12f, font.getSizeInPoints(), 0.001);
+        assertEquals(12.0f, font.getSizeInPoints(), 0.001);
         assertFalse(font.isBold());
         assertFalse(font.isItalic());
 
@@ -140,7 +140,7 @@ class AwtFontUtilTest {
         Font boldItalicConverted = fontUtil.convert(boldItalicFont);
 
         assertNotNull(boldItalicConverted);
-        assertEquals(14f, boldItalicConverted.getSizeInPoints(), 0.001);
+        assertEquals(14.0f, boldItalicConverted.getSizeInPoints(), 0.001);
         assertTrue(boldItalicConverted.isBold());
         assertTrue(boldItalicConverted.isItalic());
     }

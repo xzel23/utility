@@ -292,7 +292,7 @@ public class PemData implements Iterable<PemData.PemItem> {
         // If we collected certificates, add them as one or multiple PemItem entries
         if (!certsBuffer.isEmpty()) {
             if (certsBuffer.size() == 1) {
-                result.addFirst(new PemItem(PemType.CERTIFICATE, certsBuffer.get(0)));
+                result.addFirst(new PemItem(PemType.CERTIFICATE, certsBuffer.getFirst()));
             } else {
                 result.addFirst(new PemItem(PemType.CERTIFICATE_CHAIN, List.copyOf(certsBuffer)));
             }

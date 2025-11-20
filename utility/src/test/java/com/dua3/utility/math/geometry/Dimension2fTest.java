@@ -24,12 +24,12 @@ class Dimension2fTest {
      */
     @Test
     void testMax() {
-        Dimension2f dim1 = new Dimension2f(10f, 30f);
-        Dimension2f dim2 = new Dimension2f(20f, 20f);
+        Dimension2f dim1 = new Dimension2f(10.0f, 30.0f);
+        Dimension2f dim2 = new Dimension2f(20.0f, 20.0f);
         Dimension2f maxDim = Dimension2f.max(dim1, dim2);
 
-        assertEquals(20f, maxDim.width(), "Max width should be 20");
-        assertEquals(30f, maxDim.height(), "Max height should be 30");
+        assertEquals(20.0f, maxDim.width(), "Max width should be 20");
+        assertEquals(30.0f, maxDim.height(), "Max height should be 30");
     }
 
     /**
@@ -37,8 +37,8 @@ class Dimension2fTest {
      */
     @Test
     void testMin() {
-        Dimension2f dim1 = new Dimension2f(10f, 30f);
-        Dimension2f dim2 = new Dimension2f(20f, 20f);
+        Dimension2f dim1 = new Dimension2f(10.0f, 30.0f);
+        Dimension2f dim2 = new Dimension2f(20.0f, 20.0f);
         Dimension2f minDim = Dimension2f.min(dim1, dim2);
 
         assertEquals(10.0f, minDim.width(), "Min width should be 10");
@@ -60,12 +60,12 @@ class Dimension2fTest {
      */
     @Test
     void testScaledWithScale2f() {
-        Dimension2f dim = new Dimension2f(10f, 20f);
-        Scale2f scale = new Scale2f(2f, 3f);
+        Dimension2f dim = new Dimension2f(10.0f, 20.0f);
+        Scale2f scale = new Scale2f(2.0f, 3.0f);
         Dimension2f scaledDim = dim.scaled(scale);
 
-        assertEquals(20f, scaledDim.width(), "Scaled width should be 20");
-        assertEquals(60f, scaledDim.height(), "Scaled height should be 60");
+        assertEquals(20.0f, scaledDim.width(), "Scaled width should be 20");
+        assertEquals(60.0f, scaledDim.height(), "Scaled height should be 60");
     }
 
     /**
@@ -73,11 +73,11 @@ class Dimension2fTest {
      */
     @Test
     void testScaledWithFloat() {
-        Dimension2f dim = new Dimension2f(10f, 20f);
+        Dimension2f dim = new Dimension2f(10.0f, 20.0f);
         Dimension2f scaledDim = dim.scaled(2.5f);
 
-        assertEquals(25f, scaledDim.width(), "Scaled width should be 25");
-        assertEquals(50f, scaledDim.height(), "Scaled height should be 50");
+        assertEquals(25.0f, scaledDim.width(), "Scaled width should be 25");
+        assertEquals(50.0f, scaledDim.height(), "Scaled height should be 50");
     }
 
     /**
@@ -85,11 +85,11 @@ class Dimension2fTest {
      */
     @Test
     void testAddMarginWithOneParameter() {
-        Dimension2f dim = new Dimension2f(10f, 20f);
-        Dimension2f dimWithMargin = dim.addMargin(5f);
+        Dimension2f dim = new Dimension2f(10.0f, 20.0f);
+        Dimension2f dimWithMargin = dim.addMargin(5.0f);
 
-        assertEquals(20f, dimWithMargin.width(), "Width with margin should be 20");
-        assertEquals(30f, dimWithMargin.height(), "Height with margin should be 30");
+        assertEquals(20.0f, dimWithMargin.width(), "Width with margin should be 20");
+        assertEquals(30.0f, dimWithMargin.height(), "Height with margin should be 30");
     }
 
     /**
@@ -97,10 +97,10 @@ class Dimension2fTest {
      */
     @Test
     void testAddMarginWithTwoParameters() {
-        Dimension2f dim = new Dimension2f(10f, 20f);
-        Dimension2f dimWithMargin = dim.addMargin(5f, 10f);
+        Dimension2f dim = new Dimension2f(10.0f, 20.0f);
+        Dimension2f dimWithMargin = dim.addMargin(5.0f, 10.0f);
 
-        assertEquals(20f, dimWithMargin.width(), "Width with margin should be 20");
-        assertEquals(40f, dimWithMargin.height(), "Height with margin should be 40");
+        assertEquals(20.0f, dimWithMargin.width(), "Width with margin should be 20");
+        assertEquals(40.0f, dimWithMargin.height(), "Height with margin should be 40");
     }
 }

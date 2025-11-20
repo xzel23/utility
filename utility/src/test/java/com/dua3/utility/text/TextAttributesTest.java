@@ -128,7 +128,7 @@ class TextAttributesTest {
                 TextAttributes.of(Pair.of(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC)),
                 TextAttributes.of(Pair.of(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_NORMAL)),
                 TextAttributes.of(Pair.of(Style.FONT_FAMILIES, List.of("Arial")),
-                        Pair.of(Style.FONT_SIZE, 17f),
+                        Pair.of(Style.FONT_SIZE, 17.0f),
                         Pair.of(Style.COLOR, Color.BLUE),
                         Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD),
                         Pair.of(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE),

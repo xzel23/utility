@@ -159,7 +159,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
 
     /**
      * Closes the dialog window associated with this InputDialogPane.
-     *
+     * <p>
      * This method retrieves the current window of the dialog pane and
      * triggers its closing operation. Typically used to dismiss the dialog
      * after the necessary action is performed or when cancelling the dialog.
