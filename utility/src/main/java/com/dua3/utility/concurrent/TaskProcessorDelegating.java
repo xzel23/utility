@@ -47,8 +47,9 @@ public class TaskProcessorDelegating<K> extends TaskProcessorBase {
 
     @Override
     public void shutdownAndAbort() {
-        super.shutdownAndAbort();
+        super.shutdown();
         delegates.values().forEach(TaskProcessor::shutdownAndAbort);
+        terminate();
     }
 
     @Override

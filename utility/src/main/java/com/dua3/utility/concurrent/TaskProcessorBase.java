@@ -268,6 +268,17 @@ public abstract class TaskProcessorBase implements TaskProcessor {
     public void shutdownAndAbort() {
         LOG.debug("'{}' - shutdownAndAbort(): {}", name, phaser);
         shutdown();
+        terminate();
+    }
+
+    /**
+     * Terminates the task processor by forcefully invoking a termination on the internal {@link Phaser}.
+     * <p>
+     * This method forcibly terminates the {@code Phaser} instance associated with the task processor.
+     * <p>
+     * Note: Forceful termination may lead to incomplete tasks and unregistered parties.
+     */
+    protected void terminate() {
         phaser.forceTermination();
     }
 
