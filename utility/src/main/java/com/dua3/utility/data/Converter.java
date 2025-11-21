@@ -27,7 +27,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @return a Converter that performs an identity transformation for objects of type T
      */
     static <T extends @Nullable Object> Converter<T, T> identity() {
-        return new SimpleConverter<>(Function.identity(), Function.identity());
+        return new SimpleConverter<>(java.util.function.Function.identity(), Function.identity());
     }
 
     /**
@@ -157,9 +157,9 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @param b2a a function that converts from type B to type A
      * @return a null-aware Converter that performs conversions between types A and B using the specified functions
      */
-    static <A, B> Converter<@Nullable A, @Nullable B>
+    static <A extends @Nullable Object, B extends @Nullable Object> Converter<A, B>
     createNullAware(Function<A, B> a2b, Function<B, A> b2a) {
-        return new SimpleConverter<>(
+        return new SimpleConverter<@Nullable A, @Nullable B>(
                 v -> v == null ? null : a2b.apply(v),
                 v -> v == null ? null : b2a.apply(v)
         );
@@ -250,4 +250,4 @@ record InverseConverter<A extends @Nullable Object, B extends @Nullable Object>(
  * @param <A> the source type
  * @param <B> the target type
  */
-record SimpleConverter<A, B>(Function<A, B> a2b, Function<B, A> b2a) implements Converter<A, B> {}
+record SimpleConverter<A extends @Nullable Object, B extends @Nullable Object>(Function<A, B> a2b, Function<B, A> b2a) implements Converter<A, B> {}
