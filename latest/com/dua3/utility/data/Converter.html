@@ -139,8 +139,8 @@ B extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Creates a bidirectional converter between two types A and B.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
-B&gt;&nbsp;<a href="Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;@Nullable A,<wbr>@Nullable B&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>
+B extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="Converter.html" title="interface in com.dua3.utility.data">Converter</a><wbr>&lt;A,<wbr>B&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#createNullAware(java.util.function.Function,java.util.function.Function)" class="member-name-link">createNullAware</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;a2b,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>A&gt;&nbsp;b2a)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
@@ -261,8 +261,9 @@ B extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/
 <li>
 <section class="detail" id="createNullAware(java.util.function.Function,java.util.function.Function)">
 <h3>createNullAware</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
-B&gt;</span>&nbsp;<span class="return-type"><a href="Converter.html" title="interface in com.dua3.utility.data">Converter</a>&lt;@Nullable A,<wbr>@Nullable B&gt;</span>&nbsp;<span class="element-name">createNullAware</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;a2b,
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters-long">&lt;A extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>
+B extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="Converter.html" title="interface in com.dua3.utility.data">Converter</a>&lt;A,<wbr>B&gt;</span>&nbsp;<span class="element-name">createNullAware</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;a2b,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>A&gt;&nbsp;b2a)</span></div>
 <div class="block">Creates a bidirectional converter between two nullable types A and B.
  <p>
