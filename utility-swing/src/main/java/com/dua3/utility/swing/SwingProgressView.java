@@ -3,9 +3,11 @@ package com.dua3.utility.swing;
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.concurrent.ProgressView;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Label;
@@ -53,12 +55,15 @@ public final class SwingProgressView<T> extends JPanel implements ProgressTracke
         int row = rowCount++;
         SwingUtilities.invokeLater(() -> {
             GridBagConstraints constraints = new GridBagConstraints();
-            constraints.anchor = GridBagConstraints.LAST_LINE_START;
+            constraints.anchor = GridBagConstraints.LINE_START;
             constraints.ipadx = 8;
             constraints.gridx = 0;
             constraints.gridy = row;
             constraints.gridwidth = 2;
-            add(new Label(group), constraints);
+            JLabel label = new JLabel(group);
+            Font labelFont = label.getFont();
+            label.setFont(labelFont.deriveFont(labelFont.getStyle() | Font.BOLD));
+            add(label, constraints);
         });
 
         ProgressTracker.super.scheduleTaskGroup(group, tasks);
