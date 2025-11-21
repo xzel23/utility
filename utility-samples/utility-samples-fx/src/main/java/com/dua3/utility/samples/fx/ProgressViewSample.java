@@ -50,19 +50,19 @@ public class ProgressViewSample extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        addTask(pv, "SampleTask 1", 100, ProgressTracker.State.COMPLETED_SUCCESS);
-        addTask(pv, "SampleTask 2", 50, ProgressTracker.State.COMPLETED_SUCCESS);
-        addTask(pv, "SampleTask 3", -75, ProgressTracker.State.COMPLETED_SUCCESS);
+        SampleTask sampleTask1 = newTask(pv, "SampleTask 1", 100, ProgressTracker.State.COMPLETED_SUCCESS);
+        SampleTask sampleTask2 = newTask(pv, "SampleTask 2", 50, ProgressTracker.State.COMPLETED_SUCCESS);
+        SampleTask sampleTask3 = newTask(pv, "SampleTask 3", -75, ProgressTracker.State.COMPLETED_SUCCESS);
+
+        pv.scheduleTaskGroup("Sample Tasks", sampleTask1, sampleTask2, sampleTask3);
     }
 
     @SuppressWarnings("FutureReturnValueIgnored")
-    private void addTask(ProgressTracker<SampleTask> pv, String name, int steps, ProgressTracker.State s) {
+    private SampleTask newTask(ProgressTracker<SampleTask> pv, String name, int steps, ProgressTracker.State s) {
         boolean indeterminate = steps < 0;
         int max = steps >= 0 ? steps : -steps;
 
         SampleTask task = new SampleTask(name, indeterminate, max);
-
-        pv.schedule(task);
 
         pool.submit(() -> {
             sleep(500);
@@ -76,6 +76,8 @@ public class ProgressViewSample extends Application {
             }
             pv.finish(task, s);
         });
+
+        return task;
     }
 
     private static void sleep(int ms) {

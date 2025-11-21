@@ -55,6 +55,17 @@ public class ProgressView<T> extends GridPane implements ProgressTracker<T> {
     }
 
     @Override
+    public void scheduleTaskGroup(String group, T... tasks) {
+        int row = getChildren().size();
+        Label label = new Label(group);
+        label.setStyle("-fx-font-weight: bold;");
+        setConstraints(label, 0, row, 2, 1);
+        getChildren().addAll(label);
+
+        ProgressTracker.super.scheduleTaskGroup(group, tasks);
+    }
+
+    @Override
     public void start(T task) {
         imp.update(task, 0, 0);
     }
