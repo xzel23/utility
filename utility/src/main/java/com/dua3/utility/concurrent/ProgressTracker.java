@@ -1,5 +1,7 @@
 package com.dua3.utility.concurrent;
 
+import java.util.Arrays;
+
 /**
  * Interface for progress tracking.
  *
@@ -44,6 +46,21 @@ public interface ProgressTracker<T> {
      */
     static TaskUpdater nopTaskUpdater() {
         return new TaskUpdater(nopTracker(), "none");
+    }
+
+    /**
+     * Schedules a group of tasks to be executed. Each task in the provided
+     * iterable is individually scheduled using the {@link #schedule(Object)} method.
+     * If a task has already been scheduled, the operation for that specific task
+     * is a no-op.
+     * <p>
+     * The {@code group} parameter sets the name or identifier of the task group to which the tasks belong.
+     *
+     * @param group the name or identifier of the task group to which the tasks belong
+     * @param tasks the tasks to be scheduled
+     */
+    default void scheduleTaskGroup(String group, T... tasks) {
+        Arrays.stream(tasks).forEach(this::schedule);
     }
 
     /**

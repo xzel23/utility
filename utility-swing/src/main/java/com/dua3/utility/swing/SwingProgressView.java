@@ -49,6 +49,22 @@ public final class SwingProgressView<T> extends JPanel implements ProgressTracke
     }
 
     @Override
+    public void scheduleTaskGroup(String group, T... tasks) {
+        int row = rowCount++;
+        SwingUtilities.invokeLater(() -> {
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.anchor = GridBagConstraints.LAST_LINE_START;
+            constraints.ipadx = 8;
+            constraints.gridx = 0;
+            constraints.gridy = row;
+            constraints.gridwidth = 2;
+            add(new Label(group), constraints);
+        });
+
+        ProgressTracker.super.scheduleTaskGroup(group, tasks);
+    }
+
+    @Override
     public void schedule(T task) {
         imp.schedule(task);
     }
