@@ -23,6 +23,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 
@@ -38,6 +40,7 @@ public class AlertBuilder
         extends DialogBuilder<Alert, AlertBuilder, ButtonType> {
     private @Nullable String css = null;
     private @Nullable String text = null;
+    private boolean selectableText = false;
     private final List<ButtonDef<ButtonType>> buttons = new ArrayList<>();
     private @Nullable ButtonType defaultButton;
 
@@ -61,6 +64,29 @@ public class AlertBuilder
     @Override
     public Alert build() {
         Alert dlg = super.build();
+
+        // Replace the Label in the dialog pane with a text area to allow the user to select and copy text
+        if (selectableText && dlg.getDialogPane().lookup(".content.label") instanceof Label label) {
+            TextArea textArea = new TextArea("");
+            textArea.textProperty().bind(dlg.contentTextProperty());
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+            textArea.setFocusTraversable(false);
+
+            // Make it look like normal alert content
+            textArea.setFont(label.getFont());
+            textArea.setStyle("-fx-background-color: transparent;" +
+                    "-fx-control-inner-background: transparent;" +
+                    "-fx-padding: 0;" +
+                    "-fx-background-insets: 0;" +
+                    "-fx-border-width: 0;"
+            );
+
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+
+            dlg.getDialogPane().setContent(textArea);
+        }
 
         LangUtil.applyIfNotEmpty(css, dlg.getDialogPane().getScene().getStylesheets()::add);
         LangUtil.applyIfNotEmpty(text, dlg::setContentText);
@@ -95,6 +121,18 @@ public class AlertBuilder
      */
     public AlertBuilder text(String fmt, Object... args) {
         this.text = format(fmt, args);
+        return self();
+    }
+
+    /**
+     * Sets whether the text in the alert dialog should be selectable or not.
+     * When enabled, users will be able to highlight and copy the text from the dialog.
+     *
+     * @param selectableText true to make the text selectable, false otherwise
+     * @return the current instance of {@code AlertBuilder} for method chaining
+     */
+    public AlertBuilder selectableText(boolean selectableText) {
+        this.selectableText = selectableText;
         return self();
     }
 
