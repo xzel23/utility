@@ -244,7 +244,7 @@ could not be loaded.
 - **Minimum Java version**: Java 21. Java 25 is required for `StreamGathererUtil` and dark mode detection.
   If your project uses Java 24, please upgrade.
 
-- **IBOM artifact:** A new artefact `utility-bom` has been introduced that specifies the version for all 
+- **BOM artifact:** A new artefact `utility-bom` has been introduced that specifies the version for all 
   modules.
 
 - **Fixes and improvements:** Many small improvements and bug fixes across the board, both for correctness and 
@@ -275,6 +275,9 @@ could not be loaded.
     - New class `DarkModeDetector`.
     - New record `LicenseData`.
     - New class `RecentlyUsedDocuments`.
+
+- Package `utility.concurrent`
+    - added `scheduleTaskGroup()` to schedule a group of tasks that will be displayed with a title in the Swing and JavaFX ProgressView implementations. 
 
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
@@ -326,6 +329,7 @@ could not be loaded.
     - Added `Version` class and refactored BuildInfo class to use it.
     - Added `LangUtil.checkArg()` that throws `IllegalArgumentException`.
     - Added `LangUtil.getOrThrow()` that throws `NoSuchElementException` when the key is not contained in the map.
+    - Added `LangUtil.formatThrowable()` and `LangUtil.appendThrowable()`.
     - Check format string matches arguments in `LangUtil.check()` and `LangUtil.checkArg()`.
     - `LangUtil.newUuidV7()` to create UUID v7 instances.
     - `LangUtil.reverseInPlace()` to reverse array contents
