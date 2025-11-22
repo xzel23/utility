@@ -81,9 +81,9 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     }
 
     /**
-     * Create Alert instance.
+     * Create the dialog pane instance.
      *
-     * @return Alert instance
+     * @return dialog pane instance
      */
     public D build() {
         D dlg = dialogSupplier.get();
@@ -123,7 +123,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     }
 
     /**
-     * Set Alert header text.
+     * Set the header text.
      *
      * @param fmt  the format String as defined by {@link java.util.Formatter}
      * @param args the arguments passed to the formatter
