@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.Serial;
 import java.io.UncheckedIOException;
 import java.lang.ref.Cleaner;
@@ -2562,5 +2563,48 @@ public final class LangUtil {
             consumer.accept(cs);
         }
         return cs;
+    }
+
+    /**
+     * Formats a {@link Throwable} into a string representation, including its message
+     * and stack trace, for logging or debugging purposes.
+     *
+     * @param t the throwable to be formatted; must not be null.
+     * @return a string representation of the given throwable, including its message
+     *         and stack trace.
+     */
+    public static String formatThrowable(Throwable t) {
+        try {
+            return appendThrowable(t, new StringBuilder()).toString();
+        } catch (IOException e) {
+            // this should never happen with a StringBuilder
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Appends the details of a {@link Throwable} to the provided {@link Appendable} instance.
+     * This includes the exception's class name, its message, and its stack trace.
+     *
+     * @param <T> the type of the {@link Appendable} instance.
+     * @param t the {@link Throwable} to append. If {@code null}, the string "null" will be appended.
+     * @param app the {@link Appendable} instance to which the throwable's details are appended.
+     * @return the same {@link Appendable} instance passed in the {@code app} parameter.
+     * @throws IOException if an I/O error occurs while writing to the {@link Appendable}.
+     */
+    public static <T extends Appendable> T appendThrowable(@Nullable Throwable t, T app) throws IOException {
+        if (t == null) {
+            app.append("null");
+            return app;
+        }
+
+        app.append(t.getClass().getName())
+                .append(": ")
+                .append(t.getMessage());
+
+        PrintWriter pw = new PrintWriter(IoUtil.getWriter(app));
+        t.printStackTrace(pw);
+
+        return app;
     }
 }
