@@ -294,7 +294,7 @@ public final class LangUtil {
      * @param <T> the type
      * @return a, if a != null, else b
      */
-    public static <T extends @Nullable Object> T orElse(T a, T b) {
+    public static <T extends @Nullable Object> T orElse(@Nullable T a, T b) {
         return a != null ? a : b;
     }
 
@@ -2569,11 +2569,11 @@ public final class LangUtil {
      * Formats a {@link Throwable} into a string representation, including its message
      * and stack trace, for logging or debugging purposes.
      *
-     * @param t the throwable to be formatted; must not be null.
+     * @param t the {@link Throwable} to append. If {@code null}, the string "null" will be returned.
      * @return a string representation of the given throwable, including its message
-     *         and stack trace.
+     *         and stack trace, or "null" if the throwable is {@code null}.
      */
-    public static String formatThrowable(Throwable t) {
+    public static String formatThrowable(@Nullable Throwable t) {
         try {
             return appendThrowable(t, new StringBuilder()).toString();
         } catch (IOException e) {
@@ -2597,10 +2597,6 @@ public final class LangUtil {
             app.append("null");
             return app;
         }
-
-        app.append(t.getClass().getName())
-                .append(": ")
-                .append(t.getMessage());
 
         PrintWriter pw = new PrintWriter(IoUtil.getWriter(app));
         t.printStackTrace(pw);

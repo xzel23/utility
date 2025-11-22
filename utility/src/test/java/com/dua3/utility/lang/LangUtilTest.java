@@ -109,6 +109,56 @@ class LangUtilTest {
     }
 
     @Test
+    void testFormatThrowable_includesClassMessageAndStack() {
+        // create a throwable with a stack trace
+        Throwable t;
+        try {
+            throw new RuntimeException("boom");
+        } catch (RuntimeException e) {
+            t = e;
+        }
+
+        String s = LangUtil.formatThrowable(t);
+
+        // should contain class name and message
+        assertTrue(s.contains("java.lang.RuntimeException: boom"),
+                () -> "formatted output should contain exception header, was: " + s);
+        // should contain some stack trace lines
+        assertTrue(s.contains("\tat "), () -> "formatted output should contain stack trace, was: " + s);
+    }
+
+    @Test
+    void testAppendThrowable_nullWritesLiteralNull() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        StringBuilder result = LangUtil.appendThrowable(null, sb);
+        // same instance returned
+        assertSame(sb, result);
+        // literal "null" must be written
+        assertEquals("null", sb.toString());
+    }
+
+    @Test
+    void testAppendThrowable_includesClassMessageAndStack() throws IOException {
+        Throwable t;
+        try {
+            throw new IllegalStateException("kaputt");
+        } catch (IllegalStateException e) {
+            t = e;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Appendable ret = LangUtil.appendThrowable(t, sb);
+
+        // ensure the same appendable is returned
+        assertSame(sb, ret);
+
+        String s = sb.toString();
+        assertTrue(s.contains("java.lang.IllegalStateException: kaputt"),
+                () -> "appended output should contain exception header, was: " + s);
+        assertTrue(s.contains("\tat "), () -> "appended output should contain stack trace, was: " + s);
+    }
+
+    @Test
     void testCheckArg_supplierOverload() {
         AtomicInteger supplied = new AtomicInteger(0);
         Supplier<String> supplier = () -> { supplied.incrementAndGet(); return "bad"; };
@@ -1846,7 +1896,7 @@ class LangUtilTest {
         assertNotNull(ref.get());
 
         // Drop strong reference and encourage GC
-        obj = null;
+        obj = null; // DO NOT REMOVE
 
         // Loop a few times to give GC a chance; WeakHashMap cleans on access
         boolean cleared = false;
@@ -1860,7 +1910,7 @@ class LangUtilTest {
                     break;
                 }
             }
-            try { Thread.sleep(10); } catch (InterruptedException ignored) { }
+            try { Thread.sleep(10); } catch (InterruptedException ignored) { /* do nothing */ }
         }
 
         assertTrue(cleared, "referent should be collected eventually");
@@ -1877,7 +1927,7 @@ class LangUtilTest {
 
         // Now allow it to be GC'd like above
         java.lang.ref.WeakReference<Long> ref = new java.lang.ref.WeakReference<>(x);
-        x = null;
+        x = null; // DO NOT REMOVE
         boolean cleared = false;
         for (int i = 0; i < 100; i++) {
             System.gc();
@@ -1888,7 +1938,7 @@ class LangUtilTest {
                     break;
                 }
             }
-            try { Thread.sleep(10); } catch (InterruptedException ignored) { }
+            try { Thread.sleep(10); } catch (InterruptedException ignored) { /* do nothing */ }
         }
         assertTrue(cleared, "referent should be collected eventually");
         assertEquals(0, set.size(), "stale entry should be removed from weak set");
