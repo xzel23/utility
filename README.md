@@ -239,7 +239,7 @@ could not be loaded.
 
 ## Changes
 
-### 20.0.0 (work in progress)
+### 20.0.0
 
 - **Minimum Java version**: Java 21. Java 25 is required for `StreamGathererUtil` and dark mode detection.
   If your project uses Java 24, please upgrade.
