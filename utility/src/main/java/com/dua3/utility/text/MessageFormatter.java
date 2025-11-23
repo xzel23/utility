@@ -4,7 +4,9 @@ import com.dua3.utility.i18n.I18N;
 import org.jspecify.annotations.Nullable;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * The {@code MessageFormatter} interface provides methods to format messages
@@ -55,6 +57,50 @@ public interface MessageFormatter {
          * or cultural formatting requirements.
          */
         I18N
+    }
+
+    /**
+     * Represents a container for a format string and the corresponding arguments
+     * to be used in formatting operations.
+     * <p>
+     * This record is designed to store a format string and a variable number
+     * of arguments that can be used for replacing placeholders in the format
+     * string during a formatting process. It is a lightweight and immutable
+     * data holder intended for use with methods in the {@code MessageFormatter} interface.
+     *
+     * @param fmt the format string
+     * @param args the arguments to use for replacing placeholders in the format string
+     */
+    record MessageFormatterArgs(String fmt, @Nullable Object... args) {
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof MessageFormatterArgs(String fmt1, Object[] args1))) return false;
+            return Objects.equals(fmt, fmt1) && Objects.deepEquals(args, args1);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(fmt, Arrays.hashCode(args));
+        }
+
+        @Override
+        public String toString() {
+            return "MessageFormatterArgs{" +
+                    "fmt='" + fmt + '\'' +
+                    ", args=" + Arrays.toString(args) +
+                    '}';
+        }
+    }
+
+    /**
+     * Creates a {@code MessageFormatterArgs} instance using the provided format string and arguments.
+     *
+     * @param fmt  the format string containing placeholders to be replaced
+     * @param args the arguments to use for replacing the placeholders in the format string
+     * @return a {@code MessageFormatterArgs} instance containing the format string and the provided arguments
+     */
+    static MessageFormatterArgs args(String fmt, Object... args) {
+        return new MessageFormatterArgs(fmt, args);
     }
 
     /**

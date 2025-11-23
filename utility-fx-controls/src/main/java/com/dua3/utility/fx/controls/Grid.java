@@ -105,6 +105,14 @@ public class Grid extends GridPane {
         return result;
     }
 
+    /**
+     * Sets the content of the grid by specifying the data and number of columns.
+     *
+     * @param data the sequenced collection of {@link Meta} objects, each representing
+     *             metadata for an input field. This collection will be used to populate
+     *             the grid with input controls, labels, and markers.
+     * @param columns the number of columns into which the grid layout should be organized.
+     */
     void setContent(SequencedCollection<Meta<?>> data, int columns) {
         this.data = data;
         this.columns = columns;

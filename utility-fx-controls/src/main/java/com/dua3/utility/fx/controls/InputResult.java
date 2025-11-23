@@ -71,4 +71,17 @@ public record InputResult(ButtonType result, Map<String, @Nullable Object> data)
     public @Nullable Object get(String key) {
         return data.get(key);
     }
+
+    /**
+     * Retrieves a value from the data map associated with the specified key and casts it to the specified type.
+     *
+     * @param <T>  the type to which the value should be cast
+     * @param key  the key whose associated value is to be returned
+     * @param type the class of the type to which the value should be cast
+     * @return the value associated with the specified key, cast to the specified type, or {@code null} if the key is not present
+     * @throws ClassCastException if the value associated with the key cannot be cast to the specified type
+     */
+    public <T> T get(String key, Class<T> type) {
+        return type.cast(data.get(key));
+    }
 }
