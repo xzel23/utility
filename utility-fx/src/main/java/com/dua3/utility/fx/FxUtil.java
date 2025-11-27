@@ -1110,7 +1110,16 @@ public final class FxUtil {
         a.addListener(obj -> noOperation(args));
     }
 
-    private static void noOperation(Object... args) {
+    /**
+     * A method that performs no operation. It accepts a variable number of arguments
+     * which are ignored.
+     * <p>
+     * This method is used to bind strong references to a {@link Property} to make sure
+     * the objects are not garbage collected as long as the property itself is not garbage collected.
+     *
+     * @param ignored arguments that are intentionally ignored
+     */
+    private static void noOperation(Object... ignored) {
         // do nothing
     }
 
