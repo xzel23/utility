@@ -17,6 +17,7 @@ import javafx.scene.shape.ClosePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
+import com.dua3.utility.concurrent.Value;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Image;
 import com.dua3.utility.io.IoUtil;
@@ -623,6 +624,44 @@ public final class FxUtil {
     }
 
     /**
+     * Converts a {@link Value} object into an {@link ObservableValue}.
+     *
+     * @param value the Value object to be converted
+     * @param <T> the type of the value stored in the Value object
+     * @return an ObservableValue object that reflects changes in the Value object
+     */
+    public static <T extends @Nullable Object> ObservableValue<T> toObservableValue(Value<T> value) {
+        return new ObservableValue<>() {
+            @Override
+            public void addListener(ChangeListener<? super T> listener) {
+                value.addChangeListener(new ChangeListenerAdapter<>(this, listener));
+            }
+
+            @Override
+            public void removeListener(ChangeListener<? super T> listener) {
+                List.copyOf(value.getChangeListeners()).stream()
+                        .filter(changeListener -> changeListener instanceof ChangeListenerAdapter<?> a && a.changeListener == listener)
+                        .forEach(value::removeChangeListener);
+            }
+
+            @Override
+            public T getValue() {
+                return value.get();
+            }
+
+            @Override
+            public void addListener(InvalidationListener listener) {
+                value.addChangeListener(new InvalidationListenerAdapter<>(this, listener));
+            }
+
+            @Override
+            public void removeListener(InvalidationListener listener) {
+                List.copyOf(value.getChangeListeners()).stream().filter(changeListener -> changeListener instanceof InvalidationListenerAdapter<?> cla && cla.invalidationListener == listener).forEach(value::removeChangeListener);
+            }
+        };
+    }
+
+    /**
      * Attaches a mouse event handler to a given node for a specific event type.
      * <p>
      * If an event handler is already registered, the new handler is called first. If the event is not consumed by the#
@@ -740,6 +779,15 @@ public final class FxUtil {
 
                 @Override
                 protected int[] getPermutation() {
+                    if (changeB.wasPermutated()) {
+                        int start = getFrom();
+                        int end = getTo();
+                        int[] perm = new int[end - start];
+                        for (int i = 0; i < perm.length; i++) {
+                            perm[i] = changeB.getPermutation(start + i);
+                        }
+                        return perm;
+                    }
                     return LangUtil.EMPTY_INT_ARRAY;
                 }
             };
