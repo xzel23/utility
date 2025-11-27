@@ -727,6 +727,8 @@ public final class FxUtil {
     /**
      * MappedList is a subclass of TransformationList that maps elements from a source list to a new type using a converter function.
      * It maintains a one-to-one mapping between elements in the source list and the mapped list.
+     * <p>
+     * Note: We use the {@link #equals(Object)} and {@link #hashCode()} implementations defined in {@link java.util.AbstractList}.
      *
      * @param <A> the type of elements in the mapped list
      * @param <B> the type of elements in the source list
