@@ -405,15 +405,20 @@ B&gt;&nbsp;javafx.collections.ObservableList<wbr>&lt;B&gt;</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Schedules a task to be executed on the next frame of the JavaFX application thread.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.geometry.Rectangle2D</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#union(javafx.geometry.Rectangle2D,javafx.geometry.Rectangle2D)" class="member-name-link">union</a><wbr>(javafx.geometry.Rectangle2D&nbsp;r1,
- javafx.geometry.Rectangle2D&nbsp;r2)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.beans.value.ObservableValue<wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toObservableValue(com.dua3.utility.concurrent.Value)" class="member-name-link">toObservableValue</a><wbr>(<a href="../concurrent/Value.html" title="interface in com.dua3.utility.concurrent">Value</a>&lt;T&gt;&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Converts a <a href="../concurrent/Value.html" title="interface in com.dua3.utility.concurrent"><code>Value</code></a> object into an <code>ObservableValue</code>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.geometry.Rectangle2D</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#union(javafx.geometry.Rectangle2D,javafx.geometry.Rectangle2D)" class="member-name-link">union</a><wbr>(javafx.geometry.Rectangle2D&nbsp;r1,
+ javafx.geometry.Rectangle2D&nbsp;r2)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Create the union of two rectangles.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.layout.Region</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#vspace(double)" class="member-name-link">vspace</a><wbr>(double&nbsp;v)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.layout.Region</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#vspace(double)" class="member-name-link">vspace</a><wbr>(double&nbsp;v)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a vertical spacer Region with the specified height.</div>
 </div>
 </div>
@@ -941,6 +946,22 @@ B&gt;&nbsp;javafx.collections.ObservableList<wbr>&lt;B&gt;</code></div>
 <dd><code>r2</code> - second rectangle</dd>
 <dt>Returns:</dt>
 <dd>minimal rectangle containing both r1 and r2</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="toObservableValue(com.dua3.utility.concurrent.Value)">
+<h3>toObservableValue</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type">javafx.beans.value.ObservableValue&lt;T&gt;</span>&nbsp;<span class="element-name">toObservableValue</span><wbr><span class="parameters">(<a href="../concurrent/Value.html" title="interface in com.dua3.utility.concurrent">Value</a>&lt;T&gt;&nbsp;value)</span></div>
+<div class="block">Converts a <a href="../concurrent/Value.html" title="interface in com.dua3.utility.concurrent"><code>Value</code></a> object into an <code>ObservableValue</code>.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the value stored in the Value object</dd>
+<dt>Parameters:</dt>
+<dd><code>value</code> - the Value object to be converted</dd>
+<dt>Returns:</dt>
+<dd>an ObservableValue object that reflects changes in the Value object</dd>
 </dl>
 </section>
 </li>
