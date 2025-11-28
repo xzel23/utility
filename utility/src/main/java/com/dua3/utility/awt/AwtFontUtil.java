@@ -52,7 +52,7 @@ public final class AwtFontUtil implements FontUtil {
     static {
         boolean isHeadless = GraphicsEnvironment.isHeadless();
         boolean isJavaAwtHeadless = Boolean.getBoolean("java.awt.headless");
-        if (isHeadless && isJavaAwtHeadless) {
+        if (isHeadless && !isJavaAwtHeadless) {
             LOG.warn("The environment is headless, but the property java.awt.headless is not set to \"true\", expect problems!");
         }
         if (isJavaAwtHeadless) {
