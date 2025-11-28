@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -70,6 +71,31 @@ public class TaskProcessorEventDriven<K> extends TaskProcessorBase {
                 LOG.trace("'{}' - task with key {} not found: ignoring update", getName(), key);
             }
         }
+    }
+
+    /**
+     * Sets a timeout for a task associated with the specified key. If the task is not found or
+     * already completed, the timeout is ignored. If the task is found and not yet completed,
+     * a timeout is applied to the task using the specified duration.
+     *
+     * @param key the unique identifier for the task
+     * @param timeout the duration after which the task will time out
+     */
+    public void addTaskTimeout(K key, Duration timeout) {
+        TaskEntry taskEntry = futures.get(key);
+
+        if (taskEntry == null) {
+            LOG.debug("'{}' - task with key {} not found: ignoring timeout", getName(), key);
+            return;
+        }
+
+        CompletableFuture<?> future = taskEntry.completableFuture();
+        if (future.isDone()) {
+            LOG.debug("'{}' - task {} with key {} already completed: ignoring timeout", getName(), taskEntry.id(), key);
+        }
+
+        LOG.debug("'{}' - adding timeout of {} for task {} with key {}", getName(), timeout, taskEntry.id(), key);
+        future.orTimeout(timeout.toMillis(), java.util.concurrent.TimeUnit.MILLISECONDS);
     }
 
     @Override
