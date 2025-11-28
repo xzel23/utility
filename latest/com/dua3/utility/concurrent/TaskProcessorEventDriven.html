@@ -146,16 +146,22 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#submit(java.util.concurrent.Callable)" class="member-name-link">submit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Callable.html" title="class or interface in java.util.concurrent" class="external-link">Callable</a>&lt;? extends T&gt;&nbsp;task)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addTaskTimeout(K,java.time.Duration)" class="member-name-link">addTaskTimeout</a><wbr>(<a href="TaskProcessorEventDriven.html" title="type parameter in TaskProcessorEventDriven">K</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Duration.html" title="class or interface in java.time" class="external-link">Duration</a>&nbsp;timeout)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets a timeout for a task associated with the specified key.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#submit(java.util.concurrent.Callable)" class="member-name-link">submit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Callable.html" title="class or interface in java.util.concurrent" class="external-link">Callable</a>&lt;? extends T&gt;&nbsp;task)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Submit a task that that returns a result.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateTask(K,java.lang.Object,boolean)" class="member-name-link">updateTask</a><wbr>(<a href="TaskProcessorEventDriven.html" title="type parameter in TaskProcessorEventDriven">K</a>&nbsp;key,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateTask(K,java.lang.Object,boolean)" class="member-name-link">updateTask</a><wbr>(<a href="TaskProcessorEventDriven.html" title="type parameter in TaskProcessorEventDriven">K</a>&nbsp;key,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;result,
  boolean&nbsp;isCompleted)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates the task associated with the given key by either completing the task or logging an update
  if the task is not marked as completed.</div>
 </div>
@@ -217,6 +223,21 @@ loadScripts(document, 'script');</script>
 <dd><code>key</code> - the unique identifier for the task being updated</dd>
 <dd><code>result</code> - the result to be set if the task is successfully completed</dd>
 <dd><code>isCompleted</code> - a flag indicating whether the task is completed</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addTaskTimeout(K,java.time.Duration)">
+<h3 id="addTaskTimeout(java.lang.Object,java.time.Duration)">addTaskTimeout</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addTaskTimeout</span><wbr><span class="parameters">(<a href="TaskProcessorEventDriven.html" title="type parameter in TaskProcessorEventDriven">K</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Duration.html" title="class or interface in java.time" class="external-link">Duration</a>&nbsp;timeout)</span></div>
+<div class="block">Sets a timeout for a task associated with the specified key. If the task is not found or
+ already completed, the timeout is ignored. If the task is found and not yet completed,
+ a timeout is applied to the task using the specified duration.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>key</code> - the unique identifier for the task</dd>
+<dd><code>timeout</code> - the duration after which the task will time out</dd>
 </dl>
 </section>
 </li>

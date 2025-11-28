@@ -144,11 +144,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates an instance of the I18N class with the provided resource bundle.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#format(java.lang.String,java.lang.Object...)" class="member-name-link">format</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#format(java.lang.String,java.lang.Object...)" class="member-name-link">format</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;keyOrPattern,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Retrieves the formatted localized string for the given key from the resource bundle,
- using the provided arguments.</div>
+<div class="block">Formats a string using either a pattern or a localization key with optional arguments.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get(java.lang.String)" class="member-name-link">get</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
@@ -438,23 +437,17 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="format(java.lang.String,java.lang.Object...)">
 <h3>format</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">format</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">format</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;keyOrPattern,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
-<div class="block">Retrieves the formatted localized string for the given key from the resource bundle,
- using the provided arguments.</div>
+<div class="block">Formats a string using either a pattern or a localization key with optional arguments.
+ If <code>keyOrPattern</code> contains at least one '{', it is considered a pattern, otherwise
+ a localization key to retrieve the pattern</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>key</code> - The key that represents the string pattern to be retrieved.</dd>
-<dd><code>args</code> - The arguments to be formatted into the string pattern.</dd>
+<dd><code>keyOrPattern</code> - the localization key or the pattern to format</dd>
+<dd><code>args</code> - optional arguments to be formatted into the pattern</dd>
 <dt>Returns:</dt>
-<dd>The formatted string for the given key and arguments.</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list-long">
-<li><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ResourceBundle.html#getString(java.lang.String)" title="class or interface in java.util" class="external-link"><code>ResourceBundle.getString(String)</code></a></li>
-<li><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/MessageFormat.html#format(java.lang.String,java.lang.Object...)" title="class or interface in java.text" class="external-link"><code>MessageFormat.format(String, Object...)</code></a></li>
-</ul>
-</dd>
+<dd>the formatted string or an empty string if <code>keyOrPattern</code> is empty</dd>
 </dl>
 </section>
 </li>
