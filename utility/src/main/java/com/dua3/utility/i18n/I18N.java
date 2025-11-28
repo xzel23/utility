@@ -264,20 +264,19 @@ public final class I18N {
     }
 
     /**
-     * Retrieves the formatted localized string for the given key from the resource bundle,
-     * using the provided arguments.
+     * Formats a string using either a pattern or a localization key with optional arguments.
+     * If {@code keyOrPattern} contains at least one '{', it is considered a pattern, otherwise
+     * a localization key to retrieve the pattern
      *
-     * @param key  The key that represents the string pattern to be retrieved.
-     * @param args The arguments to be formatted into the string pattern.
-     * @return The formatted string for the given key and arguments.
-     * @see ResourceBundle#getString(String)
-     * @see MessageFormat#format(String, Object...)
+     * @param keyOrPattern the localization key or the pattern to format
+     * @param args optional arguments to be formatted into the pattern
+     * @return the formatted string or an empty string if {@code keyOrPattern} is empty
      */
-    public String format(String key, @Nullable Object... args) {
-        if (key.isEmpty()) {
+    public String format(String keyOrPattern, @Nullable Object... args) {
+        if (keyOrPattern.isEmpty()) {
             return "";
         }
-        String pattern = lookupBundle(key).getString(key);
+        String pattern = keyOrPattern.contains("{") ? keyOrPattern : lookupBundle(keyOrPattern).getString(keyOrPattern);
         return MessageFormat.format(pattern, args);
     }
 
