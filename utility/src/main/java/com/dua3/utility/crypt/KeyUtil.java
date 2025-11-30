@@ -41,11 +41,32 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.SequencedCollection;
+import java.util.SequencedSet;
+import java.util.Set;
 
 /**
  * Utility class for cryptographic key operations.
  */
 public final class KeyUtil {
+
+    /**
+     * Defines the minimum key size, in bits, required for RSA and DSA cryptographic algorithms.
+     * This value ensures compliance with security standards by specifying a minimal acceptable
+     * level of cryptographic strength for keys used in RSA and DSA operations. Keys smaller
+     * than this size are considered insecure and should not be used.
+     */
+    private static final int RSA_DSA_MINIMAL_KEY_SIZE = 2048;
+    /**
+     * Defines the set of allowed elliptic curve (EC) key sizes for cryptographic operations.
+     * <p>
+     * This array contains the specific key sizes in bits that are permissible for use
+     * within the system to ensure compliance with predefined security policies.
+     * Key sizes included in the array are chosen based on cryptographic strength
+     * and commonly accepted standards for elliptic curve cryptography.
+     */
+    private static final SequencedCollection<Integer> EC_ALLOWED_KEY_SIZES = new LinkedHashSet<>(Set.of(256, 384, 521));
 
     /**
      * Utility class private constructor.
@@ -261,7 +282,7 @@ public final class KeyUtil {
      * @throws InvalidAlgorithmParameterException if the key generation fails
      */
     public static KeyPair generateRSAKeyPair() throws InvalidAlgorithmParameterException {
-        return generateKeyPair(com.dua3.utility.crypt.AsymmetricAlgorithm.RSA, 2048);
+        return generateKeyPair(com.dua3.utility.crypt.AsymmetricAlgorithm.RSA, RSA_DSA_MINIMAL_KEY_SIZE);
     }
 
     /**
@@ -301,13 +322,13 @@ public final class KeyUtil {
     public static void validateAsymmetricKeySize(AsymmetricAlgorithm algorithm, int keySize) throws InvalidAlgorithmParameterException {
         switch (algorithm) {
             case RSA, DSA -> {
-                if (keySize < 2048) {
-                    throw new InvalidAlgorithmParameterException(algorithm + " key size must be at least 2048 bits, but was: " + keySize);
+                if (keySize < RSA_DSA_MINIMAL_KEY_SIZE) {
+                    throw new InvalidAlgorithmParameterException(algorithm + " key size must be at least " + RSA_DSA_MINIMAL_KEY_SIZE + " bits, but was: " + keySize);
                 }
             }
             case EC -> {
-                if (keySize != 256 && keySize != 384 && keySize != 521) {
-                    throw new InvalidAlgorithmParameterException("EC key size must be 256, 384, or 521 bits, but was: " + keySize);
+                if (!EC_ALLOWED_KEY_SIZES.contains(keySize)) {
+                    throw new InvalidAlgorithmParameterException("EC key size must be one of " + EC_ALLOWED_KEY_SIZES + ", but was: " + keySize);
                 }
             }
             default -> throw new IllegalStateException("Unexpected value: " + algorithm);
@@ -580,11 +601,17 @@ public final class KeyUtil {
      * @param bytes the byte array containing the DER-encoded key
      * @return the parsed key object, either a {@link PublicKey} or {@link PrivateKey}
      * @throws GeneralSecurityException if there is an issue with generating the key (e.g., unsupported algorithm)
-     * @throws IOException if the byte array cannot be parsed as a valid ASN.1 structure
      */
-    public static Key parseDer(byte[] bytes) throws GeneralSecurityException, IOException {
-        if (!(ASN1Primitive.fromByteArray(bytes) instanceof ASN1Sequence asn1Sequence)) {
-            throw new InvalidKeyException("Invalid DER: expected ASN.1 sequence");
+    public static Key parseDer(byte[] bytes) throws GeneralSecurityException {
+        ASN1Sequence asn1Sequence;
+        try {
+            if (!(ASN1Primitive.fromByteArray(bytes) instanceof ASN1Sequence asn1)) {
+                throw new InvalidKeyException("Invalid DER: expected ASN.1 sequence");
+            }
+            asn1Sequence = asn1;
+        } catch (IOException e) {
+            // should not happen, all data is in memory
+            throw new IllegalStateException("could not parse ASN1 primitive", e);
         }
 
         if (asn1Sequence.size() == 2 && asn1Sequence.getObjectAt(1) instanceof DERBitString) {
