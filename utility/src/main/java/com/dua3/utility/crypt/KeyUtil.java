@@ -19,12 +19,14 @@ import org.bouncycastle.openssl.jcajce.JcaPKCS8Generator;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8EncryptorBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.OutputEncryptor;
+import org.bouncycastle.util.io.pem.PemReader;
 import org.jspecify.annotations.Nullable;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -43,7 +45,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.SequencedCollection;
-import java.util.SequencedSet;
 import java.util.Set;
 
 /**
@@ -632,6 +633,28 @@ public final class KeyUtil {
                     .generatePrivate(new PKCS8EncodedKeySpec(bytes));
         } else {
             throw new InvalidKeyException("Unknown DER key format");
+        }
+    }
+
+    /**
+     * Parses a PEM-encoded public key and returns the corresponding {@link PublicKey} instance.
+     *
+     * @param pem the PEM-formatted string containing the public key data
+     * @param algorithm the asymmetric algorithm used for generating the key, which determines the key factory algorithm
+     * @return the {@link PublicKey} object generated from the provided PEM data
+     * @throws GeneralSecurityException if there is an error during parsing or key generation
+     */
+    public static PublicKey parsePem(String pem, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        try (PemReader reader = new PemReader(new StringReader(pem))) {
+            byte[] keyBytes = reader.readPemObject().getContent();
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+
+            KeyFactory kf = KeyFactory.getInstance(algorithm.keyFactoryAlgorithm(), "BC");
+
+            return kf.generatePublic(spec);
+        } catch (IOException e) {
+            // should not happen, all data is read from memory
+            throw new UncheckedIOException(e);
         }
     }
 

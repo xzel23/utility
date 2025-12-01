@@ -350,6 +350,22 @@ public final class CertificateUtil {
     }
 
     /**
+     * Parses a PEM-encoded string and converts it into an X.509 Certificate.
+     *
+     * @param pem the PEM-encoded string representing the certificate
+     * @return the X.509 Certificate object parsed from the input string
+     * @throws GeneralSecurityException if an error occurs during the parsing of the certificate
+     */
+    public static Certificate parsePem(String pem) throws GeneralSecurityException {
+        try (InputStream in = IoUtil.stringInputStream(pem)) {
+            return readX509Certificate(in);
+        } catch (IOException e) {
+            // this should never happen when reading from a String
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
      * Writes a PEM-encoded representation of a certificate chain to the provided {@link Appendable}.
      * Each certificate in the chain is written enclosed between "-----BEGIN CERTIFICATE-----"
      * and "-----END CERTIFICATE-----" markers.
