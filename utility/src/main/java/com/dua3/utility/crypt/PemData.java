@@ -463,7 +463,7 @@ public class PemData implements Iterable<PemData.PemItem> {
         }
     }
 
-    private PublicKey toPublicKey(PemItem pemItem) throws PemException {
+    private static PublicKey toPublicKey(PemItem pemItem) throws PemException {
         return switch (pemItem.type()) {
             case PUBLIC_KEY -> (PublicKey) pemItem.content();
             case KEY_PAIR -> ((KeyPair) pemItem.content()).getPublic();
@@ -471,7 +471,7 @@ public class PemData implements Iterable<PemData.PemItem> {
         };
     }
 
-    private PrivateKey toPrivateKey(PemItem pemItem) throws PemException {
+    private static PrivateKey toPrivateKey(PemItem pemItem) throws PemException {
         return switch (pemItem.type()) {
             case PRIVATE_KEY -> (PrivateKey) pemItem.content();
             case KEY_PAIR -> ((KeyPair) pemItem.content()).getPrivate();
@@ -481,7 +481,7 @@ public class PemData implements Iterable<PemData.PemItem> {
         };
     }
 
-    private PrivateKey toPrivateKey(PemItem pemItem, char[] password) throws PemException {
+    private static PrivateKey toPrivateKey(PemItem pemItem, char[] password) throws PemException {
         return switch (pemItem.type()) {
             case PRIVATE_KEY -> (PrivateKey) pemItem.content();
             case ENCRYPTED_PRIVATE_KEY -> decryptKey((PKCS8EncryptedPrivateKeyInfo) pemItem.content(), password);

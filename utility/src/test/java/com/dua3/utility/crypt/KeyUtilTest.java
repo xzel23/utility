@@ -214,7 +214,8 @@ class KeyUtilTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA"}) // EC does not work without encryption
+    @EnumSource(value = AsymmetricAlgorithm.class, names = "RSA")
+        // EC does not work without encryption
     void testAppendPemAndLoadPrivateKeyRoundTrip_Unencrypted(AsymmetricAlgorithm algorithm) throws Exception {
         KeyPair kp = generatePrivatePairForAlgorithm(algorithm);
         StringBuilder sb = new StringBuilder();
@@ -255,7 +256,8 @@ class KeyUtilTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA"}) // EC does not work without encryption
+    @EnumSource(value = AsymmetricAlgorithm.class, names = "RSA")
+        // EC does not work without encryption
     void testAppendPemAndLoadKeyPairRoundTrip_Unencrypted(AsymmetricAlgorithm algorithm) throws Exception {
         KeyPair kp = generatePrivatePairForAlgorithm(algorithm);
         StringBuilder sb = new StringBuilder();
