@@ -51,7 +51,7 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.21.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.4.6")
+            plugin("spotbugs", "com.github.spotbugs").version("6.4.7")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("versions", "com.github.ben-manes.versions").version("0.53.0")
 
