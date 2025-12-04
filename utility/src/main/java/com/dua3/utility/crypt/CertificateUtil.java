@@ -1,6 +1,7 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.io.ReaderInputStream;
 import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,8 +11,12 @@ import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -342,7 +347,7 @@ public final class CertificateUtil {
     public static <T extends Certificate> String toPem(T... certificates) {
         StringBuilder sb = new StringBuilder(certificates.length * 1600);
         try {
-            return writePem(sb, certificates).toString();
+            return writeCertChainToPem(sb, certificates).toString();
         } catch (IOException e) {
             // this should never happen
             throw new UncheckedIOException(e);
@@ -384,8 +389,23 @@ public final class CertificateUtil {
      * @throws IOException                  if an I/O error occurs while writing to the writer.
      */
     @SafeVarargs
-    public static <T extends Certificate, U extends Appendable> U writePem(U app, T... certificates) throws IOException {
-        try (JcaPEMWriter pemWriter = new JcaPEMWriter(IoUtil.getWriter(app))) {
+    public static <T extends Certificate, U extends Appendable> U writeCertChainToPem(U app, T... certificates) throws IOException {
+        writeCertChainToPem(IoUtil.getWriter(app), certificates);
+        return app;
+    }
+
+    /**
+     * Writes the provided certificates in PEM format to the specified writer.
+     * Supports X.509 certificates and logs a warning for non-X.509 certificate types.
+     *
+     * @param <T>          the type of certificates, must extend {@link Certificate}.
+     * @param writer       the writer to which the PEM-formatted certificates will be written.
+     * @param certificates the certificates to be written in PEM format. May include one or more certificates.
+     * @throws IOException if an I/O error occurs while writing to the provided writer.
+     */
+    @SafeVarargs
+    public static <T extends Certificate> void writeCertChainToPem(Writer writer, T... certificates) throws IOException {
+        try (JcaPEMWriter pemWriter = new JcaPEMWriter(writer)) {
             for (T certificate : certificates) {
                 if (!(certificate instanceof X509Certificate)) {
                     LOG.warn("exporting certificate of non-X509 type {} as PEM", certificate.getType());
@@ -393,7 +413,65 @@ public final class CertificateUtil {
                 pemWriter.writeObject(certificate);
             }
         }
-        return app;
+    }
+
+    /**
+     * Writes the provided certificates in PEM format to the specified writer.
+     * Supports X.509 certificates and logs a warning for non-X.509 certificate types.
+     *
+     * @param <T>          the type of certificates, must extend {@link Certificate}.
+     * @param out          the {@link OutputStream} to which the PEM-formatted certificates will be written.
+     * @param certificates the certificates to be written in PEM format. May include one or more certificates.
+     * @throws IOException if an I/O error occurs while writing to the provided writer.
+     */
+    @SafeVarargs
+    public static <T extends Certificate> void writeCertChainToPem(OutputStream out, T... certificates) throws IOException {
+        try (Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
+            writeCertChainToPem(writer, certificates);
+        }
+    }
+
+    /**
+     * Reads X.509 certificates from a PEM-encoded input provided by a Reader.
+     *
+     * @param reader the Reader instance pointing to the PEM-encoded input
+     * @return an array of {@code Certificate} objects extracted from the PEM input
+     * @throws IOException if there is an error while reading the input or parsing the certificates
+     */
+    public static Certificate[] readCertChainFromPem(Reader reader) throws IOException {
+        try (InputStream in = new ReaderInputStream(reader)) {
+            return readCertChainFromPem(in);
+        }
+    }
+
+    /**
+     * Reads X.509 certificates from a PEM-encoded input provided by a Reader.
+     *
+     * @param in the {@link InputStream} instance providing the PEM-encoded input
+     * @return an array of {@code Certificate} objects extracted from the PEM input
+     * @throws IOException if there is an error while reading the input or parsing the certificates
+     */
+    public static Certificate[] readCertChainFromPem(InputStream in) throws IOException {
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance(CERT_TYPE_X_509);
+            return cf.generateCertificates(in).toArray(Certificate[]::new);
+        } catch (CertificateException e) {
+            throw new IOException("Failed to read certificates from PEM", e);
+        }
+    }
+
+    /**
+     * Reads PEM-encoded certificate data and returns an array of Certificates.
+     *
+     * @param pem the PEM-encoded string containing certificate data
+     * @return an array of Certificate objects parsed from the provided PEM string
+     */
+    public static Certificate[] readCertChainFromPem(String pem) {
+        try (InputStream in = IoUtil.stringInputStream(pem)) {
+            return readCertChainFromPem(in);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /**

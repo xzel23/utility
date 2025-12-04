@@ -341,7 +341,7 @@ class CertificateUtilTest {
     }
 
     @Test
-    void testWritePem() throws Exception {
+    void testWriteCertChainToPem() throws Exception {
         // Create a test certificate
         KeyPair keyPair = KeyUtil.generateRSAKeyPair();
         String subject = "CN=Test WritePem, O=Test Organization, C=US";
@@ -352,7 +352,7 @@ class CertificateUtilTest {
 
         // Test writing a single certificate
         StringBuilder sb = new StringBuilder();
-        CertificateUtil.writePem(sb, certificate);
+        CertificateUtil.writeCertChainToPem(sb, certificate);
         String pemOutput = sb.toString();
 
         // Verify the PEM format is correct
@@ -369,7 +369,7 @@ class CertificateUtilTest {
         X509Certificate certificate2 = certificates2[0];
 
         StringBuilder sb2 = new StringBuilder();
-        CertificateUtil.writePem(sb2, certificate, certificate2);
+        CertificateUtil.writeCertChainToPem(sb2, certificate, certificate2);
         String pemOutput2 = sb2.toString();
 
         // Verify both certificates are in the output
@@ -384,7 +384,7 @@ class CertificateUtilTest {
 
         // Test with empty array
         StringBuilder sb3 = new StringBuilder();
-        CertificateUtil.writePem(sb3);
+        CertificateUtil.writeCertChainToPem(sb3);
         assertEquals("", sb3.toString(), "PEM output should be empty for empty array");
     }
 

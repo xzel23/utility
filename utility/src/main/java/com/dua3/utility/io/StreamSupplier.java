@@ -1,15 +1,13 @@
 package com.dua3.utility.io;
 
-import com.dua3.utility.lang.LangUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -36,7 +34,8 @@ final class StreamSupplier<V> {
             def(URL.class, URL::openStream, v -> Files.newOutputStream(IoUtil.toPath(v))),
             def(Path.class, Files::newInputStream, Files::newOutputStream),
             def(File.class, v -> Files.newInputStream(v.toPath()), v -> Files.newOutputStream(v.toPath())),
-            def(Reader.class, StreamSupplier::readerToInputStream, StreamSupplier::outputUnsupported)
+            def(Reader.class, StreamSupplier::readerToInputStream, StreamSupplier::outputUnsupported),
+            def(Writer.class, StreamSupplier::inputUnsupported, StreamSupplier::writerToOutputStream)
     );
     private final Class<V> clazz;
     private final InputStreamSupplier<V> iss;
@@ -61,7 +60,11 @@ final class StreamSupplier<V> {
     }
 
     private static InputStream readerToInputStream(Reader reader) {
-        return new UnicodeReaderInputStream(reader);
+        return new ReaderInputStream(reader);
+    }
+
+    private static OutputStream writerToOutputStream(Writer writer) {
+        return new WriterOutputStream(writer);
     }
 
     @SuppressWarnings("unchecked")
@@ -90,119 +93,4 @@ final class StreamSupplier<V> {
         OutputStream getOutputStream(C connection) throws IOException;
     }
 
-    private static final class UnicodeReaderInputStream extends InputStream {
-        private final Reader reader;
-        private byte[] buffer;
-        private int bufferPos;
-        private int bufferLen;
-        private final char[] cbuf;
-        private int carry; // stores a trailing high surrogate to be processed with the next read
-        private boolean eof;
-
-        private UnicodeReaderInputStream(Reader reader) {
-            this.reader = reader;
-            buffer = LangUtil.EMPTY_BYTE_ARRAY;
-            bufferPos = 0;
-            bufferLen = 0;
-            cbuf = new char[2048];
-            carry = -1;
-            eof = false;
-        }
-
-        private void refill() throws IOException {
-            if (bufferPos < bufferLen) {
-                return; // still have data
-            }
-            bufferLen = 0;
-            bufferPos = 0;
-
-            while (bufferLen == 0 && !eof) {
-                int off = 0;
-                if (carry != -1) {
-                    cbuf[0] = (char) carry;
-                    off = 1;
-                    carry = -1;
-                }
-
-                int n = reader.read(cbuf, off, cbuf.length - off);
-                if (n == -1) {
-                    eof = off != 1;
-                    if (!eof) {
-                        // dangling surrogate from previous chunk; encode it as-is, UTF-8 encoder will replace invalid surrogate
-                        buffer = new String(cbuf, 0, 1).getBytes(StandardCharsets.UTF_8);
-                        bufferLen = buffer.length;
-                    }
-                    return;
-                }
-
-                n += off;
-
-                // If the last char is a high surrogate and there is no following low surrogate in this chunk,
-                // keep it for the next iteration to avoid splitting surrogate pairs across chunk boundaries.
-                if (n > 0 && Character.isHighSurrogate(cbuf[n - 1])) {
-                    carry = cbuf[n - 1];
-                    n -= 1;
-                }
-
-                if (n > 0) {
-                    buffer = new String(cbuf, 0, n).getBytes(StandardCharsets.UTF_8);
-                    bufferLen = buffer.length;
-                }
-                // else loop again to read more data
-            }
-        }
-
-        @Override
-        public int read() throws IOException {
-            refill();
-            if (bufferPos >= bufferLen) {
-                return -1;
-            }
-            return buffer[bufferPos++] & 0xFF;
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            // Bounds checking as per InputStream contract
-            if ((off | len) < 0 || len > b.length - off) {
-                throw new IndexOutOfBoundsException();
-            }
-            if (len == 0) {
-                return 0;
-            }
-
-            int totalRead = 0;
-            while (len > 0) {
-                if (bufferPos >= bufferLen) {
-                    refill();
-                    if (bufferPos >= bufferLen) {
-                        // No more data available (EOF)
-                        break;
-                    }
-                }
-
-                int toCopy = Math.min(len, bufferLen - bufferPos);
-                System.arraycopy(buffer, bufferPos, b, off, toCopy);
-                bufferPos += toCopy;
-                off += toCopy;
-                len -= toCopy;
-                totalRead += toCopy;
-            }
-
-            if (totalRead == 0) {
-                // If nothing was read and we're at EOF, return -1
-                return -1;
-            }
-            return totalRead;
-        }
-
-        @Override
-        public void close() throws IOException {
-            try {
-                reader.close();
-            } finally {
-                super.close();
-            }
-        }
-    }
 }
