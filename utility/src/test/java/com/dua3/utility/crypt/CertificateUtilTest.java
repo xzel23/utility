@@ -516,6 +516,131 @@ class CertificateUtilTest {
     }
 
     @Test
+    void testParsePemSingleCertificate() throws Exception {
+        // create certificate and convert to PEM
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        X509Certificate cert = CertificateUtil.createSelfSignedX509Certificate(keyPair, "CN=Parse PEM, O=Test, C=US", 365, true)[0];
+        String pem = CertificateUtil.toPem(cert);
+
+        // parse back using parsePem(String)
+        Certificate parsed = CertificateUtil.parsePem(pem);
+
+        assertNotNull(parsed, "Parsed certificate must not be null");
+        assertTrue(parsed instanceof X509Certificate, "Parsed certificate must be X509Certificate");
+        assertArrayEquals(cert.getEncoded(), parsed.getEncoded(), "Parsed certificate must equal original");
+    }
+
+    @Test
+    void testParsePemInvalid() {
+        // invalid PEM should throw a GeneralSecurityException
+        String invalidPem = "-----BEGIN CERTIFICATE-----\nINVALID\n-----END CERTIFICATE-----\n";
+        assertThrows(CertificateException.class, () -> CertificateUtil.parsePem(invalidPem));
+    }
+
+    @Test
+    void testWriteCertChainToPemOutputStream() throws Exception {
+        KeyPair kp1 = KeyUtil.generateRSAKeyPair();
+        X509Certificate c1 = CertificateUtil.createSelfSignedX509Certificate(kp1, "CN=OS Single, O=Test, C=US", 365, true)[0];
+
+        // single cert
+        java.io.ByteArrayOutputStream baos1 = new java.io.ByteArrayOutputStream();
+        CertificateUtil.writeCertChainToPem(baos1, c1);
+        String pem1 = baos1.toString(StandardCharsets.UTF_8);
+        assertTrue(TextUtil.toUnixLineEnds(pem1).startsWith("-----BEGIN CERTIFICATE-----\n"));
+        assertTrue(TextUtil.toUnixLineEnds(pem1).endsWith("-----END CERTIFICATE-----\n"));
+        assertEquals(1, pem1.split("-----BEGIN CERTIFICATE-----").length - 1);
+        assertEquals(1, pem1.split("-----END CERTIFICATE-----").length - 1);
+
+        // two certs
+        KeyPair kp2 = KeyUtil.generateRSAKeyPair();
+        X509Certificate c2 = CertificateUtil.createSelfSignedX509Certificate(kp2, "CN=OS Second, O=Test, C=US", 365, true)[0];
+        java.io.ByteArrayOutputStream baos2 = new java.io.ByteArrayOutputStream();
+        CertificateUtil.writeCertChainToPem(baos2, c1, c2);
+        String pem2 = baos2.toString(StandardCharsets.UTF_8);
+        assertEquals(2, pem2.split("-----BEGIN CERTIFICATE-----").length - 1);
+        assertEquals(2, pem2.split("-----END CERTIFICATE-----").length - 1);
+        assertTrue(containsIgnoringLines(pem2, java.util.Base64.getMimeEncoder().encodeToString(c1.getEncoded())));
+        assertTrue(containsIgnoringLines(pem2, java.util.Base64.getMimeEncoder().encodeToString(c2.getEncoded())));
+
+        // empty
+        java.io.ByteArrayOutputStream baos3 = new java.io.ByteArrayOutputStream();
+        CertificateUtil.writeCertChainToPem(baos3);
+        assertEquals("", baos3.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void testReadCertChainFromPemInputStream() throws Exception {
+        // create two certificates and build PEM
+        KeyPair kp1 = KeyUtil.generateRSAKeyPair();
+        X509Certificate c1 = CertificateUtil.createSelfSignedX509Certificate(kp1, "CN=IS First, O=Test, C=US", 365, true)[0];
+        KeyPair kp2 = KeyUtil.generateRSAKeyPair();
+        X509Certificate c2 = CertificateUtil.createSelfSignedX509Certificate(kp2, "CN=IS Second, O=Test, C=US", 365, true)[0];
+        String pem = CertificateUtil.toPem(c1, c2);
+
+        // read via InputStream overload
+        try (java.io.InputStream in = new java.io.ByteArrayInputStream(pem.getBytes(StandardCharsets.UTF_8))) {
+            Certificate[] read = CertificateUtil.readCertChainFromPem(in);
+            assertNotNull(read);
+            assertEquals(2, read.length);
+            assertArrayEquals(c1.getEncoded(), read[0].getEncoded());
+            assertArrayEquals(c2.getEncoded(), read[1].getEncoded());
+        }
+    }
+
+    @Test
+    void testReadCertChainFromPemReader() throws Exception {
+        KeyPair kp1 = KeyUtil.generateRSAKeyPair();
+        X509Certificate c1 = CertificateUtil.createSelfSignedX509Certificate(kp1, "CN=Reader First, O=Test, C=US", 365, true)[0];
+        KeyPair kp2 = KeyUtil.generateRSAKeyPair();
+        X509Certificate c2 = CertificateUtil.createSelfSignedX509Certificate(kp2, "CN=Reader Second, O=Test, C=US", 365, true)[0];
+        String pem = CertificateUtil.toPem(c1, c2);
+
+        try (java.io.Reader reader = new java.io.StringReader(pem)) {
+            Certificate[] read = CertificateUtil.readCertChainFromPem(reader);
+            assertNotNull(read);
+            assertEquals(2, read.length);
+            assertArrayEquals(c1.getEncoded(), read[0].getEncoded());
+            assertArrayEquals(c2.getEncoded(), read[1].getEncoded());
+        }
+    }
+
+    @Test
+    void testReadCertChainFromPemString() throws Exception {
+        KeyPair kp1 = KeyUtil.generateRSAKeyPair();
+        X509Certificate c1 = CertificateUtil.createSelfSignedX509Certificate(kp1, "CN=String First, O=Test, C=US", 365, true)[0];
+        KeyPair kp2 = KeyUtil.generateRSAKeyPair();
+        X509Certificate c2 = CertificateUtil.createSelfSignedX509Certificate(kp2, "CN=String Second, O=Test, C=US", 365, true)[0];
+        String pem = CertificateUtil.toPem(c1, c2);
+
+        Certificate[] read = CertificateUtil.readCertChainFromPem(pem);
+        assertNotNull(read);
+        assertEquals(2, read.length);
+        assertArrayEquals(c1.getEncoded(), read[0].getEncoded());
+        assertArrayEquals(c2.getEncoded(), read[1].getEncoded());
+    }
+
+    @Test
+    void testReadCertChainFromPemInvalid() {
+        // InputStream overload should wrap CertificateException into IOException
+        byte[] invalid = "not a pem".getBytes(StandardCharsets.UTF_8);
+        assertThrows(java.io.IOException.class, () -> {
+            try (java.io.InputStream in = new java.io.ByteArrayInputStream(invalid)) {
+                CertificateUtil.readCertChainFromPem(in);
+            }
+        });
+
+        // Reader overload should also throw IOException
+        assertThrows(java.io.IOException.class, () -> {
+            try (java.io.Reader r = new java.io.StringReader("not a pem")) {
+                CertificateUtil.readCertChainFromPem(r);
+            }
+        });
+
+        // String overload wraps IOException into UncheckedIOException
+        assertThrows(java.io.UncheckedIOException.class, () -> CertificateUtil.readCertChainFromPem("not a pem"));
+    }
+
+    @Test
     void testPkcs7RoundTripSingleCertificate() throws Exception {
         // Create a self-signed certificate
         KeyPair keyPair = KeyUtil.generateRSAKeyPair();
