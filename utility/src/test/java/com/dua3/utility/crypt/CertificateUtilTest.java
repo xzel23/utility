@@ -654,7 +654,7 @@ class CertificateUtilTest {
         assertTrue(pkcs7.length > 0, "PKCS#7 bytes should not be empty");
 
         // Convert back to certificate chain
-        Certificate[] parsed = CertificateUtil.pkcs7BytesToCertificateChain(pkcs7);
+        Certificate[] parsed = CertificateUtil.parsePkcs7Bytes(pkcs7);
         assertNotNull(parsed, "Parsed chain should not be null");
         assertEquals(1, parsed.length, "Parsed chain should contain one certificate");
 
@@ -688,7 +688,7 @@ class CertificateUtilTest {
         assertTrue(pkcs7.length > 0, "PKCS#7 bytes should not be empty");
 
         // Convert back
-        Certificate[] parsed = CertificateUtil.pkcs7BytesToCertificateChain(pkcs7);
+        Certificate[] parsed = CertificateUtil.parsePkcs7Bytes(pkcs7);
         assertNotNull(parsed, "Parsed chain should not be null");
         assertEquals(2, parsed.length, "Parsed chain should have two certificates");
 

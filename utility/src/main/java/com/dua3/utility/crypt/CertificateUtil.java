@@ -482,10 +482,7 @@ public final class CertificateUtil {
      * @throws CertificateException if an error occurs during certificate processing
      */
     public static byte[] toPkcs7Bytes(Certificate... certificates) throws CertificateException {
-        CertificateFactory cf = CertificateFactory.getInstance(CERT_TYPE_X_509);
-        List<Certificate> certList = Arrays.asList(certificates);
-        CertPath certPath = cf.generateCertPath(certList);
-        return certPath.getEncoded("PKCS7");
+        return encodeCertificates(certificates, "PKCS7");
     }
 
     /**
@@ -495,9 +492,44 @@ public final class CertificateUtil {
      * @return an array of Certificate objects generated from the provided byte array
      * @throws CertificateException if an error occurs while creating the certificates
      */
-    public static Certificate[] pkcs7BytesToCertificateChain(byte[] pkcs7Bytes) throws CertificateException {
+    public static Certificate[] parsePkcs7Bytes(byte[] pkcs7Bytes) throws CertificateException {
+        return decodeCertificates(pkcs7Bytes, "PKCS7");
+    }
+
+    /**
+     * Converts the given array of certificates into a byte array encoded in the PkiPath format.
+     *
+     * @param certificates an array of {@link Certificate} objects to be encoded. The certificates
+     *                     must be ordered with the target certificate followed by its issuing certificates,
+     *                     ending with the root certificate.
+     * @return a byte array representing the PkiPath encoding of the provided certificates.
+     * @throws CertificateException if an error occurs during the encoding process.
+     */
+    public static byte[] toPkiPathBytes(Certificate... certificates) throws CertificateException {
+        return encodeCertificates(certificates, "PkiPath");
+    }
+
+    /**
+     * Converts a PKI Path encoded byte array into an array of Certificate objects.
+     *
+     * @param pkcs7Bytes the byte array containing the PKI Path encoded certificate chain.
+     * @return an array of Certificate objects extracted from the provided byte array.
+     * @throws CertificateException if the byte array cannot be decoded into a valid certificate chain.
+     */
+    public static Certificate[] parsePkiPathBytes(byte[] pkcs7Bytes) throws CertificateException {
+        return decodeCertificates(pkcs7Bytes, "PkiPath");
+    }
+
+    private static byte[] encodeCertificates(Certificate[] certificates, String encoding) throws CertificateException {
         CertificateFactory cf = CertificateFactory.getInstance(CERT_TYPE_X_509);
-        CertPath certPath = cf.generateCertPath(new ByteArrayInputStream(pkcs7Bytes), "PKCS7");
+        List<Certificate> certList = Arrays.asList(certificates);
+        CertPath certPath = cf.generateCertPath(certList);
+        return certPath.getEncoded(encoding);
+    }
+
+    private static Certificate[] decodeCertificates(byte[] pkcs7Bytes, String encoding) throws CertificateException {
+        CertificateFactory cf = CertificateFactory.getInstance(CERT_TYPE_X_509);
+        CertPath certPath = cf.generateCertPath(new ByteArrayInputStream(pkcs7Bytes), encoding);
         return certPath.getCertificates().toArray(Certificate[]::new);
     }
 

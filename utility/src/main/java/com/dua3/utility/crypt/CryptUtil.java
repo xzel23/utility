@@ -616,8 +616,8 @@ public final class CryptUtil {
     public static String getArgon2id(byte[] input, SecretKey secretKey) {
         byte[] salt = RandomUtil.generateRandomBytes(16);
         byte[] hash = getArgon2idBytes(input, salt, secretKey);
-        return Base64.getEncoder().encodeToString(salt) + "$" +
-                Base64.getEncoder().encodeToString(hash);
+        return TextUtil.base64Encode(salt) + "$" +
+                TextUtil.base64Encode(hash);
     }
 
     /**
@@ -662,8 +662,8 @@ public final class CryptUtil {
     public static String getArgon2id(byte[] input, String pepper) {
         byte[] salt = RandomUtil.generateRandomBytes(16);
         byte[] hash = getArgon2idBytes(input, salt, pepper);
-        return Base64.getEncoder().encodeToString(salt) + "$" +
-                Base64.getEncoder().encodeToString(hash);
+        return TextUtil.base64Encode(salt) + "$" +
+                TextUtil.base64Encode(hash);
     }
 
     /**
@@ -722,8 +722,8 @@ public final class CryptUtil {
         String saltBase64 = saltAndHash.substring(0, splitAt);
         String expectedHashBase64 = saltAndHash.substring(splitAt + 1);
 
-        byte[] salt = Base64.getDecoder().decode(saltBase64);
-        byte[] expectedHash = Base64.getDecoder().decode(expectedHashBase64);
+        byte[] salt = TextUtil.base64Decode(saltBase64);
+        byte[] expectedHash = TextUtil.base64Decode(expectedHashBase64);
 
         byte[] actualHash = getArgon2idBytes(input, salt, secret);
 
