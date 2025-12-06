@@ -570,6 +570,16 @@ public class ArgumentsParserBuilder {
             String firstSwitch,
             String... moreSwitches
     ) {
+        RecordParams<T> recordParams = getRecordParams(displayName, targetClass);
+        return new OptionBuilder<>(this, displayName, description, targetClass)
+                .repetitions(repetitions)
+                .param(recordParams.params())
+                .mapper(recordParams.mapper())
+                .defaultSupplier(defaultSupplier)
+                .build(firstSwitch, moreSwitches);
+    }
+
+    private static <T extends Record> RecordParams<T> getRecordParams(String displayName, Class<T> targetClass) {
         RecordComponent[] recordComponents = targetClass.getRecordComponents();
         Param<?>[] params = new Param<?>[recordComponents.length];
         Class<?>[] constructorArgTypes = new Class<?>[params.length];
@@ -589,14 +599,10 @@ public class ArgumentsParserBuilder {
                 throw new IllegalStateException("could not create a new instance of " + targetClass, e);
             }
         };
-
-        return new OptionBuilder<>(this, displayName, description, targetClass)
-                .repetitions(repetitions)
-                .param(params)
-                .mapper(mapper)
-                .defaultSupplier(defaultSupplier)
-                .build(firstSwitch, moreSwitches);
+        return new RecordParams<>(params, mapper);
     }
+
+    private record RecordParams<T>(Param<?>[] params, Function<Object[], T> mapper) {}
 
     private static void handleRecordComponents(String displayName, RecordComponent[] recordComponents, Param<?>[] params, Class<?>[] constructorArgTypes) {
         for (int i = 0, nRecordComponents = recordComponents.length; i < nRecordComponents; i++) {
@@ -694,30 +700,11 @@ public class ArgumentsParserBuilder {
             String firstSwitch,
             String... moreSwitches
     ) {
-        RecordComponent[] recordComponents = targetClass.getRecordComponents();
-        Param<?>[] params = new Param<?>[recordComponents.length];
-        Class<?>[] constructorArgTypes = new Class<?>[params.length];
-        handleRecordComponents(displayName, recordComponents, params, constructorArgTypes);
-
-        Constructor<T> constructor;
-        try {
-            constructor = targetClass.getDeclaredConstructor(constructorArgTypes);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("constructor not found for record class: " + targetClass.getName(), e);
-        }
-
-        Function<Object[], T> mapper = elements -> {
-            try {
-                return constructor.newInstance(elements);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalStateException("could not create a new instance of " + targetClass, e);
-            }
-        };
-
+        RecordParams<T> recordParams = getRecordParams(displayName, targetClass);
         return new OptionBuilder<>(this, displayName, description, targetClass)
                 .repetitions(repetitions)
-                .param(params)
-                .mapper(mapper)
+                .param(recordParams.params())
+                .mapper(recordParams.mapper())
                 .handler(handler)
                 .build(firstSwitch, moreSwitches);
     }
