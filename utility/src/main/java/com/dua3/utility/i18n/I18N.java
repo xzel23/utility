@@ -105,7 +105,7 @@ public final class I18N {
      * @return An instance of the I18N class.
      */
     public static I18N create(String baseName, Locale locale) {
-        LOG.trace("creating instance for {} with requested locale {}", baseName, locale);
+        LOG.trace("creating an instance for {} with requested locale {}", baseName, locale);
         ResourceBundle bundle = getResourceBundle(baseName, locale);
         return new I18N(bundle);
     }
@@ -260,7 +260,9 @@ public final class I18N {
      * @see ResourceBundle#getString(String)
      */
     public String getOrCompute(String key, Function<? super String, String> compute) {
-        return getBundle(key).map(b -> b.getString(key)).orElseGet(() -> compute.apply(key));
+        return getBundle(key)
+                .map(bundle -> bundle.getString(key))
+                .orElseGet(() -> compute.apply(key));
     }
 
     /**

@@ -49,7 +49,7 @@ class ImageUtilTest {
         ImageUtil util = ImageUtil.getInstance();
 
         int w = 3, h = 2;
-        int[] argb = new int[]{
+        int[] argb = {
                 0x11223344, 0x55667788, 0x99AABBCC,
                 0xFFFFFFFF, 0x00000000, 0x7F010203
         };
