@@ -42,6 +42,81 @@ class KeyUtilTest {
     }
 
     @ParameterizedTest
+    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA", "EC"})
+    void testToPrivateKey_FromPrivateKeyInfo(AsymmetricAlgorithm algorithm) throws Exception {
+        KeyPair kp = generatePrivatePairForAlgorithm(algorithm);
+
+        // Build PrivateKeyInfo from PKCS#8 bytes
+        org.bouncycastle.asn1.pkcs.PrivateKeyInfo pki = org.bouncycastle.asn1.pkcs.PrivateKeyInfo.getInstance(kp.getPrivate().getEncoded());
+
+        PrivateKey converted = KeyUtil.toPrivateKey(pki);
+
+        if (algorithm == AsymmetricAlgorithm.EC) {
+            ECPrivateKey ecOrig = (ECPrivateKey) kp.getPrivate();
+            ECPrivateKey ecLoaded = (ECPrivateKey) converted;
+            assertEquals(ecOrig.getS(), ecLoaded.getS());
+            assertEquals(ecOrig.getParams().getCurve(), ecLoaded.getParams().getCurve());
+        } else {
+            assertArrayEquals(kp.getPrivate().getEncoded(), converted.getEncoded());
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA", "EC"})
+    void testToPem_WithPassword(AsymmetricAlgorithm algorithm) throws Exception {
+        KeyPair kp = generatePrivatePairForAlgorithm(algorithm);
+        char[] password = "secret".toCharArray();
+
+        String pem = KeyUtil.toPem(kp.getPrivate(), password.clone());
+
+        PrivateKey loaded = PemData.parse(pem).asPrivateKey("secret".toCharArray());
+        if (algorithm == AsymmetricAlgorithm.EC) {
+            ECPrivateKey ecOrig = (ECPrivateKey) kp.getPrivate();
+            ECPrivateKey ecLoaded = (ECPrivateKey) loaded;
+            assertEquals(ecOrig.getS(), ecLoaded.getS());
+            assertEquals(ecOrig.getParams().getCurve(), ecLoaded.getParams().getCurve());
+        } else {
+            assertArrayEquals(kp.getPrivate().getEncoded(), loaded.getEncoded());
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA", "EC"})
+    void testAppendPem_KeyPair_App_Then_Password(AsymmetricAlgorithm algorithm) throws Exception {
+        KeyPair kp = generatePrivatePairForAlgorithm(algorithm);
+        StringBuilder sb = new StringBuilder();
+        char[] password = "changeit".toCharArray();
+
+        // Test the overload appendPem(KeyPair, Appendable, char[])
+        KeyUtil.appendPem(kp, sb, password.clone());
+
+        KeyPair loaded = PemData.parse(sb.toString()).asKeyPair("changeit".toCharArray());
+        if (algorithm == AsymmetricAlgorithm.EC) {
+            ECPrivateKey ecOrig = (ECPrivateKey) kp.getPrivate();
+            ECPrivateKey ecLoaded = (ECPrivateKey) loaded.getPrivate();
+            assertEquals(ecOrig.getS(), ecLoaded.getS());
+            assertEquals(ecOrig.getParams().getCurve(), ecLoaded.getParams().getCurve());
+            ECPublicKey ecOrig2 = (ECPublicKey) kp.getPublic();
+            ECPublicKey ecLoaded2 = (ECPublicKey) loaded.getPublic();
+            assertEquals(ecOrig2.getW(), ecLoaded2.getW());
+            assertEquals(ecOrig2.getParams().getCurve(), ecLoaded2.getParams().getCurve());
+        } else {
+            assertArrayEquals(kp.getPrivate().getEncoded(), loaded.getPrivate().getEncoded());
+            assertArrayEquals(kp.getPublic().getEncoded(), loaded.getPublic().getEncoded());
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AsymmetricAlgorithm.class, names = {"RSA", "EC"})
+    void testParsePem_PublicKey(AsymmetricAlgorithm algorithm) throws Exception {
+        KeyPair kp = generatePrivatePairForAlgorithm(algorithm);
+        String pem = KeyUtil.toPem(kp.getPublic());
+
+        PublicKey parsed = KeyUtil.parsePem(pem, algorithm);
+        assertArrayEquals(kp.getPublic().getEncoded(), parsed.getEncoded());
+    }
+
+    @ParameterizedTest
     @ValueSource(ints = {16, 24, 32})
     void testGenerateSalt(int length) {
         byte[] salt = KeyUtil.generateSalt(length);
