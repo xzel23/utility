@@ -14,7 +14,7 @@ import javafx.scene.layout.Priority;
  *
  * @param <T> the type of the tasks being tracked
  */
-public class ProgressView<T> extends GridPane implements ProgressTracker<T> {
+public final class ProgressView<T> extends GridPane implements ProgressTracker<T> {
 
     private final com.dua3.utility.concurrent.ProgressView<T> imp;
 
@@ -55,7 +55,8 @@ public class ProgressView<T> extends GridPane implements ProgressTracker<T> {
     }
 
     @Override
-    public void scheduleTaskGroup(String group, T... tasks) {
+    @SafeVarargs
+    public final void scheduleTaskGroup(String group, T... tasks) {
         int row = getChildren().size();
         Label label = new Label(group);
         label.setStyle("-fx-font-weight: bold; -fx-font-size: 1.2em;");
