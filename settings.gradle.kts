@@ -4,7 +4,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "20.0.3"
+val projectVersion = "20.0.4-SNAPSHOT"
 
 // define subprojects
 include("utility")
@@ -47,7 +47,7 @@ dependencyResolutionManagement {
 
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.10")
-            plugin("sonar", "org.sonarqube").version("7.1.0.6387")
+            plugin("sonar", "org.sonarqube").version("7.2.0.6526")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.21.0")
