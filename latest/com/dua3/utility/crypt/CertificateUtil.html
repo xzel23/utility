@@ -160,39 +160,49 @@ loadScripts(document, 'script');</script>
 <div class="block">Parses a PEM-encoded string and converts it into an X.509 Certificate.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pkcs7BytesToCertificateChain(byte%5B%5D)" class="member-name-link">pkcs7BytesToCertificateChain</a><wbr>(byte[]&nbsp;pkcs7Bytes)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#parsePkcs7Bytes(byte%5B%5D)" class="member-name-link">parsePkcs7Bytes</a><wbr>(byte[]&nbsp;pkcs7Bytes)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Converts a byte array representing certificates into an array of Certificate objects.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readCertChainFromPem(java.io.InputStream)" class="member-name-link">readCertChainFromPem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&nbsp;in)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#parsePkiPathBytes(byte%5B%5D)" class="member-name-link">parsePkiPathBytes</a><wbr>(byte[]&nbsp;pkcs7Bytes)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Reads X.509 certificates from a PEM-encoded input provided by a Reader.</div>
+<div class="block">Converts a PKI Path encoded byte array into an array of Certificate objects.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readCertChainFromPem(java.io.Reader)" class="member-name-link">readCertChainFromPem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Reader.html" title="class or interface in java.io" class="external-link">Reader</a>&nbsp;reader)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readCertChainFromPem(java.io.InputStream)" class="member-name-link">readCertChainFromPem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&nbsp;in)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Reads X.509 certificates from a PEM-encoded input provided by a Reader.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readCertChainFromPem(java.lang.String)" class="member-name-link">readCertChainFromPem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pem)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readCertChainFromPem(java.io.Reader)" class="member-name-link">readCertChainFromPem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Reader.html" title="class or interface in java.io" class="external-link">Reader</a>&nbsp;reader)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Reads X.509 certificates from a PEM-encoded input provided by a Reader.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>[]</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readCertChainFromPem(java.lang.String)" class="member-name-link">readCertChainFromPem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;pem)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Reads PEM-encoded certificate data and returns an array of Certificates.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readX509Certificate(java.io.InputStream)" class="member-name-link">readX509Certificate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&nbsp;in)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readX509Certificate(java.io.InputStream)" class="member-name-link">readX509Certificate</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&nbsp;in)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Reads and parses an X.509 certificate from the provided input stream.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toPem(T...)" class="member-name-link">toPem</a><wbr>(T...&nbsp;certificates)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toPem(T...)" class="member-name-link">toPem</a><wbr>(T...&nbsp;certificates)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Converts one or more certificates into their PEM-encoded string representation.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toPkcs7Bytes(java.security.cert.Certificate...)" class="member-name-link">toPkcs7Bytes</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>...&nbsp;certificates)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toPkcs7Bytes(java.security.cert.Certificate...)" class="member-name-link">toPkcs7Bytes</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>...&nbsp;certificates)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Converts an array of certificates into a byte array in PKCS#7 format.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static byte[]</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toPkiPathBytes(java.security.cert.Certificate...)" class="member-name-link">toPkiPathBytes</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>...&nbsp;certificates)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Converts the given array of certificates into a byte array encoded in the PkiPath format.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html" title="class or interface in java.security.cert" class="external-link">X509Certificate</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toX509Certificate(byte%5B%5D)" class="member-name-link">toX509Certificate</a><wbr>(byte[]&nbsp;bytes)</code></div>
@@ -589,10 +599,10 @@ U extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 </section>
 </li>
 <li>
-<section class="detail" id="pkcs7BytesToCertificateChain(byte[])">
-<h3>pkcs7BytesToCertificateChain</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>[]</span>&nbsp;<span class="element-name">pkcs7BytesToCertificateChain</span><wbr><span class="parameters">(byte[]&nbsp;pkcs7Bytes)</span>
-                                                  throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateException.html" title="class or interface in java.security.cert" class="external-link">CertificateException</a></span></div>
+<section class="detail" id="parsePkcs7Bytes(byte[])">
+<h3>parsePkcs7Bytes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>[]</span>&nbsp;<span class="element-name">parsePkcs7Bytes</span><wbr><span class="parameters">(byte[]&nbsp;pkcs7Bytes)</span>
+                                     throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateException.html" title="class or interface in java.security.cert" class="external-link">CertificateException</a></span></div>
 <div class="block">Converts a byte array representing certificates into an array of Certificate objects.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -601,6 +611,40 @@ U extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <dd>an array of Certificate objects generated from the provided byte array</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateException.html" title="class or interface in java.security.cert" class="external-link">CertificateException</a></code> - if an error occurs while creating the certificates</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="toPkiPathBytes(java.security.cert.Certificate...)">
+<h3>toPkiPathBytes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">byte[]</span>&nbsp;<span class="element-name">toPkiPathBytes</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>...&nbsp;certificates)</span>
+                             throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateException.html" title="class or interface in java.security.cert" class="external-link">CertificateException</a></span></div>
+<div class="block">Converts the given array of certificates into a byte array encoded in the PkiPath format.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>certificates</code> - an array of <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link"><code>Certificate</code></a> objects to be encoded. The certificates
+                     must be ordered with the target certificate followed by its issuing certificates,
+                     ending with the root certificate.</dd>
+<dt>Returns:</dt>
+<dd>a byte array representing the PkiPath encoding of the provided certificates.</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateException.html" title="class or interface in java.security.cert" class="external-link">CertificateException</a></code> - if an error occurs during the encoding process.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="parsePkiPathBytes(byte[])">
+<h3>parsePkiPathBytes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html" title="class or interface in java.security.cert" class="external-link">Certificate</a>[]</span>&nbsp;<span class="element-name">parsePkiPathBytes</span><wbr><span class="parameters">(byte[]&nbsp;pkcs7Bytes)</span>
+                                       throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateException.html" title="class or interface in java.security.cert" class="external-link">CertificateException</a></span></div>
+<div class="block">Converts a PKI Path encoded byte array into an array of Certificate objects.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>pkcs7Bytes</code> - the byte array containing the PKI Path encoded certificate chain.</dd>
+<dt>Returns:</dt>
+<dd>an array of Certificate objects extracted from the provided byte array.</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/CertificateException.html" title="class or interface in java.security.cert" class="external-link">CertificateException</a></code> - if the byte array cannot be decoded into a valid certificate chain.</dd>
 </dl>
 </section>
 </li>

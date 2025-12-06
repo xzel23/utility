@@ -11273,6 +11273,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Parses a PEM-encoded public key and returns the corresponding <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/PublicKey.html" title="class or interface in java.security" class="external-link"><code>PublicKey</code></a> instance.</div>
 </dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#parsePkcs7Bytes(byte%5B%5D)" class="member-name-link">parsePkcs7Bytes(byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Converts a byte array representing certificates into an array of Certificate objects.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#parsePkiPathBytes(byte%5B%5D)" class="member-name-link">parsePkiPathBytes(byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Converts a PKI Path encoded byte array into an array of Certificate objects.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/PromptMode.html#PASSWORD" class="member-name-link">PASSWORD</a> - Enum constant in enum class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/PromptMode.html" title="enum class in com.dua3.utility.fx.controls">PromptMode</a></dt>
 <dd>
 <div class="block">Used to represent a mode for masked input, typically for passwords or sensitive information.</div>
@@ -11469,10 +11477,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/crypt/PemData.PemType.html#PKCS7" class="member-name-link">PKCS7</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/PemData.PemType.html" title="enum class in com.dua3.utility.crypt">PemData.PemType</a></dt>
 <dd>
 <div class="block">PKCS#7 cryptographic message syntax data</div>
-</dd>
-<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#pkcs7BytesToCertificateChain(byte%5B%5D)" class="member-name-link">pkcs7BytesToCertificateChain(byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
-<dd>
-<div class="block">Converts a byte array representing certificates into an array of Certificate objects.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/Platform.html" class="type-name-link" title="enum class in com.dua3.utility.lang">Platform</a> - Enum Class in <a href="com/dua3/utility/lang/package-summary.html">com.dua3.utility.lang</a></dt>
 <dd>
@@ -15063,6 +15067,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/crypt/CertificateUtil.html#toPkcs7Bytes(java.security.cert.Certificate...)" class="member-name-link">toPkcs7Bytes(Certificate...)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
 <dd>
 <div class="block">Converts an array of certificates into a byte array in PKCS#7 format.</div>
+</dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#toPkiPathBytes(java.security.cert.Certificate...)" class="member-name-link">toPkiPathBytes(Certificate...)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Converts the given array of certificates into a byte array encoded in the PkiPath format.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/KeyUtil.html#toPrivateKey(byte%5B%5D)" class="member-name-link">toPrivateKey(byte[])</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/KeyUtil.html" title="class in com.dua3.utility.crypt">KeyUtil</a></dt>
 <dd>

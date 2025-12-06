@@ -110,7 +110,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="../../concurrent/ProgressTracker.html" title="interface in com.dua3.utility.concurrent">ProgressTracker</a>&lt;T&gt;</code>, <code>javafx.css.Styleable</code>, <code>javafx.event.EventTarget</code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ProgressView&lt;T&gt;</span>
+<div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ProgressView&lt;T&gt;</span>
 <span class="extends-implements">extends javafx.scene.layout.GridPane
 implements <a href="../../concurrent/ProgressTracker.html" title="interface in com.dua3.utility.concurrent">ProgressTracker</a>&lt;T&gt;</span></div>
 <div class="block">ProgressView is a UI component that displays the progress of tasks in a grid layout.
@@ -207,7 +207,7 @@ implements <a href="../../concurrent/ProgressTracker.html" title="interface in c
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Schedule task.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#scheduleTaskGroup(java.lang.String,T...)" class="member-name-link">scheduleTaskGroup</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;group,
  <a href="ProgressView.html" title="type parameter in ProgressView">T</a>...&nbsp;tasks)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -303,7 +303,8 @@ implements <a href="../../concurrent/ProgressTracker.html" title="interface in c
 <li>
 <section class="detail" id="scheduleTaskGroup(java.lang.String,T...)">
 <h3 id="scheduleTaskGroup(java.lang.String,java.lang.Object[])">scheduleTaskGroup</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">scheduleTaskGroup</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;group,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">scheduleTaskGroup</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;group,
  <a href="ProgressView.html" title="type parameter in ProgressView">T</a>...&nbsp;tasks)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../concurrent/ProgressTracker.html#scheduleTaskGroup(java.lang.String,T...)">ProgressTracker</a></code></span></div>
 <div class="block">Schedules a group of tasks to be executed. Each task in the provided
