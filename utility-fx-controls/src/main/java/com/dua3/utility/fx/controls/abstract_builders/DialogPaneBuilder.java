@@ -102,7 +102,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @return the formatted string after inserting the provided arguments
      */
     public String format(String fmt, @Nullable Object... args) {
-        return formatter.format(fmt, args);
+        return getMessageFormatter().format(fmt, args);
     }
 
     /**

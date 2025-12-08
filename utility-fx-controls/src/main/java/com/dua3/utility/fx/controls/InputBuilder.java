@@ -2,12 +2,12 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.crypt.PasswordUtil;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.MessageFormatter;
-import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
+import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.Node;
 import javafx.stage.FileChooser;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -35,21 +35,15 @@ import java.util.function.UnaryOperator;
 public interface InputBuilder<B extends InputBuilder<B>> {
 
     /**
-     * Represents the styling attributes for a section or title label, such as spacing,
-     * boldness, and scaling of the font. This style is used to configure the visual
-     * presentation of section titles in a UI layout.
+     * Formats the given message using the specified arguments.
      *
-     * @param vspaceBefore The vertical space, in units of font height, added before the section.
-     * @param vspaceAfter The vertical space, in units of font height, added after the section.
-     * @param makeBold A flag indicating whether the section title should be bold.
-     * @param scale A scaling factor to adjust the size of the font for the section title.
+     * @param message the message template which can include placeholders for arguments
+     * @param args    the arguments to be formatted and substituted into the message template
+     * @return the formatted message as a String
      */
-    record SectionStyle(
-            float vspaceBefore,
-            float vspaceAfter,
-            boolean makeBold,
-            float scale
-    ) {}
+    default String format(String message, Object... args) {
+        return getMessageFormatter().format(message, args);
+    }
 
     /**
      * Retrieves an instance of the MessageFormatter.
@@ -57,17 +51,6 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return an instance of MessageFormatter that handles the formatting of messages.
      */
     MessageFormatter getMessageFormatter();
-
-    /**
-     * Formats the given message using the specified arguments.
-     *
-     * @param message the message template which can include placeholders for arguments
-     * @param args the arguments to be formatted and substituted into the message template
-     * @return the formatted message as a String
-     */
-    default String format(String message, Object... args) {
-        return getMessageFormatter().format(message, args);
-    }
 
     /**
      * Retrieves the style configuration for a specific section level.
@@ -89,13 +72,15 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param hidden  flag, indicating whether the input us hidden from the user (no control is visible on the UI)
      * @return {@code this}
      */
-    <T> B addInput(
+    default <T> B addInput(
             String id,
             String label,
             Class<T> type,
             Supplier<? extends @Nullable T> dflt,
             InputControl<T> control,
-            boolean hidden);
+            boolean hidden) {
+        return addInput(id, new MessageFormatter.MessageFormatterArgs(label), type, dflt, control, hidden);
+    }
 
     /**
      * Add a labeled input control.
@@ -109,15 +94,14 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param hidden  flag, indicating whether the input us hidden from the user (no control is visible on the UI)
      * @return {@code this}
      */
-    default <T> B addInput(
+    <T> B addInput(
             String id,
             MessageFormatter.MessageFormatterArgs label,
             Class<T> type,
             Supplier<? extends @Nullable T> dflt,
             InputControl<T> control,
-            boolean hidden) {
-        return addInput(id, format(label), type, dflt, control, hidden);
-    }
+            boolean hidden
+    );
 
     /**
      * Add an unlabeled input control.
@@ -156,29 +140,29 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * Associates a child node with this node using the specified label.
      *
      * @param label the label used to identify the child node
-     * @param node the child node to be associated
+     * @param node  the child node to be associated
      * @return the updated instance of the current object
      */
-    B node(String label, Node node);
+    default B node(String label, Node node) {
+        return node(new MessageFormatter.MessageFormatterArgs(label), node);
+    }
 
     /**
      * Associates a child node with this node using the specified label.
      *
      * @param label the label used to identify the child node
-     * @param node the child node to be associated
+     * @param node  the child node to be associated
      * @return the updated instance of the current object
      */
-    default B node(MessageFormatter.MessageFormatterArgs label, Node node) {
-        return node(format(label), node);
-    }
+    B node(MessageFormatter.MessageFormatterArgs label, Node node);
 
     /**
      * Sets the current section level and formats the section heading
      * using the provided format string and arguments.
      *
      * @param level the level of the section
-     * @param fmt the format string used to create the section heading
-     * @param args the arguments referenced by the format specifiers in the format string
+     * @param fmt   the format string used to create the section heading
+     * @param args  the arguments referenced by the format specifiers in the format string
      * @return {@code this}
      */
     B section(int level, String fmt, Object... args);
@@ -219,12 +203,14 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls   The class type of the value provided.
      * @return An instance of `B` representing the configured disabled input field.
      */
-    <T> B inputConstant(
+    default <T> B inputConstant(
             String id,
             String label,
             Supplier<T> value,
             Class<T> cls
-    );
+    ) {
+        return inputConstant(id, new MessageFormatter.MessageFormatterArgs(label), value, cls);
+    }
 
     /**
      * Creates a disabled input field with the specified configurations.
@@ -238,13 +224,29 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls   The class type of the value provided.
      * @return An instance of `B` representing the configured disabled input field.
      */
-    default <T> B inputConstant(
+    <T> B inputConstant(
             String id,
             MessageFormatter.MessageFormatterArgs label,
             Supplier<T> value,
             Class<T> cls
-    ) {
-        return inputConstant(id, format(label), value, cls);
+    );
+
+    /**
+     * Configures a non-editable input field with the specified parameters.
+     * <p>
+     * Use this method to include values in the form data that are not editable by the user.
+     *
+     * @param id    the unique identifier for the input field
+     * @param label the label associated with the input field
+     * @param value the value to be displayed in the disabled input field
+     * @param <T>   the type of the value contained in the input field
+     * @return an instance of type B representing the configured disabled input field
+     */
+    default <T> B inputConstant(
+            String id,
+            String label,
+            T value) {
+        return inputConstant(id, new MessageFormatter.MessageFormatterArgs(label), value);
     }
 
     /**
@@ -260,26 +262,8 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     <T> B inputConstant(
             String id,
-            String label,
-            T value);
-
-    /**
-     * Configures a non-editable input field with the specified parameters.
-     * <p>
-     * Use this method to include values in the form data that are not editable by the user.
-     *
-     * @param id    the unique identifier for the input field
-     * @param label the label associated with the input field
-     * @param value the value to be displayed in the disabled input field
-     * @param <T>   the type of the value contained in the input field
-     * @return an instance of type B representing the configured disabled input field
-     */
-    default <T> B inputConstant(
-            String id,
             MessageFormatter.MessageFormatterArgs label,
-            T value) {
-        return inputConstant(id, format(label), value);
-    }
+            T value);
 
     /**
      * Creates a hidden field with the specified configurations.
@@ -333,6 +317,46 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
+     * Add a labeled text input.
+     * <p>
+     * This control is for inputting a multi-line texts. See {@link #inputString(String, String, Supplier, Function)}
+     * for a control that allows inputting single line texts.
+     *
+     * @param id       the ID
+     * @param label    the label text
+     * @param dflt     supplier of default value
+     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @return {@code this}
+     */
+    default B inputText(
+            String id,
+            String label,
+            Supplier<@Nullable String> dflt,
+            Function<@Nullable String, Optional<String>> validate
+    ) {
+        return inputText(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
+    }
+
+    /**
+     * Add a labeled text input.
+     * <p>
+     * This control is for inputting a multi-line text. See {@link #inputString(String, String, Supplier, Function)}
+     * for a control that allows inputting single line texts.
+     *
+     * @param id       the ID
+     * @param label    the label text
+     * @param dflt     supplier of default value
+     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @return {@code this}
+     */
+    B inputText(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            Supplier<@Nullable String> dflt,
+            Function<@Nullable String, Optional<String>> validate
+    );
+
+    /**
      * Add a labeled string input.
      * <p>
      * This control is for inputting a multi-line texts. See {@link #inputString(String, String, Supplier)}
@@ -349,46 +373,6 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Supplier<@Nullable String> dflt
     ) {
         return inputText(id, label, dflt, s -> Optional.empty());
-    }
-
-    /**
-     * Add a labeled text input.
-     * <p>
-     * This control is for inputting a multi-line texts. See {@link #inputString(String, String, Supplier, Function)}
-     * for a control that allows inputting single line texts.
-     *
-     * @param id       the ID
-     * @param label    the label text
-     * @param dflt     supplier of default value
-     * @param validate validation callback, return error message if invalid, empty optional if valid
-     * @return {@code this}
-     */
-    B inputText(
-            String id,
-            String label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
-    );
-
-    /**
-     * Add a labeled text input.
-     * <p>
-     * This control is for inputting a multi-line text. See {@link #inputString(String, String, Supplier, Function)}
-     * for a control that allows inputting single line texts.
-     *
-     * @param id       the ID
-     * @param label    the label text
-     * @param dflt     supplier of default value
-     * @param validate validation callback, return error message if invalid, empty optional if valid
-     * @return {@code this}
-     */
-    default B inputText(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
-    ) {
-        return inputText(id, format(label), dflt, validate);
     }
 
     /**
@@ -413,20 +397,22 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     /**
      * Add a labeled string input.
      * <p>
-     * This control is for inputting a single line of text. See {@link #inputText(String, String, Supplier)}
+     * This control is for inputting a single line of text. See {@link #inputText(String, String, Supplier, Function)}
      * for a control that allows inputting longer texts.
      *
-     * @param id    the ID
-     * @param label the label text
-     * @param dflt  supplier of default value
+     * @param id       the ID
+     * @param label    the label text
+     * @param dflt     supplier of default value
+     * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
     default B inputString(
             String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt
+            String label,
+            Supplier<@Nullable String> dflt,
+            Function<@Nullable String, Optional<String>> validate
     ) {
-        return inputString(id, format(label), dflt);
+        return inputString(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
     }
 
     /**
@@ -443,7 +429,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     B inputString(
             String id,
-            String label,
+            MessageFormatter.MessageFormatterArgs label,
             Supplier<@Nullable String> dflt,
             Function<@Nullable String, Optional<String>> validate
     );
@@ -451,22 +437,20 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     /**
      * Add a labeled string input.
      * <p>
-     * This control is for inputting a single line of text. See {@link #inputText(String, String, Supplier, Function)}
+     * This control is for inputting a single line of text. See {@link #inputText(String, String, Supplier)}
      * for a control that allows inputting longer texts.
      *
-     * @param id       the ID
-     * @param label    the label text
-     * @param dflt     supplier of default value
-     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
      * @return {@code this}
      */
     default B inputString(
             String id,
             MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
+            Supplier<@Nullable String> dflt
     ) {
-        return inputString(id, format(label), dflt, validate);
+        return inputString(id, label, dflt, s -> Optional.empty());
     }
 
     /**
@@ -486,19 +470,21 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
-     * Add a labeled password input.
+     * Add a labeled string input.
      *
-     * @param id    the ID
-     * @param label the label text
-     * @param dflt  supplier of default value
+     * @param id       the ID
+     * @param label    the label text
+     * @param dflt     supplier of default value
+     * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
     default B inputPassword(
             String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt
+            String label,
+            Supplier<@Nullable String> dflt,
+            Function<@Nullable String, Optional<String>> validate
     ) {
-        return inputPassword(id, format(label), dflt);
+        return inputPassword(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
     }
 
     /**
@@ -512,35 +498,33 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     B inputPassword(
             String id,
-            String label,
+            MessageFormatter.MessageFormatterArgs label,
             Supplier<@Nullable String> dflt,
             Function<@Nullable String, Optional<String>> validate
     );
 
     /**
-     * Add a labeled string input.
+     * Add a labeled password input.
      *
-     * @param id       the ID
-     * @param label    the label text
-     * @param dflt     supplier of default value
-     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
      * @return {@code this}
      */
     default B inputPassword(
             String id,
             MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
+            Supplier<@Nullable String> dflt
     ) {
-        return inputPassword(id, format(label), dflt, validate);
+        return inputPassword(id, label, dflt, s -> Optional.empty());
     }
 
     /**
      * Allows user to input a password along with a verification step where the password
      * is repeated and validated for strength and consistency.
      *
-     * @param id the identifier for the password input field
-     * @param label the label displayed for the initial password input field
+     * @param id          the identifier for the password input field
+     * @param label       the label displayed for the initial password input field
      * @param labelRepeat the label displayed for the repeated password input field
      * @return an instance of the builder type B after the password input process
      */
@@ -548,6 +532,27 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String id,
             String label,
             String labelRepeat
+    ) {
+        return inputPasswordWithVerification(
+                id,
+                new MessageFormatter.MessageFormatterArgs(label),
+                new MessageFormatter.MessageFormatterArgs(labelRepeat)
+        );
+    }
+
+    /**
+     * Allows user to input a password along with a verification step where the password
+     * is repeated and validated for strength and consistency.
+     *
+     * @param id          the identifier for the password input field
+     * @param label       the label displayed for the initial password input field
+     * @param labelRepeat the label displayed for the repeated password input field
+     * @return an instance of the builder type B after the password input process
+     */
+    default B inputPasswordWithVerification(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            MessageFormatter.MessageFormatterArgs labelRepeat
     ) {
         AtomicReference<@Nullable String> passwordRef = new AtomicReference<>(null);
         return inputPassword(id, label, () -> "", s -> {
@@ -570,27 +575,6 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
-     * Allows user to input a password along with a verification step where the password
-     * is repeated and validated for strength and consistency.
-     *
-     * @param id the identifier for the password input field
-     * @param label the label displayed for the initial password input field
-     * @param labelRepeat the label displayed for the repeated password input field
-     * @return an instance of the builder type B after the password input process
-     */
-    default B inputPasswordWithVerification(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            MessageFormatter.MessageFormatterArgs labelRepeat
-    ) {
-        return inputPasswordWithVerification(
-                id,
-                format(label),
-                format(labelRepeat)
-        );
-    }
-
-    /**
      * Add a labeled integer input.
      *
      * @param id    the ID
@@ -609,17 +593,19 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     /**
      * Add a labeled integer input.
      *
-     * @param id    the ID
-     * @param label the label text
-     * @param dflt  supplier of default value
+     * @param id       the ID
+     * @param label    the label text
+     * @param dflt     supplier of default value
+     * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
     default B inputInteger(
             String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Long> dflt
+            String label,
+            Supplier<@Nullable Long> dflt,
+            Function<@Nullable Long, Optional<String>> validate
     ) {
-        return inputInteger(id, format(label), dflt);
+        return inputInteger(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
     }
 
     /**
@@ -633,7 +619,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     B inputInteger(
             String id,
-            String label,
+            MessageFormatter.MessageFormatterArgs label,
             Supplier<@Nullable Long> dflt,
             Function<@Nullable Long, Optional<String>> validate
     );
@@ -641,19 +627,17 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     /**
      * Add a labeled integer input.
      *
-     * @param id       the ID
-     * @param label    the label text
-     * @param dflt     supplier of default value
-     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
      * @return {@code this}
      */
     default B inputInteger(
             String id,
             MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Long> dflt,
-            Function<@Nullable Long, Optional<String>> validate
+            Supplier<@Nullable Long> dflt
     ) {
-        return inputInteger(id, format(label), dflt, validate);
+        return inputInteger(id, label, dflt, i -> Optional.empty());
     }
 
     /**
@@ -675,17 +659,19 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     /**
      * Add a labeled decimal input.
      *
-     * @param id    the ID
-     * @param label the label text
-     * @param dflt  supplier of default value
+     * @param id       the ID
+     * @param label    the label text
+     * @param dflt     supplier of default value
+     * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
     default B inputDecimal(
             String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Double> dflt
+            String label,
+            Supplier<@Nullable Double> dflt,
+            Function<@Nullable Double, Optional<String>> validate
     ) {
-        return inputDecimal(id, format(label), dflt);
+        return inputDecimal(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
     }
 
     /**
@@ -699,7 +685,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     B inputDecimal(
             String id,
-            String label,
+            MessageFormatter.MessageFormatterArgs label,
             Supplier<@Nullable Double> dflt,
             Function<@Nullable Double, Optional<String>> validate
     );
@@ -707,19 +693,17 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     /**
      * Add a labeled decimal input.
      *
-     * @param id       the ID
-     * @param label    the label text
-     * @param dflt     supplier of default value
-     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
      * @return {@code this}
      */
     default B inputDecimal(
             String id,
             MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Double> dflt,
-            Function<@Nullable Double, Optional<String>> validate
+            Supplier<@Nullable Double> dflt
     ) {
-        return inputDecimal(id, format(label), dflt, validate);
+        return inputDecimal(id, label, dflt, d -> Optional.empty());
     }
 
     /**
@@ -741,6 +725,44 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
+     * Creates a checkbox with the given parameters.
+     *
+     * @param id       the ID of the checkbox
+     * @param label    the label for the checkbox
+     * @param dflt     the default value of the checkbox
+     * @param text     the text to display next to the checkbox
+     * @param validate a function that takes a Boolean value and returns an optional validation message
+     * @return {@code this}
+     */
+    default B inputCheckBox(
+            String id,
+            String label,
+            BooleanSupplier dflt,
+            String text,
+            Function<@Nullable Boolean, Optional<String>> validate
+    ) {
+        return inputCheckBox(id, new MessageFormatter.MessageFormatterArgs(label), dflt, text, validate);
+    }
+
+    /**
+     * Creates a checkbox with the given parameters.
+     *
+     * @param id       the ID of the checkbox
+     * @param label    the label for the checkbox
+     * @param dflt     the default value of the checkbox
+     * @param text     the text to display next to the checkbox
+     * @param validate a function that takes a Boolean value and returns an optional validation message
+     * @return {@code this}
+     */
+    B inputCheckBox(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            BooleanSupplier dflt,
+            String text,
+            Function<@Nullable Boolean, Optional<String>> validate
+    );
+
+    /**
      * Add a labeled checkbox.
      *
      * @param id    the ID
@@ -755,45 +777,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             BooleanSupplier dflt,
             String text
     ) {
-        return inputCheckBox(id, format(label), dflt, text);
-    }
-
-    /**
-     * Creates a checkbox with the given parameters.
-     *
-     * @param id        the ID of the checkbox
-     * @param label     the label for the checkbox
-     * @param dflt      the default value of the checkbox
-     * @param text      the text to display next to the checkbox
-     * @param validate  a function that takes a Boolean value and returns an optional validation message
-     * @return {@code this}
-     */
-    B inputCheckBox(
-            String id,
-            String label,
-            BooleanSupplier dflt,
-            String text,
-            Function<@Nullable Boolean, Optional<String>> validate
-    );
-
-    /**
-     * Creates a checkbox with the given parameters.
-     *
-     * @param id        the ID of the checkbox
-     * @param label     the label for the checkbox
-     * @param dflt      the default value of the checkbox
-     * @param text      the text to display next to the checkbox
-     * @param validate  a function that takes a Boolean value and returns an optional validation message
-     * @return {@code this}
-     */
-    default B inputCheckBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            BooleanSupplier dflt,
-            String text,
-            Function<@Nullable Boolean, Optional<String>> validate
-    ) {
-        return inputCheckBox(id, format(label), dflt, text, validate);
+        return inputCheckBox(id, label, dflt, text, b -> Optional.empty());
     }
 
     /**
@@ -816,6 +800,73 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
+     * Creates a comboBox widget with the given parameters.
+     *
+     * @param id       the unique identifier for the comboBox
+     * @param label    the label to display with the comboBox
+     * @param dflt     the supplier function to provide the default value for the comboBox
+     * @param cls      the class type of the comboBox items
+     * @param items    the collection of items to populate the comboBox
+     * @param validate the function to validate the selected item in the comboBox
+     * @param <T>      the type of the comboBox items
+     * @return {@code this}
+     */
+    default <T> B inputComboBox(
+            String id,
+            String label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            T[] items,
+            Function<@Nullable T, Optional<String>> validate
+    ) {
+        return inputComboBox(id, label, dflt, cls, List.of(items), validate);
+    }
+
+    /**
+     * Creates a comboBox widget with the given parameters.
+     *
+     * @param id       the unique identifier for the comboBox
+     * @param label    the label to display with the comboBox
+     * @param dflt     the supplier function to provide the default value for the comboBox
+     * @param cls      the class type of the comboBox items
+     * @param items    the collection of items to populate the comboBox
+     * @param validate the function to validate the selected item in the comboBox
+     * @param <T>      the type of the comboBox items
+     * @return {@code this}
+     */
+    default <T> B inputComboBox(
+            String id,
+            String label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            Collection<T> items,
+            Function<@Nullable T, Optional<String>> validate
+    ) {
+        return inputComboBox(id, new MessageFormatter.MessageFormatterArgs(label), dflt, cls, items, validate);
+    }
+
+    /**
+     * Creates a comboBox widget with the given parameters.
+     *
+     * @param id       the unique identifier for the comboBox
+     * @param label    the label to display with the comboBox
+     * @param dflt     the supplier function to provide the default value for the comboBox
+     * @param cls      the class type of the comboBox items
+     * @param items    the collection of items to populate the comboBox
+     * @param validate the function to validate the selected item in the comboBox
+     * @param <T>      the type of the comboBox items
+     * @return {@code this}
+     */
+    <T> B inputComboBox(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            Collection<T> items,
+            Function<@Nullable T, Optional<String>> validate
+    );
+
+    /**
      * Add a labeled combobox for selecting a value from an enum.
      *
      * @param <T>   the item type
@@ -831,7 +882,72 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Supplier<@Nullable T> dflt,
             Class<T> cls
     ) {
-        return inputComboBox(id, format(label), dflt, cls, LangUtil.enumValues(cls), t -> Optional.empty());
+        return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls), t -> Optional.empty());
+    }
+
+    /**
+     * Creates a comboBox widget with the given parameters.
+     *
+     * @param id       the unique identifier for the comboBox
+     * @param label    the label to display with the comboBox
+     * @param dflt     the supplier function to provide the default value for the comboBox
+     * @param cls      the class type of the comboBox items
+     * @param items    the collection of items to populate the comboBox
+     * @param validate the function to validate the selected item in the comboBox
+     * @param <T>      the type of the comboBox items
+     * @return {@code this}
+     */
+    default <T> B inputComboBox(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            T[] items,
+            Function<@Nullable T, Optional<String>> validate
+    ) {
+        return inputComboBox(id, label, dflt, cls, List.of(items), validate);
+    }
+
+    /**
+     * Add a labeled combobox.
+     *
+     * @param <T>   the item type
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
+     * @param cls   the result class
+     * @param items the items to choose from
+     * @return {@code this}
+     */
+   default  <T> B inputComboBox(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            Collection<T> items
+    ) {
+        return inputComboBox(id, label, dflt, cls, items, t -> Optional.empty());
+    }
+
+    /**
+     * Add a labeled combobox.
+     *
+     * @param <T>   the item type
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
+     * @param cls   the result class
+     * @param items the items to choose from
+     * @return {@code this}
+     */
+    default <T> B inputComboBox(
+            String id,
+            String label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            T[] items
+    ) {
+        return inputComboBox(id, label, dflt, cls, List.of(items));
     }
 
     /**
@@ -871,51 +987,9 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             MessageFormatter.MessageFormatterArgs label,
             Supplier<? extends @Nullable T> dflt,
             Class<T> cls,
-            Collection<T> items
-    ) {
-        return inputComboBox(id, format(label), dflt, cls, items);
-    }
-
-    /**
-     * Add a labeled combobox.
-     *
-     * @param <T>   the item type
-     * @param id    the ID
-     * @param label the label text
-     * @param dflt  supplier of default value
-     * @param cls   the result class
-     * @param items the items to choose from
-     * @return {@code this}
-     */
-    default <T> B inputComboBox(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
             T[] items
     ) {
         return inputComboBox(id, label, dflt, cls, List.of(items));
-    }
-
-    /**
-     * Add a labeled combobox.
-     *
-     * @param <T>   the item type
-     * @param id    the ID
-     * @param label the label text
-     * @param dflt  supplier of default value
-     * @param cls   the result class
-     * @param items the items to choose from
-     * @return {@code this}
-     */
-    default <T> B inputComboBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            T[] items
-    ) {
-        return inputComboBox(id, format(label), dflt, cls, items);
     }
 
     /**
@@ -957,112 +1031,22 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Class<T> cls,
             Function<@Nullable T, Optional<String>> validate
     ) {
-        return inputComboBox(id, format(label), dflt, cls, validate);
-    }
-
-    /**
-     * Creates a comboBox widget with the given parameters.
-     *
-     * @param id       the unique identifier for the comboBox
-     * @param label    the label to display with the comboBox
-     * @param dflt     the supplier function to provide the default value for the comboBox
-     * @param cls      the class type of the comboBox items
-     * @param items    the collection of items to populate the comboBox
-     * @param validate the function to validate the selected item in the comboBox
-     * @param <T>      the type of the comboBox items
-     * @return {@code this}
-     */
-    <T> B inputComboBox(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    );
-
-    /**
-     * Creates a comboBox widget with the given parameters.
-     *
-     * @param id       the unique identifier for the comboBox
-     * @param label    the label to display with the comboBox
-     * @param dflt     the supplier function to provide the default value for the comboBox
-     * @param cls      the class type of the comboBox items
-     * @param items    the collection of items to populate the comboBox
-     * @param validate the function to validate the selected item in the comboBox
-     * @param <T>      the type of the comboBox items
-     * @return {@code this}
-     */
-    default <T> B inputComboBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
-        return inputComboBox(id, format(label), dflt, cls, items, validate);
-    }
-
-    /**
-     * Creates a comboBox widget with the given parameters.
-     *
-     * @param id       the unique identifier for the comboBox
-     * @param label    the label to display with the comboBox
-     * @param dflt     the supplier function to provide the default value for the comboBox
-     * @param cls      the class type of the comboBox items
-     * @param items    the collection of items to populate the comboBox
-     * @param validate the function to validate the selected item in the comboBox
-     * @param <T>      the type of the comboBox items
-     * @return {@code this}
-     */
-    default <T> B inputComboBox(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            T[] items,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
-        return inputComboBox(id, label, dflt, cls, List.of(items), validate);
-    }
-
-    /**
-     * Creates a comboBox widget with the given parameters.
-     *
-     * @param id       the unique identifier for the comboBox
-     * @param label    the label to display with the comboBox
-     * @param dflt     the supplier function to provide the default value for the comboBox
-     * @param cls      the class type of the comboBox items
-     * @param items    the collection of items to populate the comboBox
-     * @param validate the function to validate the selected item in the comboBox
-     * @param <T>      the type of the comboBox items
-     * @return {@code this}
-     */
-    default <T> B inputComboBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            T[] items,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
-        return inputComboBox(id, format(label), dflt, cls, items, validate);
+        return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls), validate);
     }
 
     /**
      * Adds a labeled combo box control with extended functionality.
      *
-     * @param <T> the item type
-     * @param id the control's ID
-     * @param label the label text
-     * @param edit the action to be performed when an item is edited (optional)
-     * @param add the action to be performed when a new item is added (optional)
+     * @param <T>    the item type
+     * @param id     the control's ID
+     * @param label  the label text
+     * @param edit   the action to be performed when an item is edited (optional)
+     * @param add    the action to be performed when a new item is added (optional)
      * @param remove the action to be performed when an item is removed (optional)
      * @param format the function to format the items in the combo box
-     * @param dflt the supplier of the default value
-     * @param cls the result class of the combo box items
-     * @param items the collection of items to choose from
+     * @param dflt   the supplier of the default value
+     * @param cls    the result class of the combo box items
+     * @param items  the collection of items to choose from
      * @return {@code this}
      */
     default <T> B inputComboBoxEx(
@@ -1080,18 +1064,78 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
+     * Returns a custom combo box with the specified parameters.
+     *
+     * @param <T>      the type of objects in the combo box
+     * @param id       the ID of the combo box
+     * @param label    the label of the combo box
+     * @param edit     a function to modify the selected item in the combo box, or null if editing is not allowed
+     * @param add      a supplier to add a new item to the combo box, or null if adding is not allowed
+     * @param remove   a predicate to remove an item from the combo box, or null if removing is not allowed
+     * @param format   a function to format the items of the combo box as strings
+     * @param dflt     a supplier to provide a default item for the combo box
+     * @param cls      the class of objects in the combo box
+     * @param items    the collection of items to populate the combo box
+     * @param validate a function to validate the items in the combo box and return an optional error message
+     * @return {@code this}
+     */
+    default <T> B inputComboBoxEx(
+            String id,
+            String label,
+            @Nullable UnaryOperator<T> edit,
+            @Nullable Supplier<T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            Function<T, String> format,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            Collection<T> items,
+            Function<@Nullable T, Optional<String>> validate
+    ) {
+        return inputComboBoxEx(id, new MessageFormatter.MessageFormatterArgs(label), edit, add, remove, format, dflt, cls, items, validate);
+    }
+
+    /**
+     * Returns a custom combo box with the specified parameters.
+     *
+     * @param <T>      the type of objects in the combo box
+     * @param id       the ID of the combo box
+     * @param label    the label of the combo box
+     * @param edit     a function to modify the selected item in the combo box, or null if editing is not allowed
+     * @param add      a supplier to add a new item to the combo box, or null if adding is not allowed
+     * @param remove   a predicate to remove an item from the combo box, or null if removing is not allowed
+     * @param format   a function to format the items of the combo box as strings
+     * @param dflt     a supplier to provide a default item for the combo box
+     * @param cls      the class of objects in the combo box
+     * @param items    the collection of items to populate the combo box
+     * @param validate a function to validate the items in the combo box and return an optional error message
+     * @return {@code this}
+     */
+    <T> B inputComboBoxEx(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            @Nullable UnaryOperator<T> edit,
+            @Nullable Supplier<T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            Function<T, String> format,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            Collection<T> items,
+            Function<@Nullable T, Optional<String>> validate
+    );
+
+    /**
      * Adds a labeled combo box control with extended functionality.
      *
-     * @param <T> the item type
-     * @param id the control's ID
-     * @param label the label text
-     * @param edit the action to be performed when an item is edited (optional)
-     * @param add the action to be performed when a new item is added (optional)
+     * @param <T>    the item type
+     * @param id     the control's ID
+     * @param label  the label text
+     * @param edit   the action to be performed when an item is edited (optional)
+     * @param add    the action to be performed when a new item is added (optional)
      * @param remove the action to be performed when an item is removed (optional)
      * @param format the function to format the items in the combo box
-     * @param dflt the supplier of the default value
-     * @param cls the result class of the combo box items
-     * @param items the collection of items to choose from
+     * @param dflt   the supplier of the default value
+     * @param cls    the result class of the combo box items
+     * @param items  the collection of items to choose from
      * @return {@code this}
      */
     default <T> B inputComboBoxEx(
@@ -1105,67 +1149,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Class<T> cls,
             Collection<T> items
     ) {
-        return inputComboBoxEx(id, format(label), edit, add, remove, format, dflt, cls, items);
-    }
-
-    /**
-     * Returns a custom combo box with the specified parameters.
-     *
-     * @param <T>        the type of objects in the combo box
-     * @param id         the ID of the combo box
-     * @param label      the label of the combo box
-     * @param edit       a function to modify the selected item in the combo box, or null if editing is not allowed
-     * @param add        a supplier to add a new item to the combo box, or null if adding is not allowed
-     * @param remove     a predicate to remove an item from the combo box, or null if removing is not allowed
-     * @param format     a function to format the items of the combo box as strings
-     * @param dflt       a supplier to provide a default item for the combo box
-     * @param cls        the class of objects in the combo box
-     * @param items      the collection of items to populate the combo box
-     * @param validate   a function to validate the items in the combo box and return an optional error message
-     * @return {@code this}
-     */
-    <T> B inputComboBoxEx(
-            String id,
-            String label,
-            @Nullable UnaryOperator<T> edit,
-            @Nullable Supplier<T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    );
-
-    /**
-     * Returns a custom combo box with the specified parameters.
-     *
-     * @param <T>        the type of objects in the combo box
-     * @param id         the ID of the combo box
-     * @param label      the label of the combo box
-     * @param edit       a function to modify the selected item in the combo box, or null if editing is not allowed
-     * @param add        a supplier to add a new item to the combo box, or null if adding is not allowed
-     * @param remove     a predicate to remove an item from the combo box, or null if removing is not allowed
-     * @param format     a function to format the items of the combo box as strings
-     * @param dflt       a supplier to provide a default item for the combo box
-     * @param cls        the class of objects in the combo box
-     * @param items      the collection of items to populate the combo box
-     * @param validate   a function to validate the items in the combo box and return an optional error message
-     * @return {@code this}
-     */
-    default <T> B inputComboBoxEx(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            @Nullable UnaryOperator<T> edit,
-            @Nullable Supplier<T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
-        return inputComboBoxEx(id, format(label), edit, add, remove, format, dflt, cls, items, validate);
+        return inputComboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, t -> Optional.empty());
     }
 
     /**
@@ -1190,6 +1174,50 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
+     * Creates a radio list component.
+     *
+     * @param id       the ID of the radio list
+     * @param label    the label text for the radio list
+     * @param dflt     a supplier that provides the default value for the radio list
+     * @param cls      the class of the items in the radio list
+     * @param items    a collection of items for the radio list
+     * @param validate a function to validate the selected item, returning an optional error message
+     * @param <T>      the type of items in the radio list
+     * @return {@code this}
+     */
+    default <T> B inputRadioList(
+            String id,
+            String label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            Collection<T> items,
+            Function<@Nullable T, Optional<String>> validate
+    ) {
+        return inputRadioList(id, new MessageFormatter.MessageFormatterArgs(label), dflt, cls, items, validate);
+    }
+
+    /**
+     * Creates a radio list component.
+     *
+     * @param id       the ID of the radio list
+     * @param label    the label text for the radio list
+     * @param dflt     a supplier that provides the default value for the radio list
+     * @param cls      the class of the items in the radio list
+     * @param items    a collection of items for the radio list
+     * @param validate a function to validate the selected item, returning an optional error message
+     * @param <T>      the type of items in the radio list
+     * @return {@code this}
+     */
+    <T> B inputRadioList(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            Supplier<? extends @Nullable T> dflt,
+            Class<T> cls,
+            Collection<T> items,
+            Function<@Nullable T, Optional<String>> validate
+    );
+
+    /**
      * Add a labeled list of radiobuttons.
      *
      * @param <T>   the item type
@@ -1207,51 +1235,27 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Class<T> cls,
             Collection<T> items
     ) {
-        return inputRadioList(id, format(label), dflt, cls, items);
+        return inputRadioList(id, label, dflt, cls, items, (@Nullable T t) -> t != null ? Optional.empty() : Optional.of("No option selected"));
     }
 
     /**
-     * Creates a radio list component.
+     * Creates a slider component.
      *
-     * @param id        the ID of the radio list
-     * @param label     the label text for the radio list
-     * @param dflt      a supplier that provides the default value for the radio list
-     * @param cls       the class of the items in the radio list
-     * @param items     a collection of items for the radio list
-     * @param validate  a function to validate the selected item, returning an optional error message
-     * @param <T>       the type of items in the radio list
+     * @param id    the ID of the radio list
+     * @param label the label text for the radio list
+     * @param dflt  a supplier that provides the default value for the radio list
+     * @param min   the minimum value
+     * @param max   the maximum value
      * @return {@code this}
      */
-    <T> B inputRadioList(
+    default B inputSlider(
             String id,
             String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    );
-
-    /**
-     * Creates a radio list component.
-     *
-     * @param id        the ID of the radio list
-     * @param label     the label text for the radio list
-     * @param dflt      a supplier that provides the default value for the radio list
-     * @param cls       the class of the items in the radio list
-     * @param items     a collection of items for the radio list
-     * @param validate  a function to validate the selected item, returning an optional error message
-     * @param <T>       the type of items in the radio list
-     * @return {@code this}
-     */
-    default <T> B inputRadioList(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
+            Supplier<@Nullable Double> dflt,
+            double min,
+            double max
     ) {
-        return inputRadioList(id, format(label), dflt, cls, items, validate);
+        return inputSlider(id, new MessageFormatter.MessageFormatterArgs(label), dflt, min, max);
     }
 
     /**
@@ -1266,46 +1270,10 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     B inputSlider(
             String id,
-            String label,
-            Supplier<@Nullable Double> dflt,
-            double min,
-            double max
-    );
-
-    /**
-     * Creates a slider component.
-     *
-     * @param id    the ID of the radio list
-     * @param label the label text for the radio list
-     * @param dflt  a supplier that provides the default value for the radio list
-     * @param min   the minimum value
-     * @param max   the maximum value
-     * @return {@code this}
-     */
-    default B inputSlider(
-            String id,
             MessageFormatter.MessageFormatterArgs label,
             Supplier<@Nullable Double> dflt,
             double min,
             double max
-    ) {
-        return inputSlider(id, format(label), dflt, min, max);
-    }
-
-    /**
-     * Add a labeled pane with options.
-     *
-     * @param id      the ID
-     * @param label   the label text
-     * @param dflt    supplier of default values
-     * @param options supplier of options
-     * @return {@code this}
-     */
-    B inputOptions(
-            String id,
-            String label,
-            Supplier<@Nullable Arguments> dflt,
-            Supplier<Collection<Option<?>>> options
     );
 
     /**
@@ -1319,12 +1287,28 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     default B inputOptions(
             String id,
-            MessageFormatter.MessageFormatterArgs label,
+            String label,
             Supplier<@Nullable Arguments> dflt,
             Supplier<Collection<Option<?>>> options
     ) {
-        return inputOptions(id, format(label), dflt, options);
+        return inputOptions(id, new MessageFormatter.MessageFormatterArgs(label), dflt, options);
     }
+
+    /**
+     * Add a labeled pane with options.
+     *
+     * @param id      the ID
+     * @param label   the label text
+     * @param dflt    supplier of default values
+     * @param options supplier of options
+     * @return {@code this}
+     */
+    B inputOptions(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            Supplier<@Nullable Arguments> dflt,
+            Supplier<Collection<Option<?>>> options
+    );
 
     /**
      * Add an unlabeled pane with options.
@@ -1346,17 +1330,62 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     /**
      * Add a file chooser.
      *
-     * @param id     the ID
-     * @param label  the label text
-     * @param dflt   supplier of default value
-     * @param mode   the mode, either {@link FileDialogMode#OPEN} or {@link FileDialogMode#SAVE}
+     * @param id           the ID
+     * @param label        the label text
+     * @param dflt         supplier of default value
+     * @param mode         the mode, either {@link FileDialogMode#OPEN} or {@link FileDialogMode#SAVE}
      * @param existingOnly only let the user choose existing files; i.e., no new files can be created
-     * @param filter the extension filter to use
+     * @param filter       the extension filter to use
      * @return {@code this}
      */
     default B inputFile(
             String id,
             String label,
+            Supplier<@Nullable Path> dflt,
+            FileDialogMode mode,
+            boolean existingOnly,
+            Collection<FileChooser.ExtensionFilter> filter
+    ) {
+        return inputFile(id, new MessageFormatter.MessageFormatterArgs(label), dflt, mode, existingOnly, filter, FileInput.defaultValidate(mode, existingOnly));
+    }
+
+    /**
+     * Add a file chooser dialog to allow the user to select a file.
+     *
+     * @param id           The identifier for the file chooser dialog.
+     * @param label        The label to display in the file chooser dialog.
+     * @param dflt         A function that provides the default path to preselect in the file chooser dialog.
+     * @param mode         The mode of the file dialog, such as OPEN or SAVE.
+     * @param existingOnly Whether to only allow selection of existing files.
+     * @param filter       The file filters to apply in the file chooser dialog.
+     * @param validate     A function to perform additional validation on the selected file path.
+     *                     It returns an optional error message if the validation fails.
+     * @return {@code this}
+     */
+    B inputFile(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            Supplier<@Nullable Path> dflt,
+            FileDialogMode mode,
+            boolean existingOnly,
+            Collection<FileChooser.ExtensionFilter> filter,
+            Function<@Nullable Path, Optional<String>> validate
+    );
+
+    /**
+     * Add a file chooser.
+     *
+     * @param id           the ID
+     * @param label        the label text
+     * @param dflt         supplier of default value
+     * @param mode         the mode, either {@link FileDialogMode#OPEN} or {@link FileDialogMode#SAVE}
+     * @param existingOnly only let the user choose existing files; i.e., no new files can be created
+     * @param filter       the extension filter to use
+     * @return {@code this}
+     */
+    default B inputFile(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
             Supplier<@Nullable Path> dflt,
             FileDialogMode mode,
             boolean existingOnly,
@@ -1366,41 +1395,19 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
-     * Add a file chooser.
+     * Add a file chooser dialog to allow the user to select a file.
      *
-     * @param id     the ID
-     * @param label  the label text
-     * @param dflt   supplier of default value
-     * @param mode   the mode, either {@link FileDialogMode#OPEN} or {@link FileDialogMode#SAVE}
-     * @param existingOnly only let the user choose existing files; i.e., no new files can be created
-     * @param filter the extension filter to use
+     * @param id           The identifier for the file chooser dialog.
+     * @param label        The label to display in the file chooser dialog.
+     * @param dflt         A function that provides the default path to preselect in the file chooser dialog.
+     * @param mode         The mode of the file dialog, such as OPEN or SAVE.
+     * @param existingOnly Whether to only allow selection of existing files.
+     * @param filter       The file filters to apply in the file chooser dialog.
+     * @param validate     A function to perform additional validation on the selected file path.
+     *                     It returns an optional error message if the validation fails.
      * @return {@code this}
      */
     default B inputFile(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Path> dflt,
-            FileDialogMode mode,
-            boolean existingOnly,
-            Collection<FileChooser.ExtensionFilter> filter
-    ) {
-        return inputFile(id, format(label), dflt, mode, existingOnly, filter);
-    }
-
-    /**
-     * Add a file chooser dialog to allow the user to select a file.
-     *
-     * @param id            The identifier for the file chooser dialog.
-     * @param label         The label to display in the file chooser dialog.
-     * @param dflt          A function that provides the default path to preselect in the file chooser dialog.
-     * @param mode          The mode of the file dialog, such as OPEN or SAVE.
-     * @param existingOnly  Whether to only allow selection of existing files.
-     * @param filter        The file filters to apply in the file chooser dialog.
-     * @param validate      A function to perform additional validation on the selected file path.
-     *                      It returns an optional error message if the validation fails.
-     * @return {@code this}
-     */
-    B inputFile(
             String id,
             String label,
             Supplier<@Nullable Path> dflt,
@@ -1408,31 +1415,8 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             boolean existingOnly,
             Collection<FileChooser.ExtensionFilter> filter,
             Function<@Nullable Path, Optional<String>> validate
-    );
-
-    /**
-     * Add a file chooser dialog to allow the user to select a file.
-     *
-     * @param id            The identifier for the file chooser dialog.
-     * @param label         The label to display in the file chooser dialog.
-     * @param dflt          A function that provides the default path to preselect in the file chooser dialog.
-     * @param mode          The mode of the file dialog, such as OPEN or SAVE.
-     * @param existingOnly  Whether to only allow selection of existing files.
-     * @param filter        The file filters to apply in the file chooser dialog.
-     * @param validate      A function to perform additional validation on the selected file path.
-     *                      It returns an optional error message if the validation fails.
-     * @return {@code this}
-     */
-    default B inputFile(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Path> dflt,
-            FileDialogMode mode,
-            boolean existingOnly,
-            Collection<FileChooser.ExtensionFilter> filter,
-            Function<@Nullable Path, Optional<String>> validate
     ) {
-        return inputFile(id, format(label), dflt, mode, existingOnly, filter, validate);
+        return inputFile(id, new MessageFormatter.MessageFormatterArgs(label), dflt, mode, existingOnly, filter, validate);
     }
 
     /**
@@ -1450,40 +1434,22 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Supplier<@Nullable Path> dflt,
             boolean existingOnly
     ) {
-        return inputFolder(id, label, dflt, existingOnly, FileInput.defaultValidate(FileDialogMode.DIRECTORY, existingOnly));
-    }
-
-    /**
-     * Configures an input field for selecting a folder.
-     *
-     * @param id           the unique identifier for this input field
-     * @param label        the display label for the input field
-     * @param dflt         a supplier providing the default selected folder path, which can be null
-     * @param existingOnly a boolean indicating if only existing directories should be selectable
-     * @return an instance of type B after configuring the folder input field
-     */
-    default B inputFolder(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Path> dflt,
-            boolean existingOnly
-    ) {
-        return inputFolder(id, format(label), dflt, existingOnly);
+        return inputFolder(id, new MessageFormatter.MessageFormatterArgs(label), dflt, existingOnly, FileInput.defaultValidate(FileDialogMode.DIRECTORY, existingOnly));
     }
 
     /**
      * Configures an input for selecting a folder.
      *
-     * @param id the identifier for the input
-     * @param label the label text for the input
-     * @param dflt a supplier providing the default folder path
+     * @param id           the identifier for the input
+     * @param label        the label text for the input
+     * @param dflt         a supplier providing the default folder path
      * @param existingOnly a flag indicating whether only existing folders are allowed
-     * @param validate a function to validate the selected folder path
+     * @param validate     a function to validate the selected folder path
      * @return an instance of the builder configured with the folder input
      */
     default B inputFolder(
             String id,
-            String label,
+            MessageFormatter.MessageFormatterArgs label,
             Supplier<@Nullable Path> dflt,
             boolean existingOnly,
             Function<@Nullable Path, Optional<String>> validate
@@ -1492,58 +1458,97 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
-     * Configures an input for selecting a folder.
+     * Configures an input field for selecting a folder.
      *
-     * @param id the identifier for the input
-     * @param label the label text for the input
-     * @param dflt a supplier providing the default folder path
-     * @param existingOnly a flag indicating whether only existing folders are allowed
-     * @param validate a function to validate the selected folder path
-     * @return an instance of the builder configured with the folder input
+     * @param id           the unique identifier for this input field
+     * @param label        the display label for the input field
+     * @param dflt         a supplier providing the default selected folder path, which can be null
+     * @param existingOnly a boolean indicating if only existing directories should be selectable
+     * @return an instance of type B after configuring the folder input field
      */
     default B inputFolder(
             String id,
             MessageFormatter.MessageFormatterArgs label,
             Supplier<@Nullable Path> dflt,
+            boolean existingOnly
+    ) {
+        return inputFolder(id, label, dflt, existingOnly, FileInput.defaultValidate(FileDialogMode.DIRECTORY, existingOnly));
+    }
+
+    /**
+     * Configures an input for selecting a folder.
+     *
+     * @param id           the identifier for the input
+     * @param label        the label text for the input
+     * @param dflt         a supplier providing the default folder path
+     * @param existingOnly a flag indicating whether only existing folders are allowed
+     * @param validate     a function to validate the selected folder path
+     * @return an instance of the builder configured with the folder input
+     */
+    default B inputFolder(
+            String id,
+            String label,
+            Supplier<@Nullable Path> dflt,
             boolean existingOnly,
             Function<@Nullable Path, Optional<String>> validate
     ) {
-        return inputFile(id, format(label), dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
+        return inputFile(id, new MessageFormatter.MessageFormatterArgs(label), dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
     }
 
     /**
      * Associates an input control with the specified identifier, type, and default value provider.
      *
-     * @param <T>      the generic result type
-     * @param id       the unique identifier for the input control
-     * @param control  the input control to be associated
-     * @param type     the class type of the value managed by the input control
-     * @param dflt     a supplier for the default value, which may produce a null value
-     * @return         an instance of type B for method chaining or further configuration
+     * @param <T>     the generic result type
+     * @param id      the unique identifier for the input control
+     * @param control the input control to be associated
+     * @param type    the class type of the value managed by the input control
+     * @param dflt    a supplier for the default value, which may produce a null value
+     * @return an instance of type B for method chaining or further configuration
      */
     <T> B inputControl(String id, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt);
 
     /**
      * Configures an input control with the specified parameters.
      *
-     * @param <T>      the generic result type
-     * @param id       the unique identifier for the input control
-     * @param label    the label to be associated with the input control
-     * @param control  the input control instance to be configured
-     * @param type     the type of the input value
-     * @param dflt     a supplier providing the default value for the input control; may be null
+     * @param <T>     the generic result type
+     * @param id      the unique identifier for the input control
+     * @param label   the label to be associated with the input control
+     * @param control the input control instance to be configured
+     * @param type    the type of the input value
+     * @param dflt    a supplier providing the default value for the input control; may be null
      * @return an instance of type B, representing the configured input control
      */
-    <T> B inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt);
+    default <T> B inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
+        return inputControl(id, new MessageFormatter.MessageFormatterArgs(label), control, type, dflt);
+    }
 
     /**
-     * Formats a message using the provided message formatter arguments.
+     * Configures an input control with the specified parameters.
      *
-     * @param label an instance of MessageFormatter.MessageFormatterArgs containing the format string
-     *              and arguments required for message formatting
-     * @return the formatted message as a string
+     * @param <T>     the generic result type
+     * @param id      the unique identifier for the input control
+     * @param label   the label to be associated with the input control
+     * @param control the input control instance to be configured
+     * @param type    the type of the input value
+     * @param dflt    a supplier providing the default value for the input control; may be null
+     * @return an instance of type B, representing the configured input control
      */
-    private String format(MessageFormatter.MessageFormatterArgs label) {
-        return getMessageFormatter().format(label.fmt(), label.args());
-    }
+    <T> B inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt);
+
+    /**
+     * Represents the styling attributes for a section or title label, such as spacing,
+     * boldness, and scaling of the font. This style is used to configure the visual
+     * presentation of section titles in a UI layout.
+     *
+     * @param vspaceBefore The vertical space, in units of font height, added before the section.
+     * @param vspaceAfter  The vertical space, in units of font height, added after the section.
+     * @param makeBold     A flag indicating whether the section title should be bold.
+     * @param scale        A scaling factor to adjust the size of the font for the section title.
+     */
+    record SectionStyle(
+            float vspaceBefore,
+            float vspaceAfter,
+            boolean makeBold,
+            float scale
+    ) {}
 }

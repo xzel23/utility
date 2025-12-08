@@ -24,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.Grid.Meta;
 import com.dua3.utility.lang.LangUtil;
@@ -156,11 +157,6 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public String format(String message, Object... args) {
-        return messageFormatter.format(message, args);
-    }
-
-    @Override
     public SectionStyle getSectionStyle(int level) {
         return level < sectionStyles.length ? sectionStyles[level] : DEFAULT_SECTION_STYLE;
     }
@@ -182,8 +178,12 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder addInput(String id, String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
+    public <T> GridBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
         return doAdd(id, format(label), type, dflt, control, hidden);
+    }
+
+    private @NonNull String format(MessageFormatter.MessageFormatterArgs mfargs) {
+        return format(mfargs.fmt(), mfargs.args());
     }
 
     @Override
@@ -253,8 +253,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public GridBuilder node(String label, Node node) {
-        return doAdd(null, label, Void.class, () -> null, new ControlWrapper(node), false);
+    public GridBuilder node(MessageFormatter.MessageFormatterArgs label, Node node) {
+        return doAdd(null, format(label), Void.class, () -> null, new ControlWrapper(node), false);
     }
 
     @Override
@@ -264,7 +264,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder inputConstant(String id, String label, Supplier<@Nullable T> value, Class<T> cls) {
+    public <T> GridBuilder inputConstant(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable T> value, Class<T> cls) {
         Property<@Nullable T> property = new SimpleObjectProperty<>(value.get());
         TextField tf = new TextField();
         tf.setDisable(true);
@@ -275,7 +275,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> GridBuilder inputConstant(String id, String label, T value) {
+    public <T> GridBuilder inputConstant(String id, MessageFormatter.MessageFormatterArgs label, T value) {
         Class<T> cls = (Class<T>) value.getClass();
         Supplier<T> dflt = () -> value;
         return inputConstant(id, label, dflt, cls);
@@ -297,44 +297,44 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public GridBuilder inputText(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+    public GridBuilder inputText(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         return addInput(id, label, String.class, dflt, InputControl.textInput(dflt, validate), false);
     }
 
     @Override
-    public GridBuilder inputString(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+    public GridBuilder inputString(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         return addInput(id, label, String.class, dflt, InputControl.stringInput(dflt, validate), false);
     }
 
     @Override
-    public GridBuilder inputPassword(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+    public GridBuilder inputPassword(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         return addInput(id, label, String.class, dflt, InputControl.passwordInput(dflt, validate), false);
     }
 
     @Override
-    public GridBuilder inputInteger(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
+    public GridBuilder inputInteger(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
         return addInput(id, label, Long.class, dflt, InputControl.integerInput(dflt, validate), false);
     }
 
     @Override
-    public GridBuilder inputDecimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
+    public GridBuilder inputDecimal(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
         return addInput(id, label, Double.class, dflt, InputControl.decimalInput(dflt, validate), false);
     }
 
     @Override
-    public GridBuilder inputCheckBox(String id, String label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
+    public GridBuilder inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
         return addInput(id, label, Boolean.class, dflt::getAsBoolean, InputControl.checkBoxInput(dflt, text, validate), false);
     }
 
     @Override
-    public <T> GridBuilder inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+    public <T> GridBuilder inputComboBox(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         return addInput(id, label, cls, dflt, InputControl.comboBoxInput(items, dflt, validate), false);
     }
 
     @Override
     public <T> GridBuilder inputComboBoxEx(
             String id,
-            String label,
+            MessageFormatter.MessageFormatterArgs label,
             @Nullable UnaryOperator<T> edit,
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
@@ -347,18 +347,18 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder inputRadioList(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items,
+    public <T> GridBuilder inputRadioList(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items,
                                           Function<@Nullable T, Optional<String>> validate) {
         return addInput(id, label, cls, dflt, new RadioPane<>(items, null, validate), false);
     }
 
     @Override
-    public GridBuilder inputSlider(String id, String label, Supplier<@Nullable Double> dflt, double min, double max) {
+    public GridBuilder inputSlider(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Double> dflt, double min, double max) {
         return addInput(id, label, Double.class, dflt, Controls.slider().min(min).max(max).build(), false);
     }
 
     @Override
-    public GridBuilder inputOptions(String id, String label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
+    public GridBuilder inputOptions(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
         return addInput(id, label, Arguments.class, dflt, new OptionsPane(options, dflt), false);
     }
 
@@ -368,7 +368,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public GridBuilder inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
+    public GridBuilder inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
         return addInput(id, label, Path.class, dflt, new FileInput(owner, mode, existingOnly, dflt, filter, validate), false);
     }
 
@@ -378,8 +378,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
-        return doAdd(null, label, type, dflt, control, false);
+    public <T> GridBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
+        return doAdd(null, format(label), type, dflt, control, false);
     }
 
 }

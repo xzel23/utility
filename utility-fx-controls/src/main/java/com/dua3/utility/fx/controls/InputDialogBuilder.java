@@ -95,8 +95,8 @@ public class InputDialogBuilder
     }
 
     @Override
-    public <T> InputDialogBuilder addInput(String id, String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
-        pb.addInput(id, format(label), type, dflt, control, hidden);
+    public <T> InputDialogBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
+        pb.addInput(id, label, type, dflt, control, hidden);
         return this;
     }
 
@@ -107,7 +107,7 @@ public class InputDialogBuilder
     }
 
     @Override
-    public InputDialogBuilder node(String label, Node node) {
+    public InputDialogBuilder node(MessageFormatter.MessageFormatterArgs label, Node node) {
         pb.node(label, node);
         return this;
     }
@@ -137,13 +137,13 @@ public class InputDialogBuilder
     }
 
     @Override
-    public <T> InputDialogBuilder inputConstant(String id, String label, Supplier<T> value, Class<T> cls) {
+    public <T> InputDialogBuilder inputConstant(String id, MessageFormatter.MessageFormatterArgs label, Supplier<T> value, Class<T> cls) {
         pb.inputConstant(id, label, value, cls);
         return this;
     }
 
     @Override
-    public <T> InputDialogBuilder inputConstant(String id, String label, T value) {
+    public <T> InputDialogBuilder inputConstant(String id, MessageFormatter.MessageFormatterArgs label, T value) {
         pb.inputConstant(id, label, value);
         return this;
     }
@@ -161,43 +161,43 @@ public class InputDialogBuilder
     }
 
     @Override
-    public InputDialogBuilder inputText(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+    public InputDialogBuilder inputText(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         pb.inputText(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public InputDialogBuilder inputString(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+    public InputDialogBuilder inputString(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         pb.inputString(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public InputDialogBuilder inputPassword(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
+    public InputDialogBuilder inputPassword(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         pb.inputPassword(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public InputDialogBuilder inputInteger(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
+    public InputDialogBuilder inputInteger(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
         pb.inputInteger(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public InputDialogBuilder inputDecimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
+    public InputDialogBuilder inputDecimal(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
         pb.inputDecimal(id, label, dflt, validate);
         return this;
     }
 
     @Override
-    public InputDialogBuilder inputCheckBox(String id, String label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
+    public InputDialogBuilder inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
         pb.inputCheckBox(id, label, dflt, text, validate);
         return this;
     }
 
     @Override
-    public <T> InputDialogBuilder inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+    public <T> InputDialogBuilder inputComboBox(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         pb.inputComboBox(id, label, dflt, cls, items, validate);
         return this;
     }
@@ -205,7 +205,7 @@ public class InputDialogBuilder
     @Override
     public <T> InputDialogBuilder inputComboBoxEx(
             String id,
-            String label,
+            MessageFormatter.MessageFormatterArgs label,
             @Nullable UnaryOperator<@Nullable T> edit,
             @Nullable Supplier<@Nullable T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove,
@@ -219,19 +219,19 @@ public class InputDialogBuilder
     }
 
     @Override
-    public <T> InputDialogBuilder inputRadioList(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+    public <T> InputDialogBuilder inputRadioList(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         pb.inputRadioList(id, label, dflt, cls, items, validate);
         return this;
     }
 
     @Override
-    public InputDialogBuilder inputSlider(String id, String label, Supplier<@Nullable Double> dflt, double min, double max) {
+    public InputDialogBuilder inputSlider(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Double> dflt, double min, double max) {
         pb.inputSlider(id, label, dflt, min, max);
         return this;
     }
 
     @Override
-    public InputDialogBuilder inputOptions(String id, String label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
+    public InputDialogBuilder inputOptions(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
         pb.inputOptions(id, label, dflt, options);
         return this;
     }
@@ -243,7 +243,7 @@ public class InputDialogBuilder
     }
 
     @Override
-    public InputDialogBuilder inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
+    public InputDialogBuilder inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
         pb.inputFile(id, label, dflt, mode, existingOnly, filter, validate);
         return this;
     }
@@ -255,7 +255,7 @@ public class InputDialogBuilder
     }
 
     @Override
-    public <T> InputDialogBuilder inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
+    public <T> InputDialogBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
         pb.inputControl(id, label, control, type, dflt);
         return this;
     }
