@@ -444,11 +444,19 @@ public class Option<T> {
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
-        if (!(o instanceof Option<?> that)) return false;
-        return requiredArgCount == that.requiredArgCount
-                && Objects.equals(param, that.param)
-                && Objects.equals(defaultSupplier, that.defaultSupplier);
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Option<?> option = (Option<?>) obj;
+        return requiredArgCount == option.requiredArgCount
+                && Objects.equals(displayName, option.displayName)
+                && Objects.equals(description, option.description)
+                && Objects.equals(repetitions, option.repetitions)
+                && Objects.equals(targetType, option.targetType)
+                && Objects.deepEquals(switches, option.switches)
+                && Objects.equals(mapper, option.mapper)
+                && Objects.equals(handler, option.handler)
+                && Objects.equals(param, option.param)
+                && Objects.equals(defaultSupplier, option.defaultSupplier);
     }
 
     @Override

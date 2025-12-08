@@ -73,7 +73,7 @@ public interface MessageFormatter {
      */
     record MessageFormatterArgs(String fmt, @Nullable Object... args) {
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nullable Object o) {
             if (!(o instanceof MessageFormatterArgs(String fmt1, Object[] args1))) return false;
             return Objects.equals(fmt, fmt1) && Objects.deepEquals(args, args1);
         }

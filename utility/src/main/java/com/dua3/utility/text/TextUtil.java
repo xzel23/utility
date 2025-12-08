@@ -516,7 +516,7 @@ public final class TextUtil {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nullable Object o) {
             if (!(o instanceof CharSequenceWrapper(char[] charArray2, int start2, int end2))) return false;
             return end == end2 && start == start2 && Arrays.equals(charArray, charArray2);
         }

@@ -586,7 +586,11 @@ public final class LangUtil {
      * @param s2  second stream
      * @return true, if and only if both streams are equal elementwise
      */
-    public static <T> boolean equals(Stream<@Nullable T> s1, Stream<@Nullable T> s2) {
+    public static <T> boolean equals(@Nullable Stream<@Nullable T> s1, @Nullable Stream<@Nullable T> s2) {
+        if (s1 == null || s2 == null) {
+            return s1 == s2;
+        }
+
         Iterator<@Nullable T> iter1 = s1.iterator();
         Iterator<@Nullable T> iter2 = s2.iterator();
         while (iter1.hasNext() && iter2.hasNext()) {
