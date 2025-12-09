@@ -13,8 +13,10 @@ import java.util.function.Supplier;
 
 
 /**
- * The InputPane class extends InputDialogPane to provide a customized input dialog pane containing an InputGrid.
- * It initializes the input grid and ensures data retrieval and validation status binding.
+ * Lightweight pane for collecting user input using a {@link Grid} layout.
+ * <p>
+ * Wraps a {@link Grid} and exposes its validation state and collected values,
+ * allowing the pane to be embedded in dialogs or other containers.
  */
 public class InputPane extends BorderPane implements Supplier<Map<String, Object>> {
 

@@ -26,9 +26,10 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Builder for Alert Dialogs.
+ * Builder for {@link OptionsDialog} instances.
  * <p>
- * Provides a fluent interface to create Alerts.
+ * Provides a fluent API to configure an options dialog with a set of
+ * {@link com.dua3.utility.options.Option Option}s and current values.
  */
 public class OptionsDialogBuilder extends DialogBuilder<OptionsDialog, OptionsDialogBuilder, Arguments> {
 

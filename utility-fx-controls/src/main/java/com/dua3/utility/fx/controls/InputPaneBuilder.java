@@ -33,9 +33,11 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * Builder for Alert Dialogs.
+ * Builder for {@link InputPane} instances.
  * <p>
- * Provides a fluent interface to create Alerts.
+ * Provides a fluent API to assemble an input pane laid out using a grid.
+ * Use the various {@code input*} and {@code node} methods to add controls,
+ * sections, and text, and {@link #columns(int)} to configure the grid layout.
  */
 public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, Map<String, @Nullable Object>> implements InputBuilder<InputPaneBuilder> {
 

@@ -21,9 +21,10 @@ import javafx.scene.control.DialogPane;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Builder for Alert Dialogs.
+ * Builder for an alert {@link InputDialogPane}.
  * <p>
- * Provides a fluent interface to create Alerts.
+ * Provides a fluent API to configure a simple alert-style pane that can be
+ * embedded or used inside dialogs.
  */
 public class AlertPaneBuilder
         extends PaneBuilder<InputDialogPane<Void>, AlertPaneBuilder, Void> {

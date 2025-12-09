@@ -39,9 +39,12 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * Builder for Alert Dialogs.
+ * Builder for {@link InputDialog} instances.
  * <p>
- * Provides a fluent interface to create Alerts.
+ * Provides a fluent API to assemble an input dialog composed of a
+ * {@link GridInputDialogPane}. Use the various {@code input*} and
+ * {@code node} methods to add controls, sections, and text, and
+ * {@link #columns(int)} to configure the grid layout.
  */
 public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBuilder, InputResult> implements InputBuilder<InputDialogBuilder> {
 

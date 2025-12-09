@@ -27,9 +27,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * Builder for Alert Dialogs.
+ * Builder for {@link PromptDialog} instances.
  * <p>
- * Provides a fluent interface to create Alerts.
+ * Provides a fluent API to create simple text input dialogs (prompts)
+ * with configurable default value, input mode, validation, and buttons.
  */
 public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuilder, String> {
     private String defaultValue = "";

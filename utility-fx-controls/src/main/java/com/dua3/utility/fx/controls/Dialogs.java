@@ -66,21 +66,21 @@ public final class Dialogs {
     }
 
     /**
-     * Start the definition of a new alert dialog.
+     * Start the definition of a new alert pane.
      *
      * @param type the {@link AlertType}
-     * @return new {@link AlertBuilder} instance
+     * @return new {@link AlertPaneBuilder} instance
      */
     public static AlertPaneBuilder alertPane(AlertType type) {
         return alertPane(type, MessageFormatter.standard());
     }
 
     /**
-     * Start the definition of a new alert dialog.
+     * Start the definition of a new alert pane.
      *
      * @param type the {@link AlertType}
      * @param formatter the {@link MessageFormatter} to use
-     * @return new {@link AlertBuilder} instance
+     * @return new {@link AlertPaneBuilder} instance
      */
     public static AlertPaneBuilder alertPane(AlertType type, MessageFormatter formatter) {
         return new AlertPaneBuilder(type, formatter);

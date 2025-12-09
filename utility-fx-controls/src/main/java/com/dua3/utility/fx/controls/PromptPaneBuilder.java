@@ -19,9 +19,10 @@ import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.DialogPane;
 
 /**
- * Builder for Prompt Panes.
+ * Builder for {@link PromptPane} instances.
  * <p>
- * Provides a fluent interface to create Prompts.
+ * Provides a fluent API to configure a lightweight pane for prompt-style
+ * text input that can be embedded or used inside dialogs.
  */
 public class PromptPaneBuilder extends PaneBuilder<PromptPane, PromptPaneBuilder, String> {
     PromptPaneBuilder(MessageFormatter formatter) {

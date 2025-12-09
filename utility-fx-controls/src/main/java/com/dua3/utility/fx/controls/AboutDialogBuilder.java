@@ -42,9 +42,10 @@ import java.net.URL;
 import java.util.Collection;
 
 /**
- * Builder for Alert Dialogs.
+ * Builder for an application "About" dialog.
  * <p>
- * Provides a fluent interface to create Alerts.
+ * Provides a fluent API to compose a dialog showing application metadata
+ * such as title, version, copyright, contact, and license details.
  */
 public class AboutDialogBuilder {
     private static final Logger LOG = LogManager.getLogger(AboutDialogBuilder.class);
