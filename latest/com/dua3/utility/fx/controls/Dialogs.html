@@ -154,13 +154,13 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AlertPaneBuilder.html" title="class in com.dua3.utility.fx.controls">AlertPaneBuilder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#alertPane(javafx.scene.control.Alert.AlertType)" class="member-name-link">alertPane</a><wbr>(javafx.scene.control.Alert.AlertType&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Start the definition of a new alert dialog.</div>
+<div class="block">Start the definition of a new alert pane.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AlertPaneBuilder.html" title="class in com.dua3.utility.fx.controls">AlertPaneBuilder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#alertPane(javafx.scene.control.Alert.AlertType,com.dua3.utility.text.MessageFormatter)" class="member-name-link">alertPane</a><wbr>(javafx.scene.control.Alert.AlertType&nbsp;type,
  <a href="../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Start the definition of a new alert dialog.</div>
+<div class="block">Start the definition of a new alert pane.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DirectoryChooserBuilder.html" title="class in com.dua3.utility.fx.controls">DirectoryChooserBuilder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#chooseDirectory(javafx.stage.Window)" class="member-name-link">chooseDirectory</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow)</code></div>
@@ -187,6 +187,16 @@ loadScripts(document, 'script');</script>
  <a href="../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Start definition of a new input dialog.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#inputDialogPane()" class="member-name-link">inputDialogPane</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Start the definition of a new <a href="InputDialogPane.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPane</code></a> using the standard MessageFormatter.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#inputDialogPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">inputDialogPane</a><wbr>(<a href="../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Start the definition of a new <a href="InputDialogPane.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPane</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#inputGrid(javafx.stage.Window)" class="member-name-link">inputGrid</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow)</code></div>
@@ -320,12 +330,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="alertPane(javafx.scene.control.Alert.AlertType)">
 <h3>alertPane</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AlertPaneBuilder.html" title="class in com.dua3.utility.fx.controls">AlertPaneBuilder</a></span>&nbsp;<span class="element-name">alertPane</span><wbr><span class="parameters">(javafx.scene.control.Alert.AlertType&nbsp;type)</span></div>
-<div class="block">Start the definition of a new alert dialog.</div>
+<div class="block">Start the definition of a new alert pane.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>type</code> - the <code>Alert.AlertType</code></dd>
 <dt>Returns:</dt>
-<dd>new <a href="AlertBuilder.html" title="class in com.dua3.utility.fx.controls"><code>AlertBuilder</code></a> instance</dd>
+<dd>new <a href="AlertPaneBuilder.html" title="class in com.dua3.utility.fx.controls"><code>AlertPaneBuilder</code></a> instance</dd>
 </dl>
 </section>
 </li>
@@ -334,13 +344,13 @@ loadScripts(document, 'script');</script>
 <h3>alertPane</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AlertPaneBuilder.html" title="class in com.dua3.utility.fx.controls">AlertPaneBuilder</a></span>&nbsp;<span class="element-name">alertPane</span><wbr><span class="parameters">(javafx.scene.control.Alert.AlertType&nbsp;type,
  <a href="../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</span></div>
-<div class="block">Start the definition of a new alert dialog.</div>
+<div class="block">Start the definition of a new alert pane.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>type</code> - the <code>Alert.AlertType</code></dd>
 <dd><code>formatter</code> - the <a href="../../text/MessageFormatter.html" title="interface in com.dua3.utility.text"><code>MessageFormatter</code></a> to use</dd>
 <dt>Returns:</dt>
-<dd>new <a href="AlertBuilder.html" title="class in com.dua3.utility.fx.controls"><code>AlertBuilder</code></a> instance</dd>
+<dd>new <a href="AlertPaneBuilder.html" title="class in com.dua3.utility.fx.controls"><code>AlertPaneBuilder</code></a> instance</dd>
 </dl>
 </section>
 </li>
@@ -476,6 +486,30 @@ loadScripts(document, 'script');</script>
 <dd><code>parentWindow</code> - the parent window</dd>
 <dt>Returns:</dt>
 <dd>new <a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogBuilder</code></a> instance</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="inputDialogPane(com.dua3.utility.text.MessageFormatter)">
+<h3>inputDialogPane</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></span>&nbsp;<span class="element-name">inputDialogPane</span><wbr><span class="parameters">(<a href="../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</span></div>
+<div class="block">Start the definition of a new <a href="InputDialogPane.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPane</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>formatter</code> - the <a href="../../text/MessageFormatter.html" title="interface in com.dua3.utility.text"><code>MessageFormatter</code></a> to use</dd>
+<dt>Returns:</dt>
+<dd>new <a href="InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPaneBuilder</code></a> instance</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="inputDialogPane()">
+<h3>inputDialogPane</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></span>&nbsp;<span class="element-name">inputDialogPane</span>()</div>
+<div class="block">Start the definition of a new <a href="InputDialogPane.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPane</code></a> using the standard MessageFormatter.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>new <a href="InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPaneBuilder</code></a> instance</dd>
 </dl>
 </section>
 </li>

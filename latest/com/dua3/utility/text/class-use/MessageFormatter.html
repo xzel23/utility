@@ -58,7 +58,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><a href="#com.dua3.utility.fx.controls">com.dua3.utility.fx.controls</a></div>
 <div class="col-last even-row-color">
-<div class="block">This package contains custom JavaFX controls.</div>
+<div class="block">JavaFX controls and fluent builders for dialogs and panes.</div>
 </div>
 <div class="col-first odd-row-color"><a href="#com.dua3.utility.fx.controls.abstract_builders">com.dua3.utility.fx.controls.abstract_builders</a></div>
 <div class="col-last odd-row-color">
@@ -112,7 +112,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#alertPane(javafx.scene.control.Alert.AlertType,com.dua3.utility.text.MessageFormatter)" class="member-name-link">alertPane</a><wbr>(javafx.scene.control.Alert.AlertType&nbsp;type,
  <a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Start the definition of a new alert dialog.</div>
+<div class="block">Start the definition of a new alert pane.</div>
 </div>
 <div class="col-first odd-row-color"><code>static <a href="../../fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></code></div>
 <div class="col-second odd-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#input(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">input</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
@@ -120,38 +120,43 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Start definition of a new input dialog.</div>
 </div>
-<div class="col-first even-row-color"><code>static <a href="../../fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#inputGrid(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">inputGrid</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
- <a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
+<div class="col-first even-row-color"><code>static <a href="../../fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#inputDialogPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">inputDialogPane</a><wbr>(<a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
 <div class="col-last even-row-color">
+<div class="block">Start the definition of a new <a href="../../fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPane</code></a>.</div>
+</div>
+<div class="col-first odd-row-color"><code>static <a href="../../fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#inputGrid(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">inputGrid</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
+ <a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Start the definition of a new input dialog.</div>
 </div>
-<div class="col-first odd-row-color"><code>static <a href="../../fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#inputPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">inputPane</a><wbr>(<a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static <a href="../../fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#inputPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">inputPane</a><wbr>(<a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
+<div class="col-last even-row-color">
 <div class="block">Start the definition of a new input pane.</div>
 </div>
-<div class="col-first even-row-color"><code>static <a href="../../fx/controls/OptionsDialogBuilder.html" title="class in com.dua3.utility.fx.controls">OptionsDialogBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#options(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">options</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
+<div class="col-first odd-row-color"><code>static <a href="../../fx/controls/OptionsDialogBuilder.html" title="class in com.dua3.utility.fx.controls">OptionsDialogBuilder</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#options(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">options</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
  <a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last odd-row-color">
 <div class="block">Start the definition of a new <a href="../../fx/controls/OptionsDialog.html" title="class in com.dua3.utility.fx.controls"><code>OptionsDialog</code></a>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static <a href="../../fx/controls/PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#prompt(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">prompt</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
+<div class="col-first even-row-color"><code>static <a href="../../fx/controls/PromptBuilder.html" title="class in com.dua3.utility.fx.controls">PromptBuilder</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#prompt(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">prompt</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
  <a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
-<div class="col-last odd-row-color">
+<div class="col-last even-row-color">
 <div class="block">Start the definition of a new prompt dialog.</div>
 </div>
-<div class="col-first even-row-color"><code>static <a href="../../fx/controls/PromptPaneBuilder.html" title="class in com.dua3.utility.fx.controls">PromptPaneBuilder</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#promptPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">promptPane</a><wbr>(<a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static <a href="../../fx/controls/PromptPaneBuilder.html" title="class in com.dua3.utility.fx.controls">PromptPaneBuilder</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#promptPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">promptPane</a><wbr>(<a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Start the definition of a new prompt pane.</div>
 </div>
-<div class="col-first odd-row-color"><code>static <a href="../../fx/controls/WizardDialogBuilder.html" title="class in com.dua3.utility.fx.controls">WizardDialogBuilder</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#wizard(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">wizard</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
+<div class="col-first even-row-color"><code>static <a href="../../fx/controls/WizardDialogBuilder.html" title="class in com.dua3.utility.fx.controls">WizardDialogBuilder</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Dialogs.</span><code><a href="../../fx/controls/Dialogs.html#wizard(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">wizard</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
  <a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
-<div class="col-last odd-row-color">
+<div class="col-last even-row-color">
 <div class="block">Start the definition of a new wizard dialog.</div>
 </div>
 </div>
@@ -200,7 +205,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Constructs an instance of DialogPaneBuilder with the specified header setter.</div>
 </div>
 <div class="col-first even-row-color"><code>protected </code></div>
-<div class="col-second even-row-color"><code><a href="../../fx/controls/abstract_builders/PaneBuilder.html#%3Cinit%3E(com.dua3.utility.text.MessageFormatter)" class="member-name-link">PaneBuilder</a><wbr>(<a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
+<div class="col-second even-row-color"><code><a href="../../fx/controls/abstract_builders/PaneBuilder.html#%3Cinit%3E(com.dua3.utility.text.MessageFormatter,java.util.function.BiConsumer)" class="member-name-link">PaneBuilder</a><wbr>(<a href="../MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;? super <a href="../../fx/controls/abstract_builders/PaneBuilder.html" title="type parameter in PaneBuilder">D</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;setHeaderText)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Constructs an instance of the PaneBuilder class.</div>
 </div>

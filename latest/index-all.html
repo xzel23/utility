@@ -100,7 +100,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AboutDialogBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
-<div class="block">Builder for Alert Dialogs.</div>
+<div class="block">Builder for an application "About" dialog.</div>
 </dd>
 <dt><a href="com/dua3/utility/math/geometry/AbstractCurve2f.html" class="type-name-link" title="class in com.dua3.utility.math.geometry">AbstractCurve2f</a> - Class in <a href="com/dua3/utility/math/geometry/package-summary.html">com.dua3.utility.math.geometry</a></dt>
 <dd>
@@ -321,6 +321,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#addInput(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl,boolean)" class="member-name-link">addInput(String, MessageFormatter.MessageFormatterArgs, Class&lt;T&gt;, Supplier&lt;? extends T&gt;, InputControl&lt;T&gt;, boolean)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#addInput(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl,boolean)" class="member-name-link">addInput(String, MessageFormatter.MessageFormatterArgs, Class&lt;T&gt;, Supplier&lt;? extends T&gt;, InputControl&lt;T&gt;, boolean)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#addInput(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl,boolean)" class="member-name-link">addInput(String, MessageFormatter.MessageFormatterArgs, Class&lt;T&gt;, Supplier&lt;? extends T&gt;, InputControl&lt;T&gt;, boolean)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#addInput(java.lang.String,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl)" class="member-name-link">addInput(String, Class&lt;T&gt;, Supplier&lt;? extends T&gt;, InputControl&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
@@ -330,6 +332,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Add an unlabeled input control.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#addInput(java.lang.String,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl)" class="member-name-link">addInput(String, Class&lt;T&gt;, Supplier&lt;? extends T&gt;, InputControl&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#addInput(java.lang.String,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl)" class="member-name-link">addInput(String, Class&lt;T&gt;, Supplier&lt;? extends T&gt;, InputControl&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#addInput(java.lang.String,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl)" class="member-name-link">addInput(String, Class&lt;T&gt;, Supplier&lt;? extends T&gt;, InputControl&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -544,15 +548,15 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#alertPane(javafx.scene.control.Alert.AlertType)" class="member-name-link">alertPane(Alert.AlertType)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start the definition of a new alert dialog.</div>
+<div class="block">Start the definition of a new alert pane.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#alertPane(javafx.scene.control.Alert.AlertType,com.dua3.utility.text.MessageFormatter)" class="member-name-link">alertPane(Alert.AlertType, MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
 <dd>
-<div class="block">Start the definition of a new alert dialog.</div>
+<div class="block">Start the definition of a new alert pane.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AlertPaneBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">AlertPaneBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
-<div class="block">Builder for Alert Dialogs.</div>
+<div class="block">Builder for an alert <a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPane</code></a>.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html#algorithm()" class="member-name-link">algorithm()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a></dt>
 <dd>
@@ -2081,6 +2085,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#columns(int)" class="member-name-link">columns(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#columns(int)" class="member-name-link">columns(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#columns(int)" class="member-name-link">columns(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/TextAreaBuilder.html#columns(int)" class="member-name-link">columns(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TextAreaBuilder.html" title="class in com.dua3.utility.fx.controls">TextAreaBuilder</a></dt>
@@ -2119,7 +2125,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a> - package com.dua3.utility.fx.controls</dt>
 <dd>
-<div class="block">This package contains custom JavaFX controls.</div>
+<div class="block">JavaFX controls and fluent builders for dialogs and panes.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/abstract_builders/package-summary.html">com.dua3.utility.fx.controls.abstract_builders</a> - package com.dua3.utility.fx.controls.abstract_builders</dt>
 <dd>
@@ -5343,6 +5349,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Retrieves a map of IDs and their corresponding values from the input controls.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/GridInputDialogPane.html#get()" class="member-name-link">get()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridInputDialogPane.html" title="class in com.dua3.utility.fx.controls">GridInputDialogPane</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputControl.html#get()" class="member-name-link">get()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
 <div class="block">Get value.</div>
@@ -6498,6 +6506,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#getSectionStyle(int)" class="member-name-link">getSectionStyle(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#getSectionStyle(int)" class="member-name-link">getSectionStyle(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#getSectionStyle(int)" class="member-name-link">getSectionStyle(int)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/ComboBoxEx.html#getSelectedItem()" class="member-name-link">getSelectedItem()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxEx.html" title="class in com.dua3.utility.fx.controls">ComboBoxEx</a></dt>
@@ -6944,6 +6954,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A builder class for constructing a grid-based input form structure.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/GridInputDialogPane.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">GridInputDialogPane</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/GridInputDialogPane.html#%3Cinit%3E(com.dua3.utility.fx.controls.Grid)" class="member-name-link">GridInputDialogPane(Grid)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridInputDialogPane.html" title="class in com.dua3.utility.fx.controls">GridInputDialogPane</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/text/RichTextMatcher.html#group()" class="member-name-link">group()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichTextMatcher.html" title="class in com.dua3.utility.text">RichTextMatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/text/RichTextMatcher.html#group(int)" class="member-name-link">group(int)</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichTextMatcher.html" title="class in com.dua3.utility.text">RichTextMatcher</a></dt>
@@ -7751,6 +7765,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Initializes the InputGrid by clearing previous input controls,
  creating a new grid layout, and setting up input controls with labels and markers.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/GridInputDialogPane.html#init()" class="member-name-link">init()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridInputDialogPane.html" title="class in com.dua3.utility.fx.controls">GridInputDialogPane</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputControl.html#init()" class="member-name-link">init()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
 <div class="block">Set/update control state.</div>
@@ -7837,6 +7853,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputCheckBox(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.BooleanSupplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, MessageFormatter.MessageFormatterArgs, BooleanSupplier, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputCheckBox(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.BooleanSupplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, MessageFormatter.MessageFormatterArgs, BooleanSupplier, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputCheckBox(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.BooleanSupplier,java.lang.String,java.util.function.Function)" class="member-name-link">inputCheckBox(String, MessageFormatter.MessageFormatterArgs, BooleanSupplier, String, Function&lt;Boolean, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputCheckBox(java.lang.String,java.lang.String,java.util.function.BooleanSupplier,java.lang.String)" class="member-name-link">inputCheckBox(String, String, BooleanSupplier, String)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
@@ -7858,6 +7876,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a comboBox widget with the given parameters.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputComboBox(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputComboBox(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputComboBox(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputComboBox(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputComboBox(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputComboBox(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -7913,6 +7933,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a custom combo box with the specified parameters.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputComboBoxEx(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputComboBoxEx(String, MessageFormatter.MessageFormatterArgs, UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputComboBoxEx(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputComboBoxEx(String, MessageFormatter.MessageFormatterArgs, UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputComboBoxEx(java.lang.String,java.lang.String,java.util.function.UnaryOperator,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Supplier,java.lang.Class,java.util.Collection)" class="member-name-link">inputComboBoxEx(String, String, UnaryOperator&lt;T&gt;, Supplier&lt;T&gt;, BiPredicate&lt;ComboBoxEx&lt;T&gt;, T&gt;, Function&lt;T, String&gt;, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
@@ -7924,6 +7946,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns a custom combo box with the specified parameters.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#inputConstant(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.lang.Class)" class="member-name-link">inputConstant(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;T&gt;, Class&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputConstant(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.lang.Class)" class="member-name-link">inputConstant(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;T&gt;, Class&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputConstant(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.lang.Class)" class="member-name-link">inputConstant(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;T&gt;, Class&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -7940,6 +7964,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Configures a non-editable input field with the specified parameters.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputConstant(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,T)" class="member-name-link">inputConstant(String, MessageFormatter.MessageFormatterArgs, T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputConstant(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,T)" class="member-name-link">inputConstant(String, MessageFormatter.MessageFormatterArgs, T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputConstant(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,T)" class="member-name-link">inputConstant(String, MessageFormatter.MessageFormatterArgs, T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -7959,6 +7985,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputControl(java.lang.String,com.dua3.utility.fx.controls.InputControl,java.lang.Class,java.util.function.Supplier)" class="member-name-link">inputControl(String, InputControl&lt;T&gt;, Class&lt;T&gt;, Supplier&lt;? extends T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputControl(java.lang.String,com.dua3.utility.fx.controls.InputControl,java.lang.Class,java.util.function.Supplier)" class="member-name-link">inputControl(String, InputControl&lt;T&gt;, Class&lt;T&gt;, Supplier&lt;? extends T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputControl(java.lang.String,com.dua3.utility.fx.controls.InputControl,java.lang.Class,java.util.function.Supplier)" class="member-name-link">inputControl(String, InputControl&lt;T&gt;, Class&lt;T&gt;, Supplier&lt;? extends T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#inputControl(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,com.dua3.utility.fx.controls.InputControl,java.lang.Class,java.util.function.Supplier)" class="member-name-link">inputControl(String, MessageFormatter.MessageFormatterArgs, InputControl&lt;T&gt;, Class&lt;T&gt;, Supplier&lt;? extends T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
@@ -7968,6 +7996,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Configures an input control with the specified parameters.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputControl(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,com.dua3.utility.fx.controls.InputControl,java.lang.Class,java.util.function.Supplier)" class="member-name-link">inputControl(String, MessageFormatter.MessageFormatterArgs, InputControl&lt;T&gt;, Class&lt;T&gt;, Supplier&lt;? extends T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputControl(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,com.dua3.utility.fx.controls.InputControl,java.lang.Class,java.util.function.Supplier)" class="member-name-link">inputControl(String, MessageFormatter.MessageFormatterArgs, InputControl&lt;T&gt;, Class&lt;T&gt;, Supplier&lt;? extends T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputControl(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,com.dua3.utility.fx.controls.InputControl,java.lang.Class,java.util.function.Supplier)" class="member-name-link">inputControl(String, MessageFormatter.MessageFormatterArgs, InputControl&lt;T&gt;, Class&lt;T&gt;, Supplier&lt;? extends T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -8017,6 +8047,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputDecimal(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputDecimal(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Double&gt;, Function&lt;Double, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputDecimal(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputDecimal(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Double&gt;, Function&lt;Double, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputDecimal(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputDecimal(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Double&gt;, Function&lt;Double, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputDecimal(java.lang.String,java.lang.String,java.util.function.Supplier)" class="member-name-link">inputDecimal(String, String, Supplier&lt;Double&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
@@ -8037,7 +8069,15 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
-<div class="block">Builder for Alert Dialogs.</div>
+<div class="block">Builder for <a href="com/dua3/utility/fx/controls/InputDialog.html" title="class in com.dua3.utility.fx.controls"><code>InputDialog</code></a> instances.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#inputDialogPane()" class="member-name-link">inputDialogPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new <a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPane</code></a> using the standard MessageFormatter.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Dialogs.html#inputDialogPane(com.dua3.utility.text.MessageFormatter)" class="member-name-link">inputDialogPane(MessageFormatter)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
+<dd>
+<div class="block">Start the definition of a new <a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls"><code>InputDialogPane</code></a>.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogPane.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputDialogPane&lt;R&gt;</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -8046,6 +8086,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogPane.html#%3Cinit%3E()" class="member-name-link">InputDialogPane()</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a></dt>
 <dd>
 <div class="block">Constructor.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
+<dd>
+<div class="block">Builder for <a href="com/dua3/utility/fx/controls/GridInputDialogPane.html" title="class in com.dua3.utility.fx.controls"><code>GridInputDialogPane</code></a> instances.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputFile(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.Collection)" class="member-name-link">inputFile(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Path&gt;, FileDialogMode, boolean, Collection&lt;FileChooser.ExtensionFilter&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
@@ -8058,6 +8102,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Add a file chooser dialog to allow the user to select a file.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputFile(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.Collection,java.util.function.Function)" class="member-name-link">inputFile(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Path&gt;, FileDialogMode, boolean, Collection&lt;FileChooser.ExtensionFilter&gt;, Function&lt;Path, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputFile(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.Collection,java.util.function.Function)" class="member-name-link">inputFile(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Path&gt;, FileDialogMode, boolean, Collection&lt;FileChooser.ExtensionFilter&gt;, Function&lt;Path, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputFile(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,com.dua3.utility.fx.controls.FileDialogMode,boolean,java.util.Collection,java.util.function.Function)" class="member-name-link">inputFile(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Path&gt;, FileDialogMode, boolean, Collection&lt;FileChooser.ExtensionFilter&gt;, Function&lt;Path, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -8101,6 +8147,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputHidden(java.lang.String,java.util.function.Supplier,java.lang.Class)" class="member-name-link">inputHidden(String, Supplier&lt;T&gt;, Class&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputHidden(java.lang.String,java.util.function.Supplier,java.lang.Class)" class="member-name-link">inputHidden(String, Supplier&lt;T&gt;, Class&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputHidden(java.lang.String,java.util.function.Supplier,java.lang.Class)" class="member-name-link">inputHidden(String, Supplier&lt;T&gt;, Class&lt;T&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#inputHidden(java.lang.String,T)" class="member-name-link">inputHidden(String, T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
@@ -8110,6 +8158,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a hidden field with a constant value.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputHidden(java.lang.String,T)" class="member-name-link">inputHidden(String, T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputHidden(java.lang.String,T)" class="member-name-link">inputHidden(String, T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputHidden(java.lang.String,T)" class="member-name-link">inputHidden(String, T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -8124,6 +8174,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Add a labeled integer input.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputInteger(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputInteger(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Long&gt;, Function&lt;Long, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputInteger(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputInteger(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Long&gt;, Function&lt;Long, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputInteger(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputInteger(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Long&gt;, Function&lt;Long, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -8143,6 +8195,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputOptions(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">inputOptions(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Arguments&gt;, Supplier&lt;Collection&lt;Option&lt;?&gt;&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputOptions(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">inputOptions(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Arguments&gt;, Supplier&lt;Collection&lt;Option&lt;?&gt;&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputOptions(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">inputOptions(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Arguments&gt;, Supplier&lt;Collection&lt;Option&lt;?&gt;&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputOptions(java.lang.String,java.lang.String,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">inputOptions(String, String, Supplier&lt;Arguments&gt;, Supplier&lt;Collection&lt;Option&lt;?&gt;&gt;&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
@@ -8157,6 +8211,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputOptions(java.lang.String,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">inputOptions(String, Supplier&lt;Arguments&gt;, Supplier&lt;Collection&lt;Option&lt;?&gt;&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputOptions(java.lang.String,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">inputOptions(String, Supplier&lt;Arguments&gt;, Supplier&lt;Collection&lt;Option&lt;?&gt;&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputOptions(java.lang.String,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">inputOptions(String, Supplier&lt;Arguments&gt;, Supplier&lt;Collection&lt;Option&lt;?&gt;&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/Dialogs.html#inputPane()" class="member-name-link">inputPane()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Dialogs.html" title="class in com.dua3.utility.fx.controls">Dialogs</a></dt>
@@ -8169,7 +8225,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPane.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputPane</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
-<div class="block">The InputPane class extends InputDialogPane to provide a customized input dialog pane containing an InputGrid.</div>
+<div class="block">Lightweight pane for collecting user input using a <a href="com/dua3/utility/fx/controls/Grid.html" title="class in com.dua3.utility.fx.controls"><code>Grid</code></a> layout.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPane.html#%3Cinit%3E(com.dua3.utility.fx.controls.Grid)" class="member-name-link">InputPane(Grid)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPane.html" title="class in com.dua3.utility.fx.controls">InputPane</a></dt>
 <dd>
@@ -8177,7 +8233,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
-<div class="block">Builder for Alert Dialogs.</div>
+<div class="block">Builder for <a href="com/dua3/utility/fx/controls/InputPane.html" title="class in com.dua3.utility.fx.controls"><code>InputPane</code></a> instances.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputPassword(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier)" class="member-name-link">inputPassword(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
 <dd>
@@ -8190,6 +8246,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Add a labeled string input.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputPassword(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputPassword(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputPassword(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputPassword(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputPassword(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputPassword(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -8223,6 +8281,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputRadioList(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputRadioList(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputRadioList(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputRadioList(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputRadioList(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.lang.Class,java.util.Collection,java.util.function.Function)" class="member-name-link">inputRadioList(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;, Function&lt;T, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputRadioList(java.lang.String,java.lang.String,java.util.function.Supplier,java.lang.Class,java.util.Collection)" class="member-name-link">inputRadioList(String, String, Supplier&lt;? extends T&gt;, Class&lt;T&gt;, Collection&lt;T&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
@@ -8253,6 +8313,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputSlider(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,double,double)" class="member-name-link">inputSlider(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Double&gt;, double, double)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputSlider(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,double,double)" class="member-name-link">inputSlider(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Double&gt;, double, double)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputSlider(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,double,double)" class="member-name-link">inputSlider(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;Double&gt;, double, double)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputSlider(java.lang.String,java.lang.String,java.util.function.Supplier,double,double)" class="member-name-link">inputSlider(String, String, Supplier&lt;Double&gt;, double, double)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
@@ -8279,6 +8341,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputString(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputString(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputString(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputString(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputString(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputString(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#inputString(java.lang.String,java.lang.String,java.util.function.Supplier)" class="member-name-link">inputString(String, String, Supplier&lt;String&gt;)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
@@ -8300,6 +8364,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Add a labeled text input.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#inputText(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputText(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#inputText(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputText(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#inputText(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputText(String, MessageFormatter.MessageFormatterArgs, Supplier&lt;String&gt;, Function&lt;String, Optional&lt;String&gt;&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -9053,6 +9119,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Add a static text without a label.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#labeledText(java.lang.String,java.lang.String,java.lang.Object...)" class="member-name-link">labeledText(String, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#labeledText(java.lang.String,java.lang.String,java.lang.Object...)" class="member-name-link">labeledText(String, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#labeledText(java.lang.String,java.lang.String,java.lang.Object...)" class="member-name-link">labeledText(String, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -10526,6 +10594,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)" class="member-name-link">node(MessageFormatter.MessageFormatterArgs, Node)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)" class="member-name-link">node(MessageFormatter.MessageFormatterArgs, Node)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)" class="member-name-link">node(MessageFormatter.MessageFormatterArgs, Node)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.html#node(java.lang.String,javafx.scene.Node)" class="member-name-link">node(String, Node)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a></dt>
@@ -10539,6 +10609,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Processes the given node and returns a result of type B.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#node(javafx.scene.Node)" class="member-name-link">node(Node)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#node(javafx.scene.Node)" class="member-name-link">node(Node)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#node(javafx.scene.Node)" class="member-name-link">node(Node)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -11063,7 +11135,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/OptionsDialogBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">OptionsDialogBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
-<div class="block">Builder for Alert Dialogs.</div>
+<div class="block">Builder for <a href="com/dua3/utility/fx/controls/OptionsDialog.html" title="class in com.dua3.utility.fx.controls"><code>OptionsDialog</code></a> instances.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/OptionsPane.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">OptionsPane</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -11182,7 +11254,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Abstract base for DialogPane builders.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/abstract_builders/PaneBuilder.html#%3Cinit%3E(com.dua3.utility.text.MessageFormatter)" class="member-name-link">PaneBuilder(MessageFormatter)</a> - Constructor for class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/PaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">PaneBuilder</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/abstract_builders/PaneBuilder.html#%3Cinit%3E(com.dua3.utility.text.MessageFormatter,java.util.function.BiConsumer)" class="member-name-link">PaneBuilder(MessageFormatter, BiConsumer&lt;? super D, String&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/PaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">PaneBuilder</a></dt>
 <dd>
 <div class="block">Constructs an instance of the PaneBuilder class.</div>
 </dd>
@@ -11638,7 +11710,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/PromptBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">PromptBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
-<div class="block">Builder for Alert Dialogs.</div>
+<div class="block">Builder for <a href="com/dua3/utility/fx/controls/PromptDialog.html" title="class in com.dua3.utility.fx.controls"><code>PromptDialog</code></a> instances.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/PromptDialog.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">PromptDialog</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
@@ -11670,7 +11742,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/PromptPaneBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">PromptPaneBuilder</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
-<div class="block">Builder for Prompt Panes.</div>
+<div class="block">Builder for <a href="com/dua3/utility/fx/controls/PromptPane.html" title="class in com.dua3.utility.fx.controls"><code>PromptPane</code></a> instances.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/PropertyConverter.html" class="type-name-link" title="class in com.dua3.utility.fx">PropertyConverter</a> - Class in <a href="com/dua3/utility/fx/package-summary.html">com.dua3.utility.fx</a></dt>
 <dd>
@@ -12944,6 +13016,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#section(int,java.lang.String,java.lang.Object...)" class="member-name-link">section(int, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#section(int,java.lang.String,java.lang.Object...)" class="member-name-link">section(int, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#section(int,java.lang.String,java.lang.Object...)" class="member-name-link">section(int, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputBuilder.SectionStyle.html#%3Cinit%3E(float,float,boolean,float)" class="member-name-link">SectionStyle(float, float, boolean, float)</a> - Constructor for record class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputBuilder.SectionStyle.html" title="class in com.dua3.utility.fx.controls">InputBuilder.SectionStyle</a></dt>
@@ -13248,6 +13322,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the horizontal scrollbar policy of the PinBoardSkin's ScrollPane.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputPane.html#setHeaderText(java.lang.String)" class="member-name-link">setHeaderText(String)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPane.html" title="class in com.dua3.utility.fx.controls">InputPane</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/icons/Icon.html#setIconColor(javafx.scene.paint.Paint)" class="member-name-link">setIconColor(Paint)</a> - Method in interface com.dua3.utility.fx.icons.<a href="com/dua3/utility/fx/icons/Icon.html" title="interface in com.dua3.utility.fx.icons">Icon</a></dt>
 <dd>
 <div class="block">Set icon color.</div>
@@ -14724,6 +14800,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogBuilder.html#text(java.lang.String,java.lang.Object...)" class="member-name-link">text(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html#text(java.lang.String,java.lang.Object...)" class="member-name-link">text(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputPaneBuilder.html#text(java.lang.String,java.lang.Object...)" class="member-name-link">text(String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/Controls.html#text(javafx.beans.value.ObservableValue)" class="member-name-link">text(ObservableValue&lt;String&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
@@ -15871,6 +15949,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the valid state property.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/InputPane.html#validProperty()" class="member-name-link">validProperty()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputPane.html" title="class in com.dua3.utility.fx.controls">InputPane</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/OptionsPane.html#validProperty()" class="member-name-link">validProperty()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/OptionsPane.html" title="class in com.dua3.utility.fx.controls">OptionsPane</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/application/LicenseData.html#validUntil()" class="member-name-link">validUntil()</a> - Method in record class com.dua3.utility.application.<a href="com/dua3/utility/application/LicenseData.html" title="class in com.dua3.utility.application">LicenseData</a></dt>

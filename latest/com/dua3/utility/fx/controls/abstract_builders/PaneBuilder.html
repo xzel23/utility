@@ -85,7 +85,7 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">com.dua3.utility.fx.controls.abstract_builders</a></div>
-<h1 title="Class PaneBuilder" class="title">Class PaneBuilder&lt;D extends javafx.scene.control.DialogPane &amp; <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;R&gt;,<wbr>B extends PaneBuilder&lt;D,<wbr>B,<wbr>R&gt;,<wbr>R&gt;</h1>
+<h1 title="Class PaneBuilder" class="title">Class PaneBuilder&lt;D extends javafx.scene.layout.Pane &amp; <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;R&gt;,<wbr>B extends PaneBuilder&lt;D,<wbr>B,<wbr>R&gt;,<wbr>R&gt;</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance"><a href="DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder</a>&lt;D,<wbr>B,<wbr>R&gt;
@@ -101,10 +101,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>Direct Known Subclasses:</dt>
-<dd><code><a href="../AlertPaneBuilder.html" title="class in com.dua3.utility.fx.controls">AlertPaneBuilder</a></code>, <code><a href="../InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></code>, <code><a href="../PromptPaneBuilder.html" title="class in com.dua3.utility.fx.controls">PromptPaneBuilder</a></code></dd>
+<dd><code><a href="../AlertPaneBuilder.html" title="class in com.dua3.utility.fx.controls">AlertPaneBuilder</a></code>, <code><a href="../InputDialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogPaneBuilder</a></code>, <code><a href="../InputPaneBuilder.html" title="class in com.dua3.utility.fx.controls">InputPaneBuilder</a></code>, <code><a href="../PromptPaneBuilder.html" title="class in com.dua3.utility.fx.controls">PromptPaneBuilder</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">PaneBuilder&lt;D extends javafx.scene.control.DialogPane &amp; <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;R&gt;,<wbr>B extends PaneBuilder&lt;D,<wbr>B,<wbr>R&gt;,<wbr>R&gt;</span>
+<div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">PaneBuilder&lt;D extends javafx.scene.layout.Pane &amp; <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;R&gt;,<wbr>B extends PaneBuilder&lt;D,<wbr>B,<wbr>R&gt;,<wbr>R&gt;</span>
 <span class="extends-implements">extends <a href="DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a>&lt;D,<wbr>B,<wbr>R&gt;</span></div>
 <div class="block">Abstract base for DialogPane builders.</div>
 </section>
@@ -129,7 +129,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>protected </code></div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.dua3.utility.text.MessageFormatter)" class="member-name-link">PaneBuilder</a><wbr>(<a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.dua3.utility.text.MessageFormatter,java.util.function.BiConsumer)" class="member-name-link">PaneBuilder</a><wbr>(<a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;? super <a href="PaneBuilder.html" title="type parameter in PaneBuilder">D</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;setHeaderText)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Constructs an instance of the PaneBuilder class.</div>
 </div>
@@ -183,9 +184,10 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(com.dua3.utility.text.MessageFormatter)">
+<section class="detail" id="&lt;init&gt;(com.dua3.utility.text.MessageFormatter,java.util.function.BiConsumer)">
 <h3>PaneBuilder</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="element-name">PaneBuilder</span><wbr><span class="parameters">(<a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter)</span></div>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="element-name">PaneBuilder</span><wbr><span class="parameters">(<a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;formatter,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;? super <a href="PaneBuilder.html" title="type parameter in PaneBuilder">D</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;setHeaderText)</span></div>
 <div class="block">Constructs an instance of the PaneBuilder class.
  <p>
  This constructor initializes the builder by associating it with a header setter
@@ -241,7 +243,7 @@ loadScripts(document, 'script');</script>
  actions, result handlers, and enablement state.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="DialogPaneBuilder.html#getButtonDefs()">getButtonDefs</a></code>&nbsp;in class&nbsp;<code><a href="DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a>&lt;<a href="PaneBuilder.html" title="type parameter in PaneBuilder">D</a> extends javafx.scene.control.DialogPane &amp; <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="PaneBuilder.html" title="type parameter in PaneBuilder">R</a>&gt;,<wbr><a href="PaneBuilder.html" title="type parameter in PaneBuilder">B</a> extends <a href="PaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">PaneBuilder</a>&lt;<a href="PaneBuilder.html" title="type parameter in PaneBuilder">D</a>,<wbr><a href="PaneBuilder.html" title="type parameter in PaneBuilder">B</a>,<wbr><a href="PaneBuilder.html" title="type parameter in PaneBuilder">R</a>&gt;,<wbr><a href="PaneBuilder.html" title="type parameter in PaneBuilder">R</a>&gt;</code></dd>
+<dd><code><a href="DialogPaneBuilder.html#getButtonDefs()">getButtonDefs</a></code>&nbsp;in class&nbsp;<code><a href="DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a>&lt;<a href="PaneBuilder.html" title="type parameter in PaneBuilder">D</a> extends javafx.scene.layout.Pane &amp; <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="PaneBuilder.html" title="type parameter in PaneBuilder">R</a>&gt;,<wbr><a href="PaneBuilder.html" title="type parameter in PaneBuilder">B</a> extends <a href="PaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">PaneBuilder</a>&lt;<a href="PaneBuilder.html" title="type parameter in PaneBuilder">D</a>,<wbr><a href="PaneBuilder.html" title="type parameter in PaneBuilder">B</a>,<wbr><a href="PaneBuilder.html" title="type parameter in PaneBuilder">R</a>&gt;,<wbr><a href="PaneBuilder.html" title="type parameter in PaneBuilder">R</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>a modifiable list of button definitions for this dialog pane builder</dd>
 </dl>
