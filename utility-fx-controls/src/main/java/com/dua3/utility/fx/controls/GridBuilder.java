@@ -16,20 +16,13 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxUtil;
-import com.dua3.utility.text.Font;
-import com.dua3.utility.text.FontDef;
-import com.dua3.utility.text.MessageFormatter;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.stage.Window;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.Grid.Meta;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontDef;
+import com.dua3.utility.text.MessageFormatter;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -38,7 +31,13 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import javafx.stage.Window;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -73,75 +72,21 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     private static final FxFontUtil FU = FxFontUtil.getInstance();
     private static final String INPUT_WITH_ID_ALREADY_DEFINED = "Input with id '%s' already defined";
 
-    private static final SectionStyle[] DEFAULT_SECTION_STYLES = {
-            new SectionStyle(1.0f, 0.5f, true, 1.5f),
-            new SectionStyle(0.5f, 0.25f, true, 1.25f),
-            new SectionStyle(0.5f, 0.125f, true, 1.0f)
-    };
+    private static final SectionStyle[] DEFAULT_SECTION_STYLES = {new SectionStyle(1.0f, 0.5f, true, 1.5f), new SectionStyle(0.5f, 0.25f, true, 1.25f), new SectionStyle(0.5f, 0.125f, true, 1.0f)};
 
     private static final SectionStyle DEFAULT_SECTION_STYLE = new SectionStyle(0.0f, 0.0f, false, 1.0f);
-
-    private static class ControlWrapper implements InputControl<Void> {
-
-        private final Node node;
-
-        private final Property<Void> value = new SimpleObjectProperty<>();
-        private final BooleanProperty required = new SimpleBooleanProperty(false);
-        private final BooleanProperty valid = new SimpleBooleanProperty(true);
-        private final ReadOnlyStringProperty error = new SimpleStringProperty("");
-        private final InputControlState<Void> state = InputControlState.voidState();
-
-        ControlWrapper(Node node) {
-            this.node = node;
-        }
-
-        @Override
-        public InputControlState<Void> state() {
-            return state;
-        }
-
-        @Override
-        public Node node() {
-            return node;
-        }
-
-        @Override
-        public Property<Void> valueProperty() {
-            return value;
-        }
-
-        @Override
-        public void reset() { /* nop */ }
-
-        @Override
-        public ReadOnlyBooleanProperty requiredProperty() {
-            return required;
-        }
-
-        @Override
-        public ReadOnlyBooleanProperty validProperty() {
-            return valid;
-        }
-
-        @Override
-        public ReadOnlyStringProperty errorProperty() {
-            return error;
-        }
-    }
-
     private final Set<String> ids = new HashSet<>();
     private final List<Meta<?>> data = new ArrayList<>();
     private final @Nullable Window owner;
     private final MessageFormatter messageFormatter;
     private final SectionStyle[] sectionStyles;
     private final Font defaultFont;
-
     private int columns = 1;
 
     /**
      * Creates a new {@code InputGridBuilder} instance.
      *
-     * @param owner the parent window to which the input grid will be associated; can be {@code null}
+     * @param owner            the parent window to which the input grid will be associated; can be {@code null}
      * @param messageFormatter the {@code MessageFormatter} used for formatting messages
      */
     GridBuilder(@Nullable Window owner, MessageFormatter messageFormatter, SectionStyle... sectionStyles) {
@@ -161,29 +106,9 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return level < sectionStyles.length ? sectionStyles[level] : DEFAULT_SECTION_STYLE;
     }
 
-    /**
-     * Builds and returns an InputGrid with the current data and column configuration.
-     *
-     * @return the constructed InputGrid
-     */
-    public Grid build() {
-        LOG.trace("building grid with {} rows and {} columns", data.size(), columns);
-
-        Grid grid = new Grid();
-
-        grid.setContent(data, columns);
-        grid.init();
-
-        return grid;
-    }
-
     @Override
     public <T> GridBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
         return doAdd(id, format(label), type, dflt, control, hidden);
-    }
-
-    private @NonNull String format(MessageFormatter.MessageFormatterArgs mfargs) {
-        return format(mfargs.fmt(), mfargs.args());
     }
 
     @Override
@@ -191,22 +116,24 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return doAdd(id, null, type, dflt, control, false);
     }
 
-    private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
-        // check for duplicate IDs
-        if (id != null && !id.isEmpty() && !ids.add(id)) {
-            throw new IllegalArgumentException(String.format(INPUT_WITH_ID_ALREADY_DEFINED, id));
-        }
-
-        // add
-        data.add(new Meta<>(id, label, type, dflt, control, hidden));
-
-        return this;
-    }
-
     @Override
     public GridBuilder columns(int columns) {
         this.columns = LangUtil.requirePositive(columns);
         return this;
+    }
+
+    @Override
+    public GridBuilder node(Node node) {
+        return doAdd(null, null, Void.class, () -> null, new ControlWrapper(node), false);
+    }
+
+    @Override
+    public GridBuilder node(MessageFormatter.MessageFormatterArgs label, Node node) {
+        return doAdd(null, format(label), Void.class, () -> null, new ControlWrapper(node), false);
+    }
+
+    private String format(MessageFormatter.MessageFormatterArgs mfargs) {
+        return format(mfargs.fmt(), mfargs.args());
     }
 
     @Override
@@ -241,20 +168,22 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return this;
     }
 
+    private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
+        // check for duplicate IDs
+        if (id != null && !id.isEmpty() && !ids.add(id)) {
+            throw new IllegalArgumentException(String.format(INPUT_WITH_ID_ALREADY_DEFINED, id));
+        }
+
+        // add
+        data.add(new Meta<>(id, label, type, dflt, control, hidden));
+
+        return this;
+    }
+
     @Override
     public GridBuilder text(String fmt, Object... args) {
         Label node = new Label(format(fmt, args));
         return node(node);
-    }
-
-    @Override
-    public GridBuilder node(Node node) {
-        return doAdd(null, null, Void.class, () -> null, new ControlWrapper(node), false);
-    }
-
-    @Override
-    public GridBuilder node(MessageFormatter.MessageFormatterArgs label, Node node) {
-        return doAdd(null, format(label), Void.class, () -> null, new ControlWrapper(node), false);
     }
 
     @Override
@@ -332,23 +261,12 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder inputComboBoxEx(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            @Nullable UnaryOperator<T> edit,
-            @Nullable Supplier<T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate) {
+    public <T> GridBuilder inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         return addInput(id, label, cls, dflt, InputControl.comboBoxExInput(items, dflt, edit, add, remove, format, validate), false);
     }
 
     @Override
-    public <T> GridBuilder inputRadioList(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items,
-                                          Function<@Nullable T, Optional<String>> validate) {
+    public <T> GridBuilder inputRadioList(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         return addInput(id, label, cls, dflt, new RadioPane<>(items, null, validate), false);
     }
 
@@ -380,6 +298,70 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     @Override
     public <T> GridBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
         return doAdd(null, format(label), type, dflt, control, false);
+    }
+
+    /**
+     * Builds and returns an InputGrid with the current data and column configuration.
+     *
+     * @return the constructed InputGrid
+     */
+    public Grid build() {
+        LOG.trace("building grid with {} rows and {} columns", data.size(), columns);
+
+        Grid grid = new Grid();
+
+        grid.setContent(data, columns);
+        grid.init();
+
+        return grid;
+    }
+
+    private static class ControlWrapper implements InputControl<Void> {
+
+        private final Node node;
+
+        private final Property<Void> value = new SimpleObjectProperty<>();
+        private final BooleanProperty required = new SimpleBooleanProperty(false);
+        private final BooleanProperty valid = new SimpleBooleanProperty(true);
+        private final ReadOnlyStringProperty error = new SimpleStringProperty("");
+        private final InputControlState<Void> state = InputControlState.voidState();
+
+        ControlWrapper(Node node) {
+            this.node = node;
+        }
+
+        @Override
+        public InputControlState<Void> state() {
+            return state;
+        }
+
+        @Override
+        public void reset() { /* nop */ }
+
+        @Override
+        public ReadOnlyBooleanProperty requiredProperty() {
+            return required;
+        }
+
+        @Override
+        public ReadOnlyBooleanProperty validProperty() {
+            return valid;
+        }
+
+        @Override
+        public ReadOnlyStringProperty errorProperty() {
+            return error;
+        }
+
+        @Override
+        public Node node() {
+            return node;
+        }
+
+        @Override
+        public Property<Void> valueProperty() {
+            return value;
+        }
     }
 
 }

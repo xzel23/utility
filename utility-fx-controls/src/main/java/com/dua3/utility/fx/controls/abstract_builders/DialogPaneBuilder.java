@@ -129,7 +129,6 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @param args the arguments passed to the formatter
      * @return {@code this}
      */
-    @SuppressWarnings("unchecked")
     public B header(String fmt, Object... args) {
         this.header = formatter.format(fmt, args);
         return self();
@@ -141,7 +140,6 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @param resultHandler the result handler to be used for handling dialog results
      * @return this builder instance
      */
-    @SuppressWarnings("unchecked")
     public B resultHandler(ResultHandler<R> resultHandler) {
         this.resultHandler = resultHandler;
         return self();
@@ -183,7 +181,6 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      *               action to execute, and enablement state
      * @return the current builder instance with the added button definition
      */
-    @SuppressWarnings("unchecked")
     protected B addButton(ButtonDef<R> button) {
         getButtonDefs().add(button);
         return self();
@@ -196,7 +193,6 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @param buttons an array of {@link ButtonType} representing the types of buttons to be added
      * @return the current builder instance with the specified buttons added
      */
-    @SuppressWarnings("unchecked")
     @SafeVarargs
     public final B buttons(ButtonDef<R>... buttons) {
         getButtonDefs().clear();
@@ -214,7 +210,6 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      * @param buttons an array of {@link ButtonType} representing the types of buttons to be added
      * @return the current builder instance with the specified buttons added
      */
-    @SuppressWarnings("unchecked")
     public final B buttons(ButtonType... buttons) {
         getButtonDefs().clear();
         for (var btn : buttons) {

@@ -16,16 +16,16 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
-import com.dua3.utility.text.MessageFormatter;
-import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
+import com.dua3.utility.text.MessageFormatter;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -43,31 +43,16 @@ import java.util.function.UnaryOperator;
  * <p>
  * Provides a fluent interface to create Alerts.
  */
-public class InputDialogBuilder
-        extends DialogBuilder<InputDialog, InputDialogBuilder, InputResult>
-        implements InputBuilder<InputDialogBuilder> {
+public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBuilder, InputResult> implements InputBuilder<InputDialogBuilder> {
 
     private final InputPaneBuilder pb;
-    private final List<ButtonDef<InputResult>> buttons = new ArrayList<>();
+    private final List<ButtonDef<InputResult>> buttonDefs = new ArrayList<>();
 
     InputDialogBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         this.pb = new InputPaneBuilder(formatter);
         setDialogSupplier(this::createDialog);
-        pb.buttons(
-                new ButtonDef<>(
-                        ButtonType.OK,
-                        (bt, r) -> true,
-                        idp -> {},
-                        InputDialogPane::validProperty
-                ),
-                new ButtonDef<>(
-                        ButtonType.CANCEL,
-                        (bt, r) -> true,
-                        idp -> {},
-                        idp -> FxUtil.ALWAYS_TRUE
-                )
-        );
+        pb.buttons(new ButtonDef<>(ButtonType.OK, (bt, r) -> true, idp -> {}, InputDialogPane::validProperty), new ButtonDef<>(ButtonType.CANCEL, (bt, r) -> true, idp -> {}, idp -> FxUtil.ALWAYS_TRUE));
     }
 
     private InputDialog createDialog() {
@@ -107,12 +92,6 @@ public class InputDialogBuilder
     }
 
     @Override
-    public InputDialogBuilder node(MessageFormatter.MessageFormatterArgs label, Node node) {
-        pb.node(label, node);
-        return this;
-    }
-
-    @Override
     public InputDialogBuilder columns(int columns) {
         pb.columns(columns);
         return this;
@@ -121,6 +100,18 @@ public class InputDialogBuilder
     @Override
     public InputDialogBuilder node(Node node) {
         pb.node(node);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder node(MessageFormatter.MessageFormatterArgs label, Node node) {
+        pb.node(label, node);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder section(int level, String fmt, Object... args) {
+        pb.section(level, fmt, args);
         return this;
     }
 
@@ -203,17 +194,7 @@ public class InputDialogBuilder
     }
 
     @Override
-    public <T> InputDialogBuilder inputComboBoxEx(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            @Nullable UnaryOperator<@Nullable T> edit,
-            @Nullable Supplier<@Nullable T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove,
-            Function<T, String> format,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate) {
+    public <T> InputDialogBuilder inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable UnaryOperator<@Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         pb.inputComboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, validate);
         return this;
     }
@@ -261,13 +242,7 @@ public class InputDialogBuilder
     }
 
     @Override
-    public InputDialogBuilder section(int level, String fmt, Object... args) {
-        pb.section(level, fmt, args);
-        return this;
-    }
-
-    @Override
     public final List<ButtonDef<InputResult>> getButtonDefs() {
-        return buttons;
+        return buttonDefs;
     }
 }

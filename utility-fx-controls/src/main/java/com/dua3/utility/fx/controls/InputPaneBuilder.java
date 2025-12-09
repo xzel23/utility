@@ -15,12 +15,12 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
-import com.dua3.utility.text.MessageFormatter;
-import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
+import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.Node;
 import javafx.stage.FileChooser;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -37,9 +37,7 @@ import java.util.function.UnaryOperator;
  * <p>
  * Provides a fluent interface to create Alerts.
  */
-public class InputPaneBuilder
-        extends PaneBuilder<InputPane, InputPaneBuilder, Map<String, Object>>
-        implements InputBuilder<InputPaneBuilder> {
+public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, Map<String, Object>> implements InputBuilder<InputPaneBuilder> {
 
     private final GridBuilder pb;
 
@@ -169,17 +167,7 @@ public class InputPaneBuilder
     }
 
     @Override
-    public <T> InputPaneBuilder inputComboBoxEx(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            @Nullable UnaryOperator<T> edit,
-            @Nullable Supplier<T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate) {
+    public <T> InputPaneBuilder inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         pb.inputComboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, validate);
         return this;
     }

@@ -41,7 +41,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param args    the arguments to be formatted and substituted into the message template
      * @return the formatted message as a String
      */
-    default String format(String message, Object... args) {
+    default String format(String message,@Nullable Object... args) {
         return getMessageFormatter().format(message, args);
     }
 
@@ -72,13 +72,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param hidden  flag, indicating whether the input us hidden from the user (no control is visible on the UI)
      * @return {@code this}
      */
-    default <T> B addInput(
-            String id,
-            String label,
-            Class<T> type,
-            Supplier<? extends @Nullable T> dflt,
-            InputControl<T> control,
-            boolean hidden) {
+    default <T> B addInput(String id, String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
         return addInput(id, new MessageFormatter.MessageFormatterArgs(label), type, dflt, control, hidden);
     }
 
@@ -94,14 +88,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param hidden  flag, indicating whether the input us hidden from the user (no control is visible on the UI)
      * @return {@code this}
      */
-    <T> B addInput(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Class<T> type,
-            Supplier<? extends @Nullable T> dflt,
-            InputControl<T> control,
-            boolean hidden
-    );
+    <T> B addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden);
 
     /**
      * Add an unlabeled input control.
@@ -113,12 +100,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param control the control
      * @return {@code this}
      */
-    <T> B addInput(
-            String id,
-            Class<T> type,
-            Supplier<? extends @Nullable T> dflt,
-            InputControl<T> control
-    );
+    <T> B addInput(String id, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control);
 
     /**
      * Set the number of columns for layout (default is 1).
@@ -187,9 +169,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param args     the formatting arguments
      * @return {@code this}
      */
-    B labeledText(String fmtLabel,
-                  String fmtText,
-                  Object... args);
+    B labeledText(String fmtLabel, String fmtText, Object... args);
 
     /**
      * Creates a disabled input field with the specified configurations.
@@ -203,12 +183,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls   The class type of the value provided.
      * @return An instance of `B` representing the configured disabled input field.
      */
-    default <T> B inputConstant(
-            String id,
-            String label,
-            Supplier<T> value,
-            Class<T> cls
-    ) {
+    default <T> B inputConstant(String id, String label, Supplier<T> value, Class<T> cls) {
         return inputConstant(id, new MessageFormatter.MessageFormatterArgs(label), value, cls);
     }
 
@@ -224,12 +199,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls   The class type of the value provided.
      * @return An instance of `B` representing the configured disabled input field.
      */
-    <T> B inputConstant(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<T> value,
-            Class<T> cls
-    );
+    <T> B inputConstant(String id, MessageFormatter.MessageFormatterArgs label, Supplier<T> value, Class<T> cls);
 
     /**
      * Configures a non-editable input field with the specified parameters.
@@ -242,10 +212,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>   the type of the value contained in the input field
      * @return an instance of type B representing the configured disabled input field
      */
-    default <T> B inputConstant(
-            String id,
-            String label,
-            T value) {
+    default <T> B inputConstant(String id, String label, T value) {
         return inputConstant(id, new MessageFormatter.MessageFormatterArgs(label), value);
     }
 
@@ -260,10 +227,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>   the type of the value contained in the input field
      * @return an instance of type B representing the configured disabled input field
      */
-    <T> B inputConstant(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            T value);
+    <T> B inputConstant(String id, MessageFormatter.MessageFormatterArgs label, T value);
 
     /**
      * Creates a hidden field with the specified configurations.
@@ -276,11 +240,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls   The class type of the value provided.
      * @return An instance of `B` representing the configured disabled input field.
      */
-    <T> B inputHidden(
-            String id,
-            Supplier<T> value,
-            Class<T> cls
-    );
+    <T> B inputHidden(String id, Supplier<T> value, Class<T> cls);
 
     /**
      * Configures a non-editable input field with the specified parameters.
@@ -292,10 +252,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param value the value to be displayed in the disabled input field
      * @return an instance of type B representing the configured disabled input field
      */
-    <T> B inputHidden(
-            String id,
-            T value
-    );
+    <T> B inputHidden(String id, T value);
 
     /**
      * Add a labeled string input.
@@ -308,11 +265,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputText(
-            String id,
-            String label,
-            Supplier<@Nullable String> dflt
-    ) {
+    default B inputText(String id, String label, Supplier<@Nullable String> dflt) {
         return inputText(id, label, dflt, s -> Optional.empty());
     }
 
@@ -328,12 +281,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    default B inputText(
-            String id,
-            String label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
-    ) {
+    default B inputText(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         return inputText(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
     }
 
@@ -349,12 +297,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    B inputText(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
-    );
+    B inputText(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate);
 
     /**
      * Add a labeled string input.
@@ -367,11 +310,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputText(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt
-    ) {
+    default B inputText(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt) {
         return inputText(id, label, dflt, s -> Optional.empty());
     }
 
@@ -386,11 +325,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputString(
-            String id,
-            String label,
-            Supplier<@Nullable String> dflt
-    ) {
+    default B inputString(String id, String label, Supplier<@Nullable String> dflt) {
         return inputString(id, label, dflt, s -> Optional.empty());
     }
 
@@ -406,12 +341,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    default B inputString(
-            String id,
-            String label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
-    ) {
+    default B inputString(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         return inputString(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
     }
 
@@ -427,12 +357,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    B inputString(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
-    );
+    B inputString(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate);
 
     /**
      * Add a labeled string input.
@@ -445,11 +370,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputString(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt
-    ) {
+    default B inputString(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt) {
         return inputString(id, label, dflt, s -> Optional.empty());
     }
 
@@ -461,11 +382,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputPassword(
-            String id,
-            String label,
-            Supplier<@Nullable String> dflt
-    ) {
+    default B inputPassword(String id, String label, Supplier<@Nullable String> dflt) {
         return inputPassword(id, label, dflt, s -> Optional.empty());
     }
 
@@ -478,12 +395,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    default B inputPassword(
-            String id,
-            String label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
-    ) {
+    default B inputPassword(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
         return inputPassword(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
     }
 
@@ -496,12 +408,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    B inputPassword(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt,
-            Function<@Nullable String, Optional<String>> validate
-    );
+    B inputPassword(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate);
 
     /**
      * Add a labeled password input.
@@ -511,11 +418,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputPassword(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable String> dflt
-    ) {
+    default B inputPassword(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable String> dflt) {
         return inputPassword(id, label, dflt, s -> Optional.empty());
     }
 
@@ -528,16 +431,8 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param labelRepeat the label displayed for the repeated password input field
      * @return an instance of the builder type B after the password input process
      */
-    default B inputPasswordWithVerification(
-            String id,
-            String label,
-            String labelRepeat
-    ) {
-        return inputPasswordWithVerification(
-                id,
-                new MessageFormatter.MessageFormatterArgs(label),
-                new MessageFormatter.MessageFormatterArgs(labelRepeat)
-        );
+    default B inputPasswordWithVerification(String id, String label, String labelRepeat) {
+        return inputPasswordWithVerification(id, new MessageFormatter.MessageFormatterArgs(label), new MessageFormatter.MessageFormatterArgs(labelRepeat));
     }
 
     /**
@@ -549,11 +444,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param labelRepeat the label displayed for the repeated password input field
      * @return an instance of the builder type B after the password input process
      */
-    default B inputPasswordWithVerification(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            MessageFormatter.MessageFormatterArgs labelRepeat
-    ) {
+    default B inputPasswordWithVerification(String id, MessageFormatter.MessageFormatterArgs label, MessageFormatter.MessageFormatterArgs labelRepeat) {
         AtomicReference<@Nullable String> passwordRef = new AtomicReference<>(null);
         return inputPassword(id, label, () -> "", s -> {
             if (s == null) {
@@ -566,12 +457,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             } else {
                 return Optional.empty();
             }
-        })
-                .inputPassword("", labelRepeat, () -> "",
-                        s -> Objects.equals(s, passwordRef.get())
-                                ? Optional.empty()
-                                : Optional.of("Passwords do not match.")
-                );
+        }).inputPassword("", labelRepeat, () -> "", s -> Objects.equals(s, passwordRef.get()) ? Optional.empty() : Optional.of("Passwords do not match."));
     }
 
     /**
@@ -582,11 +468,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputInteger(
-            String id,
-            String label,
-            Supplier<@Nullable Long> dflt
-    ) {
+    default B inputInteger(String id, String label, Supplier<@Nullable Long> dflt) {
         return inputInteger(id, label, dflt, i -> Optional.empty());
     }
 
@@ -599,12 +481,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    default B inputInteger(
-            String id,
-            String label,
-            Supplier<@Nullable Long> dflt,
-            Function<@Nullable Long, Optional<String>> validate
-    ) {
+    default B inputInteger(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
         return inputInteger(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
     }
 
@@ -617,12 +494,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    B inputInteger(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Long> dflt,
-            Function<@Nullable Long, Optional<String>> validate
-    );
+    B inputInteger(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate);
 
     /**
      * Add a labeled integer input.
@@ -632,11 +504,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputInteger(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Long> dflt
-    ) {
+    default B inputInteger(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Long> dflt) {
         return inputInteger(id, label, dflt, i -> Optional.empty());
     }
 
@@ -648,11 +516,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputDecimal(
-            String id,
-            String label,
-            Supplier<@Nullable Double> dflt
-    ) {
+    default B inputDecimal(String id, String label, Supplier<@Nullable Double> dflt) {
         return inputDecimal(id, label, dflt, d -> Optional.empty());
     }
 
@@ -665,12 +529,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    default B inputDecimal(
-            String id,
-            String label,
-            Supplier<@Nullable Double> dflt,
-            Function<@Nullable Double, Optional<String>> validate
-    ) {
+    default B inputDecimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
         return inputDecimal(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
     }
 
@@ -683,12 +542,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate validation callback, return error message if invalid, empty optional if valid
      * @return {@code this}
      */
-    B inputDecimal(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Double> dflt,
-            Function<@Nullable Double, Optional<String>> validate
-    );
+    B inputDecimal(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate);
 
     /**
      * Add a labeled decimal input.
@@ -698,11 +552,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt  supplier of default value
      * @return {@code this}
      */
-    default B inputDecimal(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Double> dflt
-    ) {
+    default B inputDecimal(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Double> dflt) {
         return inputDecimal(id, label, dflt, d -> Optional.empty());
     }
 
@@ -715,12 +565,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param text  the checkbox text
      * @return {@code this}
      */
-    default B inputCheckBox(
-            String id,
-            String label,
-            BooleanSupplier dflt,
-            String text
-    ) {
+    default B inputCheckBox(String id, String label, BooleanSupplier dflt, String text) {
         return inputCheckBox(id, label, dflt, text, b -> Optional.empty());
     }
 
@@ -734,13 +579,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate a function that takes a Boolean value and returns an optional validation message
      * @return {@code this}
      */
-    default B inputCheckBox(
-            String id,
-            String label,
-            BooleanSupplier dflt,
-            String text,
-            Function<@Nullable Boolean, Optional<String>> validate
-    ) {
+    default B inputCheckBox(String id, String label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
         return inputCheckBox(id, new MessageFormatter.MessageFormatterArgs(label), dflt, text, validate);
     }
 
@@ -754,13 +593,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate a function that takes a Boolean value and returns an optional validation message
      * @return {@code this}
      */
-    B inputCheckBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            BooleanSupplier dflt,
-            String text,
-            Function<@Nullable Boolean, Optional<String>> validate
-    );
+    B inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate);
 
     /**
      * Add a labeled checkbox.
@@ -771,12 +604,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param text  the checkbox text
      * @return {@code this}
      */
-    default B inputCheckBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            BooleanSupplier dflt,
-            String text
-    ) {
+    default B inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, String text) {
         return inputCheckBox(id, label, dflt, text, b -> Optional.empty());
     }
 
@@ -790,12 +618,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls   the enum class
      * @return {@code this}
      */
-    default <T extends Enum<T>> B inputComboBox(
-            String id,
-            String label,
-            Supplier<@Nullable T> dflt,
-            Class<T> cls
-    ) {
+    default <T extends Enum<T>> B inputComboBox(String id, String label, Supplier<@Nullable T> dflt, Class<T> cls) {
         return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls), t -> Optional.empty());
     }
 
@@ -811,14 +634,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>      the type of the comboBox items
      * @return {@code this}
      */
-    default <T> B inputComboBox(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            T[] items,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
+    default <T> B inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, T[] items, Function<@Nullable T, Optional<String>> validate) {
         return inputComboBox(id, label, dflt, cls, List.of(items), validate);
     }
 
@@ -834,14 +650,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>      the type of the comboBox items
      * @return {@code this}
      */
-    default <T> B inputComboBox(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
+    default <T> B inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         return inputComboBox(id, new MessageFormatter.MessageFormatterArgs(label), dflt, cls, items, validate);
     }
 
@@ -857,14 +666,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>      the type of the comboBox items
      * @return {@code this}
      */
-    <T> B inputComboBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    );
+    <T> B inputComboBox(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate);
 
     /**
      * Add a labeled combobox for selecting a value from an enum.
@@ -876,12 +678,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls   the enum class
      * @return {@code this}
      */
-    default <T extends Enum<T>> B inputComboBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable T> dflt,
-            Class<T> cls
-    ) {
+    default <T extends Enum<T>> B inputComboBox(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable T> dflt, Class<T> cls) {
         return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls), t -> Optional.empty());
     }
 
@@ -897,14 +694,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>      the type of the comboBox items
      * @return {@code this}
      */
-    default <T> B inputComboBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            T[] items,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
+    default <T> B inputComboBox(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, T[] items, Function<@Nullable T, Optional<String>> validate) {
         return inputComboBox(id, label, dflt, cls, List.of(items), validate);
     }
 
@@ -919,34 +709,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the items to choose from
      * @return {@code this}
      */
-   default  <T> B inputComboBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items
-    ) {
-        return inputComboBox(id, label, dflt, cls, items, t -> Optional.empty());
-    }
-
-    /**
-     * Add a labeled combobox.
-     *
-     * @param <T>   the item type
-     * @param id    the ID
-     * @param label the label text
-     * @param dflt  supplier of default value
-     * @param cls   the result class
-     * @param items the items to choose from
-     * @return {@code this}
-     */
-    default <T> B inputComboBox(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            T[] items
-    ) {
+    default <T> B inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, T[] items) {
         return inputComboBox(id, label, dflt, cls, List.of(items));
     }
 
@@ -961,13 +724,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the items to choose from
      * @return {@code this}
      */
-    default <T> B inputComboBox(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items
-    ) {
+    default <T> B inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items) {
         return inputComboBox(id, label, dflt, cls, items, t -> Optional.empty());
     }
 
@@ -982,14 +739,23 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the items to choose from
      * @return {@code this}
      */
-    default <T> B inputComboBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            T[] items
-    ) {
+    default <T> B inputComboBox(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, T[] items) {
         return inputComboBox(id, label, dflt, cls, List.of(items));
+    }
+
+    /**
+     * Add a labeled combobox.
+     *
+     * @param <T>   the item type
+     * @param id    the ID
+     * @param label the label text
+     * @param dflt  supplier of default value
+     * @param cls   the result class
+     * @param items the items to choose from
+     * @return {@code this}
+     */
+    default <T> B inputComboBox(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items) {
+        return inputComboBox(id, label, dflt, cls, items, t -> Optional.empty());
     }
 
     /**
@@ -1003,13 +769,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>      the type of the comboBox items
      * @return {@code this}
      */
-    default <T extends Enum<T>> B inputComboBox(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
+    default <T extends Enum<T>> B inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Function<@Nullable T, Optional<String>> validate) {
         return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls), validate);
     }
 
@@ -1024,13 +784,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>      the type of the comboBox items
      * @return {@code this}
      */
-    default <T extends Enum<T>> B inputComboBox(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
+    default <T extends Enum<T>> B inputComboBox(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Function<@Nullable T, Optional<String>> validate) {
         return inputComboBox(id, label, dflt, cls, LangUtil.enumValues(cls), validate);
     }
 
@@ -1049,17 +803,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items  the collection of items to choose from
      * @return {@code this}
      */
-    default <T> B inputComboBoxEx(
-            String id,
-            String label,
-            @Nullable UnaryOperator<@Nullable T> edit,
-            @Nullable Supplier<@Nullable T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items
-    ) {
+    default <T> B inputComboBoxEx(String id, String label, @Nullable UnaryOperator<@Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items) {
         return inputComboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, t -> Optional.empty());
     }
 
@@ -1079,18 +823,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate a function to validate the items in the combo box and return an optional error message
      * @return {@code this}
      */
-    default <T> B inputComboBoxEx(
-            String id,
-            String label,
-            @Nullable UnaryOperator<T> edit,
-            @Nullable Supplier<T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
+    default <T> B inputComboBoxEx(String id, String label, @Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         return inputComboBoxEx(id, new MessageFormatter.MessageFormatterArgs(label), edit, add, remove, format, dflt, cls, items, validate);
     }
 
@@ -1110,18 +843,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate a function to validate the items in the combo box and return an optional error message
      * @return {@code this}
      */
-    <T> B inputComboBoxEx(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            @Nullable UnaryOperator<T> edit,
-            @Nullable Supplier<T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    );
+    <T> B inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate);
 
     /**
      * Adds a labeled combo box control with extended functionality.
@@ -1138,17 +860,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items  the collection of items to choose from
      * @return {@code this}
      */
-    default <T> B inputComboBoxEx(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            @Nullable UnaryOperator<@Nullable T> edit,
-            @Nullable Supplier<@Nullable T> add,
-            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<T, String> format,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items
-    ) {
+    default <T> B inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable UnaryOperator<@Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items) {
         return inputComboBoxEx(id, label, edit, add, remove, format, dflt, cls, items, t -> Optional.empty());
     }
 
@@ -1163,13 +875,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the items to choose from
      * @return {@code this}
      */
-    default <T> B inputRadioList(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items
-    ) {
+    default <T> B inputRadioList(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items) {
         return inputRadioList(id, label, dflt, cls, items, (@Nullable T t) -> t != null ? Optional.empty() : Optional.of("No option selected"));
     }
 
@@ -1185,14 +891,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>      the type of items in the radio list
      * @return {@code this}
      */
-    default <T> B inputRadioList(
-            String id,
-            String label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    ) {
+    default <T> B inputRadioList(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         return inputRadioList(id, new MessageFormatter.MessageFormatterArgs(label), dflt, cls, items, validate);
     }
 
@@ -1208,14 +907,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>      the type of items in the radio list
      * @return {@code this}
      */
-    <T> B inputRadioList(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items,
-            Function<@Nullable T, Optional<String>> validate
-    );
+    <T> B inputRadioList(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate);
 
     /**
      * Add a labeled list of radiobuttons.
@@ -1228,13 +920,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the items to choose from
      * @return {@code this}
      */
-    default <T> B inputRadioList(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<? extends @Nullable T> dflt,
-            Class<T> cls,
-            Collection<T> items
-    ) {
+    default <T> B inputRadioList(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items) {
         return inputRadioList(id, label, dflt, cls, items, (@Nullable T t) -> t != null ? Optional.empty() : Optional.of("No option selected"));
     }
 
@@ -1248,13 +934,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param max   the maximum value
      * @return {@code this}
      */
-    default B inputSlider(
-            String id,
-            String label,
-            Supplier<@Nullable Double> dflt,
-            double min,
-            double max
-    ) {
+    default B inputSlider(String id, String label, Supplier<@Nullable Double> dflt, double min, double max) {
         return inputSlider(id, new MessageFormatter.MessageFormatterArgs(label), dflt, min, max);
     }
 
@@ -1268,13 +948,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param max   the maximum value
      * @return {@code this}
      */
-    B inputSlider(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Double> dflt,
-            double min,
-            double max
-    );
+    B inputSlider(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Double> dflt, double min, double max);
 
     /**
      * Add a labeled pane with options.
@@ -1285,12 +959,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param options supplier of options
      * @return {@code this}
      */
-    default B inputOptions(
-            String id,
-            String label,
-            Supplier<@Nullable Arguments> dflt,
-            Supplier<Collection<Option<?>>> options
-    ) {
+    default B inputOptions(String id, String label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
         return inputOptions(id, new MessageFormatter.MessageFormatterArgs(label), dflt, options);
     }
 
@@ -1303,12 +972,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param options supplier of options
      * @return {@code this}
      */
-    B inputOptions(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Arguments> dflt,
-            Supplier<Collection<Option<?>>> options
-    );
+    B inputOptions(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options);
 
     /**
      * Add an unlabeled pane with options.
@@ -1321,11 +985,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param options supplier of options
      * @return {@code this}
      */
-    B inputOptions(
-            String id,
-            Supplier<@Nullable Arguments> dflt,
-            Supplier<Collection<Option<?>>> options
-    );
+    B inputOptions(String id, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options);
 
     /**
      * Add a file chooser.
@@ -1338,14 +998,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param filter       the extension filter to use
      * @return {@code this}
      */
-    default B inputFile(
-            String id,
-            String label,
-            Supplier<@Nullable Path> dflt,
-            FileDialogMode mode,
-            boolean existingOnly,
-            Collection<FileChooser.ExtensionFilter> filter
-    ) {
+    default B inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter) {
         return inputFile(id, new MessageFormatter.MessageFormatterArgs(label), dflt, mode, existingOnly, filter, FileInput.defaultValidate(mode, existingOnly));
     }
 
@@ -1362,15 +1015,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      *                     It returns an optional error message if the validation fails.
      * @return {@code this}
      */
-    B inputFile(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Path> dflt,
-            FileDialogMode mode,
-            boolean existingOnly,
-            Collection<FileChooser.ExtensionFilter> filter,
-            Function<@Nullable Path, Optional<String>> validate
-    );
+    B inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate);
 
     /**
      * Add a file chooser.
@@ -1383,14 +1028,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param filter       the extension filter to use
      * @return {@code this}
      */
-    default B inputFile(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Path> dflt,
-            FileDialogMode mode,
-            boolean existingOnly,
-            Collection<FileChooser.ExtensionFilter> filter
-    ) {
+    default B inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter) {
         return inputFile(id, label, dflt, mode, existingOnly, filter, FileInput.defaultValidate(mode, existingOnly));
     }
 
@@ -1407,15 +1045,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      *                     It returns an optional error message if the validation fails.
      * @return {@code this}
      */
-    default B inputFile(
-            String id,
-            String label,
-            Supplier<@Nullable Path> dflt,
-            FileDialogMode mode,
-            boolean existingOnly,
-            Collection<FileChooser.ExtensionFilter> filter,
-            Function<@Nullable Path, Optional<String>> validate
-    ) {
+    default B inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
         return inputFile(id, new MessageFormatter.MessageFormatterArgs(label), dflt, mode, existingOnly, filter, validate);
     }
 
@@ -1428,12 +1058,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param existingOnly a boolean indicating if only existing directories should be selectable
      * @return an instance of type B after configuring the folder input field
      */
-    default B inputFolder(
-            String id,
-            String label,
-            Supplier<@Nullable Path> dflt,
-            boolean existingOnly
-    ) {
+    default B inputFolder(String id, String label, Supplier<@Nullable Path> dflt, boolean existingOnly) {
         return inputFolder(id, new MessageFormatter.MessageFormatterArgs(label), dflt, existingOnly, FileInput.defaultValidate(FileDialogMode.DIRECTORY, existingOnly));
     }
 
@@ -1447,13 +1072,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate     a function to validate the selected folder path
      * @return an instance of the builder configured with the folder input
      */
-    default B inputFolder(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Path> dflt,
-            boolean existingOnly,
-            Function<@Nullable Path, Optional<String>> validate
-    ) {
+    default B inputFolder(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, boolean existingOnly, Function<@Nullable Path, Optional<String>> validate) {
         return inputFile(id, label, dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
     }
 
@@ -1466,12 +1085,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param existingOnly a boolean indicating if only existing directories should be selectable
      * @return an instance of type B after configuring the folder input field
      */
-    default B inputFolder(
-            String id,
-            MessageFormatter.MessageFormatterArgs label,
-            Supplier<@Nullable Path> dflt,
-            boolean existingOnly
-    ) {
+    default B inputFolder(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, boolean existingOnly) {
         return inputFolder(id, label, dflt, existingOnly, FileInput.defaultValidate(FileDialogMode.DIRECTORY, existingOnly));
     }
 
@@ -1485,13 +1099,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate     a function to validate the selected folder path
      * @return an instance of the builder configured with the folder input
      */
-    default B inputFolder(
-            String id,
-            String label,
-            Supplier<@Nullable Path> dflt,
-            boolean existingOnly,
-            Function<@Nullable Path, Optional<String>> validate
-    ) {
+    default B inputFolder(String id, String label, Supplier<@Nullable Path> dflt, boolean existingOnly, Function<@Nullable Path, Optional<String>> validate) {
         return inputFile(id, new MessageFormatter.MessageFormatterArgs(label), dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
     }
 
@@ -1545,10 +1153,5 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param makeBold     A flag indicating whether the section title should be bold.
      * @param scale        A scaling factor to adjust the size of the font for the section title.
      */
-    record SectionStyle(
-            float vspaceBefore,
-            float vspaceAfter,
-            boolean makeBold,
-            float scale
-    ) {}
+    record SectionStyle(float vspaceBefore, float vspaceAfter, boolean makeBold, float scale) {}
 }
