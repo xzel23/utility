@@ -80,8 +80,8 @@ public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBu
     }
 
     @Override
-    public <T> InputDialogBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
-        pb.addInput(id, label, type, dflt, control, hidden);
+    public <T> InputDialogBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+        pb.addInput(id, label, type, dflt, control, visible);
         return this;
     }
 

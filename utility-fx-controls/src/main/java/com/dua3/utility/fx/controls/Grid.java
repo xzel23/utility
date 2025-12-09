@@ -144,8 +144,8 @@ public class Grid extends GridPane {
         for (var entry : data) {
             controls.add(entry.control);
 
-            if (entry.hidden) {
-                // do not add cotrols for hidden fields
+            if (!entry.visible) {
+                // do not add controls for non-visible (hidden) fields
                 continue;
             }
 
@@ -253,15 +253,15 @@ public class Grid extends GridPane {
         final InputControl<? super T> control;
         final @Nullable Label label;
         final Label marker = new Label();
-        final boolean hidden;
+        final boolean visible;
 
-        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean hidden) {
+        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean visible) {
             this.id = id == null || id.isEmpty() ? null : id;
             this.label = label != null ? new Label(label) : null;
             this.cls = cls;
             this.dflt = dflt;
             this.control = control;
-            this.hidden = hidden;
+            this.visible = visible;
 
             marker.setText(control.isRequired() ? MARKER_REQUIRED : MARKER_OK_OPTIONAL);
             marker.setMinSize(MARKER_SIZE.getWidth(), MARKER_SIZE.getHeight());

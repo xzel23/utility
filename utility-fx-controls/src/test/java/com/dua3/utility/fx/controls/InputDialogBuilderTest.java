@@ -453,7 +453,7 @@ class InputDialogBuilderTest extends FxTestBase {
     }
 
     /**
-     * Test the hidden method.
+     * Test the visible method.
      */
     @Test
     void testHidden() throws Exception {
@@ -461,7 +461,7 @@ class InputDialogBuilderTest extends FxTestBase {
             // Create a builder
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
-            // Add hidden value
+            // Add visible value
             builder.inputHidden("id", () -> "Hidden value", String.class);
 
             // Build a dialog
@@ -470,14 +470,14 @@ class InputDialogBuilderTest extends FxTestBase {
             // Verify dialog was created
             assertNotNull(dialog);
 
-            // Verify the dialog contains the hidden value
+            // Verify the dialog contains the visible value
             DialogPane dialogPane = dialog.getDialogPane();
             assertInstanceOf(InputPane.class, dialogPane);
         });
     }
 
     /**
-     * Test the hidden method with direct value.
+     * Test the visible method with direct value.
      */
     @Test
     void testHiddenWithValue() throws Exception {
@@ -485,7 +485,7 @@ class InputDialogBuilderTest extends FxTestBase {
             // Create a builder
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
-            // Add hidden with direct value
+            // Add visible with direct value
             builder.inputHidden("id", "Hidden value");
 
             // Build a dialog
@@ -494,7 +494,7 @@ class InputDialogBuilderTest extends FxTestBase {
             // Verify dialog was created
             assertNotNull(dialog);
 
-            // Verify the dialog contains the hidden value
+            // Verify the dialog contains the visible value
             DialogPane dialogPane = dialog.getDialogPane();
             assertInstanceOf(InputPane.class, dialogPane);
         });

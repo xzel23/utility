@@ -69,11 +69,11 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param type    the result type
      * @param dflt    supplier of default value
      * @param control the control
-     * @param hidden  flag, indicating whether the input us hidden from the user (no control is visible on the UI)
+     * @param visible flag indicating whether the input is visible to the user
      * @return {@code this}
      */
-    default <T> B addInput(String id, String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden) {
-        return addInput(id, new MessageFormatter.MessageFormatterArgs(label), type, dflt, control, hidden);
+    default <T> B addInput(String id, String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+        return addInput(id, new MessageFormatter.MessageFormatterArgs(label), type, dflt, control, visible);
     }
 
     /**
@@ -85,10 +85,10 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param type    the result type
      * @param dflt    supplier of default value
      * @param control the control
-     * @param hidden  flag, indicating whether the input us hidden from the user (no control is visible on the UI)
+     * @param visible  flag, indicating whether the input us visible from the user (no control is visible on the UI)
      * @return {@code this}
      */
-    <T> B addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean hidden);
+    <T> B addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible);
 
     /**
      * Add an unlabeled input control.
@@ -236,21 +236,21 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      *
      * @param <T>   The type of the value managed by this input.
      * @param id    The unique identifier for the input field.
-     * @param value A supplier that provides the value to be displayed in the input field.
+     * @param value A supplier that provides the value for the hidden input field.
      * @param cls   The class type of the value provided.
-     * @return An instance of `B` representing the configured disabled input field.
+     * @return An instance of {@code B} representing the configured hidden input field.
      */
     <T> B inputHidden(String id, Supplier<T> value, Class<T> cls);
 
     /**
-     * Configures a non-editable input field with the specified parameters.
+     * Creates a hidden field with a constant value.
      * <p>
      * Use this method to include values in the form data that are not visible to the user.
      *
      * @param <T>   the type of the value contained in the input field
      * @param id    the unique identifier for the input field
-     * @param value the value to be displayed in the disabled input field
-     * @return an instance of type B representing the configured disabled input field
+     * @param value the constant value for the hidden input field
+     * @return an instance of type {@code B} representing the configured hidden input field
      */
     <T> B inputHidden(String id, T value);
 
