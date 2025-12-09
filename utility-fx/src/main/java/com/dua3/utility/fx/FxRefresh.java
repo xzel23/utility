@@ -244,11 +244,12 @@ public final class FxRefresh {
      * @param flag whether to activate or deactivate the refresher
      */
     public void setActive(boolean flag) {
-        LOG.trace("[{}] setActive({})", name, flag);
         lock.lock();
         try {
-            active.set(flag);
-            trigger.signalAll();
+            if (active.compareAndSet(!flag, flag)) {
+                LOG.trace("[{}] setActive({})", name, flag);
+                trigger.signalAll();
+            }
         } finally {
             lock.unlock();
         }
