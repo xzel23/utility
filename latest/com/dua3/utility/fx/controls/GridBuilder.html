@@ -416,17 +416,6 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 </section>
 </li>
 <li>
-<section class="detail" id="build()">
-<h3>build</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Grid.html" title="class in com.dua3.utility.fx.controls">Grid</a></span>&nbsp;<span class="element-name">build</span>()</div>
-<div class="block">Builds and returns an InputGrid with the current data and column configuration.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the constructed InputGrid</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="addInput(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl,boolean)">
 <h3>addInput</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></span>&nbsp;<span class="element-name">addInput</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
@@ -495,6 +484,40 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 </section>
 </li>
 <li>
+<section class="detail" id="node(javafx.scene.Node)">
+<h3>node</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></span>&nbsp;<span class="element-name">node</span><wbr><span class="parameters">(javafx.scene.Node&nbsp;node)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#node(javafx.scene.Node)">InputBuilder</a></code></span></div>
+<div class="block">Processes the given node and returns a result of type B.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputBuilder.html#node(javafx.scene.Node)">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a>&lt;<a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>node</code> - the node to be processed</dd>
+<dt>Returns:</dt>
+<dd>the result of processing the given node, of type B</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">
+<h3>node</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></span>&nbsp;<span class="element-name">node</span><wbr><span class="parameters">(<a href="../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;label,
+ javafx.scene.Node&nbsp;node)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">InputBuilder</a></code></span></div>
+<div class="block">Associates a child node with this node using the specified label.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a>&lt;<a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>label</code> - the label used to identify the child node</dd>
+<dd><code>node</code> - the child node to be associated</dd>
+<dt>Returns:</dt>
+<dd>the updated instance of the current object</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="section(int,java.lang.String,java.lang.Object...)">
 <h3>section</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></span>&nbsp;<span class="element-name">section</span><wbr><span class="parameters">(int&nbsp;level,
@@ -530,40 +553,6 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 <dd><code>args</code> - the formatting arguments</dd>
 <dt>Returns:</dt>
 <dd><code>this</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="node(javafx.scene.Node)">
-<h3>node</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></span>&nbsp;<span class="element-name">node</span><wbr><span class="parameters">(javafx.scene.Node&nbsp;node)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#node(javafx.scene.Node)">InputBuilder</a></code></span></div>
-<div class="block">Processes the given node and returns a result of type B.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputBuilder.html#node(javafx.scene.Node)">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a>&lt;<a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a>&gt;</code></dd>
-<dt>Parameters:</dt>
-<dd><code>node</code> - the node to be processed</dd>
-<dt>Returns:</dt>
-<dd>the result of processing the given node, of type B</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">
-<h3>node</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></span>&nbsp;<span class="element-name">node</span><wbr><span class="parameters">(<a href="../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;label,
- javafx.scene.Node&nbsp;node)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">InputBuilder</a></code></span></div>
-<div class="block">Associates a child node with this node using the specified label.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a>&lt;<a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a>&gt;</code></dd>
-<dt>Parameters:</dt>
-<dd><code>label</code> - the label used to identify the child node</dd>
-<dd><code>node</code> - the child node to be associated</dd>
-<dt>Returns:</dt>
-<dd>the updated instance of the current object</dd>
 </dl>
 </section>
 </li>
@@ -1063,6 +1052,17 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 <dd><code>dflt</code> - a supplier providing the default value for the input control; may be null</dd>
 <dt>Returns:</dt>
 <dd>an instance of type B, representing the configured input control</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="build()">
+<h3>build</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Grid.html" title="class in com.dua3.utility.fx.controls">Grid</a></span>&nbsp;<span class="element-name">build</span>()</div>
+<div class="block">Builds and returns an InputGrid with the current data and column configuration.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the constructed InputGrid</dd>
 </dl>
 </section>
 </li>

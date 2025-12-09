@@ -455,24 +455,6 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 </section>
 </li>
 <li>
-<section class="detail" id="node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">
-<h3>node</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></span>&nbsp;<span class="element-name">node</span><wbr><span class="parameters">(<a href="../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;label,
- javafx.scene.Node&nbsp;node)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">InputBuilder</a></code></span></div>
-<div class="block">Associates a child node with this node using the specified label.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a>&lt;<a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a>&gt;</code></dd>
-<dt>Parameters:</dt>
-<dd><code>label</code> - the label used to identify the child node</dd>
-<dd><code>node</code> - the child node to be associated</dd>
-<dt>Returns:</dt>
-<dd>the updated instance of the current object</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="columns(int)">
 <h3>columns</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></span>&nbsp;<span class="element-name">columns</span><wbr><span class="parameters">(int&nbsp;columns)</span></div>
@@ -501,6 +483,45 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 <dd><code>node</code> - the node to be processed</dd>
 <dt>Returns:</dt>
 <dd>the result of processing the given node, of type B</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">
+<h3>node</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></span>&nbsp;<span class="element-name">node</span><wbr><span class="parameters">(<a href="../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;label,
+ javafx.scene.Node&nbsp;node)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">InputBuilder</a></code></span></div>
+<div class="block">Associates a child node with this node using the specified label.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputBuilder.html#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)">node</a></code>&nbsp;in interface&nbsp;<code><a href="InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a>&lt;<a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>label</code> - the label used to identify the child node</dd>
+<dd><code>node</code> - the child node to be associated</dd>
+<dt>Returns:</dt>
+<dd>the updated instance of the current object</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="section(int,java.lang.String,java.lang.Object...)">
+<h3>section</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></span>&nbsp;<span class="element-name">section</span><wbr><span class="parameters">(int&nbsp;level,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#section(int,java.lang.String,java.lang.Object...)">InputBuilder</a></code></span></div>
+<div class="block">Sets the current section level and formats the section heading
+ using the provided format string and arguments.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputBuilder.html#section(int,java.lang.String,java.lang.Object...)">section</a></code>&nbsp;in interface&nbsp;<code><a href="InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a>&lt;<a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>level</code> - the level of the section</dd>
+<dd><code>fmt</code> - the format string used to create the section heading</dd>
+<dd><code>args</code> - the arguments referenced by the format specifiers in the format string</dd>
+<dt>Returns:</dt>
+<dd><code>this</code></dd>
 </dl>
 </section>
 </li>
@@ -1018,27 +1039,6 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 <dd><code>dflt</code> - a supplier providing the default value for the input control; may be null</dd>
 <dt>Returns:</dt>
 <dd>an instance of type B, representing the configured input control</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="section(int,java.lang.String,java.lang.Object...)">
-<h3>section</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a></span>&nbsp;<span class="element-name">section</span><wbr><span class="parameters">(int&nbsp;level,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#section(int,java.lang.String,java.lang.Object...)">InputBuilder</a></code></span></div>
-<div class="block">Sets the current section level and formats the section heading
- using the provided format string and arguments.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InputBuilder.html#section(int,java.lang.String,java.lang.Object...)">section</a></code>&nbsp;in interface&nbsp;<code><a href="InputBuilder.html" title="interface in com.dua3.utility.fx.controls">InputBuilder</a>&lt;<a href="InputDialogBuilder.html" title="class in com.dua3.utility.fx.controls">InputDialogBuilder</a>&gt;</code></dd>
-<dt>Parameters:</dt>
-<dd><code>level</code> - the level of the section</dd>
-<dd><code>fmt</code> - the format string used to create the section heading</dd>
-<dd><code>args</code> - the arguments referenced by the format specifiers in the format string</dd>
-<dt>Returns:</dt>
-<dd><code>this</code></dd>
 </dl>
 </section>
 </li>
