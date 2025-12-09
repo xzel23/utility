@@ -3,11 +3,14 @@ package com.dua3.utility.fx.controls.abstract_builders;
 import com.dua3.utility.fx.controls.ButtonDef;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.DialogPane;
+import javafx.scene.layout.Pane;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -17,7 +20,7 @@ import java.util.function.Supplier;
  * @param <B> the type of the builder
  * @param <R> the result type
  */
-public abstract class PaneBuilder<D extends DialogPane & Supplier<R>, B extends PaneBuilder<D, B, R>, R>
+public abstract class PaneBuilder<D extends Pane & Supplier<R>, B extends PaneBuilder<D, B, R>, R>
         extends DialogPaneBuilder<D, B, R> {
     private @Nullable String next;
 
@@ -32,8 +35,8 @@ public abstract class PaneBuilder<D extends DialogPane & Supplier<R>, B extends 
      *
      * @param formatter the {@link MessageFormatter} to use
      */
-    protected PaneBuilder(MessageFormatter formatter) {
-        super(formatter, DialogPane::setHeaderText);
+    protected PaneBuilder(MessageFormatter formatter, BiConsumer<? super D, String> setHeaderText) {
+        super(formatter, setHeaderText);
     }
 
     /**

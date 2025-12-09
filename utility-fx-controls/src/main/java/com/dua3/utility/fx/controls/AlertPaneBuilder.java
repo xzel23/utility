@@ -30,7 +30,7 @@ public class AlertPaneBuilder
     private @Nullable String text;
 
     AlertPaneBuilder(AlertType type, MessageFormatter formatter) {
-        super(formatter);
+        super(formatter, DialogPane::setHeaderText);
         setDialogSupplier(() -> createPane(type));
     }
 

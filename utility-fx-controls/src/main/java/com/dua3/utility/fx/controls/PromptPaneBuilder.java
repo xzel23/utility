@@ -16,6 +16,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
 import com.dua3.utility.text.MessageFormatter;
+import javafx.scene.control.DialogPane;
 
 /**
  * Builder for Prompt Panes.
@@ -24,7 +25,7 @@ import com.dua3.utility.text.MessageFormatter;
  */
 public class PromptPaneBuilder extends PaneBuilder<PromptPane, PromptPaneBuilder, String> {
     PromptPaneBuilder(MessageFormatter formatter) {
-        super(formatter);
+        super(formatter, DialogPane::setHeaderText);
         setDialogSupplier(PromptPane::new);
     }
 

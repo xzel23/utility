@@ -45,19 +45,19 @@ import java.util.function.UnaryOperator;
  */
 public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBuilder, InputResult> implements InputBuilder<InputDialogBuilder> {
 
-    private final InputPaneBuilder pb;
+    private final InputDialogPaneBuilder pb;
     private final List<ButtonDef<InputResult>> buttonDefs = new ArrayList<>();
 
     InputDialogBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
-        this.pb = new InputPaneBuilder(formatter);
+        this.pb = new InputDialogPaneBuilder(formatter);
         setDialogSupplier(this::createDialog);
         pb.buttons(new ButtonDef<>(ButtonType.OK, (bt, r) -> true, idp -> {}, InputDialogPane::validProperty), new ButtonDef<>(ButtonType.CANCEL, (bt, r) -> true, idp -> {}, idp -> FxUtil.ALWAYS_TRUE));
     }
 
     private InputDialog createDialog() {
         InputDialog dlg = new InputDialog();
-        InputPane dialogPane = pb.build();
+        GridInputDialogPane dialogPane = pb.build();
 
         pb.getButtonDefs().forEach(bd -> dialogPane.addButton(bd.type(), bd.resultHandler(), bd.action(), bd.enabled()));
         dialogPane.init();

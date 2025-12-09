@@ -37,7 +37,7 @@ public class InputDialog extends Dialog<@Nullable InputResult> {
             if (btn == null || btn.getButtonData().isCancelButton()) {
                 return null;
             }
-            return new InputResult(btn, ((InputPane) getDialogPane()).get());
+            return new InputResult(btn, ((GridInputDialogPane) getDialogPane()).get());
         });
     }
 

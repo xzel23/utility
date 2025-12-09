@@ -248,7 +248,7 @@ class DialogsTest extends FxTestBase {
     void testInputPane() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Create an input pane builder
-            InputPaneBuilder builder = Dialogs.inputPane(MessageFormatter.standard());
+            InputDialogPaneBuilder builder = Dialogs.inputDialogPane(MessageFormatter.standard());
 
             // Verify builder was created
             assertNotNull(builder);

@@ -201,7 +201,7 @@ public class FxDialogSample extends Application {
                                                 - the server name and port
                                                 """))
                         .page("dbms",
-                                Dialogs.inputPane(MessageFormatter.standard())
+                                Dialogs.inputDialogPane(MessageFormatter.standard())
                                         .header("Choose your Database from the list below.")
                                         .inputRadioList("rdbms", "Database", () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
                         )

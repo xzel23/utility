@@ -55,7 +55,7 @@ class InputDialogBuilderTest extends FxTestBase {
             // Verify dialog was created
             assertNotNull(dialog);
             assertNotNull(dialog.getDialogPane());
-            assertInstanceOf(InputPane.class, dialog.getDialogPane());
+            assertInstanceOf(GridInputDialogPane.class, dialog.getDialogPane());
 
             // Verify dialog has OK and Cancel buttons
             assertTrue(dialog.getDialogPane().getButtonTypes().contains(ButtonType.OK));
@@ -83,7 +83,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the text
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -107,7 +107,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the text with label
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -131,7 +131,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the string input
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -155,7 +155,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the integer input
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -179,7 +179,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the decimal input
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -203,7 +203,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the checkbox
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -228,7 +228,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the combo box
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -253,7 +253,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the extended combo box
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -278,7 +278,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the radio list
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -302,7 +302,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the slider
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -326,7 +326,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the file chooser
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -351,7 +351,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the node
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -376,7 +376,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the node with label
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -400,7 +400,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog has the columns set
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -424,7 +424,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the constant
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -448,7 +448,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the constant
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -472,7 +472,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the visible value
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -496,7 +496,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the visible value
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -521,7 +521,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the custom input control
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -546,7 +546,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the custom input control
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -571,7 +571,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the node
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 
@@ -596,7 +596,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Verify the dialog contains the node
             DialogPane dialogPane = dialog.getDialogPane();
-            assertInstanceOf(InputPane.class, dialogPane);
+            assertInstanceOf(GridInputDialogPane.class, dialogPane);
         });
     }
 

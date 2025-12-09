@@ -190,6 +190,25 @@ public final class Dialogs {
     }
 
     /**
+     * Start the definition of a new {@link InputDialogPane}.
+     *
+     * @param formatter    the {@link MessageFormatter} to use
+     * @return new {@link InputDialogPaneBuilder} instance
+     */
+    public static InputDialogPaneBuilder inputDialogPane(MessageFormatter formatter) {
+        return new InputDialogPaneBuilder(formatter);
+    }
+
+    /**
+     * Start the definition of a new {@link InputDialogPane} using the standard MessageFormatter.
+     *
+     * @return new {@link InputDialogPaneBuilder} instance
+     */
+    public static InputDialogPaneBuilder inputDialogPane() {
+        return inputDialogPane(MessageFormatter.standard());
+    }
+
+    /**
      * Start the definition of a new input pane.
      *
      * @param formatter    the {@link MessageFormatter} to use

@@ -37,12 +37,12 @@ import java.util.function.UnaryOperator;
  * <p>
  * Provides a fluent interface to create Alerts.
  */
-public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, Map<String, Object>> implements InputBuilder<InputPaneBuilder> {
+public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, Map<String, @Nullable Object>> implements InputBuilder<InputPaneBuilder> {
 
     private final GridBuilder pb;
 
     InputPaneBuilder(MessageFormatter formatter) {
-        super(formatter);
+        super(formatter, InputPane::setHeaderText);
         pb = new GridBuilder(null, formatter);
         setDialogSupplier(() -> new InputPane(pb.build()));
     }
