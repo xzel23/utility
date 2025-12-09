@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.beans.binding.BooleanExpression;
+import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
@@ -117,7 +118,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         if (pages == null) {
             return;
         }
-        // get and translate result
+        // get and translate the result
 
         Set<String> pageNames = pages.keySet();
         for (Entry<String, Page<?, ?>> entry : pages.entrySet()) {
@@ -179,8 +180,9 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         InputDialogPane<?> pane = current.second().pane;
 
         // make sure the dialog does not shrink
-        if (getDialogPane() instanceof Pane p) {
-            pane.setMinSize(p.getWidth(), p.getHeight());
+        DialogPane previousPane = getDialogPane();
+        if (previousPane != null) {
+            pane.setMinSize(previousPane.getWidth(), previousPane.getHeight());
         }
 
         setDialogPane(pane);
