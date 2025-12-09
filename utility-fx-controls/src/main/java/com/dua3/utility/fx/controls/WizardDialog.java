@@ -175,6 +175,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
     private void setPage(String pageName) {
         this.current = Pair.of(pageName, Objects.requireNonNull(pages, "pages not set").get(pageName));
 
+        assert current.second() != null;
         InputDialogPane<?> pane = current.second().pane;
 
         // make sure the dialog does not shrink
