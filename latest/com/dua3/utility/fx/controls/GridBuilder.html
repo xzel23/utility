@@ -138,7 +138,7 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable T&gt;&nbsp;dflt,
  <a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;T&gt;&nbsp;control,
- boolean&nbsp;hidden)</code></div>
+ boolean&nbsp;visible)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Add a labeled input control.</div>
 </div>
@@ -265,7 +265,7 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#inputHidden(java.lang.String,T)" class="member-name-link">inputHidden</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
  T&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Configures a non-editable input field with the specified parameters.</div>
+<div class="block">Creates a hidden field with a constant value.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#inputInteger(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.util.function.Supplier,java.util.function.Function)" class="member-name-link">inputInteger</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
@@ -423,7 +423,7 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends @Nullable T&gt;&nbsp;dflt,
  <a href="InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a>&lt;T&gt;&nbsp;control,
- boolean&nbsp;hidden)</span></div>
+ boolean&nbsp;visible)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#addInput(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl,boolean)">InputBuilder</a></code></span></div>
 <div class="block">Add a labeled input control.</div>
 <dl class="notes">
@@ -437,7 +437,7 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 <dd><code>type</code> - the result type</dd>
 <dd><code>dflt</code> - supplier of default value</dd>
 <dd><code>control</code> - the control</dd>
-<dd><code>hidden</code> - flag, indicating whether the input us hidden from the user (no control is visible on the UI)</dd>
+<dd><code>visible</code> - flag, indicating whether the input us visible from the user (no control is visible on the UI)</dd>
 <dt>Returns:</dt>
 <dd><code>this</code></dd>
 </dl>
@@ -646,10 +646,10 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 <dd><code>T</code> - The type of the value managed by this input.</dd>
 <dt>Parameters:</dt>
 <dd><code>id</code> - The unique identifier for the input field.</dd>
-<dd><code>value</code> - A supplier that provides the value to be displayed in the input field.</dd>
+<dd><code>value</code> - A supplier that provides the value for the hidden input field.</dd>
 <dd><code>cls</code> - The class type of the value provided.</dd>
 <dt>Returns:</dt>
-<dd>An instance of `B` representing the configured disabled input field.</dd>
+<dd>An instance of <code>B</code> representing the configured hidden input field.</dd>
 </dl>
 </section>
 </li>
@@ -659,7 +659,7 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></span>&nbsp;<span class="element-name">inputHidden</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
  T&nbsp;value)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InputBuilder.html#inputHidden(java.lang.String,T)">InputBuilder</a></code></span></div>
-<div class="block">Configures a non-editable input field with the specified parameters.
+<div class="block">Creates a hidden field with a constant value.
  <p>
  Use this method to include values in the form data that are not visible to the user.</div>
 <dl class="notes">
@@ -669,9 +669,9 @@ implements <a href="InputBuilder.html" title="interface in com.dua3.utility.fx.c
 <dd><code>T</code> - the type of the value contained in the input field</dd>
 <dt>Parameters:</dt>
 <dd><code>id</code> - the unique identifier for the input field</dd>
-<dd><code>value</code> - the value to be displayed in the disabled input field</dd>
+<dd><code>value</code> - the constant value for the hidden input field</dd>
 <dt>Returns:</dt>
-<dd>an instance of type B representing the configured disabled input field</dd>
+<dd>an instance of type <code>B</code> representing the configured hidden input field</dd>
 </dl>
 </section>
 </li>
