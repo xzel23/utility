@@ -33,7 +33,7 @@ public class IconViewSample extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        IconView iv = new IconView("fa-exclamation-triangle", 80, Paint.valueOf("DARKBLUE"));
+        IconView iv = new IconView("fas-exclamation-triangle", 80, Paint.valueOf("DARKBLUE"));
 
         StackPane root = new StackPane(iv);
 
