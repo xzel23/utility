@@ -43,13 +43,13 @@ public class Grid extends GridPane {
      */
     protected static final Logger LOG = LogManager.getLogger(Grid.class);
 
-    private static final String MARKER_OK_OPTIONAL = "";
-    private static final String MARKER_REQUIRED = "✱";
+    private static final String MARKER_OPTIONAL = "";
+    private static final String MARKER_REQUIRED = "•";
     private static final String MARKER_ERROR = "⚠";
 
     private static final Font LABEL_FONT = FxFontUtil.getInstance().convert(new Label().getFont());
     private static final Dimension2D MARKER_SIZE = FxUtil.convert(
-            Stream.of(MARKER_OK_OPTIONAL, MARKER_REQUIRED, MARKER_ERROR)
+            Stream.of(MARKER_OPTIONAL, MARKER_REQUIRED, MARKER_ERROR)
                     .map(m -> TextUtil.getTextDimension(m, LABEL_FONT).getDimension())
                     .reduce(Dimension2f::max)
                     .orElse(Dimension2f.of(0, 0))
@@ -211,7 +211,7 @@ public class Grid extends GridPane {
                 entry.marker.setText(MARKER_REQUIRED);
                 entry.marker.setTooltip(null);
             } else {
-                entry.marker.setText(MARKER_OK_OPTIONAL);
+                entry.marker.setText(MARKER_OPTIONAL);
                 entry.marker.setTooltip(null);
             }
         } else {
@@ -263,7 +263,7 @@ public class Grid extends GridPane {
             this.control = control;
             this.visible = visible;
 
-            marker.setText(control.isRequired() ? MARKER_REQUIRED : MARKER_OK_OPTIONAL);
+            marker.setText(control.isRequired() ? MARKER_REQUIRED : MARKER_OPTIONAL);
             marker.setMinSize(MARKER_SIZE.getWidth(), MARKER_SIZE.getHeight());
         }
 
