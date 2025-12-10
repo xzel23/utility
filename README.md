@@ -239,6 +239,43 @@ could not be loaded.
 
 ## Changes
 
+### 20.1.0
+
+#### Added
+- WriterOutputStream implementation to complement `ReaderInputStream`. (b851f47)
+- Methods to parse PEM-encoded public keys and certificates. (fdf2dba)
+- TaskProcessorEventDriven: `addTaskTimeout()` to apply timeouts to already submitted tasks via key. (42eb691)
+- Re-introduced `Value` and `ReadOnlyValue` interfaces with a thread-safe `SimpleValue` implementation (previously removed in 20.0.0). (c598406)
+- Overloads accepting `MessageFormatterArgs` to ease i18n usage. (87ce86a)
+
+#### Changed
+- Extracted record parameter handling into reusable `RecordParams` utility. (26a9f66)
+- Unified certificate encoding/decoding methods; updated hashing to use `TextUtil`. (1874d0b)
+- Simplified test utility calls; made certain cryptographic methods static. (d308572)
+- Treat `keyOrPattern` as a pattern if `{` is present; otherwise treat as key. (e8f02f3)
+- Added `@Nullable` annotations to `equals()` implementations; refined `Option.equals()`. (0f2a481)
+- `WizardDialog` will not shrink anymore. Set preferred width/height to prevent all size changes
+  when navigating through pages.
+
+#### Fixed
+- Corrected warning about inconsistent headless mode configuration. (fb752de)
+- `Option.equals()` comparison correctness and nullability annotations improvements. (0f2a481)
+
+#### Tests
+- Added tests for parsing/handling PEM-encoded certificates and chains. (4cc5f9c)
+- Added tests for `KeyUtil` PEM and private key handling (including password-protected keys). (8a8150f)
+
+#### Refactor / Cleanup
+- Removed unused `Base64` import from `CryptUtil`. (2014e55)
+- General code cleanup. (6c2e4c6)
+
+#### Build/Versioning
+- Version bump. (2557857)
+
+#### Breaking changes
+- The 'hidden' parameter in some methods of the `InputBuilder` interface was replaced by `visible`. User code
+  usually does not use these methods directly.
+
 ### 20.0.0
 
 - **Minimum Java version**: Java 21. Java 25 is required for `StreamGathererUtil` and dark mode detection.
