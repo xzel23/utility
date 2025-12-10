@@ -314,7 +314,7 @@ public interface InputControl<T> {
             Collection<T> choices,
             Supplier<? extends @Nullable T> dflt,
             @Nullable Function<T, @Nullable T> edit,
-            @Nullable Supplier<T> add,
+            @Nullable Supplier<@Nullable T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<@Nullable T, String> format,
             Function<@Nullable T, Optional<String>> validate) {

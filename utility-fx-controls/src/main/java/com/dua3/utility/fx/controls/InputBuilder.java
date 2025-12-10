@@ -19,7 +19,6 @@ import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 /**
  * A builder class for creating input controls.
@@ -879,7 +878,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate a function to validate the items in the combo box and return an optional error message
      * @return {@code this}
      */
-    default <T> B inputComboBoxEx(String id, String label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+    default <T> B inputComboBoxEx(String id, String label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
         return inputComboBoxEx(id, new MessageFormatter.MessageFormatterArgs(label), edit, add, remove, format, dflt, cls, items, validate);
     }
 
@@ -899,7 +898,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate a function to validate the items in the combo box and return an optional error message
      * @return {@code this}
      */
-    <T> B inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate);
+    <T> B inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate);
 
     /**
      * Adds a labeled combo box control with extended functionality.

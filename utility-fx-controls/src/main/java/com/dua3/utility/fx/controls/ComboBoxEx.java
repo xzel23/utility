@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 /**
  * A custom ComboBox control that supports additional features like editing, adding, and removing items.
@@ -42,7 +41,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
 
     private @Nullable Comparator<? super T> comparator = null;
     private final @Nullable Function<T, @Nullable T> edit;
-    private final @Nullable Supplier<T> add;
+    private final @Nullable Supplier<@Nullable T> add;
     private final @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
     private final Supplier<? extends @Nullable T> dflt;
     private final Function<T, String> format;
@@ -62,7 +61,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
     @SafeVarargs
     public ComboBoxEx(
             @Nullable Function<T, @Nullable T> edit,
-            @Nullable Supplier<T> add,
+            @Nullable Supplier<@Nullable T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Supplier<? extends @Nullable T> dflt,
             Function<T, String> format,
@@ -83,7 +82,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
      */
     public ComboBoxEx(
             @Nullable Function<T, @Nullable T> edit,
-            @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Supplier<? extends @Nullable T> dflt,
             Function<@Nullable T, String> format,
             Collection<T> items
