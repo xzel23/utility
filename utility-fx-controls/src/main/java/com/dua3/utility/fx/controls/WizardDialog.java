@@ -2,7 +2,6 @@ package com.dua3.utility.fx.controls;
 
 import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.DialogPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler;
@@ -51,11 +50,6 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
      * The currently displayed page.
      */
     private @Nullable Pair<String, Page<?, ?>> current;
-    /**
-     * Track the maximum window size reached while navigating pages to avoid shrinking.
-     */
-    private double maxWidthSoFar = -1;
-    private double maxHeightSoFar = -1;
 
     /**
      * WizardDialog initializes a new dialog that handles the navigation and data collection
@@ -182,7 +176,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         // make sure the dialog does not shrink
         DialogPane previousPane = getDialogPane();
         if (previousPane != null) {
-            pane.setMinSize(previousPane.getWidth(), previousPane.getHeight());
+            pane.setMinSize(Math.max(previousPane.getWidth(), pane.getMinWidth()), Math.max(previousPane.getHeight(), pane.getMinHeight()));
         }
 
         setDialogPane(pane);
