@@ -1,18 +1,12 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.FxFontUtil;
-import com.dua3.utility.math.geometry.Dimension2f;
-import com.dua3.utility.text.Font;
-import com.dua3.utility.text.TextUtil;
 import javafx.scene.control.Tooltip;
 import org.jspecify.annotations.Nullable;
-import com.dua3.utility.fx.FxUtil;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -43,18 +37,6 @@ public class Grid extends GridPane {
      */
     protected static final Logger LOG = LogManager.getLogger(Grid.class);
 
-    private static final String MARKER_OPTIONAL = "";
-    private static final String MARKER_REQUIRED = "•";
-    private static final String MARKER_ERROR = "⚠";
-
-    private static final Font LABEL_FONT = FxFontUtil.getInstance().convert(new Label().getFont());
-    private static final Dimension2D MARKER_SIZE = FxUtil.convert(
-            Stream.of(MARKER_OPTIONAL, MARKER_REQUIRED, MARKER_ERROR)
-                    .map(m -> TextUtil.getTextDimension(m, LABEL_FONT).getDimension())
-                    .reduce(Dimension2f::max)
-                    .orElse(Dimension2f.of(0, 0))
-    );
-
     /**
      * Property holding the valid state.
      *
@@ -62,13 +44,18 @@ public class Grid extends GridPane {
      */
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
+    private final MarkerSymbols markerSymbols;
     private SequencedCollection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;
 
     /**
      * Constructs a new instance of the InputGrid class.
+     *
+     * @param markerSymbols the marker symbols to use
      */
-    public Grid() { /* nothing to do */ }
+    public Grid(MarkerSymbols markerSymbols) {
+        this.markerSymbols = markerSymbols;
+    }
 
     /**
      * Get the valid state property.
@@ -142,6 +129,7 @@ public class Grid extends GridPane {
         int r = 0;
         int c = 0;
         for (var entry : data) {
+            updateMarker(entry, false);
             controls.add(entry.control);
 
             if (!entry.visible) {
@@ -166,11 +154,11 @@ public class Grid extends GridPane {
             node.focusedProperty().addListener((v, o, n) -> {
                 if (Objects.equals(n, Boolean.FALSE)) {
                     LOG.trace("input control lost focus: {}", entry.id);
-                    updateMarker(entry);
+                    updateMarker(entry, true);
                 }
             });
 
-            entry.control.state().addValidationListener(() -> updateMarker(entry));
+            entry.control.state().addValidationListener(() -> updateMarker(entry, true));
 
             addToGrid(node, gridX, gridY, span, insets);
             gridX += span;
@@ -202,27 +190,14 @@ public class Grid extends GridPane {
         }
     }
 
-    private static void updateMarker(Meta<?> entry) {
+    private void updateMarker(Meta<?> entry, boolean showErrors) {
         InputControl<?> control = entry.control;
         LOG.trace("updateMarker: valid={}, required={}, empty={}", control.isValid(), control.isRequired(), control.isEmpty());
 
-        if (control.isValid()) {
-            if (control.isRequired()) {
-                entry.marker.setText(MARKER_REQUIRED);
-                entry.marker.setTooltip(null);
-            } else {
-                entry.marker.setText(MARKER_OPTIONAL);
-                entry.marker.setTooltip(null);
-            }
-        } else {
-            if (control.isRequired() && control.isEmpty()) {
-                entry.marker.setText(MARKER_REQUIRED);
-                entry.marker.setTooltip(null);
-            } else {
-                entry.marker.setText(MARKER_ERROR);
-                entry.marker.setTooltip(new Tooltip(control.errorProperty().get()));
-            }
-        }
+        String markerText = markerSymbols.getMarker(control.isRequired(), control.isEmpty(), showErrors && !control.isValid());
+        Tooltip tooltip = control.isValid() ? null : new Tooltip(control.errorProperty().get());
+        entry.marker.setText(markerText);
+        entry.marker.setTooltip(tooltip);
     }
 
     private void addToGrid(Node child, int c, int r, int span, Insets insets) {
@@ -252,19 +227,19 @@ public class Grid extends GridPane {
         final Supplier<? extends T> dflt;
         final InputControl<? super T> control;
         final @Nullable Label label;
-        final Label marker = new Label();
+        final Label marker;
         final boolean visible;
 
-        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean visible) {
+        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean visible, double markerWidth) {
             this.id = id == null || id.isEmpty() ? null : id;
             this.label = label != null ? new Label(label) : null;
+            this.marker = new Label();
             this.cls = cls;
             this.dflt = dflt;
             this.control = control;
             this.visible = visible;
 
-            marker.setText(control.isRequired() ? MARKER_REQUIRED : MARKER_OPTIONAL);
-            marker.setMinSize(MARKER_SIZE.getWidth(), MARKER_SIZE.getHeight());
+            marker.setMinWidth(markerWidth);
         }
 
         void reset() {

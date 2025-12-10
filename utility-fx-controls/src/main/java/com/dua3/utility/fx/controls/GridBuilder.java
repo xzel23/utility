@@ -82,6 +82,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     private final SectionStyle[] sectionStyles;
     private final Font defaultFont;
     private int columns = 1;
+    private MarkerSymbols markerSymbols;
+    private double markerWidth;
 
     /**
      * Creates a new {@code InputGridBuilder} instance.
@@ -94,6 +96,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         this.messageFormatter = messageFormatter;
         this.sectionStyles = sectionStyles.length == 0 ? DEFAULT_SECTION_STYLES : sectionStyles;
         this.defaultFont = FU.convert(new Label().getFont());
+        this.markerSymbols = MarkerSymbols.defaultSymbols();
+        this.markerWidth = markerSymbols.calculateWidth(defaultFont, 0.0);
     }
 
     @Override
@@ -175,7 +179,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         }
 
         // add
-        data.add(new Meta<>(id, label, type, dflt, control, visible));
+        Meta<T> meta = new Meta<>(id, label, type, dflt, control, visible, markerWidth);
+        data.add(meta);
 
         return this;
     }
@@ -308,7 +313,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     public Grid build() {
         LOG.trace("building grid with {} rows and {} columns", data.size(), columns);
 
-        Grid grid = new Grid();
+        Grid grid = new Grid(markerSymbols);
 
         grid.setContent(data, columns);
         grid.init();
