@@ -31,7 +31,7 @@ public class GridInputDialogPane extends InputDialogPane<Map<String, Object>> {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         // Let the scroll pane compute its preferred size based on content
-        scrollPane.setPrefViewportWidth(USE_COMPUTED_SIZE);
+        scrollPane.setPrefViewportWidth(USE_PREF_SIZE);
         scrollPane.setPrefViewportHeight(USE_COMPUTED_SIZE);
 
         // Set content in dialog

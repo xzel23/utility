@@ -1,6 +1,8 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.Priority;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -55,6 +57,18 @@ public class Grid extends GridPane {
      */
     public Grid(MarkerSymbols markerSymbols) {
         this.markerSymbols = markerSymbols;
+        ColumnConstraints left = new ColumnConstraints();
+        ColumnConstraints middle = new ColumnConstraints();
+        ColumnConstraints right = new ColumnConstraints();
+
+        // Allow the middle column to grow
+        middle.setHgrow(Priority.ALWAYS);
+
+        // Optional: the others should NOT grow
+        left.setHgrow(Priority.NEVER);
+        right.setHgrow(Priority.NEVER);
+
+        getColumnConstraints().addAll(left, middle, right);
     }
 
     /**
