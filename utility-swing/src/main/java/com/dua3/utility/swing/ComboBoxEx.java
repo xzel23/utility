@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 /**
  * A custom JPanel-based ComboBox component with additional functionality for editing, adding, and removing items.
