@@ -56,6 +56,12 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
+    public InputDialogPaneBuilder markerSymbols(MarkerSymbols markerSymbols) {
+        pb.markerSymbols(markerSymbols);
+        return self();
+    }
+
+    @Override
     public <T> InputDialogPaneBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
         pb.addInput(id, label, type, dflt, control, visible);
         return this;

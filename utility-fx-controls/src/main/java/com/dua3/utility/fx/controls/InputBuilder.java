@@ -77,6 +77,14 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
+     * Sets the marker symbols.
+     *
+     * @param markerSymbols the MarkerSymbols instance representing the symbols to be assigned
+     * @return {@code this}
+     */
+    B markerSymbols(MarkerSymbols markerSymbols);
+
+    /**
      * Add a labeled input control.
      *
      * @param <T>     the result type

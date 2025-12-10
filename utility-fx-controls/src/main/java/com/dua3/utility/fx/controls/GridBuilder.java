@@ -111,6 +111,12 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
+    public GridBuilder markerSymbols(MarkerSymbols markerSymbols) {
+        this.markerSymbols = markerSymbols;
+        return this;
+    }
+
+    @Override
     public <T> GridBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
         return doAdd(id, format(label), type, dflt, control, visible);
     }
