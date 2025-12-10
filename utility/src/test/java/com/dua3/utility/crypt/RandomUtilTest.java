@@ -32,7 +32,7 @@ class RandomUtilTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 1, 16, 32, 64, 128})
+    @ValueSource(ints = {0, 4, 16, 32, 64, 128})
     void testGenerateRandomBytes(int length) {
         // Generate random bytes
         byte[] randomBytes = RandomUtil.generateRandomBytes(length);
