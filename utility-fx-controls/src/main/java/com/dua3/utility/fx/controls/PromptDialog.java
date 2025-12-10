@@ -30,8 +30,8 @@ public class PromptDialog extends Dialog<String> {
             case PASSWORD -> new PasswordField();
             case TEXT -> new TextField();
         };
-        textField.setText(defaultValue);
         textField.textProperty().bindBidirectional(contentTextProperty());
+        textField.setText(defaultValue);
 
         final DialogPane dialogPane = getDialogPane();
         BorderPane pane = new BorderPane(textField);
