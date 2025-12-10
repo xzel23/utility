@@ -55,6 +55,42 @@ public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, M
     }
 
     @Override
+    public InputPaneBuilder minWidth(double value) {
+        pb.minWidth(value);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder minHeight(double value) {
+        pb.minHeight(value);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder maxWidth(double value) {
+        pb.maxWidth(value);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder maxHeight(double value) {
+        pb.maxHeight(value);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder prefWidth(double value) {
+        pb.prefWidth(value);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder prefHeight(double value) {
+        pb.prefHeight(value);
+        return this;
+    }
+
+    @Override
     public InputPaneBuilder markerSymbols(MarkerSymbols markerSymbols) {
         pb.markerSymbols(markerSymbols);
         return this;

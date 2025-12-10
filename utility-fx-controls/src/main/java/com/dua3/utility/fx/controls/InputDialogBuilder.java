@@ -89,6 +89,42 @@ public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBu
     }
 
     @Override
+    public InputDialogBuilder minWidth(double value) {
+        pb.minWidth(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder minHeight(double value) {
+        pb.minHeight(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder maxWidth(double value) {
+        pb.maxWidth(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder maxHeight(double value) {
+        pb.maxHeight(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder prefWidth(double value) {
+        pb.prefWidth(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder prefHeight(double value) {
+        pb.prefHeight(value);
+        return this;
+    }
+
+    @Override
     public <T> InputDialogBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
         pb.addInput(id, label, type, dflt, control, visible);
         return this;

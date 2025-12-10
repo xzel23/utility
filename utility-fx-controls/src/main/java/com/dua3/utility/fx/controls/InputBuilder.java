@@ -77,6 +77,54 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
+     * Sets the preferred width.
+     *
+     * @param value the preferred width value
+     * @return the current builder instance of type {@code B}, to allow method chaining
+     */
+    B prefWidth(double value);
+
+    /**
+     * Sets the preferred height.
+     *
+     * @param value the preferred height value in pixels
+     * @return the current builder instance of type {@code B}, to allow method chaining
+     */
+    B prefHeight(double value);
+
+    /**
+     * Sets the minimum width.
+     *
+     * @param value the minimum width value to be set
+     * @return the current builder instance of type {@code B}, to allow method chaining
+     */
+    B minWidth(double value);
+
+    /**
+     * Sets the minimum height.
+     *
+     * @param value the minimum height value to set
+     * @return the current builder instance of type {@code B}, to allow method chaining
+     */
+    B minHeight(double value);
+
+    /**
+     * Sets the maximum width.
+     *
+     * @param value the maximum width to be set
+     * @return the current builder instance of type {@code B}, to allow method chaining
+     */
+    B maxWidth(double value);
+
+    /**
+     * Sets the maximum height.
+     *
+     * @param value the maximum height value to set
+     * @return the current builder instance of type {@code B}, to allow method chaining
+     */
+    B maxHeight(double value);
+
+    /**
      * Sets the marker symbols.
      *
      * @param markerSymbols the MarkerSymbols instance representing the symbols to be assigned

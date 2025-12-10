@@ -56,6 +56,42 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
+    public InputDialogPaneBuilder minWidth(double value) {
+        pb.minWidth(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogPaneBuilder minHeight(double value) {
+        pb.minHeight(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogPaneBuilder maxWidth(double value) {
+        pb.maxWidth(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogPaneBuilder maxHeight(double value) {
+        pb.maxHeight(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogPaneBuilder prefWidth(double value) {
+        pb.prefWidth(value);
+        return this;
+    }
+
+    @Override
+    public InputDialogPaneBuilder prefHeight(double value) {
+        pb.prefHeight(value);
+        return this;
+    }
+
+    @Override
     public InputDialogPaneBuilder markerSymbols(MarkerSymbols markerSymbols) {
         pb.markerSymbols(markerSymbols);
         return self();

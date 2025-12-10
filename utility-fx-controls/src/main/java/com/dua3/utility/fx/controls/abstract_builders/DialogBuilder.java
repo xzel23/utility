@@ -27,6 +27,7 @@ import javafx.stage.Window;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.DoubleConsumer;
 
 /**
  * Abstract class for building dialog boxes.
@@ -91,8 +92,14 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
         return build().showAndWait();
     }
 
+    private void setIfConfigured(double value, DoubleConsumer setter) {
+        if (value > 0) {
+            setter.accept(value);
+        }
+    }
+
     /**
-     * Create Dialog instance.
+     * Create a new Dialog instance.
      *
      * @return Dialog instance
      */

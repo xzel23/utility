@@ -49,6 +49,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -84,6 +85,12 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     private int columns = 1;
     private MarkerSymbols markerSymbols;
     private double markerWidth;
+    private double prefWidth = -1;
+    private double prefHeight = -1;
+    private double minWidth = -1;
+    private double minHeight = -1;
+    private double maxWidth = -1;
+    private double maxHeight = -1;
 
     /**
      * Creates a new {@code InputGridBuilder} instance.
@@ -113,6 +120,42 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     @Override
     public GridBuilder markerSymbols(MarkerSymbols markerSymbols) {
         this.markerSymbols = markerSymbols;
+        return this;
+    }
+
+    @Override
+    public GridBuilder prefWidth(double value) {
+        this.prefWidth = value;
+        return this;
+    }
+
+    @Override
+    public GridBuilder prefHeight(double value) {
+        this.prefHeight = value;
+        return this;
+    }
+
+    @Override
+    public GridBuilder minWidth(double value) {
+        this.minWidth = value;
+        return this;
+    }
+
+    @Override
+    public GridBuilder minHeight(double value) {
+        this.minHeight = value;
+        return this;
+    }
+
+    @Override
+    public GridBuilder maxWidth(double value) {
+        this.maxWidth = value;
+        return this;
+    }
+
+    @Override
+    public GridBuilder maxHeight(double value) {
+        this.maxHeight = value;
         return this;
     }
 
@@ -321,10 +364,24 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
         Grid grid = new Grid(markerSymbols);
 
+        setIfConfigured(minWidth, grid::setMinWidth);
+        setIfConfigured(minHeight, grid::setMinHeight);
+        setIfConfigured(maxWidth, grid::setMaxWidth);
+        setIfConfigured(maxHeight, grid::setMaxHeight);
+        setIfConfigured(prefWidth, grid::setPrefWidth);
+        setIfConfigured(prefHeight, grid::setPrefHeight);
+
         grid.setContent(data, columns);
+
         grid.init();
 
         return grid;
+    }
+
+    private void setIfConfigured(double value, DoubleConsumer setter) {
+        if (value > 0) {
+            setter.accept(value);
+        }
     }
 
     private static class ControlWrapper implements InputControl<Void> {
