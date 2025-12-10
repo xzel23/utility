@@ -313,7 +313,7 @@ public interface InputControl<T> {
     static <T> SimpleInputControl<ComboBoxEx<T>, T> comboBoxExInput(
             Collection<T> choices,
             Supplier<? extends @Nullable T> dflt,
-            @Nullable UnaryOperator<T> edit,
+            @Nullable Function<T, @Nullable T> edit,
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<@Nullable T, String> format,

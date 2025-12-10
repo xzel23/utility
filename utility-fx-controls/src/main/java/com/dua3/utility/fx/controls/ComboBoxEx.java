@@ -61,7 +61,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
      */
     @SafeVarargs
     public ComboBoxEx(
-            @Nullable UnaryOperator<T> edit,
+            @Nullable Function<T, @Nullable T> edit,
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Supplier<? extends @Nullable T> dflt,

@@ -164,7 +164,7 @@ public class FxDialogSample extends Application {
                         .inputComboBoxEx(
                                 "listEx",
                                 "edit items and choose one",
-                                s -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Edit item").defaultValue("%s", Objects.requireNonNullElse(s, "")).build().showAndWait().orElse(null),
+                                s -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Edit item").defaultValue("%s", s).build().showAndWait().orElse(null),
                                 () -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Add item").build().showAndWait().orElse(null),
                                 (cb, item) -> true,
                                 Objects::toString,
