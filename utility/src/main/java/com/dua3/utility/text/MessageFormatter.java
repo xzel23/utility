@@ -7,6 +7,8 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The {@code MessageFormatter} interface provides methods to format messages
@@ -101,6 +103,16 @@ public interface MessageFormatter {
      */
     static MessageFormatterArgs args(String fmt, Object... args) {
         return new MessageFormatterArgs(fmt, args);
+    }
+
+    /**
+     * Creates a {@code MessageFormatterArgs} instance using the provided literal string.
+     *
+     * @param s the literal string to be used
+     * @return a {@code MessageFormatterArgs} instance containing the literal string
+     */
+    static MessageFormatterArgs literal(String s) {
+        return new MessageFormatterArgs("\0", s);
     }
 
     /**
@@ -210,7 +222,12 @@ public interface MessageFormatter {
 
         @Override
         public String format(String fmt, @Nullable Object... args) {
-            return String.format(locale, fmt, args);
+            if (fmt.startsWith("\0")) {
+                String delimiter = fmt.substring(1);
+                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(delimiter));
+            } else {
+                return String.format(locale, fmt, args);
+            }
         }
 
         @Override
@@ -241,7 +258,12 @@ public interface MessageFormatter {
 
         @Override
         public String format(String fmt, @Nullable Object... args) {
-            return MessageFormat.format(fmt, args);
+            if (fmt.startsWith("\0")) {
+                String delimiter = fmt.substring(1);
+                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(delimiter));
+            } else {
+                return MessageFormat.format(fmt, args);
+            }
         }
 
         @Override
@@ -265,7 +287,12 @@ public interface MessageFormatter {
     record MessageFormatterI18n(I18N i18n) implements MessageFormatter {
         @Override
         public String format(String key, @Nullable Object... args) {
-            return i18n.format(key, args);
+            if (key.startsWith("\0")) {
+                String delimiter = key.substring(1);
+                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(delimiter));
+            } else {
+                return i18n.format(key, args);
+            }
         }
 
         @Override

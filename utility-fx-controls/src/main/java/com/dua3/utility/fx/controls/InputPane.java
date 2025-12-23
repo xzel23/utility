@@ -41,14 +41,33 @@ public class InputPane extends BorderPane implements Supplier<Map<String, Object
         return grid.get();
     }
 
+    /**
+     * Initializes the associated {@code Grid} instance contained in this {@code InputPane}.
+     * <p>
+     * This method delegates to {@link Grid#init()} to perform the setup process for
+     * the grid. It clears existing input controls, sets up new controls and layouts
+     * them within the grid, initializes their validation bindings, and configures
+     * the overall state of the grid.
+     */
     public void init() {
         grid.init();
     }
 
+    /**
+     * Sets the header text displayed at the top of the pane.
+     *
+     * @param s the text to be displayed as the header
+     */
     public void setHeaderText(String s) {
         setTop(new Label(s));
     }
 
+    /**
+     * Provides a read-only property that indicates the validation state of the input pane.
+     * The property reflects whether the data entered in the contained grid layout is valid.
+     *
+     * @return a {@code ReadOnlyBooleanProperty} representing the current validation state
+     */
     public ReadOnlyBooleanProperty validProperty() {
         return valid;
     }

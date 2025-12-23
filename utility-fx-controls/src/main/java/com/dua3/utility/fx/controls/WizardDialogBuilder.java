@@ -69,31 +69,67 @@ public class WizardDialogBuilder {
         return this;
     }
 
+    /**
+     * Sets the preferred width of the wizard dialog being built.
+     *
+     * @param value the preferred width value to set, in pixels
+     * @return the current instance of {@code WizardDialogBuilder}, allowing method chaining
+     */
     public WizardDialogBuilder prefWidth(double value) {
         this.prefWidth = value;
         return this;
     }
 
+    /**
+     * Sets the preferred height for the wizard dialog being built.
+     *
+     * @param value the preferred height value in pixels
+     * @return The current instance of {@code WizardDialogBuilder}, allowing method chaining
+     */
     public WizardDialogBuilder prefHeight(double value) {
         this.prefHeight = value;
         return this;
     }
 
+    /**
+     * Sets the minimum width for the wizard dialog being built.
+     *
+     * @param value the minimum width to be applied to the wizard dialog
+     * @return The current instance of {@code WizardDialogBuilder}, allowing method chaining
+     */
     public WizardDialogBuilder minWidth(double value) {
         this.minWidth = value;
         return this;
     }
 
+    /**
+     * Sets the minimum height for the wizard dialog being built.
+     *
+     * @param value the minimum height of the dialog, specified as a double
+     * @return the current instance of {@code WizardDialogBuilder}, for method chaining
+     */
     public WizardDialogBuilder minHeight(double value) {
         this.minHeight = value;
         return this;
     }
 
+    /**
+     * Sets the maximum width for the wizard dialog being built.
+     *
+     * @param value the maximum width of the wizard dialog in pixels
+     * @return the current instance of {@code WizardDialogBuilder}, allowing method chaining
+     */
     public WizardDialogBuilder maxWidth(double value) {
         this.maxWidth = value;
         return this;
     }
 
+    /**
+     * Sets the maximum height for the wizard dialog being built.
+     *
+     * @param value the maximum height value to be set, specified as a double.
+     * @return The current instance of {@code WizardDialogBuilder}, allowing method chaining.
+     */
     public WizardDialogBuilder maxHeight(double value) {
         this.maxHeight = value;
         return this;

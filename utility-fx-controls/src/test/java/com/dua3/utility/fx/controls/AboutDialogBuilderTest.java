@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
@@ -132,7 +133,7 @@ class AboutDialogBuilderTest extends FxTestBase {
     void testMail() throws Exception {
         // The dialog content is actually a StackPane, not a VBox as assumed
         runOnFxThreadAndWait(() -> {
-            String testMail = "test@example.com";
+            URI testMail = URI.create("mailto:test@example.com");
             AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             builder.mail(testMail);
             Dialog<Void> dialog = builder.build();
@@ -157,9 +158,9 @@ class AboutDialogBuilderTest extends FxTestBase {
         // The dialog content is actually a StackPane, not a VBox as assumed
         runOnFxThreadAndWait(() -> {
             String testMailText = "Contact Us";
-            String testMailUri = "mailto:test@example.com";
+            URI testMailUri = URI.create("mailto:test@example.com");
             AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
-            builder.mail(testMailText, testMailUri);
+            builder.mail(testMailUri, testMailText);
             Dialog<Void> dialog = builder.build();
 
             DialogPane dialogPane = dialog.getDialogPane();

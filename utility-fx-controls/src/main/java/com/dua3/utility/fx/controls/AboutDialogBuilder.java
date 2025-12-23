@@ -58,7 +58,7 @@ public class AboutDialogBuilder {
     private String copyright = "";
     private String version = "";
     private String mailText = "";
-    private String mailAddress = "";
+    private @Nullable URI mailTo = null;
     private String licenseNote = "";
     private @Nullable Runnable showLicenseDetails;
 
@@ -74,6 +74,10 @@ public class AboutDialogBuilder {
     AboutDialogBuilder(@Nullable Window parentWindow, MessageFormatter messageFormatter) {
         this.parentWindow = parentWindow;
         this.messageFormatter = messageFormatter;
+    }
+
+    private String format(MessageFormatter.MessageFormatterArgs mfargs) {
+        return format(mfargs.fmt(), mfargs.args());
     }
 
     private String format(String fmt, @Nullable Object... args) {
@@ -153,6 +157,17 @@ public class AboutDialogBuilder {
     }
 
     /**
+     * Sets the application name by formatting the provided arguments.
+     *
+     * @param args the arguments to be formatted into the application name
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder applicationName(MessageFormatter.MessageFormatterArgs args) {
+        this.applicationName = format(args);
+        return this;
+    }
+
+    /**
      * Sets the version information for the AboutDialog.
      *
      * @param fmt  the format string for the version information
@@ -161,6 +176,17 @@ public class AboutDialogBuilder {
      */
     public AboutDialogBuilder version(String fmt, Object... args) {
         this.version = format(fmt, args);
+        return this;
+    }
+
+    /**
+     * Sets the version information for the AboutDialog.
+     *
+     * @param args the arguments to be formatted into the version string
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder version(MessageFormatter.MessageFormatterArgs args) {
+        this.version = format(args);
         return this;
     }
 
@@ -177,14 +203,41 @@ public class AboutDialogBuilder {
     }
 
     /**
+     * Sets the copyright information for the AboutDialog.
+     *
+     * @param args the arguments to be formatted into the copyright text
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder copyright(MessageFormatter.MessageFormatterArgs args) {
+        this.copyright = format(args);
+        return this;
+    }
+
+    /**
+     * Sets the email address for the AboutDialog by creating a mailto link.
+     *
+     * @param address the email address to be used in the mailto link
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder mail(String address) {
+        URI mailtoUri = URI.create("mailto:" + address);
+        this.mailText = address;
+        this.mailTo = mailtoUri;
+        return this;
+    }
+
+    /**
      * Sets the email address for the About dialog.
      *
      * @param address the email address to be displayed and used in the mailto link
      * @return the current instance of AboutDialogBuilder for method chaining
      */
-    public AboutDialogBuilder mail(String address) {
-        this.mailText = address;
-        this.mailAddress = "mailto:" + address;
+    public AboutDialogBuilder mail(URI address) {
+        if (!address.getScheme().equalsIgnoreCase("mailto")) {
+            LOG.warn("invalid mailto URI, ignnoring: {}", address);
+        }
+        this.mailText = address.getSchemeSpecificPart();
+        this.mailTo = address;
         return this;
     }
 
@@ -197,9 +250,23 @@ public class AboutDialogBuilder {
      * @param args the arguments referenced by the format specifiers in the format string
      * @return the current instance of AboutDialogBuilder for method chaining
      */
-    public AboutDialogBuilder mail(String mailtoUri, String fmt, Object... args) {
+    public AboutDialogBuilder mail(URI mailtoUri, String fmt, Object... args) {
         this.mailText = format(fmt, args);
-        this.mailAddress = mailtoUri;
+        this.mailTo = mailtoUri;
+        return this;
+    }
+
+    /**
+     * Sets the email address and corresponding email content for the AboutDialog.
+     * The email content is generated using the specified format string and arguments.
+     *
+     * @param mailtoUri the email address to be displayed and used in the mailto link
+     * @param args the arguments to be formatted into mail display text
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder mail(URI mailtoUri, MessageFormatter.MessageFormatterArgs args) {
+        this.mailText = format(args);
+        this.mailTo = mailtoUri;
         return this;
     }
 
@@ -303,14 +370,14 @@ public class AboutDialogBuilder {
         vBox.setAlignment(Pos.CENTER);
 
         ObservableList<Node> children = vBox.getChildren();
-        addLabel(children, "application-name", applicationName);
-        addLabel(children, "version", version);
-        addLabel(children, "copyright", copyright);
+        addLabelLiteral(children, "application-name", applicationName);
+        addLabelLiteral(children, "version", version);
+        addLabelLiteral(children, "copyright", copyright);
 
         if (!mailText.isEmpty()) {
             Hyperlink hlMail = new Hyperlink(mailText);
             hlMail.setId("mail");
-            hlMail.setOnAction(e -> sendMailTo(mailAddress));
+            hlMail.setOnAction(e -> sendMailTo(mailTo));
             children.add(hlMail);
         }
 
@@ -383,18 +450,33 @@ public class AboutDialogBuilder {
     }
 
     /**
+     * Adds a labeled node to the specified collection if the text is not empty.
+     *
+     * @param nodes the collection of nodes to which the new label will be added
+     * @param id the identifier to assign to the label
+     * @param text the label text
+     */
+    private void addLabelLiteral(Collection<Node> nodes, String id, String text) {
+        if (!text.isEmpty()) {
+            Label label = new Label(text);
+            label.setId(id);
+            nodes.add(label);
+        }
+    }
+
+    /**
      * Opens the default mail application with the specified email address.
      * If the desktop environment does not support the MAIL action, the method does nothing.
      * Logs informational messages and warnings as appropriate when attempting to open the mail application.
      *
      * @param address the email address to open in the default mail application. This must be properly formatted as a URI.
      */
-    private static void sendMailTo(String address) {
+    private static void sendMailTo(URI address) {
         Desktop desktop = Desktop.getDesktop();
         if (desktop.isSupported(Desktop.Action.MAIL)) {
             try {
                 LOG.debug("opening mail application");
-                desktop.mail(URI.create(address));
+                desktop.mail(address);
             } catch (IOException | IllegalArgumentException e) {
                 LOG.warn("could not open mail application", e);
             }

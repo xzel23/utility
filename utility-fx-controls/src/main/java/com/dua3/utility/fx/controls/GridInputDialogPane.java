@@ -10,9 +10,22 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
+/**
+ * A custom dialog pane that contains a {@link Grid} as its main content.
+ * This class allows the grid to expand naturally within a scrollable dialog and supports content-driven resizing.
+ * It extends the {@link InputDialogPane} with a specified return type of {@code Map<String, Object>}.
+ * <p>
+ * This dialog pane is optimized for rendering within the bounds of the primary screen,
+ * ensuring that its dimensions remain adaptively constrained to 90% of the screen size.
+ */
 public class GridInputDialogPane extends InputDialogPane<Map<String, Object>> {
     private final Grid grid;
 
+    /**
+     * Constructs a new GridInputDialogPane with the specified {@link Grid} as its primary content.
+     *
+     * @param grid the {@link Grid} component to be displayed within the dialog pane.
+     */
     public GridInputDialogPane(Grid grid) {
         this.grid = grid;
 

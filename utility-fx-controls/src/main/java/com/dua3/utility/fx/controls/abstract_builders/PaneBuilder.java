@@ -32,6 +32,7 @@ public abstract class PaneBuilder<D extends Pane & Supplier<R>, B extends PaneBu
      * The constructor must be called by subclasses to initialize the base class.
      *
      * @param formatter the {@link MessageFormatter} to use
+     * @param setHeaderText the BiConsumer that sets the header text of the dialog pane
      */
     protected PaneBuilder(MessageFormatter formatter, BiConsumer<? super D, String> setHeaderText) {
         super(formatter, setHeaderText);

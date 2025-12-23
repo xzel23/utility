@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -59,7 +60,7 @@ public class FxDialogSample extends Application {
                     .applicationName("Dialog Sample")
                     .version("v 0.1")
                     .copyright("(c) 2021 Axel Howind")
-                    .mail("info@example.com")
+                    .mail(URI.create("mailto:info@example.com"))
                     .expandableContent(SystemInfo.getSystemInfo().formatted())
                     .showAndWait();
             println("About Dialog shown");
