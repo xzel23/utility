@@ -378,6 +378,7 @@ public class PemData implements Iterable<PemData.PemItem> {
      * is not a certificate or certificate chain.
      * @throws IllegalStateException if the PEM data contains an unexpected type.
      */
+    @SuppressWarnings("unchecked")
     public List<X509Certificate> asCertificateChain() throws PemException {
         if (size() == 0) {
             return Collections.emptyList();
