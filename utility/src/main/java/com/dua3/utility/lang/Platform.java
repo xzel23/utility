@@ -3,6 +3,7 @@ package com.dua3.utility.lang;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -145,8 +146,8 @@ public enum Platform {
             detected = (Boolean) imageInfoClass
                     .getMethod("inImageRuntimeCode")
                     .invoke(null);
-        } catch (Exception e) {
-            // Not running in GraalVM native image
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            // ignore
             detected = false;
         }
         IS_NATIVE_IMAGE = detected;
