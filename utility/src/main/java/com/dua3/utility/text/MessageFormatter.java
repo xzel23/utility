@@ -108,11 +108,11 @@ public interface MessageFormatter {
     /**
      * Creates a {@code MessageFormatterArgs} instance using the provided literal string.
      *
-     * @param s the literal string to be used
+     * @param obj the literal to be used, will be converted to string representation
      * @return a {@code MessageFormatterArgs} instance containing the literal string
      */
-    static MessageFormatterArgs literal(String s) {
-        return new MessageFormatterArgs("\0", s);
+    static MessageFormatterArgs literal(@Nullable Object obj) {
+        return new MessageFormatterArgs("\0", obj);
     }
 
     /**
