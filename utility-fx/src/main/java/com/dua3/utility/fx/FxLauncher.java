@@ -271,12 +271,14 @@ public final class FxLauncher {
                 "--help", "-h"
         );
 
-        agp.addFlag(
-                "Runtime Checks",
-                "Enable runtime checks.",
-                v -> enableAssertions = v,
-                "--enable-assertions", "-ea"
-        );
+        if (!Platform.isNativeImage()) {
+            agp.addFlag(
+                    "Runtime Checks",
+                    "Enable runtime checks.",
+                    v -> enableAssertions = v,
+                    "--enable-assertions", "-ea"
+            );
+        }
 
         if (LOGUTIL_INITIALISER != null) {
             Consumer<LogLevel> setLogLevel = level -> logLevel = level;
@@ -361,8 +363,7 @@ public final class FxLauncher {
         int rc;
         try {
             ClassLoader loader = ClassLoader.getSystemClassLoader();
-
-            if (enableAssertions) {
+            if (enableAssertions && !Platform.isNativeImage()) {
                 log.debug("enabling assertions");
                 loader.setDefaultAssertionStatus(true);
             }

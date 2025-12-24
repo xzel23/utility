@@ -128,6 +128,31 @@ public enum Platform {
     }
 
     /**
+     * Checks if the application is running as a GraalVM native image.
+     *
+     * @return true if the application is running in a GraalVM native image, false otherwise
+     */
+    public static boolean isNativeImage() {
+        return IS_NATIVE_IMAGE;
+    }
+
+    private static final boolean IS_NATIVE_IMAGE;
+
+    static {
+        boolean detected;
+        try {
+            Class<?> imageInfoClass = Class.forName("org.graalvm.nativeimage.ImageInfo");
+            detected = (Boolean) imageInfoClass
+                    .getMethod("inImageRuntimeCode")
+                    .invoke(null);
+        } catch (Exception e) {
+            // Not running in GraalVM native image
+            detected = false;
+        }
+        IS_NATIVE_IMAGE = detected;
+    }
+
+    /**
      * Check if argument needs to be quoted before passing to {@link ProcessBuilder}.
      * <p>
      * The default version of this method returns false and is overridden to return true on Windows.
