@@ -244,7 +244,7 @@ could not be loaded.
 - added `Platform.isNativeImage()`
 - added overloads taking `MessageFormatterArgs` to `AboutDialogBuilder`
 - added `MessageFormatter.literal()`
-- dependency updates annd code cleanup
+- dependency updates and code cleanup
 
 ### 20.1.0
 
@@ -355,7 +355,7 @@ could not be loaded.
       The `MessageFormatter` class can be used with either the standard Java `MessageFormat` or `String.format()`
       conventions.
     - `Dialogs.information()`, `Dialogs.warning()` etc. have been replaced by `Dialogs.alert()` which takes a parameter
-      of type Àlert.AlertType`.
+      of type `Alert.AlertType`.
     - Added new class `InputValidatorFactory` to make input validation implementation less verbose.
     - Added error message tooltips for input fields with invalid data.
     - Fixed input dialog validation not detecting invalid data when the user clicked 'OK' or 'Next'
