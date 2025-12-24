@@ -239,6 +239,13 @@ could not be loaded.
 
 ## Changes
 
+### 20.2.0
+
+- added `Platform.isNativeImage()`
+- added overloads taking `MessageFormatterArgs` to `AboutDialogBuilder`
+- added `MessageFormatter.literal()`
+- dependency updates annd code cleanup
+
 ### 20.1.0
 
 #### Added
