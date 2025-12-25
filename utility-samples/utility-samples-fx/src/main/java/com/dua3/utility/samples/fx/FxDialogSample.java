@@ -22,6 +22,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.net.URI;
@@ -79,77 +80,103 @@ public class FxDialogSample extends Application {
 
         // About
         container.getChildren().add(createButton("About", () -> {
-            Dialogs.about(primaryStage)
+            javafx.scene.control.Dialog<Void> dlg = Dialogs.about(primaryStage)
                     .title("About…")
                     .applicationName("Dialog Sample")
                     .version("v 0.1")
                     .copyright("(c) 2021 Axel Howind")
                     .mail(URI.create("mailto:info@example.com"))
                     .expandableContent(SystemInfo.getSystemInfo().formatted())
-                    .showAndWait();
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
             println("About Dialog shown");
         }));
 
         // Confirmation
-        container.getChildren().add(createButton("Confirmation", () ->
-                Dialogs.alert(primaryStage, AlertType.CONFIRMATION, MessageFormatter.standard())
-                        .title("Elevator cleaning")
-                        .header("Good for you!")
-                        .text("You've decided to clean the elevator.")
-                        .showAndWait()
-                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
-        ));
+        container.getChildren().add(createButton("Confirmation", () -> {
+            javafx.scene.control.Dialog<javafx.scene.control.ButtonType> dlg = Dialogs.alert(primaryStage, AlertType.CONFIRMATION, MessageFormatter.standard())
+                    .title("Elevator cleaning")
+                    .header("Good for you!")
+                    .text("You've decided to clean the elevator.")
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
+            dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    println(ANSWER + newVal);
+                }
+            });
+        }));
 
         // Information
         container.getChildren().add(createButton("Info", () -> {
-            Dialogs.alert(primaryStage, AlertType.INFORMATION, MessageFormatter.standard())
+            javafx.scene.control.Dialog<javafx.scene.control.ButtonType> dlg = Dialogs.alert(primaryStage, AlertType.INFORMATION, MessageFormatter.standard())
                     .title("Info")
                     .header("Elevator cleaning")
                     .text("To clean and service the electromagnetic coils in the bottom, " +
                             "it is necessary to jettison the access plate in the floor.")
-                    .showAndWait();
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
             println("Info Dialog shown");
         }));
 
         // Warning
         container.getChildren().add(createButton("Warning", () -> {
-            Dialogs.alert(primaryStage, AlertType.WARNING, MessageFormatter.standard())
+            javafx.scene.control.Dialog<javafx.scene.control.ButtonType> dlg = Dialogs.alert(primaryStage, AlertType.WARNING, MessageFormatter.standard())
                     .title("Warning")
                     .header("Attention... danger")
                     .text("Automatic charges will now blow the explosive bolts in the floor plate unit. " +
                             "The plate will disengage from the floor in 5 seconds.")
-                    .showAndWait();
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
             println("Warning Dialog shown");
         }));
 
         // Error
         container.getChildren().add(createButton("Error", () -> {
-            Dialogs.alert(primaryStage, AlertType.ERROR, MessageFormatter.standard())
+            javafx.scene.control.Dialog<javafx.scene.control.ButtonType> dlg = Dialogs.alert(primaryStage, AlertType.ERROR, MessageFormatter.standard())
                     .title("Error")
                     .header("Please leave the elevator immediately")
                     .text("5-4-3-2-1...")
-                    .showAndWait();
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
             println("Error Dialog shown");
         }));
 
         // Prompt
-        container.getChildren().add(createButton("Prompt", () ->
-                Dialogs.prompt(primaryStage, MessageFormatter.standard())
-                        .title("Prompt")
-                        .header("This is a prompt dialog.")
-                        .showAndWait()
-                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
-        ));
+        container.getChildren().add(createButton("Prompt", () -> {
+            javafx.scene.control.Dialog<String> dlg = Dialogs.prompt(primaryStage, MessageFormatter.standard())
+                    .title("Prompt")
+                    .header("This is a prompt dialog.")
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
+            dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    println(ANSWER + newVal);
+                }
+            });
+        }));
 
         // Password
-        container.getChildren().add(createButton("Password", () ->
-                Dialogs.prompt(primaryStage, MessageFormatter.standard())
-                        .mode(PromptMode.PASSWORD)
-                        .title("Password Prompt")
-                        .header("This is a password prompt dialog.")
-                        .showAndWait()
-                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
-        ));
+        container.getChildren().add(createButton("Password", () -> {
+            javafx.scene.control.Dialog<String> dlg = Dialogs.prompt(primaryStage, MessageFormatter.standard())
+                    .mode(PromptMode.PASSWORD)
+                    .title("Password Prompt")
+                    .header("This is a password prompt dialog.")
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
+            dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    println(ANSWER + newVal);
+                }
+            });
+        }));
 
         // File selection
         container.getChildren().add(createButton("File selection", () ->
@@ -166,73 +193,91 @@ public class FxDialogSample extends Application {
         ));
 
         // Input
-        container.getChildren().add(createButton("Input", () ->
-                Dialogs.input(primaryStage, MessageFormatter.standard())
-                        .title("Input")
-                        .header("This is an input dialog.")
-                        .text("This is some text without label.")
-                        .labeledText("static text", "This is some labeled text.")
-                        .inputConstant("readonly", "readonly", "This is the value of the readonly field.")
-                        .inputConstant("readonly2", "readonly date", LocalDate::now, LocalDate.class)
-                        .inputString("txt", "enter text", () -> "dflt")
-                        .inputText("longtext", "long text", () -> "")
-                        .inputHidden("secret1", "A")
-                        .inputHidden("secret2", "B")
-                        .inputInteger("integer", "enter number", () -> 0L)
-                        .inputInteger("integer from 4 to 7", "enter number [4-7]", () -> null,
-                                i -> i != null && i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i + " is not between 4 and 7"))
-                        .inputDecimal("decimal", "decimal", () -> null)
-                        .inputComboBox("list", "choose one", () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
-                        .inputCheckBox("bool", "Yes or No:", () -> false, "yes")
-                        .inputFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(FILTER_ALL_FILES))
-                        .inputFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(FILTER_ALL_FILES))
-                        .inputComboBoxEx(
-                                "listEx",
-                                "edit items and choose one",
-                                s -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Edit item").defaultValue("%s", s).build().showAndWait().orElse(null),
-                                () -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Add item").build().showAndWait().orElse(null),
-                                (cb, item) -> true,
-                                Objects::toString,
-                                () -> null,
-                                String.class,
-                                List.of("1", "2", "3"),
-                                v -> v != null ? Optional.empty() : Optional.of("Select an item or enter a new one"))
-                        .showAndWait()
-                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
-        ));
+        container.getChildren().add(createButton("Input", () -> {
+            var dlg = Dialogs.input(primaryStage, MessageFormatter.standard())
+                    .title("Input")
+                    .header("This is an input dialog.")
+                    .text("This is some text without label.")
+                    .labeledText("static text", "This is some labeled text.")
+                    .inputConstant("readonly", "readonly", "This is the value of the readonly field.")
+                    .inputConstant("readonly2", "readonly date", LocalDate::now, LocalDate.class)
+                    .inputString("txt", "enter text", () -> "dflt")
+                    .inputText("longtext", "long text", () -> "")
+                    .inputHidden("secret1", "A")
+                    .inputHidden("secret2", "B")
+                    .inputInteger("integer", "enter number", () -> 0L)
+                    .inputInteger("integer from 4 to 7", "enter number [4-7]", () -> null,
+                            i -> i != null && i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i + " is not between 4 and 7"))
+                    .inputDecimal("decimal", "decimal", () -> null)
+                    .inputComboBox("list", "choose one", () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
+                    .inputCheckBox("bool", "Yes or No:", () -> false, "yes")
+                    .inputFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(FILTER_ALL_FILES))
+                    .inputFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(FILTER_ALL_FILES))
+                    .inputComboBoxEx(
+                            "listEx",
+                            "edit items and choose one",
+                            s -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Edit item").defaultValue("%s", s).build().showAndWait().orElse(null),
+                            () -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title("Add item").build().showAndWait().orElse(null),
+                            (cb, item) -> true,
+                            Objects::toString,
+                            () -> null,
+                            String.class,
+                            List.of("1", "2", "3"),
+                            v -> v != null ? Optional.empty() : Optional.of("Select an item or enter a new one"))
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
+            dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    println(ANSWER + newVal);
+                }
+            });
+        }));
 
         // Options
-        container.getChildren().add(createButton("Options", () ->
-                Dialogs.options(primaryStage, MessageFormatter.standard())
-                        .options(CsvIo.getOptions())
-                        .title("Options")
-                        .header("This is an options dialog.")
-                        .showAndWait()
-                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
-        ));
+        container.getChildren().add(createButton("Options", () -> {
+            var dlg = Dialogs.options(primaryStage, MessageFormatter.standard())
+                    .options(CsvIo.getOptions())
+                    .title("Options")
+                    .header("This is an options dialog.")
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
+            dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    println(ANSWER + newVal);
+                }
+            });
+        }));
 
         // Wizard
-        container.getChildren().add(createButton("Wizard", () ->
-                Dialogs.wizard(primaryStage)
-                        .title("Database Connection Wizard")
-                        .page("start",
-                                Dialogs.alertPane(AlertType.INFORMATION, MessageFormatter.standard())
-                                        .header("Create new database connection")
-                                        .text("""
-                                                This wizard helps you to define a new database connection.
-                                                
-                                                You will need the following information:
-                                                - the vendor or manufacturer name of your database system
-                                                - the server name and port
-                                                """))
-                        .page("dbms",
-                                Dialogs.inputDialogPane(MessageFormatter.standard())
-                                        .header("Choose your Database from the list below.")
-                                        .inputRadioList("rdbms", "Database", () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
-                        )
-                        .showAndWait()
-                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
-        ));
+        container.getChildren().add(createButton("Wizard", () -> {
+            var dlg = Dialogs.wizard(primaryStage)
+                    .title("Database Connection Wizard")
+                    .page("start",
+                            Dialogs.alertPane(AlertType.INFORMATION, MessageFormatter.standard())
+                                    .header("Create new database connection")
+                                    .text("""
+                                            This wizard helps you to define a new database connection.
+                                            
+                                            You will need the following information:
+                                            - the vendor or manufacturer name of your database system
+                                            - the server name and port
+                                            """))
+                    .page("dbms",
+                            Dialogs.inputDialogPane(MessageFormatter.standard())
+                                    .header("Choose your Database from the list below.")
+                                    .inputRadioList("rdbms", "Database", () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
+                    )
+                    .build();
+            dlg.initModality(Modality.NONE);
+            dlg.show();
+            dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    println(ANSWER + newVal);
+                }
+            });
+        }));
 
         StackPane root = new StackPane(container);
 
