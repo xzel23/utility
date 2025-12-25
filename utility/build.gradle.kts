@@ -1,9 +1,5 @@
 project.description = "Java utilities (core)"
 
-jdk {
-    version = 25
-}
-
 // Define Java 25 source set
 sourceSets {
     create("java25") {
