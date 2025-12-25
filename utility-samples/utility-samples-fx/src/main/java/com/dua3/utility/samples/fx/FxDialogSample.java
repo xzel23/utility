@@ -1,5 +1,11 @@
 package com.dua3.utility.samples.fx;
 
+import atlantafx.base.theme.PrimerDark;
+import atlantafx.base.theme.PrimerLight;
+import atlantafx.base.theme.Theme;
+import com.dua3.utility.application.ApplicationUtil;
+import com.dua3.utility.application.UiMode;
+import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.fx.controls.PromptMode;
 import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.fx.controls.Dialogs;
@@ -7,9 +13,11 @@ import com.dua3.utility.fx.controls.FileDialogMode;
 import com.dua3.utility.lang.SystemInfo;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -20,12 +28,20 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.prefs.Preferences;
 
 /**
  * Sample Application.
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class FxDialogSample extends Application {
+
+    static {
+        ApplicationUtil.initApplicationPreferences(Preferences.userNodeForPackage(FxDialogSample.class));
+        ApplicationUtil.addDarkModeListener(FxDialogSample::setDarkMode);
+        ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT);
+    }
 
     private static final String ANSWER = "Answer: ";
     private static final String NO_ANSWER = "No answer";
@@ -52,6 +68,13 @@ public class FxDialogSample extends Application {
     @Override
     public void start(Stage primaryStage) {
         VBox container = new VBox();
+
+        // UiMode
+        ComboBox<UiMode> comboUiMode = new ComboBox<>(FXCollections.observableArrayList(UiMode.values()));
+        comboUiMode.setValue(ApplicationUtil.getUiMode());
+        comboUiMode.valueProperty().addListener((obs, oldVal, newVal) -> ApplicationUtil.setUiMode(newVal));
+        comboUiMode.setMaxWidth(Double.MAX_VALUE);
+        container.getChildren().add(comboUiMode);
 
         // About
         container.getChildren().add(createButton("About", () -> {
@@ -222,7 +245,15 @@ public class FxDialogSample extends Application {
     private static Button createButton(String text, Runnable action) {
         Button btn = new Button(text);
         btn.setOnAction(e -> action.run());
-        btn.setPrefWidth(120.0);
+        btn.setMaxWidth(Double.MAX_VALUE);
         return btn;
     }
+
+    private static void setDarkMode(boolean enabled) {
+        Supplier<Theme> themeSupplier = enabled ? PrimerDark::new : PrimerLight::new;
+        PlatformHelper.runAndWait(() -> {
+            setUserAgentStylesheet(themeSupplier.get().getUserAgentStylesheet());
+        });
+    }
+
 }
