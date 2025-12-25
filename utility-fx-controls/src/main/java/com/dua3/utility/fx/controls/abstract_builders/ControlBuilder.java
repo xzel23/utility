@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * @param <C>  the type of control to be built
  * @param <B> the type of the concrete builder
  */
-public abstract class ControlBuilder<C extends Control, B extends ControlBuilder<C, B>> extends NodeBuilder<C, B> {
+public abstract class ControlBuilder<C extends Control, B extends ControlBuilder<C, B>> extends RegionBuilder<C, B> {
     private @Nullable ObservableValue<String> tooltip;
 
     /**

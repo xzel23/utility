@@ -6,6 +6,7 @@ import atlantafx.base.theme.Theme;
 import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.UiMode;
 import com.dua3.utility.fx.PlatformHelper;
+import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.PromptMode;
 import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.fx.controls.Dialogs;
@@ -243,10 +244,7 @@ public class FxDialogSample extends Application {
     }
 
     private static Button createButton(String text, Runnable action) {
-        Button btn = new Button(text);
-        btn.setOnAction(e -> action.run());
-        btn.setMaxWidth(Double.MAX_VALUE);
-        return btn;
+        return Controls.button().text(text).action(action).maxWidth(Double.MAX_VALUE).build();
     }
 
     private static void setDarkMode(boolean enabled) {
