@@ -4,11 +4,6 @@ plugins {
     id("application")
 }
 
-jdk {
-    version = 25
-    javaFxBundled = true
-}
-
 java {
     withJavadocJar()
     withSourcesJar()

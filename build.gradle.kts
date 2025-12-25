@@ -31,11 +31,6 @@ plugins {
     alias(libs.plugins.jreleaser)
 }
 
-jdk {
-    version = 25
-    javaFxBundled = true
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // Meta data object
 /////////////////////////////////////////////////////////////////////////////
@@ -225,6 +220,12 @@ subprojects {
         apply(plugin = rootProject.libs.plugins.cabe.get().pluginId)
         apply(plugin = rootProject.libs.plugins.forbiddenapis.get().pluginId)
         apply(plugin = rootProject.libs.plugins.jmh.get().pluginId)
+    }
+
+    jdk {
+        version = 25
+        javaFxBundled = true
+        nativeImageCapable = false
     }
 
     // Java configuration for non-BOM projects

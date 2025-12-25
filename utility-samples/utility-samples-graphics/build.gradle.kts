@@ -4,11 +4,6 @@ plugins {
     id("application")
 }
 
-jdk {
-    version = 25
-    javaFxBundled = true
-}
-
 application {
     mainClass.set("com.dua3.utility.samples.graphics.FxGraphicsSample")
 }

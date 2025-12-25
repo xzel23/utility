@@ -169,6 +169,12 @@ tasks.named("testJava25") {
     dependsOn(tasks.jar)
 }
 
+subprojects {
+    dependencies {
+        implementation(project(":utility"))
+    }
+}
+
 // Disable forbiddenapis for some source sets
 tasks.matching {
     listOf(
