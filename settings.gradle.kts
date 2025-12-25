@@ -40,13 +40,13 @@ dependencyResolutionManagement {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("jdk", "com.dua3.gradle.jdkprovider").version("0.3.0")
+            plugin("jdk", "com.dua3.gradle.jdkprovider").version("0.3.1")
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.10")
-            plugin("sonar", "org.sonarqube").version("7.2.0.6526")
+            plugin("sonar", "org.sonarqube").version("7.2.2.6593")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.21.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.4.7")
+            plugin("spotbugs", "com.github.spotbugs").version("6.4.8")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("versions", "com.github.ben-manes.versions").version("0.53.0")
 
@@ -58,7 +58,7 @@ dependencyResolutionManagement {
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
             version("junit-bom", "6.0.1")
-            version("log4j-bom", "2.25.2")
+            version("log4j-bom", "2.25.3")
             version("miglayout", "11.4.2")
             version("slf4j", "2.0.17")
             version("spotbugs", "4.9.8")
