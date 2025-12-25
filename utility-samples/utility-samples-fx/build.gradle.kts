@@ -2,32 +2,16 @@ project.description = "Java utilities (samples - JavaFX Log Pane)"
 
 plugins {
     id("application")
-    alias(libs.plugins.javafx) apply false
 }
 
-val isWindowsArm = System.getProperty("os.name").startsWith("Windows", ignoreCase = true) &&
-        (System.getProperty("os.arch").equals("aarch64", ignoreCase = true) || System.getProperty("os.arch").equals("arm64", ignoreCase = true))
-val useJavaFxPlugin = !isWindowsArm
-
-if (useJavaFxPlugin) {
-    apply(plugin = libs.plugins.javafx.get().pluginId)
+jdk {
+    version = 25
+    javaFxBundled = true
 }
 
 java {
-    toolchain {
-        // Java 25 is needed for dark mode detection
-        languageVersion.set(JavaLanguageVersion.of(25))
-    }
-
     withJavadocJar()
     withSourcesJar()
-}
-
-if (useJavaFxPlugin) {
-    extensions.configure<org.openjfx.gradle.JavaFXOptions>("javafx") {
-        version = libs.versions.javafx.get()
-        modules = listOf("javafx.base", "javafx.controls", "javafx.graphics")
-    }
 }
 
 dependencies {
@@ -48,29 +32,15 @@ dependencies {
     runtimeOnly(rootProject.libs.ikonli.javafx)
 }
 
-fun createJavaFxRunTask(taskName: String, mainClassName: String, description: String) {
+fun createJavaFxRunTask(taskName: String, mainClassName: String, taskDescription: String) {
     tasks.register<JavaExec>(taskName) {
-        this.description = description
+        description = taskDescription
         group = ApplicationPlugin.APPLICATION_GROUP
         classpath = sourceSets["main"].runtimeClasspath
         mainClass.set(mainClassName)
         enableAssertions = true
-
-        doFirst {
-            val javaFxModules = listOf("javafx.base", "javafx.controls", "javafx.graphics")
-            jvmArgs = if (useJavaFxPlugin) {
-                listOf(
-                    "--module-path", classpath.asPath,
-                    "--add-modules", javaFxModules.joinToString(",")
-                )
-            } else {
-                // When the plugin is not used (e.g., Windows ARM with JDK-provided JavaFX),
-                // rely on JDK modules and only add the modules without setting a custom module-path.
-                listOf(
-                    "--add-modules", javaFxModules.joinToString(",")
-                )
-            }
-        }
+        println(jvmArgs)
+        jvmArgs("--enable-native-access=javafx.graphics")
     }
 }
 

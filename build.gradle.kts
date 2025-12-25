@@ -20,6 +20,7 @@ plugins {
     id("signing")
     id("idea")
     id("jacoco-report-aggregation")
+    alias(libs.plugins.jdk)
     alias(libs.plugins.versions)
     alias(libs.plugins.test.logger)
     alias(libs.plugins.spotbugs)
@@ -206,6 +207,7 @@ subprojects {
     apply(plugin = "version-catalog")
     apply(plugin = "signing")
     apply(plugin = "idea")
+    apply(plugin = rootProject.libs.plugins.jdk.get().pluginId)
     apply(plugin = rootProject.libs.plugins.versions.get().pluginId)
     apply(plugin = rootProject.libs.plugins.test.logger.get().pluginId)
 
@@ -223,13 +225,6 @@ subprojects {
     // Java configuration for non-BOM projects
     if (!project.name.endsWith("-bom")) {
         java {
-            toolchain {
-                languageVersion.set(JavaLanguageVersion.of(21))
-                vendor.set(JvmVendorSpec.ADOPTIUM)
-            }
-            targetCompatibility = JavaVersion.VERSION_21
-            sourceCompatibility = targetCompatibility
-
             withJavadocJar()
             withSourcesJar()
         }
@@ -322,7 +317,6 @@ subprojects {
             options.encoding = "UTF-8"
             options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:-module", "-Xlint:unchecked"))
             options.javaModuleVersion.set(provider { project.version as String })
-            options.release.set(java.targetCompatibility.majorVersion.toInt())
         }
         tasks.compileTestJava {
             options.encoding = "UTF-8"
