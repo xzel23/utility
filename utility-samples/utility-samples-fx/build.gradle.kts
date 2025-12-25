@@ -4,6 +4,12 @@ plugins {
     id("application")
 }
 
+jdk {
+    version = 25
+    javaFxBundled = true
+    nativeImageCapable = false
+}
+
 java {
     withJavadocJar()
     withSourcesJar()
@@ -34,8 +40,11 @@ fun createJavaFxRunTask(taskName: String, mainClassName: String, taskDescription
         classpath = sourceSets["main"].runtimeClasspath
         mainClass.set(mainClassName)
         enableAssertions = true
-        println(jvmArgs)
-        jvmArgs("--enable-native-access=javafx.graphics")
+        jvmArgs(
+            "--enable-native-access=javafx.graphics",
+            "--add-opens=javafx.graphics/javafx.stage=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED"
+        )
     }
 }
 
