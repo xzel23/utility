@@ -41,9 +41,9 @@ open module com.dua3.utility.fx.icons {
     exports com.dua3.utility.fx.icons;
 
     requires org.apache.logging.log4j;
-
     requires org.jspecify;
     requires javafx.controls;
     requires javafx.graphics;
+
     uses IconProvider;
 }
