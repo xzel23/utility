@@ -29,6 +29,7 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
@@ -65,6 +66,7 @@ public class AboutDialogBuilder {
     private @Nullable URL css;
     private @Nullable Node graphic;
     private @Nullable Node expandableContent;
+    private @Nullable Modality modality;
 
     /**
      * Constructs a new AboutDialogBuilder with the specified parent window.
@@ -348,6 +350,17 @@ public class AboutDialogBuilder {
     }
 
     /**
+     * Set the modality of the dialog.
+     *
+     * @param modality the modality to set
+     * @return the current builder instance, to allow method chaining
+     */
+    public AboutDialogBuilder modality(Modality modality) {
+        this.modality = modality;
+        return this;
+    }
+
+    /**
      * Displays the dialog and waits for the user to respond before returning.
      *
      * <p>This method constructs an instance of AboutDialog using the current configuration
@@ -428,6 +441,9 @@ public class AboutDialogBuilder {
             dialogPane.setExpandableContent(expandableContent);
         }
 
+        if (modality != null) {
+            dlg.initModality(modality);
+        }
 
         return dlg;
     }

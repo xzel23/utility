@@ -80,27 +80,27 @@ public class FxDialogSample extends Application {
 
         // About
         container.getChildren().add(createButton("About", () -> {
-            javafx.scene.control.Dialog<Void> dlg = Dialogs.about(primaryStage)
+            Dialogs.about(primaryStage)
                     .title("About…")
                     .applicationName("Dialog Sample")
                     .version("v 0.1")
                     .copyright("(c) 2021 Axel Howind")
                     .mail(URI.create("mailto:info@example.com"))
                     .expandableContent(SystemInfo.getSystemInfo().formatted())
-                    .build();
-            dlg.initModality(Modality.NONE);
-            dlg.show();
+                    .modality(Modality.NONE)
+                    .build()
+                    .show();
             println("About Dialog shown");
         }));
 
         // Confirmation
         container.getChildren().add(createButton("Confirmation", () -> {
-            javafx.scene.control.Dialog<javafx.scene.control.ButtonType> dlg = Dialogs.alert(primaryStage, AlertType.CONFIRMATION, MessageFormatter.standard())
+            var dlg = Dialogs.alert(primaryStage, AlertType.CONFIRMATION, MessageFormatter.standard())
                     .title("Elevator cleaning")
                     .header("Good for you!")
                     .text("You've decided to clean the elevator.")
+                    .modality(Modality.NONE)
                     .build();
-            dlg.initModality(Modality.NONE);
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
@@ -111,49 +111,49 @@ public class FxDialogSample extends Application {
 
         // Information
         container.getChildren().add(createButton("Info", () -> {
-            javafx.scene.control.Dialog<javafx.scene.control.ButtonType> dlg = Dialogs.alert(primaryStage, AlertType.INFORMATION, MessageFormatter.standard())
+            Dialogs.alert(primaryStage, AlertType.INFORMATION, MessageFormatter.standard())
                     .title("Info")
                     .header("Elevator cleaning")
                     .text("To clean and service the electromagnetic coils in the bottom, " +
                             "it is necessary to jettison the access plate in the floor.")
-                    .build();
-            dlg.initModality(Modality.NONE);
-            dlg.show();
+                    .modality(Modality.NONE)
+                    .build()
+                    .show();
             println("Info Dialog shown");
         }));
 
         // Warning
         container.getChildren().add(createButton("Warning", () -> {
-            javafx.scene.control.Dialog<javafx.scene.control.ButtonType> dlg = Dialogs.alert(primaryStage, AlertType.WARNING, MessageFormatter.standard())
+            Dialogs.alert(primaryStage, AlertType.WARNING, MessageFormatter.standard())
                     .title("Warning")
                     .header("Attention... danger")
                     .text("Automatic charges will now blow the explosive bolts in the floor plate unit. " +
                             "The plate will disengage from the floor in 5 seconds.")
-                    .build();
-            dlg.initModality(Modality.NONE);
-            dlg.show();
+                    .modality(Modality.NONE)
+                    .build()
+                    .show();
             println("Warning Dialog shown");
         }));
 
         // Error
         container.getChildren().add(createButton("Error", () -> {
-            javafx.scene.control.Dialog<javafx.scene.control.ButtonType> dlg = Dialogs.alert(primaryStage, AlertType.ERROR, MessageFormatter.standard())
+            Dialogs.alert(primaryStage, AlertType.ERROR, MessageFormatter.standard())
                     .title("Error")
                     .header("Please leave the elevator immediately")
                     .text("5-4-3-2-1...")
-                    .build();
-            dlg.initModality(Modality.NONE);
-            dlg.show();
+                    .modality(Modality.NONE)
+                    .build()
+                    .show();
             println("Error Dialog shown");
         }));
 
         // Prompt
         container.getChildren().add(createButton("Prompt", () -> {
-            javafx.scene.control.Dialog<String> dlg = Dialogs.prompt(primaryStage, MessageFormatter.standard())
+            var dlg = Dialogs.prompt(primaryStage, MessageFormatter.standard())
                     .title("Prompt")
                     .header("This is a prompt dialog.")
+                    .modality(Modality.NONE)
                     .build();
-            dlg.initModality(Modality.NONE);
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
@@ -164,12 +164,12 @@ public class FxDialogSample extends Application {
 
         // Password
         container.getChildren().add(createButton("Password", () -> {
-            javafx.scene.control.Dialog<String> dlg = Dialogs.prompt(primaryStage, MessageFormatter.standard())
+            var dlg = Dialogs.prompt(primaryStage, MessageFormatter.standard())
                     .mode(PromptMode.PASSWORD)
                     .title("Password Prompt")
                     .header("This is a password prompt dialog.")
+                    .modality(Modality.NONE)
                     .build();
-            dlg.initModality(Modality.NONE);
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
@@ -224,8 +224,8 @@ public class FxDialogSample extends Application {
                             String.class,
                             List.of("1", "2", "3"),
                             v -> v != null ? Optional.empty() : Optional.of("Select an item or enter a new one"))
+                    .modality(Modality.NONE)
                     .build();
-            dlg.initModality(Modality.NONE);
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
@@ -240,8 +240,8 @@ public class FxDialogSample extends Application {
                     .options(CsvIo.getOptions())
                     .title("Options")
                     .header("This is an options dialog.")
+                    .modality(Modality.NONE)
                     .build();
-            dlg.initModality(Modality.NONE);
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
@@ -269,8 +269,8 @@ public class FxDialogSample extends Application {
                                     .header("Choose your Database from the list below.")
                                     .inputRadioList("rdbms", "Database", () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
                     )
+                    .modality(Modality.NONE)
                     .build();
-            dlg.initModality(Modality.NONE);
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {

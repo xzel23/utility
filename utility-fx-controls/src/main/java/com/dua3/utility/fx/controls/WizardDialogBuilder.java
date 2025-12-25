@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
 import com.dua3.utility.text.MessageFormatter;
+import javafx.stage.Modality;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 
@@ -31,6 +32,7 @@ public class WizardDialogBuilder {
     private double minHeight = -1;
     private double maxWidth = -1;
     private double maxHeight = -1;
+    private @Nullable Modality modality;
 
     /**
      * Constructs a new instance of {@code WizardDialogBuilder} with the specified parent window
@@ -136,6 +138,17 @@ public class WizardDialogBuilder {
     }
 
     /**
+     * Set the modality of the dialog.
+     *
+     * @param modality the modality to set
+     * @return the current builder instance, to allow method chaining
+     */
+    public WizardDialogBuilder modality(Modality modality) {
+        this.modality = modality;
+        return this;
+    }
+
+    /**
      * Adds a page to the wizard dialog.
      *
      * @param <D> the type of the input dialog pane
@@ -210,6 +223,10 @@ public class WizardDialogBuilder {
 
         dlg.setTitle(title);
         dlg.setPages(new LinkedHashMap<>(pages), getStartPage());
+
+        if (modality != null) {
+            dlg.initModality(modality);
+        }
 
         return dlg;
     }

@@ -22,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.Dialog;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -42,6 +43,7 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
     private final @Nullable Window parentWindow;
     private @Nullable String title;
     private boolean resizable = false;
+    private @Nullable Modality modality;
 
     /**
      * Constructs a DialogBuilder with an optional parent window.
@@ -81,6 +83,17 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
     }
 
     /**
+     * Set the modality of the dialog.
+     *
+     * @param modality the modality to set
+     * @return the current builder instance of type {@code B}, to allow method chaining
+     */
+    public B modality(Modality modality) {
+        this.modality = modality;
+        return self();
+    }
+
+    /**
      * Build and show the dialog.
      * <p>
      * This is equivalent to calling build().showAndWait().
@@ -112,6 +125,11 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
 
         // make resizable
         dlg.setResizable(resizable);
+
+        // modality
+        if (modality != null) {
+            dlg.initModality(modality);
+        }
 
         // set buttons
         if (!getButtonDefs().isEmpty()) {
