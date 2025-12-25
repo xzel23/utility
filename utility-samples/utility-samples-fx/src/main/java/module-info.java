@@ -27,4 +27,5 @@ open module com.dua3.utility.samples.fx {
     requires org.apache.logging.log4j.jul;
     requires org.jspecify;
     requires org.slf4j;
+    requires java.prefs;
 }

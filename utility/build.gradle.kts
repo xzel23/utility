@@ -1,5 +1,9 @@
 project.description = "Java utilities (core)"
 
+jdk {
+    version = 25
+}
+
 // Define Java 25 source set
 sourceSets {
     create("java25") {
@@ -67,41 +71,25 @@ dependencies {
     "javaTestUtilImplementation"(rootProject.libs.junit.jupiter.api)
 }
 
-// Configure Java 25 compilation
-tasks.named<JavaCompile>("compileJava25Java") {
-    // Use Java 25 toolchain for this task only
-    javaCompiler.set(javaToolchains.compilerFor {
-        languageVersion.set(JavaLanguageVersion.of(25))
-    })
+// Configure compilation
+tasks.withType<JavaCompile>().configureEach {
+    val release = if (name.contains("Java25")) "25" else "21"
+
+    // set standard compile options
+    options.compilerArgs.addAll(
+        listOf(
+            "--release", release
+        )
+    )
 
     // Make sure the Java 25 compilation can access the original module info
-    options.compilerArgs.addAll(
-        listOf(
-            "--patch-module", "com.dua3.utility=${sourceSets.main.get().output.asPath}"
+    if (release == "25") {
+        options.compilerArgs.addAll(
+            listOf(
+                "--patch-module", "com.dua3.utility=${sourceSets.main.get().output.asPath}"
+            )
         )
-    )
-
-    // Set the release flag to 25
-    options.release.set(25)
-}
-
-// Configure Java 25 test compilation
-tasks.named<JavaCompile>("compileTestJava25Java") {
-    // Use Java 25 toolchain for this task only
-    javaCompiler.set(javaToolchains.compilerFor {
-        languageVersion.set(JavaLanguageVersion.of(25))
-    })
-
-    // Make sure the Java 25 test compilation can access the original module info
-    options.compilerArgs.addAll(
-        listOf(
-            "--patch-module",
-            "com.dua3.utility=${sourceSets.main.get().output.asPath}:${sourceSets.getByName("java25").output.asPath}"
-        )
-    )
-
-    // Set the release flag to 25
-    options.release.set(25)
+    }
 }
 
 // Make sure the java25 compilation happens after the main compilation
@@ -122,11 +110,6 @@ val testJava25 = tasks.register<Test>("testJava25") {
 
     testClassesDirs = sourceSets.getByName("testJava25").output.classesDirs
     classpath = sourceSets.getByName("testJava25").runtimeClasspath
-
-    // Use the Java 25 toolchain
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(25))
-    })
 
     jvmArgs("-Djava.awt.headless=true")
 

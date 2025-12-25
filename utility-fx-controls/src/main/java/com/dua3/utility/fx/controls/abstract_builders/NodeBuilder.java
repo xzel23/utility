@@ -20,8 +20,6 @@ import java.util.function.Supplier;
 public abstract class NodeBuilder<N extends Node, B extends NodeBuilder<N, B>> {
     private final Supplier<? extends N> factory;
     private @Nullable ObservableValue<Boolean> disabled = null;
-    private @Nullable Double width = null;
-    private @Nullable Double height = null;
 
     /**
      * Constructs a new instance of the NodeBuilder class using the specified factory.
@@ -87,8 +85,6 @@ public abstract class NodeBuilder<N extends Node, B extends NodeBuilder<N, B>> {
     public N build() {
         N node = factory.get();
         apply(disabled, node.disableProperty());
-        apply(width, node::prefWidth);
-        apply(height, node::prefHeight);
         return node;
     }
 
@@ -132,39 +128,5 @@ public abstract class NodeBuilder<N extends Node, B extends NodeBuilder<N, B>> {
         return self();
     }
 
-    /**
-     * Sets the preferred width for the node being built.
-     *
-     * @param width the preferred width to set for the node
-     * @return this instance of the builder
-     */
-    public B prefWidth(double width) {
-        this.width = width;
-        return self();
-    }
-
-    /**
-     * Sets the preferred height of the node being built.
-     *
-     * @param height the preferred height to set
-     * @return this instance of the builder
-     */
-    public B prefHeight(double height) {
-        this.height = height;
-        return self();
-    }
-
-    /**
-     * Sets the preferred width and height for the node being built.
-     *
-     * @param width  the preferred width to set for the node
-     * @param height the preferred height to set for the node
-     * @return this instance of the builder
-     */
-    public B prefSize(double width, double height) {
-        this.width = width;
-        this.height = height;
-        return self();
-    }
 
 }
