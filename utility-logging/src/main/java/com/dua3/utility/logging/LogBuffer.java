@@ -217,12 +217,12 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     public record BufferState(LogEntry[] entries, long totalRemoved, long totalAdded) {
         @Override
         public boolean equals(@Nullable Object o) {
-            if (!(o instanceof BufferState(LogEntry[] entries1, long removed, long added))) {
+            if (!(o instanceof BufferState state)) {
                 return false;
             }
-            return totalRemoved == removed
-                    && totalAdded == added
-                    && java.util.Arrays.equals(entries, entries1);
+            return totalRemoved == state.totalRemoved
+                    && totalAdded == state.totalAdded
+                    && java.util.Arrays.equals(entries, state.entries);
         }
 
         @Override
