@@ -225,7 +225,7 @@ public final class ApplicationUtil {
      * @param listener the listener to be notified of dark mode changes (non-null)
      */
     public static void addDarkModeListener(Consumer<Boolean> listener) {
-        LOG.trace("Ensure DarkModeUpdater is initialised");
+        LOG.trace("Ensure DarkModeUpdater is initialized");
         DarkModeUpdater.INSTANCE.ensureRunning();
         darkModeListeners.add(listener);
     }
@@ -274,6 +274,16 @@ public final class ApplicationUtil {
             }
         }
 
+        /**
+         * Ensures that the {@code DarkModeUpdater} instance is initialized and the
+         * necessary mechanisms for monitoring system dark mode changes are in place.
+         * <p>
+         * <strong>Note: Do not remove and do not declare static!</strong><br>
+         * This method is used to trigger initialization in a safe manner without
+         * static analysis tools such as SpotBugs or Sonar warning about
+         * unused return values or unneeded operations.
+         */
+        @SuppressWarnings("MethodMayBeStatic")
         public void ensureRunning() {
             LOG.trace("DarkModeUpdater is initialised");
             // There is nothing more to do here, the instance is created when the clas is loaded.
