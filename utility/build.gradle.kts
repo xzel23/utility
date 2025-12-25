@@ -69,17 +69,8 @@ dependencies {
 
 // Configure compilation
 tasks.withType<JavaCompile>().configureEach {
-    val release = if (name.contains("Java25")) "25" else "21"
-
-    // set standard compile options
-    options.compilerArgs.addAll(
-        listOf(
-            "--release", release
-        )
-    )
-
     // Make sure the Java 25 compilation can access the original module info
-    if (release == "25") {
+    if (name.contains("Java25")) {
         options.compilerArgs.addAll(
             listOf(
                 "--patch-module", "com.dua3.utility=${sourceSets.main.get().output.asPath}"

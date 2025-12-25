@@ -223,9 +223,22 @@ subprojects {
     }
 
     jdk {
-        version = 25
+        version = 21
         javaFxBundled = true
         nativeImageCapable = false
+
+        overrides {
+            create("java25") {
+                version = 25
+                javaFxBundled = true
+                nativeImageCapable = false
+            }
+            create("testJava25") {
+                version = 25
+                javaFxBundled = true
+                nativeImageCapable = false
+            }
+        }
     }
 
     // Java configuration for non-BOM projects
