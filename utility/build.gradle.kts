@@ -169,7 +169,6 @@ subprojects {
 // Disable forbiddenapis for some source sets
 tasks.matching {
     listOf(
-        "forbiddenApisJava25",
         "forbiddenApisJmh",
         "forbiddenApisJavaTestUtil",
         "forbiddenApisTest"

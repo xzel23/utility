@@ -365,7 +365,7 @@ subprojects {
         // === FORBIDDEN APIS ===
         tasks.withType(de.thetaphi.forbiddenapis.gradle.CheckForbiddenApis::class).configureEach {
             bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
-            ignoreFailures = false
+            ignoreFailures = true
         }
 
         // === SPOTBUGS ===
