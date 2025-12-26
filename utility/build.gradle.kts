@@ -165,14 +165,3 @@ subprojects {
         implementation(project(":utility"))
     }
 }
-
-// Disable forbiddenapis for some source sets
-tasks.matching {
-    listOf(
-        "forbiddenApisJmh",
-        "forbiddenApisJavaTestUtil",
-        "forbiddenApisTest"
-    ).contains(it.name)
-}.configureEach {
-    enabled = false
-}

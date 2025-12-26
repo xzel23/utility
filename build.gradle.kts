@@ -25,7 +25,6 @@ plugins {
     alias(libs.plugins.test.logger)
     alias(libs.plugins.spotbugs)
     alias(libs.plugins.cabe)
-    alias(libs.plugins.forbiddenapis)
     alias(libs.plugins.jmh)
     alias(libs.plugins.sonar)
     alias(libs.plugins.jreleaser)
@@ -218,7 +217,6 @@ subprojects {
         apply(plugin = "jvm-test-suite")
         apply(plugin = rootProject.libs.plugins.spotbugs.get().pluginId)
         apply(plugin = rootProject.libs.plugins.cabe.get().pluginId)
-        apply(plugin = rootProject.libs.plugins.forbiddenapis.get().pluginId)
         apply(plugin = rootProject.libs.plugins.jmh.get().pluginId)
     }
 
@@ -360,13 +358,8 @@ subprojects {
         }
     }
 
-    // Forbidden APIs and SpotBugs for non-BOM projects
+    // SpotBugs for non-BOM projects
     if (!project.name.endsWith("-bom")) {
-        // === FORBIDDEN APIS ===
-        tasks.withType(de.thetaphi.forbiddenapis.gradle.CheckForbiddenApis::class).configureEach {
-            bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
-            ignoreFailures = true
-        }
 
         // === SPOTBUGS ===
         spotbugs {
