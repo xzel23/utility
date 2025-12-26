@@ -1,6 +1,8 @@
 package com.dua3.utility.application;
 
 import com.dua3.utility.application.imp.DarkModeDetectorInstance;
+import com.dua3.utility.application.imp.NativeHelperInstance;
+import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -35,7 +37,7 @@ public final class ApplicationUtil {
      * <p>
      * This variable is initialized to {@link UiMode#LIGHT} by default.
      */
-    private static final AtomicReference<UiMode> uiMode = new AtomicReference<>(UiMode.LIGHT);
+    private static final AtomicReference<@Nullable UiMode> uiMode = new AtomicReference<>(null);
 
     /**
      * An {@link AtomicBoolean} representing whether the application is currently in dark mode.
@@ -46,12 +48,12 @@ public final class ApplicationUtil {
      * The value is typically updated in response to changes in the application or system UI mode and
      * cannot be modified directly.
      */
-    private static final AtomicBoolean darkMode = new AtomicBoolean(false);
+    private static final AtomicBoolean DARK_MODE = new AtomicBoolean(false);
 
     /**
      * A thread-safe list of listeners to be notified about changes in the application's dark mode state.
      */
-    private static final CopyOnWriteArrayList<Consumer<Boolean>> darkModeListeners = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<Consumer<Boolean>> DARK_MODE_LISTENERS = new CopyOnWriteArrayList<>();
 
     /**
      * A thread-safe list of listeners to be notified about changes to the application's ui mode.
@@ -118,7 +120,11 @@ public final class ApplicationUtil {
      * @return the current application UI mode, which is an instance of {@link UiMode}
      */
     public static UiMode getUiMode() {
-        return uiMode.get();
+        UiMode m = uiMode.get();
+        if (m == null) {
+            throw new IllegalStateException("UiMode not initialized, call setUiMode at Application startup to initialize");
+        }
+        return m;
     }
 
     /**
@@ -163,7 +169,7 @@ public final class ApplicationUtil {
      * @param dark a boolean indicating whether dark mode is enabled (true) or disabled (false)
      */
     private static void onUpdateDarkMode(boolean dark) {
-        darkModeListeners.forEach(listener -> {
+        DARK_MODE_LISTENERS.forEach(listener -> {
             try {
                 listener.accept(dark);
             } catch (Exception ex) {
@@ -182,8 +188,9 @@ public final class ApplicationUtil {
      */
     private static void setDarkMode(boolean darkMode) {
         LOG.debug("application dark mode set to {}", darkMode);
-        if (darkMode != ApplicationUtil.darkMode.compareAndExchange(!darkMode, darkMode)) {
+        if (darkMode != ApplicationUtil.DARK_MODE.compareAndExchange(!darkMode, darkMode)) {
             onUpdateDarkMode(darkMode);
+            NativeHelperInstance.get().setWindowDecorations(darkMode);
         }
     }
 
@@ -193,7 +200,7 @@ public final class ApplicationUtil {
      * @return {@code true} if the application is in dark mode, {@code false} otherwise
      */
     public static boolean isDarkMode() {
-        return darkMode.get();
+        return DARK_MODE.get();
     }
 
     /**
@@ -227,7 +234,7 @@ public final class ApplicationUtil {
     public static void addDarkModeListener(Consumer<Boolean> listener) {
         LOG.trace("Ensure DarkModeUpdater is initialized");
         DarkModeUpdater.INSTANCE.ensureRunning();
-        darkModeListeners.add(listener);
+        DARK_MODE_LISTENERS.add(listener);
     }
 
     /**
@@ -237,7 +244,7 @@ public final class ApplicationUtil {
      *                 a {@code Boolean} indicating the dark mode state (true if dark mode is enabled, false otherwise)
      */
     public static void removeDarkModeListener(Consumer<Boolean> listener) {
-        darkModeListeners.remove(listener);
+        DARK_MODE_LISTENERS.remove(listener);
     }
 
     /**
@@ -307,4 +314,13 @@ public final class ApplicationUtil {
         }
     }
 
+    /**
+     * Checks if the current platform supports dark mode detection.
+     *
+     * @return {@code true} if the platform natively supports detecting the dark mode state,
+     *         {@code false} otherwise
+     */
+    public static boolean isDarkModeDetectionSupported() {
+        return DarkModeDetectorInstance.get().isDarkModeDetectionSupported();
+    }
 }

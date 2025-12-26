@@ -116,6 +116,7 @@ class PairTest {
         assertEquals(1, pair.getValue());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     void setValue_unsupportedOperationException() {
         Pair<String, Integer> pair = Pair.of("one", 1);

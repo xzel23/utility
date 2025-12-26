@@ -59,12 +59,13 @@ open module com.dua3.utility {
     exports com.dua3.utility.crypt;
 
     requires java.xml;
-    requires static java.desktop;
-    requires static java.prefs;
     requires org.apache.logging.log4j;
     requires org.jspecify;
     requires static org.bouncycastle.provider;
     requires static org.bouncycastle.pkix;
+    requires static java.desktop;
+    requires static java.prefs;
+    requires static javafx.graphics;
 
     uses FileType;
     uses I18NProvider;

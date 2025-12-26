@@ -110,7 +110,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         SwingProgressView<Object> progress = new SwingProgressView<>();
         int max = 100;
 
-        progress.scheduleTaskGroup("Log Level", LogLevel.values());
+        progress.scheduleTaskGroup("Log Level", (Object[]) LogLevel.values());
         progress.scheduleTaskGroup("Indeterminate", TASK_INDETERMINATE_1);
 
         Map<LogLevel, Integer> counter = new EnumMap<>(LogLevel.class);
