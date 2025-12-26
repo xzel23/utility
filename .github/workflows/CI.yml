@@ -20,8 +20,9 @@ jobs:
       - name: 'Set up JDK 21'
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: '21'
+          java-package: 'jdk+fx'
           cache: 'gradle'
 
       # Extract Gradle version from wrapper properties for cache key
@@ -87,12 +88,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Setup JDK 25 + JavaFX
-      - name: 'Set up JDK 25 with JavaFX'
+      - name: 'Set up JDK 21'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '25'
+          java-version: '21'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -147,12 +147,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Setup JDK 25 with JavaFX
-      - name: 'Set up JDK 25 with JavaFX'
+      - name: 'Set up JDK 21'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '25'
+          java-version: '21'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -195,12 +194,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Setup JDK 25 with JavaFX
-      - name: 'Set up JDK 25 with JavaFX'
+      - name: 'Set up JDK 21'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '25'
+          java-version: '21'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -308,12 +306,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Setup JDK 21 for publishing
       - name: 'Set up JDK 21'
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: '21'
+          java-package: 'jdk+fx'
           cache: 'gradle'
 
       # Download build artifacts first to get the Gradle version file
