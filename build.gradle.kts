@@ -530,8 +530,9 @@ tasks.register("publishToStagingDirectory") {
 tasks.register<Javadoc>("aggregateJavadoc") {
     group = "documentation"
     description = "Generates aggregated Javadoc for all subprojects"
-    executable = jdk.jdkHome.get().file("bin/javadoc").toString()
-
+    executable = jdk.jdkHome.get()
+        .file("bin/javadoc${if (System.getProperty("os.name").contains("Windows", ignoreCase = true)) ".exe" else ""}")
+        .toString()
     setDestinationDir(layout.buildDirectory.dir("docs/javadoc").get().asFile)
     setTitle("${rootProject.name} ${project.version} API")
 
