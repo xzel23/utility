@@ -239,6 +239,12 @@ could not be loaded.
 
 ## Changes
 
+### 20.3.0 (in development)
+
+- switch from using Gradle toolchains to jdkproviderplugin, this finally allows building the library directly on Windows ARM
+- add support for updating the native windows decorations accoring to the dark mode setting (currently macOS and Windows only)
+- minor bugfixes and improvements
+
 ### 20.2.0
 
 - added `Platform.isNativeImage()`
