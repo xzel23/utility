@@ -4,7 +4,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "20.3.0-beta"
+val projectVersion = "20.3.0"
 
 // define subprojects
 include("utility")
@@ -49,7 +49,7 @@ dependencyResolutionManagement {
             plugin("spotbugs", "com.github.spotbugs").version("6.4.8")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("versions", "com.github.ben-manes.versions").version("0.53.0")
-            plugin("native", "org.graalvm.buildtools.native").version("0.11.1")
+            plugin("native", "org.graalvm.buildtools.native").version("0.11.3")
 
             version("atlantafx", "2.1.0")
             version("h2database", "2.4.240")
