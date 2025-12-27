@@ -86,7 +86,7 @@ public class FfmTestApp extends Application {
         System.out.println("Setting dark decorations (true)...");
         Platform.runLater(() -> ApplicationUtil.setUiMode(UiMode.DARK));
 
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
                 Thread.sleep(2000);
                 System.out.println("Setting dark decorations (false)...");
@@ -109,6 +109,8 @@ public class FfmTestApp extends Application {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 }
