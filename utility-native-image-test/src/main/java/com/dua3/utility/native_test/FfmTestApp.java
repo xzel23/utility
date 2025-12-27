@@ -27,6 +27,18 @@ public class FfmTestApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         System.out.println("FFM Test App started.");
         System.out.println("This app will exercise FFM-based dark mode detection and window decorations.");
+
+        String javaHome = System.getProperty("java.home");
+        String hasNativeImage;
+        if (javaHome == null) {
+            hasNativeImage = "N/A";
+        } else {
+            hasNativeImage = String.valueOf(
+                    Files.isExecutable(Paths.get(javaHome, "bin", "native-image"))
+                            || Files.isExecutable(Paths.get(javaHome, "bin", "native-image.exe"))
+            );
+        }
+
         System.out.format("""
                         
                         JDK
@@ -46,8 +58,7 @@ public class FfmTestApp extends Application {
                 System.getProperty("java.version", "unknown"),
                 System.getProperty("java.vendor", "unknown"),
                 System.getProperty("java.home", "unknown"),
-                Files.isExecutable(Paths.get(System.getProperty("java.home"), "bin", "native-image"))
-                || Files.isExecutable(Paths.get(System.getProperty("java.home"), "bin", "native-image.exe")),
+                hasNativeImage,
                 System.getProperty("java.vm.name", "unknown"),
                 System.getProperty("java.vm.vendor", "unknown"),
                 System.getProperty("org.graalvm.nativeimage.imagecode") != null
