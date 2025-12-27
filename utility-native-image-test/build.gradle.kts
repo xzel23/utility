@@ -23,6 +23,11 @@ dependencies {
 
 application {
     mainClass.set("com.dua3.utility.native_test.FfmTestApp")
+    applicationDefaultJvmArgs = listOf(
+        "--enable-native-access=javafx.graphics,ALL-UNNAMED",
+        "--add-opens=javafx.graphics/javafx.stage=ALL-UNNAMED",
+        "--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED"
+    )
 }
 
 // Ensure the FFM-related classes from the 'java25' source set are available
