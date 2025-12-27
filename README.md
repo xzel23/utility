@@ -243,6 +243,7 @@ could not be loaded.
 
 - switch from using Gradle toolchains to jdkproviderplugin, this finally allows building the library directly on Windows ARM
 - add support for updating the native windows decorations accoring to the dark mode setting (currently macOS and Windows only)
+- add native-image configuration files to the JAR
 - minor bugfixes and improvements
 
 ### 20.2.0
