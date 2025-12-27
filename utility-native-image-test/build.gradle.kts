@@ -2,6 +2,7 @@ project.description = "Java utilities (GraalVM native-image test)"
 
 plugins {
     id("application")
+    alias(libs.plugins.native)
 }
 
 jdk {
@@ -28,6 +29,26 @@ application {
         "--add-opens=javafx.graphics/javafx.stage=ALL-UNNAMED",
         "--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED"
     )
+}
+
+graalvmNative {
+    binaries {
+        named("main") {
+            javaLauncher = jdk.getJavaLauncher(project)
+            imageName.set("FfmTestApp")
+            mainClass.set("com.dua3.utility.native_test.FfmTestApp")
+            buildArgs.addAll(
+                "--enable-native-access=javafx.graphics,ALL-UNNAMED",
+                "--initialize-at-build-time=org.apache.logging.log4j",
+                "--initialize-at-run-time=com.dua3.utility.application.imp.NativeHelperMacOs",
+                "--initialize-at-run-time=com.dua3.utility.application.imp.DarkModeDetectorMacOs",
+                "--initialize-at-run-time=com.dua3.utility.application.imp.NativeHelperWindows",
+                "--initialize-at-run-time=com.dua3.utility.application.imp.DarkModeDetectorWindows",
+                "-H:+UnlockExperimentalVMOptions",
+                "-H:+ForeignAPISupport"
+            )
+        }
+    }
 }
 
 // Ensure the FFM-related classes from the 'java25' source set are available
