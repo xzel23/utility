@@ -13,10 +13,12 @@ jdk {
 
 // User will configure JDK and native-image manually
 
-tasks.configureEach {
-    if (name.contains("nativeCompile") || name.contains("nativeRun") || name.contains("generateResourcesConfigFile")) {
-        notCompatibleWithConfigurationCache("Issues with GraalVM native-image plugin configuration cache")
-    }
+tasks.withType<org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask>().configureEach {
+    notCompatibleWithConfigurationCache("Issues with GraalVM native-image plugin configuration cache")
+}
+
+tasks.withType<org.graalvm.buildtools.gradle.tasks.GenerateResourcesConfigFile>().configureEach {
+    notCompatibleWithConfigurationCache("Issues with GraalVM native-image plugin configuration cache")
 }
 
 dependencies {
