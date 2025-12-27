@@ -3,6 +3,7 @@ package com.dua3.utility.samples.fx;
 import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.UiMode;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -45,13 +46,13 @@ public class FfmTestApp extends Application {
         primaryStage.show();
 
         System.out.println("Setting dark decorations (true)...");
-        ApplicationUtil.setUiMode(UiMode.DARK);
+        Platform.runLater(() -> ApplicationUtil.setUiMode(UiMode.DARK));
 
         new Thread(() -> {
             try {
                 Thread.sleep(2000);
                 System.out.println("Setting dark decorations (false)...");
-                ApplicationUtil.setUiMode(UiMode.LIGHT);
+                Platform.runLater(() -> ApplicationUtil.setUiMode(UiMode.LIGHT));
 
                 System.out.println("Waiting up to 30 seconds for you to toggle system dark mode...");
                 if (latch.await(30, TimeUnit.SECONDS)) {

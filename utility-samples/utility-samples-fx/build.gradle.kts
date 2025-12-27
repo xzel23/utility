@@ -79,3 +79,23 @@ createJavaFxRunTask(
 )
 createJavaFxRunTask("runShapeFx", "com.dua3.utility.samples.fx.ShapeFx", "Run the ShapeFx application.")
 createJavaFxRunTask("runFfmTestApp", "com.dua3.utility.samples.fx.FfmTestApp", "Run the FfmTestApp application for GraalVM configuration generation.")
+
+tasks.register<JavaExec>("runFfmTestAppWithAgent") {
+    description = "Run the FfmTestApp application with GraalVM tracing agent."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    
+    val java25Output = project(":utility").sourceSets.getByName("java25").output
+    classpath = files(java25Output) + sourceSets["main"].runtimeClasspath
+    
+    mainClass.set("com.dua3.utility.samples.fx.FfmTestApp")
+    enableAssertions = true
+    
+    // FFM and JavaFX require native access and opens
+    jvmArgs(
+        "--enable-native-access=javafx.graphics",
+        "--enable-native-access=ALL-UNNAMED",
+        "--add-opens=javafx.graphics/javafx.stage=ALL-UNNAMED",
+        "--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
+        "-agentlib:native-image-agent=config-output-dir=build/native-image-config"
+    )
+}
