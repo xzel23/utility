@@ -1,4 +1,4 @@
-package com.dua3.utility.samples.fx;
+package com.dua3.utility.native_test;
 
 import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.UiMode;
@@ -9,6 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +27,31 @@ public class FfmTestApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         System.out.println("FFM Test App started.");
         System.out.println("This app will exercise FFM-based dark mode detection and window decorations.");
+        System.out.format("""
+                        
+                        JDK
+                          Java version:               %s
+                          Java vendor:                %s
+                          Java Home:                  %s
+                          has native-image:           %s
+                        
+                        JVM
+                          VM Name:                    %s
+                          VM Vendor:                  %s
+                        
+                        Application
+                          running as native code:     %s
+                        
+                        """,
+                System.getProperty("java.version", "unknown"),
+                System.getProperty("java.vendor", "unknown"),
+                System.getProperty("java.home", "unknown"),
+                Files.isExecutable(Paths.get(System.getProperty("java.home"), "bin", "native-image"))
+                || Files.isExecutable(Paths.get(System.getProperty("java.home"), "bin", "native-image.exe")),
+                System.getProperty("java.vm.name", "unknown"),
+                System.getProperty("java.vm.vendor", "unknown"),
+                System.getProperty("org.graalvm.nativeimage.imagecode") != null
+        );
 
         // 1. Exercise DarkModeDetector
         ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT);
