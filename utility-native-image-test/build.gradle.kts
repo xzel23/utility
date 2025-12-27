@@ -43,7 +43,9 @@ graalvmNative {
             javaLauncher = jdk.getJavaLauncher(project)
             imageName.set("FfmTestApp")
             mainClass.set("com.dua3.utility.native_test.FfmTestApp")
+            sharedLibrary.set(false)
             buildArgs.addAll(
+                "--no-fallback",
                 "--enable-native-access=javafx.graphics,ALL-UNNAMED",
                 "--initialize-at-build-time=org.apache.logging.log4j",
                 "--initialize-at-run-time=com.dua3.utility.application.imp.NativeHelperMacOs",
