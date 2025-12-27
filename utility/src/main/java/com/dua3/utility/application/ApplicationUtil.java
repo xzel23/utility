@@ -2,7 +2,6 @@ package com.dua3.utility.application;
 
 import com.dua3.utility.application.imp.DarkModeDetectorInstance;
 import com.dua3.utility.application.imp.NativeHelperInstance;
-import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -120,17 +119,17 @@ public final class ApplicationUtil {
      * @return the current application UI mode, which is an instance of {@link UiMode}
      */
     public static UiMode getUiMode() {
-        UiMode m = uiMode.get();
-        if (m == null) {
+        UiMode mode = uiMode.get();
+        if (mode == null) {
             throw new IllegalStateException("UiMode not initialized, call setUiMode at Application startup to initialize");
         }
-        return m;
+        return mode;
     }
 
     /**
      * Sets the application's UI mode and updates the dark mode setting accordingly.
      * If the specified UI mode differs from the previous mode, any necessary adjustments are made,
-     * including determining whether the application should utilize dark mode and invoking appropriate listeners.
+     * including determining whether the application should use dark mode and invoking appropriate listeners.
      *
      * @param mode the desired UI mode for the application. Must be one of {@link UiMode#DARK}, {@link UiMode#LIGHT},
      *             or {@link UiMode#SYSTEM_DEFAULT}.
@@ -188,9 +187,9 @@ public final class ApplicationUtil {
      */
     private static void setDarkMode(boolean darkMode) {
         LOG.debug("application dark mode set to {}", darkMode);
-        if (darkMode != ApplicationUtil.DARK_MODE.compareAndExchange(!darkMode, darkMode)) {
-            onUpdateDarkMode(darkMode);
+        if (darkMode != DARK_MODE.compareAndExchange(!darkMode, darkMode)) {
             NativeHelperInstance.get().setWindowDecorations(darkMode);
+            onUpdateDarkMode(darkMode);
         }
     }
 
@@ -292,7 +291,7 @@ public final class ApplicationUtil {
          */
         @SuppressWarnings("MethodMayBeStatic")
         public void ensureRunning() {
-            LOG.trace("DarkModeUpdater is initialised");
+            LOG.trace("DarkModeUpdater is initialized");
             // There is nothing more to do here, the instance is created when the clas is loaded.
         }
 
