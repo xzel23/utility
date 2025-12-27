@@ -37,11 +37,15 @@ fun createJavaFxRunTask(taskName: String, mainClassName: String, taskDescription
     tasks.register<JavaExec>(taskName) {
         description = taskDescription
         group = ApplicationPlugin.APPLICATION_GROUP
-        classpath = sourceSets["main"].runtimeClasspath
+        
+        val java25Output = project(":utility").sourceSets.getByName("java25").output
+        classpath = files(java25Output) + sourceSets["main"].runtimeClasspath
+        
         mainClass.set(mainClassName)
         enableAssertions = true
         jvmArgs(
             "--enable-native-access=javafx.graphics",
+            "--enable-native-access=ALL-UNNAMED",
             "--add-opens=javafx.graphics/javafx.stage=ALL-UNNAMED",
             "--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED"
         )
@@ -74,3 +78,4 @@ createJavaFxRunTask(
     "Run the ProgressViewSample application."
 )
 createJavaFxRunTask("runShapeFx", "com.dua3.utility.samples.fx.ShapeFx", "Run the ShapeFx application.")
+createJavaFxRunTask("runFfmTestApp", "com.dua3.utility.samples.fx.FfmTestApp", "Run the FfmTestApp application for GraalVM configuration generation.")
