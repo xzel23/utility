@@ -1,0 +1,57 @@
+[
+  {
+    "kind": "downcall",
+    "firstLeafType": "int",
+    "restLeafTypes": [ "int", "long" ]
+  },
+  {
+    "kind": "downcall",
+    "firstLeafType": "int",
+    "restLeafTypes": [ "long", "long", "int", "int", "long" ]
+  },
+  {
+    "kind": "downcall",
+    "firstLeafType": "int",
+    "restLeafTypes": [ "long", "long", "long", "int", "long", "long", "long" ]
+  },
+  {
+    "kind": "downcall",
+    "firstLeafType": "int",
+    "restLeafTypes": [ "long", "int", "int", "long", "int" ]
+  },
+  {
+    "kind": "downcall",
+    "firstLeafType": "int",
+    "restLeafTypes": [ "long" ]
+  },
+  {
+    "kind": "downcall",
+    "firstLeafType": "int",
+    "restLeafTypes": [ "long", "int", "long", "int" ]
+  },
+  {
+    "kind": "downcall",
+    "firstLeafType": "int",
+    "restLeafTypes": [ "long", "long" ]
+  },
+  {
+    "kind": "downcall",
+    "firstLeafType": "int",
+    "restLeafTypes": []
+  },
+  {
+    "kind": "downcall",
+    "firstLeafType": "long",
+    "restLeafTypes": [ "int", "int", "long", "long", "int", "int", "int" ]
+  },
+  {
+    "kind": "upcall",
+    "firstLeafType": "void",
+    "restLeafTypes": [ "long", "int", "long", "int", "int", "int", "int" ]
+  },
+  {
+    "kind": "upcall",
+    "firstLeafType": "int",
+    "restLeafTypes": [ "long", "long" ]
+  }
+]
