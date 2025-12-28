@@ -419,6 +419,7 @@ public class AboutDialogBuilder {
         dialogPane.getStylesheets().add(dialogCss.toExternalForm());
 
         Dialog<Void> dlg = new Dialog<>();
+        dlg.getDialogPane().getScene().setFill(javafx.scene.paint.Color.TRANSPARENT);
         dlg.setDialogPane(dialogPane);
 
         if (!title.isBlank()) {

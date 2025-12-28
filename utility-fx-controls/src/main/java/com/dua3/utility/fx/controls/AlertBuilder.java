@@ -104,6 +104,8 @@ public class AlertBuilder
             }
         }
 
+        dlg.getDialogPane().applyCss();
+
         return dlg;
     }
 

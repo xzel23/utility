@@ -34,10 +34,6 @@ public class InputDialog extends Dialog<@Nullable InputResult> {
      * dialog pane. Otherwise, it returns null.
      */
     public InputDialog() {
-        // Set the initial dialog pane scene to transparent to prevent visual flicker during initialization.
-        // The dialog pane will be replaced with a custom pane (GridInputDialogPane) later.
-        getDialogPane().getScene().setFill(Color.TRANSPARENT);
-
         setResultConverter(btn -> {
             if (btn == null || btn.getButtonData().isCancelButton()) {
                 return null;

@@ -18,8 +18,10 @@ import com.dua3.utility.fx.controls.ButtonDef;
 import com.dua3.utility.fx.controls.InputDialogPane;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
+import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.Dialog;
 import javafx.stage.Modality;
@@ -113,10 +115,14 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
     public D build() {
         D dlg = super.build();
 
+        // set scene to transparent to prevent visual flicker during initialization
+        Scene scene = dlg.getDialogPane().getScene();
+        scene.setFill(Color.TRANSPARENT);
+
         // copy stage icons from parent
         DialogPane dialogPane = dlg.getDialogPane();
         if (parentWindow != null) {
-            Stage stage = (Stage) dialogPane.getScene().getWindow();
+            Stage stage = (Stage) scene.getWindow();
             stage.getIcons().addAll(((Stage) parentWindow).getIcons());
         }
 
