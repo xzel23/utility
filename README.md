@@ -239,11 +239,16 @@ could not be loaded.
 
 ## Changes
 
-### 20.3.0 (in development)
+### 20.3.1 (in development)
 
-- switch from using Gradle toolchains to jdkproviderplugin, this finally allows building the library directly on Windows ARM
-- add support for updating the native windows decorations accoring to the dark mode setting (currently macOS and Windows only)
-- add native-image configuration files to the JAR
+- remove flickering when displaying dialogs in dark mode
+
+### 20.3.0
+
+- Switch from Gradle toolchains to jdkprovider plugin -> Library can now be built directly on Windows ARM
+- Update native window decorations when entering dark/light mode
+- Add GraalVM native image support configuration files
+- Add dark mode support to FxDialogSample
 - minor bugfixes and improvements
 
 ### 20.2.0
