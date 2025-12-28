@@ -58,7 +58,6 @@ public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBu
     }
 
     private InputDialog createDialog() {
-        InputDialog dlg = new InputDialog();
         GridInputDialogPane dialogPane = pb.build();
 
         pb.getButtonDefs().forEach(bd -> dialogPane.addButton(bd.type(), bd.resultHandler(), bd.action(), bd.enabled()));
@@ -69,9 +68,10 @@ public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBu
             okButton.disableProperty().bind(Bindings.not(dialogPane.validProperty()));
         }
 
+        InputDialog dlg = new InputDialog();
         dlg.setDialogPane(dialogPane);
-        dlg.getDialogPane().applyCss();
-        dlg.getDialogPane().layout();
+        dialogPane.applyCss();
+        dialogPane.layout();
 
         return dlg;
     }
