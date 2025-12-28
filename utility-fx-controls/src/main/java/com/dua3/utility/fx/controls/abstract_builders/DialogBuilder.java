@@ -28,6 +28,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -132,10 +133,8 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
         // make resizable
         dlg.setResizable(resizable);
 
-        // modality
-        if (modality != null) {
-            dlg.initModality(modality);
-        }
+        // modality - defaults to Modality.WINDOW_MODAL
+        dlg.initModality(Objects.requireNonNullElse(modality, Modality.WINDOW_MODAL));
 
         // set buttons
         if (!getButtonDefs().isEmpty()) {
