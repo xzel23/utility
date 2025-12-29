@@ -9,9 +9,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.DoubleConsumer;
-import java.util.function.DoubleSupplier;
 
 /**
  * A builder class for constructing a {@link WizardDialog} instance.
@@ -30,8 +29,8 @@ public class WizardDialogBuilder {
     private double prefHeight = -1;
     private double minWidth = -1;
     private double minHeight = -1;
-    private double maxWidth = -1;
-    private double maxHeight = -1;
+    private double maxWidth = Integer.MAX_VALUE;
+    private double maxHeight = Integer.MAX_VALUE;
     private @Nullable Modality modality;
 
     /**
@@ -161,14 +160,13 @@ public class WizardDialogBuilder {
     public <D extends InputDialogPane<R>, B extends PaneBuilder<D, B, R>, R> WizardDialogBuilder page(String name, B builder) {
         D pane = builder.build();
 
-        setMax(pane::getMinWidth, pane::setMinWidth, minWidth);
-        setMax(pane::getMinHeight, pane::setMinHeight, minHeight);
-        setMax(pane::getMaxWidth, pane::setMaxWidth, maxWidth);
-        setMax(pane::getMaxHeight, pane::setMaxHeight, maxHeight);
-        setMax(pane::getPrefWidth, pane::setPrefWidth, prefWidth);
-        setMax(pane::getPrefHeight, pane::setPrefHeight, prefHeight);
+        if (minWidth > 0) pane.setMinWidth(minWidth);
+        if (minHeight > 0) pane.setMinHeight(minHeight);
+        if (maxWidth < Integer.MAX_VALUE) pane.setMaxWidth(maxWidth);
+        if (maxHeight < Integer.MAX_VALUE) pane.setMaxHeight(maxHeight);
+        if (prefWidth > 0) pane.setPrefWidth(prefWidth);
+        if (prefHeight > 0) pane.setPrefHeight(prefHeight);
 
-        if (pane.getPrefWidth() < prefWidth) { pane.setPrefWidth(prefWidth); }
         DialogPaneBuilder.ResultHandler<R> resultHandler = builder.getResultHandler();
         WizardDialog.Page<D, R> page = new WizardDialog.Page<>(pane, resultHandler);
         page.setNext(builder.getNext().orElse(null));
@@ -179,12 +177,6 @@ public class WizardDialogBuilder {
         }
 
         return this;
-    }
-
-    private static void setMax(DoubleSupplier getter, DoubleConsumer setter, double value) {
-        if (value > getter.getAsDouble()) {
-            setter.accept(value);
-        }
     }
 
     /**
@@ -224,9 +216,7 @@ public class WizardDialogBuilder {
         dlg.setTitle(title);
         dlg.setPages(new LinkedHashMap<>(pages), getStartPage());
 
-        if (modality != null) {
-            dlg.initModality(modality);
-        }
+        dlg.initModality(Objects.requireNonNullElse(modality, Modality.WINDOW_MODAL));
 
         return dlg;
     }

@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.DialogPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler;
@@ -112,8 +113,11 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         if (pages == null) {
             return;
         }
-        // get and translate the result
 
+        // avoid flickering
+        getDialogPane().getScene().setFill(Color.TRANSPARENT);
+
+        // get and translate the result
         Set<String> pageNames = pages.keySet();
         for (Entry<String, Page<?, ?>> entry : pages.entrySet()) {
             String name = entry.getKey();
@@ -160,6 +164,40 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
                         p -> Bindings.isNotEmpty(pageStack)
                 );
             }
+        }
+
+        // determine dialog dimensions
+        double minWidth = -1;
+        double minHeight = -1;
+        double maxWidth = Integer.MAX_VALUE;
+        double maxHeight = Integer.MAX_VALUE;
+        double prefWidth = -1;
+        double prefHeight = -1;
+        for (var page : pages.values()) {
+            InputDialogPane<?> pane = page.pane;
+
+            setDialogPane(pane);
+            pane.applyCss();
+            pane.layout();
+
+            if (pane.getMinWidth() > 0) {minWidth = Math.max(minWidth, pane.getMinWidth());}
+            if (pane.getMinHeight() > 0) {minHeight = Math.max(minHeight, pane.getMinHeight());}
+            if (pane.getMaxWidth() < Integer.MAX_VALUE) {maxWidth = Math.min(maxWidth, pane.getMaxWidth());}
+            if (pane.getMaxHeight() < Integer.MAX_VALUE) {maxHeight = Math.min(maxHeight, pane.getMaxHeight());}
+            if (pane.getPrefWidth() > 0) {prefWidth = Math.max(prefWidth, pane.getPrefWidth());}
+            if (pane.getPrefHeight() > 0) {prefHeight = Math.max(prefHeight, pane.getPrefHeight());}
+        }
+
+        if (minWidth > 0 && maxWidth < Integer.MAX_VALUE && minWidth > maxWidth) {minWidth = maxWidth;}
+        if (minHeight > 0 && maxHeight < Integer.MAX_VALUE && minHeight > maxHeight) {minHeight = maxHeight;}
+
+        for (var page : pages.values()) {
+            InputDialogPane<?> pane = page.pane;
+            if (minWidth > 0) {pane.setMinWidth(minWidth);}
+            if (maxWidth < Integer.MAX_VALUE) {pane.setMaxWidth(maxWidth);}
+            if (prefWidth > 0) {pane.setPrefWidth(Math.clamp(pane.getPrefWidth(), minWidth, maxWidth));}
+            if (prefHeight > 0) {pane.setPrefWidth(Math.clamp(pane.getPrefHeight(), minHeight, maxHeight));}
+            pane.layout();
         }
     }
 
