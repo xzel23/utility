@@ -169,8 +169,6 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         // determine dialog dimensions
         double minWidth = -1;
         double minHeight = -1;
-        double maxWidth = Integer.MAX_VALUE;
-        double maxHeight = Integer.MAX_VALUE;
         double prefWidth = -1;
         double prefHeight = -1;
         for (var page : pages.values()) {
@@ -180,23 +178,22 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
             pane.applyCss();
             pane.layout();
 
-            if (pane.getMinWidth() > 0) {minWidth = Math.max(minWidth, pane.getMinWidth());}
-            if (pane.getMinHeight() > 0) {minHeight = Math.max(minHeight, pane.getMinHeight());}
-            if (pane.getMaxWidth() < Integer.MAX_VALUE) {maxWidth = Math.min(maxWidth, pane.getMaxWidth());}
-            if (pane.getMaxHeight() < Integer.MAX_VALUE) {maxHeight = Math.min(maxHeight, pane.getMaxHeight());}
-            if (pane.getPrefWidth() > 0) {prefWidth = Math.max(prefWidth, pane.getPrefWidth());}
-            if (pane.getPrefHeight() > 0) {prefHeight = Math.max(prefHeight, pane.getPrefHeight());}
-        }
+            double paneMinWidth = pane.minWidth(-1);
+            double paneMinHeight = pane.minHeight(-1);
+            double panePrefWidth = pane.prefWidth(-1);
+            double panePrefHeight = pane.prefHeight(-1);
 
-        if (minWidth > 0 && maxWidth < Integer.MAX_VALUE && minWidth > maxWidth) {minWidth = maxWidth;}
-        if (minHeight > 0 && maxHeight < Integer.MAX_VALUE && minHeight > maxHeight) {minHeight = maxHeight;}
+            if (paneMinWidth > 0) {minWidth = Math.max(minWidth, paneMinWidth);}
+            if (paneMinHeight > 0) {minHeight = Math.max(minHeight, paneMinHeight);}
+            if (panePrefWidth > 0) {prefWidth = Math.max(prefWidth, panePrefWidth);}
+            if (panePrefHeight > 0) {prefHeight = Math.max(prefHeight, panePrefHeight);}
+        }
 
         for (var page : pages.values()) {
             InputDialogPane<?> pane = page.pane;
             if (minWidth > 0) {pane.setMinWidth(minWidth);}
-            if (maxWidth < Integer.MAX_VALUE) {pane.setMaxWidth(maxWidth);}
-            if (prefWidth > 0) {pane.setPrefWidth(Math.clamp(pane.getPrefWidth(), minWidth, maxWidth));}
-            if (prefHeight > 0) {pane.setPrefHeight(Math.clamp(pane.getPrefHeight(), minHeight, maxHeight));}
+            if (prefWidth > 0) {pane.setPrefWidth(prefWidth);}
+            if (prefHeight > 0) {pane.setPrefHeight(prefHeight);}
             pane.layout();
         }
     }

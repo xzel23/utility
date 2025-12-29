@@ -244,7 +244,7 @@ could not be loaded.
 - remove flickering when displaying dialogs in dark mode
 - DialogBuilder, AlertBuilder, WizardDialogBuilder: set default modality to `Modality.WINDOW_MODAL` instead of 
   `Modality.APPLICATION_MODAL`
-- improve WizardDialog size calculation
+- fix WizardDialog layout calculations
 
 ### 20.3.0
 
