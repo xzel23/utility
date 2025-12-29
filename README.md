@@ -245,6 +245,7 @@ could not be loaded.
 - DialogBuilder, AlertBuilder, WizardDialogBuilder: set default modality to `Modality.WINDOW_MODAL` instead of 
   `Modality.APPLICATION_MODAL`
 - fix WizardDialog layout calculations
+- changed input dialogs to display the required marker on the left and the error marker on the right
 
 ### 20.3.0
 

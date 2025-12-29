@@ -119,6 +119,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     @Override
     public GridBuilder markerSymbols(MarkerSymbols markerSymbols) {
         this.markerSymbols = markerSymbols;
+        this.markerWidth = markerSymbols.calculateWidth(defaultFont, 0.0);
         return this;
     }
 

@@ -57,18 +57,20 @@ public class Grid extends GridPane {
      */
     public Grid(MarkerSymbols markerSymbols) {
         this.markerSymbols = markerSymbols;
-        ColumnConstraints left = new ColumnConstraints();
-        ColumnConstraints middle = new ColumnConstraints();
-        ColumnConstraints right = new ColumnConstraints();
+        ColumnConstraints c0 = new ColumnConstraints();
+        ColumnConstraints c1 = new ColumnConstraints();
+        ColumnConstraints c2 = new ColumnConstraints();
+        ColumnConstraints c3 = new ColumnConstraints();
 
-        // Allow the middle column to grow
-        middle.setHgrow(Priority.ALWAYS);
+        // Allow the control column to grow
+        c2.setHgrow(Priority.ALWAYS);
 
-        // Optional: the others should NOT grow
-        left.setHgrow(Priority.NEVER);
-        right.setHgrow(Priority.NEVER);
+        // the others should NOT grow
+        c0.setHgrow(Priority.NEVER);
+        c1.setHgrow(Priority.NEVER);
+        c3.setHgrow(Priority.NEVER);
 
-        getColumnConstraints().addAll(left, middle, right);
+        getColumnConstraints().addAll(c0, c1, c2, c3);
     }
 
     /**
@@ -151,9 +153,11 @@ public class Grid extends GridPane {
                 continue;
             }
 
-            // add label and control
-            int gridX = 3 * c;
+            // add markers, label and control
+            int gridX = 4 * c;
             int gridY = r;
+
+            addToGrid(entry.requiredMarker, gridX++, gridY, 1, markerInsets);
 
             int span;
             if (entry.label != null) {
@@ -177,7 +181,7 @@ public class Grid extends GridPane {
             addToGrid(node, gridX, gridY, span, insets);
             gridX += span;
 
-            addToGrid(entry.marker, gridX, gridY, 1, markerInsets);
+            addToGrid(entry.errorMarker, gridX, gridY, 1, markerInsets);
 
             entry.control.init();
 
@@ -208,10 +212,15 @@ public class Grid extends GridPane {
         InputControl<?> control = entry.control;
         LOG.trace("updateMarker: valid={}, required={}, empty={}", control.isValid(), control.isRequired(), control.isEmpty());
 
-        String markerText = markerSymbols.getMarker(control.isRequired(), control.isEmpty(), showErrors && !control.isValid());
+        boolean isError = showErrors && !control.isValid();
+        String requiredMarkerText = control.isRequired() ? (control.isEmpty() ? markerSymbols.requiredEmpty() : markerSymbols.requiredFilled()) : "";
+        String errorMarkerText = isError ? (control.isRequired() ? markerSymbols.requiredError() : markerSymbols.optionalError()) : "";
+
         Tooltip tooltip = control.isValid() ? null : new Tooltip(control.errorProperty().get());
-        entry.marker.setText(markerText);
-        entry.marker.setTooltip(tooltip);
+
+        entry.requiredMarker.setText(requiredMarkerText);
+        entry.errorMarker.setText(errorMarkerText);
+        entry.errorMarker.setTooltip(tooltip);
     }
 
     private void addToGrid(Node child, int c, int r, int span, Insets insets) {
@@ -241,19 +250,22 @@ public class Grid extends GridPane {
         final Supplier<? extends T> dflt;
         final InputControl<? super T> control;
         final @Nullable Label label;
-        final Label marker;
+        final Label requiredMarker;
+        final Label errorMarker;
         final boolean visible;
 
         Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean visible, double markerWidth) {
             this.id = id == null || id.isEmpty() ? null : id;
             this.label = label != null ? new Label(label) : null;
-            this.marker = new Label();
+            this.requiredMarker = new Label();
+            this.errorMarker = new Label();
             this.cls = cls;
             this.dflt = dflt;
             this.control = control;
             this.visible = visible;
 
-            marker.setMinWidth(markerWidth);
+            requiredMarker.setMinWidth(markerWidth);
+            errorMarker.setMinWidth(markerWidth);
         }
 
         void reset() {
