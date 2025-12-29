@@ -196,7 +196,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
             if (minWidth > 0) {pane.setMinWidth(minWidth);}
             if (maxWidth < Integer.MAX_VALUE) {pane.setMaxWidth(maxWidth);}
             if (prefWidth > 0) {pane.setPrefWidth(Math.clamp(pane.getPrefWidth(), minWidth, maxWidth));}
-            if (prefHeight > 0) {pane.setPrefWidth(Math.clamp(pane.getPrefHeight(), minHeight, maxHeight));}
+            if (prefHeight > 0) {pane.setPrefHeight(Math.clamp(pane.getPrefHeight(), minHeight, maxHeight));}
             pane.layout();
         }
     }
