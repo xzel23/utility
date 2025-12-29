@@ -15,6 +15,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -79,30 +80,35 @@ public class Grid extends GridPane {
 
     private void updateColumnConstraints() {
         getColumnConstraints().clear();
+        int cols = columns;
         if (getLabelPlacement() == LabelPlacement.BEFORE) {
-            ColumnConstraints c0 = new ColumnConstraints();
-            ColumnConstraints c1 = new ColumnConstraints();
-            ColumnConstraints c2 = new ColumnConstraints();
+            for (int i = 0; i < cols; i++) {
+                ColumnConstraints c0 = new ColumnConstraints();
+                ColumnConstraints c1 = new ColumnConstraints();
+                ColumnConstraints c2 = new ColumnConstraints();
 
-            // Allow the control column to grow
-            c1.setHgrow(Priority.ALWAYS);
+                // Allow the control column to grow
+                c1.setHgrow(Priority.ALWAYS);
 
-            // the others should NOT grow
-            c0.setHgrow(Priority.NEVER);
-            c2.setHgrow(Priority.NEVER);
+                // the others should NOT grow
+                c0.setHgrow(Priority.NEVER);
+                c2.setHgrow(Priority.NEVER);
 
-            getColumnConstraints().addAll(c0, c1, c2);
+                getColumnConstraints().addAll(c0, c1, c2);
+            }
         } else {
-            ColumnConstraints c0 = new ColumnConstraints();
-            ColumnConstraints c1 = new ColumnConstraints();
+            for (int i = 0; i < cols; i++) {
+                ColumnConstraints c0 = new ColumnConstraints();
+                ColumnConstraints c1 = new ColumnConstraints();
 
-            // Allow the control column to grow
-            c0.setHgrow(Priority.ALWAYS);
+                // Allow the control column to grow
+                c0.setHgrow(Priority.ALWAYS);
 
-            // error marker column should NOT grow
-            c1.setHgrow(Priority.NEVER);
+                // error marker column should NOT grow
+                c1.setHgrow(Priority.NEVER);
 
-            getColumnConstraints().addAll(c0, c1);
+                getColumnConstraints().addAll(c0, c1);
+            }
         }
     }
 
@@ -235,7 +241,11 @@ public class Grid extends GridPane {
                 // set row height
                 if (c == 0) {
                     RowConstraints rc = new RowConstraints();
-                    rc.setMinHeight(minRowHeight);
+                    if (minRowHeight > 0) {
+                        rc.setMinHeight(minRowHeight);
+                        rc.setPrefHeight(minRowHeight);
+                    }
+                    rc.setValignment(VPos.CENTER);
                     getRowConstraints().add(rc);
                 }
 
@@ -272,8 +282,10 @@ public class Grid extends GridPane {
                 // set row constraints (label row)
                 if (c == 0) {
                     RowConstraints rcLabel = new RowConstraints();
+                    rcLabel.setValignment(VPos.CENTER);
                     getRowConstraints().add(rcLabel); // row 2r
                     RowConstraints rcControl = new RowConstraints();
+                    rcControl.setValignment(VPos.CENTER);
                     getRowConstraints().add(rcControl); // row 2r + 1
                 }
 

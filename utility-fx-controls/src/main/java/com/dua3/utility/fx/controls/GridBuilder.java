@@ -104,7 +104,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         this.sectionStyles = sectionStyles.length == 0 ? DEFAULT_SECTION_STYLES : sectionStyles;
         this.defaultFont = FU.convert(new Label().getFont());
         this.markerSymbols = MarkerSymbols.defaultSymbols();
-        this.markerWidth = markerSymbols.calculateWidth(defaultFont, 0.0);
+        this.markerWidth = markerSymbols.calculateWidth(defaultFont, 0.0) + 2.0;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     @Override
     public GridBuilder markerSymbols(MarkerSymbols markerSymbols) {
         this.markerSymbols = markerSymbols;
-        this.markerWidth = markerSymbols.calculateWidth(defaultFont, 0.0);
+        this.markerWidth = markerSymbols.calculateWidth(defaultFont, 0.0) + 2.0;
         return this;
     }
 
