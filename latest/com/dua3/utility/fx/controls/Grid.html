@@ -62,6 +62,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#property-detail" tabindex="0">Property Details</a>
 <ol class="toc-list">
+<li><a href="#labelPlacementProperty" tabindex="0">labelPlacement</a></li>
 <li><a href="#validProperty" tabindex="0">valid</a></li>
 </ol>
 </li>
@@ -69,6 +70,7 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#LOG" tabindex="0">LOG</a></li>
 <li><a href="#valid" tabindex="0">valid</a></li>
+<li><a href="#labelPlacement" tabindex="0">labelPlacement</a></li>
 </ol>
 </li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
@@ -78,6 +80,9 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
+<li><a href="#labelPlacementProperty()" tabindex="0">labelPlacementProperty()</a></li>
+<li><a href="#getLabelPlacement()" tabindex="0">getLabelPlacement()</a></li>
+<li><a href="#setLabelPlacement(com.dua3.utility.fx.controls.LabelPlacement)" tabindex="0">setLabelPlacement(LabelPlacement)</a></li>
 <li><a href="#validProperty()" tabindex="0">validProperty()</a></li>
 <li><a href="#get()" tabindex="0">get()</a></li>
 <li><a href="#init()" tabindex="0">init()</a></li>
@@ -129,9 +134,14 @@ provides methods for initialization, resetting, and retrieving input values.</di
 <div class="table-header col-first">Type</div>
 <div class="table-header col-second">Property</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second even-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
+<div class="col-first even-row-color"><code>javafx.beans.property.ObjectProperty<wbr>&lt;<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#labelPlacementProperty" class="member-name-link">labelPlacement</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Get the label placement property.</div>
+</div>
+<div class="col-first odd-row-color"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second odd-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Get the valid state property.</div>
 </div>
 </div>
@@ -158,14 +168,19 @@ provides methods for initialization, resetting, and retrieving input values.</di
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>protected static final org.apache.logging.log4j.Logger</code></div>
-<div class="col-second even-row-color"><code><a href="#LOG" class="member-name-link">LOG</a></code></div>
+<div class="col-first even-row-color"><code>protected final javafx.beans.property.ObjectProperty<wbr>&lt;<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#labelPlacement" class="member-name-link">labelPlacement</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Property holding the label placement.</div>
+</div>
+<div class="col-first odd-row-color"><code>protected static final org.apache.logging.log4j.Logger</code></div>
+<div class="col-second odd-row-color"><code><a href="#LOG" class="member-name-link">LOG</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Logger</div>
 </div>
-<div class="col-first odd-row-color"><code>protected final javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second odd-row-color"><code><a href="#valid" class="member-name-link">valid</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>protected final javafx.beans.property.BooleanProperty</code></div>
+<div class="col-second even-row-color"><code><a href="#valid" class="member-name-link">valid</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Property holding the valid state.</div>
 </div>
 </div>
@@ -211,20 +226,35 @@ provides methods for initialization, resetting, and retrieving input values.</di
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves a map of IDs and their corresponding values from the input controls.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#init()" class="member-name-link">init</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLabelPlacement()" class="member-name-link">getLabelPlacement</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get the label placement.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#init()" class="member-name-link">init</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Initializes the InputGrid by clearing previous input controls,
 creating a new grid layout, and setting up input controls with labels and markers.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ObjectProperty<wbr>&lt;<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#labelPlacementProperty()" class="member-name-link">labelPlacementProperty</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get the label placement property.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Resets all input controls in the grid to their default values.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLabelPlacement(com.dua3.utility.fx.controls.LabelPlacement)" class="member-name-link">setLabelPlacement</a><wbr>(<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&nbsp;labelPlacement)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Set the label placement.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the valid state property.</div>
 </div>
 </div>
@@ -262,6 +292,23 @@ creating a new grid layout, and setting up input controls with labels and marker
 <section class="property-details" id="property-detail">
 <h2>Property Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="labelPlacementProperty">
+<h3>labelPlacement</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ObjectProperty&lt;<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&gt;</span>&nbsp;<span class="element-name">labelPlacementProperty</span></div>
+<div class="block">Get the label placement property.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#labelPlacementProperty()"><code>labelPlacementProperty()</code></a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
 <li>
 <section class="detail" id="validProperty">
 <h3>valid</h3>
@@ -323,6 +370,15 @@ allowing it to automatically update based on user interactions or changes in the
 </div>
 </section>
 </li>
+<li>
+<section class="detail" id="labelPlacement">
+<h3>labelPlacement</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">javafx.beans.property.ObjectProperty&lt;<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&gt;</span>&nbsp;<span class="element-name">labelPlacement</span></div>
+<div class="block">Property holding the label placement.</div>
+</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -352,6 +408,45 @@ allowing it to automatically update based on user interactions or changes in the
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="labelPlacementProperty()">
+<h3>labelPlacementProperty</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.beans.property.ObjectProperty&lt;<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&gt;</span>&nbsp;<span class="element-name">labelPlacementProperty</span>()</div>
+<div class="block">Get the label placement property.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the label placement property</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getLabelPlacement()">
+<h3>getLabelPlacement</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a></span>&nbsp;<span class="element-name">getLabelPlacement</span>()</div>
+<div class="block">Get the label placement.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the label placement</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="setLabelPlacement(com.dua3.utility.fx.controls.LabelPlacement)">
+<h3>setLabelPlacement</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setLabelPlacement</span><wbr><span class="parameters">(<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&nbsp;labelPlacement)</span></div>
+<div class="block">Set the label placement.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>labelPlacement</code> - the label placement</dd>
+</dl>
+</div>
+</section>
+</li>
 <li>
 <section class="detail" id="validProperty()">
 <h3>validProperty</h3>
