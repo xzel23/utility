@@ -55,8 +55,6 @@ import java.util.regex.Pattern;
  *             bridge implementations on your classpath, and make sure the logging system is not initialized
  *             before the {@code launchApplication()} is called.
  *             This option is only added when {@code com.dua3.utility.logging.log4j.LogUtilLog4J} is on the classpath.
- *         <li><strong>{@code --log-level}:</strong>
- *             Set the global log level. Only messages with at least the given level are logged.
  *         <li><strong>Application-specific options:</strong>
  *             Use the {@code addOptions}parameter to pass application-specific options.
  *     </ul>
@@ -74,6 +72,7 @@ public final class FxLauncher {
     public static final int RC_ERROR = 1;
 
     private static final @Nullable Method LOGUTIL_INITIALISER;
+    public static final String LOG_MESSAGES = "Log Messages";
 
     static {
         Method initialiser = null;
@@ -87,7 +86,6 @@ public final class FxLauncher {
     }
 
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
-    static @Nullable LogLevel logLevel = null;
     static @Nullable LogBuffer logBuffer = null;
     static boolean showLogWindow = false;
     static boolean debug = false;
@@ -281,17 +279,6 @@ public final class FxLauncher {
         }
 
         if (LOGUTIL_INITIALISER != null) {
-            Consumer<LogLevel> setLogLevel = level -> logLevel = level;
-
-            agp.addEnumOption(
-                    "Log Level",
-                    "Set the global Log Level.",
-                    Repetitions.ZERO_OR_ONE,
-                    "level",
-                    setLogLevel,
-                    LogLevel.class,
-                    "--log-level", "-ll"
-            );
             agp.addFlag(
                     "Show Log Window",
                     "Show Log Messages in a separate Window.",
@@ -303,9 +290,6 @@ public final class FxLauncher {
                     "Enable debugging features.",
                     v -> {
                         debug = v;
-                        if (logLevel == null) {
-                            logLevel = LogLevel.DEBUG;
-                        }
                     },
                     "--debug"
             );
@@ -348,8 +332,7 @@ public final class FxLauncher {
 
         if ((showLogWindow || debug) && LOGUTIL_INITIALISER != null) {
             try {
-                LogLevel level = logLevel != null ? logLevel : LogLevel.DEBUG;
-                LOGUTIL_INITIALISER.invoke(null, level);
+                LOGUTIL_INITIALISER.invoke(null, LogLevel.TRACE);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalStateException(e);
             }
@@ -371,7 +354,7 @@ public final class FxLauncher {
             @SuppressWarnings("unchecked")
             Class<? extends Application> applicationClass = (Class<? extends Application>) loader.loadClass(applicationClassName);
             log.info("starting application: {}", applicationClass.getName());
-            showLogWindow(null);
+            showLogWindow(null, appName + " - " + LOG_MESSAGES);
             launch(applicationClass, args);
             rc = RC_SUCCESS;
         } catch (Exception e) {
@@ -442,7 +425,7 @@ public final class FxLauncher {
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
     public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner) {
-        return showLogWindow(owner, "Log Messages");
+        return showLogWindow(owner, LOG_MESSAGES);
     }
 
     /**

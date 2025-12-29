@@ -1,7 +1,9 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.logging.LogBuffer;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -66,9 +68,17 @@ public class FxLogWindow extends Stage {
     public FxLogWindow(String title, LogBuffer logBuffer) {
         this.logBuffer = logBuffer;
         FxLogPane logPane = new FxLogPane(this.logBuffer);
-        Scene scene = new Scene(logPane, 800, 400);
+        Scene scene = new Scene(logPane);
         setScene(scene);
         setTitle(title);
+
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        double width = primaryScreenBounds.getWidth() * 0.8;
+        double height = primaryScreenBounds.getHeight() * 0.5;
+        setWidth(width);
+        setHeight(height);
+        setX((primaryScreenBounds.getWidth() - width) / 2 + primaryScreenBounds.getMinX());
+        setY(primaryScreenBounds.getMaxY() - height);
     }
 
     /**
