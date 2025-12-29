@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.binding.Bindings;
@@ -18,8 +19,10 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -37,6 +40,21 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
      * Constructor.
      */
     protected InputDialogPane() {
+        ApplicationUtil.addDarkModeListener(darkModeListener);
+        sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene == null) {
+                ApplicationUtil.removeDarkModeListener(darkModeListener);
+            }
+        });
+        updateStylesheet(ApplicationUtil.isDarkMode());
+    }
+
+    private final Consumer<Boolean> darkModeListener = this::updateStylesheet;
+
+    private void updateStylesheet(boolean dark) {
+        String stylesheet = dark ? "dialogs_dark.css" : "dialogs_light.css";
+        URL url = Objects.requireNonNull(InputDialogPane.class.getResource(stylesheet));
+        getStylesheets().setAll(url.toExternalForm());
     }
 
     /**

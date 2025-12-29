@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -119,11 +120,7 @@ public final class ApplicationUtil {
      * @return the current application UI mode, which is an instance of {@link UiMode}
      */
     public static UiMode getUiMode() {
-        UiMode mode = uiMode.get();
-        if (mode == null) {
-            throw new IllegalStateException("UiMode not initialized, call setUiMode at Application startup to initialize");
-        }
-        return mode;
+        return Objects.requireNonNullElse(uiMode.get(), UiMode.SYSTEM_DEFAULT);
     }
 
     /**

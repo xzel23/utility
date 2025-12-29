@@ -245,7 +245,9 @@ could not be loaded.
 - DialogBuilder, AlertBuilder, WizardDialogBuilder: set default modality to `Modality.WINDOW_MODAL` instead of 
   `Modality.APPLICATION_MODAL`
 - fix WizardDialog layout calculations
-- changed input dialogs to display the required marker on the left and the error marker on the right
+- changed input dialogs to display the required marker on the left and the error marker on the right, also a hint 
+  for required fields is added automatically when required fields are present; added colors to required and error 
+  markers and update on dark mode toggle
 
 ### 20.3.0
 

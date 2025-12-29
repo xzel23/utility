@@ -1,0 +1,16 @@
+.root {
+    -dua3-required-marker-color: #ff9933;
+    -dua3-error-marker-color: #ff3333;
+}
+
+.required-marker {
+    -fx-text-fill: -dua3-required-marker-color;
+}
+
+.error-marker {
+    -fx-text-fill: -dua3-error-marker-color;
+}
+
+.required-field-label {
+    -fx-text-fill: -dua3-required-marker-color;
+}

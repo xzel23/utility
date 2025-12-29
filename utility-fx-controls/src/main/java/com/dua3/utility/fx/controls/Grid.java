@@ -59,8 +59,6 @@ public class Grid extends GridPane {
     public Grid(MarkerSymbols markerSymbols) {
         this.markerSymbols = markerSymbols;
 
-        this.setStyle("-dua3-required-marker-color: orange; -dua3-error-marker-color: red;");
-
         ColumnConstraints c0 = new ColumnConstraints();
         ColumnConstraints c1 = new ColumnConstraints();
         ColumnConstraints c2 = new ColumnConstraints();
@@ -202,7 +200,6 @@ public class Grid extends GridPane {
         if (data.stream().anyMatch(e -> e.control.isRequired())) {
             Label requiredFieldLabel = new Label("* Required field");
             requiredFieldLabel.getStyleClass().add("required-field-label");
-            requiredFieldLabel.setStyle("-fx-text-fill: -dua3-required-marker-color;");
             addToGrid(requiredFieldLabel, 0, r, 3 * columns, insets);
         }
 
@@ -273,10 +270,8 @@ public class Grid extends GridPane {
             this.label = label != null ? new Label(label) : null;
             this.requiredMarker = new Label();
             this.requiredMarker.getStyleClass().add("required-marker");
-            this.requiredMarker.setStyle("-fx-text-fill: -dua3-required-marker-color;");
             this.errorMarker = new Label();
             this.errorMarker.getStyleClass().add("error-marker");
-            this.errorMarker.setStyle("-fx-text-fill: -dua3-error-marker-color;");
             this.cls = cls;
             this.dflt = dflt;
             this.control = control;
