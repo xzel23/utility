@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
@@ -57,20 +58,21 @@ public class Grid extends GridPane {
      */
     public Grid(MarkerSymbols markerSymbols) {
         this.markerSymbols = markerSymbols;
+
+        this.setStyle("-dua3-required-marker-color: orange; -dua3-error-marker-color: red;");
+
         ColumnConstraints c0 = new ColumnConstraints();
         ColumnConstraints c1 = new ColumnConstraints();
         ColumnConstraints c2 = new ColumnConstraints();
-        ColumnConstraints c3 = new ColumnConstraints();
 
         // Allow the control column to grow
-        c2.setHgrow(Priority.ALWAYS);
+        c1.setHgrow(Priority.ALWAYS);
 
         // the others should NOT grow
         c0.setHgrow(Priority.NEVER);
-        c1.setHgrow(Priority.NEVER);
-        c3.setHgrow(Priority.NEVER);
+        c2.setHgrow(Priority.NEVER);
 
-        getColumnConstraints().addAll(c0, c1, c2, c3);
+        getColumnConstraints().addAll(c0, c1, c2);
     }
 
     /**
@@ -154,18 +156,18 @@ public class Grid extends GridPane {
             }
 
             // add markers, label and control
-            int gridX = 4 * c;
+            int gridX = 3 * c;
             int gridY = r;
-
-            addToGrid(entry.requiredMarker, gridX++, gridY, 1, markerInsets);
 
             int span;
             if (entry.label != null) {
-                addToGrid(entry.label, gridX, gridY, 1, insets);
-                gridX++;
+                HBox labelBox = new HBox(entry.label, entry.requiredMarker);
+                labelBox.setSpacing(2);
+                addToGrid(labelBox, gridX++, gridY, 1, insets);
                 span = 1;
             } else {
-                span = 2;
+                addToGrid(entry.requiredMarker, gridX++, gridY, 1, markerInsets);
+                span = 1;
             }
 
             Node node = entry.control.node();
@@ -190,6 +192,18 @@ public class Grid extends GridPane {
             if (c == 0) {
                 r++;
             }
+        }
+
+        if (c != 0) {
+            r++;
+        }
+
+        // add "* Required field" label
+        if (data.stream().anyMatch(e -> e.control.isRequired())) {
+            Label requiredFieldLabel = new Label("* Required field");
+            requiredFieldLabel.getStyleClass().add("required-field-label");
+            requiredFieldLabel.setStyle("-fx-text-fill: -dua3-required-marker-color;");
+            addToGrid(requiredFieldLabel, 0, r, 3 * columns, insets);
         }
 
         // the valid state is true if all inputs are valid
@@ -258,7 +272,11 @@ public class Grid extends GridPane {
             this.id = id == null || id.isEmpty() ? null : id;
             this.label = label != null ? new Label(label) : null;
             this.requiredMarker = new Label();
+            this.requiredMarker.getStyleClass().add("required-marker");
+            this.requiredMarker.setStyle("-fx-text-fill: -dua3-required-marker-color;");
             this.errorMarker = new Label();
+            this.errorMarker.getStyleClass().add("error-marker");
+            this.errorMarker.setStyle("-fx-text-fill: -dua3-error-marker-color;");
             this.cls = cls;
             this.dflt = dflt;
             this.control = control;

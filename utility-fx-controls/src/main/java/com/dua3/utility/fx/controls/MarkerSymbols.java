@@ -34,8 +34,8 @@ public record MarkerSymbols(
      * - Optional empty: (empty string)
      * - Optional filled: (empty string)
      * - Optional error: ⚠
-     * - Required empty: •
-     * - Required filled: •
+     * - Required empty: *
+     * - Required filled: *
      * - Required error: ⚠
      *
      * @return a MarkerSymbols instance representing the default marker symbols
@@ -43,7 +43,7 @@ public record MarkerSymbols(
     public static MarkerSymbols defaultSymbols() {
         return new MarkerSymbols(
                 "", "", "⚠",
-                "•", "•", "⚠"
+                "*", "*", "⚠"
         );
     }
 
