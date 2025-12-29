@@ -166,6 +166,14 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B columns(int columns);
 
     /**
+     * Set the label placement.
+     *
+     * @param labelPlacement the label placement
+     * @return this builder instance
+     */
+    B labelPlacement(LabelPlacement labelPlacement);
+
+    /**
      * Processes the given node and returns a result of type B.
      *
      * @param node the node to be processed

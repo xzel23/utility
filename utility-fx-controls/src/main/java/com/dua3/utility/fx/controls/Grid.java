@@ -1,5 +1,9 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.HBox;
@@ -47,6 +51,11 @@ public class Grid extends GridPane {
      */
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
+    /**
+     * Property holding the label placement.
+     */
+    protected final ObjectProperty<LabelPlacement> labelPlacement = new SimpleObjectProperty<>(LabelPlacement.BEFORE);
+
     private final MarkerSymbols markerSymbols;
     private SequencedCollection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;
@@ -59,18 +68,69 @@ public class Grid extends GridPane {
     public Grid(MarkerSymbols markerSymbols) {
         this.markerSymbols = markerSymbols;
 
-        ColumnConstraints c0 = new ColumnConstraints();
-        ColumnConstraints c1 = new ColumnConstraints();
-        ColumnConstraints c2 = new ColumnConstraints();
+        labelPlacement.addListener((obs, oldVal, newVal) -> {
+            if (oldVal != newVal) {
+                init();
+            }
+        });
 
-        // Allow the control column to grow
-        c1.setHgrow(Priority.ALWAYS);
+        updateColumnConstraints();
+    }
 
-        // the others should NOT grow
-        c0.setHgrow(Priority.NEVER);
-        c2.setHgrow(Priority.NEVER);
+    private void updateColumnConstraints() {
+        getColumnConstraints().clear();
+        if (getLabelPlacement() == LabelPlacement.BEFORE) {
+            ColumnConstraints c0 = new ColumnConstraints();
+            ColumnConstraints c1 = new ColumnConstraints();
+            ColumnConstraints c2 = new ColumnConstraints();
 
-        getColumnConstraints().addAll(c0, c1, c2);
+            // Allow the control column to grow
+            c1.setHgrow(Priority.ALWAYS);
+
+            // the others should NOT grow
+            c0.setHgrow(Priority.NEVER);
+            c2.setHgrow(Priority.NEVER);
+
+            getColumnConstraints().addAll(c0, c1, c2);
+        } else {
+            ColumnConstraints c0 = new ColumnConstraints();
+            ColumnConstraints c1 = new ColumnConstraints();
+
+            // Allow the control column to grow
+            c0.setHgrow(Priority.ALWAYS);
+
+            // error marker column should NOT grow
+            c1.setHgrow(Priority.NEVER);
+
+            getColumnConstraints().addAll(c0, c1);
+        }
+    }
+
+    /**
+     * Get the label placement property.
+     *
+     * @return the label placement property
+     */
+    public ObjectProperty<LabelPlacement> labelPlacementProperty() {
+        return labelPlacement;
+    }
+
+    /**
+     * Get the label placement.
+     *
+     * @return the label placement
+     */
+    public LabelPlacement getLabelPlacement() {
+        return labelPlacement.get();
+    }
+
+    /**
+     * Set the label placement.
+     *
+     * @param labelPlacement the label placement
+     */
+    public void setLabelPlacement(LabelPlacement labelPlacement) {
+        this.labelPlacement.set(labelPlacement);
     }
 
     /**
@@ -135,13 +195,27 @@ public class Grid extends GridPane {
     public void init() {
         LOG.trace("init: {}", data);
 
+        updateColumnConstraints();
+
         getChildren().clear();
+        getRowConstraints().clear();
 
         List<InputControl<?>> controls = new ArrayList<>();
 
         // create grid with input controls
         Insets insets = new Insets(2);
         Insets markerInsets = new Insets(0);
+
+        LabelPlacement placement = getLabelPlacement();
+
+        double minRowHeight = -1;
+        if (placement == LabelPlacement.BEFORE) {
+            TextField dummy = new TextField();
+            dummy.setManaged(false);
+            dummy.setVisible(false);
+            minRowHeight = dummy.prefHeight(-1);
+        }
+
         int r = 0;
         int c = 0;
         for (var entry : data) {
@@ -154,34 +228,77 @@ public class Grid extends GridPane {
             }
 
             // add markers, label and control
-            int gridX = 3 * c;
-            int gridY = r;
+            if (placement == LabelPlacement.BEFORE) {
+                int gridX = 3 * c;
+                int gridY = r;
 
-            int span;
-            if (entry.label != null) {
-                HBox labelBox = new HBox(entry.label, entry.requiredMarker);
-                labelBox.setSpacing(2);
-                addToGrid(labelBox, gridX++, gridY, 1, insets);
-                span = 1;
-            } else {
-                addToGrid(entry.requiredMarker, gridX++, gridY, 1, markerInsets);
-                span = 1;
-            }
-
-            Node node = entry.control.node();
-            node.focusedProperty().addListener((v, o, n) -> {
-                if (Objects.equals(n, Boolean.FALSE)) {
-                    LOG.trace("input control lost focus: {}", entry.id);
-                    updateMarker(entry, true);
+                // set row height
+                if (c == 0) {
+                    RowConstraints rc = new RowConstraints();
+                    rc.setMinHeight(minRowHeight);
+                    getRowConstraints().add(rc);
                 }
-            });
 
-            entry.control.state().addValidationListener(() -> updateMarker(entry, true));
+                int span;
+                if (entry.label != null) {
+                    HBox labelBox = new HBox(entry.label, entry.requiredMarker);
+                    labelBox.setSpacing(2);
+                    addToGrid(labelBox, gridX++, gridY, 1, insets);
+                    span = 1;
+                } else {
+                    addToGrid(entry.requiredMarker, gridX++, gridY, 1, markerInsets);
+                    span = 1;
+                }
 
-            addToGrid(node, gridX, gridY, span, insets);
-            gridX += span;
+                Node node = entry.control.node();
+                node.focusedProperty().addListener((v, o, n) -> {
+                    if (Objects.equals(n, Boolean.FALSE)) {
+                        LOG.trace("input control lost focus: {}", entry.id);
+                        updateMarker(entry, true);
+                    }
+                });
 
-            addToGrid(entry.errorMarker, gridX, gridY, 1, markerInsets);
+                entry.control.state().addValidationListener(() -> updateMarker(entry, true));
+
+                addToGrid(node, gridX, gridY, span, insets);
+                gridX += span;
+
+                addToGrid(entry.errorMarker, gridX, gridY, 1, markerInsets);
+            } else {
+                // LabelPlacement.ABOVE
+                int gridX = 2 * c;
+                int gridY = 2 * r;
+
+                // set row constraints (label row)
+                if (c == 0) {
+                    RowConstraints rcLabel = new RowConstraints();
+                    getRowConstraints().add(rcLabel); // row 2r
+                    RowConstraints rcControl = new RowConstraints();
+                    getRowConstraints().add(rcControl); // row 2r + 1
+                }
+
+                if (entry.label != null) {
+                    HBox labelBox = new HBox(entry.label, entry.requiredMarker);
+                    labelBox.setSpacing(2);
+                    labelBox.setPadding(new Insets(6, 0, 0, 0)); // add vertical space above label
+                    addToGrid(labelBox, gridX, gridY, 2, insets);
+                } else {
+                    addToGrid(entry.requiredMarker, gridX, gridY, 2, markerInsets);
+                }
+
+                Node node = entry.control.node();
+                node.focusedProperty().addListener((v, o, n) -> {
+                    if (Objects.equals(n, Boolean.FALSE)) {
+                        LOG.trace("input control lost focus: {}", entry.id);
+                        updateMarker(entry, true);
+                    }
+                });
+
+                entry.control.state().addValidationListener(() -> updateMarker(entry, true));
+
+                addToGrid(node, gridX++, gridY + 1, 1, insets);
+                addToGrid(entry.errorMarker, gridX, gridY + 1, 1, markerInsets);
+            }
 
             entry.control.init();
 
@@ -200,7 +317,9 @@ public class Grid extends GridPane {
         if (data.stream().anyMatch(e -> e.control.isRequired())) {
             Label requiredFieldLabel = new Label("* Required field");
             requiredFieldLabel.getStyleClass().add("required-field-label");
-            addToGrid(requiredFieldLabel, 0, r, 3 * columns, insets);
+            int span = (placement == LabelPlacement.BEFORE ? 3 : 2) * columns;
+            int gridY = placement == LabelPlacement.BEFORE ? r : 2 * r;
+            addToGrid(requiredFieldLabel, 0, gridY, span, insets);
         }
 
         // the valid state is true if all inputs are valid

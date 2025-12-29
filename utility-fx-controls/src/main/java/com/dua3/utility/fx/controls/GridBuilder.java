@@ -82,6 +82,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     private final SectionStyle[] sectionStyles;
     private final Font defaultFont;
     private int columns = 1;
+    private LabelPlacement labelPlacement = LabelPlacement.BEFORE;
     private MarkerSymbols markerSymbols;
     private double markerWidth;
     private double prefWidth = -1;
@@ -172,6 +173,17 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     @Override
     public GridBuilder columns(int columns) {
         this.columns = LangUtil.requirePositive(columns);
+        return this;
+    }
+
+    /**
+     * Set the label placement.
+     *
+     * @param labelPlacement the label placement
+     * @return this GridBuilder instance
+     */
+    public GridBuilder labelPlacement(LabelPlacement labelPlacement) {
+        this.labelPlacement = labelPlacement;
         return this;
     }
 
@@ -372,7 +384,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         setIfConfigured(prefHeight, grid::setPrefHeight);
 
         grid.setContent(data, columns);
-
+        grid.setLabelPlacement(labelPlacement);
         grid.init();
 
         return grid;

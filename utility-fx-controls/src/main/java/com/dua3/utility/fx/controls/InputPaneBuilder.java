@@ -114,6 +114,12 @@ public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, M
     }
 
     @Override
+    public InputPaneBuilder labelPlacement(LabelPlacement labelPlacement) {
+        pb.labelPlacement(labelPlacement);
+        return this;
+    }
+
+    @Override
     public InputPaneBuilder node(Node node) {
         pb.node(node);
         return this;

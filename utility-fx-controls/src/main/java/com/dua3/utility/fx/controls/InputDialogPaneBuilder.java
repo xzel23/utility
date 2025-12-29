@@ -115,6 +115,12 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
+    public InputDialogPaneBuilder labelPlacement(LabelPlacement labelPlacement) {
+        pb.labelPlacement(labelPlacement);
+        return this;
+    }
+
+    @Override
     public InputDialogPaneBuilder node(Node node) {
         pb.node(node);
         return this;

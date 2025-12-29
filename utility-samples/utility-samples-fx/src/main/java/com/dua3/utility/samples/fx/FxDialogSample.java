@@ -7,6 +7,7 @@ import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.UiMode;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.fx.controls.Controls;
+import com.dua3.utility.fx.controls.LabelPlacement;
 import com.dua3.utility.fx.controls.PromptMode;
 import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.fx.controls.Dialogs;
@@ -77,6 +78,12 @@ public class FxDialogSample extends Application {
         comboUiMode.valueProperty().addListener((obs, oldVal, newVal) -> ApplicationUtil.setUiMode(newVal));
         comboUiMode.setMaxWidth(Double.MAX_VALUE);
         container.getChildren().add(comboUiMode);
+
+        // LabelPlacement
+        ComboBox<LabelPlacement> comboLabelPlacement = new ComboBox<>(FXCollections.observableArrayList(LabelPlacement.values()));
+        comboLabelPlacement.setValue(LabelPlacement.BEFORE);
+        comboLabelPlacement.setMaxWidth(Double.MAX_VALUE);
+        container.getChildren().add(comboLabelPlacement);
 
         // About
         container.getChildren().add(createButton("About", () -> {
@@ -197,6 +204,7 @@ public class FxDialogSample extends Application {
             var dlg = Dialogs.input(primaryStage, MessageFormatter.standard())
                     .title("Input")
                     .header("This is an input dialog.")
+                    .labelPlacement(comboLabelPlacement.getValue())
                     .text("This is some text without label.")
                     .labeledText("static text", "This is some labeled text.")
                     .inputConstant("readonly", "readonly", "This is the value of the readonly field.")
@@ -294,9 +302,7 @@ public class FxDialogSample extends Application {
 
     private static void setDarkMode(boolean enabled) {
         Supplier<Theme> themeSupplier = enabled ? PrimerDark::new : PrimerLight::new;
-        PlatformHelper.runAndWait(() -> {
-            setUserAgentStylesheet(themeSupplier.get().getUserAgentStylesheet());
-        });
+        PlatformHelper.runAndWait(() -> setUserAgentStylesheet(themeSupplier.get().getUserAgentStylesheet()));
     }
 
 }

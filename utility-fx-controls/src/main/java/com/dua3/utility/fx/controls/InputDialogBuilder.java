@@ -142,6 +142,12 @@ public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBu
     }
 
     @Override
+    public InputDialogBuilder labelPlacement(LabelPlacement labelPlacement) {
+        pb.labelPlacement(labelPlacement);
+        return this;
+    }
+
+    @Override
     public InputDialogBuilder node(Node node) {
         pb.node(node);
         return this;
