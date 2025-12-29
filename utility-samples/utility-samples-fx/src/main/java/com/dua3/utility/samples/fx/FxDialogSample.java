@@ -186,7 +186,7 @@ public class FxDialogSample extends Application {
         ));
 
         // Directory selection
-        container.getChildren().add(createButton("Direcory selection", () ->
+        container.getChildren().add(createButton("Directory selection", () ->
                 Dialogs.chooseDirectory(primaryStage)
                         .showDialog()
                         .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
