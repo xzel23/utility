@@ -398,7 +398,12 @@ public class Grid extends GridPane {
 
         Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean visible, double markerWidth) {
             this.id = id == null || id.isEmpty() ? null : id;
-            this.label = label != null ? new Label(label) : null;
+            if (label != null) {
+                this.label = new Label(label);
+                this.label.getStyleClass().add("grid-label");
+            } else {
+                this.label = null;
+            }
             this.requiredMarker = new Label();
             this.requiredMarker.getStyleClass().add("required-marker");
             this.errorMarker = new Label();

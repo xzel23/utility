@@ -3,6 +3,9 @@
     -dua3-error-marker-color: #801a1a;
 }
 
+.grid-label {
+}
+
 .required-marker {
     -fx-text-fill: -dua3-required-marker-color;
 }
