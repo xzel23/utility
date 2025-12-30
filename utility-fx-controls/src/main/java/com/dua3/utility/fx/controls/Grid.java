@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxFontUtil;
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.text.Font;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -378,7 +379,7 @@ public class Grid extends GridPane {
 
         // add "* Required field" label
         if (data.stream().anyMatch(e -> e.control.isRequired())) {
-            Label requiredFieldLabel = new Label("* Required field");
+            Label requiredFieldLabel = new Label(I18N.getInstance().get("dua3_fx.grid.required_field"));
             requiredFieldLabel.getStyleClass().add("required-field-label");
             int span = (placement == LabelPlacement.BEFORE ? 3 : 2) * columns;
             int gridY = placement == LabelPlacement.BEFORE ? r : 2 * r;

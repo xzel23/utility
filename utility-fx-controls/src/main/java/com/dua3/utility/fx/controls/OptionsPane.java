@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Param;
 import org.jspecify.annotations.Nullable;
@@ -155,7 +156,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
 
     private static <T> Optional<String> validateNonNull(Option<T> option, @Nullable Object v) {
         if (v == null) {
-            return Optional.of("No value for '" + option.displayName() + "'.");
+            return Optional.of(I18N.getInstance().format("dua3_fx.options_pane.no_value", option.displayName()));
         }
         return Optional.empty();
     }

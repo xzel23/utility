@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.crypt.PasswordUtil;
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
@@ -553,11 +554,11 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             passwordRef.set(s);
             PasswordUtil.PasswordStrength strength = PasswordUtil.evaluatePasswordStrength(s.toCharArray());
             if (strength.strengthLevel().compareTo(PasswordUtil.StrengthLevel.MODERATE) < 0) {
-                return Optional.of("Password is too weak: " + strength.strengthLevel());
+                return Optional.of(I18N.getInstance().format("dua3_fx.input_builder.password_weak", strength.strengthLevel()));
             } else {
                 return Optional.empty();
             }
-        }).inputPassword("", labelRepeat, () -> "", s -> Objects.equals(s, passwordRef.get()) ? Optional.empty() : Optional.of("Passwords do not match."));
+        }).inputPassword("", labelRepeat, () -> "", s -> Objects.equals(s, passwordRef.get()) ? Optional.empty() : Optional.of(I18N.getInstance().get("dua3_fx.input_builder.passwords_do_not_match")));
     }
 
     /**

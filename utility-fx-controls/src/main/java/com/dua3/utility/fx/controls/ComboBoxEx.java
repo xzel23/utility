@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.Alert;
@@ -103,7 +104,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
 
         if (edit != null) {
             this.edit = edit;
-            Button buttonEdit = Controls.button().text("✎").action(this::editItem).build();
+            Button buttonEdit = Controls.button().text(I18N.getInstance().get("dua3_fx.combobox_ex.edit")).action(this::editItem).build();
             children.add(buttonEdit);
             buttonEdit.disableProperty().bind(comboBox.selectionModelProperty().isNull());
         } else {
@@ -112,7 +113,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
 
         if (add != null) {
             this.add = add;
-            Button buttonAdd = Controls.button().text("+").action(this::addItem).build();
+            Button buttonAdd = Controls.button().text(I18N.getInstance().get("dua3_fx.combobox_ex.add")).action(this::addItem).build();
             children.add(buttonAdd);
         } else {
             this.add = null;
@@ -120,7 +121,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
 
         if (remove != null) {
             this.remove = remove;
-            Button buttonRemove = Controls.button().text("-").action(this::removeItem).build();
+            Button buttonRemove = Controls.button().text(I18N.getInstance().get("dua3_fx.combobox_ex.remove")).action(this::removeItem).build();
             children.add(buttonRemove);
             buttonRemove.disableProperty().bind(Bindings.createBooleanBinding(
                     () -> comboBox.getSelectionModel().getSelectedItem() != null && this.items.size() > 1,
@@ -177,9 +178,9 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
                 int idxExisting = items.indexOf(item);
                 if (idxExisting >= 0 && idx != idxExisting) {
                     Dialogs.alert(getScene().getWindow(), Alert.AlertType.CONFIRMATION, MessageFormatter.standard())
-                            .title("Duplicate item")
-                            .header("There already exists an item with the same name.")
-                            .text("Do you want to remove the item instead?")
+                            .title(I18N.getInstance().get("dua3_fx.combobox_ex.duplicate_item.title"))
+                            .header(I18N.getInstance().get("dua3_fx.combobox_ex.duplicate_item.header"))
+                            .text(I18N.getInstance().get("dua3_fx.combobox_ex.duplicate_item_remove.text"))
                             .buttons(ButtonType.YES, ButtonType.NO)
                             .defaultButton(ButtonType.NO)
                             .showAndWait()
@@ -206,9 +207,9 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
             int idxExisting = items.indexOf(item);
             if (idxExisting >= 0) {
                 Dialogs.alert(getScene().getWindow(), Alert.AlertType.INFORMATION, MessageFormatter.standard())
-                        .title("Duplicate item")
-                        .header("There already exists an item with the same name.")
-                        .text("The existing item will be selected.")
+                        .title(I18N.getInstance().get("dua3_fx.combobox_ex.duplicate_item.title"))
+                        .header(I18N.getInstance().get("dua3_fx.combobox_ex.duplicate_item.header"))
+                        .text(I18N.getInstance().get("dua3_fx.combobox_ex.duplicate_item_select.text"))
                         .showAndWait();
                 comboBox.getSelectionModel().select(idxExisting);
                 return;
@@ -242,7 +243,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
      */
     public boolean askBeforeRemoveSelectedItem(T item) {
         return Dialogs.alert(Optional.ofNullable(getScene()).map(Scene::getWindow).orElse(null), Alert.AlertType.CONFIRMATION, MessageFormatter.standard())
-                .header("Remove %s?", format.apply(item))
+                .header(I18N.getInstance().format("dua3_fx.combobox_ex.remove_item.header", format.apply(item)))
                 .buttons(ButtonType.YES, ButtonType.NO)
                 .defaultButton(ButtonType.YES)
                 .build()

@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.i18n.I18N;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.value.ObservableValue;
@@ -110,8 +111,8 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      */
     private String itemText(boolean captitalize) {
         return switch (mode) {
-            case DIRECTORY -> captitalize ? "Directory" : "directory";
-            case OPEN, SAVE -> captitalize ? "File" : "file";
+            case DIRECTORY -> captitalize ? I18N.getInstance().get("dua3_fx.file_input_builder.directory_cap") : I18N.getInstance().get("dua3_fx.file_input_builder.directory");
+            case OPEN, SAVE -> captitalize ? I18N.getInstance().get("dua3_fx.file_input_builder.file_cap") : I18N.getInstance().get("dua3_fx.file_input_builder.file");
         };
     }
 
@@ -124,10 +125,10 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      */
     private Optional<String> defaultValidate(@Nullable Path p) {
         if (p == null) {
-            return Optional.of("No " + itemText(false) + " selected");
+            return Optional.of(I18N.getInstance().format("dua3_fx.file_input_builder.no_item_selected", itemText(false)));
         }
         if (existingOnly && !Files.exists(p)) {
-            return Optional.of(itemText(true) + " does not exist");
+            return Optional.of(I18N.getInstance().format("dua3_fx.file_input_builder.item_does_not_exist", itemText(true)));
         }
         if (!existingOnly) {
             return Optional.empty();
@@ -136,13 +137,13 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
         return switch (mode) {
             case DIRECTORY -> isDirectory
                     ? Optional.empty()
-                    : Optional.of("Selection is not a " + itemText(false));
+                    : Optional.of(I18N.getInstance().format("dua3_fx.file_input_builder.selection_is_not_a", itemText(false)));
             case OPEN -> isDirectory
-                    ? Optional.of("Selection is a directory")
+                    ? Optional.of(I18N.getInstance().get("dua3_fx.file_input_builder.selection_is_a_directory"))
                     : Optional.empty();
             case SAVE -> isDirectory
-                    ? Optional.of("Selection is a directory")
-                    : (!Files.isWritable(p) ? Optional.of(itemText(true) + " is not writeable") : Optional.empty());
+                    ? Optional.of(I18N.getInstance().get("dua3_fx.file_input_builder.selection_is_a_directory"))
+                    : (!Files.isWritable(p) ? Optional.of(I18N.getInstance().format("dua3_fx.file_input_builder.item_is_not_writable", itemText(true))) : Optional.empty());
         };
     }
 }

@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.PropertyConverter;
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -61,13 +62,13 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         this.formatter = formatter;
 
         this.slider = new Slider();
-        this.btnDecrement = new Button("-");
-        this.btnIncrement = new Button("+");
+        this.btnDecrement = new Button(I18N.getInstance().get("dua3_fx.slider_with_buttons.decrement"));
+        this.btnIncrement = new Button(I18N.getInstance().get("dua3_fx.slider_with_buttons.increment"));
 
         this.state = new InputControlState<>(
                 PropertyConverter.convert(slider.valueProperty()),
                 () -> null,
-                v -> v != null && isValueValid(v) ? Optional.empty() : Optional.of("Value out of range")
+                v -> v != null && isValueValid(v) ? Optional.empty() : Optional.of(I18N.getInstance().get("dua3_fx.slider_with_buttons.out_of_range"))
         );
 
         btnDecrement.setOnAction(evt -> slider.decrement());
