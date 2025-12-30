@@ -174,6 +174,24 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B labelPlacement(LabelPlacement labelPlacement);
 
     /**
+     * Add vertical space before the next row.
+     *
+     * @param height the height of the space
+     * @param unit the unit of the height
+     * @return this builder instance
+     */
+    B verticalSpace(double height, LayoutUnit unit);
+
+    /**
+     * Add vertical space of 1 em before the next row.
+     *
+     * @return this builder instance
+     */
+    default B verticalSpace() {
+        return verticalSpace(1.0, LayoutUnit.EM);
+    }
+
+    /**
      * Processes the given node and returns a result of type B.
      *
      * @param node the node to be processed

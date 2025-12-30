@@ -33,6 +33,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
@@ -184,6 +185,12 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
      */
     public GridBuilder labelPlacement(LabelPlacement labelPlacement) {
         this.labelPlacement = labelPlacement;
+        return this;
+    }
+
+    @Override
+    public GridBuilder verticalSpace(double height, LayoutUnit unit) {
+        data.add(new Meta<>(null, null, Void.class, () -> null, new ControlWrapper(new Region()), true, markerWidth, height, unit));
         return this;
     }
 

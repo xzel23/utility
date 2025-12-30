@@ -12,6 +12,7 @@ import com.dua3.utility.fx.controls.PromptMode;
 import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.FileDialogMode;
+import com.dua3.utility.fx.controls.LayoutUnit;
 import com.dua3.utility.lang.SystemInfo;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.application.Application;
@@ -218,6 +219,7 @@ public class FxDialogSample extends Application {
                             i -> i != null && i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i + " is not between 4 and 7"))
                     .inputDecimal("decimal", "decimal", () -> null)
                     .inputComboBox("list", "choose one", () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
+                    .verticalSpace(10, LayoutUnit.PIXELS)
                     .inputCheckBox("bool", "Yes or No:", () -> false, "yes")
                     .inputFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(FILTER_ALL_FILES))
                     .inputFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(FILTER_ALL_FILES))

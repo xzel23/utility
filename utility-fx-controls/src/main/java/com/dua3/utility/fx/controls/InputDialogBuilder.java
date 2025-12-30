@@ -148,6 +148,12 @@ public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBu
     }
 
     @Override
+    public InputDialogBuilder verticalSpace(double height, LayoutUnit unit) {
+        pb.verticalSpace(height, unit);
+        return this;
+    }
+
+    @Override
     public InputDialogBuilder node(Node node) {
         pb.node(node);
         return this;

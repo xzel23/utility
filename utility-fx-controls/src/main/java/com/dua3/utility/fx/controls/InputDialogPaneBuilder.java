@@ -97,18 +97,6 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
-    public <T> InputDialogPaneBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
-        pb.addInput(id, label, type, dflt, control, visible);
-        return this;
-    }
-
-    @Override
-    public <T> InputDialogPaneBuilder addInput(String id, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
-        pb.addInput(id, type, dflt, control);
-        return this;
-    }
-
-    @Override
     public InputDialogPaneBuilder columns(int columns) {
         pb.columns(columns);
         return this;
@@ -121,10 +109,23 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
-    public InputDialogPaneBuilder node(Node node) {
-        pb.node(node);
+    public InputDialogPaneBuilder verticalSpace(double height, LayoutUnit unit) {
+        pb.verticalSpace(height, unit);
         return this;
     }
+
+    @Override
+    public <T> InputDialogPaneBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+        pb.addInput(id, label, type, dflt, control, visible);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogPaneBuilder addInput(String id, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
+        pb.addInput(id, type, dflt, control);
+        return this;
+    }
+
 
     @Override
     public InputDialogPaneBuilder node(MessageFormatter.MessageFormatterArgs label, Node node) {
@@ -261,6 +262,12 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     @Override
     public <T> InputDialogPaneBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
         pb.inputControl(id, label, control, type, dflt);
+        return this;
+    }
+
+    @Override
+    public InputDialogPaneBuilder node(Node node) {
+        pb.node(node);
         return this;
     }
 

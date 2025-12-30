@@ -1,5 +1,7 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxFontUtil;
+import com.dua3.utility.text.Font;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.RowConstraints;
@@ -57,6 +59,9 @@ public class Grid extends GridPane {
      */
     protected final ObjectProperty<LabelPlacement> labelPlacement = new SimpleObjectProperty<>(LabelPlacement.BEFORE);
 
+    private static final FxFontUtil FU = FxFontUtil.getInstance();
+    private final Font defaultFont;
+
     private final MarkerSymbols markerSymbols;
     private SequencedCollection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;
@@ -68,6 +73,7 @@ public class Grid extends GridPane {
      */
     public Grid(MarkerSymbols markerSymbols) {
         this.markerSymbols = markerSymbols;
+        this.defaultFont = FU.convert(new Label().getFont());
 
         labelPlacement.addListener((obs, oldVal, newVal) -> {
             if (oldVal != newVal) {
@@ -233,6 +239,31 @@ public class Grid extends GridPane {
                 continue;
             }
 
+            // apply vertical space
+            if (entry.space > 0) {
+                double height = switch (entry.spaceUnit) {
+                    case PIXELS -> entry.space;
+                    case EM -> entry.space * FU.getTextHeight("M", defaultFont);
+                    case POINTS -> entry.space * 96.0 / 72.0; // assuming 96 DPI
+                };
+
+                if (c != 0) {
+                    r++;
+                    c = 0;
+                }
+
+                RowConstraints rc = new RowConstraints();
+                rc.setMinHeight(height);
+                rc.setPrefHeight(height);
+                rc.setMaxHeight(height);
+                getRowConstraints().add(rc);
+                r++;
+            }
+
+            if (entry.control.node() == null) {
+                continue;
+            }
+
             // add markers, label and control
             if (placement == LabelPlacement.BEFORE) {
                 int gridX = 3 * c;
@@ -395,8 +426,14 @@ public class Grid extends GridPane {
         final Label requiredMarker;
         final Label errorMarker;
         final boolean visible;
+        final double space;
+        final LayoutUnit spaceUnit;
 
         Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean visible, double markerWidth) {
+            this(id, label, cls, dflt, control, visible, markerWidth, 0.0, LayoutUnit.PIXELS);
+        }
+
+        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean visible, double markerWidth, double space, LayoutUnit spaceUnit) {
             this.id = id == null || id.isEmpty() ? null : id;
             if (label != null) {
                 this.label = new Label(label);
@@ -412,6 +449,8 @@ public class Grid extends GridPane {
             this.dflt = dflt;
             this.control = control;
             this.visible = visible;
+            this.space = space;
+            this.spaceUnit = spaceUnit;
 
             requiredMarker.setMinWidth(markerWidth);
             errorMarker.setMinWidth(markerWidth);
