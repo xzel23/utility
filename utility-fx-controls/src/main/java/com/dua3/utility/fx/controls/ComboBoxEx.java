@@ -88,13 +88,14 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
             Collection<T> items
     ) {
         super(new HBox());
-        container.setAlignment(Pos.CENTER_LEFT);
+        container.setAlignment(Pos.BASELINE_LEFT);
 
         getStyleClass().setAll("comboboxex");
 
         this.format = format;
         this.items = FXCollections.observableArrayList(List.copyOf(items));
         this.dflt = dflt;
+        container.setFillHeight(false);
 
         this.comboBox = new ComboBox<>(this.items);
         ObservableList<Node> children = container.getChildren();

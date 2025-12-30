@@ -4,6 +4,7 @@ import org.jspecify.annotations.Nullable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
@@ -42,6 +43,8 @@ public class RadioPane<T> extends VBox implements InputControl<T> {
     public RadioPane(Collection<T> items, @Nullable T currentValue, Function<T, Optional<String>> validate) {
         this.group = new ToggleGroup();
 
+        setAlignment(Pos.BASELINE_LEFT);
+        setFillWidth(false);
         setSpacing(SPACING);
         ObservableList<Node> children = getChildren();
         for (var item : items) {

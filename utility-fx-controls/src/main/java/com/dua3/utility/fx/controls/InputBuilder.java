@@ -166,6 +166,25 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B columns(int columns);
 
     /**
+     * Set the minimum row height.
+     *
+     * @param height the height
+     * @param unit the unit
+     * @return {@code this}
+     */
+    B minRowHeight(double height, LayoutUnit unit);
+
+    /**
+     * Set the minimum row height.
+     *
+     * @param height the height in EM
+     * @return {@code this}
+     */
+    default B minRowHeight(double height) {
+        return minRowHeight(height, LayoutUnit.EM);
+    }
+
+    /**
      * Set the label placement.
      *
      * @param labelPlacement the label placement

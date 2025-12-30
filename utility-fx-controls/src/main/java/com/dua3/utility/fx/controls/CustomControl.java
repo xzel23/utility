@@ -57,6 +57,11 @@ public class CustomControl<C extends Pane> extends Control {
     }
 
     @Override
+    public double getBaselineOffset() {
+        return container.getBaselineOffset();
+    }
+
+    @Override
     protected Skin<?> createDefaultSkin() {
         return new Skin<CustomControl<C>>() {
             @Override

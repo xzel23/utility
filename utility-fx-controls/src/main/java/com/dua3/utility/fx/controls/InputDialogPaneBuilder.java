@@ -103,6 +103,12 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
+    public InputDialogPaneBuilder minRowHeight(double height, LayoutUnit unit) {
+        pb.minRowHeight(height, unit);
+        return this;
+    }
+
+    @Override
     public InputDialogPaneBuilder labelPlacement(LabelPlacement labelPlacement) {
         pb.labelPlacement(labelPlacement);
         return this;

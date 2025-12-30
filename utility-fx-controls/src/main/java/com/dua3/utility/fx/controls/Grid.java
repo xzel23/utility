@@ -17,6 +17,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -65,6 +66,8 @@ public class Grid extends GridPane {
     private final MarkerSymbols markerSymbols;
     private SequencedCollection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;
+    private double minRowHeight = 1.5;
+    private LayoutUnit minRowHeightUnit = LayoutUnit.EM;
 
     /**
      * Constructs a new instance of the InputGrid class.
@@ -194,6 +197,17 @@ public class Grid extends GridPane {
     }
 
     /**
+     * Sets the minimum row height.
+     *
+     * @param minRowHeight the minimum row height
+     * @param unit the unit
+     */
+    void setMinRowHeight(double minRowHeight, LayoutUnit unit) {
+        this.minRowHeight = minRowHeight;
+        this.minRowHeightUnit = unit;
+    }
+
+    /**
      * Initializes the InputGrid by clearing previous input controls,
      * creating a new grid layout, and setting up input controls with labels and markers.
      *
@@ -220,12 +234,18 @@ public class Grid extends GridPane {
 
         LabelPlacement placement = getLabelPlacement();
 
-        double minRowHeight = -1;
+        double minHeight = switch (minRowHeightUnit) {
+            case PIXELS -> minRowHeight;
+            case EM -> minRowHeight * FU.getTextHeight("M", defaultFont);
+            case POINTS -> minRowHeight * 96.0 / 72.0; // assuming 96 DPI
+        };
+
+        double minRowHeightFromDummy = -1;
         if (placement == LabelPlacement.BEFORE) {
             TextField dummy = new TextField();
             dummy.setManaged(false);
             dummy.setVisible(false);
-            minRowHeight = dummy.prefHeight(-1);
+            minRowHeightFromDummy = dummy.prefHeight(-1);
         }
 
         int r = 0;
@@ -272,11 +292,8 @@ public class Grid extends GridPane {
                 // set row height
                 if (c == 0) {
                     RowConstraints rc = new RowConstraints();
-                    if (minRowHeight > 0) {
-                        rc.setMinHeight(minRowHeight);
-                        rc.setPrefHeight(minRowHeight);
-                    }
-                    rc.setValignment(VPos.CENTER);
+                    rc.setMinHeight(Math.max(minHeight, minRowHeightFromDummy));
+                    rc.setValignment(VPos.BASELINE);
                     getRowConstraints().add(rc);
                 }
 
@@ -284,6 +301,7 @@ public class Grid extends GridPane {
                 if (entry.label != null) {
                     HBox labelBox = new HBox(entry.label, entry.requiredMarker);
                     labelBox.setSpacing(2);
+                    labelBox.setAlignment(Pos.BASELINE_LEFT);
                     addToGrid(labelBox, gridX++, gridY, 1, insets);
                     span = 1;
                 } else {
@@ -313,9 +331,11 @@ public class Grid extends GridPane {
                 // set row constraints (label row)
                 if (c == 0) {
                     RowConstraints rcLabel = new RowConstraints();
+                    rcLabel.setMinHeight(minHeight);
                     rcLabel.setValignment(VPos.CENTER);
                     getRowConstraints().add(rcLabel); // row 2r
                     RowConstraints rcControl = new RowConstraints();
+                    rcControl.setMinHeight(minHeight);
                     rcControl.setValignment(VPos.CENTER);
                     getRowConstraints().add(rcControl); // row 2r + 1
                 }

@@ -102,6 +102,12 @@ public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, M
     }
 
     @Override
+    public InputPaneBuilder minRowHeight(double height, LayoutUnit unit) {
+        pb.minRowHeight(height, unit);
+        return this;
+    }
+
+    @Override
     public InputPaneBuilder labelPlacement(LabelPlacement labelPlacement) {
         pb.labelPlacement(labelPlacement);
         return this;

@@ -142,6 +142,12 @@ public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBu
     }
 
     @Override
+    public InputDialogBuilder minRowHeight(double height, LayoutUnit unit) {
+        pb.minRowHeight(height, unit);
+        return this;
+    }
+
+    @Override
     public InputDialogBuilder labelPlacement(LabelPlacement labelPlacement) {
         pb.labelPlacement(labelPlacement);
         return this;

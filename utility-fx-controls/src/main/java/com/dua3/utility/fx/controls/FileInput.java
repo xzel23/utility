@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.geometry.Pos;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.FxUtil;
@@ -76,6 +77,8 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
             Collection<FileChooser.ExtensionFilter> filters,
             Function<@Nullable Path, Optional<String>> validate) {
         super(new HBox());
+        container.setAlignment(Pos.BASELINE_LEFT);
+        container.setFillHeight(false);
 
         getStyleClass().setAll("file-input");
 

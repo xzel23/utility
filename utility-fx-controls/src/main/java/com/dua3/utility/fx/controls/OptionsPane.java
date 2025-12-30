@@ -10,9 +10,12 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.util.StringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -115,13 +118,19 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
 
     @Override
     public void init() {
+        setAlignment(Pos.BASELINE_LEFT);
         getChildren().clear();
+        getRowConstraints().clear();
 
         Collection<Option<?>> optionSet = options.get();
         Arguments values = dflt.get();
 
         int row = 0;
         for (Option<?> option : optionSet) {
+            RowConstraints rc = new RowConstraints();
+            rc.setValignment(VPos.BASELINE);
+            getRowConstraints().add(rc);
+
             Label label = new Label(option.displayName());
 
             var control = createControl(Objects.requireNonNullElseGet(values, Arguments::empty), option);

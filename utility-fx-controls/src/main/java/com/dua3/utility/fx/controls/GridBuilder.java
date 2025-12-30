@@ -83,6 +83,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     private final SectionStyle[] sectionStyles;
     private final Font defaultFont;
     private int columns = 1;
+    private double minRowHeight = 2.5;
+    private LayoutUnit minRowHeightUnit = LayoutUnit.EM;
     private LabelPlacement labelPlacement = LabelPlacement.BEFORE;
     private MarkerSymbols markerSymbols;
     private double markerWidth;
@@ -174,6 +176,13 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     @Override
     public GridBuilder columns(int columns) {
         this.columns = LangUtil.requirePositive(columns);
+        return this;
+    }
+
+    @Override
+    public GridBuilder minRowHeight(double height, LayoutUnit unit) {
+        this.minRowHeight = height;
+        this.minRowHeightUnit = unit;
         return this;
     }
 
@@ -391,6 +400,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         setIfConfigured(prefHeight, grid::setPrefHeight);
 
         grid.setContent(data, columns);
+        grid.setMinRowHeight(minRowHeight, minRowHeightUnit);
         grid.setLabelPlacement(labelPlacement);
         grid.init();
 
