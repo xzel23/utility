@@ -382,7 +382,7 @@ public class Grid extends GridPane {
             requiredFieldLabel.getStyleClass().add("required-field-label");
             int span = (placement == LabelPlacement.BEFORE ? 3 : 2) * columns;
             int gridY = placement == LabelPlacement.BEFORE ? r : 2 * r;
-            addToGrid(requiredFieldLabel, 0, gridY, span, insets);
+            addToGrid(requiredFieldLabel, 0, gridY, span, new Insets(0.5 * FU.getTextHeight("M", defaultFont), 2, 2, 2));
         }
 
         // the valid state is true if all inputs are valid
