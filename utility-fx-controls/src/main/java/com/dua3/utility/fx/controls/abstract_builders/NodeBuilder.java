@@ -91,8 +91,8 @@ public abstract class NodeBuilder<N extends Node, B extends NodeBuilder<N, B>> {
     /**
      * Set the node's disabled state to the supplied value.
      *
-     * <p><strong>NOTE: </strong>Do not use together with {@link #bindEnabled(ObservableValue)} and
-     * {@link #bindDisabled(ObservableValue)}.
+     * <p><strong>NOTE: </strong>Do not use together with {@link #enabled(ObservableValue)} and
+     * {@link #disabled(ObservableValue)}.
      *
      * @param disabled the value to bind the node's disableProperty to
      * @return this NodeBuilder instance
@@ -105,12 +105,26 @@ public abstract class NodeBuilder<N extends Node, B extends NodeBuilder<N, B>> {
     /**
      * Bind the node's disabled state to an {@link ObservableValue}.
      *
-     * <p><strong>NOTE: </strong>Use either this method or {@link #bindEnabled(ObservableValue)}, not both.
+     * <p><strong>NOTE: </strong>Use either this method or {@link #enabled(ObservableValue)}, not both.
+     *
+     * @param disabled the value to bind the node's disableProperty to
+     * @return this NodeBuilder instance
+     * @deprecated use {@link #disabled(ObservableValue)} instead
+     */
+    @Deprecated(since = "20.0.4", forRemoval = true)
+    public B bindDisabled(ObservableValue<Boolean> disabled) {
+        return disabled(disabled);
+    }
+
+    /**
+     * Bind the node's disabled state to an {@link ObservableValue}.
+     *
+     * <p><strong>NOTE: </strong>Use either this method or {@link #enabled(ObservableValue)}, not both.
      *
      * @param disabled the value to bind the node's disableProperty to
      * @return this NodeBuilder instance
      */
-    public B bindDisabled(ObservableValue<Boolean> disabled) {
+    public B disabled(ObservableValue<Boolean> disabled) {
         this.disabled = disabled;
         return self();
     }
@@ -118,12 +132,26 @@ public abstract class NodeBuilder<N extends Node, B extends NodeBuilder<N, B>> {
     /**
      * Bind the button's enabled state to an {@link ObservableValue}.
      *
-     * <p><strong>NOTE: </strong>Use either this method or {@link #bindDisabled(ObservableValue)}, not both.
+     * <p><strong>NOTE: </strong>Use either this method or {@link #disabled(ObservableValue)}, not both.
+     *
+     * @param enabled the value to bind the button's disableProperty to
+     * @return this NodeBuilder instance
+     * @deprecated use {@link #enabled(ObservableValue)} instead
+     */
+    @Deprecated(since = "20.0.4", forRemoval = true)
+    public B bindEnabled(ObservableValue<Boolean> enabled) {
+        return enabled(enabled);
+    }
+
+    /**
+     * Bind the button's enabled state to an {@link ObservableValue}.
+     *
+     * <p><strong>NOTE: </strong>Use either this method or {@link #disabled(ObservableValue)}, not both.
      *
      * @param enabled the value to bind the button's disableProperty to
      * @return this NodeBuilder instance
      */
-    public B bindEnabled(ObservableValue<Boolean> enabled) {
+    public B enabled(ObservableValue<Boolean> enabled) {
         this.disabled = Bindings.createBooleanBinding(() -> !enabled.getValue(), enabled);
         return self();
     }

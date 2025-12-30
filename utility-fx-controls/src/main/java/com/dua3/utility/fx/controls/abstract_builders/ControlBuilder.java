@@ -59,8 +59,20 @@ public abstract class ControlBuilder<C extends Control, B extends ControlBuilder
      *
      * @param tooltip the tooltip text
      * @return this ControlBuilder instance
+     * @deprecated use {@link #tooltip(ObservableValue)} instead
      */
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public B bindTooltip(ObservableValue<String> tooltip) {
+        return tooltip(tooltip);
+    }
+
+    /**
+     * Set the tooltip for the control.
+     *
+     * @param tooltip the tooltip text
+     * @return this ControlBuilder instance
+     */
+    public B tooltip(ObservableValue<String> tooltip) {
         this.tooltip = tooltip;
         return self();
     }

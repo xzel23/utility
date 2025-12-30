@@ -1,66 +1,38 @@
 package com.dua3.utility.fx.controls;
 
-import javafx.scene.Node;
+import com.dua3.utility.fx.controls.abstract_builders.MenuItemBuilder;
 import javafx.scene.control.Menu;
-import javafx.scene.input.KeyCombination;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import javafx.scene.control.MenuItem;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 
-public abstract class MenuBuilder<B extends MenuBuilder<B>, M> {
-    private Supplier<M> factory;
+/**
+ * A builder for {@link Menu} instances.
+ */
+public class MenuBuilder extends MenuItemBuilder<Menu, MenuBuilder> {
+    private List<MenuItem> items = List.of();
 
-    private @Nullable String text;
-    private @Nullable Node graphic;
-    private @Nullable KeyCombination accelerator;
-    private @Nullable Runnable action;
-
-    protected MenuBuilder(Supplier<M> factory) {
-        this.factory = factory;
+    MenuBuilder(Supplier<Menu> factory) {
+        super(factory);
     }
 
-    protected <T> void applyIfNonNull(@Nullable T value, BiConsumer<T> consumer) {
-        if (value != null) {
-            consumer.accept(value);
-        }
+    @Override
+    public Menu build() {
+        Menu menu = super.build();
+        menu.getItems().setAll(items);
+        return menu;
     }
 
-    public M build() {
-        M m = factory.get();
-        applyIfNonNull(text, m::setText);
-        applyIfNonNull(graphic, m::setGraphic);
-        applyIfNonNull(accelerator, m::setAccelerator);
-        applyIfNonNull(action, m::setOnAction);
-        return m;
-    }
-
-    public B text(String text) {
-        this.text = text;
+    /**
+     * Set the menu items.
+     *
+     * @param items the menu items
+     * @return this MenuBuilder instance
+     */
+    public MenuBuilder items(MenuItem... items) {
+        this.items = Arrays.asList(items);
         return self();
     }
-
-    public B graphic(Node graphic) {
-        this.graphic = graphic;
-        return self();
-    }
-
-    public B accelerator(KeyCombination accelerator) {
-        this.accelerator = accelerator;
-        return self();
-    }
-
-    public B action(Runnable action) {
-        this.action = action;
-        return self();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected B self() {
-        return (B) this;
-    }
-
-    ;
 }

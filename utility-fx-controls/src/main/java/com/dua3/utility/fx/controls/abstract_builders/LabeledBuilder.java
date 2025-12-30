@@ -67,8 +67,20 @@ public abstract class LabeledBuilder<C extends Labeled, B extends LabeledBuilder
      *
      * @param text the text
      * @return this LabeledBuilder instance
+     * @deprecated use {@link #text(ObservableValue)} instead
      */
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public B bindText(ObservableValue<String> text) {
+        return text(text);
+    }
+
+    /**
+     * Set text for the Labeled.
+     *
+     * @param text the text
+     * @return this LabeledBuilder instance
+     */
+    public B text(ObservableValue<String> text) {
         this.text = text;
         return self();
     }
@@ -82,6 +94,18 @@ public abstract class LabeledBuilder<C extends Labeled, B extends LabeledBuilder
     public B graphic(Node graphic) {
         this.graphic = new SimpleObjectProperty<>(graphic);
         return self();
+    }
+
+    /**
+     * Set the graphic for the Labeled.
+     *
+     * @param graphic the graphic to use
+     * @return this LabeledBuilder instance
+     * @deprecated use {@link #graphic(ObservableValue)} instead
+     */
+    @Deprecated(since = "20.0.4", forRemoval = true)
+    public B bindGraphic(ObservableValue<Node> graphic) {
+        return graphic(graphic);
     }
 
     /**
@@ -125,8 +149,23 @@ public abstract class LabeledBuilder<C extends Labeled, B extends LabeledBuilder
      *
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
      * @return this {@link LabelBuilder} instance for method chaining
+     * @deprecated use {@link #fontFx(ObservableValue)} instead
      */
-    public B bindFxFont(ObservableValue<javafx.scene.text.Font> font) {
+    @Deprecated(since = "20.0.4", forRemoval = true)
+    public B bindFontFx(ObservableValue<javafx.scene.text.Font> font) {
+        return fontFx(font);
+    }
+
+    /**
+     * Binds the {@link Font} property of the {@link Text} node to the specified {@link ObservableValue}.
+     *
+     * <p>This allows the font property of the node to dynamically update whenever the value
+     * in the provided observable changes.
+     *
+     * @param font the {@link ObservableValue} providing the font to bind to the node's font property
+     * @return this {@link LabelBuilder} instance for method chaining
+     */
+    public B fontFx(ObservableValue<javafx.scene.text.Font> font) {
         this.font = font;
         return self();
     }
@@ -139,8 +178,23 @@ public abstract class LabeledBuilder<C extends Labeled, B extends LabeledBuilder
      *
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
      * @return this {@link LabelBuilder} instance for method chaining
+     * @deprecated use {@link #font(ObservableValue)} instead
      */
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public B bindFont(ObservableValue<Font> font) {
+        return font(font);
+    }
+
+    /**
+     * Binds the {@link Font} property of the {@link Text} node to the specified {@link ObservableValue}.
+     *
+     * <p>This allows the font property of the node to dynamically update whenever the value
+     * in the provided observable changes.
+     *
+     * @param font the {@link ObservableValue} providing the font to bind to the node's font property
+     * @return this {@link LabelBuilder} instance for method chaining
+     */
+    public B font(ObservableValue<Font> font) {
         this.font = PropertyConverter.convertReadOnly(font, FxUtil.fontConverter());
         return self();
     }

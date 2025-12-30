@@ -72,7 +72,7 @@ public final class FxLauncher {
     public static final int RC_ERROR = 1;
 
     private static final @Nullable Method LOGUTIL_INITIALISER;
-    public static final String LOG_MESSAGES = "Log Messages";
+    private static final String LOG_MESSAGES = "Log Messages";
 
     static {
         Method initialiser = null;

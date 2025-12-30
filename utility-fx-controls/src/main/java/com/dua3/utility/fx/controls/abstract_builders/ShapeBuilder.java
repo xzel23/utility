@@ -72,8 +72,21 @@ public abstract class ShapeBuilder<S extends Shape, B extends ShapeBuilder<S, B>
      *
      * @param fill the {@link ObservableValue} representing the fill value to be bound
      * @return this instance of the builder
+     * @deprecated use {@link #fillFx(ObservableValue)} instead
      */
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public B bindFillFx(ObservableValue<Paint> fill) {
+        return fillFx(fill);
+    }
+
+    /**
+     * Binds the given {@link ObservableValue} to the fill property of the node being built.
+     * This allows the fill property of the node to dynamically reflect the value of the provided observable.
+     *
+     * @param fill the {@link ObservableValue} representing the fill value to be bound
+     * @return this instance of the builder
+     */
+    public B fillFx(ObservableValue<Paint> fill) {
         this.fill = fill;
         return self();
     }
@@ -84,8 +97,21 @@ public abstract class ShapeBuilder<S extends Shape, B extends ShapeBuilder<S, B>
      *
      * @param fill the {@link ObservableValue} representing the fill value to be bound
      * @return this instance of the builder
+     * @deprecated use {@link #fill(ObservableValue)} instead
      */
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public B bindFill(ObservableValue<Color> fill) {
+        return fill(fill);
+    }
+
+    /**
+     * Binds the given {@link ObservableValue} to the fill property of the node being built.
+     * This allows the fill property of the node to dynamically reflect the value of the provided observable.
+     *
+     * @param fill the {@link ObservableValue} representing the fill value to be bound
+     * @return this instance of the builder
+     */
+    public B fill(ObservableValue<Color> fill) {
         this.fill = PropertyConverter.convertReadOnly(fill, FxUtil.colorConverter());
         return self();
     }
@@ -118,8 +144,21 @@ public abstract class ShapeBuilder<S extends Shape, B extends ShapeBuilder<S, B>
      *
      * @param stroke the {@link ObservableValue} to bind to the node's stroke property
      * @return the current instance of the builder
+     * @deprecated use {@link #strokeFx(ObservableValue)} instead
      */
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public B bindStrokeFx(ObservableValue<Paint> stroke) {
+        return strokeFx(stroke);
+    }
+
+    /**
+     * Binds the stroke property of the node being built to the specified {@link ObservableValue}.
+     * This ensures that the stroke property dynamically updates to reflect the value of the observable.
+     *
+     * @param stroke the {@link ObservableValue} to bind to the node's stroke property
+     * @return the current instance of the builder
+     */
+    public B strokeFx(ObservableValue<Paint> stroke) {
         this.stroke = stroke;
         return self();
     }
@@ -130,8 +169,21 @@ public abstract class ShapeBuilder<S extends Shape, B extends ShapeBuilder<S, B>
      *
      * @param stroke the {@link ObservableValue} to bind to the node's stroke property
      * @return the current instance of the builder
+     * @deprecated use {@link #stroke(ObservableValue)} instead
      */
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public B bindStroke(ObservableValue<Color> stroke) {
+        return stroke(stroke);
+    }
+
+    /**
+     * Binds the stroke property of the node being built to the specified {@link ObservableValue}.
+     * This ensures that the stroke property dynamically updates to reflect the value of the observable.
+     *
+     * @param stroke the {@link ObservableValue} to bind to the node's stroke property
+     * @return the current instance of the builder
+     */
+    public B stroke(ObservableValue<Color> stroke) {
         this.stroke = PropertyConverter.convertReadOnly(stroke, FxUtil.colorConverter());
         return self();
     }

@@ -21,6 +21,7 @@ import javafx.scene.layout.Region;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -253,6 +254,51 @@ class ControlsTest extends FxTestBase {
             region2.setPrefSize(100, 100);
             Controls.makeResizable(region2, 10, Position.BOTTOM, Position.RIGHT);
         }));
+    }
+
+    @Test
+    @Timeout(value = 10, unit = java.util.concurrent.TimeUnit.SECONDS)
+    void testMenuBuilders() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            // MenuItemBuilder
+            AtomicBoolean miActionCalled = new AtomicBoolean(false);
+            SimpleBooleanProperty miEnabled = new SimpleBooleanProperty(true);
+            MenuItem mi = Controls.menuItem()
+                    .text("MI")
+                    .action(() -> miActionCalled.set(true))
+                    .enabled(miEnabled)
+                    .build();
+            assertEquals("MI", mi.getText());
+            assertFalse(mi.isDisable());
+            mi.fire();
+            assertTrue(miActionCalled.get());
+            miEnabled.set(false);
+            assertTrue(mi.isDisable());
+
+            // MenuBuilder
+            MenuItem item1 = new MenuItem("I1");
+            MenuItem item2 = new MenuItem("I2");
+            SimpleBooleanProperty menuDisabled = new SimpleBooleanProperty(false);
+            Menu menu = Controls.menu()
+                    .text("Menu")
+                    .items(item1, item2)
+                    .disabled(menuDisabled)
+                    .build();
+            assertEquals("Menu", menu.getText());
+            assertEquals(2, menu.getItems().size());
+            assertEquals(item1, menu.getItems().get(0));
+            assertFalse(menu.isDisable());
+            menuDisabled.set(true);
+            assertTrue(menu.isDisable());
+
+            // ChoiceMenuBuilder
+            SimpleStringProperty property = new SimpleStringProperty("A");
+            Menu choiceMenu = Controls.choiceMenu(property, List.of("A", "B", "C"))
+                    .text("Choices")
+                    .build();
+            assertEquals("Choices", choiceMenu.getText());
+            assertEquals(3, choiceMenu.getItems().size());
+        });
     }
 
     /**

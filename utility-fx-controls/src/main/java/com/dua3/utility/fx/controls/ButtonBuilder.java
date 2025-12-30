@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  *         .graphic(new ImageView("icon.png"))
  *         .tooltip("Tooltip text")
  *         .action(event -> System.out.println("Button clicked"))
- *         .bindDisabled(disabledProperty)
+ *         .disabled(disabledProperty)
  *         .build();
  *     }
  * </pre>

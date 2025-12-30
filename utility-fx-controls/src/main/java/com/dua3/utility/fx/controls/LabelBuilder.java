@@ -52,7 +52,7 @@ public class LabelBuilder extends LabeledBuilder<Label, LabelBuilder> {
      * Sets the font for the text node being built.
      *
      * @param font the {@link com.dua3.utility.text.Font} to set for the text node
-     * @return this TextBuilder instance for fluent method chaining
+     * @return this LabelBuilder instance for fluent method chaining
      */
     @Override
     public LabelBuilder font(javafx.scene.text.Font font) {
@@ -64,7 +64,7 @@ public class LabelBuilder extends LabeledBuilder<Label, LabelBuilder> {
      * Sets the font for the text node being built.
      *
      * @param font the {@link com.dua3.utility.text.Font} to set for the text node
-     * @return this TextBuilder instance for fluent method chaining
+     * @return this LabelBuilder instance for fluent method chaining
      */
     @Override
     public LabelBuilder font(com.dua3.utility.text.Font font) {
@@ -79,9 +79,26 @@ public class LabelBuilder extends LabeledBuilder<Label, LabelBuilder> {
      * in the provided observable changes.
      *
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
-     * @return this {@link TextBuilder} instance for method chaining
+     * @return this {@link LabelBuilder} instance for method chaining
+     * @deprecated use {@link #fontFx(ObservableValue)} instead
      */
+    @Override
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public LabelBuilder bindFontFx(ObservableValue<javafx.scene.text.Font> font) {
+        return fontFx(font);
+    }
+
+    /**
+     * Binds the {@link com.dua3.utility.text.Font} property of the {@link Text} node to the specified {@link ObservableValue}.
+     *
+     * <p>This allows the font property of the node to dynamically update whenever the value
+     * in the provided observable changes.
+     *
+     * @param font the {@link ObservableValue} providing the font to bind to the node's font property
+     * @return this {@link LabelBuilder} instance for method chaining
+     */
+    @Override
+    public LabelBuilder fontFx(ObservableValue<javafx.scene.text.Font> font) {
         this.font = font;
         return self();
     }
@@ -93,10 +110,26 @@ public class LabelBuilder extends LabeledBuilder<Label, LabelBuilder> {
      * in the provided observable changes.
      *
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
-     * @return this {@link TextBuilder} instance for method chaining
+     * @return this {@link LabelBuilder} instance for method chaining
+     * @deprecated use {@link #font(ObservableValue)} instead
      */
     @Override
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public LabelBuilder bindFont(ObservableValue<com.dua3.utility.text.Font> font) {
+        return font(font);
+    }
+
+    /**
+     * Binds the {@link com.dua3.utility.text.Font} property of the {@link Text} node to the specified {@link ObservableValue}.
+     *
+     * <p>This allows the font property of the node to dynamically update whenever the value
+     * in the provided observable changes.
+     *
+     * @param font the {@link ObservableValue} providing the font to bind to the node's font property
+     * @return this {@link LabelBuilder} instance for method chaining
+     */
+    @Override
+    public LabelBuilder font(ObservableValue<com.dua3.utility.text.Font> font) {
         this.font = PropertyConverter.convertReadOnly(font, FxUtil.fontConverter());
         return self();
     }

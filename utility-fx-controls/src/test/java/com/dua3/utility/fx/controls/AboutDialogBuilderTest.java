@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Timeout;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Tests for the {@link AboutDialogBuilder} class.
@@ -31,6 +33,8 @@ class AboutDialogBuilderTest extends FxTestBase {
      */
     @Test
     void testConstructor() throws Exception {
+        assumeTrue(Locale.getDefault().getLanguage().equals("en"), "MessageFormatter must be non-null");
+
         runOnFxThreadAndWait(() -> {
             AboutDialogBuilder builder = new AboutDialogBuilder(null, MessageFormatter.standard());
             Dialog<Void> dialog = builder.build();

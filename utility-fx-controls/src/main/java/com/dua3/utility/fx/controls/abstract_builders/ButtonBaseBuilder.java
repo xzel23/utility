@@ -67,8 +67,20 @@ public abstract class ButtonBaseBuilder<B extends ButtonBase, BB extends ButtonB
      *
      * @param action the action to perform when pressed
      * @return this ButtonBaseBuilder instance
+     * @deprecated use {@link #action(ObservableValue)} instead
      */
+    @Deprecated(since = "20.0.4", forRemoval = true)
     public BB bindAction(ObservableValue<? extends Runnable> action) {
+        return action(action);
+    }
+
+    /**
+     * Set action for the button.
+     *
+     * @param action the action to perform when pressed
+     * @return this ButtonBaseBuilder instance
+     */
+    public BB action(ObservableValue<? extends Runnable> action) {
         this.action = PropertyConverter.convertReadOnly(action, r -> event -> r.run());
         return self();
     }
