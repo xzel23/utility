@@ -375,9 +375,11 @@ public final class Controls {
      * @param text   the text to show
      * @param action the action to perform when the menu item is invoked
      * @return new menu item
+     * @deprecated use {@link #menuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static MenuItem menuItem(String text, Runnable action) {
-        return menuItem(text, null, action);
+        return menuItem().text(text).action(action).build();
     }
 
     /**
@@ -387,14 +389,14 @@ public final class Controls {
      * @param graphic the graphic to show before the text
      * @param action  the action to perform when the menu item is invoked
      * @return new menu item
+     * @deprecated use {@link #menuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action) {
-        if (text == null && graphic == null) {
-            throw new IllegalArgumentException("text and graphic must not both be null");
-        }
-        MenuItem mi = new MenuItem(text, graphic);
-        mi.setOnAction(evt -> action.run());
-        return mi;
+        MenuItemBuilderImpl builder = menuItem();
+        if (text != null) builder.text(text);
+        if (graphic != null) builder.graphic(graphic);
+        return builder.action(action).build();
     }
 
     /**
@@ -404,9 +406,11 @@ public final class Controls {
      * @param action  the action to perform when the menu item is invoked
      * @param enabled the property controlling the enabled state
      * @return new menu item
+     * @deprecated use {@link #menuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static MenuItem menuItem(String text, Runnable action, ObservableBooleanValue enabled) {
-        return menuItem(text, null, action, enabled);
+        return menuItem().text(text).action(action).enabled(enabled).build();
     }
 
     /**
@@ -420,9 +424,11 @@ public final class Controls {
      * @param action  the action to perform when the menu item is invoked
      * @param enabled the property controlling the enabled state
      * @return new menu item
+     * @deprecated use {@link #menuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static MenuItem menuItem(String text, Runnable action, boolean enabled) {
-        return menuItem(text, null, action, FxUtil.constant(enabled));
+        return menuItem().text(text).action(action).disabled(!enabled).build();
     }
 
     /**
@@ -433,15 +439,14 @@ public final class Controls {
      * @param action  the action to perform when the menu item is invoked
      * @param enabled the property controlling the enabled state
      * @return new menu item
+     * @deprecated use {@link #menuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action, ObservableBooleanValue enabled) {
-        if (text == null && graphic == null) {
-            throw new IllegalArgumentException("text and graphic must not both be null");
-        }
-        MenuItem mi = new MenuItem(text, graphic);
-        mi.disableProperty().bind(Bindings.not(enabled));
-        mi.setOnAction(evt -> action.run());
-        return mi;
+        MenuItemBuilderImpl builder = menuItem();
+        if (text != null) builder.text(text);
+        if (graphic != null) builder.graphic(graphic);
+        return builder.action(action).enabled(enabled).build();
     }
 
     /**
@@ -456,9 +461,14 @@ public final class Controls {
      * @param action  the action to perform when the menu item is invoked
      * @param enabled the enabled state
      * @return new menu item
+     * @deprecated use {@link #menuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action, boolean enabled) {
-        return menuItem(text, graphic, action, FxUtil.constant(enabled));
+        MenuItemBuilderImpl builder = menuItem();
+        if (text != null) builder.text(text);
+        if (graphic != null) builder.graphic(graphic);
+        return builder.action(action).disabled(!enabled).build();
     }
 
     /**
