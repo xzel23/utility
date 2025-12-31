@@ -193,7 +193,7 @@ public final class KeyUtil {
             return kf.generatePrivate(keySpec);
         } else {
             if (algOid.equals("1.2.840.10045.2.1") && pki.getPrivateKeyAlgorithm().getParameters() == null) { // EC
-                    throw new InvalidKeyException("EC domain parameters must be encoded in the algorithm identifier");
+                throw new InvalidKeyException("EC domain parameters must be encoded in the algorithm identifier");
             }
             // Other algorithms (DSA, etc.)
             JcaPEMKeyConverter converter = new JcaPEMKeyConverter();

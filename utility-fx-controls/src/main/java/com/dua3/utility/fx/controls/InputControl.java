@@ -81,7 +81,7 @@ public interface InputControl<T> {
      * @param <T>       The type of the value.
      * @return A {@link SimpleInputControl} containing the {@link TextField} and associated properties.
      */
-    static <T> SimpleInputControl<TextArea, T> textInput(int columns, int rows,  Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate, StringConverter<@Nullable T> converter) {
+    static <T> SimpleInputControl<TextArea, T> textInput(int columns, int rows, Supplier<? extends @Nullable T> dflt, Function<@Nullable T, Optional<String>> validate, StringConverter<@Nullable T> converter) {
         TextArea control = new TextArea();
         control.setPrefColumnCount(columns);
         control.setPrefRowCount(rows);

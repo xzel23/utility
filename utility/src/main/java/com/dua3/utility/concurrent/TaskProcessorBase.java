@@ -78,7 +78,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
         /**
          * The task processor has finished processing all tasks and is fully shut down.
          */
-        COMLETED;
+        COMLETED
     }
 
     /**
@@ -143,7 +143,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      * are invoked to avoid potential issues caused by listeners being garbage-collected.
      */
     private void notifyListeners() {
-        for (var listener:listeners) {
+        for (var listener : listeners) {
             LangUtil.applyIfNonNull(listener.get(), c -> {
                 try {
                     c.accept(this);

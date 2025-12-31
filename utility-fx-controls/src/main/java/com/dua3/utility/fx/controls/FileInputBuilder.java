@@ -111,8 +111,12 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      */
     private String itemText(boolean captitalize) {
         return switch (mode) {
-            case DIRECTORY -> captitalize ? I18N.getInstance().get("dua3_fx.file_input_builder.directory_cap") : I18N.getInstance().get("dua3_fx.file_input_builder.directory");
-            case OPEN, SAVE -> captitalize ? I18N.getInstance().get("dua3_fx.file_input_builder.file_cap") : I18N.getInstance().get("dua3_fx.file_input_builder.file");
+            case DIRECTORY -> captitalize
+                    ? I18N.getInstance().get("dua3_fx.file_input_builder.directory_cap")
+                    : I18N.getInstance().get("dua3_fx.file_input_builder.directory");
+            case OPEN, SAVE -> captitalize
+                    ? I18N.getInstance().get("dua3_fx.file_input_builder.file_cap")
+                    : I18N.getInstance().get("dua3_fx.file_input_builder.file");
         };
     }
 

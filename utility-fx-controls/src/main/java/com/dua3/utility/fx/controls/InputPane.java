@@ -3,7 +3,6 @@ package com.dua3.utility.fx.controls;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import org.jspecify.annotations.Nullable;

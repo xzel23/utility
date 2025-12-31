@@ -250,4 +250,5 @@ record InverseConverter<A extends @Nullable Object, B extends @Nullable Object>(
  * @param <A> the source type
  * @param <B> the target type
  */
-record SimpleConverter<A extends @Nullable Object, B extends @Nullable Object>(Function<A, B> a2b, Function<B, A> b2a) implements Converter<A, B> {}
+record SimpleConverter<A extends @Nullable Object, B extends @Nullable Object>(Function<A, B> a2b, Function<B, A> b2a)
+        implements Converter<A, B> {}

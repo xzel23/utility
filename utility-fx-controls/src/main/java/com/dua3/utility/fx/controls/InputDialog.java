@@ -15,7 +15,6 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.scene.control.Dialog;
-import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
 /**

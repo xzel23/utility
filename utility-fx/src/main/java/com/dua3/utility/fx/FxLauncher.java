@@ -288,9 +288,7 @@ public final class FxLauncher {
             agp.addFlag(
                     "Enable debugging features",
                     "Enable debugging features.",
-                    v -> {
-                        debug = v;
-                    },
+                    v -> debug = v,
                     "--debug"
             );
             agp.addStringOption(
