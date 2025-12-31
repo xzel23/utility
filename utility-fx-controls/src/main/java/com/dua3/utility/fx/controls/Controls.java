@@ -7,6 +7,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -315,15 +316,16 @@ public final class Controls {
     }
 
     /**
-     * Create a new {@link ChoiceMenuBuilder}.
+     * Creates and returns a new instance of {@code ChoiceMenuBuilder} with the specified collection of values.
+     * <p>
+     * Use an {@link ObservableList} for {@code values} to automatically update menu items.
      *
-     * @param property the property to bind the choices to
-     * @param values   the values to choose from
-     * @param <T>      the type of the values
-     * @return a new ChoiceMenuBuilder
+     * @param <T> The type of the elements in the collection.
+     * @param values The collection of values to be presented in the choice menu.
+     * @return A {@code ChoiceMenuBuilder} instance initialized with the given collection of values.
      */
-    public static <T> ChoiceMenuBuilder<T> choiceMenu(Property<T> property, Collection<T> values) {
-        return new ChoiceMenuBuilder<>(Menu::new, property, values);
+    public static <T> ChoiceMenuBuilder<T> choiceMenu(Collection<T> values) {
+        return new ChoiceMenuBuilder<>(values);
     }
 
     /**
@@ -333,6 +335,15 @@ public final class Controls {
      */
     public static MenuItemBuilderImpl menuItem() {
         return new MenuItemBuilderImpl(MenuItem::new);
+    }
+
+    /**
+     * Create a new {@link CheckMenuItemBuilder}.
+     *
+     * @return a new CheckMenuItemBuilder
+     */
+    public static CheckMenuItemBuilder checkMenuItem() {
+        return new CheckMenuItemBuilder(CheckMenuItem::new);
     }
 
     /**
@@ -559,7 +570,7 @@ public final class Controls {
      * @return the created {@code Menu} object populated with selectable items
      * @throws IllegalArgumentException if both {@code text} and {@code graphic} are null
      */
-    public static <T extends @Nullable Object> Menu menu(@Nullable String text, @Nullable Node graphic, ObservableBooleanValue enabled, Property<T> property, Collection<T> values) {
+    public static <T extends @Nullable Object> Menu choiceMenu(@Nullable String text, @Nullable Node graphic, ObservableBooleanValue enabled, Property<T> property, Collection<T> values) {
         if (text == null && graphic == null) {
             throw new IllegalArgumentException("text and graphic must not both be null");
         }
@@ -593,8 +604,8 @@ public final class Controls {
      * @param values the collection of values to populate the menu choices
      * @return the constructed menu object with the specified properties and choices
      */
-    public static <T extends @Nullable Object> Menu menu(String text, ObservableBooleanValue enabled, Property<T> property, Collection<T> values) {
-        return menu(text, null, enabled, property, values);
+    public static <T extends @Nullable Object> Menu choiceMenu(String text, ObservableBooleanValue enabled, Property<T> property, Collection<T> values) {
+        return choiceMenu(text, null, enabled, property, values);
     }
 
     /**
@@ -608,8 +619,8 @@ public final class Controls {
      * @param values the collection of selectable values to be displayed in the menu
      * @return a new Menu instance configured with the specified options and behavior
      */
-    public static <T extends @Nullable Object> Menu menu(Node graphic, ObservableBooleanValue enabled, Property<T> property, Collection<T> values) {
-        return menu(null, graphic, enabled, property, values);
+    public static <T extends @Nullable Object> Menu choiceMenu(Node graphic, ObservableBooleanValue enabled, Property<T> property, Collection<T> values) {
+        return choiceMenu(null, graphic, enabled, property, values);
     }
 
     /**
@@ -622,8 +633,8 @@ public final class Controls {
      * @param values the collection of values to populate the menu with
      * @return a Menu object populated with the specified choices
      */
-    public static <T extends @Nullable Object> Menu menu(String text, Property<T> property, Collection<T> values) {
-        return menu(text, null, FxUtil.ALWAYS_TRUE, property, values);
+    public static <T extends @Nullable Object> Menu choiceMenu(String text, Property<T> property, Collection<T> values) {
+        return choiceMenu(text, null, FxUtil.ALWAYS_TRUE, property, values);
     }
 
     /**
@@ -635,8 +646,8 @@ public final class Controls {
      * @param values   the collection of available values to choose from
      * @return a Menu instance populated with the provided values
      */
-    public static <T extends @Nullable Object> Menu menu(Node graphic, Property<T> property, Collection<T> values) {
-        return menu(null, graphic, FxUtil.ALWAYS_TRUE, property, values);
+    public static <T extends @Nullable Object> Menu choiceMenu(Node graphic, Property<T> property, Collection<T> values) {
+        return choiceMenu(null, graphic, FxUtil.ALWAYS_TRUE, property, values);
     }
 
     /**

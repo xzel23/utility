@@ -293,11 +293,25 @@ class ControlsTest extends FxTestBase {
 
             // ChoiceMenuBuilder
             SimpleStringProperty property = new SimpleStringProperty("A");
-            Menu choiceMenu = Controls.choiceMenu(property, List.of("A", "B", "C"))
+            Menu choiceMenu = Controls.<String>choiceMenu(List.of("A", "B", "C"))
                     .text("Choices")
+                    .bind(property)
                     .build();
             assertEquals("Choices", choiceMenu.getText());
             assertEquals(3, choiceMenu.getItems().size());
+
+            // CheckMenuItemBuilder
+            SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
+            CheckMenuItem cmi = Controls.checkMenuItem()
+                    .text("CMI")
+                    .selected(selected)
+                    .build();
+            assertEquals("CMI", cmi.getText());
+            assertFalse(cmi.isSelected());
+            selected.set(true);
+            assertTrue(cmi.isSelected());
+            cmi.setSelected(false);
+            assertFalse(selected.get());
         });
     }
 

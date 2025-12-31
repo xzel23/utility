@@ -53,6 +53,15 @@ public abstract class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuil
     }
 
     /**
+     * Provides an observable value representing the disabled state.
+     *
+     * @return an ObservableValue of type Boolean that indicates whether the state is disabled.
+     */
+    protected @Nullable ObservableValue<Boolean> disabledValue() {
+        return disabled;
+    }
+
+    /**
      * Applies a value to the provided consumer if the value is not null.
      *
      * @param <T>   the type of the value to apply
