@@ -1,6 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
@@ -37,7 +36,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -71,8 +69,10 @@ public final class Controls {
      * Create {@link ButtonBuilder} instance for toggle buttons.
      *
      * @param selected the initial selection state of the button
-     * @return new ButtonBuilder
+     * @return new ToggleButtonBuilder
+     * @deprecated use {@link #toggleButton()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static ToggleButtonBuilder toggleButton(boolean selected) {
         return new ToggleButtonBuilder(() -> {
             ToggleButton b = new ToggleButton();
@@ -84,24 +84,22 @@ public final class Controls {
     /**
      * Create {@link ButtonBuilder} instance for checkboxes.
      *
-     * @return new ButtonBuilder
+     * @return new CheckBoxButtonBuilder
      */
     public static CheckBoxButtonBuilder checkbox() {
         return new CheckBoxButtonBuilder(CheckBox::new);
     }
 
     /**
-     * Create {@link ButtonBuilder} instance for checkboxes.
+     * Create {@link CheckBoxButtonBuilder} instance for checkboxes.
      *
      * @param selected the initial selection state of the button
-     * @return new ButtonBuilder
+     * @return new CheckBoxButtonBuilder
+     * @deprecated use {@link #checkbox()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static CheckBoxButtonBuilder checkbox(boolean selected) {
-        return new CheckBoxButtonBuilder(() -> {
-            CheckBox b = new CheckBox();
-            b.setSelected(selected);
-            return b;
-        });
+        return checkbox().selected(selected);
     }
 
     /**
