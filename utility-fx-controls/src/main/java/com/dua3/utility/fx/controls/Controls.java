@@ -349,9 +349,11 @@ public final class Controls {
      * @param text    the text to show
      * @param items   the menu items
      * @return new menu
+     * @deprecated use {@link #menu()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static Menu menu(String text, MenuItem... items) {
-        return menu(text, null, items);
+        return menu().text(text).items(items).build();
     }
 
     /**
@@ -361,12 +363,14 @@ public final class Controls {
      * @param graphic the graphic to show before the text
      * @param items   the menu items
      * @return new menu
+     * @deprecated use {@link #menu()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static Menu menu(@Nullable String text, @Nullable Node graphic, MenuItem... items) {
-        if (text == null && graphic == null) {
-            throw new IllegalArgumentException("text and graphic must not both be null");
-        }
-        return new Menu(text, graphic, items);
+        MenuBuilder builder = menu();
+        if (text != null) builder.text(text);
+        if (graphic != null) builder.graphic(graphic);
+        return builder.items(items).build();
     }
 
     /**
