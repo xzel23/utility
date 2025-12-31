@@ -471,9 +471,15 @@ public final class Controls {
      * @param action    the action to perform when the menu item is invoked
      * @param initialState  flag indicating the initial state
      * @return new menu item
+     * @deprecated use {@link #checkMenuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static CheckMenuItem checkMenuItem(String text, Consumer<Boolean> action, boolean initialState) {
-        return checkMenuItem(text, null, action, initialState);
+        return checkMenuItem()
+                .text(text)
+                .action(action)
+                .selected(initialState)
+                .build();
     }
 
     /**
@@ -484,15 +490,16 @@ public final class Controls {
      * @param action  the action to perform when the menu item is invoked
      * @param initialState  flag indicating the initial state
      * @return new menu item
+     * @deprecated use {@link #checkMenuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static CheckMenuItem checkMenuItem(@Nullable String text, @Nullable Node graphic, Consumer<Boolean> action, boolean initialState) {
-        if (text == null && graphic == null) {
-            throw new IllegalArgumentException("text and graphic must not both be null");
-        }
-        CheckMenuItem mi = new CheckMenuItem(text, graphic);
-        mi.setOnAction(evt -> action.accept(mi.isSelected()));
-        mi.selectedProperty().set(initialState);
-        return mi;
+        return checkMenuItem()
+                .text(text)
+                .graphic(graphic)
+                .action(action)
+                .selected(initialState)
+                .build();
     }
 
     /**
@@ -501,9 +508,14 @@ public final class Controls {
      * @param text    the text to show
      * @param selected the property controlling the selected state
      * @return new menu item
+     * @deprecated use {@link #checkMenuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static CheckMenuItem checkMenuItem(String text, Property<Boolean> selected) {
-        return checkMenuItem(text, (Node) null, selected);
+        return checkMenuItem()
+                .text(text)
+                .selected(selected)
+                .build();
     }
 
     /**
@@ -513,14 +525,15 @@ public final class Controls {
      * @param graphic the graphic to show before the text
      * @param selected the property controlling the selected state
      * @return new menu item
+     * @deprecated use {@link #checkMenuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static CheckMenuItem checkMenuItem(@Nullable String text, @Nullable Node graphic, Property<Boolean> selected) {
-        if (text == null && graphic == null) {
-            throw new IllegalArgumentException("text and graphic must not both be null");
-        }
-        CheckMenuItem mi = new CheckMenuItem(text, graphic);
-        mi.selectedProperty().bindBidirectional(selected);
-        return mi;
+        return checkMenuItem()
+                .text(text)
+                .graphic(graphic)
+                .selected(selected)
+                .build();
     }
 
     /**
@@ -530,9 +543,15 @@ public final class Controls {
      * @param selected the property controlling the selected state
      * @param enabled the property controlling the enabled state
      * @return new menu item
+     * @deprecated use {@link #checkMenuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static CheckMenuItem checkMenuItem(String text, Property<Boolean> selected, ObservableBooleanValue enabled) {
-        return checkMenuItem(text, null, selected, enabled);
+        return checkMenuItem()
+                .text(text)
+                .selected(selected)
+                .enabled(enabled)
+                .build();
     }
 
     /**
@@ -543,15 +562,16 @@ public final class Controls {
      * @param selected the property controlling the selected state
      * @param enabled the property controlling the enabled state
      * @return new menu item
+     * @deprecated use {@link #checkMenuItem()} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static CheckMenuItem checkMenuItem(@Nullable String text, @Nullable Node graphic, Property<Boolean> selected, ObservableBooleanValue enabled) {
-        if (text == null && graphic == null) {
-            throw new IllegalArgumentException("text and graphic must not both be null");
-        }
-        CheckMenuItem mi = new CheckMenuItem(text, graphic);
-        mi.disableProperty().bind(Bindings.not(enabled));
-        mi.selectedProperty().bindBidirectional(selected);
-        return mi;
+        return checkMenuItem()
+                .text(text)
+                .graphic(graphic)
+                .selected(selected)
+                .enabled(enabled)
+                .build();
     }
 
     /**

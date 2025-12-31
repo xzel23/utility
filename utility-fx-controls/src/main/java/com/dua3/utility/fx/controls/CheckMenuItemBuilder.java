@@ -1,12 +1,12 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.MenuItemBuilder;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckMenuItem;
 import org.jspecify.annotations.Nullable;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -14,6 +14,7 @@ import java.util.function.Supplier;
  */
 public class CheckMenuItemBuilder extends MenuItemBuilder<CheckMenuItem, CheckMenuItemBuilder> {
     private @Nullable ObservableValue<Boolean> selected;
+    private @Nullable Consumer<Boolean> action;
 
     /**
      * Constructs a new instance of the CheckMenuItemBuilder class.
@@ -27,6 +28,11 @@ public class CheckMenuItemBuilder extends MenuItemBuilder<CheckMenuItem, CheckMe
     @Override
     public CheckMenuItem build() {
         CheckMenuItem item = super.build();
+
+        if (action != null) {
+            item.selectedProperty().addListener((v, o, n) -> action.accept(n));
+        }
+
         apply(selected, item.selectedProperty());
         return item;
     }
@@ -39,17 +45,6 @@ public class CheckMenuItemBuilder extends MenuItemBuilder<CheckMenuItem, CheckMe
      */
     public CheckMenuItemBuilder selected(boolean selected) {
         this.selected = new SimpleBooleanProperty(selected);
-        return self();
-    }
-
-    /**
-     * Set the selected state for the CheckMenuItem.
-     *
-     * @param selected the selected state property
-     * @return this CheckMenuItemBuilder instance
-     */
-    public CheckMenuItemBuilder selected(Property<Boolean> selected) {
-        this.selected = selected;
         return self();
     }
 
@@ -74,5 +69,16 @@ public class CheckMenuItemBuilder extends MenuItemBuilder<CheckMenuItem, CheckMe
     @Deprecated(since = "21", forRemoval = true)
     public CheckMenuItemBuilder bindSelected(ObservableValue<Boolean> selected) {
         return selected(selected);
+    }
+
+    /**
+     * Set the action for the CheckMenuItem.
+     *
+     * @param action the action to perform when the selected state changes, receives the new state
+     * @return this CheckMenuItemBuilder instance
+     */
+    public CheckMenuItemBuilder action(Consumer<Boolean> action) {
+        this.action = action;
+        return self();
     }
 }
