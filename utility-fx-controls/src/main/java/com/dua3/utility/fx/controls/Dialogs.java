@@ -42,10 +42,6 @@ import java.util.stream.Collectors;
  */
 public final class Dialogs {
 
-    static {
-        I18N.getInstance().mergeBundle(ResourceBundle.getBundle(Dialogs.class.getPackageName() + ".messages", Locale.getDefault()));
-    }
-
     // utility - no instances
     private Dialogs() {}
 
@@ -394,7 +390,7 @@ public final class Dialogs {
         }
 
         if (fileType.isEmpty()) {
-            throw new UnsupportedFileTypeException(I18N.getInstance().get("dua3_fx.dialogs.unsupported_file_type"));
+            throw new UnsupportedFileTypeException(I18NInstance.get().get("dua3_fx.dialogs.unsupported_file_type"));
         }
 
         return Optional.of(fileType.orElseThrow().read(selectedFile.toPath()));

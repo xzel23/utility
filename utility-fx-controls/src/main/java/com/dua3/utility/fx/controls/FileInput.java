@@ -88,7 +88,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
         this.state = new InputControlState<>(value, dflt, validate);
 
         TextField tfFilename = new TextField();
-        Button button = new Button(I18N.getInstance().get("dua3_fx.file_input.button"));
+        Button button = new Button(I18NInstance.get().get("dua3_fx.file_input.button"));
 
         HBox.setHgrow(tfFilename, Priority.ALWAYS);
 
@@ -151,7 +151,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
     public static Function<@Nullable Path, Optional<String>> defaultValidate(FileDialogMode mode, boolean existingOnly) {
         return p -> {
             if (p == null || p.toString().isBlank()) {
-                return Optional.of(I18N.getInstance().get("dua3_fx.file_input.nothing_selected"));
+                return Optional.of(I18NInstance.get().get("dua3_fx.file_input.nothing_selected"));
             }
 
             boolean exists = Files.exists(p);
@@ -161,19 +161,19 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
                 case DIRECTORY -> {
                     // is a directory or existingOnly is not set and doesn't exist
                     if (exists && !isDirectory) {
-                        return Optional.of(I18N.getInstance().format("dua3_fx.file_input.not_a_directory", p));
+                        return Optional.of(I18NInstance.get().format("dua3_fx.file_input.not_a_directory", p));
                     }
                     if (existingOnly && !exists) {
-                        return Optional.of(I18N.getInstance().format("dua3_fx.file_input.does_not_exist", p));
+                        return Optional.of(I18NInstance.get().format("dua3_fx.file_input.does_not_exist", p));
                     }
                     return Optional.empty();
                 }
                 case OPEN, SAVE -> {
                     if (isDirectory) {
-                        return Optional.of(I18N.getInstance().format("dua3_fx.file_input.is_a_directory", p));
+                        return Optional.of(I18NInstance.get().format("dua3_fx.file_input.is_a_directory", p));
                     }
                     if (existingOnly && !exists) {
-                        return Optional.of(I18N.getInstance().format("dua3_fx.file_input.does_not_exist", p));
+                        return Optional.of(I18NInstance.get().format("dua3_fx.file_input.does_not_exist", p));
                     }
                     return Optional.empty();
                 }

@@ -109,12 +109,12 @@ public class AboutDialogBuilder {
      * @return the current instance of AboutDialogBuilder for method chaining
      */
     public AboutDialogBuilder license(LicenseData licenseData) {
-        licenseNote(I18N.getInstance().format("dua3_fx.about_dialog.license_note", licenseData.licenseId(), licenseData.licensee(), licenseData.validUntil()));
+        licenseNote(I18NInstance.get().format("dua3_fx.about_dialog.license_note", licenseData.licenseId(), licenseData.licensee(), licenseData.validUntil()));
         licenseData.licenseText().ifPresent(licenseText ->
                 onShowLicenseDetails(() ->
                         Dialogs.alert(parentWindow, Alert.AlertType.INFORMATION)
-                                .title(I18N.getInstance().get("dua3_fx.about_dialog.license_details.title"))
-                                .header(I18N.getInstance().format("dua3_fx.about_dialog.license_details.header", licenseData.validUntil()))
+                                .title(I18NInstance.get().get("dua3_fx.about_dialog.license_details.title"))
+                                .header(I18NInstance.get().format("dua3_fx.about_dialog.license_details.header", licenseData.validUntil()))
                                 .text(licenseText.toString())
                                 .build()
                                 .show()
@@ -398,7 +398,7 @@ public class AboutDialogBuilder {
         if (!licenseNote.isEmpty()) {
             if (showLicenseDetails != null) {
                 Hyperlink hlLicense = new Hyperlink(licenseNote);
-                hlLicense.setText(mailText.isBlank() ? I18N.getInstance().get("dua3_fx.about_dialog.email") : mailText);
+                hlLicense.setText(mailText.isBlank() ? I18NInstance.get().get("dua3_fx.about_dialog.email") : mailText);
                 hlLicense.setId("license");
                 hlLicense.setOnAction(e -> showLicenseDetails.run());
                 children.add(hlLicense);
@@ -426,9 +426,9 @@ public class AboutDialogBuilder {
         if (!title.isBlank()) {
             dlg.setTitle(title);
         } else if (!applicationName.isBlank()) {
-            dlg.setTitle(I18N.getInstance().format("dua3_fx.about_dialog.title_with_name", applicationName));
+            dlg.setTitle(I18NInstance.get().format("dua3_fx.about_dialog.title_with_name", applicationName));
         } else {
-            dlg.setTitle(I18N.getInstance().get("dua3_fx.about_dialog.title"));
+            dlg.setTitle(I18NInstance.get().get("dua3_fx.about_dialog.title"));
         }
         dialogPane.getButtonTypes().addAll(ButtonType.OK);
 
