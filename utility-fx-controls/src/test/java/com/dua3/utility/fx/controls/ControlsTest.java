@@ -316,6 +316,38 @@ class ControlsTest extends FxTestBase {
     }
 
     /**
+     * Test the choice menu creation methods.
+     */
+    @Test
+    @Timeout(value = 10, unit = java.util.concurrent.TimeUnit.SECONDS)
+    void testChoiceMenu() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            List<String> values = List.of("A", "B", "C");
+            SimpleStringProperty property = new SimpleStringProperty("B");
+
+            // Test builder
+            Menu menu = Controls.choiceMenu(values)
+                    .text("Choice Menu")
+                    .bind(property)
+                    .build();
+
+            assertEquals("Choice Menu", menu.getText());
+            assertEquals(3, menu.getItems().size());
+            assertTrue(((javafx.scene.control.RadioMenuItem) menu.getItems().get(1)).isSelected());
+
+            property.set("C");
+            assertTrue(((javafx.scene.control.RadioMenuItem) menu.getItems().get(2)).isSelected());
+            assertFalse(((javafx.scene.control.RadioMenuItem) menu.getItems().get(1)).isSelected());
+
+            // Test deprecated method
+            Menu deprecatedMenu = Controls.choiceMenu("Deprecated", property, values);
+            assertEquals("Deprecated", deprecatedMenu.getText());
+            assertEquals(3, deprecatedMenu.getItems().size());
+            assertTrue(((javafx.scene.control.RadioMenuItem) deprecatedMenu.getItems().get(2)).isSelected());
+        });
+    }
+
+    /**
      * Test the menu creation methods.
      */
     @Test

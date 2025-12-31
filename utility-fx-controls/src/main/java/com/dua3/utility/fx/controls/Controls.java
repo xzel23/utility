@@ -1,10 +1,7 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.data.Converter;
-import com.dua3.utility.fx.PropertyConverter;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -581,49 +578,39 @@ public final class Controls {
      * in the associated property. Each choice is represented as a check menu item, and the menu
      * can be disabled based on the provided {@code enabled} value.
      *
-     * @param <T> the type of the values and the associated property
-     * @param text the text to display as the label of the menu; can be null if {@code graphic} is not null
-     * @param graphic a Node to display as the graphic of the menu; can be null if {@code text} is not null
-     * @param enabled an observable value controlling whether the menu is enabled or disabled
+     * @param <T>      the type of the values and the associated property
+     * @param text     the text to display as the label of the menu; can be null if {@code graphic} is not null
+     * @param graphic  a Node to display as the graphic of the menu; can be null if {@code text} is not null
+     * @param enabled  an observable value controlling whether the menu is enabled or disabled
      * @param property the property that reflects the currently selected menu option
-     * @param values the collection of possible values to be presented as menu options
+     * @param values   the collection of possible values to be presented as menu options
      * @return the created {@code Menu} object populated with selectable items
      * @throws IllegalArgumentException if both {@code text} and {@code graphic} are null
+     * @deprecated use {@link #choiceMenu(Collection)} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static <T extends @Nullable Object> Menu choiceMenu(@Nullable String text, @Nullable Node graphic, ObservableBooleanValue enabled, Property<T> property, Collection<T> values) {
-        if (text == null && graphic == null) {
-            throw new IllegalArgumentException("text and graphic must not both be null");
-        }
-        Menu menu = new Menu(text, graphic);
-        T current = property.getValue();
-        for (T value : values) {
-            Property<@Nullable Boolean> selected = new SimpleBooleanProperty(Objects.equals(current, value));
-            Converter<@Nullable T, @Nullable Boolean> converter = Converter.create(
-                    v -> Objects.equals(v, value),
-                    b -> b != null && b ? value : property.getValue()
-            );
-            selected.bindBidirectional(PropertyConverter.convert(property, converter));
-            CheckMenuItem mi = checkMenuItem(String.valueOf(value), selected);
-
-            // make sure selected is not GC'ed
-            FxUtil.addStrongReference(mi.selectedProperty(), selected);
-
-            menu.getItems().add(mi);
-        }
-        menu.disableProperty().bind(Bindings.not(enabled));
-        return menu;
+        ChoiceMenuBuilder<T> builder = Controls.<T>choiceMenu(values);
+        if (text != null) builder.text(text);
+        if (graphic != null) builder.graphic(graphic);
+        return builder
+                .enabled(enabled)
+                .bind(property)
+                .build();
     }
 
     /**
      * Creates a menu with a set of selectable choices based on the provided values.
      *
-     * @param <T> the type of the values and the associated property
-     * @param text the title or label for the menu
-     * @param enabled an observable boolean value indicating if the menu should be enabled or disabled
+     * @param <T>      the type of the values and the associated property
+     * @param text     the title or label for the menu
+     * @param enabled  an observable boolean value indicating if the menu should be enabled or disabled
      * @param property the property to be bound to the selected value in the menu
-     * @param values the collection of values to populate the menu choices
+     * @param values   the collection of values to populate the menu choices
      * @return the constructed menu object with the specified properties and choices
+     * @deprecated use {@link #choiceMenu(Collection)} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static <T extends @Nullable Object> Menu choiceMenu(String text, ObservableBooleanValue enabled, Property<T> property, Collection<T> values) {
         return choiceMenu(text, null, enabled, property, values);
     }
@@ -632,13 +619,15 @@ public final class Controls {
      * Creates and returns a menu with choices derived from the provided collection of values.
      * This method associates the menu with a specified property that reflects the current selection.
      *
-     * @param <T> the type of the values and the associated property
-     * @param graphic the graphical representation to be displayed with the menu
-     * @param enabled an observable boolean value indicating whether the menu is enabled
+     * @param <T>      the type of the values and the associated property
+     * @param graphic  the graphical representation to be displayed with the menu
+     * @param enabled  an observable boolean value indicating whether the menu is enabled
      * @param property a property that represents the selected value in the menu
-     * @param values the collection of selectable values to be displayed in the menu
+     * @param values   the collection of selectable values to be displayed in the menu
      * @return a new Menu instance configured with the specified options and behavior
+     * @deprecated use {@link #choiceMenu(Collection)} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static <T extends @Nullable Object> Menu choiceMenu(Node graphic, ObservableBooleanValue enabled, Property<T> property, Collection<T> values) {
         return choiceMenu(null, graphic, enabled, property, values);
     }
@@ -647,12 +636,14 @@ public final class Controls {
      * Creates a menu with selectable choices based on the provided text, property, and values.
      * The menu allows selection of items from the given collection of values.
      *
-     * @param <T> the type of the values and the associated property
-     * @param text the label or prompt text for the menu
+     * @param <T>      the type of the values and the associated property
+     * @param text     the label or prompt text for the menu
      * @param property the property to bind the selected value to
-     * @param values the collection of values to populate the menu with
+     * @param values   the collection of values to populate the menu with
      * @return a Menu object populated with the specified choices
+     * @deprecated use {@link #choiceMenu(Collection)} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static <T extends @Nullable Object> Menu choiceMenu(String text, Property<T> property, Collection<T> values) {
         return choiceMenu(text, null, FxUtil.ALWAYS_TRUE, property, values);
     }
@@ -665,7 +656,9 @@ public final class Controls {
      * @param property the property to which the selected value will be bound
      * @param values   the collection of available values to choose from
      * @return a Menu instance populated with the provided values
+     * @deprecated use {@link #choiceMenu(Collection)} instead
      */
+    @Deprecated(since = "21", forRemoval = true)
     public static <T extends @Nullable Object> Menu choiceMenu(Node graphic, Property<T> property, Collection<T> values) {
         return choiceMenu(null, graphic, FxUtil.ALWAYS_TRUE, property, values);
     }
