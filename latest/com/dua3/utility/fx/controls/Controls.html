@@ -80,6 +80,10 @@ loadScripts(document, 'script');</script>
 <li><a href="#textArea()" tabindex="0">textArea()</a></li>
 <li><a href="#makeResizable(javafx.scene.layout.Region,com.dua3.utility.fx.controls.Position...)" tabindex="0">makeResizable(Region, Position...)</a></li>
 <li><a href="#makeResizable(javafx.scene.layout.Region,int,com.dua3.utility.fx.controls.Position...)" tabindex="0">makeResizable(Region, int, Position...)</a></li>
+<li><a href="#menu()" tabindex="0">menu()</a></li>
+<li><a href="#choiceMenu(java.util.Collection)" tabindex="0">choiceMenu(Collection)</a></li>
+<li><a href="#menuItem()" tabindex="0">menuItem()</a></li>
+<li><a href="#checkMenuItem()" tabindex="0">checkMenuItem()</a></li>
 <li><a href="#menu(java.lang.String,javafx.scene.control.MenuItem...)" tabindex="0">menu(String, MenuItem...)</a></li>
 <li><a href="#menu(java.lang.String,javafx.scene.Node,javafx.scene.control.MenuItem...)" tabindex="0">menu(String, Node, MenuItem...)</a></li>
 <li><a href="#menuItem(java.lang.String,java.lang.Runnable)" tabindex="0">menuItem(String, Runnable)</a></li>
@@ -133,7 +137,7 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -154,92 +158,126 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Create <a href="ButtonBuilder.html" title="class in com.dua3.utility.fx.controls"><code>ButtonBuilder</code></a> instance for checkboxes.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CheckBoxButtonBuilder.html" title="class in com.dua3.utility.fx.controls">CheckBoxButtonBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkbox(boolean)" class="member-name-link">checkbox</a><wbr>(boolean&nbsp;selected)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create <a href="ButtonBuilder.html" title="class in com.dua3.utility.fx.controls"><code>ButtonBuilder</code></a> instance for checkboxes.</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static <a href="CheckBoxButtonBuilder.html" title="class in com.dua3.utility.fx.controls">CheckBoxButtonBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#checkbox(boolean)" class="member-name-link">checkbox</a><wbr>(boolean&nbsp;selected)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkbox()"><code>checkbox()</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.CheckMenuItem</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkMenuItem(java.lang.String,javafx.scene.Node,java.util.function.Consumer,boolean)" class="member-name-link">checkMenuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CheckMenuItemBuilder.html" title="class in com.dua3.utility.fx.controls">CheckMenuItemBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkMenuItem()" class="member-name-link">checkMenuItem</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Create a new <a href="CheckMenuItemBuilder.html" title="class in com.dua3.utility.fx.controls"><code>CheckMenuItemBuilder</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.CheckMenuItem</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#checkMenuItem(java.lang.String,javafx.scene.Node,java.util.function.Consumer,boolean)" class="member-name-link">checkMenuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;action,
  boolean&nbsp;initialState)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>CheckMenuItem</code>.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.CheckMenuItem</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkMenuItem(java.lang.String,javafx.scene.Node,javafx.beans.property.Property)" class="member-name-link">checkMenuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.CheckMenuItem</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#checkMenuItem(java.lang.String,javafx.scene.Node,javafx.beans.property.Property)" class="member-name-link">checkMenuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;selected)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>CheckMenuItem</code>.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.CheckMenuItem</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkMenuItem(java.lang.String,javafx.scene.Node,javafx.beans.property.Property,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">checkMenuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.CheckMenuItem</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#checkMenuItem(java.lang.String,javafx.scene.Node,javafx.beans.property.Property,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">checkMenuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;selected,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>CheckMenuItem</code>.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.CheckMenuItem</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkMenuItem(java.lang.String,java.util.function.Consumer,boolean)" class="member-name-link">checkMenuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.CheckMenuItem</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#checkMenuItem(java.lang.String,java.util.function.Consumer,boolean)" class="member-name-link">checkMenuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;action,
  boolean&nbsp;initialState)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>CheckMenuItem</code>.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.CheckMenuItem</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkMenuItem(java.lang.String,javafx.beans.property.Property)" class="member-name-link">checkMenuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.CheckMenuItem</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#checkMenuItem(java.lang.String,javafx.beans.property.Property)" class="member-name-link">checkMenuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;selected)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>CheckMenuItem</code>.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.CheckMenuItem</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkMenuItem(java.lang.String,javafx.beans.property.Property,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">checkMenuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.CheckMenuItem</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#checkMenuItem(java.lang.String,javafx.beans.property.Property,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">checkMenuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;selected,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>CheckMenuItem</code>.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#choiceMenu(java.lang.String,javafx.scene.Node,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#choiceMenu(java.lang.String,javafx.scene.Node,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a choice menu with selectable options based on a property and a collection of possible values.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#choiceMenu(java.lang.String,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#choiceMenu(java.lang.String,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a menu with selectable choices based on the provided text, property, and values.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#choiceMenu(java.lang.String,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#choiceMenu(java.lang.String,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a menu with a set of selectable choices based on the provided values.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#choiceMenu(javafx.scene.Node,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(javafx.scene.Node&nbsp;graphic,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="ChoiceMenuBuilder.html" title="class in com.dua3.utility.fx.controls">ChoiceMenuBuilder</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#choiceMenu(java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates and returns a new instance of <code>ChoiceMenuBuilder</code> with the specified collection of values.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#choiceMenu(javafx.scene.Node,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(javafx.scene.Node&nbsp;graphic,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a menu allowing users to choose from a collection of values and bind the selected value to a property.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#choiceMenu(javafx.scene.Node,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(javafx.scene.Node&nbsp;graphic,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br>javafx.scene.control.Menu</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#choiceMenu(javafx.scene.Node,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)" class="member-name-link">choiceMenu</a><wbr>(javafx.scene.Node&nbsp;graphic,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates and returns a menu with choices derived from the provided collection of values.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
+</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fileInput(javafx.stage.Window,com.dua3.utility.fx.controls.FileDialogMode)" class="member-name-link">fileInput</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWinndw,
@@ -300,61 +338,87 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Make a region resizable by dragging its edge.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.Menu</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menu(java.lang.String,javafx.scene.Node,javafx.scene.control.MenuItem...)" class="member-name-link">menu</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="MenuBuilder.html" title="class in com.dua3.utility.fx.controls">MenuBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menu()" class="member-name-link">menu</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Create a new <a href="MenuBuilder.html" title="class in com.dua3.utility.fx.controls"><code>MenuBuilder</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.Menu</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#menu(java.lang.String,javafx.scene.Node,javafx.scene.control.MenuItem...)" class="member-name-link">menu</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  javafx.scene.control.MenuItem...&nbsp;items)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>Menu</code>.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menu()"><code>menu()</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.Menu</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menu(java.lang.String,javafx.scene.control.MenuItem...)" class="member-name-link">menu</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.Menu</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#menu(java.lang.String,javafx.scene.control.MenuItem...)" class="member-name-link">menu</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.scene.control.MenuItem...&nbsp;items)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>Menu</code>.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menu()"><code>menu()</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.MenuItem</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menuItem(java.lang.String,javafx.scene.Node,java.lang.Runnable)" class="member-name-link">menuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="MenuItemBuilderImpl.html" title="class in com.dua3.utility.fx.controls">MenuItemBuilderImpl</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menuItem()" class="member-name-link">menuItem</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Create a new <a href="MenuItemBuilderImpl.html" title="class in com.dua3.utility.fx.controls"><code>MenuItemBuilderImpl</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.MenuItem</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#menuItem(java.lang.String,javafx.scene.Node,java.lang.Runnable)" class="member-name-link">menuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>MenuItem</code>.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.MenuItem</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menuItem(java.lang.String,javafx.scene.Node,java.lang.Runnable,boolean)" class="member-name-link">menuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.MenuItem</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#menuItem(java.lang.String,javafx.scene.Node,java.lang.Runnable,boolean)" class="member-name-link">menuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action,
  boolean&nbsp;enabled)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>MenuItem</code>.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.MenuItem</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menuItem(java.lang.String,javafx.scene.Node,java.lang.Runnable,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">menuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.MenuItem</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#menuItem(java.lang.String,javafx.scene.Node,java.lang.Runnable,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">menuItem</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>MenuItem</code>.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.MenuItem</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menuItem(java.lang.String,java.lang.Runnable)" class="member-name-link">menuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.MenuItem</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#menuItem(java.lang.String,java.lang.Runnable)" class="member-name-link">menuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>MenuItem</code>.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.MenuItem</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menuItem(java.lang.String,java.lang.Runnable,boolean)" class="member-name-link">menuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.MenuItem</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#menuItem(java.lang.String,java.lang.Runnable,boolean)" class="member-name-link">menuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action,
  boolean&nbsp;enabled)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>MenuItem</code>.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.MenuItem</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#menuItem(java.lang.String,java.lang.Runnable,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">menuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static javafx.scene.control.MenuItem</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#menuItem(java.lang.String,java.lang.Runnable,javafx.beans.value.ObservableBooleanValue)" class="member-name-link">menuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create new <code>MenuItem</code>.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
+</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.control.Label</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rigidLabel(java.lang.String)" class="member-name-link">rigidLabel</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
@@ -412,10 +476,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Create <a href="ButtonBuilder.html" title="class in com.dua3.utility.fx.controls"><code>ButtonBuilder</code></a> instance for toggle buttons.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ToggleButtonBuilder.html" title="class in com.dua3.utility.fx.controls">ToggleButtonBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toggleButton(boolean)" class="member-name-link">toggleButton</a><wbr>(boolean&nbsp;selected)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create <a href="ButtonBuilder.html" title="class in com.dua3.utility.fx.controls"><code>ButtonBuilder</code></a> instance for toggle buttons.</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code>static <a href="ToggleButtonBuilder.html" title="class in com.dua3.utility.fx.controls">ToggleButtonBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#toggleButton(boolean)" class="member-name-link">toggleButton</a><wbr>(boolean&nbsp;selected)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#toggleButton()"><code>toggleButton()</code></a> instead</div>
+</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static javafx.scene.Node</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tooltipIcon(java.lang.String,int,com.dua3.utility.data.Color,java.lang.String)" class="member-name-link">tooltipIcon</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
@@ -480,13 +546,18 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="toggleButton(boolean)">
 <h3>toggleButton</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ToggleButtonBuilder.html" title="class in com.dua3.utility.fx.controls">ToggleButtonBuilder</a></span>&nbsp;<span class="element-name">toggleButton</span><wbr><span class="parameters">(boolean&nbsp;selected)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ToggleButtonBuilder.html" title="class in com.dua3.utility.fx.controls">ToggleButtonBuilder</a></span>&nbsp;<span class="element-name">toggleButton</span><wbr><span class="parameters">(boolean&nbsp;selected)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#toggleButton()"><code>toggleButton()</code></a> instead</div>
+</div>
 <div class="block">Create <a href="ButtonBuilder.html" title="class in com.dua3.utility.fx.controls"><code>ButtonBuilder</code></a> instance for toggle buttons.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>selected</code> - the initial selection state of the button</dd>
 <dt>Returns:</dt>
-<dd>new ButtonBuilder</dd>
+<dd>new ToggleButtonBuilder</dd>
 </dl>
 </div>
 </section>
@@ -499,7 +570,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Create <a href="ButtonBuilder.html" title="class in com.dua3.utility.fx.controls"><code>ButtonBuilder</code></a> instance for checkboxes.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>new ButtonBuilder</dd>
+<dd>new CheckBoxButtonBuilder</dd>
 </dl>
 </div>
 </section>
@@ -508,13 +579,18 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="checkbox(boolean)">
 <h3>checkbox</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="CheckBoxButtonBuilder.html" title="class in com.dua3.utility.fx.controls">CheckBoxButtonBuilder</a></span>&nbsp;<span class="element-name">checkbox</span><wbr><span class="parameters">(boolean&nbsp;selected)</span></div>
-<div class="block">Create <a href="ButtonBuilder.html" title="class in com.dua3.utility.fx.controls"><code>ButtonBuilder</code></a> instance for checkboxes.</div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="CheckBoxButtonBuilder.html" title="class in com.dua3.utility.fx.controls">CheckBoxButtonBuilder</a></span>&nbsp;<span class="element-name">checkbox</span><wbr><span class="parameters">(boolean&nbsp;selected)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkbox()"><code>checkbox()</code></a> instead</div>
+</div>
+<div class="block">Create <a href="CheckBoxButtonBuilder.html" title="class in com.dua3.utility.fx.controls"><code>CheckBoxButtonBuilder</code></a> instance for checkboxes.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>selected</code> - the initial selection state of the button</dd>
 <dt>Returns:</dt>
-<dd>new ButtonBuilder</dd>
+<dd>new CheckBoxButtonBuilder</dd>
 </dl>
 </div>
 </section>
@@ -852,11 +928,74 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="menu()">
+<h3>menu</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="MenuBuilder.html" title="class in com.dua3.utility.fx.controls">MenuBuilder</a></span>&nbsp;<span class="element-name">menu</span>()</div>
+<div class="block">Create a new <a href="MenuBuilder.html" title="class in com.dua3.utility.fx.controls"><code>MenuBuilder</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a new MenuBuilder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="choiceMenu(java.util.Collection)">
+<h3>choiceMenu</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ChoiceMenuBuilder.html" title="class in com.dua3.utility.fx.controls">ChoiceMenuBuilder</a>&lt;T&gt;</span>&nbsp;<span class="element-name">choiceMenu</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</span></div>
+<div class="block">Creates and returns a new instance of <code>ChoiceMenuBuilder</code> with the specified collection of values.
+<p>
+Use an <code>ObservableList</code> for <code>values</code> to automatically update menu items.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="choiceMenu(java.util.Collection)-type-param-T"><code>T</code> - The type of the elements in the collection.</span></dd>
+<dt>Parameters:</dt>
+<dd><code>values</code> - The collection of values to be presented in the choice menu.</dd>
+<dt>Returns:</dt>
+<dd>A <code>ChoiceMenuBuilder</code> instance initialized with the given collection of values.</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="menuItem()">
+<h3>menuItem</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="MenuItemBuilderImpl.html" title="class in com.dua3.utility.fx.controls">MenuItemBuilderImpl</a></span>&nbsp;<span class="element-name">menuItem</span>()</div>
+<div class="block">Create a new <a href="MenuItemBuilderImpl.html" title="class in com.dua3.utility.fx.controls"><code>MenuItemBuilderImpl</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a new MenuItemBuilder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="checkMenuItem()">
+<h3>checkMenuItem</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="CheckMenuItemBuilder.html" title="class in com.dua3.utility.fx.controls">CheckMenuItemBuilder</a></span>&nbsp;<span class="element-name">checkMenuItem</span>()</div>
+<div class="block">Create a new <a href="CheckMenuItemBuilder.html" title="class in com.dua3.utility.fx.controls"><code>CheckMenuItemBuilder</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a new CheckMenuItemBuilder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="menu(java.lang.String,javafx.scene.control.MenuItem...)">
 <h3>menu</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.Menu</span>&nbsp;<span class="element-name">menu</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.Menu</span>&nbsp;<span class="element-name">menu</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.scene.control.MenuItem...&nbsp;items)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menu()"><code>menu()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>Menu</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -872,9 +1011,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="menu(java.lang.String,javafx.scene.Node,javafx.scene.control.MenuItem...)">
 <h3>menu</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.Menu</span>&nbsp;<span class="element-name">menu</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.Menu</span>&nbsp;<span class="element-name">menu</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  javafx.scene.control.MenuItem...&nbsp;items)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menu()"><code>menu()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>Menu</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -891,8 +1035,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="menuItem(java.lang.String,java.lang.Runnable)">
 <h3>menuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>MenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -908,9 +1057,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="menuItem(java.lang.String,javafx.scene.Node,java.lang.Runnable)">
 <h3>menuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>MenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -927,9 +1081,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="menuItem(java.lang.String,java.lang.Runnable,javafx.beans.value.ObservableBooleanValue)">
 <h3>menuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>MenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -946,9 +1105,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="menuItem(java.lang.String,java.lang.Runnable,boolean)">
 <h3>menuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action,
  boolean&nbsp;enabled)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>MenuItem</code>.
 
 <p><strong>NOTE: </strong> the <code>enabled</code> state is permanent. Use this method only for menus where the
@@ -969,10 +1133,15 @@ an <code>ObservableBooleanValue</code> instead.</div>
 <section class="detail" id="menuItem(java.lang.String,javafx.scene.Node,java.lang.Runnable,javafx.beans.value.ObservableBooleanValue)">
 <h3>menuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>MenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -990,10 +1159,15 @@ an <code>ObservableBooleanValue</code> instead.</div>
 <section class="detail" id="menuItem(java.lang.String,javafx.scene.Node,java.lang.Runnable,boolean)">
 <h3>menuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.MenuItem</span>&nbsp;<span class="element-name">menuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action,
  boolean&nbsp;enabled)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#menuItem()"><code>menuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>MenuItem</code>.
 
 <p><strong>NOTE: </strong> the <code>enabled</code> state is permanent. Use this method only for menus where the
@@ -1015,9 +1189,14 @@ an <code>ObservableBooleanValue</code> instead.</div>
 <section class="detail" id="checkMenuItem(java.lang.String,java.util.function.Consumer,boolean)">
 <h3>checkMenuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;action,
  boolean&nbsp;initialState)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1034,10 +1213,15 @@ an <code>ObservableBooleanValue</code> instead.</div>
 <section class="detail" id="checkMenuItem(java.lang.String,javafx.scene.Node,java.util.function.Consumer,boolean)">
 <h3>checkMenuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;action,
  boolean&nbsp;initialState)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1055,8 +1239,13 @@ an <code>ObservableBooleanValue</code> instead.</div>
 <section class="detail" id="checkMenuItem(java.lang.String,javafx.beans.property.Property)">
 <h3>checkMenuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;selected)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1072,9 +1261,14 @@ an <code>ObservableBooleanValue</code> instead.</div>
 <section class="detail" id="checkMenuItem(java.lang.String,javafx.scene.Node,javafx.beans.property.Property)">
 <h3>checkMenuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;selected)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1091,9 +1285,14 @@ an <code>ObservableBooleanValue</code> instead.</div>
 <section class="detail" id="checkMenuItem(java.lang.String,javafx.beans.property.Property,javafx.beans.value.ObservableBooleanValue)">
 <h3>checkMenuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;selected,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1110,10 +1309,15 @@ an <code>ObservableBooleanValue</code> instead.</div>
 <section class="detail" id="checkMenuItem(java.lang.String,javafx.scene.Node,javafx.beans.property.Property,javafx.beans.value.ObservableBooleanValue)">
 <h3>checkMenuItem</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">javafx.scene.control.CheckMenuItem</span>&nbsp;<span class="element-name">checkMenuItem</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  javafx.beans.property.Property&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;selected,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#checkMenuItem()"><code>checkMenuItem()</code></a> instead</div>
+</div>
 <div class="block">Create new <code>CheckMenuItem</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1131,12 +1335,17 @@ an <code>ObservableBooleanValue</code> instead.</div>
 <section class="detail" id="choiceMenu(java.lang.String,javafx.scene.Node,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)">
 <h3>choiceMenu</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
 <span class="return-type">javafx.scene.control.Menu</span>&nbsp;<span class="element-name">choiceMenu</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  @Nullable javafx.scene.Node&nbsp;graphic,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
+</div>
 <div class="block">Creates a choice menu with selectable options based on a property and a collection of possible values.
 <p>
 The menu allows the user to choose one of the provided values, and the selection is reflected
@@ -1163,11 +1372,16 @@ can be disabled based on the provided <code>enabled</code> value.</div>
 <section class="detail" id="choiceMenu(java.lang.String,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)">
 <h3>choiceMenu</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
 <span class="return-type">javafx.scene.control.Menu</span>&nbsp;<span class="element-name">choiceMenu</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
+</div>
 <div class="block">Creates a menu with a set of selectable choices based on the provided values.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
@@ -1187,11 +1401,16 @@ can be disabled based on the provided <code>enabled</code> value.</div>
 <section class="detail" id="choiceMenu(javafx.scene.Node,javafx.beans.value.ObservableBooleanValue,javafx.beans.property.Property,java.util.Collection)">
 <h3>choiceMenu</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
 <span class="return-type">javafx.scene.control.Menu</span>&nbsp;<span class="element-name">choiceMenu</span><wbr><span class="parameters">(javafx.scene.Node&nbsp;graphic,
  javafx.beans.value.ObservableBooleanValue&nbsp;enabled,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
+</div>
 <div class="block">Creates and returns a menu with choices derived from the provided collection of values.
 This method associates the menu with a specified property that reflects the current selection.</div>
 <dl class="notes">
@@ -1212,10 +1431,15 @@ This method associates the menu with a specified property that reflects the curr
 <section class="detail" id="choiceMenu(java.lang.String,javafx.beans.property.Property,java.util.Collection)">
 <h3>choiceMenu</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
 <span class="return-type">javafx.scene.control.Menu</span>&nbsp;<span class="element-name">choiceMenu</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
+</div>
 <div class="block">Creates a menu with selectable choices based on the provided text, property, and values.
 The menu allows selection of items from the given collection of values.</div>
 <dl class="notes">
@@ -1235,10 +1459,15 @@ The menu allows selection of items from the given collection of values.</div>
 <section class="detail" id="choiceMenu(javafx.scene.Node,javafx.beans.property.Property,java.util.Collection)">
 <h3>choiceMenu</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="21",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
 <span class="return-type">javafx.scene.control.Menu</span>&nbsp;<span class="element-name">choiceMenu</span><wbr><span class="parameters">(javafx.scene.Node&nbsp;graphic,
  javafx.beans.property.Property&lt;T&gt;&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
+</div>
 <div class="block">Creates a menu allowing users to choose from a collection of values and bind the selected value to a property.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>

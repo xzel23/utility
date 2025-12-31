@@ -69,6 +69,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#action(javafx.event.EventHandler)" tabindex="0">action(EventHandler)</a></li>
 <li><a href="#action(java.lang.Runnable)" tabindex="0">action(Runnable)</a></li>
 <li><a href="#bindAction(javafx.beans.value.ObservableValue)" tabindex="0">bindAction(ObservableValue)</a></li>
+<li><a href="#action(javafx.beans.value.ObservableValue)" tabindex="0">action(ObservableValue)</a></li>
 </ol>
 </li>
 </ol>
@@ -131,7 +132,7 @@ Provides a fluent API for configuring properties such as actions and bindings fo
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -143,18 +144,25 @@ Provides a fluent API for configuring properties such as actions and bindings fo
 <div class="block">Set the action for the button.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-BB" title="type parameter in ButtonBaseBuilder">BB</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#action(javafx.event.EventHandler)" class="member-name-link">action</a><wbr>(javafx.event.EventHandler&lt;javafx.event.ActionEvent&gt;&nbsp;action)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#action(javafx.beans.value.ObservableValue)" class="member-name-link">action</a><wbr>(javafx.beans.value.ObservableValue&lt;? extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;&nbsp;action)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Set the event handler for the button.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-BB" title="type parameter in ButtonBaseBuilder">BB</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindAction(javafx.beans.value.ObservableValue)" class="member-name-link">bindAction</a><wbr>(javafx.beans.value.ObservableValue&lt;? extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;&nbsp;action)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set action for the button.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ButtonBaseBuilder">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-BB" title="type parameter in ButtonBaseBuilder">BB</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#action(javafx.event.EventHandler)" class="member-name-link">action</a><wbr>(javafx.event.EventHandler&lt;javafx.event.ActionEvent&gt;&nbsp;action)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Set the event handler for the button.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#type-param-BB" title="type parameter in ButtonBaseBuilder">BB</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#bindAction(javafx.beans.value.ObservableValue)" class="member-name-link">bindAction</a><wbr>(javafx.beans.value.ObservableValue&lt;? extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;&nbsp;action)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#action(javafx.beans.value.ObservableValue)"><code>action(ObservableValue)</code></a> instead</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ButtonBaseBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Build the button.</div>
 </div>
 </div>
@@ -162,16 +170,16 @@ Provides a fluent API for configuring properties such as actions and bindings fo
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.abstract_builders.LabeledBuilder">Methods inherited from class&nbsp;<a href="LabeledBuilder.html#method-summary" title="class in com.dua3.utility.fx.controls.abstract_builders">LabeledBuilder</a></h3>
-<code><a href="LabeledBuilder.html#bindFont(javafx.beans.value.ObservableValue)" title="bindFont(ObservableValue)">bindFont</a>, <a href="LabeledBuilder.html#bindFxFont(javafx.beans.value.ObservableValue)" title="bindFxFont(ObservableValue)">bindFxFont</a>, <a href="LabeledBuilder.html#bindText(javafx.beans.value.ObservableValue)" title="bindText(ObservableValue)">bindText</a>, <a href="LabeledBuilder.html#font(com.dua3.utility.text.Font)" title="font(Font)">font</a>, <a href="LabeledBuilder.html#font(javafx.scene.text.Font)" title="font(Font)">font</a>, <a href="LabeledBuilder.html#graphic(javafx.beans.value.ObservableValue)" title="graphic(ObservableValue)">graphic</a>, <a href="LabeledBuilder.html#graphic(javafx.scene.Node)" title="graphic(Node)">graphic</a>, <a href="LabeledBuilder.html#text(java.lang.String)" title="text(String)">text</a></code></div>
+<code><a href="LabeledBuilder.html#bindFont(javafx.beans.value.ObservableValue)" title="bindFont(ObservableValue)">bindFont</a>, <a href="LabeledBuilder.html#bindFontFx(javafx.beans.value.ObservableValue)" title="bindFontFx(ObservableValue)">bindFontFx</a>, <a href="LabeledBuilder.html#bindGraphic(javafx.beans.value.ObservableValue)" title="bindGraphic(ObservableValue)">bindGraphic</a>, <a href="LabeledBuilder.html#bindText(javafx.beans.value.ObservableValue)" title="bindText(ObservableValue)">bindText</a>, <a href="LabeledBuilder.html#font(com.dua3.utility.text.Font)" title="font(Font)">font</a>, <a href="LabeledBuilder.html#font(javafx.beans.value.ObservableValue)" title="font(ObservableValue)">font</a>, <a href="LabeledBuilder.html#font(javafx.scene.text.Font)" title="font(Font)">font</a>, <a href="LabeledBuilder.html#fontFx(javafx.beans.value.ObservableValue)" title="fontFx(ObservableValue)">fontFx</a>, <a href="LabeledBuilder.html#graphic(javafx.beans.value.ObservableValue)" title="graphic(ObservableValue)">graphic</a>, <a href="LabeledBuilder.html#graphic(javafx.scene.Node)" title="graphic(Node)">graphic</a>, <a href="LabeledBuilder.html#text(java.lang.String)" title="text(String)">text</a>, <a href="LabeledBuilder.html#text(javafx.beans.value.ObservableValue)" title="text(ObservableValue)">text</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.abstract_builders.ControlBuilder">Methods inherited from class&nbsp;<a href="ControlBuilder.html#method-summary" title="class in com.dua3.utility.fx.controls.abstract_builders">ControlBuilder</a></h3>
-<code><a href="ControlBuilder.html#bindTooltip(javafx.beans.value.ObservableValue)" title="bindTooltip(ObservableValue)">bindTooltip</a>, <a href="ControlBuilder.html#tooltip(java.lang.String)" title="tooltip(String)">tooltip</a></code></div>
+<code><a href="ControlBuilder.html#bindTooltip(javafx.beans.value.ObservableValue)" title="bindTooltip(ObservableValue)">bindTooltip</a>, <a href="ControlBuilder.html#tooltip(java.lang.String)" title="tooltip(String)">tooltip</a>, <a href="ControlBuilder.html#tooltip(javafx.beans.value.ObservableValue)" title="tooltip(ObservableValue)">tooltip</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.abstract_builders.RegionBuilder">Methods inherited from class&nbsp;<a href="RegionBuilder.html#method-summary" title="class in com.dua3.utility.fx.controls.abstract_builders">RegionBuilder</a></h3>
 <code><a href="RegionBuilder.html#maxHeight(double)" title="maxHeight(double)">maxHeight</a>, <a href="RegionBuilder.html#maxSize(double,double)" title="maxSize(double, double)">maxSize</a>, <a href="RegionBuilder.html#maxWidth(double)" title="maxWidth(double)">maxWidth</a>, <a href="RegionBuilder.html#minHeight(double)" title="minHeight(double)">minHeight</a>, <a href="RegionBuilder.html#minSize(double,double)" title="minSize(double, double)">minSize</a>, <a href="RegionBuilder.html#minWidth(double)" title="minWidth(double)">minWidth</a>, <a href="RegionBuilder.html#prefHeight(double)" title="prefHeight(double)">prefHeight</a>, <a href="RegionBuilder.html#prefSize(double,double)" title="prefSize(double, double)">prefSize</a>, <a href="RegionBuilder.html#prefWidth(double)" title="prefWidth(double)">prefWidth</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.abstract_builders.NodeBuilder">Methods inherited from class&nbsp;<a href="NodeBuilder.html#method-summary" title="class in com.dua3.utility.fx.controls.abstract_builders">NodeBuilder</a></h3>
-<code><a href="NodeBuilder.html#apply(T,java.util.function.Consumer)" title="apply(T, Consumer)">apply</a>, <a href="NodeBuilder.html#apply(javafx.beans.value.ObservableValue,javafx.beans.property.Property)" title="apply(ObservableValue, Property)">apply</a>, <a href="NodeBuilder.html#bindDisabled(javafx.beans.value.ObservableValue)" title="bindDisabled(ObservableValue)">bindDisabled</a>, <a href="NodeBuilder.html#bindEnabled(javafx.beans.value.ObservableValue)" title="bindEnabled(ObservableValue)">bindEnabled</a>, <a href="NodeBuilder.html#disabled(boolean)" title="disabled(boolean)">disabled</a>, <a href="NodeBuilder.html#self()" title="self()">self</a></code></div>
+<code><a href="NodeBuilder.html#apply(T,java.util.function.Consumer)" title="apply(T, Consumer)">apply</a>, <a href="NodeBuilder.html#apply(javafx.beans.value.ObservableValue,javafx.beans.property.Property)" title="apply(ObservableValue, Property)">apply</a>, <a href="NodeBuilder.html#bindDisabled(javafx.beans.value.ObservableValue)" title="bindDisabled(ObservableValue)">bindDisabled</a>, <a href="NodeBuilder.html#bindEnabled(javafx.beans.value.ObservableValue)" title="bindEnabled(ObservableValue)">bindEnabled</a>, <a href="NodeBuilder.html#disabled(boolean)" title="disabled(boolean)">disabled</a>, <a href="NodeBuilder.html#disabled(javafx.beans.value.ObservableValue)" title="disabled(ObservableValue)">disabled</a>, <a href="NodeBuilder.html#enabled(javafx.beans.value.ObservableValue)" title="enabled(ObservableValue)">enabled</a>, <a href="NodeBuilder.html#self()" title="self()">self</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#method-summary" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -256,7 +264,27 @@ Provides a fluent API for configuring properties such as actions and bindings fo
 <section class="detail" id="bindAction(javafx.beans.value.ObservableValue)">
 <h3>bindAction</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-BB" title="type parameter in ButtonBaseBuilder">BB</a></span>&nbsp;<span class="element-name">bindAction</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;? extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;&nbsp;action)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="20.0.4",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-BB" title="type parameter in ButtonBaseBuilder">BB</a></span>&nbsp;<span class="element-name">bindAction</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;? extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;&nbsp;action)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#action(javafx.beans.value.ObservableValue)"><code>action(ObservableValue)</code></a> instead</div>
+</div>
+<div class="block">Set action for the button.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>action</code> - the action to perform when pressed</dd>
+<dt>Returns:</dt>
+<dd>this ButtonBaseBuilder instance</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="action(javafx.beans.value.ObservableValue)">
+<h3>action</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-BB" title="type parameter in ButtonBaseBuilder">BB</a></span>&nbsp;<span class="element-name">action</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;? extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;&nbsp;action)</span></div>
 <div class="block">Set action for the button.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

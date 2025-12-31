@@ -69,11 +69,15 @@ loadScripts(document, 'script');</script>
 <li><a href="#fill(javafx.scene.paint.Paint)" tabindex="0">fill(Paint)</a></li>
 <li><a href="#fill(com.dua3.utility.data.Color)" tabindex="0">fill(Color)</a></li>
 <li><a href="#bindFillFx(javafx.beans.value.ObservableValue)" tabindex="0">bindFillFx(ObservableValue)</a></li>
+<li><a href="#fillFx(javafx.beans.value.ObservableValue)" tabindex="0">fillFx(ObservableValue)</a></li>
 <li><a href="#bindFill(javafx.beans.value.ObservableValue)" tabindex="0">bindFill(ObservableValue)</a></li>
+<li><a href="#fill(javafx.beans.value.ObservableValue)" tabindex="0">fill(ObservableValue)</a></li>
 <li><a href="#stroke(javafx.scene.paint.Paint)" tabindex="0">stroke(Paint)</a></li>
 <li><a href="#stroke(com.dua3.utility.data.Color)" tabindex="0">stroke(Color)</a></li>
 <li><a href="#bindStrokeFx(javafx.beans.value.ObservableValue)" tabindex="0">bindStrokeFx(ObservableValue)</a></li>
+<li><a href="#strokeFx(javafx.beans.value.ObservableValue)" tabindex="0">strokeFx(ObservableValue)</a></li>
 <li><a href="#bindStroke(javafx.beans.value.ObservableValue)" tabindex="0">bindStroke(ObservableValue)</a></li>
+<li><a href="#stroke(javafx.beans.value.ObservableValue)" tabindex="0">stroke(ObservableValue)</a></li>
 </ol>
 </li>
 </ol>
@@ -130,31 +134,39 @@ of the node type specified by the generic parameter <code>N</code>.</div>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindFill(javafx.beans.value.ObservableValue)" class="member-name-link">bindFill</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;fill)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Binds the given <code>ObservableValue</code> to the fill property of the node being built.</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#bindFill(javafx.beans.value.ObservableValue)" class="member-name-link">bindFill</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;fill)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#fill(javafx.beans.value.ObservableValue)"><code>fill(ObservableValue)</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindFillFx(javafx.beans.value.ObservableValue)" class="member-name-link">bindFillFx</a><wbr>(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;fill)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Binds the given <code>ObservableValue</code> to the fill property of the node being built.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindStroke(javafx.beans.value.ObservableValue)" class="member-name-link">bindStroke</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;stroke)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Binds the stroke property of the node being built to the specified <code>ObservableValue</code>.</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#bindFillFx(javafx.beans.value.ObservableValue)" class="member-name-link">bindFillFx</a><wbr>(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;fill)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#fillFx(javafx.beans.value.ObservableValue)"><code>fillFx(ObservableValue)</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindStrokeFx(javafx.beans.value.ObservableValue)" class="member-name-link">bindStrokeFx</a><wbr>(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;stroke)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Binds the stroke property of the node being built to the specified <code>ObservableValue</code>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#bindStroke(javafx.beans.value.ObservableValue)" class="member-name-link">bindStroke</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;stroke)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#stroke(javafx.beans.value.ObservableValue)"><code>stroke(ObservableValue)</code></a> instead</div>
+</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#bindStrokeFx(javafx.beans.value.ObservableValue)" class="member-name-link">bindStrokeFx</a><wbr>(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;stroke)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#strokeFx(javafx.beans.value.ObservableValue)"><code>strokeFx(ObservableValue)</code></a> instead</div>
+</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-S" title="type parameter in ShapeBuilder">S</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
@@ -167,9 +179,19 @@ of the node type specified by the generic parameter <code>N</code>.</div>
 <div class="block">Sets the fill property for the shape being built.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fill(javafx.scene.paint.Paint)" class="member-name-link">fill</a><wbr>(javafx.scene.paint.Paint&nbsp;fill)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fill(javafx.beans.value.ObservableValue)" class="member-name-link">fill</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;fill)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Binds the given <code>ObservableValue</code> to the fill property of the node being built.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fill(javafx.scene.paint.Paint)" class="member-name-link">fill</a><wbr>(javafx.scene.paint.Paint&nbsp;fill)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the fill property for the shape being built.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fillFx(javafx.beans.value.ObservableValue)" class="member-name-link">fillFx</a><wbr>(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;fill)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Binds the given <code>ObservableValue</code> to the fill property of the node being built.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stroke(com.dua3.utility.data.Color)" class="member-name-link">stroke</a><wbr>(<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&nbsp;stroke)</code></div>
@@ -177,16 +199,26 @@ of the node type specified by the generic parameter <code>N</code>.</div>
 <div class="block">Sets the stroke paint property for the shape being built.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stroke(javafx.scene.paint.Paint)" class="member-name-link">stroke</a><wbr>(javafx.scene.paint.Paint&nbsp;stroke)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stroke(javafx.beans.value.ObservableValue)" class="member-name-link">stroke</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;stroke)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Binds the stroke property of the node being built to the specified <code>ObservableValue</code>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stroke(javafx.scene.paint.Paint)" class="member-name-link">stroke</a><wbr>(javafx.scene.paint.Paint&nbsp;stroke)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the stroke paint property for the shape being built.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#strokeFx(javafx.beans.value.ObservableValue)" class="member-name-link">strokeFx</a><wbr>(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;stroke)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Binds the stroke property of the node being built to the specified <code>ObservableValue</code>.</div>
 </div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.abstract_builders.NodeBuilder">Methods inherited from class&nbsp;<a href="NodeBuilder.html#method-summary" title="class in com.dua3.utility.fx.controls.abstract_builders">NodeBuilder</a></h3>
-<code><a href="NodeBuilder.html#apply(T,java.util.function.Consumer)" title="apply(T, Consumer)">apply</a>, <a href="NodeBuilder.html#apply(javafx.beans.value.ObservableValue,javafx.beans.property.Property)" title="apply(ObservableValue, Property)">apply</a>, <a href="NodeBuilder.html#bindDisabled(javafx.beans.value.ObservableValue)" title="bindDisabled(ObservableValue)">bindDisabled</a>, <a href="NodeBuilder.html#bindEnabled(javafx.beans.value.ObservableValue)" title="bindEnabled(ObservableValue)">bindEnabled</a>, <a href="NodeBuilder.html#disabled(boolean)" title="disabled(boolean)">disabled</a>, <a href="NodeBuilder.html#self()" title="self()">self</a></code></div>
+<code><a href="NodeBuilder.html#apply(T,java.util.function.Consumer)" title="apply(T, Consumer)">apply</a>, <a href="NodeBuilder.html#apply(javafx.beans.value.ObservableValue,javafx.beans.property.Property)" title="apply(ObservableValue, Property)">apply</a>, <a href="NodeBuilder.html#bindDisabled(javafx.beans.value.ObservableValue)" title="bindDisabled(ObservableValue)">bindDisabled</a>, <a href="NodeBuilder.html#bindEnabled(javafx.beans.value.ObservableValue)" title="bindEnabled(ObservableValue)">bindEnabled</a>, <a href="NodeBuilder.html#disabled(boolean)" title="disabled(boolean)">disabled</a>, <a href="NodeBuilder.html#disabled(javafx.beans.value.ObservableValue)" title="disabled(ObservableValue)">disabled</a>, <a href="NodeBuilder.html#enabled(javafx.beans.value.ObservableValue)" title="enabled(ObservableValue)">enabled</a>, <a href="NodeBuilder.html#self()" title="self()">self</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#method-summary" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -271,7 +303,28 @@ of the node type specified by the generic parameter <code>N</code>.</div>
 <section class="detail" id="bindFillFx(javafx.beans.value.ObservableValue)">
 <h3>bindFillFx</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">bindFillFx</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;fill)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="20.0.4",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">bindFillFx</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;fill)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#fillFx(javafx.beans.value.ObservableValue)"><code>fillFx(ObservableValue)</code></a> instead</div>
+</div>
+<div class="block">Binds the given <code>ObservableValue</code> to the fill property of the node being built.
+This allows the fill property of the node to dynamically reflect the value of the provided observable.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>fill</code> - the <code>ObservableValue</code> representing the fill value to be bound</dd>
+<dt>Returns:</dt>
+<dd>this instance of the builder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="fillFx(javafx.beans.value.ObservableValue)">
+<h3>fillFx</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">fillFx</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;fill)</span></div>
 <div class="block">Binds the given <code>ObservableValue</code> to the fill property of the node being built.
 This allows the fill property of the node to dynamically reflect the value of the provided observable.</div>
 <dl class="notes">
@@ -287,7 +340,28 @@ This allows the fill property of the node to dynamically reflect the value of th
 <section class="detail" id="bindFill(javafx.beans.value.ObservableValue)">
 <h3>bindFill</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">bindFill</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;fill)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="20.0.4",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">bindFill</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;fill)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#fill(javafx.beans.value.ObservableValue)"><code>fill(ObservableValue)</code></a> instead</div>
+</div>
+<div class="block">Binds the given <code>ObservableValue</code> to the fill property of the node being built.
+This allows the fill property of the node to dynamically reflect the value of the provided observable.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>fill</code> - the <code>ObservableValue</code> representing the fill value to be bound</dd>
+<dt>Returns:</dt>
+<dd>this instance of the builder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="fill(javafx.beans.value.ObservableValue)">
+<h3>fill</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">fill</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;fill)</span></div>
 <div class="block">Binds the given <code>ObservableValue</code> to the fill property of the node being built.
 This allows the fill property of the node to dynamically reflect the value of the provided observable.</div>
 <dl class="notes">
@@ -333,7 +407,28 @@ This allows the fill property of the node to dynamically reflect the value of th
 <section class="detail" id="bindStrokeFx(javafx.beans.value.ObservableValue)">
 <h3>bindStrokeFx</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">bindStrokeFx</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;stroke)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="20.0.4",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">bindStrokeFx</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;stroke)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#strokeFx(javafx.beans.value.ObservableValue)"><code>strokeFx(ObservableValue)</code></a> instead</div>
+</div>
+<div class="block">Binds the stroke property of the node being built to the specified <code>ObservableValue</code>.
+This ensures that the stroke property dynamically updates to reflect the value of the observable.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>stroke</code> - the <code>ObservableValue</code> to bind to the node's stroke property</dd>
+<dt>Returns:</dt>
+<dd>the current instance of the builder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="strokeFx(javafx.beans.value.ObservableValue)">
+<h3>strokeFx</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">strokeFx</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;javafx.scene.paint.Paint&gt;&nbsp;stroke)</span></div>
 <div class="block">Binds the stroke property of the node being built to the specified <code>ObservableValue</code>.
 This ensures that the stroke property dynamically updates to reflect the value of the observable.</div>
 <dl class="notes">
@@ -349,7 +444,28 @@ This ensures that the stroke property dynamically updates to reflect the value o
 <section class="detail" id="bindStroke(javafx.beans.value.ObservableValue)">
 <h3>bindStroke</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">bindStroke</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;stroke)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="20.0.4",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">bindStroke</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;stroke)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#stroke(javafx.beans.value.ObservableValue)"><code>stroke(ObservableValue)</code></a> instead</div>
+</div>
+<div class="block">Binds the stroke property of the node being built to the specified <code>ObservableValue</code>.
+This ensures that the stroke property dynamically updates to reflect the value of the observable.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>stroke</code> - the <code>ObservableValue</code> to bind to the node's stroke property</dd>
+<dt>Returns:</dt>
+<dd>the current instance of the builder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="stroke(javafx.beans.value.ObservableValue)">
+<h3>stroke</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in ShapeBuilder">B</a></span>&nbsp;<span class="element-name">stroke</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="../../../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;stroke)</span></div>
 <div class="block">Binds the stroke property of the node being built to the specified <code>ObservableValue</code>.
 This ensures that the stroke property dynamically updates to reflect the value of the observable.</div>
 <dl class="notes">

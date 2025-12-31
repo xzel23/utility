@@ -71,7 +71,9 @@ loadScripts(document, 'script');</script>
 <li><a href="#build()" tabindex="0">build()</a></li>
 <li><a href="#disabled(boolean)" tabindex="0">disabled(boolean)</a></li>
 <li><a href="#bindDisabled(javafx.beans.value.ObservableValue)" tabindex="0">bindDisabled(ObservableValue)</a></li>
+<li><a href="#disabled(javafx.beans.value.ObservableValue)" tabindex="0">disabled(ObservableValue)</a></li>
 <li><a href="#bindEnabled(javafx.beans.value.ObservableValue)" tabindex="0">bindEnabled(ObservableValue)</a></li>
+<li><a href="#enabled(javafx.beans.value.ObservableValue)" tabindex="0">enabled(ObservableValue)</a></li>
 </ol>
 </li>
 </ol>
@@ -126,7 +128,7 @@ of the node type specified by the generic parameter <code>N</code>.</div>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -144,15 +146,19 @@ of the node type specified by the generic parameter <code>N</code>.</div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Binds the given <code>ObservableValue</code> to the specified <code>Property</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindDisabled(javafx.beans.value.ObservableValue)" class="member-name-link">bindDisabled</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;disabled)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Bind the node's disabled state to an <code>ObservableValue</code>.</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#bindDisabled(javafx.beans.value.ObservableValue)" class="member-name-link">bindDisabled</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;disabled)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#disabled(javafx.beans.value.ObservableValue)"><code>disabled(ObservableValue)</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bindEnabled(javafx.beans.value.ObservableValue)" class="member-name-link">bindEnabled</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;enabled)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Bind the button's enabled state to an <code>ObservableValue</code>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#bindEnabled(javafx.beans.value.ObservableValue)" class="member-name-link">bindEnabled</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;enabled)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#enabled(javafx.beans.value.ObservableValue)"><code>enabled(ObservableValue)</code></a> instead</div>
+</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-N" title="type parameter in NodeBuilder">N</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
@@ -163,6 +169,16 @@ of the node type specified by the generic parameter <code>N</code>.</div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#disabled(boolean)" class="member-name-link">disabled</a><wbr>(boolean&nbsp;disabled)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set the node's disabled state to the supplied value.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#disabled(javafx.beans.value.ObservableValue)" class="member-name-link">disabled</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;disabled)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Bind the node's disabled state to an <code>ObservableValue</code>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enabled(javafx.beans.value.ObservableValue)" class="member-name-link">enabled</a><wbr>(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;enabled)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Bind the button's enabled state to an <code>ObservableValue</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final <a href="#type-param-B" title="type parameter in NodeBuilder">B</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#self()" class="member-name-link">self</a>()</code></div>
@@ -280,8 +296,8 @@ the added configuration.</div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></span>&nbsp;<span class="element-name">disabled</span><wbr><span class="parameters">(boolean&nbsp;disabled)</span></div>
 <div class="block">Set the node's disabled state to the supplied value.
 
-<p><strong>NOTE: </strong>Do not use together with <a href="#bindEnabled(javafx.beans.value.ObservableValue)"><code>bindEnabled(ObservableValue)</code></a> and
-<a href="#bindDisabled(javafx.beans.value.ObservableValue)"><code>bindDisabled(ObservableValue)</code></a>.</div>
+<p><strong>NOTE: </strong>Do not use together with <a href="#enabled(javafx.beans.value.ObservableValue)"><code>enabled(ObservableValue)</code></a> and
+<a href="#disabled(javafx.beans.value.ObservableValue)"><code>disabled(ObservableValue)</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>disabled</code> - the value to bind the node's disableProperty to</dd>
@@ -295,10 +311,32 @@ the added configuration.</div>
 <section class="detail" id="bindDisabled(javafx.beans.value.ObservableValue)">
 <h3>bindDisabled</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></span>&nbsp;<span class="element-name">bindDisabled</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;disabled)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="20.0.4",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></span>&nbsp;<span class="element-name">bindDisabled</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;disabled)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#disabled(javafx.beans.value.ObservableValue)"><code>disabled(ObservableValue)</code></a> instead</div>
+</div>
 <div class="block">Bind the node's disabled state to an <code>ObservableValue</code>.
 
-<p><strong>NOTE: </strong>Use either this method or <a href="#bindEnabled(javafx.beans.value.ObservableValue)"><code>bindEnabled(ObservableValue)</code></a>, not both.</div>
+<p><strong>NOTE: </strong>Use either this method or <a href="#enabled(javafx.beans.value.ObservableValue)"><code>enabled(ObservableValue)</code></a>, not both.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>disabled</code> - the value to bind the node's disableProperty to</dd>
+<dt>Returns:</dt>
+<dd>this NodeBuilder instance</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="disabled(javafx.beans.value.ObservableValue)">
+<h3>disabled</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></span>&nbsp;<span class="element-name">disabled</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;disabled)</span></div>
+<div class="block">Bind the node's disabled state to an <code>ObservableValue</code>.
+
+<p><strong>NOTE: </strong>Use either this method or <a href="#enabled(javafx.beans.value.ObservableValue)"><code>enabled(ObservableValue)</code></a>, not both.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>disabled</code> - the value to bind the node's disableProperty to</dd>
@@ -312,10 +350,32 @@ the added configuration.</div>
 <section class="detail" id="bindEnabled(javafx.beans.value.ObservableValue)">
 <h3>bindEnabled</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></span>&nbsp;<span class="element-name">bindEnabled</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;enabled)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="20.0.4",
+            <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></span>&nbsp;<span class="element-name">bindEnabled</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;enabled)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#enabled(javafx.beans.value.ObservableValue)"><code>enabled(ObservableValue)</code></a> instead</div>
+</div>
 <div class="block">Bind the button's enabled state to an <code>ObservableValue</code>.
 
-<p><strong>NOTE: </strong>Use either this method or <a href="#bindDisabled(javafx.beans.value.ObservableValue)"><code>bindDisabled(ObservableValue)</code></a>, not both.</div>
+<p><strong>NOTE: </strong>Use either this method or <a href="#disabled(javafx.beans.value.ObservableValue)"><code>disabled(ObservableValue)</code></a>, not both.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>enabled</code> - the value to bind the button's disableProperty to</dd>
+<dt>Returns:</dt>
+<dd>this NodeBuilder instance</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="enabled(javafx.beans.value.ObservableValue)">
+<h3>enabled</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in NodeBuilder">B</a></span>&nbsp;<span class="element-name">enabled</span><wbr><span class="parameters">(javafx.beans.value.ObservableValue&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;enabled)</span></div>
+<div class="block">Bind the button's enabled state to an <code>ObservableValue</code>.
+
+<p><strong>NOTE: </strong>Use either this method or <a href="#disabled(javafx.beans.value.ObservableValue)"><code>disabled(ObservableValue)</code></a>, not both.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>enabled</code> - the value to bind the button's disableProperty to</dd>

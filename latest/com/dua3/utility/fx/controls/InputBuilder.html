@@ -74,7 +74,11 @@ loadScripts(document, 'script');</script>
 <li><a href="#addInput(java.lang.String,com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl,boolean)" tabindex="0">addInput(String, MessageFormatter.MessageFormatterArgs, Class, Supplier, InputControl, boolean)</a></li>
 <li><a href="#addInput(java.lang.String,java.lang.Class,java.util.function.Supplier,com.dua3.utility.fx.controls.InputControl)" tabindex="0">addInput(String, Class, Supplier, InputControl)</a></li>
 <li><a href="#columns(int)" tabindex="0">columns(int)</a></li>
+<li><a href="#minRowHeight(double,com.dua3.utility.fx.controls.LayoutUnit)" tabindex="0">minRowHeight(double, LayoutUnit)</a></li>
+<li><a href="#minRowHeight(double)" tabindex="0">minRowHeight(double)</a></li>
 <li><a href="#labelPlacement(com.dua3.utility.fx.controls.LabelPlacement)" tabindex="0">labelPlacement(LabelPlacement)</a></li>
+<li><a href="#verticalSpace(double,com.dua3.utility.fx.controls.LayoutUnit)" tabindex="0">verticalSpace(double, LayoutUnit)</a></li>
+<li><a href="#verticalSpace()" tabindex="0">verticalSpace()</a></li>
 <li><a href="#node(javafx.scene.Node)" tabindex="0">node(Node)</a></li>
 <li><a href="#node(java.lang.String,javafx.scene.Node)" tabindex="0">node(String, Node)</a></li>
 <li><a href="#node(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs,javafx.scene.Node)" tabindex="0">node(MessageFormatter.MessageFormatterArgs, Node)</a></li>
@@ -879,6 +883,17 @@ is repeated and validated for strength and consistency.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Sets the minimum height.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="#type-param-B" title="type parameter in InputBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#minRowHeight(double)" class="member-name-link">minRowHeight</a><wbr>(double&nbsp;height)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Set the minimum row height.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type-param-B" title="type parameter in InputBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#minRowHeight(double,com.dua3.utility.fx.controls.LayoutUnit)" class="member-name-link">minRowHeight</a><wbr>(double&nbsp;height,
+ <a href="LayoutUnit.html" title="enum class in com.dua3.utility.fx.controls">LayoutUnit</a>&nbsp;unit)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Set the minimum row height.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type-param-B" title="type parameter in InputBuilder">B</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#minWidth(double)" class="member-name-link">minWidth</a><wbr>(double&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -924,6 +939,17 @@ using the provided format string and arguments.</div>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Add a static text without a label.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="#type-param-B" title="type parameter in InputBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#verticalSpace()" class="member-name-link">verticalSpace</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Add vertical space of 1 em before the next row.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type-param-B" title="type parameter in InputBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#verticalSpace(double,com.dua3.utility.fx.controls.LayoutUnit)" class="member-name-link">verticalSpace</a><wbr>(double&nbsp;height,
+ <a href="LayoutUnit.html" title="enum class in com.dua3.utility.fx.controls">LayoutUnit</a>&nbsp;unit)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Add vertical space before the next row.</div>
 </div>
 </div>
 </div>
@@ -1182,6 +1208,38 @@ using the provided format string and arguments.</div>
 </section>
 </li>
 <li>
+<section class="detail" id="minRowHeight(double,com.dua3.utility.fx.controls.LayoutUnit)">
+<h3>minRowHeight</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="return-type"><a href="#type-param-B" title="type parameter in InputBuilder">B</a></span>&nbsp;<span class="element-name">minRowHeight</span><wbr><span class="parameters">(double&nbsp;height,
+ <a href="LayoutUnit.html" title="enum class in com.dua3.utility.fx.controls">LayoutUnit</a>&nbsp;unit)</span></div>
+<div class="block">Set the minimum row height.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>height</code> - the height</dd>
+<dd><code>unit</code> - the unit</dd>
+<dt>Returns:</dt>
+<dd><code>this</code></dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="minRowHeight(double)">
+<h3>minRowHeight</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in InputBuilder">B</a></span>&nbsp;<span class="element-name">minRowHeight</span><wbr><span class="parameters">(double&nbsp;height)</span></div>
+<div class="block">Set the minimum row height.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>height</code> - the height in EM</dd>
+<dt>Returns:</dt>
+<dd><code>this</code></dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="labelPlacement(com.dua3.utility.fx.controls.LabelPlacement)">
 <h3>labelPlacement</h3>
 <div class="horizontal-scroll">
@@ -1190,6 +1248,36 @@ using the provided format string and arguments.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>labelPlacement</code> - the label placement</dd>
+<dt>Returns:</dt>
+<dd>this builder instance</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="verticalSpace(double,com.dua3.utility.fx.controls.LayoutUnit)">
+<h3>verticalSpace</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="return-type"><a href="#type-param-B" title="type parameter in InputBuilder">B</a></span>&nbsp;<span class="element-name">verticalSpace</span><wbr><span class="parameters">(double&nbsp;height,
+ <a href="LayoutUnit.html" title="enum class in com.dua3.utility.fx.controls">LayoutUnit</a>&nbsp;unit)</span></div>
+<div class="block">Add vertical space before the next row.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>height</code> - the height of the space</dd>
+<dd><code>unit</code> - the unit of the height</dd>
+<dt>Returns:</dt>
+<dd>this builder instance</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="verticalSpace()">
+<h3>verticalSpace</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="#type-param-B" title="type parameter in InputBuilder">B</a></span>&nbsp;<span class="element-name">verticalSpace</span>()</div>
+<div class="block">Add vertical space of 1 em before the next row.</div>
+<dl class="notes">
 <dt>Returns:</dt>
 <dd>this builder instance</dd>
 </dl>
