@@ -349,6 +349,39 @@ class ControlsTest extends FxTestBase {
     }
 
     /**
+     * Test ComboBoxEx creation.
+     */
+    @Test
+    @Timeout(value = 10, unit = java.util.concurrent.TimeUnit.SECONDS)
+    void testComboBoxExCreation() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            List<String> items = List.of("A", "B", "C");
+            SimpleStringProperty property = new SimpleStringProperty("B");
+            AtomicReference<String> changedValue = new AtomicReference<>();
+
+            ComboBoxEx<String> comboBoxEx = Controls.<String>comboBoxEx(items)
+                    .bind(property)
+                    .onChange(changedValue::set)
+                    .tooltip("Tooltip Text")
+                    .build();
+
+            assertNotNull(comboBoxEx);
+            assertEquals(items, comboBoxEx.getItems());
+            assertEquals("B", comboBoxEx.valueProperty().getValue());
+            assertNotNull(comboBoxEx.getTooltip());
+            assertEquals("Tooltip Text", comboBoxEx.getTooltip().getText());
+
+            property.set("C");
+            assertEquals("C", comboBoxEx.valueProperty().getValue());
+            assertEquals("C", changedValue.get());
+
+            comboBoxEx.valueProperty().setValue("A");
+            assertEquals("A", property.get());
+            assertEquals("A", changedValue.get());
+        });
+    }
+
+    /**
      * Test ComboBox localization.
      */
     @Test

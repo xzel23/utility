@@ -1,7 +1,6 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxUtil;
-import com.dua3.utility.i18n.I18N;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.stage.Window;

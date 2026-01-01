@@ -17,7 +17,6 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.text.MessageFormatter;
-import com.dua3.utility.i18n.I18N;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
@@ -30,10 +29,8 @@ import java.io.Serial;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

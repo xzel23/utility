@@ -1,7 +1,6 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxFontUtil;
-import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.text.Font;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

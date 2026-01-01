@@ -21,7 +21,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -36,6 +35,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
@@ -57,6 +57,41 @@ public final class Controls {
      */
     public static <T> ComboBoxBuilder<T> comboBox(Collection<T> values) {
         return new ComboBoxBuilder<>(values);
+    }
+
+    /**
+     * Creates a new instance of ComboBoxBuilder using the provided values.
+     *
+     * @param <T> the type of the items in the ComboBox
+     * @param values the values to be included in the combo box
+     * @return a new instance of ComboBoxBuilder initialized with the given values
+     */
+    @SafeVarargs
+    public static <T> ComboBoxBuilder<T> comboBox(T... values) {
+        return new ComboBoxBuilder<>(List.of(values));
+    }
+
+    /**
+     * Creates a new instance of ComboBoxExBuilder using the provided collection of values.
+     *
+     * @param <T> the type of the items in the ComboBoxEx
+     * @param values a collection of values to be included in the combo box
+     * @return a new instance of ComboBoxExBuilder initialized with the given values
+     */
+    public static <T> ComboBoxExBuilder<T> comboBoxEx(Collection<T> values) {
+        return new ComboBoxExBuilder<>(values);
+    }
+
+    /**
+     * Creates a new instance of ComboBoxExBuilder using the provided values.
+     *
+     * @param <T> the type of the items in the ComboBoxEx
+     * @param values the values to be included in the combo box
+     * @return a new instance of ComboBoxExBuilder initialized with the given values
+     */
+    @SafeVarargs
+    public static <T> ComboBoxExBuilder<T> comboBoxEx(T... values) {
+        return new ComboBoxExBuilder<>(List.of(values));
     }
 
     /**

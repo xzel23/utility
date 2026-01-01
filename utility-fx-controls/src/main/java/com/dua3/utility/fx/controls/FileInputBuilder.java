@@ -1,6 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.i18n.I18N;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.value.ObservableValue;

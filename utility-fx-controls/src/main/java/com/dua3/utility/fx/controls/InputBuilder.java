@@ -1,7 +1,6 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.crypt.PasswordUtil;
-import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;

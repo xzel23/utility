@@ -1,7 +1,6 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.PropertyConverter;
-import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;

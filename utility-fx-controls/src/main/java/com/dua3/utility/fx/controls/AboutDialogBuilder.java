@@ -15,7 +15,6 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.application.LicenseData;
-import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
