@@ -18,6 +18,10 @@ public class I18NInstance {
         }
     }
 
+    private I18NInstance() {
+        // Private constructor to prevent instantiation
+    }
+
     static I18N get() {
         return Holder.INSTANCE;
     }

@@ -22,7 +22,9 @@ public final class I18NInstance {
         }
     }
 
-    private I18NInstance() {}
+    private I18NInstance() {
+        // Private constructor to prevent instantiation
+    }
 
     /**
      * Provides access to the shared {@link I18N} instance of the application and ensures local bundles have been
