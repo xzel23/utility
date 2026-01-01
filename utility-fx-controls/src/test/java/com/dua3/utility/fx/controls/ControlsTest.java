@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.application.UiMode;
 import com.dua3.utility.fx.FxUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,6 +13,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
@@ -327,8 +329,7 @@ class ControlsTest extends FxTestBase {
             SimpleStringProperty property = new SimpleStringProperty("B");
             AtomicReference<String> changedValue = new AtomicReference<>();
 
-            ComboBox<String> comboBox = Controls.<String>comboBox()
-                    .items(items)
+            ComboBox<String> comboBox = Controls.<String>comboBox(items)
                     .bind(property)
                     .onChange(changedValue::set)
                     .build();
@@ -344,6 +345,35 @@ class ControlsTest extends FxTestBase {
             comboBox.setValue("A");
             assertEquals("A", property.get());
             assertEquals("A", changedValue.get());
+        });
+    }
+
+    /**
+     * Test ComboBox localization.
+     */
+    @Test
+    @Timeout(value = 10, unit = java.util.concurrent.TimeUnit.SECONDS)
+    void testComboBoxLocalization() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            // Test default (localized = true)
+            ComboBox<UiMode> cb1 = Controls.<UiMode>comboBox(List.of(UiMode.values()))
+                    .build();
+
+            assertEquals(UiMode.DARK.toLocalizedString(), cb1.getConverter().toString(UiMode.DARK));
+
+            // Test explicit localized = false
+            ComboBox<UiMode> cb2 = Controls.<UiMode>comboBox(List.of(UiMode.values()))
+                    .localized(false)
+                    .build();
+
+            assertEquals(String.valueOf(UiMode.DARK), cb2.getConverter().toString(UiMode.DARK));
+
+            // Test explicit localized = true
+            ComboBox<UiMode> cb3 = Controls.<UiMode>comboBox(List.of(UiMode.values()))
+                    .localized(true)
+                    .build();
+
+            assertEquals(UiMode.DARK.toLocalizedString(), cb3.getConverter().toString(UiMode.DARK));
         });
     }
 

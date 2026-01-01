@@ -49,13 +49,14 @@ public final class Controls {
     }
 
     /**
-     * Create {@link ComboBoxBuilder} instance for ComboBoxes.
+     * Creates a new instance of ComboBoxBuilder using the provided collection of values.
      *
      * @param <T> the type of the items in the ComboBox
-     * @return new ComboBoxBuilder
+     * @param values a collection of values to be included in the combo box
+     * @return a new instance of ComboBoxBuilder initialized with the given values
      */
-    public static <T> ComboBoxBuilder<T> comboBox() {
-        return new ComboBoxBuilder<>(ComboBox::new);
+    public static <T> ComboBoxBuilder<T> comboBox(Collection<T> values) {
+        return new ComboBoxBuilder<>(values);
     }
 
     /**

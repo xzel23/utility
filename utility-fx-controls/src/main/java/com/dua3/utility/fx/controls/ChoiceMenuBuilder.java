@@ -23,20 +23,24 @@ import java.util.function.Consumer;
 /**
  * A builder for menus with a choice of items.
  *
- * @param <T> the type of the values
+ * @param <T> the type of the items
  */
 public class ChoiceMenuBuilder<T> extends MenuItemBuilder<Menu, ChoiceMenuBuilder<T>> {
-    private final ObservableList<T> values;
+    private final ObservableList<T> items;
     private final Property<@Nullable T> property;
     private @Nullable Consumer<@Nullable T> onChange;
 
     /**
-     * Constructs a new instance of the ChoiceMenuBuilder class.
+     * Constructs a new instance of the {@code ChoiceMenuBuilder} with the specified collection of items.
+     *
+     * @param items the collection of items to populate the choice menu;
+     *               if the provided collection is not an instance of {@code ObservableList},
+     *               a new observable list will be created from a copy of the provided collection
      */
-    ChoiceMenuBuilder(Collection<T> values) {
+    ChoiceMenuBuilder(Collection<T> items) {
         super(Menu::new);
         this.property = new SimpleObjectProperty<>(null);
-        this.values = values instanceof ObservableList<T> ol ? ol : FXCollections.observableList(List.copyOf(values));
+        this.items = items instanceof ObservableList<T> ol ? ol : FXCollections.observableList(List.copyOf(items));
     }
 
     /**
@@ -64,10 +68,10 @@ public class ChoiceMenuBuilder<T> extends MenuItemBuilder<Menu, ChoiceMenuBuilde
 
     /**
      * Binds the menu's internal property to the specified external property, enabling bidirectional
-     * synchronization of values between the two properties.
+     * synchronization of items between the two properties.
      *
      * @param property the external {@link Property} to bind bidirectionally with the builder's internal property;
-     *                 can hold {@code null} values
+     *                 can hold {@code null} items
      * @return this instance of the {@code ChoiceMenuBuilder} for method chaining
      */
     public ChoiceMenuBuilder<T> bind(Property<@Nullable T> property) {
@@ -86,7 +90,7 @@ public class ChoiceMenuBuilder<T> extends MenuItemBuilder<Menu, ChoiceMenuBuilde
         }
 
         ToggleGroup group = new ToggleGroup();
-        for (T value : values) {
+        for (T value : items) {
             Property<@Nullable Boolean> selected = new SimpleBooleanProperty(Objects.equals(current, value));
             Converter<@Nullable T, @Nullable Boolean> converter = Converter.create(
                     v -> Objects.equals(v, value),

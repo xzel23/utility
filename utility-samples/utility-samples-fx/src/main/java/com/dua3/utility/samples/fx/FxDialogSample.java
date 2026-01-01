@@ -74,10 +74,11 @@ public class FxDialogSample extends Application {
         VBox container = new VBox();
 
         // UiMode
-        ComboBox<UiMode> comboUiMode = new ComboBox<>(FXCollections.observableArrayList(UiMode.values()));
-        comboUiMode.setValue(ApplicationUtil.getUiMode());
-        comboUiMode.valueProperty().addListener((obs, oldVal, newVal) -> ApplicationUtil.setUiMode(newVal));
-        comboUiMode.setMaxWidth(Double.MAX_VALUE);
+        ComboBox<UiMode> comboUiMode = Controls.comboBox(List.of(UiMode.values()))
+                .onChange(ApplicationUtil::setUiMode)
+                .initialValue(ApplicationUtil.getUiMode())
+                .maxWidth(Double.MAX_VALUE)
+                .build();
         container.getChildren().add(comboUiMode);
 
         // LabelPlacement
