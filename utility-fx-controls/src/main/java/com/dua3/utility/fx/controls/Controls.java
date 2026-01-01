@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.MenuItemBuilder;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
@@ -371,12 +372,12 @@ public final class Controls {
     }
 
     /**
-     * Create a new {@link MenuItemBuilderImpl}.
+     * Create a new {@link MenuItemBuilder}.
      *
      * @return a new MenuItemBuilder
      */
-    public static MenuItemBuilderImpl menuItem() {
-        return new MenuItemBuilderImpl(MenuItem::new);
+    public static MenuItemBuilder menuItem() {
+        return new MenuItemBuilder(MenuItem::new);
     }
 
     /**
@@ -442,7 +443,7 @@ public final class Controls {
      */
     @Deprecated(since = "21", forRemoval = true)
     public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action) {
-        MenuItemBuilderImpl builder = menuItem();
+        MenuItemBuilder builder = menuItem();
         if (text != null) builder.text(text);
         if (graphic != null) builder.graphic(graphic);
         return builder.action(action).build();
@@ -492,7 +493,7 @@ public final class Controls {
      */
     @Deprecated(since = "21", forRemoval = true)
     public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action, ObservableBooleanValue enabled) {
-        MenuItemBuilderImpl builder = menuItem();
+        MenuItemBuilder builder = menuItem();
         if (text != null) builder.text(text);
         if (graphic != null) builder.graphic(graphic);
         return builder.action(action).enabled(enabled).build();
@@ -514,7 +515,7 @@ public final class Controls {
      */
     @Deprecated(since = "21", forRemoval = true)
     public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action, boolean enabled) {
-        MenuItemBuilderImpl builder = menuItem();
+        MenuItemBuilder builder = menuItem();
         if (text != null) builder.text(text);
         if (graphic != null) builder.graphic(graphic);
         return builder.action(action).disabled(!enabled).build();
