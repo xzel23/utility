@@ -53,7 +53,7 @@ public class ToggleButtonBuilder extends ButtonBaseBuilder<ToggleButton, ToggleB
     public ToggleButton build() {
         ToggleButton button = super.build();
 
-        selectedList.forEach(selected -> Bindings.bindBidirectional(selected, button.selectedProperty()));
+        selectedList.forEach(sel -> Bindings.bindBidirectional(sel, button.selectedProperty()));
 
         if (selected != null) {
             button.setSelected(selected);
