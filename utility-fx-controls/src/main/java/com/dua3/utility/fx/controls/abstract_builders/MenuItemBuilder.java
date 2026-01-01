@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * @param <M> the type of MenuItem to be built
  * @param <B> the type of the concrete builder
  */
-public class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuilder<M, B>> {
+public abstract class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuilder<M, B>> {
     private final Supplier<? extends M> factory;
     private @Nullable ObservableValue<String> text;
     private @Nullable ObservableValue<Node> graphic;
@@ -38,7 +38,7 @@ public class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuilder<M, B>
      *
      * @param factory the supplier that provides a new instance of the MenuItem type to be built
      */
-    public MenuItemBuilder(Supplier<? extends M> factory) {
+    protected MenuItemBuilder(Supplier<? extends M> factory) {
         this.factory = factory;
     }
 
