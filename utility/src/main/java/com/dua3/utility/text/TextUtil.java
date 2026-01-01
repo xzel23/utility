@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.Localized;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
@@ -1415,5 +1416,30 @@ public final class TextUtil {
      */
     public static Pattern createUnescapedDelimiterPattern(char delimiter) {
         return Pattern.compile(String.format("(?<!\\\\)%s", Pattern.quote(Character.toString(delimiter))));
+    }
+
+    /**
+     * Converts the given object to its localized string representation if it implements the
+     * {@code Localized} interface. Otherwise, it converts the object to a string using its
+     * {@code toString} method.
+     *
+     * @param obj the object to be converted to a localized string representation
+     * @return the localized string representation of the object if it implements {@code Localized},
+     *         or the result of {@code String.valueOf(obj)} if it does not
+     */
+    public static String toLocalizedString(@Nullable Object obj) {
+        return obj instanceof Localized localized ? localized.toLocalizedString() : String.valueOf(obj);
+    }
+
+    /**
+     * Converts the provided object to its localized string representation.
+     * If the first object is null, the second object is used instead.
+     *
+     * @param obj the object to be converted to a localized string, may be null
+     * @param objIfNull the fallback object to use if the first object is null
+     * @return the localized string representation of the provided object, or the fallback object if the first is null
+     */
+    public static String toLocalizedString(@Nullable Object obj, Object objIfNull) {
+        return toLocalizedString(Objects.requireNonNullElse(obj, objIfNull));
     }
 }

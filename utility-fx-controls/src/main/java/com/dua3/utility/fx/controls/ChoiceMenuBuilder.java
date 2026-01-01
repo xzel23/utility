@@ -4,6 +4,7 @@ import com.dua3.utility.data.Converter;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PropertyConverter;
 import com.dua3.utility.fx.controls.abstract_builders.MenuItemBuilder;
+import com.dua3.utility.text.TextUtil;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -92,7 +93,7 @@ public class ChoiceMenuBuilder<T> extends MenuItemBuilder<Menu, ChoiceMenuBuilde
                     b -> b != null && b ? value : property.getValue()
             );
             selected.bindBidirectional(PropertyConverter.convert(property, converter));
-            RadioMenuItem mi = new RadioMenuItem(String.valueOf(value));
+            RadioMenuItem mi = new RadioMenuItem(TextUtil.toLocalizedString(value));
             mi.setToggleGroup(group);
             mi.selectedProperty().bindBidirectional(selected);
             mi.setSelected(value.equals(property.getValue()));
