@@ -111,11 +111,11 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
     private String itemText(boolean captitalize) {
         return switch (mode) {
             case DIRECTORY -> captitalize
-                    ? I18NInstance.get().get("dua3.fx.file.input.builder.directory.cap")
-                    : I18NInstance.get().get("dua3.fx.file.input.builder.directory");
+                    ? I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.directory.cap")
+                    : I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.directory");
             case OPEN, SAVE -> captitalize
-                    ? I18NInstance.get().get("dua3.fx.file.input.builder.file.cap")
-                    : I18NInstance.get().get("dua3.fx.file.input.builder.file");
+                    ? I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.file.cap")
+                    : I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.file");
         };
     }
 
@@ -128,10 +128,10 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      */
     private Optional<String> defaultValidate(@Nullable Path p) {
         if (p == null) {
-            return Optional.of(I18NInstance.get().format("dua3.fx.file.input.builder.no.item.selected", itemText(false)));
+            return Optional.of(I18NInstance.get().format("dua3.utility.fx.controls.file.input.builder.no.item.selected", itemText(false)));
         }
         if (existingOnly && !Files.exists(p)) {
-            return Optional.of(I18NInstance.get().format("dua3.fx.file.input.builder.item.does.not.exist", itemText(true)));
+            return Optional.of(I18NInstance.get().format("dua3.utility.fx.controls.file.input.builder.item.does.not.exist", itemText(true)));
         }
         if (!existingOnly) {
             return Optional.empty();
@@ -140,13 +140,13 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
         return switch (mode) {
             case DIRECTORY -> isDirectory
                     ? Optional.empty()
-                    : Optional.of(I18NInstance.get().format("dua3.fx.file.input.builder.selection.is.not.a", itemText(false)));
+                    : Optional.of(I18NInstance.get().format("dua3.utility.fx.controls.file.input.builder.selection.is.not.a", itemText(false)));
             case OPEN -> isDirectory
-                    ? Optional.of(I18NInstance.get().get("dua3.fx.file.input.builder.selection.is.a.directory"))
+                    ? Optional.of(I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.selection.is.a.directory"))
                     : Optional.empty();
             case SAVE -> isDirectory
-                    ? Optional.of(I18NInstance.get().get("dua3.fx.file.input.builder.selection.is.a.directory"))
-                    : (!Files.isWritable(p) ? Optional.of(I18NInstance.get().format("dua3.fx.file.input.builder.item.is.not.writable", itemText(true))) : Optional.empty());
+                    ? Optional.of(I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.selection.is.a.directory"))
+                    : (!Files.isWritable(p) ? Optional.of(I18NInstance.get().format("dua3.utility.fx.controls.file.input.builder.item.is.not.writable", itemText(true))) : Optional.empty());
         };
     }
 }

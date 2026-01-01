@@ -194,8 +194,8 @@ public class FxLogPane extends BorderPane {
         // search for text
         TextField tfSearchText = new TextField();
         tfSearchText.setPrefWidth(tfWidth);
-        Button btnSearchUp = new Button(I18NInstance.get().get("dua3.fx.log.search.up"));
-        Button btnSearchDown = new Button(I18NInstance.get().get("dua3.fx.log.search.down"));
+        Button btnSearchUp = new Button(I18NInstance.get().get("dua3.utility.fx.controls.log.search.up"));
+        Button btnSearchDown = new Button(I18NInstance.get().get("dua3.utility.fx.controls.log.search.down"));
 
         BiConsumer<String, Boolean> searchAction = (text, up) -> searchAction(text, up, entries);
 
@@ -208,19 +208,19 @@ public class FxLogPane extends BorderPane {
         btnSearchUp.setOnAction(evt -> searchAction.accept(tfSearchText.getText(), true));
         btnSearchDown.setOnAction(evt -> searchAction.accept(tfSearchText.getText(), false));
 
-        Button btnClear = new Button(I18NInstance.get().get("dua3.fx.log.clear"));
+        Button btnClear = new Button(I18NInstance.get().get("dua3.utility.fx.controls.log.clear"));
         btnClear.setOnAction(evt -> logBuffer.clear());
 
         // create toolbar
         toolBar.getItems().setAll(
-                new Label(I18NInstance.get().get("dua3.fx.log.level")),
+                new Label(I18NInstance.get().get("dua3.utility.fx.controls.log.level")),
                 cbLogLevel,
-                new Label(I18NInstance.get().get("dua3.fx.log.logger")),
+                new Label(I18NInstance.get().get("dua3.utility.fx.controls.log.logger")),
                 tfLoggerName,
-                new Label(I18NInstance.get().get("dua3.fx.log.text")),
+                new Label(I18NInstance.get().get("dua3.utility.fx.controls.log.text")),
                 tfMessageContent,
                 new Separator(Orientation.HORIZONTAL),
-                new Label(I18NInstance.get().get("dua3.fx.log.search")),
+                new Label(I18NInstance.get().get("dua3.utility.fx.controls.log.search")),
                 tfSearchText,
                 btnSearchUp,
                 btnSearchDown,
@@ -233,10 +233,10 @@ public class FxLogPane extends BorderPane {
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         //noinspection unchecked
         tableView.getColumns().setAll(
-                createColumn(I18NInstance.get().get("dua3.fx.log.column.time"), LogEntry::time, true, "8888-88-88T88:88:88.8888888"),
-                createColumn(I18NInstance.get().get("dua3.fx.log.column.level"), LogEntry::level, true, Arrays.stream(LogLevel.values()).map(Object::toString).toArray(String[]::new)),
-                createColumn(I18NInstance.get().get("dua3.fx.log.column.logger"), LogEntry::loggerName, false, "X".repeat(20)),
-                createColumn(I18NInstance.get().get("dua3.fx.log.column.message"), LogEntry::message, false)
+                createColumn(I18NInstance.get().get("dua3.utility.fx.controls.log.column.time"), LogEntry::time, true, "8888-88-88T88:88:88.8888888"),
+                createColumn(I18NInstance.get().get("dua3.utility.fx.controls.log.column.level"), LogEntry::level, true, Arrays.stream(LogLevel.values()).map(Object::toString).toArray(String[]::new)),
+                createColumn(I18NInstance.get().get("dua3.utility.fx.controls.log.column.logger"), LogEntry::loggerName, false, "X".repeat(20)),
+                createColumn(I18NInstance.get().get("dua3.utility.fx.controls.log.column.message"), LogEntry::message, false)
         );
 
         // disable autoscroll if the selection is not empty, enable when selection is cleared while scrolled to bottom

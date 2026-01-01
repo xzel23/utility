@@ -61,13 +61,13 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         this.formatter = formatter;
 
         this.slider = new Slider();
-        this.btnDecrement = new Button(I18NInstance.get().get("dua3.fx.slider.with.buttons.decrement"));
-        this.btnIncrement = new Button(I18NInstance.get().get("dua3.fx.slider.with.buttons.increment"));
+        this.btnDecrement = new Button(I18NInstance.get().get("dua3.utility.fx.controls.slider.with.buttons.decrement"));
+        this.btnIncrement = new Button(I18NInstance.get().get("dua3.utility.fx.controls.slider.with.buttons.increment"));
 
         this.state = new InputControlState<>(
                 PropertyConverter.convert(slider.valueProperty()),
                 () -> null,
-                v -> v != null && isValueValid(v) ? Optional.empty() : Optional.of(I18NInstance.get().get("dua3.fx.slider.with.buttons.out.of.range"))
+                v -> v != null && isValueValid(v) ? Optional.empty() : Optional.of(I18NInstance.get().get("dua3.utility.fx.controls.slider.with.buttons.out.of.range"))
         );
 
         btnDecrement.setOnAction(evt -> slider.decrement());

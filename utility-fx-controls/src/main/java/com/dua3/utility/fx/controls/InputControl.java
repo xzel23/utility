@@ -49,7 +49,7 @@ public interface InputControl<T> {
     /**
      * The constant string "Invalid value".
      */
-    String INVALID_VALUE = I18NInstance.get().get("dua3.fx.input.control.invalid.value");
+    String INVALID_VALUE = I18NInstance.get().get("dua3.utility.fx.controls.input.control.invalid.value");
 
     /**
      * CSS class to mark required input fields.

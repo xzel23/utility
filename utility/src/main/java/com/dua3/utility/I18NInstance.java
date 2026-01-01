@@ -16,7 +16,7 @@ public final class I18NInstance {
         private static I18N initInstance() {
             I18N i18N = I18N.getInstance();
 
-            i18N.mergeBundle(ResourceBundle.getBundle("com.dua3.messages", i18N.getLocale()));
+            i18N.mergeBundle(ResourceBundle.getBundle("com.dua3.utility.messages", i18N.getLocale()));
 
             return i18N;
         }

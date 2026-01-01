@@ -12,7 +12,7 @@ import javafx.stage.Stage;
  */
 public class FxLogWindow extends Stage {
 
-    private static final String DEFAULT_WINDOW_TITLE = I18NInstance.get().get("dua3.fx.log.window.title");
+    private static final String DEFAULT_WINDOW_TITLE = I18NInstance.get().get("dua3.utility.fx.controls.log.window.title");
     private final LogBuffer logBuffer;
 
     /**

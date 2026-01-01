@@ -72,7 +72,7 @@ public final class FxLauncher {
     public static final int RC_ERROR = 1;
 
     private static final @Nullable Method LOGUTIL_INITIALISER;
-    private static final String LOG_MESSAGES = I18NInstance.get().get("dua3.fx.launcher.log.messages");
+    private static final String LOG_MESSAGES = I18NInstance.get().get("dua3.utility.fx.controls.launcher.log.messages");
 
     static {
         Method initialiser = null;
@@ -255,8 +255,8 @@ public final class FxLauncher {
     ) {
         var agp = ArgumentsParser.builder()
                 .name(appName)
-                .description(I18NInstance.get().format("dua3.fx.launcher.about.version", version) + "\n"
-                        + I18NInstance.get().format("dua3.fx.launcher.about.copyright", copyright, developerMail) + "\n"
+                .description(I18NInstance.get().format("dua3.utility.fx.controls.launcher.about.version", version) + "\n"
+                        + I18NInstance.get().format("dua3.utility.fx.controls.launcher.about.copyright", copyright, developerMail) + "\n"
                         + "\n"
                         + appDescription
                         + "\n"
@@ -264,15 +264,15 @@ public final class FxLauncher {
                 .positionalArgs(0, 0);
 
         var flagHelp = agp.addFlag(
-                I18NInstance.get().get("dua3.fx.launcher.arg.help.name"),
-                I18NInstance.get().get("dua3.fx.launcher.arg.help.description"),
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.help.name"),
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.help.description"),
                 "--help", "-h"
         );
 
         if (!Platform.isNativeImage()) {
             agp.addFlag(
-                    I18NInstance.get().get("dua3.fx.launcher.arg.assertions.name"),
-                    I18NInstance.get().get("dua3.fx.launcher.arg.assertions.description"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.assertions.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.assertions.description"),
                     v -> enableAssertions = v,
                     "--enable-assertions", "-ea"
             );
@@ -280,20 +280,20 @@ public final class FxLauncher {
 
         if (LOGUTIL_INITIALISER != null) {
             agp.addFlag(
-                    I18NInstance.get().get("dua3.fx.launcher.arg.log_window.name"),
-                    I18NInstance.get().get("dua3.fx.launcher.arg.log_window.description"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.description"),
                     v -> showLogWindow = v,
                     "--log-window", "-lw"
             );
             agp.addFlag(
-                    I18NInstance.get().get("dua3.fx.launcher.arg.debug.name"),
-                    I18NInstance.get().get("dua3.fx.launcher.arg.debug.description"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.description"),
                     v -> debug = v,
                     "--debug"
             );
             agp.addStringOption(
-                    I18NInstance.get().get("dua3.fx.launcher.arg.log_filter.name"),
-                    I18NInstance.get().get("dua3.fx.launcher.arg.log_filter.description"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_filter.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_filter.description"),
                     Repetitions.ZERO_OR_ONE,
                     "regex",
                     pattern -> {
@@ -303,8 +303,8 @@ public final class FxLauncher {
                     "--log-filter", "-lf"
             );
             agp.addIntegerOption(
-                    I18NInstance.get().get("dua3.fx.launcher.arg.log_buffer_size.name"),
-                    I18NInstance.get().get("dua3.fx.launcher.arg.log_buffer_size.description"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.description"),
                     Repetitions.ZERO_OR_ONE,
                     "size",
                     size -> logBuffer = new LogBuffer(size),

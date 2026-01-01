@@ -155,7 +155,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
 
     private static <T> Optional<String> validateNonNull(Option<T> option, @Nullable Object v) {
         if (v == null) {
-            return Optional.of(I18NInstance.get().format("dua3.fx.options.pane.no.value", option.displayName()));
+            return Optional.of(I18NInstance.get().format("dua3.utility.fx.controls.options.pane.no.value", option.displayName()));
         }
         return Optional.empty();
     }

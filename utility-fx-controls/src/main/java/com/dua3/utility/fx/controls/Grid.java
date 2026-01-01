@@ -378,7 +378,7 @@ public class Grid extends GridPane {
 
         // add "* Required field" label
         if (data.stream().anyMatch(e -> e.control.isRequired())) {
-            Label requiredFieldLabel = new Label(I18NInstance.get().get("dua3.fx.grid.required.field"));
+            Label requiredFieldLabel = new Label(I18NInstance.get().get("dua3.utility.fx.controls.grid.required.field"));
             requiredFieldLabel.getStyleClass().add("required-field-label");
             int span = (placement == LabelPlacement.BEFORE ? 3 : 2) * columns;
             int gridY = placement == LabelPlacement.BEFORE ? r : 2 * r;

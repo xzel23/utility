@@ -15,25 +15,25 @@ class UiModeTest {
         // We can't easily change the global I18N instance locale once initialized,
         // so we check if the keys are present in the bundles.
         
-        I18N i18nEn = I18N.create("com.dua3.messages", Locale.ENGLISH);
-        assertEquals("System Default", i18nEn.get("dua3.ui.mode.system.default"));
-        assertEquals("Light", i18nEn.get("dua3.ui.mode.light"));
-        assertEquals("Dark", i18nEn.get("dua3.ui.mode.dark"));
+        I18N i18nEn = I18N.create("com.dua3.utility.messages", Locale.ENGLISH);
+        assertEquals("System Default", i18nEn.get("dua3.utility.ui.mode.system.default"));
+        assertEquals("Light", i18nEn.get("dua3.utility.ui.mode.light"));
+        assertEquals("Dark", i18nEn.get("dua3.utility.ui.mode.dark"));
 
-        I18N i18nDe = I18N.create("com.dua3.messages", Locale.GERMAN);
-        assertEquals("Systemstandard", i18nDe.get("dua3.ui.mode.system.default"));
-        assertEquals("Hell", i18nDe.get("dua3.ui.mode.light"));
-        assertEquals("Dunkel", i18nDe.get("dua3.ui.mode.dark"));
+        I18N i18nDe = I18N.create("com.dua3.utility.messages", Locale.GERMAN);
+        assertEquals("Systemstandard", i18nDe.get("dua3.utility.ui.mode.system.default"));
+        assertEquals("Hell", i18nDe.get("dua3.utility.ui.mode.light"));
+        assertEquals("Dunkel", i18nDe.get("dua3.utility.ui.mode.dark"));
 
-        I18N i18nFr = I18N.create("com.dua3.messages", Locale.FRENCH);
-        assertEquals("Système par défaut", i18nFr.get("dua3.ui.mode.system.default"));
-        assertEquals("Clair", i18nFr.get("dua3.ui.mode.light"));
-        assertEquals("Sombre", i18nFr.get("dua3.ui.mode.dark"));
+        I18N i18nFr = I18N.create("com.dua3.utility.messages", Locale.FRENCH);
+        assertEquals("Système par défaut", i18nFr.get("dua3.utility.ui.mode.system.default"));
+        assertEquals("Clair", i18nFr.get("dua3.utility.ui.mode.light"));
+        assertEquals("Sombre", i18nFr.get("dua3.utility.ui.mode.dark"));
 
-        I18N i18nEs = I18N.create("com.dua3.messages", Locale.forLanguageTag("es"));
-        assertEquals("Predeterminado del sistema", i18nEs.get("dua3.ui.mode.system.default"));
-        assertEquals("Claro", i18nEs.get("dua3.ui.mode.light"));
-        assertEquals("Oscuro", i18nEs.get("dua3.ui.mode.dark"));
+        I18N i18nEs = I18N.create("com.dua3.utility.messages", Locale.forLanguageTag("es"));
+        assertEquals("Predeterminado del sistema", i18nEs.get("dua3.utility.ui.mode.system.default"));
+        assertEquals("Claro", i18nEs.get("dua3.utility.ui.mode.light"));
+        assertEquals("Oscuro", i18nEs.get("dua3.utility.ui.mode.dark"));
     }
 
     @Test

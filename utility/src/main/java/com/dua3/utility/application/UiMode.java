@@ -32,7 +32,7 @@ public enum UiMode implements Localized {
 
     UiMode(String text) {
         this.text = text;
-        this.i18nKey = "dua3.ui.mode." + name().toLowerCase(Locale.ROOT).replace('_', '.');
+        this.i18nKey = "dua3.utility.ui.mode." + name().toLowerCase(Locale.ROOT).replace('_', '.');
     }
 
     @Override
