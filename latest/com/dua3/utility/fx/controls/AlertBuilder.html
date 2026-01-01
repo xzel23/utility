@@ -63,6 +63,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#build()" tabindex="0">build()</a></li>
 <li><a href="#getButtonDefs()" tabindex="0">getButtonDefs()</a></li>
 <li><a href="#text(java.lang.String,java.lang.Object...)" tabindex="0">text(String, Object...)</a></li>
+<li><a href="#text(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)" tabindex="0">text(MessageFormatter.MessageFormatterArgs)</a></li>
 <li><a href="#selectableText(boolean)" tabindex="0">selectableText(boolean)</a></li>
 <li><a href="#defaultButton(javafx.scene.control.ButtonType)" tabindex="0">defaultButton(ButtonType)</a></li>
 <li><a href="#css(java.lang.String)" tabindex="0">css(String)</a></li>
@@ -139,9 +140,14 @@ Provides a fluent interface to create Alerts.</div>
 <div class="block">Sets whether the text in the alert dialog should be selectable or not.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AlertBuilder.html" title="class in com.dua3.utility.fx.controls">AlertBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#text(java.lang.String,java.lang.Object...)" class="member-name-link">text</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#text(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)" class="member-name-link">text</a><wbr>(<a href="../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;args)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Set text.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AlertBuilder.html" title="class in com.dua3.utility.fx.controls">AlertBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#text(java.lang.String,java.lang.Object...)" class="member-name-link">text</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set text.</div>
 </div>
 </div>
@@ -152,7 +158,7 @@ Provides a fluent interface to create Alerts.</div>
 <code><a href="abstract_builders/DialogBuilder.html#modality(javafx.stage.Modality)" title="modality(Modality)">modality</a>, <a href="abstract_builders/DialogBuilder.html#resizable(boolean)" title="resizable(boolean)">resizable</a>, <a href="abstract_builders/DialogBuilder.html#showAndWait()" title="showAndWait()">showAndWait</a>, <a href="abstract_builders/DialogBuilder.html#title(java.lang.String,java.lang.Object...)" title="title(String, Object...)">title</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder">Methods inherited from class&nbsp;<a href="abstract_builders/DialogPaneBuilder.html#method-summary" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a></h3>
-<code><a href="abstract_builders/DialogPaneBuilder.html#addButton(com.dua3.utility.fx.controls.ButtonDef)" title="addButton(ButtonDef)">addButton</a>, <a href="abstract_builders/DialogPaneBuilder.html#applyIfNotNull(java.util.function.BiConsumer,C,D)" title="applyIfNotNull(BiConsumer, C, D)">applyIfNotNull</a>, <a href="abstract_builders/DialogPaneBuilder.html#buttons(com.dua3.utility.fx.controls.ButtonDef...)" title="buttons(ButtonDef...)">buttons</a>, <a href="abstract_builders/DialogPaneBuilder.html#buttons(javafx.scene.control.ButtonType...)" title="buttons(ButtonType...)">buttons</a>, <a href="abstract_builders/DialogPaneBuilder.html#format(java.lang.String,java.lang.Object...)" title="format(String, Object...)">format</a>, <a href="abstract_builders/DialogPaneBuilder.html#getMessageFormatter()" title="getMessageFormatter()">getMessageFormatter</a>, <a href="abstract_builders/DialogPaneBuilder.html#getResultHandler()" title="getResultHandler()">getResultHandler</a>, <a href="abstract_builders/DialogPaneBuilder.html#header(java.lang.String,java.lang.Object...)" title="header(String, Object...)">header</a>, <a href="abstract_builders/DialogPaneBuilder.html#resultHandler(com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler)" title="resultHandler(DialogPaneBuilder.ResultHandler)">resultHandler</a>, <a href="abstract_builders/DialogPaneBuilder.html#self()" title="self()">self</a>, <a href="abstract_builders/DialogPaneBuilder.html#setDialogSupplier(java.util.function.Supplier)" title="setDialogSupplier(Supplier)">setDialogSupplier</a></code></div>
+<code><a href="abstract_builders/DialogPaneBuilder.html#addButton(com.dua3.utility.fx.controls.ButtonDef)" title="addButton(ButtonDef)">addButton</a>, <a href="abstract_builders/DialogPaneBuilder.html#applyIfNotNull(java.util.function.BiConsumer,C,D)" title="applyIfNotNull(BiConsumer, C, D)">applyIfNotNull</a>, <a href="abstract_builders/DialogPaneBuilder.html#buttons(com.dua3.utility.fx.controls.ButtonDef...)" title="buttons(ButtonDef...)">buttons</a>, <a href="abstract_builders/DialogPaneBuilder.html#buttons(javafx.scene.control.ButtonType...)" title="buttons(ButtonType...)">buttons</a>, <a href="abstract_builders/DialogPaneBuilder.html#format(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)" title="format(MessageFormatter.MessageFormatterArgs)">format</a>, <a href="abstract_builders/DialogPaneBuilder.html#format(java.lang.String,java.lang.Object...)" title="format(String, Object...)">format</a>, <a href="abstract_builders/DialogPaneBuilder.html#getMessageFormatter()" title="getMessageFormatter()">getMessageFormatter</a>, <a href="abstract_builders/DialogPaneBuilder.html#getResultHandler()" title="getResultHandler()">getResultHandler</a>, <a href="abstract_builders/DialogPaneBuilder.html#header(java.lang.String,java.lang.Object...)" title="header(String, Object...)">header</a>, <a href="abstract_builders/DialogPaneBuilder.html#resultHandler(com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler)" title="resultHandler(DialogPaneBuilder.ResultHandler)">resultHandler</a>, <a href="abstract_builders/DialogPaneBuilder.html#self()" title="self()">self</a>, <a href="abstract_builders/DialogPaneBuilder.html#setDialogSupplier(java.util.function.Supplier)" title="setDialogSupplier(Supplier)">setDialogSupplier</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#method-summary" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -211,6 +217,21 @@ actions, result handlers, and enablement state.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>fmt</code> - the format String as defined by <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Formatter.html" title="class or interface in java.util" class="external-link"><code>Formatter</code></a></dd>
+<dd><code>args</code> - the arguments passed to the formatter</dd>
+<dt>Returns:</dt>
+<dd><code>this</code></dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="text(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)">
+<h3>text</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AlertBuilder.html" title="class in com.dua3.utility.fx.controls">AlertBuilder</a></span>&nbsp;<span class="element-name">text</span><wbr><span class="parameters">(<a href="../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;args)</span></div>
+<div class="block">Set text.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
 <dd><code>args</code> - the arguments passed to the formatter</dd>
 <dt>Returns:</dt>
 <dd><code>this</code></dd>

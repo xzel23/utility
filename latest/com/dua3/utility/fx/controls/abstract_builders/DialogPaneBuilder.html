@@ -70,6 +70,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#setDialogSupplier(java.util.function.Supplier)" tabindex="0">setDialogSupplier(Supplier)</a></li>
 <li><a href="#build()" tabindex="0">build()</a></li>
 <li><a href="#format(java.lang.String,java.lang.Object...)" tabindex="0">format(String, Object...)</a></li>
+<li><a href="#format(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)" tabindex="0">format(MessageFormatter.MessageFormatterArgs)</a></li>
 <li><a href="#applyIfNotNull(java.util.function.BiConsumer,C,D)" tabindex="0">applyIfNotNull(BiConsumer, C, D)</a></li>
 <li><a href="#header(java.lang.String,java.lang.Object...)" tabindex="0">header(String, Object...)</a></li>
 <li><a href="#resultHandler(com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler)" tabindex="0">resultHandler(DialogPaneBuilder.ResultHandler)</a></li>
@@ -187,45 +188,50 @@ Provides a fluent interface to create Dialog panes.</div>
 <div class="block">Replaces the current button definitions in the dialog pane builder with the specified button types.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#format(java.lang.String,java.lang.Object...)" class="member-name-link">format</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
- @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#format(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)" class="member-name-link">format</a><wbr>(<a href="../../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;args)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Formats a message using the provided <a href="../../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text"><code>MessageFormatter.MessageFormatterArgs</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#format(java.lang.String,java.lang.Object...)" class="member-name-link">format</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Formats the given format string using the provided arguments.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../ButtonDef.html" title="class in com.dua3.utility.fx.controls">ButtonDef</a>&lt;<a href="#type-param-R" title="type parameter in DialogPaneBuilder">R</a>&gt;&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getButtonDefs()" class="member-name-link">getButtonDefs</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../ButtonDef.html" title="class in com.dua3.utility.fx.controls">ButtonDef</a>&lt;<a href="#type-param-R" title="type parameter in DialogPaneBuilder">R</a>&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getButtonDefs()" class="member-name-link">getButtonDefs</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Retrieves the list of button definitions associated with this dialog pane builder.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessageFormatter()" class="member-name-link">getMessageFormatter</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessageFormatter()" class="member-name-link">getMessageFormatter</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the message formatter associated with this instance of <code>DialogPaneBuilder</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a><wbr>&lt;<a href="#type-param-R" title="type parameter in DialogPaneBuilder">R</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getResultHandler()" class="member-name-link">getResultHandler</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a><wbr>&lt;<a href="#type-param-R" title="type parameter in DialogPaneBuilder">R</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getResultHandler()" class="member-name-link">getResultHandler</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the result handler for this dialog pane builder.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in DialogPaneBuilder">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#header(java.lang.String,java.lang.Object...)" class="member-name-link">header</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in DialogPaneBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#header(java.lang.String,java.lang.Object...)" class="member-name-link">header</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set the header text.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in DialogPaneBuilder">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resultHandler(com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler)" class="member-name-link">resultHandler</a><wbr>(<a href="DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a>&lt;<a href="#type-param-R" title="type parameter in DialogPaneBuilder">R</a>&gt;&nbsp;resultHandler)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type-param-B" title="type parameter in DialogPaneBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resultHandler(com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler)" class="member-name-link">resultHandler</a><wbr>(<a href="DialogPaneBuilder.ResultHandler.html" title="interface in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder.ResultHandler</a>&lt;<a href="#type-param-R" title="type parameter in DialogPaneBuilder">R</a>&gt;&nbsp;resultHandler)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the result handler for this dialog pane builder.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="#type-param-B" title="type parameter in DialogPaneBuilder">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#self()" class="member-name-link">self</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="#type-param-B" title="type parameter in DialogPaneBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#self()" class="member-name-link">self</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the current instance of the builder.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDialogSupplier(java.util.function.Supplier)" class="member-name-link">setDialogSupplier</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="#type-param-D" title="type parameter in DialogPaneBuilder">D</a>&gt;&nbsp;dialogSupplier)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDialogSupplier(java.util.function.Supplier)" class="member-name-link">setDialogSupplier</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="#type-param-D" title="type parameter in DialogPaneBuilder">D</a>&gt;&nbsp;dialogSupplier)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the supplier that provides instances of the dialog type.</div>
 </div>
 </div>
@@ -327,6 +333,23 @@ This method delegates the formatting process to an associated formatter instance
 <dd><code>args</code> - the arguments to be inserted into the format string's placeholders</dd>
 <dt>Returns:</dt>
 <dd>the formatted string after inserting the provided arguments</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="format(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)">
+<h3>format</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">format</span><wbr><span class="parameters">(<a href="../../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;args)</span></div>
+<div class="block">Formats a message using the provided <a href="../../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text"><code>MessageFormatter.MessageFormatterArgs</code></a>.
+This method delegates the formatting process to the associated <code>MessageFormatter</code>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>args</code> - an instance of <a href="../../../text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text"><code>MessageFormatter.MessageFormatterArgs</code></a>
+            containing the format string and its corresponding arguments</dd>
+<dt>Returns:</dt>
+<dd>the formatted string using the specified format and arguments</dd>
 </dl>
 </div>
 </section>

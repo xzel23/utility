@@ -59,6 +59,10 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
+<li><a href="#comboBox(java.util.Collection)" tabindex="0">comboBox(Collection)</a></li>
+<li><a href="#comboBox(T...)" tabindex="0">comboBox(T...)</a></li>
+<li><a href="#comboBoxEx(java.util.Collection)" tabindex="0">comboBoxEx(Collection)</a></li>
+<li><a href="#comboBoxEx(T...)" tabindex="0">comboBoxEx(T...)</a></li>
 <li><a href="#button()" tabindex="0">button()</a></li>
 <li><a href="#toggleButton()" tabindex="0">toggleButton()</a></li>
 <li><a href="#toggleButton(boolean)" tabindex="0">toggleButton(boolean)</a></li>
@@ -278,6 +282,26 @@ loadScripts(document, 'script');</script>
 <div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
 <div class="deprecation-comment">use <a href="#choiceMenu(java.util.Collection)"><code>choiceMenu(Collection)</code></a> instead</div>
 </div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#comboBox(java.util.Collection)" class="member-name-link">comboBox</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new instance of ComboBoxBuilder using the provided collection of values.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#comboBox(T...)" class="member-name-link">comboBox</a><wbr>(T...&nbsp;values)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new instance of ComboBoxBuilder using the provided values.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#comboBoxEx(java.util.Collection)" class="member-name-link">comboBoxEx</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new instance of ComboBoxExBuilder using the provided collection of values.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#comboBoxEx(T...)" class="member-name-link">comboBoxEx</a><wbr>(T...&nbsp;values)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new instance of ComboBoxExBuilder using the provided values.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fileInput(javafx.stage.Window,com.dua3.utility.fx.controls.FileDialogMode)" class="member-name-link">fileInput</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWinndw,
@@ -516,6 +540,76 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="comboBox(java.util.Collection)">
+<h3>comboBox</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a>&lt;T&gt;</span>&nbsp;<span class="element-name">comboBox</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</span></div>
+<div class="block">Creates a new instance of ComboBoxBuilder using the provided collection of values.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="comboBox(java.util.Collection)-type-param-T"><code>T</code> - the type of the items in the ComboBox</span></dd>
+<dt>Parameters:</dt>
+<dd><code>values</code> - a collection of values to be included in the combo box</dd>
+<dt>Returns:</dt>
+<dd>a new instance of ComboBoxBuilder initialized with the given values</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="comboBox(T...)">
+<h3 id="comboBox(java.lang.Object[])">comboBox</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a>&lt;T&gt;</span>&nbsp;<span class="element-name">comboBox</span><wbr><span class="parameters">(T...&nbsp;values)</span></div>
+<div class="block">Creates a new instance of ComboBoxBuilder using the provided values.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="comboBox(T...)-type-param-T"><code>T</code> - the type of the items in the ComboBox</span></dd>
+<dt>Parameters:</dt>
+<dd><code>values</code> - the values to be included in the combo box</dd>
+<dt>Returns:</dt>
+<dd>a new instance of ComboBoxBuilder initialized with the given values</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="comboBoxEx(java.util.Collection)">
+<h3>comboBoxEx</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a>&lt;T&gt;</span>&nbsp;<span class="element-name">comboBoxEx</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;values)</span></div>
+<div class="block">Creates a new instance of ComboBoxExBuilder using the provided collection of values.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="comboBoxEx(java.util.Collection)-type-param-T"><code>T</code> - the type of the items in the ComboBoxEx</span></dd>
+<dt>Parameters:</dt>
+<dd><code>values</code> - a collection of values to be included in the combo box</dd>
+<dt>Returns:</dt>
+<dd>a new instance of ComboBoxExBuilder initialized with the given values</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="comboBoxEx(T...)">
+<h3 id="comboBoxEx(java.lang.Object[])">comboBoxEx</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a>&lt;T&gt;</span>&nbsp;<span class="element-name">comboBoxEx</span><wbr><span class="parameters">(T...&nbsp;values)</span></div>
+<div class="block">Creates a new instance of ComboBoxExBuilder using the provided values.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="comboBoxEx(T...)-type-param-T"><code>T</code> - the type of the items in the ComboBoxEx</span></dd>
+<dt>Parameters:</dt>
+<dd><code>values</code> - the values to be included in the combo box</dd>
+<dt>Returns:</dt>
+<dd>a new instance of ComboBoxExBuilder initialized with the given values</dd>
+</dl>
+</div>
+</section>
+</li>
 <li>
 <section class="detail" id="button()">
 <h3>button</h3>

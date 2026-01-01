@@ -223,6 +223,10 @@ and message formatter.</div>
 <dd>
 <div class="block">Add non-binary (text) file to zip.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html#add(java.util.function.Supplier)" class="member-name-link">add(Supplier)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a></dt>
+<dd>
+<div class="block">Sets the supplier responsible for adding a new item to the ComboBoxEx.</div>
+</dd>
 <dt><a href="com/dua3/utility/data/Histogram.html#add(T)" class="member-name-link">add(T)</a> - Method in class com.dua3.utility.data.<a href="com/dua3/utility/data/Histogram.html" title="class in com.dua3.utility.data">Histogram</a></dt>
 <dd>
 <div class="block">Adds an item to the histogram, incrementing its associated count.</div>
@@ -1321,7 +1325,16 @@ and returns an optional validation message if the value is not within the range.
 <dt><a href="com/dua3/utility/fx/controls/ChoiceMenuBuilder.html#bind(javafx.beans.property.Property)" class="member-name-link">bind(Property)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ChoiceMenuBuilder.html" title="class in com.dua3.utility.fx.controls">ChoiceMenuBuilder</a></dt>
 <dd>
 <div class="block">Binds the menu's internal property to the specified external property, enabling bidirectional
-synchronization of values between the two properties.</div>
+synchronization of items between the two properties.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html#bind(javafx.beans.property.Property)" class="member-name-link">bind(Property)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a></dt>
+<dd>
+<div class="block">Binds the menu's internal property to the specified external property, enabling bidirectional
+synchronization of items between the two properties.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html#bind(javafx.beans.property.Property)" class="member-name-link">bind(Property)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a></dt>
+<dd>
+<div class="block">Binds the provided property bidirectionally to the builder's internal property.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/abstract_builders/MenuItemBuilder.html#bindAccelerator(javafx.beans.value.ObservableValue)" class="member-name-link">bindAccelerator(ObservableValue)</a> - Method in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/MenuItemBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">MenuItemBuilder</a></dt>
 <dd>
@@ -1661,6 +1674,10 @@ the Java security environment.</div>
 <dt><a href="com/dua3/utility/fx/controls/CheckMenuItemBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/CheckMenuItemBuilder.html" title="class in com.dua3.utility.fx.controls">CheckMenuItemBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/ChoiceMenuBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ChoiceMenuBuilder.html" title="class in com.dua3.utility.fx.controls">ChoiceMenuBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/FileInputBuilder.html#build()" class="member-name-link">build()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/FileInputBuilder.html" title="class in com.dua3.utility.fx.controls">FileInputBuilder</a></dt>
 <dd>
@@ -2294,6 +2311,8 @@ from remaining in memory.</div>
 <dd>
 <div class="block">Sets the number of columns for the text area.</div>
 </dd>
+<dt><a href="com/dua3/utility/package-summary.html">com.dua3.utility</a> - package com.dua3.utility</dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/application/package-summary.html">com.dua3.utility.application</a> - package com.dua3.utility.application</dt>
 <dd>
 <div class="block">This package contains classes supporting application development.</div>
@@ -2423,6 +2442,26 @@ rich text.</div>
 <dd>
 <div class="block">Combines multiple <code>HtmlTag</code> instances into a single <a href="com/dua3/utility/text/HtmlTag.html" title="interface in com.dua3.utility.text"><code>HtmlTag</code></a>.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#comboBox(java.util.Collection)" class="member-name-link">comboBox(Collection)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Creates a new instance of ComboBoxBuilder using the provided collection of values.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#comboBox(T...)" class="member-name-link">comboBox(T...)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Creates a new instance of ComboBoxBuilder using the provided values.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder&lt;T&gt;</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
+<dd>
+<div class="block">Builder for <code>ComboBox</code>.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#comboBoxEx(java.util.Collection)" class="member-name-link">comboBoxEx(Collection)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Creates a new instance of ComboBoxExBuilder using the provided collection of values.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/Controls.html#comboBoxEx(T...)" class="member-name-link">comboBoxEx(T...)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
+<dd>
+<div class="block">Creates a new instance of ComboBoxExBuilder using the provided values.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ComboBoxEx.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">ComboBoxEx&lt;T&gt;</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>
 <div class="block">A custom ComboBox control that supports additional features like editing, adding, and removing items.</div>
@@ -2442,6 +2481,10 @@ rich text.</div>
 <dt><a href="com/dua3/utility/fx/controls/ComboBoxEx.html#%3Cinit%3E(java.util.function.Function,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Supplier,java.util.function.Function,T...)" class="member-name-link">ComboBoxEx(Function, Supplier, BiPredicate, Supplier, Function, T...)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxEx.html" title="class in com.dua3.utility.fx.controls">ComboBoxEx</a></dt>
 <dd>
 <div class="block">Constructs a ComboBoxEx with the specified edit, add, remove, format, and items.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder&lt;T&gt;</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
+<dd>
+<div class="block">Builder for <a href="com/dua3/utility/fx/controls/ComboBoxEx.html" title="class in com.dua3.utility.fx.controls"><code>ComboBoxEx</code></a>.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/InputControl.html#comboBoxExInput(java.util.Collection,java.util.function.Supplier,java.util.function.Function,java.util.function.Supplier,java.util.function.BiPredicate,java.util.function.Function,java.util.function.Function)" class="member-name-link">comboBoxExInput(Collection, Supplier, Function, Supplier, BiPredicate, Function, Function)</a> - Static method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControl.html" title="interface in com.dua3.utility.fx.controls">InputControl</a></dt>
 <dd>
@@ -3780,6 +3823,10 @@ only existing files or directories are allowed.</div>
 <dd>
 <div class="block">Sets the default value for the prompt dialog.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html#defaultValue(java.util.function.Supplier)" class="member-name-link">defaultValue(Supplier)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a></dt>
+<dd>
+<div class="block">Sets the default value supplier for the ComboBoxEx.</div>
+</dd>
 <dt><a href="com/dua3/utility/math/MathUtil.html#deg(double)" class="member-name-link">deg(double)</a> - Static method in class com.dua3.utility.math.<a href="com/dua3/utility/math/MathUtil.html" title="class in com.dua3.utility.math">MathUtil</a></dt>
 <dd>
 <div class="block">Converts an angle from radians to degrees.</div>
@@ -4064,6 +4111,10 @@ in the file system.</div>
 <dt><a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html#EC" class="member-name-link">EC</a> - Enum constant in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a></dt>
 <dd>
 <div class="block">Elliptic Curve Cryptography, requires a special provider for encryption (not signatures and key agreement)</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html#edit(java.util.function.Function)" class="member-name-link">edit(Function)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a></dt>
+<dd>
+<div class="block">Sets an edit function that allows modifying a given item when triggered.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/Stopwatch.html#elapsed()" class="member-name-link">elapsed()</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/Stopwatch.html" title="class in com.dua3.utility.lang">Stopwatch</a></dt>
 <dd>
@@ -4686,6 +4737,8 @@ statement.</div>
 <dd>
 <div class="block">Factor to apply when generating a brighter or darker version of a color.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/abstract_builders/NodeBuilder.html#factory" class="member-name-link">factory</a> - Variable in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/NodeBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">NodeBuilder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/LangUtil.FailedCheckException.html#%3Cinit%3E()" class="member-name-link">FailedCheckException()</a> - Constructor for exception class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.FailedCheckException.html" title="class in com.dua3.utility.lang">LangUtil.FailedCheckException</a></dt>
 <dd>
 <div class="block">Default constructor.</div>
@@ -5252,6 +5305,10 @@ instances.</div>
 <dd>
 <div class="block">Formats the given value into its string representation.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html#format(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)" class="member-name-link">format(MessageFormatter.MessageFormatterArgs)</a> - Method in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/DialogPaneBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">DialogPaneBuilder</a></dt>
+<dd>
+<div class="block">Formats a message using the provided <a href="com/dua3/utility/text/MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text"><code>MessageFormatter.MessageFormatterArgs</code></a>.</div>
+</dd>
 <dt><a href="com/dua3/utility/xml/XmlUtil.html#format(java.io.OutputStream,org.w3c.dom.Node)" class="member-name-link">format(OutputStream, Node)</a> - Method in class com.dua3.utility.xml.<a href="com/dua3/utility/xml/XmlUtil.html" title="class in com.dua3.utility.xml">XmlUtil</a></dt>
 <dd>
 <div class="block">Pretty print W3C Node using UTF-8 encoding.</div>
@@ -5301,6 +5358,11 @@ instances.</div>
 <dt><a href="com/dua3/utility/lang/Stopwatch.Format.html#format(java.time.Duration)" class="member-name-link">format(Duration)</a> - Method in enum class com.dua3.utility.lang.<a href="com/dua3/utility/lang/Stopwatch.Format.html" title="enum class in com.dua3.utility.lang">Stopwatch.Format</a></dt>
 <dd>
 <div class="block">Format a duration.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html#format(java.util.function.Function)" class="member-name-link">format(Function)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a></dt>
+<dd>
+<div class="block">Sets the format function to define how items of type <code>T</code> should be
+converted to their string representation for display in the combo box.</div>
 </dd>
 <dt><a href="com/dua3/utility/xml/XmlUtil.html#format(org.w3c.dom.Node)" class="member-name-link">format(Node)</a> - Method in class com.dua3.utility.xml.<a href="com/dua3/utility/xml/XmlUtil.html" title="class in com.dua3.utility.xml">XmlUtil</a></dt>
 <dd>
@@ -5625,8 +5687,6 @@ and search capabilities.</div>
 <dd>
 <div class="block">Generate SecretKey for the specified algorithm.</div>
 </dd>
-<dt><a href="com/dua3/utility/application/I18NInstance.html#get()" class="member-name-link">get()</a> - Static method in class com.dua3.utility.application.<a href="com/dua3/utility/application/I18NInstance.html" title="class in com.dua3.utility.application">I18NInstance</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/application/imp/DarkModeDetectorInstance.html#get()" class="member-name-link">get()</a> - Static method in class com.dua3.utility.application.imp.<a href="com/dua3/utility/application/imp/DarkModeDetectorInstance.html" title="class in com.dua3.utility.application.imp">DarkModeDetectorInstance</a></dt>
 <dd>
 <div class="block">Retrieves the instance of the <a href="com/dua3/utility/application/DarkModeDetector.html" title="interface in com.dua3.utility.application"><code>DarkModeDetector</code></a>.</div>
@@ -5662,7 +5722,15 @@ and search capabilities.</div>
 <dt><a href="com/dua3/utility/fx/FxImageUtilProvider.html#get()" class="member-name-link">get()</a> - Method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxImageUtilProvider.html" title="class in com.dua3.utility.fx">FxImageUtilProvider</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/I18NInstance.html#get()" class="member-name-link">get()</a> - Static method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/I18NInstance.html" title="class in com.dua3.utility.fx">I18NInstance</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Provides access to the shared <a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n"><code>I18N</code></a> instance of the application and ensures local bundles have been
+loaded before access.</div>
+</dd>
+<dt><a href="com/dua3/utility/I18NInstance.html#get()" class="member-name-link">get()</a> - Static method in class com.dua3.utility.<a href="com/dua3/utility/I18NInstance.html" title="class in com.dua3.utility">I18NInstance</a></dt>
+<dd>
+<div class="block">Provides access to the shared <a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n"><code>I18N</code></a> instance of the application and ensures local bundles have been
+loaded before access.</div>
+</dd>
 <dt><a href="com/dua3/utility/io/SoftResource.html#get()" class="member-name-link">get()</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/SoftResource.html" title="class in com.dua3.utility.io">SoftResource</a></dt>
 <dd>
 <div class="block">Get the resource.</div>
@@ -7778,12 +7846,18 @@ which allows for internationalized message formatting.</div>
 <div class="block">A constant representing the usage of a specific internationalization (I18N) instance
 for formatting messages.</div>
 </dd>
-<dt><a href="com/dua3/utility/application/I18NInstance.html" class="type-name-link" title="class in com.dua3.utility.application">I18NInstance</a> - Class in <a href="com/dua3/utility/application/package-summary.html">com.dua3.utility.application</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/I18NInstance.html" class="type-name-link" title="class in com.dua3.utility.fx.controls">I18NInstance</a> - Class in <a href="com/dua3/utility/fx/controls/package-summary.html">com.dua3.utility.fx.controls</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/I18NInstance.html" class="type-name-link" title="class in com.dua3.utility.fx">I18NInstance</a> - Class in <a href="com/dua3/utility/fx/package-summary.html">com.dua3.utility.fx</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">I18NInstance ensures that bundles from the current library have been loaded when
+accessing the globale <a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n"><code>I18N</code></a> instance.</div>
+</dd>
+<dt><a href="com/dua3/utility/I18NInstance.html" class="type-name-link" title="class in com.dua3.utility">I18NInstance</a> - Class in <a href="com/dua3/utility/package-summary.html">com.dua3.utility</a></dt>
+<dd>
+<div class="block">I18NInstance ensures that bundles from the current library have been loaded when
+accessing the globale <a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n"><code>I18N</code></a> instance.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/I18NInstance.html#%3Cinit%3E()" class="member-name-link">I18NInstance()</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/I18NInstance.html" title="class in com.dua3.utility.fx.controls">I18NInstance</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/i18n/I18NProvider.html" class="type-name-link" title="interface in com.dua3.utility.i18n">I18NProvider</a> - Interface in <a href="com/dua3/utility/i18n/package-summary.html">com.dua3.utility.i18n</a></dt>
@@ -8151,6 +8225,10 @@ or state required before the pane is displayed.</div>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggingServiceProviderSlf4j.html#initialize()" class="member-name-link">initialize()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggingServiceProviderSlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggingServiceProviderSlf4j</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/ChoiceMenuBuilder.html#initialValue(T)" class="member-name-link">initialValue(T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ChoiceMenuBuilder.html" title="class in com.dua3.utility.fx.controls">ChoiceMenuBuilder</a></dt>
+<dd>
+<div class="block">Sets the initial value for the choice menu.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html#initialValue(T)" class="member-name-link">initialValue(T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a></dt>
 <dd>
 <div class="block">Sets the initial value for the choice menu.</div>
 </dd>
@@ -10029,6 +10107,10 @@ by the specified x and y coordinates.</div>
 <dd>
 <div class="block">Represents a locale-dependent short format style.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html#localized(boolean)" class="member-name-link">localized(boolean)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a></dt>
+<dd>
+<div class="block">Set the localization state.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/MessageFormatter.html#localized(java.util.Locale)" class="member-name-link">localized(Locale)</a> - Static method in interface com.dua3.utility.text.<a href="com/dua3/utility/text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a></dt>
 <dd>
 <div class="block">Creates an instance of <code>MessageFormatter</code> that uses <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#format(java.util.Locale,java.lang.String,java.lang.Object...)" title="class or interface in java.lang" class="external-link"><code>String.format(Locale, String, Object...)</code></a>
@@ -11545,6 +11627,14 @@ argument name, and repetition rules.</div>
 <dd>
 <div class="block">Sets a callback to be invoked whenever the selected value in the choice menu changes.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html#onChange(java.util.function.Consumer)" class="member-name-link">onChange(Consumer)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a></dt>
+<dd>
+<div class="block">Sets a callback to be invoked whenever the selected value in the choice menu changes.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html#onChange(java.util.function.Consumer)" class="member-name-link">onChange(Consumer)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a></dt>
+<dd>
+<div class="block">Sets a callback to be invoked when the value of the ComboBoxEx changes.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputControlBuilder.html#onChange(java.util.function.Consumer)" class="member-name-link">onChange(Consumer)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputControlBuilder.html" title="class in com.dua3.utility.fx.controls">InputControlBuilder</a></dt>
 <dd>
 <div class="block">Sets a callback to be invoked when the value of the slider changes.</div>
@@ -12770,6 +12860,11 @@ with an extension included in the specified collection of extensions.</div>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/ReversedSequencedCollectionWrapper.html#remove(java.lang.Object)" class="member-name-link">remove(Object)</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/ReversedSequencedCollectionWrapper.html" title="class in com.dua3.utility.lang">ReversedSequencedCollectionWrapper</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html#remove(java.util.function.BiPredicate)" class="member-name-link">remove(BiPredicate)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxExBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxExBuilder</a></dt>
+<dd>
+<div class="block">Sets the logic to determine whether an item should be eligible for removal
+in the ComboBoxEx.</div>
+</dd>
 <dt><a href="com/dua3/utility/swing/ComboBoxEx.html#removeActionListener(java.awt.event.ActionListener)" class="member-name-link">removeActionListener(ActionListener)</a> - Method in class com.dua3.utility.swing.<a href="com/dua3/utility/swing/ComboBoxEx.html" title="class in com.dua3.utility.swing">ComboBoxEx</a></dt>
 <dd>
 <div class="block">Removes an ActionListener from the ComboBoxEx.</div>
@@ -15493,6 +15588,10 @@ for a specific platform.</div>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/text/HtmlConverter.HeaderStyle.html#param-text"><code>text</code></a> record component.</div>
 </dd>
+<dt><a href="com/dua3/utility/fx/controls/AlertBuilder.html#text(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)" class="member-name-link">text(MessageFormatter.MessageFormatterArgs)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AlertBuilder.html" title="class in com.dua3.utility.fx.controls">AlertBuilder</a></dt>
+<dd>
+<div class="block">Set text.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/abstract_builders/LabeledBuilder.html#text(java.lang.String)" class="member-name-link">text(String)</a> - Method in class com.dua3.utility.fx.controls.abstract_builders.<a href="com/dua3/utility/fx/controls/abstract_builders/LabeledBuilder.html" title="class in com.dua3.utility.fx.controls.abstract_builders">LabeledBuilder</a></dt>
 <dd>
 <div class="block">Set text for the Labeled.</div>
@@ -15814,6 +15913,15 @@ with properties configured using a fluent API.</div>
 <dt><a href="com/dua3/utility/lang/Localized.html#toLocalizedString()" class="member-name-link">toLocalizedString()</a> - Method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/Localized.html" title="interface in com.dua3.utility.lang">Localized</a></dt>
 <dd>
 <div class="block">Provides a localized string representation of the implementing object.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/TextUtil.html#toLocalizedString(java.lang.Object)" class="member-name-link">toLocalizedString(Object)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dd>
+<div class="block">Converts the given object to its localized string representation if it implements the
+<code>Localized</code> interface.</div>
+</dd>
+<dt><a href="com/dua3/utility/text/TextUtil.html#toLocalizedString(java.lang.Object,java.lang.Object)" class="member-name-link">toLocalizedString(Object, Object)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/TextUtil.html" title="class in com.dua3.utility.text">TextUtil</a></dt>
+<dd>
+<div class="block">Converts the provided object to its localized string representation.</div>
 </dd>
 <dt><a href="com/dua3/utility/db/DbUtil.html#toLocalTime(java.lang.Object)" class="member-name-link">toLocalTime(Object)</a> - Static method in class com.dua3.utility.db.<a href="com/dua3/utility/db/DbUtil.html" title="class in com.dua3.utility.db">DbUtil</a></dt>
 <dd>
