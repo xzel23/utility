@@ -239,8 +239,9 @@ could not be loaded.
 
 ## Changes
 
-### 20.3.1
+### 20.4.0
 
+- IMPORTANT: deprecate for removal most methods in Controls that do not return a fluent builder
 - remove flickering when displaying dialogs in dark mode
 - DialogBuilder, AlertBuilder, WizardDialogBuilder: set default modality to `Modality.WINDOW_MODAL` instead of 
   `Modality.APPLICATION_MODAL`
@@ -248,6 +249,12 @@ could not be loaded.
 - changed input dialogs to display the required marker on the left and the error marker on the right, also a hint 
   for required fields is added automatically when required fields are present; added colors to required and error 
   markers and update on dark mode toggle
+- add translations for dialogs and messages for all official EU languages, chinese, japanese, korean, and many others
+- update GraalVM native image support configuration files
+- add `Controls.comboBox()`, `Controls.comboBoxEx()`
+- remove the standard `--log-level` command line switch
+- add support for switching input dialog layout between label before or above input field
+- improved support for CSS styling of dialogs and messages
 
 ### 20.3.0
 

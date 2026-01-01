@@ -66,7 +66,7 @@ public class Grid extends GridPane {
     private final MarkerSymbols markerSymbols;
     private SequencedCollection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;
-    private double minRowHeight = 1.5;
+    private double minRowHeight = 1.0;
     private LayoutUnit minRowHeightUnit = LayoutUnit.EM;
 
     /**
