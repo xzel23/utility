@@ -106,6 +106,18 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     }
 
     /**
+     * Formats a message using the provided {@link MessageFormatter.MessageFormatterArgs}.
+     * This method delegates the formatting process to the associated {@code MessageFormatter}.
+     *
+     * @param args an instance of {@link MessageFormatter.MessageFormatterArgs}
+     *             containing the format string and its corresponding arguments
+     * @return the formatted string using the specified format and arguments
+     */
+    public String format(MessageFormatter.MessageFormatterArgs args) {
+        return getMessageFormatter().format(args.fmt(), args.args());
+    }
+
+    /**
      * Applies the given {@link BiConsumer} to the specified inputs if both inputs are non-null.
      * This utility method ensures that the consumer is only executed when both provided arguments
      * are non-null, avoiding potential {@code NullPointerException}.

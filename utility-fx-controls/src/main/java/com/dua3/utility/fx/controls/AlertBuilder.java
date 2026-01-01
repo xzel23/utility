@@ -127,6 +127,17 @@ public class AlertBuilder
     }
 
     /**
+     * Set text.
+     *
+     * @param args the arguments passed to the formatter
+     * @return {@code this}
+     */
+    public AlertBuilder text(MessageFormatter.MessageFormatterArgs args) {
+        this.text = format(args);
+        return self();
+    }
+
+    /**
      * Sets whether the text in the alert dialog should be selectable or not.
      * When enabled, users will be able to highlight and copy the text from the dialog.
      *
