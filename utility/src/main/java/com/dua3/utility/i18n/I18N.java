@@ -72,7 +72,7 @@ public final class I18N {
                 }
             };
             i18n = create(bundle);
-            LOG.warn("No I18N provider found. Creating empty I18N instance.");
+            LOG.info("No I18N provider found. Creating empty I18N instance.");
         } else {
             i18n = serviceIterator.next().i18n();
         }
