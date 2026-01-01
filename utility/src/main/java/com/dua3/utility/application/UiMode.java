@@ -1,5 +1,6 @@
 package com.dua3.utility.application;
 
+import com.dua3.utility.I18NInstance;
 import com.dua3.utility.lang.Localized;
 
 import java.util.Locale;

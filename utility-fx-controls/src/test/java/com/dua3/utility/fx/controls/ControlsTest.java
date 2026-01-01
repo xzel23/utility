@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -312,6 +313,37 @@ class ControlsTest extends FxTestBase {
             assertTrue(cmi.isSelected());
             cmi.setSelected(false);
             assertFalse(selected.get());
+        });
+    }
+
+    /**
+     * Test ComboBox creation.
+     */
+    @Test
+    @Timeout(value = 10, unit = java.util.concurrent.TimeUnit.SECONDS)
+    void testComboBoxCreation() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            List<String> items = List.of("A", "B", "C");
+            SimpleStringProperty property = new SimpleStringProperty("B");
+            AtomicReference<String> changedValue = new AtomicReference<>();
+
+            ComboBox<String> comboBox = Controls.<String>comboBox()
+                    .items(items)
+                    .bind(property)
+                    .onChange(changedValue::set)
+                    .build();
+
+            assertNotNull(comboBox);
+            assertEquals(items, comboBox.getItems());
+            assertEquals("B", comboBox.getValue());
+
+            property.set("C");
+            assertEquals("C", comboBox.getValue());
+            assertEquals("C", changedValue.get());
+
+            comboBox.setValue("A");
+            assertEquals("A", property.get());
+            assertEquals("A", changedValue.get());
         });
     }
 

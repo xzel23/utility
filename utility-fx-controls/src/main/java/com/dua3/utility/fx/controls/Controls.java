@@ -21,6 +21,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -45,6 +46,16 @@ public final class Controls {
     private static final Logger LOG = LogManager.getLogger(Controls.class);
 
     private Controls() {
+    }
+
+    /**
+     * Create {@link ComboBoxBuilder} instance for ComboBoxes.
+     *
+     * @param <T> the type of the items in the ComboBox
+     * @return new ComboBoxBuilder
+     */
+    public static <T> ComboBoxBuilder<T> comboBox() {
+        return new ComboBoxBuilder<>(ComboBox::new);
     }
 
     /**
