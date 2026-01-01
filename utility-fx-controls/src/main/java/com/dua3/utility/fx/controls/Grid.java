@@ -248,15 +248,30 @@ public class Grid extends GridPane {
             minRowHeightFromDummy = dummy.prefHeight(-1);
         }
 
-        int r = 0;
+        int y = 0;
         int c = 0;
-        for (var entry : data) {
+        List<Meta<?>> dataList = new ArrayList<>(data);
+        for (int i = 0; i < dataList.size(); i++) {
+            var entry = dataList.get(i);
             updateMarker(entry, false);
             controls.add(entry.control);
 
             if (!entry.visible) {
                 // do not add controls for non-visible (hidden) fields
                 continue;
+            }
+
+            // decide if label row is needed for the current logical row
+            boolean needsLabelRow = false;
+            if (placement == LabelPlacement.ABOVE) {
+                int rowStart = i - c;
+                for (int j = rowStart; j < Math.min(rowStart + columns, dataList.size()); j++) {
+                    var rowEntry = dataList.get(j);
+                    if (rowEntry.visible && rowEntry.control.node() != null && rowEntry.label != null) {
+                        needsLabelRow = true;
+                        break;
+                    }
+                }
             }
 
             // apply vertical space
@@ -268,16 +283,29 @@ public class Grid extends GridPane {
                 };
 
                 if (c != 0) {
-                    r++;
+                    y += (placement == LabelPlacement.BEFORE || !needsLabelRow ? 1 : 2);
                     c = 0;
+                    // re-calculate needsLabelRow for the new logical row
+                    if (placement == LabelPlacement.ABOVE) {
+                        needsLabelRow = false;
+                        int rowStart = i;
+                        for (int j = rowStart; j < Math.min(rowStart + columns, dataList.size()); j++) {
+                            var rowEntry = dataList.get(j);
+                            if (rowEntry.visible && rowEntry.control.node() != null && rowEntry.label != null) {
+                                needsLabelRow = true;
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 RowConstraints rc = new RowConstraints();
                 rc.setMinHeight(height);
                 rc.setPrefHeight(height);
                 rc.setMaxHeight(height);
+
                 getRowConstraints().add(rc);
-                r++;
+                y++;
             }
 
             if (entry.control.node() == null) {
@@ -287,7 +315,7 @@ public class Grid extends GridPane {
             // add markers, label and control
             if (placement == LabelPlacement.BEFORE) {
                 int gridX = 3 * c;
-                int gridY = r;
+                int gridY = y;
 
                 // set row height
                 if (c == 0) {
@@ -326,27 +354,36 @@ public class Grid extends GridPane {
             } else {
                 // LabelPlacement.ABOVE
                 int gridX = 2 * c;
-                int gridY = 2 * r;
+                int gridY = y;
 
-                // set row constraints (label row)
+                // set row constraints
                 if (c == 0) {
-                    RowConstraints rcLabel = new RowConstraints();
-                    rcLabel.setMinHeight(minHeight);
-                    rcLabel.setValignment(VPos.CENTER);
-                    getRowConstraints().add(rcLabel); // row 2r
-                    RowConstraints rcControl = new RowConstraints();
-                    rcControl.setMinHeight(minHeight);
-                    rcControl.setValignment(VPos.CENTER);
-                    getRowConstraints().add(rcControl); // row 2r + 1
+                    if (needsLabelRow) {
+                        RowConstraints rcLabel = new RowConstraints();
+                        rcLabel.setMinHeight(minHeight);
+                        rcLabel.setValignment(VPos.CENTER);
+                        getRowConstraints().add(rcLabel); // row gridY
+                        RowConstraints rcControl = new RowConstraints();
+                        rcControl.setMinHeight(minHeight);
+                        rcControl.setValignment(VPos.CENTER);
+                        getRowConstraints().add(rcControl); // row gridY + 1
+                    } else {
+                        RowConstraints rcControl = new RowConstraints();
+                        rcControl.setMinHeight(minHeight);
+                        rcControl.setValignment(VPos.CENTER);
+                        getRowConstraints().add(rcControl); // row gridY
+                    }
                 }
 
-                if (entry.label != null) {
-                    HBox labelBox = new HBox(entry.label, entry.requiredMarker);
-                    labelBox.setSpacing(2);
-                    labelBox.setPadding(new Insets(6, 0, 0, 0)); // add vertical space above label
-                    addToGrid(labelBox, gridX, gridY, 2, insets);
-                } else {
-                    addToGrid(entry.requiredMarker, gridX, gridY, 2, markerInsets);
+                if (needsLabelRow) {
+                    if (entry.label != null) {
+                        HBox labelBox = new HBox(entry.label, entry.requiredMarker);
+                        labelBox.setSpacing(2);
+                        labelBox.setPadding(new Insets(6, 0, 0, 0)); // add vertical space above label
+                        addToGrid(labelBox, gridX, gridY, 2, insets);
+                    } else {
+                        addToGrid(entry.requiredMarker, gridX, gridY, 2, markerInsets);
+                    }
                 }
 
                 Node node = entry.control.node();
@@ -359,8 +396,13 @@ public class Grid extends GridPane {
 
                 entry.control.state().addValidationListener(() -> updateMarker(entry, true));
 
-                addToGrid(node, gridX++, gridY + 1, 1, insets);
-                addToGrid(entry.errorMarker, gridX, gridY + 1, 1, markerInsets);
+                if (needsLabelRow) {
+                    addToGrid(node, gridX++, gridY + 1, 1, insets);
+                    addToGrid(entry.errorMarker, gridX, gridY + 1, 1, markerInsets);
+                } else {
+                    addToGrid(node, gridX++, gridY, 1, insets);
+                    addToGrid(entry.errorMarker, gridX, gridY, 1, markerInsets);
+                }
             }
 
             entry.control.init();
@@ -368,12 +410,24 @@ public class Grid extends GridPane {
             // move to next position in grid
             c = (c + 1) % columns;
             if (c == 0) {
-                r++;
+                y += (placement == LabelPlacement.BEFORE || !needsLabelRow ? 1 : 2);
             }
         }
 
         if (c != 0) {
-            r++;
+            // we were in the middle of a row, check if it needed a label row
+            boolean needsLabelRow = false;
+            if (placement == LabelPlacement.ABOVE) {
+                int rowStart = dataList.size() - c;
+                for (int j = rowStart; j < dataList.size(); j++) {
+                    var rowEntry = dataList.get(j);
+                    if (rowEntry.visible && rowEntry.control.node() != null && rowEntry.label != null) {
+                        needsLabelRow = true;
+                        break;
+                    }
+                }
+            }
+            y += (placement == LabelPlacement.BEFORE || !needsLabelRow ? 1 : 2);
         }
 
         // add "* Required field" label
@@ -381,7 +435,7 @@ public class Grid extends GridPane {
             Label requiredFieldLabel = new Label(I18NInstance.get().get("dua3.utility.fx.controls.grid.required.field"));
             requiredFieldLabel.getStyleClass().add("required-field-label");
             int span = (placement == LabelPlacement.BEFORE ? 3 : 2) * columns;
-            int gridY = placement == LabelPlacement.BEFORE ? r : 2 * r;
+            int gridY = y;
             addToGrid(requiredFieldLabel, 0, gridY, span, new Insets(0.5 * FU.getTextHeight("M", defaultFont), 2, 2, 2));
         }
 
