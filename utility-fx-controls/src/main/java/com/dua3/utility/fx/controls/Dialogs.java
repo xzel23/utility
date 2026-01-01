@@ -390,7 +390,7 @@ public final class Dialogs {
         }
 
         if (fileType.isEmpty()) {
-            throw new UnsupportedFileTypeException(I18NInstance.get().get("dua3_fx.dialogs.unsupported_file_type"));
+            throw new UnsupportedFileTypeException(I18NInstance.get().get("dua3.fx.dialogs.unsupported.file.type"));
         }
 
         return Optional.of(fileType.orElseThrow().read(selectedFile.toPath()));

@@ -554,11 +554,11 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             passwordRef.set(s);
             PasswordUtil.PasswordStrength strength = PasswordUtil.evaluatePasswordStrength(s.toCharArray());
             if (strength.strengthLevel().compareTo(PasswordUtil.StrengthLevel.MODERATE) < 0) {
-                return Optional.of(I18NInstance.get().format("dua3_fx.input_builder.password_weak", strength.strengthLevel()));
+                return Optional.of(I18NInstance.get().format("dua3.fx.input.builder.password.weak", strength.strengthLevel()));
             } else {
                 return Optional.empty();
             }
-        }).inputPassword("", labelRepeat, () -> "", s -> Objects.equals(s, passwordRef.get()) ? Optional.empty() : Optional.of(I18NInstance.get().get("dua3_fx.input_builder.passwords_do_not_match")));
+        }).inputPassword("", labelRepeat, () -> "", s -> Objects.equals(s, passwordRef.get()) ? Optional.empty() : Optional.of(I18NInstance.get().get("dua3.fx.input.builder.passwords.do.not.match")));
     }
 
     /**
