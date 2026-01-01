@@ -72,7 +72,7 @@ public final class FxLauncher {
     public static final int RC_ERROR = 1;
 
     private static final @Nullable Method LOGUTIL_INITIALISER;
-    private static final String LOG_MESSAGES = "Log Messages";
+    private static final String LOG_MESSAGES = I18NInstance.get().get("dua3.fx.launcher.log.messages");
 
     static {
         Method initialiser = null;
@@ -255,8 +255,8 @@ public final class FxLauncher {
     ) {
         var agp = ArgumentsParser.builder()
                 .name(appName)
-                .description("Version " + version + "\n"
-                        + copyright + " (" + developerMail + ")\n"
+                .description(I18NInstance.get().format("dua3.fx.launcher.about.version", version) + "\n"
+                        + I18NInstance.get().format("dua3.fx.launcher.about.copyright", copyright, developerMail) + "\n"
                         + "\n"
                         + appDescription
                         + "\n"
@@ -264,15 +264,15 @@ public final class FxLauncher {
                 .positionalArgs(0, 0);
 
         var flagHelp = agp.addFlag(
-                "Help",
-                "Show Help and quit.",
+                I18NInstance.get().get("dua3.fx.launcher.arg.help.name"),
+                I18NInstance.get().get("dua3.fx.launcher.arg.help.description"),
                 "--help", "-h"
         );
 
         if (!Platform.isNativeImage()) {
             agp.addFlag(
-                    "Runtime Checks",
-                    "Enable runtime checks.",
+                    I18NInstance.get().get("dua3.fx.launcher.arg.assertions.name"),
+                    I18NInstance.get().get("dua3.fx.launcher.arg.assertions.description"),
                     v -> enableAssertions = v,
                     "--enable-assertions", "-ea"
             );
@@ -280,20 +280,20 @@ public final class FxLauncher {
 
         if (LOGUTIL_INITIALISER != null) {
             agp.addFlag(
-                    "Show Log Window",
-                    "Show Log Messages in a separate Window.",
+                    I18NInstance.get().get("dua3.fx.launcher.arg.log_window.name"),
+                    I18NInstance.get().get("dua3.fx.launcher.arg.log_window.description"),
                     v -> showLogWindow = v,
                     "--log-window", "-lw"
             );
             agp.addFlag(
-                    "Enable debugging features",
-                    "Enable debugging features.",
+                    I18NInstance.get().get("dua3.fx.launcher.arg.debug.name"),
+                    I18NInstance.get().get("dua3.fx.launcher.arg.debug.description"),
                     v -> debug = v,
                     "--debug"
             );
             agp.addStringOption(
-                    "Log Filter",
-                    "Set global Filter for Logger Names.",
+                    I18NInstance.get().get("dua3.fx.launcher.arg.log_filter.name"),
+                    I18NInstance.get().get("dua3.fx.launcher.arg.log_filter.description"),
                     Repetitions.ZERO_OR_ONE,
                     "regex",
                     pattern -> {
@@ -303,8 +303,8 @@ public final class FxLauncher {
                     "--log-filter", "-lf"
             );
             agp.addIntegerOption(
-                    "Log Buffer Size",
-                    "Set the Size of the Log Buffer.",
+                    I18NInstance.get().get("dua3.fx.launcher.arg.log_buffer_size.name"),
+                    I18NInstance.get().get("dua3.fx.launcher.arg.log_buffer_size.description"),
                     Repetitions.ZERO_OR_ONE,
                     "size",
                     size -> logBuffer = new LogBuffer(size),
