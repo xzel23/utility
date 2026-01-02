@@ -90,9 +90,7 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
     @Override
     public ComboBox<T> build() {
         ComboBox<T> comboBox = super.build();
-        if (items != null) {
-            comboBox.setItems(items);
-        }
+        comboBox.setItems(items);
 
         if (localized) {
             comboBox.setCellFactory(lv -> new ListCell<>() {
