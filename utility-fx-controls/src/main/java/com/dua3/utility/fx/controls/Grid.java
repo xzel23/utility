@@ -78,6 +78,8 @@ public class Grid extends GridPane {
      *
      * @param markerSymbols the marker symbols to use
      * @param validate the page validation function
+     *
+     * @see GridBuilder#validate(Function)
      */
     public Grid(MarkerSymbols markerSymbols, Function<Map<String, Object>, Map<String, Optional<String>>> validate) {
         this.markerSymbols = markerSymbols;

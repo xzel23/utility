@@ -385,6 +385,21 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return doAdd(null, format(label), type, dflt, control, true);
     }
 
+    /**
+     * Sets the validation logic for the grid inputs.
+     * <p>
+     * An explicit validation function is only needed if field based validation is not enough, i.e.,
+     * when multiple fields have to be validated together.
+     * <p>
+     * The method should always return a map with the same keys so that the validation errors
+     * can be displayed correctly.
+     *
+     * @param validate a function that takes a map of input values and returns a map where
+     *                 the keys are the input field identifiers, and the values are
+     *                 optional error messages indicating validation issues. An empty
+     *                 optional indicates no validation error for the corresponding field.
+     * @return this {@code GridBuilder} instance for method chaining
+     */
     public GridBuilder validate(Function<Map<String, Object>, Map<String, Optional<String>>> validate) {
         this.validate = validate;
         return this;

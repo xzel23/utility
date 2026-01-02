@@ -239,6 +239,11 @@ could not be loaded.
 
 ## Changes
 
+### 20.4.1
+
+- fix ellipsis displayed as question mark in english locales
+- add page validation method to input dialogs
+
 ### 20.4.0
 
 - IMPORTANT: deprecate for removal most methods in Controls that do not return a fluent builder
