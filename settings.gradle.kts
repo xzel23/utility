@@ -41,7 +41,7 @@ dependencyResolutionManagement {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("jdk", "com.dua3.gradle.jdkprovider").version("0.4.0-beta4")
+            plugin("jdk", "com.dua3.gradle.jdkprovider").version("0.4.0")
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
             plugin("sonar", "org.sonarqube").version("7.2.2.6593")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
