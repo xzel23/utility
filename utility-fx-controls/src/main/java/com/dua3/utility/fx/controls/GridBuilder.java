@@ -43,8 +43,10 @@ import org.jspecify.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -94,6 +96,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     private double minHeight = -1;
     private double maxWidth = -1;
     private double maxHeight = -1;
+    private Function<Map<String, Object>, Map<String, Optional<String>>> validate = ignored -> Collections.emptyMap();
 
     /**
      * Creates a new {@code InputGridBuilder} instance.
@@ -382,6 +385,11 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return doAdd(null, format(label), type, dflt, control, true);
     }
 
+    public GridBuilder validate(Function<Map<String, Object>, Map<String, Optional<String>>> validate) {
+        this.validate = validate;
+        return this;
+    }
+
     /**
      * Builds and returns an InputGrid with the current data and column configuration.
      *
@@ -390,7 +398,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     public Grid build() {
         LOG.trace("building grid with {} rows and {} columns", data.size(), columns);
 
-        Grid grid = new Grid(markerSymbols);
+        Grid grid = new Grid(markerSymbols, validate);
 
         setIfConfigured(minWidth, grid::setMinWidth);
         setIfConfigured(minHeight, grid::setMinHeight);

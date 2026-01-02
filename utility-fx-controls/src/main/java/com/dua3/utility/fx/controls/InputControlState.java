@@ -196,7 +196,7 @@ public final class InputControlState<R> {
         LOG.trace("validation result: {}", result);
 
         valid.setValue(result.isEmpty());
-        error.setValue(result.orElse(""));
+        setError(result.orElse(""));
 
         validationListeners.forEach(Runnable::run);
 
@@ -256,5 +256,24 @@ public final class InputControlState<R> {
             case String s -> s.isEmpty();
             default -> false;
         };
+    }
+
+    /**
+     * Sets the error message for this state.
+     *
+     * @param s the error message to be set; it may be an empty string to indicate no error
+     */
+    public void setError(String s) {
+        error.setValue(s);
+        valid.setValue(s.isEmpty());
+    }
+
+    /**
+     * Retrieves the current error message for this state.
+     *
+     * @return the current error message as a String.
+     */
+    public String getError() {
+        return error.getValue();
     }
 }

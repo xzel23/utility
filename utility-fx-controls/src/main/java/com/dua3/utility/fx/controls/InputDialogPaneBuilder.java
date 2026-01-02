@@ -277,4 +277,9 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
         return this;
     }
 
+    public InputDialogPaneBuilder validate(Function<Map<String, Object>, Map<String, Optional<String>>> validate) {
+        pb.validate(validate);
+        return this;
+    }
+
 }

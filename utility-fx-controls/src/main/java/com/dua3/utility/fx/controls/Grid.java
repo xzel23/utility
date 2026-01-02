@@ -31,7 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SequencedCollection;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -64,6 +66,8 @@ public class Grid extends GridPane {
     private final Font defaultFont;
 
     private final MarkerSymbols markerSymbols;
+    private final Function<Map<String, Object>, Map<String, Optional<String>>> validate;
+
     private SequencedCollection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;
     private double minRowHeight = 1.0;
@@ -73,9 +77,11 @@ public class Grid extends GridPane {
      * Constructs a new instance of the InputGrid class.
      *
      * @param markerSymbols the marker symbols to use
+     * @param validate the page validation function
      */
-    public Grid(MarkerSymbols markerSymbols) {
+    public Grid(MarkerSymbols markerSymbols, Function<Map<String, Object>, Map<String, Optional<String>>> validate) {
         this.markerSymbols = markerSymbols;
+        this.validate = validate;
         this.defaultFont = FU.convert(new Label().getFont());
 
         labelPlacement.addListener((obs, oldVal, newVal) -> {
@@ -85,6 +91,29 @@ public class Grid extends GridPane {
         });
 
         updateColumnConstraints();
+    }
+
+    private boolean validatePage(boolean fieldsValid) {
+        Map<String, Optional<String>> results = validate.apply(get());
+        boolean valid = true;
+        for (var meta: data) {
+            Optional<String> result = meta.id != null ? results.getOrDefault(meta.id, Optional.empty()) : Optional.empty();
+            if (result.isPresent()) {
+                valid = false;
+                InputControlState<?> state = meta.control.state();
+                String originalError = state.getError();
+                state.setError(result.get());
+                updateMarker(meta, fieldsValid);
+                state.setError(originalError);
+                LOG.trace("validatePage: {} -> {}", meta.id, result.get());
+            } else {
+                if (fieldsValid) {
+                    updateMarker(meta, true);
+                }
+            }
+        }
+        LOG.trace("validatePage: {}", valid);
+        return valid;
     }
 
     private void updateColumnConstraints() {
@@ -441,11 +470,15 @@ public class Grid extends GridPane {
 
         // the valid state is true if all inputs are valid
         valid.bind(Bindings.createBooleanBinding(
-                () -> controls.stream().allMatch(control -> {
-                    boolean v = control.isValid();
-                    LOG.trace("validate: {} -> {}", control, v);
-                    return v;
-                }),
+                () -> {
+                    boolean fieldsValid = controls.stream().allMatch(control -> {
+                        boolean v = control.isValid();
+                        LOG.trace("validate: {} -> {}", control, v);
+                        return v;
+                    });
+                    boolean pageValid = validatePage(fieldsValid);
+                    return fieldsValid && pageValid;
+                },
                 controls.stream().flatMap(control -> Stream.of(control.valueProperty(), control.validProperty())).toArray(ObservableValue[]::new)
         ));
 
@@ -532,6 +565,11 @@ public class Grid extends GridPane {
 
         void reset() {
             control.set(dflt.get());
+        }
+
+        @Override
+        public String toString() {
+            return "Meta<" + cls.getSimpleName() + ">[" + id + "]";
         }
     }
 
