@@ -106,13 +106,33 @@ public interface MessageFormatter {
     }
 
     /**
-     * Creates a {@code MessageFormatterArgs} instance using the provided literal string.
-     *
-     * @param obj the literal to be used, will be converted to string representation
-     * @return a {@code MessageFormatterArgs} instance containing the literal string
+     * Creates a {@code MessageFormatterArgs} instance where the given object's string value is output unchanged.
+     * <p>
+     * This method is useful for cases where the string representation of an object should be used directly
+     * without any formatting or translation. The string value is determined by calling {@link String#valueOf(Object)}.
+     * </p>
+     * @param obj the object whose string value should be output unchanged
+     * @return a {@code MessageFormatterArgs} instance containing the object's literal string value
      */
     static MessageFormatterArgs literal(@Nullable Object obj) {
         return new MessageFormatterArgs("\0", obj);
+    }
+
+    /**
+     * Creates a {@code MessageFormatterArgs} instance using the given format string and arguments
+     * without applying any message lookup/internationalization (i18n).
+     * <p>
+     * Implementation note: The provided format string will be prefixed with a null character ('\0') to indicate
+     * that the string should not be localized.
+     *
+     * @param fmt  the format string to be used
+     * @param args the arguments to replace placeholders in the format string
+     *             (optional, may be {@code null})
+     * @return a {@code MessageFormatterArgs} instance containing the prefixed format string
+     *         and the provided arguments
+     */
+    static MessageFormatterArgs nonI18N(String fmt, @Nullable Object... args) {
+        return new MessageFormatterArgs("\0" + fmt, args);
     }
 
     /**
@@ -222,12 +242,16 @@ public interface MessageFormatter {
 
         @Override
         public String format(String fmt, @Nullable Object... args) {
-            if (fmt.startsWith("\0")) {
-                String delimiter = fmt.substring(1);
-                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(delimiter));
-            } else {
-                return String.format(locale, fmt, args);
+            // literal string
+            if (fmt.equals("\0")) {
+                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(" "));
             }
+            // non-I18N text
+            if (fmt.startsWith("\0")) {
+                return fmt.substring(1).formatted(args);
+            }
+            // I18N text
+            return String.format(locale, fmt, args);
         }
 
         @Override
@@ -258,12 +282,16 @@ public interface MessageFormatter {
 
         @Override
         public String format(String fmt, @Nullable Object... args) {
-            if (fmt.startsWith("\0")) {
-                String delimiter = fmt.substring(1);
-                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(delimiter));
-            } else {
-                return MessageFormat.format(fmt, args);
+            // literal string
+            if (fmt.equals("\0")) {
+                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(" "));
             }
+            // non-I18N text
+            if (fmt.startsWith("\0")) {
+                return MessageFormat.format(fmt.substring(1), args);
+            }
+            // I18N text (no I18N used by this formatter)
+            return MessageFormat.format(fmt, args);
         }
 
         @Override
@@ -286,13 +314,17 @@ public interface MessageFormatter {
      */
     record MessageFormatterI18n(I18N i18n) implements MessageFormatter {
         @Override
-        public String format(String key, @Nullable Object... args) {
-            if (key.startsWith("\0")) {
-                String delimiter = key.substring(1);
-                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(delimiter));
-            } else {
-                return i18n.format(key, args);
+        public String format(String fmt, @Nullable Object... args) {
+            // literal string
+            if (fmt.equals("\0")) {
+                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(" "));
             }
+            // non-I18N text
+            if (fmt.startsWith("\0")) {
+                return MessageFormat.format(fmt.substring(1), args);
+            }
+            // I18N text
+            return i18n.format(fmt, args);
         }
 
         @Override

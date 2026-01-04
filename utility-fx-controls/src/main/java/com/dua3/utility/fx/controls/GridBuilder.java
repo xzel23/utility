@@ -274,7 +274,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     @Override
     public GridBuilder labeledText(String fmtLabel, String fmtText, Object... args) {
         Label node = new Label(format(fmtText, args));
-        return node(format(fmtLabel, args), node);
+        return node(MessageFormatter.args(fmtLabel, args), node);
     }
 
     @Override
