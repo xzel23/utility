@@ -465,8 +465,8 @@ public final class IoUtil {
      * @param s the string
      * @return true, if string denotes a URI
      */
-    private static boolean isURI(String s) {
-        return IS_URI.test(s);
+    private static boolean isURI(@Nullable String s) {
+        return s != null && IS_URI.test(s);
     }
 
     /**
@@ -1570,7 +1570,10 @@ public final class IoUtil {
      * @param platform the platform for which the file name validation is being performed
      * @return true if the file name is valid according to all platform-specific rules, false otherwise
      */
-    public static boolean isValidFileName(String filename, Platform platform) {
+    public static boolean isValidFileName(@Nullable String filename, Platform platform) {
+        if (filename == null) {
+            return false;
+        }
         for (var rule : FileNameRule.values()) {
             if (!rule.test(filename, platform)) {
                 return false;
@@ -1587,7 +1590,10 @@ public final class IoUtil {
      * @param filename the file name to be validated
      * @return true if the file name passes all the rules, false otherwise
      */
-    public static boolean isPortableFileName(String filename) {
+    public static boolean isPortableFileName(@Nullable String filename) {
+        if (filename == null) {
+            return false;
+        }
         for (var rule : FileNameRule.values()) {
             if (!rule.test(filename)) {
                 return false;
