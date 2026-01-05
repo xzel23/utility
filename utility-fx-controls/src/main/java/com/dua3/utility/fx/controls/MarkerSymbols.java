@@ -118,4 +118,39 @@ public record MarkerSymbols(
         }
         return required ? requiredEmpty : optionalEmpty;
     }
+
+    /**
+     * Determines whether all required marker symbols are defined.
+     * A required marker symbol is considered defined if its corresponding field is non-empty.
+     * Specifically, this method checks that the fields `requiredEmpty`, `requiredFilled`,
+     * and `requiredError` are not empty.
+     *
+     * @return true if all required marker symbols (`requiredEmpty`, `requiredFilled`,
+     *         and `requiredError`) are non-empty; false otherwise.
+     */
+    public boolean hasRequiredSymbols() {
+        return !requiredEmpty.isEmpty() && !requiredFilled.isEmpty() && !requiredError.isEmpty();
+    }
+
+    /**
+     * Returns the symbol associated with the 'required' state, prioritizing the 'empty',
+     * 'error', and 'filled' states in that order.
+     *
+     * Specifically:
+     * - If the requiredEmpty symbol is not empty, it is returned.
+     * - Otherwise, if the requiredError symbol is not empty, it is returned.
+     * - If neither of the above is true, the requiredFilled symbol is returned.
+     *
+     * @return a string representing the most appropriate 'required' state symbol
+     *         based on the priority order of empty, error, and filled.
+     */
+    public String getRequiredSymbol() {
+        if (!requiredEmpty.isEmpty()) {
+            return requiredEmpty;
+        }
+        if (!requiredError.isEmpty()) {
+            return requiredError;
+        }
+        return requiredFilled;
+    }
 }
