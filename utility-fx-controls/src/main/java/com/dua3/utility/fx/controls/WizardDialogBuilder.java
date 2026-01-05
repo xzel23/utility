@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
 import com.dua3.utility.text.MessageFormatter;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
@@ -169,7 +170,7 @@ public class WizardDialogBuilder {
 
         DialogPaneBuilder.ResultHandler<R> resultHandler = builder.getResultHandler();
         WizardDialog.Page<D, R> page = new WizardDialog.Page<>(pane, resultHandler);
-        page.setNext(builder.getNext().orElse(null));
+        page.setNext(builder.getNext());
         pages.put(name, page);
 
         if (startPage.isEmpty()) {
@@ -206,8 +207,8 @@ public class WizardDialogBuilder {
             String name = entry.getKey();
             WizardDialog.Page<?, ?> page = entry.getValue();
 
-            if (prev != null && prev.getNext() == null) {
-                prev.setNext(name);
+            if (prev != null && prev.getNext().isEmpty()) {
+                prev.setNext(Map.of(ButtonType.NEXT, name));
             }
 
             prev = page;

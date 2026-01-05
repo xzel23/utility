@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -124,9 +125,10 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
             Page<?, ?> page = entry.getValue();
 
             // check page names
-            String next = page.getNext();
-            if (next != null && !pageNames.contains(next)) {
-                throw new IllegalStateException(String.format("Page '%s': next page doesn't exist ['%s']", name, next));
+            Map<ButtonType, String> next = page.getNext();
+            List<String> missingPages = next.values().stream().filter(o -> !o.isEmpty() && !pageNames.contains(o)).toList();
+            if (!missingPages.isEmpty()) {
+                throw new IllegalStateException(String.format("Page %s references missing pages in 'next' map: %s", name, missingPages));
             }
 
             // cancel button
@@ -139,21 +141,23 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
             }
 
             // next button
-            if (page.getNext() == null) {
+            if (next.isEmpty()) {
                 page.addButton(
                         ButtonType.FINISH,
                         p -> {},
                         InputDialogPane::validProperty
                 );
             } else {
-                page.addButton(
-                        ButtonType.NEXT,
-                        p -> {
-                            addPageToStack(Pair.of(name, page));
-                            setPage(page.getNext());
-                        },
-                        InputDialogPane::validProperty
-                );
+                next.forEach((k, v) -> {
+                    page.addButton(
+                            k,
+                            p -> {
+                                addPageToStack(Pair.of(name, page));
+                                setPage(v);
+                            },
+                            InputDialogPane::validProperty
+                    );
+                });
             }
 
             // prev button
@@ -253,7 +257,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
     public static class Page<D extends InputDialogPane<R>, R> {
         private final D pane;
         private final ResultHandler<R> resultHandler;
-        private @Nullable String next;
+        private Map<ButtonType, String> next;
         private @Nullable R result;
 
         Page(D pane, ResultHandler<R> resultHandler) {
@@ -265,12 +269,11 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
             };
         }
 
-        @Nullable
-        String getNext() {
+        Map<ButtonType, String> getNext() {
             return next;
         }
 
-        void setNext(@Nullable String next) {
+        void setNext(Map<ButtonType, String> next) {
             this.next = next;
         }
 

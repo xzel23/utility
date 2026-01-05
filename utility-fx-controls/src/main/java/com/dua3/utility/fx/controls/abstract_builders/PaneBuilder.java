@@ -2,12 +2,13 @@ package com.dua3.utility.fx.controls.abstract_builders;
 
 import com.dua3.utility.fx.controls.ButtonDef;
 import com.dua3.utility.text.MessageFormatter;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -20,7 +21,7 @@ import java.util.function.Supplier;
  */
 public abstract class PaneBuilder<D extends Pane & Supplier<R>, B extends PaneBuilder<D, B, R>, R>
         extends DialogPaneBuilder<D, B, R> {
-    private @Nullable String next;
+    private Map<ButtonType, String> next = Collections.emptyMap();
 
     private final List<ButtonDef<R>> buttons = new ArrayList<>();
 
@@ -46,7 +47,21 @@ public abstract class PaneBuilder<D extends Pane & Supplier<R>, B extends PaneBu
      */
     @SuppressWarnings("unchecked")
     public B next(String s) {
-        this.next = s;
+        this.next = Map.of(ButtonType.NEXT, s);
+        return self();
+    }
+
+    /**
+     * Sets the mapping for the "next" parameter in the builder.
+     * This method accepts a map where keys are {@code ButtonType} instances and
+     * values are their corresponding string representations. It allows setting
+     * multiple "next" parameters at once for the builder.
+     *
+     * @param next a {@code Map} containing {@code ButtonType} keys and their associated string values
+     * @return the current builder instance of type {@code B}
+     */
+    public B next(Map<ButtonType, String> next) {
+        this.next = next;
         return self();
     }
 
@@ -56,8 +71,8 @@ public abstract class PaneBuilder<D extends Pane & Supplier<R>, B extends PaneBu
      * @return an {@code Optional<String>} containing the value of the next parameter,
      *         or an empty {@code Optional} if the value is not set.
      */
-    public Optional<String> getNext() {
-        return Optional.ofNullable(next);
+    public Map<ButtonType, String> getNext() {
+        return next;
     }
 
     @Override
