@@ -2,6 +2,8 @@ package com.dua3.utility.application;
 
 import com.dua3.utility.application.imp.DarkModeDetectorInstance;
 import com.dua3.utility.application.imp.NativeHelperInstance;
+import com.dua3.utility.i18n.I18N;
+import com.dua3.utility.lang.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -9,6 +11,7 @@ import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -368,5 +371,15 @@ public final class ApplicationUtil {
             LOG.warn("Failed to show file in system file manager", e);
             return false;
         }
+    }
+
+    /**
+     * Retrieves the localized name of the file manager for the current platform.
+     *
+     * @param i18n the internationalization (I18N) instance used to fetch the localized string.
+     * @return the localized name of the file manager for the current platform.
+     */
+    public static String getLocalizedFileManagerName(I18N i18n) {
+        return i18n.get("dua3.utility.application.filemanagername." + Platform.currentPlatform().name().toLowerCase(Locale.ROOT));
     }
 }
