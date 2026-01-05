@@ -640,12 +640,16 @@ public final class KeyStoreUtil {
      *
      * @param keyStore the KeyStore to list aliases from
      * @return a set of all aliases in the KeyStore
-     * @throws GeneralSecurityException if listing aliases fails
      */
-    public static Set<String> listAliases(KeyStore keyStore) throws GeneralSecurityException {
-        Set<String> aliases = new HashSet<>();
-        keyStore.aliases().asIterator().forEachRemaining(aliases::add);
-        return aliases;
+    public static Set<String> listAliases(KeyStore keyStore) {
+        try {
+            Set<String> aliases = new HashSet<>();
+            keyStore.aliases().asIterator().forEachRemaining(aliases::add);
+            return aliases;
+        } catch (KeyStoreException e) {
+            // this should not happen if a valid keystore is passed
+            throw new IllegalStateException("Keystore not initialized", e);
+        }
     }
 
     /**
