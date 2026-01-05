@@ -239,6 +239,13 @@ could not be loaded.
 
 ## Changes
 
+### 20.4.2
+
+- Add the possibility to define the next page depending on button
+- Add desktop support to `ApplicationUtil`
+- Allow null arguments for `IoUtil.isURI()`, `isValidfileName()`, `isPortableFilename()`
+- add `MessageFormatterArgs.nonI18N()`
+
 ### 20.4.1
 
 - fix ellipsis displayed as question mark in english locales
