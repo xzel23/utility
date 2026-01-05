@@ -21,6 +21,10 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -79,13 +83,23 @@ public class FxDialogSample extends Application {
                 .initialValue(ApplicationUtil.getUiMode())
                 .maxWidth(Double.MAX_VALUE)
                 .build();
-        container.getChildren().add(comboUiMode);
+        HBox.setHgrow(comboUiMode, Priority.ALWAYS);
+        Label lblUiMode = new Label("UI Mode");
+        lblUiMode.setPrefWidth(120);
+        HBox hboxUiMode = new HBox(8, lblUiMode, comboUiMode);
+        hboxUiMode.setAlignment(Pos.CENTER_LEFT);
+        container.getChildren().add(hboxUiMode);
 
         // LabelPlacement
         ComboBox<LabelPlacement> comboLabelPlacement = new ComboBox<>(FXCollections.observableArrayList(LabelPlacement.values()));
         comboLabelPlacement.setValue(LabelPlacement.BEFORE);
         comboLabelPlacement.setMaxWidth(Double.MAX_VALUE);
-        container.getChildren().add(comboLabelPlacement);
+        HBox.setHgrow(comboLabelPlacement, Priority.ALWAYS);
+        Label lblLabelPlacement = new Label("Label Placement");
+        lblLabelPlacement.setPrefWidth(120);
+        HBox hboxLabelPlacement = new HBox(8, lblLabelPlacement, comboLabelPlacement);
+        hboxLabelPlacement.setAlignment(Pos.CENTER_LEFT);
+        container.getChildren().add(hboxLabelPlacement);
 
         // About
         container.getChildren().add(createButton("About", () -> {
