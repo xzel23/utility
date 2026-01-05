@@ -6,6 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -318,5 +321,52 @@ public final class ApplicationUtil {
      */
     public static boolean isDarkModeDetectionSupported() {
         return DarkModeDetectorInstance.get().isDarkModeDetectionSupported();
+    }
+
+    /**
+     * Checks if the current platform supports desktop integration features.
+     *
+     * @return {@code true} if the platform supports desktop integration features such as opening
+     *         files, browsing URLs, or mail composition, {@code false} otherwise
+     */
+    public static boolean isDesktopSupported() {
+        try {
+            Class<?> desktopClass = Class.forName("java.awt.Desktop");
+            Method isSupported = desktopClass.getMethod("isDesktopSupported");
+            return (boolean) isSupported.invoke(null);
+        } catch (ClassNotFoundException | NoSuchMethodException |
+                 IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Attempts to display the specified file or directory in the system's file manager.
+     * If the file or directory does not exist or the operation fails, the method returns {@code false}.
+     *
+     * @param path the {@link Path} representing the file or directory to display in the file manager. Must not be null.
+     * @return {@code true} if the operation succeeds, {@code false} otherwise.
+     */
+    public static boolean showInFileManager(Path path) {
+        File file = path.toFile();
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            Class<?> desktopClass = Class.forName("java.awt.Desktop");
+            Method getDesktop = desktopClass.getMethod("getDesktop");
+            Object desktop = getDesktop.invoke(null);
+
+            Method browseFileDir = desktopClass.getMethod("browseFileDirectory", File.class);
+            browseFileDir.invoke(desktop, file);
+            return true;
+        } catch (ClassNotFoundException e) {
+            // java.desktop not present
+            return false;
+        } catch (NoSuchMethodException | IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
+            LOG.warn("Failed to show file in system file manager", e);
+            return false;
+        }
     }
 }
