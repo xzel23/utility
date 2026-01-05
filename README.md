@@ -239,6 +239,11 @@ could not be loaded.
 
 ## Changes
 
+### 20.4.3 (in development)
+
+- fix: required field message should only be shown when a required field marker is set and should contain the configured symbol
+- allow changing the locale at runtime
+
 ### 20.4.2
 
 - Add the possibility to define the next page depending on button

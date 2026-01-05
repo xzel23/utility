@@ -7,14 +7,17 @@ import java.util.ResourceBundle;
 public class I18NInstance {
 
     private static final class Holder {
-        private static final I18N INSTANCE = initInstance();
+        private static I18N INSTANCE = null;
 
-        private static I18N initInstance() {
-            I18N i18N = I18N.getInstance();
-
-            i18N.mergeBundle(ResourceBundle.getBundle("com.dua3.utility.fx.controls.messages", i18N.getLocale()));
-
-            return i18N;
+        public static I18N getInstance() {
+            I18N i18n = I18N.getInstance();
+            if (INSTANCE != i18n) {
+                synchronized (i18n) {
+                    i18n.mergeBundle(ResourceBundle.getBundle("com.dua3.utility.fx.controls.messages", i18n.getLocale()));
+                    INSTANCE = i18n;
+                }
+            }
+            return INSTANCE;
         }
     }
 
@@ -23,6 +26,6 @@ public class I18NInstance {
     }
 
     static I18N get() {
-        return Holder.INSTANCE;
+        return Holder.getInstance();
     }
 }

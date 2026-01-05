@@ -9,6 +9,7 @@ import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.LabelPlacement;
 import com.dua3.utility.fx.controls.PromptMode;
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.FileDialogMode;
@@ -33,11 +34,15 @@ import javafx.stage.Stage;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Locale;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Sample Application.
@@ -100,6 +105,25 @@ public class FxDialogSample extends Application {
         HBox hboxLabelPlacement = new HBox(8, lblLabelPlacement, comboLabelPlacement);
         hboxLabelPlacement.setAlignment(Pos.CENTER_LEFT);
         container.getChildren().add(hboxLabelPlacement);
+
+        // Locale
+        List<Locale> locales = Stream.of(
+                        "ar", "bg", "cs", "da", "de", "el", "en", "es", "et", "fi", "fr", "ga", "hi", "hr", "hu", "id", "it", "ja", "ko", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "ru", "sk", "sl", "sv", "th", "tr", "zh", "zh_Hant"
+                )
+                .map(Locale::forLanguageTag)
+                .sorted(Comparator.comparing(Locale::getDisplayName))
+                .collect(Collectors.toList());
+        ComboBox<Locale> comboLocale = Controls.comboBox(locales)
+                .onChange(this::setLocale)
+                .initialValue(Locale.getDefault())
+                .maxWidth(Double.MAX_VALUE)
+                .build();
+        HBox.setHgrow(comboLocale, Priority.ALWAYS);
+        Label lblLocale = new Label("Locale");
+        lblLocale.setPrefWidth(120);
+        HBox hboxLocale = new HBox(8, lblLocale, comboLocale);
+        hboxLocale.setAlignment(Pos.CENTER_LEFT);
+        container.getChildren().add(hboxLocale);
 
         // About
         container.getChildren().add(createButton("About", () -> {
@@ -311,6 +335,11 @@ public class FxDialogSample extends Application {
         primaryStage.setTitle("Dialogs");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void setLocale(Locale locale) {
+        Locale.setDefault(locale);
+        I18N.resetInstance(locale);
     }
 
     private static Button createButton(String text, Runnable action) {
