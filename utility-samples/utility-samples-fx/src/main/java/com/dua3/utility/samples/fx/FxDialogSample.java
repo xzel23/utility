@@ -351,7 +351,7 @@ public class FxDialogSample extends Application {
     private void setLocale(Locale locale) {
         if (!Objects.equals(locale, Locale.getDefault())) {
             Locale.setDefault(locale);
-            I18N.resetInstance(locale);
+            I18N.init("", locale);
             PlatformHelper.runLater(() -> start((Stage) comboLocale.getScene().getWindow()));
         }
     }

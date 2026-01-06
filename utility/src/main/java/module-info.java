@@ -70,7 +70,6 @@ open module com.dua3.utility {
 
     uses FileType;
     uses I18NProvider;
-    uses I18N.Provider;
     uses FontUtilProvider;
     uses ImageUtilProvider;
 }

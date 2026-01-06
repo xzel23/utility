@@ -1,14 +1,11 @@
 package com.dua3.utility.i18n;
 
-import com.dua3.utility.lang.StreamUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
@@ -17,7 +14,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.ServiceLoader;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -51,35 +47,29 @@ import java.util.stream.Stream;
 public final class I18N {
     private static final Logger LOG = LogManager.getLogger(I18N.class);
 
-    @FunctionalInterface
-    public interface Provider {
-        I18N i18n(Locale locale);
-    }
-
     private final ResourceBundle mainBundle;
     private final Map<String, ResourceBundle> bundleMap = new HashMap<>();
 
-    private static AtomicReference<I18N> INSTANCE = new AtomicReference<>(loadAndInitInstance(Locale.getDefault()));
+    private static AtomicReference<@Nullable I18N> INSTANCE = new AtomicReference<>(initFromSPI());
 
-    private static I18N loadAndInitInstance(Locale locale) {
-        return Stream.concat(
-                        ServiceLoader.load(I18N.Provider.class).stream(),
-                        ServiceLoader.load(I18NProvider.class).stream() // TODO remove in version 21
-                )
-                .findFirst()
-                .map(provider -> {
-                    Provider i18nProvider = provider.get();
-                    LOG.debug("I18N.Provider: {}", i18nProvider.getClass().getName());
-                    return i18nProvider.i18n(locale);
-                })
-                .orElseGet(() -> {
-                    LOG.debug("no I18N.Provider found, creating empty instance");
-                    return createEmptyInstance(locale);
-                });
+    private static I18N initFromSPI() {
+        try (Stream<ServiceLoader.Provider<I18NProvider>> stream = ServiceLoader.load(I18NProvider.class).stream()) {
+            return stream
+                    .findFirst()
+                    .map(provider -> {
+                        I18NProvider i18nProvider = provider.get();
+                        LOG.debug("I18N.Provider: {}", i18nProvider.getClass().getName());
+                        return i18nProvider.i18n();
+                    })
+                    .orElseGet(() -> {
+                        LOG.debug("no I18N.Provider found, creating empty instance");
+                        return create(emptyBundle(Locale.getDefault()));
+                    });
+        }
     }
 
-    private static I18N createEmptyInstance(Locale locale) {
-        ResourceBundle bundle = new ListResourceBundle() {
+    private static ListResourceBundle emptyBundle(Locale locale) {
+        return new ListResourceBundle() {
             private static final Object[][] EMPTY_CONTENT = {};
 
             @Override
@@ -92,7 +82,6 @@ public final class I18N {
                 return locale;
             }
         };
-        return create(bundle);
     }
 
     /**
@@ -100,11 +89,17 @@ public final class I18N {
      * @return the singleton instance.
      */
     public static I18N getInstance() {
-        return INSTANCE.get();
+        return INSTANCE.updateAndGet(inst -> inst == null ? initFromSPI() : inst);
     }
 
-    public static void resetInstance(Locale locale) {
-        INSTANCE.set(loadAndInitInstance(locale));
+    /**
+     * Initializes the global instance of the I18N class using the specified base name and locale.
+     *
+     * @param baseName The base name of the resource bundle to be loaded, use "" if no bundle is to be loaded.
+     * @param locale   The locale to be used for localization.
+     */
+    public static void init(String baseName, Locale locale) {
+        INSTANCE.set(create(baseName, locale));
     }
 
     /**
@@ -116,7 +111,7 @@ public final class I18N {
      */
     public static I18N create(String baseName, Locale locale) {
         LOG.trace("creating an instance for {} with requested locale {}", baseName, locale);
-        ResourceBundle bundle = getResourceBundle(baseName, locale);
+        ResourceBundle bundle = baseName.isEmpty() ? emptyBundle(locale) : getResourceBundle(baseName, locale);
         return new I18N(bundle);
     }
 

@@ -241,6 +241,7 @@ could not be loaded.
 
 ### 20.4.3 (in development)
 
+- IMPORTANT: deprecate for removal the I18NProvider interface; use `I18N.init(basename, locale)` instead
 - fix: required field message should only be shown when a required field marker is set and should contain the configured symbol
 - allow changing the locale at runtime
 

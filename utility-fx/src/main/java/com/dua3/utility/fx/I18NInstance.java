@@ -1,8 +1,7 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.i18n.I18N;
-
-import java.util.ResourceBundle;
+import com.dua3.utility.i18n.I18NProxy;
 
 /**
  * I18NInstance ensures that bundles from the current library have been loaded when
@@ -10,20 +9,9 @@ import java.util.ResourceBundle;
  */
 public final class I18NInstance {
 
-    private static final class Holder {
-        private static final I18N INSTANCE = initInstance();
-
-        private static I18N initInstance() {
-            I18N i18N = I18N.getInstance();
-
-            i18N.mergeBundle(ResourceBundle.getBundle("com.dua3.utility.fx.messages", i18N.getLocale()));
-
-            return i18N;
-        }
-    }
+    private static final I18NProxy proxy = new I18NProxy("com.dua3.utility.fx.messages");
 
     private I18NInstance() {
-        // Private constructor to prevent instantiation
     }
 
     /**
@@ -33,6 +21,6 @@ public final class I18NInstance {
      * @return the singleton {@link I18N} instance
      */
     public static I18N get() {
-        return Holder.INSTANCE;
+        return proxy.get();
     }
 }

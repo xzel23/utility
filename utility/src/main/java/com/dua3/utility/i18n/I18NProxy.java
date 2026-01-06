@@ -1,0 +1,34 @@
+package com.dua3.utility.i18n;
+
+import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * I18NInstance ensures that bundles from the current library have been loaded when
+ * accessing the globale {@link I18N} instance.
+ */
+public final class I18NProxy {
+
+    private final String baseName;
+    private final AtomicReference<I18N> instance = new AtomicReference<>();
+
+    public I18NProxy(String baseName) {
+        this.baseName = baseName;
+    }
+
+    /**
+     * Provides access to the shared {@link I18N} instance of the application and ensures local bundles have been
+     * loaded before access.
+     *
+     * @return the singleton {@link I18N} instance
+     */
+    public I18N get() {
+        return instance.updateAndGet(inst -> {
+            I18N globalInstance = I18N.getInstance();
+            if (inst != globalInstance) {
+                globalInstance.mergeBundle(ResourceBundle.getBundle(baseName, globalInstance.getLocale()));
+            }
+            return globalInstance;
+        });
+    }
+}

@@ -1,31 +1,27 @@
 package com.dua3.utility.samples.fx;
 
 import com.dua3.utility.i18n.I18N;
+import com.dua3.utility.i18n.I18NProxy;
 
-import java.util.ResourceBundle;
+/**
+ * I18NInstance ensures that bundles from the current library have been loaded when
+ * accessing the globale {@link I18N} instance.
+ */
+public final class I18NInstance {
 
-public class I18NInstance {
-
-    private static final class Holder {
-        private static I18N INSTANCE = null;
-
-        public static I18N getInstance() {
-            I18N i18n = I18N.getInstance();
-            if (INSTANCE != i18n) {
-                synchronized (i18n) {
-                    i18n.mergeBundle(ResourceBundle.getBundle("com.dua3.utility.samples.fx.messages", i18n.getLocale()));
-                    INSTANCE = i18n;
-                }
-            }
-            return INSTANCE;
-        }
-    }
+    private static final I18NProxy proxy = new I18NProxy("com.dua3.utility.samples.fx.messages");
 
     private I18NInstance() {
-        // Private constructor to prevent instantiation
     }
 
-    static I18N get() {
-        return Holder.getInstance();
+    /**
+     * Provides access to the shared {@link I18N} instance of the application and ensures local bundles have been
+     * loaded before access.
+     *
+     * @return the singleton {@link I18N} instance
+     */
+    public static I18N get() {
+        return proxy.get();
     }
 }
+
