@@ -94,12 +94,26 @@ public final class I18N {
 
     /**
      * Initializes the global instance of the I18N class using the specified base name and locale.
+     * <p>
+     * This method should only be called from a single module and only once at program start, unless, for
+     * example, the locale is changed at runtime.
+     * <p>
+     * <strong>Libraries should NOT call init()!</strong>
+     * <p>
+     * It is the responsibility of the application to initialize I18N
+     * with a main bundle and a locale supported by the application.
+     * <p>
+     * Libraries should implement an accessor that automatically handles changes of the global instance
+     * by automatically adding the library bundles.
+     * Implementation is shown in {@link com.dua3.utility.I18NInstance}. The class uses {@link I18NProxy}
+     * to automatically add library bundles when the global I18N instance changes.
      *
      * @param baseName The base name of the resource bundle to be loaded, use "" if no bundle is to be loaded.
      * @param locale   The locale to be used for localization.
+     * @return The updated global instance of the I18N class.
      */
-    public static void init(String baseName, Locale locale) {
-        INSTANCE.set(create(baseName, locale));
+    public static I18N init(String baseName, Locale locale) {
+        return INSTANCE.updateAndGet(i18n -> create(baseName, locale));
     }
 
     /**
