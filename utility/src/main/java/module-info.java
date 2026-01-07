@@ -5,7 +5,6 @@
 
 import com.dua3.utility.data.ImageUtilProvider;
 import com.dua3.utility.i18n.I18NProvider;
-import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.text.FontUtilProvider;
 import org.jspecify.annotations.NullMarked;
