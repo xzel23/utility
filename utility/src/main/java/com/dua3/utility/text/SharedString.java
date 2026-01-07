@@ -9,7 +9,6 @@ import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 
 import java.util.Objects;
-import java.util.stream.IntStream;
 
 /**
  * A class that provides a shared view of a portion of a base string, implementing
@@ -74,11 +73,18 @@ public final class SharedString implements CharSequence {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof SharedString anotherString) {
-            int n = length();
-            if (n == anotherString.length()) {
-                return IntStream.range(0, n).noneMatch(i -> anotherString.charAt(i) != charAt(i));
+        if (!(obj instanceof SharedString anotherString)) {
+            return false;
+        }
+
+        int n = length();
+        if (n == anotherString.length()) {
+            for (int i = 0; i < n; i++) {
+                if (anotherString.charAt(i) != charAt(i)) {
+                    return false;
+                }
             }
+            return true;
         }
         return false;
     }

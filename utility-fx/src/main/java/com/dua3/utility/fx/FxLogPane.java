@@ -2,8 +2,8 @@ package com.dua3.utility.fx;
 
 import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.lang.LangUtil;
-import org.jspecify.annotations.Nullable;
 import com.dua3.utility.logging.DefaultLogEntryFilter;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogLevel;

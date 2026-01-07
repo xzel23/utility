@@ -1,6 +1,7 @@
 package com.dua3.utility.samples.log4j;
 
 import com.dua3.utility.logging.DefaultLogEntryFilter;
+import com.dua3.utility.logging.LogFilter;
 import com.dua3.utility.logging.LogEntryFilter;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;

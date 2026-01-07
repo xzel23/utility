@@ -5,6 +5,10 @@ import com.dua3.utility.logging.backend.jul.JulHandler;
 import org.apache.logging.log4j.LogManager;
 import org.jspecify.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
@@ -50,6 +54,10 @@ public final class LogUtil {
 
         // JCL
         wireJcl();
+
+        getLoggingProperties().ifPresent(properties ->
+                LoggingConfigurator.configure(properties, globalDispatcher::setFilter, globalDispatcher::addLogEntryHandler)
+        );
     }
 
     private static void wireJul() {
@@ -97,4 +105,21 @@ public final class LogUtil {
         assert globalDispatcher != null;
         return globalDispatcher;
     }
+
+
+    private static Optional<Properties> getLoggingProperties() {
+        Properties properties = new Properties();
+        try (InputStream in = ClassLoader.getSystemResourceAsStream("logging.properties")) {
+            if (in == null) {
+                return Optional.empty();
+            } else {
+                properties.load(in);
+                return Optional.of(properties);
+            }
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
+            return Optional.empty();
+        }
+    }
+
 }

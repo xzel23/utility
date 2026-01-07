@@ -55,4 +55,23 @@ public final class SharableString implements CharSequence {
     public boolean equals(@Nullable Object obj) {
         return this == obj || (obj instanceof SharableString ss) && (ss.base.equals(base));
     }
+
+    /**
+     * Finds the first occurrence of a specified character in the sequence starting
+     * from a given index.
+     *
+     * @param c the character to locate within the sequence
+     * @param start the starting index from which the search begins
+     * @return the index of the first occurrence of the specified character, or -1
+     *         if the character is not found
+     */
+    public int indexOf(char c, int start) {
+        final int haystackLength = length();
+        for (int i = start; i < haystackLength; i++) {
+            if (charAt(i) == c) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }
