@@ -61,6 +61,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
 <ol class="toc-list">
 <li><a href="#%3Cinit%3E(java.lang.String,java.lang.String,java.time.Instant,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.Throwable,java.lang.String)" tabindex="0">SimpleLogEntry(String, String, Instant, LogLevel, String, Throwable, String)</a></li>
+<li><a href="#%3Cinit%3E(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" tabindex="0">SimpleLogEntry(Instant, String, LogLevel, String, String, String, Throwable)</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
@@ -68,13 +69,13 @@ loadScripts(document, 'script');</script>
 <li><a href="#toString()" tabindex="0">toString()</a></li>
 <li><a href="#hashCode()" tabindex="0">hashCode()</a></li>
 <li><a href="#equals(java.lang.Object)" tabindex="0">equals(Object)</a></li>
-<li><a href="#message()" tabindex="0">message()</a></li>
-<li><a href="#loggerName()" tabindex="0">loggerName()</a></li>
 <li><a href="#time()" tabindex="0">time()</a></li>
+<li><a href="#loggerName()" tabindex="0">loggerName()</a></li>
 <li><a href="#level()" tabindex="0">level()</a></li>
 <li><a href="#marker()" tabindex="0">marker()</a></li>
-<li><a href="#throwable()" tabindex="0">throwable()</a></li>
+<li><a href="#message()" tabindex="0">message()</a></li>
 <li><a href="#location()" tabindex="0">location()</a></li>
+<li><a href="#throwable()" tabindex="0">throwable()</a></li>
 </ol>
 </li>
 </ol>
@@ -92,13 +93,13 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-message">message</span></code> - the message of the log entry</dd>
-<dd><code><span id="param-loggerName">loggerName</span></code> - the name of the logger associated with the log entry</dd>
 <dd><code><span id="param-time">time</span></code> - the timestamp of the log entry as an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link"><code>Instant</code></a></dd>
+<dd><code><span id="param-loggerName">loggerName</span></code> - the name of the logger associated with the log entry</dd>
 <dd><code><span id="param-level">level</span></code> - the <a href="LogLevel.html" title="enum class in com.dua3.utility.logging"><code>LogLevel</code></a> describing the severity of the log entry</dd>
 <dd><code><span id="param-marker">marker</span></code> - an identifier or additional metadata associated with the log entry</dd>
-<dd><code><span id="param-throwable">throwable</span></code> - the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link"><code>Throwable</code></a> associated with the log entry, or null if no throwable is present</dd>
+<dd><code><span id="param-message">message</span></code> - the message of the log entry</dd>
 <dd><code><span id="param-location">location</span></code> - the source location associated with the log entry, or null if no location is specified</dd>
+<dd><code><span id="param-throwable">throwable</span></code> - the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link"><code>Throwable</code></a> associated with the log entry, or null if no throwable is present</dd>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
@@ -106,7 +107,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">SimpleLogEntry</span>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;time, <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;marker, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;throwable, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location)
+<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">SimpleLogEntry</span>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;time, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName, <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;marker, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;throwable)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></span></div>
 <div class="block">Represents a single log entry containing details about a logging event.
@@ -132,6 +133,16 @@ of a log entry with properties such as message, logger name, time, log level, ma
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;throwable,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location)</code></div>
 <div class="col-last even-row-color">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span></div>
+</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" class="member-name-link">SimpleLogEntry</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;time,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
+ <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;marker,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;throwable)</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Creates an instance of a <code>SimpleLogEntry</code> record class.</div>
 </div>
 </div>
@@ -163,7 +174,7 @@ of a log entry with properties such as message, logger name, time, log level, ma
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-level"><code>level</code></a> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#location()" class="member-name-link">location</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-location"><code>location</code></a> record component.</div>
@@ -222,23 +233,39 @@ of a log entry with properties such as message, logger name, time, log level, ma
 <section class="detail" id="&lt;init&gt;(java.lang.String,java.lang.String,java.time.Instant,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.Throwable,java.lang.String)">
 <h3>SimpleLogEntry</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SimpleLogEntry</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public</span>&nbsp;<span class="element-name">SimpleLogEntry</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;time,
  <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;marker,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;throwable,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)">
+<h3>SimpleLogEntry</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SimpleLogEntry</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;time,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
+ <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;marker,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;throwable)</span></div>
 <div class="block">Creates an instance of a <code>SimpleLogEntry</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>message</code> - the value for the <a href="#param-message"><code>message</code></a> record component</dd>
-<dd><code>loggerName</code> - the value for the <a href="#param-loggerName"><code>loggerName</code></a> record component</dd>
 <dd><code>time</code> - the value for the <a href="#param-time"><code>time</code></a> record component</dd>
+<dd><code>loggerName</code> - the value for the <a href="#param-loggerName"><code>loggerName</code></a> record component</dd>
 <dd><code>level</code> - the value for the <a href="#param-level"><code>level</code></a> record component</dd>
 <dd><code>marker</code> - the value for the <a href="#param-marker"><code>marker</code></a> record component</dd>
-<dd><code>throwable</code> - the value for the <a href="#param-throwable"><code>throwable</code></a> record component</dd>
+<dd><code>message</code> - the value for the <a href="#param-message"><code>message</code></a> record component</dd>
 <dd><code>location</code> - the value for the <a href="#param-location"><code>location</code></a> record component</dd>
+<dd><code>throwable</code> - the value for the <a href="#param-throwable"><code>throwable</code></a> record component</dd>
 </dl>
 </div>
 </section>
@@ -299,16 +326,16 @@ of a log entry with properties such as message, logger name, time, log level, ma
 </section>
 </li>
 <li>
-<section class="detail" id="message()">
-<h3>message</h3>
+<section class="detail" id="time()">
+<h3>time</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">message</span>()</div>
-<div class="block">Returns the value of the <a href="#param-message"><code>message</code></a> record component.</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a></span>&nbsp;<span class="element-name">time</span>()</div>
+<div class="block">Returns the value of the <a href="#param-time"><code>time</code></a> record component.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="LogEntry.html#message()">message</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></code></dd>
+<dd><code><a href="LogEntry.html#time()">time</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></code></dd>
 <dt>Returns:</dt>
-<dd>the value of the <a href="#param-message"><code>message</code></a> record component</dd>
+<dd>the value of the <a href="#param-time"><code>time</code></a> record component</dd>
 </dl>
 </div>
 </section>
@@ -324,21 +351,6 @@ of a log entry with properties such as message, logger name, time, log level, ma
 <dd><code><a href="LogEntry.html#loggerName()">loggerName</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></code></dd>
 <dt>Returns:</dt>
 <dd>the value of the <a href="#param-loggerName"><code>loggerName</code></a> record component</dd>
-</dl>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="time()">
-<h3>time</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a></span>&nbsp;<span class="element-name">time</span>()</div>
-<div class="block">Returns the value of the <a href="#param-time"><code>time</code></a> record component.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="LogEntry.html#time()">time</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></code></dd>
-<dt>Returns:</dt>
-<dd>the value of the <a href="#param-time"><code>time</code></a> record component</dd>
 </dl>
 </div>
 </section>
@@ -374,6 +386,36 @@ of a log entry with properties such as message, logger name, time, log level, ma
 </section>
 </li>
 <li>
+<section class="detail" id="message()">
+<h3>message</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">message</span>()</div>
+<div class="block">Returns the value of the <a href="#param-message"><code>message</code></a> record component.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="LogEntry.html#message()">message</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></code></dd>
+<dt>Returns:</dt>
+<dd>the value of the <a href="#param-message"><code>message</code></a> record component</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="location()">
+<h3>location</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">location</span>()</div>
+<div class="block">Returns the value of the <a href="#param-location"><code>location</code></a> record component.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="LogEntry.html#location()">location</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></code></dd>
+<dt>Returns:</dt>
+<dd>the value of the <a href="#param-location"><code>location</code></a> record component</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="throwable()">
 <h3>throwable</h3>
 <div class="horizontal-scroll">
@@ -384,21 +426,6 @@ of a log entry with properties such as message, logger name, time, log level, ma
 <dd><code><a href="LogEntry.html#throwable()">throwable</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></code></dd>
 <dt>Returns:</dt>
 <dd>the value of the <a href="#param-throwable"><code>throwable</code></a> record component</dd>
-</dl>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="location()">
-<h3>location</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">location</span>()</div>
-<div class="block">Returns the value of the <a href="#param-location"><code>location</code></a> record component.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="LogEntry.html#location()">location</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></code></dd>
-<dt>Returns:</dt>
-<dd>the value of the <a href="#param-location"><code>location</code></a> record component</dd>
 </dl>
 </div>
 </section>

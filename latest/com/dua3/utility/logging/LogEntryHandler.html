@@ -60,6 +60,8 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#handleEntry(com.dua3.utility.logging.LogEntry)" tabindex="0">handleEntry(LogEntry)</a></li>
+<li><a href="#isEnabled(com.dua3.utility.logging.LogLevel)" tabindex="0">isEnabled(LogLevel)</a></li>
+<li><a href="#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" tabindex="0">handle(Instant, String, LogLevel, String, String, String, Throwable)</a></li>
 </ol>
 </li>
 </ol>
@@ -92,16 +94,34 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#handleEntry(com.dua3.utility.logging.LogEntry)" class="member-name-link">handleEntry</a><wbr>(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;entry)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
+ <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Handles a log entry.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#handleEntry(com.dua3.utility.logging.LogEntry)" class="member-name-link">handleEntry</a><wbr>(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;entry)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)"><code>handle(Instant, String, LogLevel, String, String, String, Throwable)</code></a></div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isEnabled(com.dua3.utility.logging.LogLevel)" class="member-name-link">isEnabled</a><wbr>(<a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Determines whether logging is enabled for a specific log level.</div>
 </div>
 </div>
 </div>
@@ -121,11 +141,55 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="handleEntry(com.dua3.utility.logging.LogEntry)">
 <h3>handleEntry</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">handleEntry</span><wbr><span class="parameters">(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;entry)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="return-type">void</span>&nbsp;<span class="element-name">handleEntry</span><wbr><span class="parameters">(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;entry)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)"><code>handle(Instant, String, LogLevel, String, String, String, Throwable)</code></a></div>
+</div>
 <div class="block">Handles a log entry.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>entry</code> - the log entry to be handled</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="isEnabled(com.dua3.utility.logging.LogLevel)">
+<h3>isEnabled</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isEnabled</span><wbr><span class="parameters">(<a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl)</span></div>
+<div class="block">Determines whether logging is enabled for a specific log level.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>lvl</code> - the log level to check</dd>
+<dt>Returns:</dt>
+<dd><code>true</code> if logging is enabled for the specified log level, otherwise <code>false</code></dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)">
+<h3>handle</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handle</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
+ <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</span></div>
+<div class="block">Handles a log entry.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>instant</code> - the timestamp of the log entry</dd>
+<dd><code>loggerName</code> - the name of the logger</dd>
+<dd><code>lvl</code> - the log level of the log entry</dd>
+<dd><code>mrk</code> - the marker associated with the log entry, or <code>null</code> if none</dd>
+<dd><code>msg</code> - the message of the log entry</dd>
+<dd><code>location</code> - the location in the code where the log entry was created</dd>
+<dd><code>t</code> - the throwable associated with the log entry, or <code>null</code> if none</dd>
 </dl>
 </div>
 </section>

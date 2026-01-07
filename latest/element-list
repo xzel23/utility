@@ -17,6 +17,11 @@ com.dua3.utility.i18n
 com.dua3.utility.io
 com.dua3.utility.lang
 com.dua3.utility.logging
+com.dua3.utility.logging.backend.jcl
+com.dua3.utility.logging.backend.jul
+com.dua3.utility.logging.backend.log4j
+com.dua3.utility.logging.backend.slf4j
+com.dua3.utility.logging.backend.universal
 com.dua3.utility.logging.log4j
 com.dua3.utility.logging.slf4j
 com.dua3.utility.math
