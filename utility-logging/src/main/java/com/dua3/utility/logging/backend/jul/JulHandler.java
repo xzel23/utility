@@ -7,6 +7,13 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
+/**
+ * Custom Java Util Logging (JUL) {@link Handler} implementation that dispatches log records to
+ * the global {@link UniversalDispatcher}.
+ * <p>
+ * <strong>Note:</strong> This class filters out messages from {@code java.*}, {@code javax.*},
+ * and {@code sun.*} packages with {@link Level#FINE} or below.
+ */
 public class JulHandler extends Handler {
 
     private static final UniversalDispatcher DISPATCHER = UniversalDispatcher.getInstance();
