@@ -48,6 +48,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -73,6 +74,7 @@ import java.util.function.LongFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -1974,6 +1976,18 @@ public final class LangUtil {
     @SafeVarargs
     public static <T extends Comparable<T>> ImmutableSortedListSet<T> asUnmodifiableSortedListSet(T... elements) {
         return ImmutableListBackedSortedSet.ofNaturalOrder(elements);
+    }
+
+    /**
+     * Converts the given {@code Properties} object into an unmodifiable {@code Map<String, String>}.
+     *
+     * @param properties the properties object to be converted; must not be null
+     * @return an unmodifiable map containing the same entries as the provided properties object
+     */
+    public static Map<String, String> asUnmodifiableMap(Properties properties) {
+        Map<String, String> map = LinkedHashMap.newLinkedHashMap(properties.size());
+        properties.forEach((k, v) -> map.put(String.valueOf(k), String.valueOf(v)));
+        return Collections.unmodifiableMap(map);
     }
 
     /**
