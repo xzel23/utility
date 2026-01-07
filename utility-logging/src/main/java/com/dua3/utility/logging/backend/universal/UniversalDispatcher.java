@@ -111,6 +111,16 @@ public class UniversalDispatcher implements LogEntryDispatcher {
     }
 
     /**
+     * Checks if logging is enabled for the provided SLF4J log level.
+     *
+     * @param level the SLF4J logging level to check
+     * @return true if logging is enabled for the specified level, false otherwise
+     */
+    public boolean isEnabledSlf4j(org.slf4j.event.Level level) {
+        return true;
+    }
+
+    /**
      * Determines if logging is enabled for a specific {@link LogLevel}.
      * This method evaluates the provided log level to determine whether
      * logging should proceed.

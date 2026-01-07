@@ -1,6 +1,5 @@
 package com.dua3.utility.logging.backend.slf4j;
 
-import com.dua3.utility.logging.LogEntryHandler;
 import com.dua3.utility.logging.backend.universal.UniversalDispatcher;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Marker;
@@ -9,8 +8,6 @@ import org.slf4j.helpers.AbstractLogger;
 
 import java.io.NotSerializableException;
 import java.io.Serial;
-import java.lang.ref.WeakReference;
-import java.util.List;
 
 /**
  * This class represents a logger implementation using the SLF4J logging framework. It extends the AbstractLogger class.
@@ -26,39 +23,14 @@ public class LoggerSlf4j extends AbstractLogger {
 
     private static final UniversalDispatcher DISPATCHER = UniversalDispatcher.getInstance();
 
-    private static Level defaultLevel = Level.INFO;
-
-    private final transient List<? extends WeakReference<LogEntryHandler>> handlers;
-    private @Nullable Level level;
-
     /**
      * Constructs a new LoggerSlf4j instance with the specified name and handlers.
      *
      * @param name     the name of the logger
-     * @param handlers a list of handlers for processing log entries
      */
-    public LoggerSlf4j(String name, List<? extends WeakReference<LogEntryHandler>> handlers) {
+    public LoggerSlf4j(String name) {
         //noinspection AssignmentToSuperclassField - API restriction; it is the only way to set the logger name
         super.name = name;
-        this.handlers = handlers;
-    }
-
-    /**
-     * Returns the default log level for the logger.
-     *
-     * @return the default log level
-     */
-    public static Level getDefaultLevel() {
-        return defaultLevel;
-    }
-
-    /**
-     * Sets the default logging level.
-     *
-     * @param level the new default logging level
-     */
-    public static void setDefaultLevel(Level level) {
-        defaultLevel = level;
     }
 
     @Override
@@ -68,9 +40,7 @@ public class LoggerSlf4j extends AbstractLogger {
 
     @Override
     protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String messagePattern, @Nullable Object @Nullable [] arguments, @Nullable Throwable throwable) {
-        if (level.toInt() >= defaultLevel.toInt()) {
-            DISPATCHER.dispatchSlf4j(name, level, marker, messagePattern, arguments, throwable);
-        }
+        DISPATCHER.dispatchSlf4j(name, level, marker, messagePattern, arguments, throwable);
     }
 
     /**
@@ -82,7 +52,7 @@ public class LoggerSlf4j extends AbstractLogger {
      * @return true if the provided logging level is enabled, false otherwise
      */
     public boolean isEnabled(Level level) {
-        return getLevel().toInt() <= level.toInt();
+        return DISPATCHER.isEnabledSlf4j(level);
     }
 
     /**
@@ -146,24 +116,6 @@ public class LoggerSlf4j extends AbstractLogger {
     @Override
     public boolean isErrorEnabled(@Nullable Marker marker) {
         return isEnabled(marker, Level.ERROR);
-    }
-
-    /**
-     * Retrieves the current logging level. If not explicitly set, returns the default level.
-     *
-     * @return the current logging level if set, otherwise the default logging level
-     */
-    public Level getLevel() {
-        return level != null ? level : defaultLevel;
-    }
-
-    /**
-     * Sets the logging level for this logger.
-     *
-     * @param level the new logging level to be set
-     */
-    public void setLevel(Level level) {
-        this.level = level;
     }
 
     /**
