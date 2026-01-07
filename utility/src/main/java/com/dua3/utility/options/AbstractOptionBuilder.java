@@ -74,7 +74,7 @@ public abstract class AbstractOptionBuilder<T, B extends AbstractOptionBuilder<T
      * @param handler the handler function
      * @return this builder instance
      */
-    protected final B handler(Consumer<T> handler) {
+    public final B handler(Consumer<T> handler) {
         this.handler = handler;
         return self();
     }
