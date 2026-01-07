@@ -21,6 +21,7 @@ include("utility-logging")
 include("utility-logging-slf4j")
 include("utility-logging-log4j")
 include("utility-samples")
+include("utility-samples:utility-samples-commonlogger")
 include("utility-samples:utility-samples-slf4j")
 include("utility-samples:utility-samples-log4j")
 include("utility-samples:utility-samples-graphics")
@@ -51,6 +52,8 @@ dependencyResolutionManagement {
             plugin("versions", "com.github.ben-manes.versions").version("0.53.0")
             plugin("native", "org.graalvm.buildtools.native").version("0.11.3")
 
+            version("utility-bom", projectVersion)
+
             version("atlantafx", "2.1.0")
             version("h2database", "2.4.240")
             version("ikonli", "12.4.0")
@@ -64,7 +67,7 @@ dependencyResolutionManagement {
             version("slf4j", "2.0.17")
             version("spotbugs", "4.9.8")
             version("bouncycastle", "1.83")
-            version("utility-bom", projectVersion)
+            version("commons-logging", "1.3.4")
 
             library("atlantafx", "io.github.mkpaz", "atlantafx-base").versionRef("atlantafx")
 
@@ -98,6 +101,8 @@ dependencyResolutionManagement {
             library("h2", "com.h2database", "h2").versionRef("h2database")
             library("bouncycastle-provider", "org.bouncycastle", "bcprov-jdk18on").versionRef("bouncycastle")
             library("bouncycastle-pkix", "org.bouncycastle", "bcpkix-jdk18on").versionRef("bouncycastle")
+
+            library("commons-logging", "commons-logging", "commons-logging").versionRef("commons-logging")
         }
     }
 

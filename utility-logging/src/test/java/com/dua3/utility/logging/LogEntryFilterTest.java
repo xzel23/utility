@@ -19,7 +19,7 @@ class LogEntryFilterTest {
         LogEntryFilter filter = LogEntryFilter.ALL_PASS_FILTER;
 
         // Create a test log entry
-        LogEntry entry = new SimpleLogEntry("Test message", "TestLogger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        LogEntry entry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "TEST_MARKER", "Test message", "", null);
 
         // Test that the filter passes all entries
         assertTrue(filter.test(entry), "ALL_PASS_FILTER should pass all entries");
@@ -31,7 +31,7 @@ class LogEntryFilterTest {
         LogEntryFilter filter = LogEntryFilter.allPass();
 
         // Create a test log entry
-        LogEntry entry = new SimpleLogEntry("Test message", "TestLogger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        LogEntry entry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "TEST_MARKER", "Test message", "", null);
 
         // Test that the filter passes all entries
         assertTrue(filter.test(entry), "allPass() should return a filter that passes all entries");
@@ -46,15 +46,15 @@ class LogEntryFilterTest {
         LogEntryFilter filter = entry -> entry.level().ordinal() >= LogLevel.INFO.ordinal();
 
         // Create test log entries with different levels
-        LogEntry traceEntry = new SimpleLogEntry("Trace message", "TestLogger", Instant.now(), LogLevel.TRACE, "TEST_MARKER", null, null);
+        LogEntry traceEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.TRACE, "TEST_MARKER", "Trace message", "", null);
 
-        LogEntry debugEntry = new SimpleLogEntry("Debug message", "TestLogger", Instant.now(), LogLevel.DEBUG, "TEST_MARKER", null, null);
+        LogEntry debugEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.DEBUG, "TEST_MARKER", "Debug message", "", null);
 
-        LogEntry infoEntry = new SimpleLogEntry("Info message", "TestLogger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        LogEntry infoEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "TEST_MARKER", "Info message", "", null);
 
-        LogEntry warnEntry = new SimpleLogEntry("Warn message", "TestLogger", Instant.now(), LogLevel.WARN, "TEST_MARKER", null, null);
+        LogEntry warnEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.WARN, "TEST_MARKER", "Warn message", "", null);
 
-        LogEntry errorEntry = new SimpleLogEntry("Error message", "TestLogger", Instant.now(), LogLevel.ERROR, "TEST_MARKER", null, null);
+        LogEntry errorEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.ERROR, "TEST_MARKER", "Error message", "", null);
 
         // Test the filter
         assertFalse(filter.test(traceEntry), "Filter should not pass TRACE entries");

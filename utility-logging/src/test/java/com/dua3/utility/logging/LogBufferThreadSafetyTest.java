@@ -342,13 +342,9 @@ class LogBufferThreadSafetyTest {
      */
     private static LogEntry createTestLogEntry(String message) {
         return new SimpleLogEntry(
-                message,
-                "TestLogger",
-                Instant.now(),
-                LogLevel.INFO,
-                "",  // Empty string instead of null for marker
-                null,
-                null
+                Instant.now(), "TestLogger", LogLevel.INFO, "", message,
+                // Empty string instead of null for marker
+                "", null
         );
     }
 }

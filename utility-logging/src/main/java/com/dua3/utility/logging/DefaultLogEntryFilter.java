@@ -1,5 +1,8 @@
 package com.dua3.utility.logging;
 
+import org.jspecify.annotations.Nullable;
+
+import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiPredicate;
 
@@ -107,17 +110,22 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     public boolean test(LogEntry logEntry) {
-        if (logEntry.level().ordinal() < level.ordinal()) {
+        return test(logEntry.time(), logEntry.loggerName(), logEntry.level(), logEntry.marker(), logEntry.message(), logEntry.location(), logEntry.throwable());
+    }
+
+    @Override
+    public boolean test(Instant instant, String loggerName, LogLevel lvl, String mrk, String msg, String location, @Nullable Throwable t) {
+        if (lvl.ordinal() < level.ordinal()) {
             return false;
         }
-
-        boolean isLoggerShown = knownLoggers.computeIfAbsent(logEntry.loggerName(), loggerName -> filterLoggerName.test(logEntry.loggerName(), logEntry.level()));
+        boolean isLoggerShown = knownLoggers.computeIfAbsent(loggerName, name -> filterLoggerName.test(name, lvl));
         if (!isLoggerShown) {
             return false;
         }
 
-        return filterText.test(logEntry.message(), logEntry.level());
+        return filterText.test(msg, lvl);
     }
 
     /**

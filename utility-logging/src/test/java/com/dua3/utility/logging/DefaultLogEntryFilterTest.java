@@ -30,15 +30,15 @@ class DefaultLogEntryFilterTest {
         filter = new DefaultLogEntryFilter();
 
         // Create test log entries with different levels
-        traceEntry = new SimpleLogEntry("Trace message", "com.example.TestLogger", Instant.now(), LogLevel.TRACE, "TEST_MARKER", null, null);
+        traceEntry = new SimpleLogEntry(Instant.now(), "com.example.TestLogger", LogLevel.TRACE, "TEST_MARKER", "Trace message", "", null);
 
-        debugEntry = new SimpleLogEntry("Debug message", "com.example.TestLogger", Instant.now(), LogLevel.DEBUG, "TEST_MARKER", null, null);
+        debugEntry = new SimpleLogEntry(Instant.now(), "com.example.TestLogger", LogLevel.DEBUG, "TEST_MARKER", "Debug message", "", null);
 
-        infoEntry = new SimpleLogEntry("Info message", "com.example.TestLogger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        infoEntry = new SimpleLogEntry(Instant.now(), "com.example.TestLogger", LogLevel.INFO, "TEST_MARKER", "Info message", "", null);
 
-        warnEntry = new SimpleLogEntry("Warn message", "com.example.TestLogger", Instant.now(), LogLevel.WARN, "TEST_MARKER", null, null);
+        warnEntry = new SimpleLogEntry(Instant.now(), "com.example.TestLogger", LogLevel.WARN, "TEST_MARKER", "Warn message", "", null);
 
-        errorEntry = new SimpleLogEntry("Error message", "com.example.TestLogger", Instant.now(), LogLevel.ERROR, "TEST_MARKER", null, null);
+        errorEntry = new SimpleLogEntry(Instant.now(), "com.example.TestLogger", LogLevel.ERROR, "TEST_MARKER", "Error message", "", null);
     }
 
     @Test
@@ -72,11 +72,11 @@ class DefaultLogEntryFilterTest {
         assertTrue(customFilter.test(errorEntry), "Filter should pass ERROR entries");
 
         // Test filtering by logger name
-        LogEntry entryWithDifferentLogger = new SimpleLogEntry("Info message", "org.other.Logger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        LogEntry entryWithDifferentLogger = new SimpleLogEntry(Instant.now(), "org.other.Logger", LogLevel.INFO, "TEST_MARKER", "Info message", "", null);
         assertFalse(customFilter.test(entryWithDifferentLogger), "Filter should not pass entries with non-matching logger name");
 
         // Test filtering by message text
-        LogEntry entryWithDifferentText = new SimpleLogEntry("Different text", "com.example.TestLogger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        LogEntry entryWithDifferentText = new SimpleLogEntry(Instant.now(), "com.example.TestLogger", LogLevel.INFO, "TEST_MARKER", "Different text", "", null);
         assertFalse(customFilter.test(entryWithDifferentText), "Filter should not pass entries with non-matching message text");
     }
 
@@ -115,7 +115,7 @@ class DefaultLogEntryFilterTest {
         // Test filtering by the new logger name filter
         assertTrue(filter.test(infoEntry), "Filter should pass entries with matching logger name");
 
-        LogEntry entryWithDifferentLogger = new SimpleLogEntry("Info message", "org.other.Logger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        LogEntry entryWithDifferentLogger = new SimpleLogEntry(Instant.now(), "org.other.Logger", LogLevel.INFO, "TEST_MARKER", "Info message", "", null);
         assertFalse(filter.test(entryWithDifferentLogger), "Filter should not pass entries with non-matching logger name");
     }
 
@@ -135,7 +135,7 @@ class DefaultLogEntryFilterTest {
         // Test filtering by the new text filter
         assertTrue(filter.test(infoEntry), "Filter should pass entries with matching message text");
 
-        LogEntry entryWithDifferentText = new SimpleLogEntry("Different text", "com.example.TestLogger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        LogEntry entryWithDifferentText = new SimpleLogEntry(Instant.now(), "com.example.TestLogger", LogLevel.INFO, "TEST_MARKER", "Different text", "", null);
         assertFalse(filter.test(entryWithDifferentText), "Filter should not pass entries with non-matching message text");
     }
 
@@ -231,7 +231,7 @@ class DefaultLogEntryFilterTest {
         assertEquals(1, count[0], "Logger name filter should only be called once for the same logger name");
 
         // Test with a different logger name
-        LogEntry entryWithDifferentLogger = new SimpleLogEntry("Info message", "org.other.Logger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        LogEntry entryWithDifferentLogger = new SimpleLogEntry(Instant.now(), "org.other.Logger", LogLevel.INFO, "TEST_MARKER", "Info message", "", null);
         assertTrue(filter.test(entryWithDifferentLogger), "Filter should pass the entry");
 
         // The filter should be called again for a different logger name

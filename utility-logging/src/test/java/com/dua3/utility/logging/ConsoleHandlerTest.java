@@ -37,7 +37,7 @@ class ConsoleHandlerTest {
         handler = new ConsoleHandler(testOut, true);
 
         // Create a test log entry
-        testEntry = new SimpleLogEntry("Test message", "TestLogger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, "com.example.TestClass.testMethod(TestClass.java:123)");
+        testEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "TEST_MARKER", "Test message", "com.example.TestClass.testMethod(TestClass.java:123)", null);
     }
 
     @AfterEach
@@ -75,7 +75,7 @@ class ConsoleHandlerTest {
     void testHandleEntryWithThrowable() {
         // Create a test entry with a throwable
         Throwable throwable = new RuntimeException("Test exception");
-        LogEntry entryWithThrowable = new SimpleLogEntry("Test message with exception", "TestLogger", Instant.now(), LogLevel.ERROR, "TEST_MARKER", throwable, "com.example.TestClass.testMethod(TestClass.java:123)");
+        LogEntry entryWithThrowable = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.ERROR, "TEST_MARKER", "Test message with exception", "com.example.TestClass.testMethod(TestClass.java:123)", throwable);
 
         // Handle the entry
         handler.handleEntry(entryWithThrowable);
@@ -146,7 +146,7 @@ class ConsoleHandlerTest {
 
         // First, handle an INFO level entry (should be filtered out)
         outContent.reset(); // Clear previous output
-        LogEntry infoEntry = new SimpleLogEntry("Info message", "TestLogger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, "com.example.TestClass.testMethod(TestClass.java:123)");
+        LogEntry infoEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "TEST_MARKER", "Info message", "com.example.TestClass.testMethod(TestClass.java:123)", null);
         handler.handleEntry(infoEntry);
 
         // The output should be empty because the INFO entry should be filtered out
@@ -155,7 +155,7 @@ class ConsoleHandlerTest {
 
         // Now, handle an ERROR level entry (should pass through the filter)
         outContent.reset(); // Clear previous output
-        LogEntry errorEntry = new SimpleLogEntry("Error message", "TestLogger", Instant.now(), LogLevel.ERROR, "TEST_MARKER", null, "com.example.TestClass.testMethod(TestClass.java:123)");
+        LogEntry errorEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.ERROR, "TEST_MARKER", "Error message", "com.example.TestClass.testMethod(TestClass.java:123)", null);
         handler.handleEntry(errorEntry);
 
         // The output should contain the error message because the ERROR entry should pass through the filter

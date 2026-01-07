@@ -405,13 +405,8 @@ class LogBufferTest {
         // Create an entry with a throwable
         RuntimeException exception = new RuntimeException("Test exception");
         LogEntry entryWithThrowable = new SimpleLogEntry(
-                "Exception message",
-                "TestLogger",
-                Instant.now(),
-                LogLevel.ERROR,
-                "ERROR_MARKER",
-                exception,
-                "TestLocation"
+                Instant.now(), "TestLogger", LogLevel.ERROR, "ERROR_MARKER", "Exception message",
+                "TestLocation", exception
         );
 
         // Add the entry to the buffer
@@ -574,13 +569,7 @@ class LogBufferTest {
      */
     private LogEntry createTestLogEntry(String message) {
         return new SimpleLogEntry(
-                message,
-                "TestLogger",
-                Instant.now(),
-                LogLevel.INFO,
-                "",  // Empty string instead of null for marker
-                null,
-                null
+                Instant.now(), "TestLogger", LogLevel.INFO, "", message, "", null
         );
     }
 }

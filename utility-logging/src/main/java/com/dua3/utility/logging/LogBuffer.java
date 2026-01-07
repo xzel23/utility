@@ -125,7 +125,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
                                 "\nOriginal stack trace:\n" + stackTrace);
             }
 
-            entries.add(new SimpleLogEntry(message, loggerName, time, level, marker, throwable, location));
+            entries.add(new SimpleLogEntry(time, loggerName, level, marker, message, location, throwable));
         }
 
         // Update buffer state and notify listeners

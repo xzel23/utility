@@ -25,7 +25,7 @@ class SimpleLogEntryTest {
         String location = "com.example.TestClass.testMethod(TestClass.java:123)";
 
         // Create a SimpleLogEntry
-        SimpleLogEntry entry = new SimpleLogEntry(message, loggerName, time, level, marker, throwable, location);
+        SimpleLogEntry entry = new SimpleLogEntry(time, loggerName, level, marker, message, location, throwable);
 
         // Test getters
         assertEquals(message, entry.message(), "message should match");
@@ -40,14 +40,13 @@ class SimpleLogEntryTest {
     @Test
     void testConstructorWithNullValues() {
         // Create a SimpleLogEntry with null values where allowed
-        SimpleLogEntry entry = new SimpleLogEntry("Test message", "TestLogger", Instant.now(), LogLevel.INFO, "", // empty marker (marker can't be null)
-                null, // null throwable
-                null  // null location
+        SimpleLogEntry entry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "", "Test message",
+                "", null // null throwable
         );
 
         // Test getters with null values
         assertNull(entry.throwable(), "throwable should be null");
-        assertNull(entry.location(), "location should be null");
+        assertEquals("", entry.location(), "location should be empty string");
         assertEquals("", entry.marker(), "marker should be empty string");
     }
 
@@ -55,7 +54,7 @@ class SimpleLogEntryTest {
     void testFormat() {
         // Create a SimpleLogEntry
         Instant time = Instant.now();
-        SimpleLogEntry entry = new SimpleLogEntry("Test message", "TestLogger", time, LogLevel.INFO, "TEST_MARKER", null, "com.example.TestClass.testMethod(TestClass.java:123)");
+        SimpleLogEntry entry = new SimpleLogEntry(time, "TestLogger", LogLevel.INFO, "TEST_MARKER", "Test message", "com.example.TestClass.testMethod(TestClass.java:123)", null);
 
         // Test format with empty prefix and suffix
         String formatted = entry.format("", "");
@@ -75,7 +74,7 @@ class SimpleLogEntryTest {
     void testFormatWithThrowable() {
         // Create a SimpleLogEntry with a throwable
         Throwable throwable = new RuntimeException("Test exception");
-        SimpleLogEntry entry = new SimpleLogEntry("Test message", "TestLogger", Instant.now(), LogLevel.ERROR, "TEST_MARKER", throwable, "com.example.TestClass.testMethod(TestClass.java:123)");
+        SimpleLogEntry entry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.ERROR, "TEST_MARKER", "Test message", "com.example.TestClass.testMethod(TestClass.java:123)", throwable);
 
         // Test format
         String formatted = entry.format("", "");

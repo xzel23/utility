@@ -36,7 +36,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
     private static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
     private static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
     private static final int AVERAGE_SLEEP_MILLIS = 10;
-    private static final int LOG_BUFFER_SIZE = 1000;
+    private static final int LOG_BUFFER_SIZE = 10000;
 
     /**
      * The SLF4J logger.
@@ -46,11 +46,14 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
      * The JUL logger.
      */
     private final transient java.util.logging.Logger julLogger = java.util.logging.Logger.getLogger("JUL." + getClass().getName());
-
     /**
      * The Log4J2 logger.
      */
     private final transient org.apache.logging.log4j.Logger log4JLogger = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + getClass().getName());
+    /**
+     * The JCL logger.
+     */
+    private final transient org.apache.commons.logging.Log jclLogger = org.apache.commons.logging.LogFactory.getLog("JCL." + getClass().getName());
 
     /**
      * A cryptographically strong random generator used for securely generating
@@ -145,7 +148,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         add(logPane);
 
         // start threads
-        final int numberOfImplementations = 3;
+        final int numberOfImplementations = 4;
         for (final int implementation : IntStream.range(0, numberOfImplementations).toArray()) {
             Thread.ofVirtual()
                     .name("Logger-Thread-" + implementation)
@@ -202,6 +205,16 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                                         case 2 -> log4JLogger.info(msg);
                                         case 3 -> log4JLogger.warn(msg);
                                         case 4 -> log4JLogger.error(msg, generateThrowable());
+                                        default -> throw new IllegalStateException("integer out of range");
+                                    }
+                                }
+                                case 3 -> {
+                                    switch (levelInt) {
+                                        case 0 -> jclLogger.trace(msg);
+                                        case 1 -> jclLogger.debug(msg);
+                                        case 2 -> jclLogger.info(msg);
+                                        case 3 -> jclLogger.warn(msg);
+                                        case 4 -> jclLogger.error(msg, generateThrowable());
                                         default -> throw new IllegalStateException("integer out of range");
                                     }
                                 }

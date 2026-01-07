@@ -12,8 +12,10 @@ import java.time.format.DateTimeFormatter;
  * The LogEntry interface represents a log entry with various properties such as message, logger name, time, level, marker, and throwable.
  * <p>
  * Note: Implementing classes should be immutable!
+ * @deprecated will be removed in version 21
  */
 @SuppressWarnings("MagicCharacter")
+@Deprecated(forRemoval = true)
 public interface LogEntry {
     /**
      * Retrieves the message of the log entry.
@@ -63,7 +65,6 @@ public interface LogEntry {
      *
      * @return the location information, or null if no location is present
      */
-    @Nullable
     String location();
 
     /**
@@ -72,7 +73,9 @@ public interface LogEntry {
      * @param prefix the prefix to prepend to the formatted entry
      * @param suffix the suffix to append to the formatted entry
      * @return the formatted log entry as a string
+     * @deprecated the formatting should be done by the consuming class
      */
+    @Deprecated(forRemoval = true)
     default String format(String prefix, String suffix) {
         StringBuilder sb = new StringBuilder(100);
         sb.append(prefix);

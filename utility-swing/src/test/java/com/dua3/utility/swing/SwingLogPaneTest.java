@@ -69,7 +69,7 @@ class SwingLogPaneTest {
         SwingLogPane pane = new SwingLogPane(buffer);
 
         // Add a log entry to the buffer
-        LogEntry entry = new SimpleLogEntry("Test message", "test.logger", Instant.now(), LogLevel.INFO, "", null, null);
+        LogEntry entry = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message", null, null);
         buffer.handleEntry(entry);
 
         // Wait a bit for the UI to update
@@ -98,7 +98,7 @@ class SwingLogPaneTest {
 
         // Add some log entries
         for (int i = 0; i < 5; i++) {
-            buffer.handleEntry(new SimpleLogEntry("Test message " + i, "test.logger", Instant.now(), LogLevel.INFO, "", null, null));
+            buffer.handleEntry(new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, null, null));
         }
 
         // Wait a bit for the UI to update
@@ -141,7 +141,7 @@ class SwingLogPaneTest {
 
             // Add some log entries
             for (int i = 0; i < 20; i++) {
-                buffer.handleEntry(new SimpleLogEntry("Test message " + i, "test.logger", Instant.now(), LogLevel.INFO, "", null, null));
+                buffer.handleEntry(new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, null, null));
             }
 
             // Wait a bit for the UI to update

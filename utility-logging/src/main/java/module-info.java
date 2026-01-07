@@ -23,6 +23,10 @@ open module com.dua3.utility.logging {
     requires org.jspecify;
     uses com.dua3.utility.logging.ILogEntryDispatcherFactory;
 
-    requires org.apache.logging.log4j;
+    requires static java.logging;
+    requires static org.slf4j;
+    requires static org.apache.logging.log4j;
+    requires static org.apache.commons.logging;
+
     requires com.dua3.utility;
 }

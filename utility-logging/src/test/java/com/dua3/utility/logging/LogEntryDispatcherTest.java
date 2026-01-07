@@ -26,7 +26,7 @@ class LogEntryDispatcherTest {
     @BeforeEach
     void setUp() {
         dispatcher = new MockLogEntryDispatcher();
-        testEntry = new SimpleLogEntry("Test message", "TestLogger", Instant.now(), LogLevel.INFO, "TEST_MARKER", null, null);
+        testEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "TEST_MARKER", "Test message", "", null);
     }
 
     @Test
@@ -108,7 +108,7 @@ class LogEntryDispatcherTest {
         assertEquals(2, count.get(), "The handler should have been called again");
 
         // Dispatch a TRACE entry
-        LogEntry traceEntry = new SimpleLogEntry("Trace message", "TestLogger", Instant.now(), LogLevel.TRACE, "TEST_MARKER", null, null);
+        LogEntry traceEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.TRACE, "TEST_MARKER", "Trace message", "", null);
         dispatcher.dispatch(traceEntry);
 
         // Test that the handler was not called

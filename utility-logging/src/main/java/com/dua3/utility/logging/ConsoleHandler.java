@@ -3,8 +3,10 @@ package com.dua3.utility.logging;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.AnsiCode;
+import org.jspecify.annotations.Nullable;
 
 import java.io.PrintStream;
+import java.time.Instant;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -48,6 +50,25 @@ public final class ConsoleHandler implements LogEntryHandler {
     }
 
     @Override
+    public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, String msg, String location, @Nullable Throwable t) {
+        if (filter.test(instant, loggerName, lvl, mrk, msg, location, t)) {
+            Pair<String, String> colorCodes = colorMap.get(lvl);
+            out.format("%s[%s] %s %s %s %s %s%s%n",
+                    colorCodes.first(),
+                    lvl.name(),
+                    loggerName,
+                    mrk,
+                    msg,
+                    t == null ? "" : t.getMessage(),
+                    t == null ? "" : NEWLINE,
+                    colorCodes.second()
+            );
+            LogEntryHandler.super.handle(instant, loggerName, lvl, mrk, msg, location, t);
+        }
+    }
+
+    @Override
+    @Deprecated
     public void handleEntry(LogEntry entry) {
         if (filter.test(entry)) {
             var colors = colorMap.get(entry.level());

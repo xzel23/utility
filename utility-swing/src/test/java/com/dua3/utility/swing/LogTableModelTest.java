@@ -44,7 +44,7 @@ class LogTableModelTest {
     @Test
     void testAddLogEntry() {
         // Add a log entry to the buffer
-        LogEntry entry = new SimpleLogEntry("Test message", "test.logger", Instant.now(), LogLevel.INFO, "", null, null);
+        LogEntry entry = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message", "", null);
         buffer.handleEntry(entry);
 
         // Wait for the model to update asynchronously
@@ -73,7 +73,7 @@ class LogTableModelTest {
     void testClearBuffer() {
         // Add some log entries one by one with small delays to ensure proper processing
         for (int i = 0; i < 5; i++) {
-            buffer.handleEntry(new SimpleLogEntry("Test message " + i, "test.logger", Instant.now(), LogLevel.INFO, "", null, null));
+            buffer.handleEntry(new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, "", null));
         }
 
         // Wait for the model to update asynchronously
@@ -110,9 +110,9 @@ class LogTableModelTest {
     @Test
     void testMultipleEntries() {
         // Add multiple log entries with different levels
-        LogEntry entry1 = new SimpleLogEntry("Info message", "test.logger", Instant.now(), LogLevel.INFO, "", null, null);
-        LogEntry entry2 = new SimpleLogEntry("Warning message", "test.logger", Instant.now(), LogLevel.WARN, "", null, null);
-        LogEntry entry3 = new SimpleLogEntry("Error message", "test.logger", Instant.now(), LogLevel.ERROR, "", null, null);
+        LogEntry entry1 = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Info message", "", null);
+        LogEntry entry2 = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.WARN, "", "Warning message", "", null);
+        LogEntry entry3 = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.ERROR, "", "Error message", "", null);
 
         buffer.handleEntry(entry1);
         buffer.handleEntry(entry2);
@@ -135,7 +135,7 @@ class LogTableModelTest {
         // Add all entries at once
         LogEntry[] entries = new LogEntry[5];
         for (int i = 0; i < 5; i++) {
-            entries[i] = new SimpleLogEntry("Test message " + i, "test.logger", Instant.now(), LogLevel.INFO, "", null, null);
+            entries[i] = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, "", null);
         }
 
         // Add all entries in a synchronized block to ensure they're added as a batch

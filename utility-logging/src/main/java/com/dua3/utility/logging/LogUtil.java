@@ -1,7 +1,8 @@
 package com.dua3.utility.logging;
 
+import com.dua3.utility.logging.backend.universal.UniversalDispatcher;
+import com.dua3.utility.logging.backend.jul.JulHandler;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ServiceConfigurationError;
@@ -13,8 +14,6 @@ import java.util.ServiceLoader;
 public final class LogUtil {
     private LogUtil() { /* utility class */ }
 
-    private static final Logger LOG = LogManager.getLogger(LogUtil.class);
-
     private static @Nullable LogEntryDispatcher globalDispatcher;
 
     private static synchronized void init() {
@@ -25,18 +24,54 @@ public final class LogUtil {
                 try {
                     LogEntryDispatcher dispatcher = factory.getDispatcher();
                     if (dispatcher != null) {
-                        LOG.trace("created dispatcher of class {} using factory {}", dispatcher.getClass(), factory.getClass());
                         globalDispatcher = dispatcher;
+                        LogManager.getLogger(LogUtil.class).trace("created dispatcher of class {} using factory {}", dispatcher.getClass(), factory.getClass());
                         return;
                     }
-                    LOG.trace("factory {} did not return a dispatcher", factory.getClass());
                 } catch (Exception e) {
-                    LOG.warn("factory {} threw an exception when trying to create a dispatcher", factory.getClass().getName(), e);
                 }
             }
 
             throw new ServiceConfigurationError("no factories left to try - could not create a dispatcher");
         }
+    }
+
+    public static synchronized void initUnifiedLogging() {
+        globalDispatcher = UniversalDispatcher.getInstance();
+
+        // LOG4J
+        wireLog4j();
+
+        // SLF4J
+        wireSlf4j();
+
+        // JUL
+        wireJul();
+
+        // JCL
+        wireJcl();
+    }
+
+    private static void wireJul() {
+        java.util.logging.Logger root = java.util.logging.LogManager.getLogManager().getLogger("");
+        // Remove existing handlers to avoid duplicates
+        for (var h : root.getHandlers()) root.removeHandler(h);
+        // Add your bridge
+        root.addHandler(new JulHandler());
+        root.setLevel(java.util.logging.Level.ALL);
+    }
+
+    private static void wireJcl() {
+        System.setProperty("org.apache.commons.logging.LogFactory", "org.apache.commons.logging.impl.LogFactoryImpl");
+        System.setProperty("org.apache.commons.logging.Log", "com.dua3.utility.logging.backend.jcl.LoggerJcl");
+    }
+
+    private static void wireLog4j() {
+        System.setProperty("log4j2.loggerContextFactory", "com.dua3.utility.logging.backend.log4j.Log4jLoggerContextFactory");
+    }
+
+    private static void wireSlf4j() {
+        System.setProperty("slf4j.provider", "com.dua3.utility.logging.backend.slf4j.LoggingServiceProviderSlf4j");
     }
 
     /**

@@ -35,7 +35,10 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UncheckedIOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +67,37 @@ public class SwingLogPane extends JPanel {
     private final java.util.List<TableColumn> tableColumns = new ArrayList<>();
     private final transient Function<LogEntry, Color> colorize;
     private final transient TableRowSorter<AbstractTableModel> tableRowSorter;
-    private transient Function<? super LogEntry, String> format = LogEntry::toString;
+    private transient Function<? super LogEntry, String> format = SwingLogPane::formatLogEntry;
+
+    private static String formatLogEntry(LogEntry logEntry) {
+        StringBuilder sb = new StringBuilder(80);
+        sb.append('[').append(logEntry.level()).append(']');
+        sb.append(' ');
+        sb.append(DateTimeFormatter.ISO_INSTANT.format(logEntry.time()));
+        sb.append(' ');
+        sb.append(logEntry.loggerName());
+        sb.append('\n');
+        if (!logEntry.location().isEmpty()) {
+            sb.append(logEntry.location());
+            sb.append('\n');
+        }
+        sb.append(logEntry.message());
+        if (logEntry.throwable() != null) {
+            sb.append(System.lineSeparator());
+            appendThrowable(sb, logEntry.throwable());
+        }
+        return sb.toString();
+    }
+
+    private static void appendThrowable(StringBuilder sb, Throwable t) {
+        try (StringWriter sw = new StringWriter(200); PrintWriter pw = new PrintWriter(sw)) {
+            t.printStackTrace(pw);
+            sb.append(sw);
+        } catch (IOException e) {
+            sb.append(t);
+        }
+    }
+
     private volatile double dividerLocation = 0.5;
     private final JScrollPane scrollPaneTable;
     private transient List<LogEntry> selectedEntries = Collections.emptyList();
