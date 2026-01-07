@@ -137,25 +137,26 @@ public class UniversalDispatcher implements LogEntryDispatcher {
      * This method determines if the log event should be processed based on the
      * translated log level and forwards the event to handlers enabled for that level.
      *
-     * @param fqcn the fully qualified class name of the logger emitting the event; must not be null
+     * @param name the fully qualified class name of the logger emitting the event; must not be null
      * @param level the Log4j {@code Level} of the log event; must not be null
      * @param marker an optional {@code Marker} associated with the log event; may be null
      * @param message the log message to be formatted and dispatched; must not be null
      * @param t an optional {@code Throwable} associated with the log event; may be null
      */
-    public void dispatchLog4j(String fqcn, Level level, @Nullable Marker marker, Message message, @Nullable Throwable t) {
-        Instant instant = null;
-        String mrk = null;
+    public void dispatchLog4j(String name, Level level, @Nullable Marker marker, Message message, @Nullable Throwable t) {
+        Instant instant = Instant.now();
+        String mrk = marker == null ? "" : marker.getName();
         String msg = null;
 
         LogLevel lvl = translateLog4jLevel(level);
-        for (WeakReference<LogEntryHandler> handlerRef : handlers) {
-            LogEntryHandler handler = handlerRef.get();
-            if (handler != null && handler.isEnabled(lvl)) {
-                if (instant == null) instant = Instant.now();
-                if (mrk == null) mrk = marker == null ? "" : marker.getName();
-                if (msg == null) msg = formatLog4jMessage(message);
-                handler.handle(instant, fqcn, lvl, mrk, msg, "", t);
+
+        if (filter.test(instant, name, lvl, mrk, "", "", t)) {
+            for (WeakReference<LogEntryHandler> handlerRef : handlers) {
+                LogEntryHandler handler = handlerRef.get();
+                if (handler != null && handler.isEnabled(lvl)) {
+                    if (msg == null) msg = formatLog4jMessage(message);
+                    handler.handle(instant, name, lvl, mrk, msg, "", t);
+                }
             }
         }
     }
@@ -209,18 +210,18 @@ public class UniversalDispatcher implements LogEntryDispatcher {
      * @param throwable an optional {@link Throwable} associated with the log event; may be null
      */
     public void dispatchSlf4j(String loggerName, org.slf4j.event.Level level, org.slf4j.@Nullable Marker marker, String messagePattern, @Nullable Object @Nullable [] arguments, @Nullable Throwable throwable) {
-        Instant instant = null;
-        String mrk = null;
+        Instant instant = Instant.now();
+        String mrk = marker == null ? "" : marker.getName();
         String msg = null;
 
         LogLevel lvl = translateSlf4jLevel(level);
-        for (WeakReference<LogEntryHandler> handlerRef : handlers) {
-            LogEntryHandler handler = handlerRef.get();
-            if (handler != null && handler.isEnabled(lvl)) {
-                if (instant == null) instant = Instant.now();
-                if (mrk == null) mrk = marker == null ? "" : marker.getName();
-                if (msg == null) msg = formatSlf4jMessage(messagePattern, arguments);
-                handler.handle(instant, loggerName, lvl, mrk, msg, "", throwable);
+        if (filter.test(instant, loggerName, lvl, mrk, "", "", throwable)) {
+            for (WeakReference<LogEntryHandler> handlerRef : handlers) {
+                LogEntryHandler handler = handlerRef.get();
+                if (handler != null && handler.isEnabled(lvl)) {
+                    if (msg == null) msg = formatSlf4jMessage(messagePattern, arguments);
+                    handler.handle(instant, loggerName, lvl, mrk, msg, "", throwable);
+                }
             }
         }
     }
@@ -276,16 +277,17 @@ public class UniversalDispatcher implements LogEntryDispatcher {
      * @param logRecord the {@code LogRecord} containing the log information; must not be null
      */
     public void dispatchJul(LogRecord logRecord) {
-        Instant instant = null;
+        Instant instant = instant = Instant.now();
         String msg = null;
 
         LogLevel lvl = translateJulLevel(logRecord.getLevel());
-        for (WeakReference<LogEntryHandler> handlerRef : handlers) {
-            LogEntryHandler handler = handlerRef.get();
-            if (handler != null && handler.isEnabled(lvl)) {
-                if (instant == null) instant = Instant.now();
-                if (msg == null) msg = formatJulMessage(logRecord.getMessage(), logRecord.getParameters());
-                handler.handle(instant, logRecord.getLoggerName(), lvl, "", msg, "", logRecord.getThrown());
+        if (filter.test(instant, logRecord.getLoggerName(), lvl, "", "", "", logRecord.getThrown())) {
+            for (WeakReference<LogEntryHandler> handlerRef : handlers) {
+                LogEntryHandler handler = handlerRef.get();
+                if (handler != null && handler.isEnabled(lvl)) {
+                    if (msg == null) msg = formatJulMessage(logRecord.getMessage(), logRecord.getParameters());
+                    handler.handle(instant, logRecord.getLoggerName(), lvl, "", msg, "", logRecord.getThrown());
+                }
             }
         }
     }
@@ -341,15 +343,17 @@ public class UniversalDispatcher implements LogEntryDispatcher {
      * @param t an optional {@link Throwable} associated with the log event; can be null
      */
     public void dispatchJcl(String name, LogLevel level, @Nullable Object message, @Nullable Throwable t) {
-        Instant instant = null;
+        Instant instant = Instant.now();
         String msg = null;
 
-        for (WeakReference<LogEntryHandler> handlerRef : handlers) {
-            LogEntryHandler handler = handlerRef.get();
-            if (handler != null && handler.isEnabled(level)) {
-                if (instant == null) instant = Instant.now();
-                if (msg == null) msg = formatJclMessage(message);
-                handler.handle(instant, name, level, "", msg, "", t);
+        if (filter.test(instant, name, level, "", "", "", t)) {
+            for (WeakReference<LogEntryHandler> handlerRef : handlers) {
+                LogEntryHandler handler = handlerRef.get();
+                if (handler != null && handler.isEnabled(level)) {
+                    if (instant == null) instant = Instant.now();
+                    if (msg == null) msg = formatJclMessage(message);
+                    handler.handle(instant, name, level, "", msg, "", t);
+                }
             }
         }
     }

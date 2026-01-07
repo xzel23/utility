@@ -18,7 +18,6 @@ open module com.dua3.utility.samples.fx {
     requires com.dua3.utility.fx.controls;
     requires com.dua3.utility.fx.icons;
     requires com.dua3.utility.logging;
-    requires com.dua3.utility.logging.log4j;
     requires java.logging;
     requires javafx.controls;
     requires javafx.graphics;

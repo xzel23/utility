@@ -36,6 +36,9 @@ class LevelMap {
             root.level = level;
             return;
         }
+        if (loggerName.endsWith(".")) {
+            throw new IllegalArgumentException("loggerName must not end with '.'");
+        }
 
         Node current = root;
         int start = 0;
@@ -48,7 +51,7 @@ class LevelMap {
             current = current.children.computeIfAbsent(segment, k -> new Node());
             start = dot + 1;
         }
-        current.children.computeIfAbsent(name.subSequence(start, loggerName.length()), k -> new Node()).level = level;
+        current.children.computeIfAbsent(name.subSequence(start, name.length()), k -> new Node()).level = level;
     }
 
     public LogLevel level(String className) {

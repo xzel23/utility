@@ -15,6 +15,7 @@ import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.FileDialogMode;
 import com.dua3.utility.fx.controls.LayoutUnit;
 import com.dua3.utility.lang.SystemInfo;
+import com.dua3.utility.logging.LogUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -54,6 +55,8 @@ public class FxDialogSample extends Application {
         ApplicationUtil.initApplicationPreferences(Preferences.userNodeForPackage(FxDialogSample.class));
         ApplicationUtil.addDarkModeListener(FxDialogSample::setDarkMode);
         ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT);
+
+        LogUtil.initUnifiedLogging();
     }
 
     private static final String ANSWER = "dua3.utility.samples.fx.answer";

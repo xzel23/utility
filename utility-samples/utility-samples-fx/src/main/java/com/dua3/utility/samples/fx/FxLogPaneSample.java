@@ -7,8 +7,9 @@ import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.UiMode;
 import com.dua3.utility.fx.FxLogPane;
 import com.dua3.utility.fx.PlatformHelper;
+import com.dua3.utility.logging.LogFilter;
 import com.dua3.utility.logging.LogLevel;
-import com.dua3.utility.logging.log4j.LogUtilLog4J;
+import com.dua3.utility.logging.LogUtil;
 import com.dua3.utility.math.MathUtil;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -30,7 +31,14 @@ public class FxLogPaneSample extends Application {
 
     static {
         // this has to be done before the first logger is initialized!
-        LogUtilLog4J.init(LogLevel.TRACE);
+        LogUtil.initUnifiedLogging();
+        if (LogUtil.getGlobalDispatcher().getFilter() instanceof LogFilter filter) {
+            filter.setLevel("", LogLevel.TRACE);
+            filter.setLevel("java", LogLevel.ERROR);
+            filter.setLevel("javax", LogLevel.ERROR);
+            filter.setLevel("javafx", LogLevel.ERROR);
+            filter.setLevel("sun", LogLevel.ERROR);
+        }
 
         ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT);
     }
