@@ -42,7 +42,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.prefs.Preferences;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -121,7 +120,7 @@ public class FxDialogSample extends Application {
                 )
                 .map(Locale::forLanguageTag)
                 .sorted(Comparator.comparing(l -> l.getDisplayName(l)))
-                .collect(Collectors.toList());
+                .toList();
         Locale currentLocale = comboLocale == null ? Locale.getDefault() : comboLocale.getValue();
         comboLocale = Controls.comboBox(locales)
                 .onChange(this::setLocale)

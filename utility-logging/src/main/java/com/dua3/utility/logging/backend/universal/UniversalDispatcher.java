@@ -277,7 +277,7 @@ public class UniversalDispatcher implements LogEntryDispatcher {
      * @param logRecord the {@code LogRecord} containing the log information; must not be null
      */
     public void dispatchJul(LogRecord logRecord) {
-        Instant instant = instant = Instant.now();
+        Instant instant = Instant.now();
         String msg = null;
 
         LogLevel lvl = translateJulLevel(logRecord.getLevel());
