@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,31 +16,50 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit tests for the {@link LogEntryDispatcher} interface.
- * Since LogEntryDispatcher is an interface, we create a mock implementation for testing.
+ * Unit tests for the {@link LogDispatcher} interface.
+ * Since LogDispatcher is an interface, we create a mock implementation for testing.
  */
-class LogEntryDispatcherTest {
+class LogDispatcherTest {
 
-    private MockLogEntryDispatcher dispatcher;
+    private MockLogDispatcher dispatcher;
     private LogEntry testEntry;
 
     @BeforeEach
     void setUp() {
-        dispatcher = new MockLogEntryDispatcher();
+        dispatcher = new MockLogDispatcher();
         testEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "TEST_MARKER", "Test message", "", null);
     }
 
     @Test
-    void testAddAndRemoveLogEntryHandler() {
+    void testAddAndRemoveLogHandler() {
         // Create a test handler
         AtomicInteger count = new AtomicInteger(0);
-        LogEntryHandler handler = entry -> count.incrementAndGet();
+        LogHandler handler = new LogHandler() {
+            @Override
+            public String name() {
+                return "test";
+            }
+
+            @Override
+            public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, Throwable t) {
+                count.incrementAndGet();
+            }
+
+            @Override
+            public void setFilter(LogFilter filter) {
+            }
+
+            @Override
+            public LogFilter getFilter() {
+                return LogFilter.allPass();
+            }
+        };
 
         // Add the handler
-        dispatcher.addLogEntryHandler(handler);
+        dispatcher.addLogHandler(handler);
 
         // Test that the handler was added
-        Collection<LogEntryHandler> handlers = dispatcher.getLogEntryHandlers();
+        Collection<LogHandler> handlers = dispatcher.getLogHandlers();
         assertEquals(1, handlers.size(), "There should be 1 handler");
         assertTrue(handlers.contains(handler), "The handler should be in the collection");
 
@@ -50,10 +70,10 @@ class LogEntryDispatcherTest {
         assertEquals(1, count.get(), "The handler should have been called once");
 
         // Remove the handler
-        dispatcher.removeLogEntryHandler(handler);
+        dispatcher.removeLogHandler(handler);
 
         // Test that the handler was removed
-        handlers = dispatcher.getLogEntryHandlers();
+        handlers = dispatcher.getLogHandlers();
         assertEquals(0, handlers.size(), "There should be 0 handlers");
         assertFalse(handlers.contains(handler), "The handler should not be in the collection");
 
@@ -67,13 +87,32 @@ class LogEntryDispatcherTest {
     @Test
     void testSetAndGetFilter() {
         // Test the default filter
-        LogEntryFilter defaultFilter = dispatcher.getFilter();
-        assertEquals(LogEntryFilter.allPass(), defaultFilter, "Default filter should be the all-pass filter");
+        LogFilter defaultFilter = dispatcher.getFilter();
+        assertEquals(LogFilter.allPass(), defaultFilter, "Default filter should be the all-pass filter");
 
         // Create a test handler
         AtomicInteger count = new AtomicInteger(0);
-        LogEntryHandler handler = entry -> count.incrementAndGet();
-        dispatcher.addLogEntryHandler(handler);
+        LogHandler handler = new LogHandler() {
+            @Override
+            public String name() {
+                return "test";
+            }
+
+            @Override
+            public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, Throwable t) {
+                count.incrementAndGet();
+            }
+
+            @Override
+            public void setFilter(LogFilter filter) {
+            }
+
+            @Override
+            public LogFilter getFilter() {
+                return LogFilter.allPass();
+            }
+        };
+        dispatcher.addLogHandler(handler);
 
         // Dispatch a log entry with the default filter
         dispatcher.dispatch(testEntry);
@@ -82,7 +121,17 @@ class LogEntryDispatcherTest {
         assertEquals(1, count.get(), "The handler should have been called once");
 
         // Set a filter that blocks all entries
-        LogEntryFilter blockAllFilter = entry -> false;
+        LogFilter blockAllFilter = new LogFilter() {
+            @Override
+            public String name() {
+                return "block all";
+            }
+
+            @Override
+            public boolean test(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, Throwable t) {
+                return false;
+            }
+        };
         dispatcher.setFilter(blockAllFilter);
 
         // Test that the filter was set
@@ -95,7 +144,17 @@ class LogEntryDispatcherTest {
         assertEquals(1, count.get(), "The handler should not have been called again");
 
         // Set a filter that only passes entries with level INFO or higher
-        LogEntryFilter infoOrHigherFilter = entry -> entry.level().ordinal() >= LogLevel.INFO.ordinal();
+        LogFilter infoOrHigherFilter = new LogFilter() {
+            @Override
+            public String name() {
+                return "info or higher";
+            }
+
+            @Override
+            public boolean test(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, Throwable t) {
+                return lvl.ordinal() >= LogLevel.INFO.ordinal();
+            }
+        };
         dispatcher.setFilter(infoOrHigherFilter);
 
         // Test that the filter was set
@@ -116,44 +175,80 @@ class LogEntryDispatcherTest {
     }
 
     @Test
-    void testGetLogEntryHandlers() {
+    void testGetLogHandlers() {
         // Test with no handlers
-        Collection<LogEntryHandler> handlers = dispatcher.getLogEntryHandlers();
+        Collection<LogHandler> handlers = dispatcher.getLogHandlers();
         assertNotNull(handlers, "Handlers collection should not be null");
         assertTrue(handlers.isEmpty(), "Handlers collection should be empty");
 
         // Add some handlers
-        LogEntryHandler handler1 = entry -> {};
-        LogEntryHandler handler2 = entry -> {};
-        dispatcher.addLogEntryHandler(handler1);
-        dispatcher.addLogEntryHandler(handler2);
+        LogHandler handler1 = new LogHandler() {
+            @Override
+            public String name() {
+                return "test1";
+            }
+
+            @Override
+            public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, Throwable t) {
+            }
+
+            @Override
+            public void setFilter(LogFilter filter) {
+            }
+
+            @Override
+            public LogFilter getFilter() {
+                return LogFilter.allPass();
+            }
+        };
+        LogHandler handler2 = new LogHandler() {
+            @Override
+            public String name() {
+                return "test2";
+            }
+
+            @Override
+            public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, Throwable t) {
+            }
+
+            @Override
+            public void setFilter(LogFilter filter) {
+            }
+
+            @Override
+            public LogFilter getFilter() {
+                return LogFilter.allPass();
+            }
+        };
+        dispatcher.addLogHandler(handler1);
+        dispatcher.addLogHandler(handler2);
 
         // Test with handlers
-        handlers = dispatcher.getLogEntryHandlers();
+        handlers = dispatcher.getLogHandlers();
         assertEquals(2, handlers.size(), "There should be 2 handlers");
         assertTrue(handlers.contains(handler1), "The first handler should be in the collection");
         assertTrue(handlers.contains(handler2), "The second handler should be in the collection");
 
         // Test that the collection is a copy
         handlers.clear();
-        Collection<LogEntryHandler> handlersAfterClear = dispatcher.getLogEntryHandlers();
+        Collection<LogHandler> handlersAfterClear = dispatcher.getLogHandlers();
         assertEquals(2, handlersAfterClear.size(), "There should still be 2 handlers");
     }
 
     /**
-     * A mock implementation of LogEntryDispatcher for testing.
+     * A mock implementation of LogDispatcher for testing.
      */
-    private static class MockLogEntryDispatcher implements LogEntryDispatcher {
-        private final List<LogEntryHandler> handlers = new ArrayList<>();
-        private LogEntryFilter filter = LogEntryFilter.allPass();
+    private static class MockLogDispatcher implements LogDispatcher {
+        private final List<LogHandler> handlers = new ArrayList<>();
+        private LogFilter filter = LogFilter.allPass();
 
         @Override
-        public void addLogEntryHandler(LogEntryHandler handler) {
+        public void addLogHandler(LogHandler handler) {
             handlers.add(handler);
         }
 
         @Override
-        public void removeLogEntryHandler(LogEntryHandler handler) {
+        public void removeLogHandler(LogHandler handler) {
             handlers.remove(handler);
         }
 
@@ -163,28 +258,26 @@ class LogEntryDispatcherTest {
          * @param entry the log entry to dispatch
          */
         public void dispatch(LogEntry entry) {
-            if (filter.test(entry)) {
-                for (LogEntryHandler handler : handlers) {
-                    handler.handleEntry(entry);
+            if (filter.test(entry.time(), entry.loggerName(), entry.level(), entry.marker(), entry::message, entry.location(), entry.throwable())) {
+                for (LogHandler handler : handlers) {
+                    handler.handle(entry.time(), entry.loggerName(), entry.level(), entry.marker(), entry::message, entry.location(), entry.throwable());
                 }
             }
         }
 
         @Override
-        public void setFilter(LogEntryFilter filter) {
+        public void setFilter(LogFilter filter) {
             this.filter = filter;
         }
 
         @Override
-        public LogEntryFilter getFilter() {
+        public LogFilter getFilter() {
             return filter;
         }
 
         @Override
-        public Collection<LogEntryHandler> getLogEntryHandlers() {
+        public Collection<LogHandler> getLogHandlers() {
             return new ArrayList<>(handlers);
         }
-
-
     }
 }

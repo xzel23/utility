@@ -941,7 +941,7 @@ Changes:
 - added LangUtil.require...() methods to check integer arguments
 - added LangUtil.formatLazy()
 - fix: LoggerFactorySlf4j should not dispose the default handler
-- add LogEntryDispatcher.getHandlers()
+- add LogDispatcher.getHandlers()
 - make Stopwatch(Supplier<String> name) protected
 
 ### 12.1.2

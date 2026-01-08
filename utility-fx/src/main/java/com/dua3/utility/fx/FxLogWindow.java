@@ -47,7 +47,7 @@ public class FxLogWindow extends Stage {
      * @param maxLines the maximum number of lines to display in the log window
      */
     public FxLogWindow(String title, int maxLines) {
-        this(title, new LogBuffer(maxLines));
+        this(title, new LogBuffer(FxLogWindow.class.getSimpleName() + "Log Buffer", maxLines));
     }
 
     /**

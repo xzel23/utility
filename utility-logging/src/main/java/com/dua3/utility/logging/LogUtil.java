@@ -18,15 +18,15 @@ import java.util.ServiceLoader;
 public final class LogUtil {
     private LogUtil() { /* utility class */ }
 
-    private static @Nullable LogEntryDispatcher globalDispatcher;
+    private static @Nullable LogDispatcher globalDispatcher;
 
     private static synchronized void init() {
         if (globalDispatcher == null) {
-            ServiceLoader<ILogEntryDispatcherFactory> serviceLoader = ServiceLoader.load(ILogEntryDispatcherFactory.class);
+            ServiceLoader<LogDispatcherFactory> serviceLoader = ServiceLoader.load(LogDispatcherFactory.class);
 
-            for (ILogEntryDispatcherFactory factory : serviceLoader) {
+            for (LogDispatcherFactory factory : serviceLoader) {
                 try {
-                    LogEntryDispatcher dispatcher = factory.getDispatcher();
+                    LogDispatcher dispatcher = factory.getDispatcher();
                     if (dispatcher != null) {
                         globalDispatcher = dispatcher;
                         LogManager.getLogger(LogUtil.class).trace("created dispatcher of class {} using factory {}", dispatcher.getClass(), factory.getClass());
@@ -40,6 +40,24 @@ public final class LogUtil {
         }
     }
 
+    /**
+     * Initializes the unified logging system by setting up various logging frameworks
+     * to work with a global dispatch mechanism.
+     * <p>
+     * Once invoked, this method performs the following:
+     * 1. Acquires an instance of the global dispatcher.
+     * 2. Wires several logging frameworks, including:
+     *    - Log4j
+     *    - SLF4J
+     *    - Java Util Logging (JUL)
+     *    - Jakarta Commons Logging (JCL)
+     * 3. Optionally configures logging properties using a custom logging configurator
+     *    if logging properties are present.
+     * <p>
+     * This method ensures that all supported logging frameworks are unified under a
+     * single global dispatcher, allowing centralized logging management. It is not
+     * necessary to install any bridge libraries for the various frameworks.
+     */
     public static synchronized void initUnifiedLogging() {
         globalDispatcher = UniversalDispatcher.getInstance();
 
@@ -56,7 +74,7 @@ public final class LogUtil {
         wireJcl();
 
         getLoggingProperties().ifPresent(properties ->
-                LoggingConfigurator.configure(properties, globalDispatcher::setFilter, globalDispatcher::addLogEntryHandler)
+                LoggingConfigurator.configure(properties, globalDispatcher::setFilter, globalDispatcher::addLogHandler)
         );
     }
 
@@ -85,7 +103,7 @@ public final class LogUtil {
     /**
      * Checks if the globalDispatcher variable is null and initializes it by calling the init() method if necessary.
      *
-     * @throws ServiceConfigurationError if no factories can create a LogEntryDispatcher
+     * @throws ServiceConfigurationError if no factories can create a LogDispatcher
      */
     public static void assureInitialized() {
         if (globalDispatcher == null) {
@@ -94,13 +112,13 @@ public final class LogUtil {
     }
 
     /**
-     * Returns the global LogEntryDispatcher by using the available ILogEntryDispatcherFactory implementations loaded
+     * Returns the global LogDispatcher by using the available ILogDispatcherFactory implementations loaded
      * through ServiceLoader and connects all known loggers to it.
      *
-     * @return The global LogEntryDispatcher instance.
-     * @throws ServiceConfigurationError if no factories can create a LogEntryDispatcher.
+     * @return The global LogDispatcher instance.
+     * @throws ServiceConfigurationError if no factories can create a LogDispatcher.
      */
-    public static LogEntryDispatcher getGlobalDispatcher() {
+    public static LogDispatcher getGlobalDispatcher() {
         assureInitialized();
         assert globalDispatcher != null;
         return globalDispatcher;

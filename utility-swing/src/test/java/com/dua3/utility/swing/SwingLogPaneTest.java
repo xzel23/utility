@@ -55,7 +55,7 @@ class SwingLogPaneTest {
         // Skip test in headless environment
         assumeFalse(GraphicsEnvironment.isHeadless());
 
-        LogBuffer buffer = new LogBuffer(100);
+        LogBuffer buffer = new LogBuffer("testConstructorWithCustomBuffer", 100);
         SwingLogPane pane = new SwingLogPane(buffer);
         assertNotNull(pane, "SwingLogPane should be created successfully with custom buffer");
     }
@@ -65,12 +65,20 @@ class SwingLogPaneTest {
         // Skip test in headless environment
         assumeFalse(GraphicsEnvironment.isHeadless());
 
-        LogBuffer buffer = new LogBuffer(100);
+        LogBuffer buffer = new LogBuffer("testAddLogEntryToBuffer", 100);
         SwingLogPane pane = new SwingLogPane(buffer);
 
         // Add a log entry to the buffer
-        LogEntry entry = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message", null, null);
-        buffer.handleEntry(entry);
+        LogEntry entry = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message", "", null);
+        buffer.handle(
+                entry.time(),
+                entry.loggerName(),
+                entry.level(),
+                entry.marker(),
+                entry::message,
+                entry.location(),
+                entry.throwable()
+        );
 
         // Wait a bit for the UI to update
         try {
@@ -93,12 +101,21 @@ class SwingLogPaneTest {
         // Skip test in headless environment
         assumeFalse(GraphicsEnvironment.isHeadless());
 
-        LogBuffer buffer = new LogBuffer(100);
+        LogBuffer buffer = new LogBuffer("testClearBuffer", 100);
         SwingLogPane pane = new SwingLogPane(buffer);
 
         // Add some log entries
         for (int i = 0; i < 5; i++) {
-            buffer.handleEntry(new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, null, null));
+            LogEntry entry = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, "", null);
+            buffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Wait a bit for the UI to update
@@ -136,12 +153,21 @@ class SwingLogPaneTest {
         assumeFalse(GraphicsEnvironment.isHeadless());
 
         assertDoesNotThrow(() -> {
-            LogBuffer buffer = new LogBuffer(100);
+            LogBuffer buffer = new LogBuffer("testScrollRowIntoView", 100);
             SwingLogPane pane = new SwingLogPane(buffer);
 
             // Add some log entries
             for (int i = 0; i < 20; i++) {
-                buffer.handleEntry(new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, null, null));
+                LogEntry entry = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, "", null);
+                buffer.handle(
+                        entry.time(),
+                        entry.loggerName(),
+                        entry.level(),
+                        entry.marker(),
+                        entry::message,
+                        entry.location(),
+                        entry.throwable()
+                );
             }
 
             // Wait a bit for the UI to update

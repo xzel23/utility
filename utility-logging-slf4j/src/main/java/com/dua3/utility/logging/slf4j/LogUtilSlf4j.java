@@ -1,6 +1,6 @@
 package com.dua3.utility.logging.slf4j;
 
-import com.dua3.utility.logging.LogEntryDispatcher;
+import com.dua3.utility.logging.LogDispatcher;
 import com.dua3.utility.logging.LogUtil;
 
 import java.util.ServiceConfigurationError;
@@ -34,17 +34,17 @@ public final class LogUtilSlf4j {
     }
 
     /**
-     * Returns the global LogEntryDispatcher by using the available ILogEntryDispatcherFactory implementations loaded
+     * Returns the global LogDispatcher by using the available ILogDispatcherFactory implementations loaded
      * through ServiceLoader and connects all known loggers to it.
      * <p>
      * NOTE: This method delegates to {@link LogUtil#getGlobalDispatcher()}.
      *
-     * @return The global LogEntryDispatcher instance.
-     * @throws ServiceConfigurationError if no factories can create a LogEntryDispatcher.
+     * @return The global LogDispatcher instance.
+     * @throws ServiceConfigurationError if no factories can create a LogDispatcher.
      * @throws IllegalStateException if the implementations do not match
      */
     public static LoggerFactorySlf4j getGlobalDispatcher() {
-        LogEntryDispatcher dispatcher = LogUtil.getGlobalDispatcher();
+        LogDispatcher dispatcher = LogUtil.getGlobalDispatcher();
         if (dispatcher instanceof LoggerFactorySlf4j loggerFactorySlf4j) {
             return loggerFactorySlf4j;
         }

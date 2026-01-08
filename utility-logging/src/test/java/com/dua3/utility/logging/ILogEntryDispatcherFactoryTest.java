@@ -8,19 +8,19 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
- * Unit tests for the {@link ILogEntryDispatcherFactory} interface.
- * Since ILogEntryDispatcherFactory is a functional interface, we create mock implementations for testing.
+ * Unit tests for the {@link LogDispatcherFactory} interface.
+ * Since ILogDispatcherFactory is a functional interface, we create mock implementations for testing.
  */
-class ILogEntryDispatcherFactoryTest {
+class ILogDispatcherFactoryTest {
 
     @Test
     void testFactoryReturningDispatcher() {
         // Create a factory that returns a dispatcher
-        MockLogEntryDispatcher dispatcher = new MockLogEntryDispatcher();
-        ILogEntryDispatcherFactory factory = () -> dispatcher;
+        MockLogDispatcher dispatcher = new MockLogDispatcher();
+        LogDispatcherFactory factory = () -> dispatcher;
 
         // Test that the factory returns the expected dispatcher
-        LogEntryDispatcher returnedDispatcher = factory.getDispatcher();
+        LogDispatcher returnedDispatcher = factory.getDispatcher();
         assertNotNull(returnedDispatcher, "Factory should return a non-null dispatcher");
         assertSame(dispatcher, returnedDispatcher, "Factory should return the expected dispatcher");
     }
@@ -28,50 +28,50 @@ class ILogEntryDispatcherFactoryTest {
     @Test
     void testFactoryReturningNull() {
         // Create a factory that returns null
-        ILogEntryDispatcherFactory factory = () -> null;
+        LogDispatcherFactory factory = () -> null;
 
         // Test that the factory returns null
-        LogEntryDispatcher returnedDispatcher = factory.getDispatcher();
+        LogDispatcher returnedDispatcher = factory.getDispatcher();
         assertNull(returnedDispatcher, "Factory should return null");
     }
 
     @Test
     void testLambdaImplementation() {
         // Create a factory using a lambda expression
-        ILogEntryDispatcherFactory factory = MockLogEntryDispatcher::new;
+        LogDispatcherFactory factory = MockLogDispatcher::new;
 
         // Test that the factory returns a non-null dispatcher
-        LogEntryDispatcher returnedDispatcher = factory.getDispatcher();
+        LogDispatcher returnedDispatcher = factory.getDispatcher();
         assertNotNull(returnedDispatcher, "Factory should return a non-null dispatcher");
-        assertInstanceOf(MockLogEntryDispatcher.class, returnedDispatcher, "Factory should return an instance of MockLogEntryDispatcher");
+        assertInstanceOf(MockLogDispatcher.class, returnedDispatcher, "Factory should return an instance of MockLogDispatcher");
     }
 
     /**
-     * A mock implementation of LogEntryDispatcher for testing.
+     * A mock implementation of LogDispatcher for testing.
      */
-    private static class MockLogEntryDispatcher implements LogEntryDispatcher {
+    private static class MockLogDispatcher implements LogDispatcher {
         @Override
-        public void addLogEntryHandler(LogEntryHandler handler) {
+        public void addLogHandler(LogHandler handler) {
             // Not needed for this test
         }
 
         @Override
-        public void removeLogEntryHandler(LogEntryHandler handler) {
+        public void removeLogHandler(LogHandler handler) {
             // Not needed for this test
         }
 
         @Override
-        public void setFilter(LogEntryFilter filter) {
+        public void setFilter(LogFilter filter) {
             // Not needed for this test
         }
 
         @Override
-        public LogEntryFilter getFilter() {
-            return LogEntryFilter.allPass();
+        public LogFilter getFilter() {
+            return LogFilter.allPass();
         }
 
         @Override
-        public java.util.Collection<LogEntryHandler> getLogEntryHandlers() {
+        public java.util.Collection<LogHandler> getLogHandlers() {
             return java.util.Collections.emptyList();
         }
     }

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 /**
  * A thread-safe log buffer class intended to provide a buffer for log messages
@@ -23,32 +24,46 @@ import java.util.concurrent.atomic.AtomicLong;
  * <p>All operations are thread-safe. For compound operations requiring consistency
  * across multiple calls, use {@link #getBufferState()} to get an atomic snapshot.
  */
-public class LogBuffer implements LogEntryHandler, Externalizable {
+public class LogBuffer implements LogHandler, Externalizable {
 
     /**
      * The default capacity.
      */
     public static final int DEFAULT_CAPACITY = 10_000;
 
-    private final RingBuffer<LogEntry> buffer;
+    private String name;
+    private final RingBuffer<SimpleLogEntry> buffer;
     private final Collection<LogBufferListener> listeners = new CopyOnWriteArrayList<>();
     private final AtomicLong totalAdded = new AtomicLong(0);
     private final AtomicLong totalRemoved = new AtomicLong(0);
+    private LogFilter filter = LogFilter.allPass();
+
+    /**
+     * Constructs a new LogBuffer instance with a default name "unnamed" and default capacity.
+     * This constructor is needed for serialization.
+     */
+    public LogBuffer() {
+        this("unnamed");
+    }
 
     /**
      * Construct a new LogBuffer instance with default capacity.
+     *
+     * @param name the name of the buffer
      */
-    public LogBuffer() {
-        this(DEFAULT_CAPACITY);
+    public LogBuffer(String name) {
+        this(name, DEFAULT_CAPACITY);
     }
 
     /**
      * Construct a new LogBuffer instance.
      *
+     * @param name the name of the buffer
      * @param capacity the initial capacity
      */
-    public LogBuffer(int capacity) {
-        buffer = new RingBuffer<>(capacity);
+    public LogBuffer(String name, int capacity) {
+        this.name = name;
+        this.buffer = new RingBuffer<>(capacity);
     }
 
     /**
@@ -76,7 +91,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         BufferState bufferState = getBufferState();
         out.writeInt(bufferState.entries.length);
-        for (LogEntry entry : bufferState.entries) {
+        for (SimpleLogEntry entry : bufferState.entries) {
             // Serialize individual fields to avoid non-serializable components
             out.writeObject(entry.message());
             out.writeObject(entry.loggerName());
@@ -105,7 +120,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int n = in.readInt();
-        List<LogEntry> entries = new ArrayList<>(n);
+        List<SimpleLogEntry> entries = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
             String message = (String) in.readObject();
             String loggerName = (String) in.readObject();
@@ -166,7 +181,13 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     }
 
     @Override
-    public void handleEntry(LogEntry entry) {
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, @Nullable Throwable t) {
+        SimpleLogEntry entry = new SimpleLogEntry(instant, loggerName, lvl, mrk, msg.get(), location, t);
         int removed;
         synchronized (buffer) {
             removed = buffer.put(entry) ? 0 : 1;
@@ -176,6 +197,16 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
 
         // Notify listeners outside the buffer synchronization to avoid deadlock
         listeners.forEach(listener -> listener.entries(removed, 1));
+    }
+
+    @Override
+    public void setFilter(LogFilter filter) {
+        this.filter = filter;
+    }
+
+    @Override
+    public LogFilter getFilter() {
+        return filter;
     }
 
     /**
@@ -197,9 +228,9 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      *
      * @return an array of LogEntry objects representing the contents of the LogBuffer
      */
-    public LogEntry[] toArray() {
+    public SimpleLogEntry[] toArray() {
         synchronized (buffer) {
-            return buffer.toArray(LogEntry[]::new);
+            return buffer.toArray(SimpleLogEntry[]::new);
         }
     }
 
@@ -214,7 +245,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * @param totalRemoved the total count of log entries that have been removed from the buffer
      * @param totalAdded   the total count of log entries that have been added to the buffer
      */
-    public record BufferState(LogEntry[] entries, long totalRemoved, long totalAdded) {
+    public record BufferState(SimpleLogEntry[] entries, long totalRemoved, long totalAdded) {
         @Override
         public boolean equals(@Nullable Object o) {
             if (!(o instanceof BufferState state)) {
@@ -262,7 +293,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      */
     public BufferState getBufferState() {
         synchronized (buffer) {
-            LogEntry[] array = toArray();
+            SimpleLogEntry[] array = toArray();
             long r = totalRemoved.get();
             long a = totalAdded.get();
             assert array.length == a - r;
@@ -289,11 +320,9 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * @param i the index of the LogEntry to retrieve
      * @return the LogEntry at the specified index
      */
-    public LogEntry get(int i) {
+    public SimpleLogEntry get(int i) {
         synchronized (buffer) {
-            LogEntry logEntry = buffer.get(i);
-            assert logEntry != null;
-            return logEntry;
+            return buffer.get(i);
         }
     }
 
@@ -309,7 +338,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * @throws IndexOutOfBoundsException if {@code fromIndex} or {@code toIndex} is
      *         out of range (fromIndex &lt; 0 || toIndex &gt; size() || fromIndex &gt; toIndex).
      */
-    public List<LogEntry> subList(int fromIndex, int toIndex) {
+    public List<SimpleLogEntry> subList(int fromIndex, int toIndex) {
         synchronized (buffer) {
             return new ArrayList<>(buffer.subList(fromIndex, toIndex));
         }
@@ -322,7 +351,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * @throws IOException if an I/O error occurs while appending the LogEntries
      */
     public void appendTo(Appendable app) throws IOException {
-        for (LogEntry entry : toArray()) {
+        for (SimpleLogEntry entry : toArray()) {
             app.append(entry.toString()).append("\n");
         }
     }

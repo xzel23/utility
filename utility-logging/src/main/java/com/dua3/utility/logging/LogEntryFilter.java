@@ -4,6 +4,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * The LogEntryFilter interface represents a filter used to determine if a LogEntry should be included or excluded.
@@ -21,7 +22,9 @@ import java.util.function.Predicate;
  * }
  * </pre>
  */
-public interface LogEntryFilter extends Predicate<LogEntry> {
+@Deprecated
+@FunctionalInterface
+public interface LogEntryFilter extends LogFilter, Predicate<LogEntry> {
 
     /**
      * A LogEntryFilter that allows all log entries to pass through.
@@ -31,11 +34,16 @@ public interface LogEntryFilter extends Predicate<LogEntry> {
      */
     LogEntryFilter ALL_PASS_FILTER = entry -> true;
 
+    @Override
+    default String name() {
+        return "unnamed " + getClass().getSimpleName();
+    }
+
     /**
      * Test if a {@link LogEntry} should be processed.
      * @param logEntry the input argument
      * @return {@code true}, if the {@code logEntry} should be processed, {@code false} if it should be filtered out
-     * @deprecated use {@link #test(Instant, String, LogLevel, String, String, String, Throwable)}
+     * @deprecated use {@link #test(Instant, String, LogLevel, String, Supplier, String, Throwable)}
      */
     @Override
     @Deprecated(forRemoval = true)
@@ -53,15 +61,17 @@ public interface LogEntryFilter extends Predicate<LogEntry> {
      * @param t the throwable associated with the log entry, can be {@code null}
      * @return {@code true}, if the log entry should be processed, {@code false} if it should be filtered out
      */
-    default boolean test(Instant instant, String loggerName, LogLevel lvl, String mrk, String msg, String location, @Nullable Throwable t) {
-        return test(new SimpleLogEntry(instant, loggerName, lvl, mrk, msg, location, t));
+    default boolean test(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, @Nullable Throwable t) {
+        return test(new SimpleLogEntry(instant, loggerName, lvl, mrk, msg.get(), location, t));
     }
 
     /**
      * Returns a LogEntryFilter that allows all log entries to pass through.
      *
      * @return a LogEntryFilter that allows all log entries to pass through
+     * @deprecated use {@link LogFilter#allPass()}
      */
+    @Deprecated(forRemoval = true)
     static LogEntryFilter allPass() {
         return ALL_PASS_FILTER;
     }

@@ -7,7 +7,7 @@ import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.UiMode;
 import com.dua3.utility.fx.FxLogPane;
 import com.dua3.utility.fx.PlatformHelper;
-import com.dua3.utility.logging.LogFilter;
+import com.dua3.utility.logging.StandardLogFilter;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
 import com.dua3.utility.math.MathUtil;
@@ -32,7 +32,7 @@ public class FxLogPaneSample extends Application {
     static {
         // this has to be done before the first logger is initialized!
         LogUtil.initUnifiedLogging();
-        if (LogUtil.getGlobalDispatcher().getFilter() instanceof LogFilter filter) {
+        if (LogUtil.getGlobalDispatcher().getFilter() instanceof StandardLogFilter filter) {
             filter.setLevel("", LogLevel.TRACE);
             filter.setLevel("java", LogLevel.ERROR);
             filter.setLevel("javax", LogLevel.ERROR);

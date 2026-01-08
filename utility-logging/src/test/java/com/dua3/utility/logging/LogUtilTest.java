@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * Unit tests for the {@link LogUtil} class.
  * <p>
  * Note: Testing LogUtil is challenging because it uses the ServiceLoader mechanism to find and load
- * ILogEntryDispatcherFactory implementations. We use reflection to access and modify private fields
+ * ILogDispatcherFactory implementations. We use reflection to access and modify private fields
  * for testing purposes.
  */
 @Execution(ExecutionMode.SAME_THREAD)
@@ -26,11 +26,11 @@ class LogUtilTest {
         resetGlobalDispatcher();
 
         // We'll test by manually setting the globalDispatcher
-        MockLogEntryDispatcher mockDispatcher = new MockLogEntryDispatcher();
+        MockLogDispatcher mockDispatcher = new MockLogDispatcher();
         setGlobalDispatcher(mockDispatcher);
 
         // Test that getGlobalDispatcher returns the expected dispatcher
-        LogEntryDispatcher returnedDispatcher = LogUtil.getGlobalDispatcher();
+        LogDispatcher returnedDispatcher = LogUtil.getGlobalDispatcher();
         assertNotNull(returnedDispatcher, "getGlobalDispatcher should return a non-null dispatcher");
         assertSame(mockDispatcher, returnedDispatcher, "getGlobalDispatcher should return the expected dispatcher");
     }
@@ -51,30 +51,30 @@ class LogUtilTest {
         resetGlobalDispatcher();
 
         // Set a mock dispatcher
-        MockLogEntryDispatcher mockDispatcher = new MockLogEntryDispatcher();
+        MockLogDispatcher mockDispatcher = new MockLogDispatcher();
         setGlobalDispatcher(mockDispatcher);
 
         // Call assureInitialized
         LogUtil.assureInitialized();
 
         // Test that the globalDispatcher is still the mock dispatcher
-        LogEntryDispatcher dispatcher = getGlobalDispatcher();
+        LogDispatcher dispatcher = getGlobalDispatcher();
         assertSame(mockDispatcher, dispatcher, "globalDispatcher should still be the mock dispatcher");
     }
 
     /**
      * Get the value of the globalDispatcher field in LogUtil.
      */
-    private LogEntryDispatcher getGlobalDispatcher() throws Exception {
+    private LogDispatcher getGlobalDispatcher() throws Exception {
         Field globalDispatcherField = LogUtil.class.getDeclaredField("globalDispatcher");
         globalDispatcherField.setAccessible(true);
-        return (LogEntryDispatcher) globalDispatcherField.get(null);
+        return (LogDispatcher) globalDispatcherField.get(null);
     }
 
     /**
      * Set the globalDispatcher field in LogUtil to a specific value.
      */
-    private void setGlobalDispatcher(LogEntryDispatcher dispatcher) throws Exception {
+    private void setGlobalDispatcher(LogDispatcher dispatcher) throws Exception {
         Field globalDispatcherField = LogUtil.class.getDeclaredField("globalDispatcher");
         globalDispatcherField.setAccessible(true);
         globalDispatcherField.set(null, dispatcher);
@@ -83,40 +83,40 @@ class LogUtilTest {
     @Test
     void testServiceLoaderMechanism() {
         // We can't directly test the ServiceLoader mechanism in the test environment
-        // because there is no ILogEntryDispatcherFactory implementation available.
+        // because there is no ILogDispatcherFactory implementation available.
         // In a real environment, this would load the available implementations.
 
         // Instead, we'll just verify that the ServiceLoader can be loaded
-        ServiceLoader<ILogEntryDispatcherFactory> serviceLoader = ServiceLoader.load(ILogEntryDispatcherFactory.class);
+        ServiceLoader<LogDispatcherFactory> serviceLoader = ServiceLoader.load(LogDispatcherFactory.class);
         assertNotNull(serviceLoader, "ServiceLoader should not be null");
     }
 
     /**
-     * A mock implementation of LogEntryDispatcher for testing.
+     * A mock implementation of LogDispatcher for testing.
      */
-    private static class MockLogEntryDispatcher implements LogEntryDispatcher {
+    private static class MockLogDispatcher implements LogDispatcher {
         @Override
-        public void addLogEntryHandler(LogEntryHandler handler) {
+        public void addLogHandler(LogHandler handler) {
             // Not needed for this test
         }
 
         @Override
-        public void removeLogEntryHandler(LogEntryHandler handler) {
+        public void removeLogHandler(LogHandler handler) {
             // Not needed for this test
         }
 
         @Override
-        public void setFilter(LogEntryFilter filter) {
+        public void setFilter(LogFilter filter) {
             // Not needed for this test
         }
 
         @Override
-        public LogEntryFilter getFilter() {
-            return LogEntryFilter.allPass();
+        public LogFilter getFilter() {
+            return LogFilter.allPass();
         }
 
         @Override
-        public java.util.Collection<LogEntryHandler> getLogEntryHandlers() {
+        public java.util.Collection<LogHandler> getLogHandlers() {
             return java.util.Collections.emptyList();
         }
     }

@@ -24,7 +24,7 @@ class LogTableModelTest {
 
     @BeforeEach
     void setUp() {
-        buffer = new LogBuffer(100);
+        buffer = new LogBuffer("LogTableModelTest", 100);
         model = new LogTableModel(buffer);
     }
 
@@ -45,7 +45,15 @@ class LogTableModelTest {
     void testAddLogEntry() {
         // Add a log entry to the buffer
         LogEntry entry = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message", "", null);
-        buffer.handleEntry(entry);
+        buffer.handle(
+                entry.time(),
+                entry.loggerName(),
+                entry.level(),
+                entry.marker(),
+                entry::message,
+                entry.location(),
+                entry.throwable()
+        );
 
         // Wait for the model to update asynchronously
         waitForRowCount(1);
@@ -73,7 +81,16 @@ class LogTableModelTest {
     void testClearBuffer() {
         // Add some log entries one by one with small delays to ensure proper processing
         for (int i = 0; i < 5; i++) {
-            buffer.handleEntry(new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, "", null));
+            LogEntry entry = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.INFO, "", "Test message " + i, "", null);
+            buffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Wait for the model to update asynchronously
@@ -103,7 +120,7 @@ class LogTableModelTest {
     void testGetColumnClass() {
         for (int i = 0; i < model.getColumnCount(); i++) {
             Class<?> columnClass = model.getColumnClass(i);
-            assertSame(SwingLogPane.LogEntryField.class, columnClass, "Column class should be LogEntryField");
+            assertSame(SwingLogPane.SimpleLogEntryField.class, columnClass, "Column class should be SimpleLogEntryField");
         }
     }
 
@@ -114,9 +131,33 @@ class LogTableModelTest {
         LogEntry entry2 = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.WARN, "", "Warning message", "", null);
         LogEntry entry3 = new SimpleLogEntry(Instant.now(), "test.logger", LogLevel.ERROR, "", "Error message", "", null);
 
-        buffer.handleEntry(entry1);
-        buffer.handleEntry(entry2);
-        buffer.handleEntry(entry3);
+        buffer.handle(
+                entry1.time(),
+                entry1.loggerName(),
+                entry1.level(),
+                entry1.marker(),
+                entry1::message,
+                entry1.location(),
+                entry1.throwable()
+        );
+        buffer.handle(
+                entry2.time(),
+                entry2.loggerName(),
+                entry2.level(),
+                entry2.marker(),
+                entry2::message,
+                entry2.location(),
+                entry2.throwable()
+        );
+        buffer.handle(
+                entry3.time(),
+                entry3.loggerName(),
+                entry3.level(),
+                entry3.marker(),
+                entry3::message,
+                entry3.location(),
+                entry3.throwable()
+        );
 
         // Wait for the model to update asynchronously
         waitForRowCount(3);
@@ -140,7 +181,15 @@ class LogTableModelTest {
 
         // Add all entries in a synchronized block to ensure they're added as a batch
         for (LogEntry entry : entries) {
-            buffer.handleEntry(entry);
+            buffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Wait for the model to stabilize

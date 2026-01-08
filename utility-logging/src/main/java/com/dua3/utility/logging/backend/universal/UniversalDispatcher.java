@@ -1,8 +1,9 @@
 package com.dua3.utility.logging.backend.universal;
 
-import com.dua3.utility.logging.LogEntryDispatcher;
-import com.dua3.utility.logging.LogEntryFilter;
-import com.dua3.utility.logging.LogEntryHandler;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.logging.LogDispatcher;
+import com.dua3.utility.logging.LogFilter;
+import com.dua3.utility.logging.LogHandler;
 import com.dua3.utility.logging.LogLevel;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
@@ -18,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 import java.util.logging.LogRecord;
 
 /**
@@ -29,7 +31,7 @@ import java.util.logging.LogRecord;
  * <p>
  * The class follows a singleton pattern to ensure a single instance is used throughout the application.
  */
-public class UniversalDispatcher implements LogEntryDispatcher {
+public class UniversalDispatcher implements LogDispatcher {
 
     /**
      * A private static final class that holds a singleton instance of {@link UniversalDispatcher}.
@@ -52,14 +54,14 @@ public class UniversalDispatcher implements LogEntryDispatcher {
         return SingletonHolder.INSTANCE;
     }
 
-    private LogEntryFilter filter = LogEntryFilter.allPass();
+    private LogFilter filter = LogFilter.allPass();
 
     /**
-     * A thread-safe list of weak references to LogEntryHandler instances. This guarantees that the handlers
+     * A thread-safe list of weak references to LogHandler instances. This guarantees that the handlers
      * can be accessed concurrently without external synchronization and minimizes memory retention by
      * allowing garbage collection of handlers no longer in use.
      */
-    private final List<WeakReference<LogEntryHandler>> handlers = new CopyOnWriteArrayList<>();
+    private final List<WeakReference<LogHandler>> handlers = new CopyOnWriteArrayList<>();
 
     /**
      * Default constructor for the CommonDispatcher class.
@@ -72,27 +74,27 @@ public class UniversalDispatcher implements LogEntryDispatcher {
     }
 
     @Override
-    public void addLogEntryHandler(LogEntryHandler handler) {
+    public void addLogHandler(LogHandler handler) {
         handlers.add(new WeakReference<>(handler));
     }
 
     @Override
-    public synchronized void removeLogEntryHandler(LogEntryHandler handler) {
+    public synchronized void removeLogHandler(LogHandler handler) {
         handlers.removeIf(h -> h.get() == handler);
     }
 
     @Override
-    public void setFilter(LogEntryFilter filter) {
+    public void setFilter(LogFilter filter) {
         this.filter = filter;
     }
 
     @Override
-    public LogEntryFilter getFilter() {
+    public LogFilter getFilter() {
         return filter;
     }
 
     @Override
-    public Collection<LogEntryHandler> getLogEntryHandlers() {
+    public Collection<LogHandler> getLogHandlers() {
         return List.copyOf(handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList());
     }
 
@@ -133,7 +135,7 @@ public class UniversalDispatcher implements LogEntryDispatcher {
     }
 
     /**
-     * Dispatches a Log4j log event to all registered {@link LogEntryHandler} instances.
+     * Dispatches a Log4j log event to all registered {@link LogHandler} instances.
      * This method determines if the log event should be processed based on the
      * translated log level and forwards the event to handlers enabled for that level.
      *
@@ -146,15 +148,14 @@ public class UniversalDispatcher implements LogEntryDispatcher {
     public void dispatchLog4j(String name, Level level, @Nullable Marker marker, Message message, @Nullable Throwable t) {
         Instant instant = Instant.now();
         String mrk = marker == null ? "" : marker.getName();
-        String msg = null;
+        Supplier<String> msg = LangUtil.cachingStringSupplier(message::getFormattedMessage);
 
         LogLevel lvl = translateLog4jLevel(level);
 
-        if (filter.test(instant, name, lvl, mrk, "", "", t)) {
-            for (WeakReference<LogEntryHandler> handlerRef : handlers) {
-                LogEntryHandler handler = handlerRef.get();
+        if (filter.test(instant, name, lvl, mrk, msg, "", t)) {
+            for (WeakReference<LogHandler> handlerRef : handlers) {
+                LogHandler handler = handlerRef.get();
                 if (handler != null && handler.isEnabled(lvl)) {
-                    if (msg == null) msg = formatLog4jMessage(message);
                     handler.handle(instant, name, lvl, mrk, msg, "", t);
                 }
             }
@@ -198,7 +199,7 @@ public class UniversalDispatcher implements LogEntryDispatcher {
     }
 
     /**
-     * Dispatches an SLF4J logging event to all registered {@link LogEntryHandler} instances.
+     * Dispatches an SLF4J logging event to all registered {@link LogHandler} instances.
      * This method determines if the log event should be processed based on the log level and
      * forwards the event to handlers that are enabled for the translated log level.
      *
@@ -212,14 +213,13 @@ public class UniversalDispatcher implements LogEntryDispatcher {
     public void dispatchSlf4j(String loggerName, org.slf4j.event.Level level, org.slf4j.@Nullable Marker marker, String messagePattern, @Nullable Object @Nullable [] arguments, @Nullable Throwable throwable) {
         Instant instant = Instant.now();
         String mrk = marker == null ? "" : marker.getName();
-        String msg = null;
+        Supplier<String> msg = LangUtil.cachingStringSupplier(() -> formatSlf4jMessage(messagePattern, arguments));
 
         LogLevel lvl = translateSlf4jLevel(level);
-        if (filter.test(instant, loggerName, lvl, mrk, "", "", throwable)) {
-            for (WeakReference<LogEntryHandler> handlerRef : handlers) {
-                LogEntryHandler handler = handlerRef.get();
+        if (filter.test(instant, loggerName, lvl, mrk, msg, "", throwable)) {
+            for (WeakReference<LogHandler> handlerRef : handlers) {
+                LogHandler handler = handlerRef.get();
                 if (handler != null && handler.isEnabled(lvl)) {
-                    if (msg == null) msg = formatSlf4jMessage(messagePattern, arguments);
                     handler.handle(instant, loggerName, lvl, mrk, msg, "", throwable);
                 }
             }
@@ -272,20 +272,19 @@ public class UniversalDispatcher implements LogEntryDispatcher {
      * Dispatches a log event derived from a {@link LogRecord}.
      * This method translates the JUL (Java Util Logging) level to the appropriate
      * {@link LogLevel}, formats the log message, and forwards the log record to all
-     * registered {@link LogEntryHandler} instances that are enabled for the translated log level.
+     * registered {@link LogHandler} instances that are enabled for the translated log level.
      *
      * @param logRecord the {@code LogRecord} containing the log information; must not be null
      */
     public void dispatchJul(LogRecord logRecord) {
         Instant instant = Instant.now();
-        String msg = null;
-
+        Supplier<String> msg = LangUtil.cachingStringSupplier(() -> formatJulMessage(logRecord.getMessage(), logRecord.getParameters()));
         LogLevel lvl = translateJulLevel(logRecord.getLevel());
-        if (filter.test(instant, logRecord.getLoggerName(), lvl, "", "", "", logRecord.getThrown())) {
-            for (WeakReference<LogEntryHandler> handlerRef : handlers) {
-                LogEntryHandler handler = handlerRef.get();
+
+        if (filter.test(instant, logRecord.getLoggerName(), lvl, "", msg, "", logRecord.getThrown())) {
+            for (WeakReference<LogHandler> handlerRef : handlers) {
+                LogHandler handler = handlerRef.get();
                 if (handler != null && handler.isEnabled(lvl)) {
-                    if (msg == null) msg = formatJulMessage(logRecord.getMessage(), logRecord.getParameters());
                     handler.handle(instant, logRecord.getLoggerName(), lvl, "", msg, "", logRecord.getThrown());
                 }
             }
@@ -334,7 +333,7 @@ public class UniversalDispatcher implements LogEntryDispatcher {
     /**
      * Dispatches a log event using the JCL (Jakarta Commons Logging) mechanism.
      * The method determines whether the log event should be handled based on its log level
-     * and dispatches it to all registered {@link LogEntryHandler} instances that are enabled
+     * and dispatches it to all registered {@link LogHandler} instances that are enabled
      * for the specified log level.
      *
      * @param name the name of the logger
@@ -344,29 +343,16 @@ public class UniversalDispatcher implements LogEntryDispatcher {
      */
     public void dispatchJcl(String name, LogLevel level, @Nullable Object message, @Nullable Throwable t) {
         Instant instant = Instant.now();
-        String msg = null;
+        Supplier<String> msg = LangUtil.cachingStringSupplier(() -> String.valueOf(message));
 
-        if (filter.test(instant, name, level, "", "", "", t)) {
-            for (WeakReference<LogEntryHandler> handlerRef : handlers) {
-                LogEntryHandler handler = handlerRef.get();
+        if (filter.test(instant, name, level, "", ()-> "", "", t)) {
+            for (WeakReference<LogHandler> handlerRef : handlers) {
+                LogHandler handler = handlerRef.get();
                 if (handler != null && handler.isEnabled(level)) {
-                    if (instant == null) instant = Instant.now();
-                    if (msg == null) msg = formatJclMessage(message);
                     handler.handle(instant, name, level, "", msg, "", t);
                 }
             }
         }
-    }
-
-    /**
-     * Formats a given message into a string representation suitable for JCL logging.
-     * If the input message is null, it returns an empty string.
-     *
-     * @param message the message object to format; can be null
-     * @return a string representation of the message, or an empty string if the message is null
-     */
-    private static String formatJclMessage(@Nullable Object message) {
-        return Objects.toString(message, "null");
     }
 
 }

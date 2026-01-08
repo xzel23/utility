@@ -4,11 +4,20 @@ import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.backend.universal.UniversalDispatcher;
 import org.apache.commons.logging.Log;
 
+/**
+ * LoggerJcl is an implementation of the Apache commons Log interfac that forwards all logging
+ * calls to the global universal dispatcher instance.
+ */
 public class LoggerJcl implements Log {
     private static final UniversalDispatcher DISPATCHER = UniversalDispatcher.getInstance();
 
     private final String name;
 
+    /**
+     * Creates an instance of the LoggerJcl class with the specified logger name.
+     *
+     * @param name the name of the logger
+     */
     public LoggerJcl(String name) {
         this.name = name;
     }

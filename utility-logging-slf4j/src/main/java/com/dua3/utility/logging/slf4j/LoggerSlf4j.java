@@ -1,16 +1,21 @@
 package com.dua3.utility.logging.slf4j;
 
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.logging.LogLevel;
 import org.jspecify.annotations.Nullable;
-import com.dua3.utility.logging.LogEntryHandler;
+import com.dua3.utility.logging.LogHandler;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
 import org.slf4j.helpers.MessageFormatter;
+import org.slf4j.spi.LocationAwareLogger;
 
 import java.io.NotSerializableException;
 import java.io.Serial;
 import java.lang.ref.WeakReference;
+import java.time.Instant;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * This class represents a logger implementation using the SLF4J logging framework. It extends the AbstractLogger class.
@@ -26,7 +31,7 @@ public class LoggerSlf4j extends AbstractLogger {
 
     private static Level defaultLevel = Level.INFO;
 
-    private final transient List<? extends WeakReference<LogEntryHandler>> handlers;
+    private final transient List<? extends WeakReference<LogHandler>> handlers;
     private @Nullable Level level;
 
     /**
@@ -35,7 +40,7 @@ public class LoggerSlf4j extends AbstractLogger {
      * @param name     the name of the logger
      * @param handlers a list of handlers for processing log entries
      */
-    public LoggerSlf4j(String name, List<? extends WeakReference<LogEntryHandler>> handlers) {
+    public LoggerSlf4j(String name, List<? extends WeakReference<LogHandler>> handlers) {
         //noinspection AssignmentToSuperclassField - API restriction; it is the only way to set the logger name
         super.name = name;
         this.handlers = handlers;
@@ -67,17 +72,35 @@ public class LoggerSlf4j extends AbstractLogger {
     @Override
     protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String messagePattern, @Nullable Object @Nullable [] arguments, @Nullable Throwable throwable) {
         boolean cleanup = false;
-        for (WeakReference<LogEntryHandler> ref : handlers) {
-            LogEntryHandler handler = ref.get();
+        Supplier<String> msg = LangUtil.cachingStringSupplier(() -> MessageFormatter.basicArrayFormat(messagePattern, arguments));
+        for (WeakReference<LogHandler> ref : handlers) {
+            LogHandler handler = ref.get();
             if (handler == null) {
                 cleanup = true;
             } else {
-                handler.handleEntry(new LogEntrySlf4j(name, level, marker, () -> MessageFormatter.basicArrayFormat(messagePattern, arguments), throwable));
+                handler.handle(Instant.now(), name, translateSlf4jLevel(level), marker == null ? "" : marker.toString(), msg, "", throwable);
             }
         }
         if (cleanup) {
             handlers.removeIf(ref -> ref.get() == null);
         }
+    }
+
+    private static LogLevel translateSlf4jLevel(org.slf4j.event.Level level) {
+        int levelInt = level.toInt();
+        if (levelInt < LocationAwareLogger.DEBUG_INT) {
+            return LogLevel.TRACE;
+        }
+        if (levelInt < LocationAwareLogger.INFO_INT) {
+            return LogLevel.DEBUG;
+        }
+        if (levelInt < LocationAwareLogger.WARN_INT) {
+            return LogLevel.INFO;
+        }
+        if (levelInt < LocationAwareLogger.ERROR_INT) {
+            return LogLevel.WARN;
+        }
+        return LogLevel.ERROR;
     }
 
     /**

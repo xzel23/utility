@@ -33,7 +33,7 @@ class LogBufferThreadSafetyTest {
     @Test
     @Timeout(value = 30, unit = TimeUnit.SECONDS)
     void testConcurrentAdding() throws InterruptedException {
-        LogBuffer logBuffer = new LogBuffer(BUFFER_CAPACITY);
+        LogBuffer logBuffer = new LogBuffer("testConcurrentAdding", BUFFER_CAPACITY);
 
         // Create a listener to track added entries
         AtomicInteger listenerAddedCount = new AtomicInteger(0);
@@ -69,7 +69,15 @@ class LogBufferThreadSafetyTest {
                     // Add entries
                     for (int i = 0; i < ENTRIES_PER_THREAD; i++) {
                         LogEntry entry = createTestLogEntry("Thread " + id + " Message " + i);
-                        logBuffer.handleEntry(entry);
+                        logBuffer.handle(
+                                entry.time(),
+                                entry.loggerName(),
+                                entry.level(),
+                                entry.marker(),
+                                entry::message,
+                                entry.location(),
+                                entry.throwable()
+                        );
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -114,7 +122,7 @@ class LogBufferThreadSafetyTest {
     @Test
     @Timeout(value = 30, unit = TimeUnit.SECONDS)
     void testConcurrentAddingAndClearing() throws InterruptedException {
-        LogBuffer logBuffer = new LogBuffer(BUFFER_CAPACITY);
+        LogBuffer logBuffer = new LogBuffer("testConcurrentAddingAndClearing", BUFFER_CAPACITY);
 
         // Track clear operations
         AtomicInteger clearCount = new AtomicInteger(0);
@@ -147,7 +155,15 @@ class LogBufferThreadSafetyTest {
                     int counter = 0;
                     while (running.get() && counter < ENTRIES_PER_THREAD) {
                         LogEntry entry = createTestLogEntry("Thread " + id + " Message " + counter);
-                        logBuffer.handleEntry(entry);
+                        logBuffer.handle(
+                                entry.time(),
+                                entry.loggerName(),
+                                entry.level(),
+                                entry.marker(),
+                                entry::message,
+                                entry.location(),
+                                entry.throwable()
+                        );
                         counter++;
 
                         // Small delay to reduce contention
@@ -219,7 +235,7 @@ class LogBufferThreadSafetyTest {
     @Test
     @Timeout(value = 30, unit = TimeUnit.SECONDS)
     void testConcurrentReadingAndWriting() throws InterruptedException {
-        LogBuffer logBuffer = new LogBuffer(BUFFER_CAPACITY);
+        LogBuffer logBuffer = new LogBuffer("testConcurrentReadingAndWriting", BUFFER_CAPACITY);
 
         // Flag to signal threads to stop
         AtomicBoolean running = new AtomicBoolean(true);
@@ -238,7 +254,15 @@ class LogBufferThreadSafetyTest {
                     int counter = 0;
                     while (running.get() && counter < ENTRIES_PER_THREAD) {
                         LogEntry entry = createTestLogEntry("Thread " + id + " Message " + counter);
-                        logBuffer.handleEntry(entry);
+                        logBuffer.handle(
+                                entry.time(),
+                                entry.loggerName(),
+                                entry.level(),
+                                entry.marker(),
+                                entry::message,
+                                entry.location(),
+                                entry.throwable()
+                        );
                         counter++;
 
                         // Small delay to reduce contention
@@ -277,7 +301,7 @@ class LogBufferThreadSafetyTest {
                                 if (state.entries().length > 2) {
                                     int fromIndex = randomIndex / 2;
                                     int toIndex = Math.min(fromIndex + 2, state.entries().length);
-                                    List<LogEntry> subList = logBuffer.subList(fromIndex, toIndex);
+                                    List<? extends LogEntry> subList = logBuffer.subList(fromIndex, toIndex);
                                     assertNotNull(subList, "Sublist should not be null");
                                     assertTrue(subList.size() <= toIndex - fromIndex,
                                             "Sublist size should be consistent");

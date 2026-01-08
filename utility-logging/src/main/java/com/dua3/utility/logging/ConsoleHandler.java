@@ -9,12 +9,13 @@ import java.io.PrintStream;
 import java.time.Instant;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * The ConsoleHandler class is an implementation of the LogEntryHandler interface.
  * It handles log entries by writing them to the console.
  */
-public final class ConsoleHandler implements LogEntryHandler {
+public final class ConsoleHandler implements LogHandler {
 
     private static final String NEWLINE = System.lineSeparator();
 
@@ -34,45 +35,64 @@ public final class ConsoleHandler implements LogEntryHandler {
             LogLevel.ERROR, Pair.of("", NEWLINE)
     );
 
+    private final String name;
     private final PrintStream out;
-    private volatile LogEntryFilter filter = LogEntryFilter.allPass();
+    private volatile LogFilter filter = LogFilter.allPass();
     private volatile Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
+
+    /**
+     * Constructs a ConsoleHandler with the specified PrintStream and colored flag.
+     *
+     * @param name    the name of the handler
+     * @param out     the PrintStream to which log messages will be written
+     * @param colored flag indicating whether to use colored brackets for different log levels
+     */
+    public ConsoleHandler(String name, PrintStream out, boolean colored) {
+        this.name = name;
+        this.out = out;
+        setColored(colored);
+    }
 
     /**
      * Constructs a ConsoleHandler with the specified PrintStream and colored flag.
      *
      * @param out     the PrintStream to which log messages will be written
      * @param colored flag indicating whether to use colored brackets for different log levels
+     * @deprecated use {@link #ConsoleHandler(String, PrintStream, boolean)} instead
      */
+    @Deprecated(forRemoval = true)
     public ConsoleHandler(PrintStream out, boolean colored) {
-        this.out = out;
-        setColored(colored);
+        this(ConsoleHandler.class.getSimpleName(), out, colored);
     }
 
     @Override
-    public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, String msg, String location, @Nullable Throwable t) {
+    public String name() {
+        return name;
+    }
+
+    /**
+     * Retrieves the PrintStream for log entries.
+     * @return the PrintStream for log entries
+     */
+    public PrintStream getPrintStream() {
+        return out;
+    }
+
+    @Override
+    public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, @Nullable Throwable t) {
         if (filter.test(instant, loggerName, lvl, mrk, msg, location, t)) {
             Pair<String, String> colorCodes = colorMap.get(lvl);
-            out.format("%s[%s] %s %s %s %s %s%s%n",
+            out.format("%s[%s] %s %s %s %s %s %s%s%n",
                     colorCodes.first(),
                     lvl.name(),
                     loggerName,
                     mrk,
-                    msg,
-                    t == null ? "" : t.getMessage(),
+                    msg.get(),
+                    location,
+                    t == null ? "" : t.getClass().getName() + ": " + t.getMessage(),
                     t == null ? "" : NEWLINE,
                     colorCodes.second()
             );
-            LogEntryHandler.super.handle(instant, loggerName, lvl, mrk, msg, location, t);
-        }
-    }
-
-    @Override
-    @Deprecated
-    public void handleEntry(LogEntry entry) {
-        if (filter.test(entry)) {
-            var colors = colorMap.get(entry.level());
-            out.append(entry.format(colors.first(), colors.second()));
         }
     }
 
@@ -95,9 +115,10 @@ public final class ConsoleHandler implements LogEntryHandler {
     /**
      * Sets the filter for log entries.
      *
-     * @param filter the LogEntryFilter to be set as the filter for log entries
+     * @param filter the LogFilter to be set as the filter for log entries
      */
-    public void setFilter(LogEntryFilter filter) {
+    @Override
+    public void setFilter(LogFilter filter) {
         this.filter = filter;
     }
 
@@ -107,9 +128,10 @@ public final class ConsoleHandler implements LogEntryHandler {
      * This method returns the current filter that is being used to determine if a log entry should
      * be included or excluded.
      *
-     * @return the LogEntryFilter that is currently set as the filter for log entries.
+     * @return the LogFilter that is currently set as the filter for log entries.
      */
-    public LogEntryFilter getFilter() {
+    @Override
+    public LogFilter getFilter() {
         return filter;
     }
 }

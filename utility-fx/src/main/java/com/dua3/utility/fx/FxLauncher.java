@@ -1,9 +1,12 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.lang.Platform;
+import com.dua3.utility.logging.DefaultLogEntryFilter;
 import com.dua3.utility.logging.LogBuffer;
+import com.dua3.utility.logging.LogEntryFilter;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
+import com.dua3.utility.logging.log4j.LogEntryLog4J;
 import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.options.Repetitions;
@@ -298,7 +301,7 @@ public final class FxLauncher {
                     "regex",
                     pattern -> {
                         Predicate<String> predicate = Pattern.compile(pattern).asMatchPredicate();
-                        LogUtil.getGlobalDispatcher().setFilter(entry -> predicate.test(entry.loggerName()));
+                        LogUtil.getGlobalDispatcher().setFilter((LogEntryFilter) (entry -> predicate.test(entry.loggerName())));
                     },
                     "--log-filter", "-lf"
             );
@@ -307,7 +310,7 @@ public final class FxLauncher {
                     I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.description"),
                     Repetitions.ZERO_OR_ONE,
                     "size",
-                    size -> logBuffer = new LogBuffer(size),
+                    size -> logBuffer = new LogBuffer("Application Log Buffer", size),
                     "--log-buffer-size", "-ls"
             );
         }
@@ -337,7 +340,7 @@ public final class FxLauncher {
             if (logBuffer == null) {
                 logBuffer = new LogBuffer();
             }
-            LogUtil.getGlobalDispatcher().addLogEntryHandler(logBuffer);
+            LogUtil.getGlobalDispatcher().addLogHandler(logBuffer);
         }
 
         Logger log = LogManager.getLogger(FxLauncher.class);

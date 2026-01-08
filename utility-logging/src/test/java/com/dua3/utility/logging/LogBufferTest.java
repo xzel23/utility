@@ -25,7 +25,7 @@ class LogBufferTest {
 
     @BeforeEach
     void setUp() {
-        logBuffer = new LogBuffer(TEST_CAPACITY);
+        logBuffer = new LogBuffer("LogBufferTest", TEST_CAPACITY);
     }
 
     @Test
@@ -38,12 +38,20 @@ class LogBufferTest {
     }
 
     @Test
-    void testHandleEntry() {
+    void testHandle() {
         // Create a test log entry
         LogEntry entry = createTestLogEntry("Test message");
 
         // Add the entry to the buffer
-        logBuffer.handleEntry(entry);
+        logBuffer.handle(
+                entry.time(),
+                entry.loggerName(),
+                entry.level(),
+                entry.marker(),
+                entry::message,
+                entry.location(),
+                entry.throwable()
+        );
 
         // Verify the entry was added
         LogBuffer.BufferState state = logBuffer.getBufferState();
@@ -57,7 +65,16 @@ class LogBufferTest {
     void testCapacityLimit() {
         // Add more entries than the capacity
         for (int i = 0; i < TEST_CAPACITY + 5; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Verify that only the most recent entries are kept
@@ -77,7 +94,16 @@ class LogBufferTest {
     void testClear() {
         // Add some entries
         for (int i = 0; i < 5; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Clear the buffer
@@ -115,7 +141,16 @@ class LogBufferTest {
 
         // Add some entries
         for (int i = 0; i < 5; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Verify the listener was notified
@@ -125,7 +160,16 @@ class LogBufferTest {
 
         // Add more entries than capacity
         for (int i = 0; i < TEST_CAPACITY; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + (i + 5)));
+            LogEntry entry = createTestLogEntry("Message " + (i + 5));
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Verify the listener was notified about removed entries
@@ -142,7 +186,16 @@ class LogBufferTest {
         logBuffer.removeLogBufferListener(listener);
 
         // Add an entry and clear again
-        logBuffer.handleEntry(createTestLogEntry("Test"));
+        LogEntry entry = createTestLogEntry("Test");
+        logBuffer.handle(
+                entry.time(),
+                entry.loggerName(),
+                entry.level(),
+                entry.marker(),
+                entry::message,
+                entry.location(),
+                entry.throwable()
+        );
         logBuffer.clear();
 
         // Verify the listener was not notified
@@ -158,7 +211,15 @@ class LogBufferTest {
         for (int i = 0; i < 5; i++) {
             LogEntry entry = createTestLogEntry("Message " + i);
             entries.add(entry);
-            logBuffer.handleEntry(entry);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Get the array
@@ -179,7 +240,15 @@ class LogBufferTest {
         for (int i = 0; i < 5; i++) {
             LogEntry entry = createTestLogEntry("Message " + i);
             entries.add(entry);
-            logBuffer.handleEntry(entry);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Get entries by index
@@ -198,11 +267,20 @@ class LogBufferTest {
     void testSubList() {
         // Add some entries
         for (int i = 0; i < 10; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Get a sublist
-        List<LogEntry> subList = logBuffer.subList(2, 7);
+        List<? extends LogEntry> subList = logBuffer.subList(2, 7);
 
         // Verify the sublist
         assertEquals(5, subList.size(), "Sublist should contain 5 entries");
@@ -247,7 +325,16 @@ class LogBufferTest {
     void testWriteExternalWithEntries() throws IOException {
         // Add some entries to the buffer
         for (int i = 0; i < 5; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Serialize the buffer
@@ -350,7 +437,16 @@ class LogBufferTest {
     void testSerializationCycle() throws Exception {
         // Add some entries to the buffer
         for (int i = 0; i < 5; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Get the original buffer state
@@ -410,7 +506,15 @@ class LogBufferTest {
         );
 
         // Add the entry to the buffer
-        logBuffer.handleEntry(entryWithThrowable);
+        logBuffer.handle(
+                entryWithThrowable.time(),
+                entryWithThrowable.loggerName(),
+                entryWithThrowable.level(),
+                entryWithThrowable.marker(),
+                entryWithThrowable::message,
+                entryWithThrowable.location(),
+                entryWithThrowable.throwable()
+        );
 
         // Serialize the buffer
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -454,13 +558,31 @@ class LogBufferTest {
 
         // Add some entries and test sequence number
         for (int i = 0; i < 5; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
         assertEquals(5, logBuffer.getSequenceNumber(), "Sequence number should be 5 after adding 5 entries");
 
         // Add more entries than capacity to trigger removal
         for (int i = 0; i < TEST_CAPACITY; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + (i + 5)));
+            LogEntry entry = createTestLogEntry("Message " + (i + 5));
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
         // The actual sequence number is 20. This is because once the capacity is reached, each addition to the buffer
         // removes the oldest entry from the buffer.
@@ -480,7 +602,16 @@ class LogBufferTest {
     void testSetCapacity() {
         // Add some entries
         for (int i = 0; i < 5; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Test increasing capacity
@@ -492,7 +623,16 @@ class LogBufferTest {
 
         // Add more entries
         for (int i = 5; i < 15; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
         state = logBuffer.getBufferState();
         assertEquals(15, state.entries().length, "Buffer should contain 15 entries");
@@ -529,7 +669,16 @@ class LogBufferTest {
 
         // Add some entries
         for (int i = 0; i < 5; i++) {
-            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+            LogEntry entry = createTestLogEntry("Message " + i);
+            logBuffer.handle(
+                    entry.time(),
+                    entry.loggerName(),
+                    entry.level(),
+                    entry.marker(),
+                    entry::message,
+                    entry.location(),
+                    entry.throwable()
+            );
         }
 
         // Test with multiple entries
@@ -556,7 +705,16 @@ class LogBufferTest {
 
         // Test with entry containing special characters
         logBuffer.clear();
-        logBuffer.handleEntry(createTestLogEntry("Special chars: \n\t\r\f\\\""));
+        LogEntry specialEntry = createTestLogEntry("Special chars: \n\t\r\f\\\"");
+        logBuffer.handle(
+                specialEntry.time(),
+                specialEntry.loggerName(),
+                specialEntry.level(),
+                specialEntry.marker(),
+                specialEntry::message,
+                specialEntry.location(),
+                specialEntry.throwable()
+        );
 
         StringBuilder specialResult = new StringBuilder();
         logBuffer.appendTo(specialResult);

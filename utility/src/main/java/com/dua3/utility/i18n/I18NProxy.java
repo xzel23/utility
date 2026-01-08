@@ -12,6 +12,11 @@ public final class I18NProxy {
     private final String baseName;
     private final AtomicReference<I18N> instance = new AtomicReference<>();
 
+    /**
+     * Constructs a new instance of {@code I18NProxy} with the specified base name for the resource bundle.
+     *
+     * @param baseName the base name of the resource bundle to be used for localization
+     */
     public I18NProxy(String baseName) {
         this.baseName = baseName;
     }

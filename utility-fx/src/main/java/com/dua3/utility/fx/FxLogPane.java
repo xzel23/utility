@@ -426,8 +426,8 @@ public class FxLogPane extends BorderPane {
      * @return the created LogBuffer
      */
     private static LogBuffer createBuffer(int bufferSize) {
-        LogBuffer buffer = new LogBuffer(bufferSize);
-        LogUtil.getGlobalDispatcher().addLogEntryHandler(buffer);
+        LogBuffer buffer = new LogBuffer("Log Buffer", bufferSize);
+        LogUtil.getGlobalDispatcher().addLogHandler(buffer);
         return buffer;
     }
 

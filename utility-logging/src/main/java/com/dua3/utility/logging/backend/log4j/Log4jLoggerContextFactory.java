@@ -6,7 +6,7 @@ import org.jspecify.annotations.Nullable;
 import java.net.URI;
 
 /**
- * A factory class for creating LogEntryDispatcher instances using Log4j.
+ * A factory class for creating LogDispatcher instances using Log4j.
  */
 public class Log4jLoggerContextFactory implements org.apache.logging.log4j.spi.LoggerContextFactory {
 

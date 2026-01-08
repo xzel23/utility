@@ -1,6 +1,7 @@
 package com.dua3.utility.logging.log4j;
 
 import com.dua3.utility.logging.LogEntryHandler;
+import com.dua3.utility.logging.LogHandler;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class LogAppenderLog4jTest {
 
     private LogAppenderLog4j appender;
-    private LogAppenderLog4j.LogEntryDispatcherLog4J dispatcher;
+    private LogAppenderLog4j.LogDispatcherLog4J dispatcher;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +55,7 @@ class LogAppenderLog4jTest {
         LogEntryHandler handler = entry -> handlerCalled.set(true);
 
         // Add the handler to the dispatcher
-        dispatcher.addLogEntryHandler(handler);
+        dispatcher.addLogHandler(handler);
 
         // Create a log event
         LogEvent event = Log4jLogEvent.newBuilder().setLoggerName("TestLogger").setLevel(Level.INFO).setMessage(new SimpleMessage("Test message")).build();
@@ -81,17 +82,17 @@ class LogAppenderLog4jTest {
         LogEntryHandler handler = entry -> {};
 
         // Add the handler to the dispatcher
-        dispatcher.addLogEntryHandler(handler);
+        dispatcher.addLogHandler(handler);
 
         // Verify that the handler was added
-        Collection<LogEntryHandler> handlers = dispatcher.getLogEntryHandlers();
+        Collection<LogHandler> handlers = dispatcher.getLogHandlers();
         assertTrue(handlers.contains(handler));
 
         // Remove the handler
-        dispatcher.removeLogEntryHandler(handler);
+        dispatcher.removeLogHandler(handler);
 
         // Verify that the handler was removed
-        handlers = dispatcher.getLogEntryHandlers();
+        handlers = dispatcher.getLogHandlers();
         assertFalse(handlers.contains(handler));
     }
 

@@ -5,7 +5,7 @@ import org.slf4j.ILoggerFactory;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogEntryDispatcher interfaces.
+ * The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogDispatcher interfaces.
  */
 public class LoggerFactorySlf4j implements ILoggerFactory {
 

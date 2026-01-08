@@ -18,6 +18,13 @@ public class JulHandler extends Handler {
 
     private static final UniversalDispatcher DISPATCHER = UniversalDispatcher.getInstance();
 
+    /**
+     * Constructs a new instance of the {@code JulHandler}.
+     */
+    public JulHandler() {
+        // nothing to do
+    }
+
     @Override
     public void publish(LogRecord logRecord) {
         // filter out Java messages with FINE level coming in over JUL

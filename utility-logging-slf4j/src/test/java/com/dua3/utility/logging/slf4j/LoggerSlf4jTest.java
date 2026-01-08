@@ -1,6 +1,7 @@
 package com.dua3.utility.logging.slf4j;
 
 import com.dua3.utility.logging.LogEntryHandler;
+import com.dua3.utility.logging.LogHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -25,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class LoggerSlf4jTest {
 
     private LoggerSlf4j logger;
-    private List<WeakReference<LogEntryHandler>> handlers;
-    private LogEntryHandler handler;
+    private List<WeakReference<LogHandler>> handlers;
+    private LogHandler handler;
     private AtomicBoolean handlerCalled;
 
     @BeforeEach
@@ -36,7 +37,7 @@ class LoggerSlf4jTest {
 
         handlers = new ArrayList<>();
         handlerCalled = new AtomicBoolean(false);
-        handler = entry -> handlerCalled.set(true);
+        handler = (LogEntryHandler) entry -> handlerCalled.set(true);
         handlers.add(new WeakReference<>(handler));
 
         logger = new LoggerSlf4j("testLogger", handlers);

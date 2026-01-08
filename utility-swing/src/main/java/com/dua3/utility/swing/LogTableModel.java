@@ -1,7 +1,7 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.logging.LogBuffer;
-import com.dua3.utility.logging.LogEntry;
+import com.dua3.utility.logging.SimpleLogEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,10 +24,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
     private static final Logger LOG = LogManager.getLogger(LogTableModel.class);
-    private static final LogEntry[] EMPTY_LOG_ENTRIES = {};
+    private static final SimpleLogEntry[] EMPTY_LOG_ENTRIES = {};
     private static final int MAX_UPDATE_MILLISECONDS = 1000;
 
-    private final AtomicReference<LogEntry[]> data = new AtomicReference<>(EMPTY_LOG_ENTRIES);
+    private final AtomicReference<SimpleLogEntry[]> data = new AtomicReference<>(EMPTY_LOG_ENTRIES);
     private final AtomicInteger queuedRemoves = new AtomicInteger();
 
     private final ReadWriteLock updateLock = new ReentrantReadWriteLock();
@@ -62,7 +62,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
                     }
 
                     LogBuffer.BufferState bufferState = buffer.getBufferState();
-                    LogEntry[] bufferArray = bufferState.entries();
+                    SimpleLogEntry[] bufferArray = bufferState.entries();
                     sequence = bufferState.getSequenceNumber();
                     int oldSz = data.getAndSet(bufferArray).length;
                     int sz = bufferArray.length;
@@ -100,7 +100,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     }
 
     @Override
-    public LogEntry getValueAt(int rowIndex, int columnIndex) {
+    public SimpleLogEntry getValueAt(int rowIndex, int columnIndex) {
         return data.get()[rowIndex];
     }
 
@@ -111,7 +111,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return SwingLogPane.LogEntryField.class;
+        return SwingLogPane.SimpleLogEntryField.class;
     }
 
     @Override

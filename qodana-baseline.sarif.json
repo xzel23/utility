@@ -63098,7 +63098,7 @@
                     "charOffset": 317,
                     "charLength": 188,
                     "snippet": {
-                      "text": "    private LogUtil() { /* utility class */ }\n\n    private static final Logger LOG = LogManager.getLogger(LogUtil.class);\n\n    private static @Nullable LogEntryDispatcher globalDispatcher;"
+                      "text": "    private LogUtil() { /* utility class */ }\n\n    private static final Logger LOG = LogManager.getLogger(LogUtil.class);\n\n    private static @Nullable LogDispatcher globalDispatcher;"
                     },
                     "sourceLanguage": "JAVA"
                   }

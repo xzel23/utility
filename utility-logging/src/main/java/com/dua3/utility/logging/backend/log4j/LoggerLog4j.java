@@ -7,9 +7,18 @@ import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * LoggerLog4j is an implementation of the Log4J AbstractLogger class that forwards all logging
+ * calls to the global UniversalDispatcher instance.
+ */
 public class LoggerLog4j extends AbstractLogger {
     private static final UniversalDispatcher DISPATCHER = UniversalDispatcher.getInstance();
 
+    /**
+     * Constructs a new LoggerLog4j instance with the specified logger name.
+     *
+     * @param name the name of the logger to be associated with this instance
+     */
     public LoggerLog4j(String name) {
         super(name);
     }

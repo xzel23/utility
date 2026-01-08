@@ -3,6 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+import com.dua3.utility.logging.LogDispatcherFactory;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -11,8 +12,8 @@ import org.jspecify.annotations.NullMarked;
  * <p>
  * The module requires the org.jspecify module for annotations.
  * <p>
- * It uses the com.dua3.utility.logging.ILogEntryDispatcherFactory service to get an instance of the
- * LogEntryDispatcher.
+ * It uses the com.dua3.utility.logging.ILogDispatcherFactory service to get an instance of the
+ * LogDispatcher.
  * <p>
  * The module also requires the org.apache.logging.log4j and com.dua3.utility packages at runtime.
  */
@@ -21,7 +22,7 @@ open module com.dua3.utility.logging {
     exports com.dua3.utility.logging;
 
     requires org.jspecify;
-    uses com.dua3.utility.logging.ILogEntryDispatcherFactory;
+    uses LogDispatcherFactory;
 
     requires static java.logging;
     requires static org.slf4j;

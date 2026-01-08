@@ -1,9 +1,12 @@
 package com.dua3.utility.logging.log4j;
 
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.logging.LogLevel;
+import org.apache.logging.log4j.message.ReusableMessage;
 import org.jspecify.annotations.Nullable;
-import com.dua3.utility.logging.LogEntryDispatcher;
-import com.dua3.utility.logging.LogEntryFilter;
-import com.dua3.utility.logging.LogEntryHandler;
+import com.dua3.utility.logging.LogDispatcher;
+import com.dua3.utility.logging.LogFilter;
+import com.dua3.utility.logging.LogHandler;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -16,14 +19,16 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
- * This class is an implementation of the Log4j Appender and LogEntryHandlerPool interfaces.
+ * This class is an implementation of the Log4j Appender and LogHandlerPool interfaces.
  * It is used as an appender for log events and provides a mechanism for forwarding log4j log events to applications.
  */
 public class LogAppenderLog4j extends AbstractAppender {
@@ -40,53 +45,53 @@ public class LogAppenderLog4j extends AbstractAppender {
     /**
      * The list of handlers for log entries.
      */
-    private final List<WeakReference<LogEntryHandler>> handlers = new ArrayList<>();
+    private final List<WeakReference<LogHandler>> handlers = new ArrayList<>();
 
     /**
-     * The LogEntryDispatcher associated with this LogAppenderLog4j instance.
-     * The LogEntryDispatcher is responsible for dispatching log entries to registered handlers based on a filter.
+     * The LogDispatcher associated with this LogAppenderLog4j instance.
+     * The LogDispatcher is responsible for dispatching log entries to registered handlers based on a filter.
      */
-    private final LogEntryDispatcherLog4J dispatcher;
+    private final LogDispatcherLog4J dispatcher;
 
     /**
-     * This class represents an implementation of the LogEntryDispatcher interface using Log4J.
+     * This class represents an implementation of the LogDispatcher interface using Log4J.
      * It dispatches log entries to registered handlers based on a filter.
      */
-    public class LogEntryDispatcherLog4J implements LogEntryDispatcher {
-        private volatile LogEntryFilter filter = LogEntryFilter.ALL_PASS_FILTER;
+    public class LogDispatcherLog4J implements LogDispatcher {
+        private volatile LogFilter filter = LogFilter.ALL_PASS_FILTER;
 
         /**
          * Constructor.
          */
-        public LogEntryDispatcherLog4J() { /* nothing to do */ }
+        public LogDispatcherLog4J() { /* nothing to do */ }
 
         @Override
-        public void addLogEntryHandler(LogEntryHandler handler) {
+        public void addLogHandler(LogHandler handler) {
             handlers.add(new WeakReference<>(handler));
         }
 
         @Override
-        public void removeLogEntryHandler(LogEntryHandler handler) {
+        public void removeLogHandler(LogHandler handler) {
             handlers.removeIf(h -> h.get() == handler);
         }
 
         @Override
-        public void setFilter(LogEntryFilter filter) {
+        public void setFilter(LogFilter filter) {
             this.filter = filter;
         }
 
         @Override
-        public LogEntryFilter getFilter() {
+        public LogFilter getFilter() {
             return filter;
         }
 
         @Override
-        public Collection<LogEntryHandler> getLogEntryHandlers() {
+        public Collection<LogHandler> getLogHandlers() {
             return handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList();
         }
 
         /**
-         * Returns the LogAppenderLog4j instance associated with this LogEntryDispatcherLog4J instance.
+         * Returns the LogAppenderLog4j instance associated with this LogDispatcherLog4J instance.
          *
          * @return the LogAppenderLog4j instance
          */
@@ -106,7 +111,7 @@ public class LogAppenderLog4j extends AbstractAppender {
     protected LogAppenderLog4j(String name, @Nullable Filter filter, @Nullable Layout<? extends Serializable> layout,
                                final boolean ignoreExceptions) {
         super(name, filter, layout, ignoreExceptions, Property.EMPTY_ARRAY);
-        this.dispatcher = new LogEntryDispatcherLog4J();
+        this.dispatcher = new LogDispatcherLog4J();
     }
 
     /**
@@ -147,26 +152,49 @@ public class LogAppenderLog4j extends AbstractAppender {
      */
     @Override
     public void append(LogEvent event) {
-        LogEntryLog4J entry = new LogEntryLog4J(event);
-        boolean pass = dispatcher.filter.test(entry);
+        var evtInstant = event.getInstant();
+        var instant = Instant.ofEpochSecond(evtInstant.getEpochSecond(), evtInstant.getNanoOfSecond());
+        LogLevel level = LogUtilLog4J.translate(event.getLevel());
+        Supplier<String> msg = event.getMessage() instanceof ReusableMessage rm
+                ? () -> rm.getFormattedMessage()
+                : LangUtil.cachingStringSupplier(event.getMessage()::getFormattedMessage);
 
-        Iterator<WeakReference<LogEntryHandler>> iterator = handlers.iterator();
+        String mrk = event.getMarker() == null ? "" : event.getMarker().getName();
+        boolean pass = dispatcher.filter.test(
+                instant,
+                event.getLoggerName(),
+                level,
+                mrk,
+                msg,
+                "",
+                event.getThrown()
+        );
+
+        Iterator<WeakReference<LogHandler>> iterator = handlers.iterator();
         while (iterator.hasNext()) {
-            LogEntryHandler handler = iterator.next().get();
+            LogHandler handler = iterator.next().get();
             if (handler == null) {
                 iterator.remove();
             } else if (pass) {
-                handler.handleEntry(entry);
+                handler.handle(
+                        instant,
+                        event.getLoggerName(),
+                        level,
+                        mrk,
+                        msg,
+                        "",
+                        event.getThrown()
+                );
             }
         }
     }
 
     /**
-     * Returns the LogEntryDispatcher associated with the LogAppenderLog4j instance.
+     * Returns the LogDispatcher associated with the LogAppenderLog4j instance.
      *
-     * @return the LogEntryDispatcher
+     * @return the LogDispatcher
      */
-    public LogEntryDispatcherLog4J dispatcher() {
+    public LogDispatcherLog4J dispatcher() {
         return dispatcher;
     }
 

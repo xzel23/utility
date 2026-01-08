@@ -2,6 +2,7 @@ package com.dua3.utility.logging.slf4j;
 
 import com.dua3.utility.logging.LogEntryFilter;
 import com.dua3.utility.logging.LogEntryHandler;
+import com.dua3.utility.logging.LogHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -41,24 +42,24 @@ class LoggerFactorySlf4jTest {
     }
 
     @Test
-    void testAddRemoveLogEntryHandler() {
+    void testAddRemoveLogHandler() {
         LoggerFactorySlf4j factory = new LoggerFactorySlf4j();
 
         // Create a mock handler
         LogEntryHandler handler = entry -> {};
 
         // Add the handler
-        factory.addLogEntryHandler(handler);
+        factory.addLogHandler(handler);
 
         // Verify that the handler was added
-        Collection<LogEntryHandler> handlers = factory.getLogEntryHandlers();
+        Collection<LogHandler> handlers = factory.getLogHandlers();
         assertTrue(handlers.contains(handler), "Handler should be in the list");
 
         // Remove the handler
-        factory.removeLogEntryHandler(handler);
+        factory.removeLogHandler(handler);
 
         // Verify that the handler was removed
-        handlers = factory.getLogEntryHandlers();
+        handlers = factory.getLogHandlers();
         assertFalse(handlers.contains(handler), "Handler should not be in the list");
     }
 

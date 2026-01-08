@@ -5,14 +5,14 @@ import java.util.Collection;
 /**
  * This interface defines the contract for classes that dispatch log entries to registered handlers.
  */
-public interface LogEntryDispatcher {
+public interface LogDispatcher {
     /**
      * Adds a handler for log entry events. The handler will be invoked
      * whenever a log entry is received.
      *
      * @param handler The log entry handler to be added.
      */
-    void addLogEntryHandler(LogEntryHandler handler);
+    void addLogHandler(LogHandler handler);
 
     /**
      * Removes a previously added log entry handler. The handler will no longer be invoked
@@ -20,28 +20,28 @@ public interface LogEntryDispatcher {
      *
      * @param handler The log entry handler to be removed.
      */
-    void removeLogEntryHandler(LogEntryHandler handler);
+    void removeLogHandler(LogHandler handler);
 
     /**
-     * Sets the {@link LogEntryFilter} for log entry events.
+     * Sets the {@link LogFilter} for log entry events.
      *
      * <p>Only entries that pass the filter will be dispatched to handlers.
      *
      * @param filter The filter to be set for log entry events.
      */
-    void setFilter(LogEntryFilter filter);
+    void setFilter(LogFilter filter);
 
     /**
-     * Get the {@link LogEntryFilter}.
+     * Get the {@link LogFilter}.
      *
      * @return the filter in use
      */
-    LogEntryFilter getFilter();
+    LogFilter getFilter();
 
     /**
      * Get the registered log entry handlers. Note that implementations usually hold weak references
      * to the handlers, so unused handlers may already have been removed from the list.
      * @return collection containing the registered log entry handlers
      */
-    Collection<LogEntryHandler> getLogEntryHandlers();
+    Collection<LogHandler> getLogHandlers();
 }

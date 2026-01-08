@@ -14,6 +14,13 @@ public class Log4jLoggerContext implements LoggerContext {
 
     private final Map<String, ExtendedLogger> loggers = new ConcurrentHashMap<>();
 
+    /**
+     * Default constructor for the Log4jLoggerContext class.
+     */
+    public Log4jLoggerContext() {
+        // nothing to do
+    }
+
     @Override
     public Object getExternalContext() {
         return EXTERNAL_CONTEXT;

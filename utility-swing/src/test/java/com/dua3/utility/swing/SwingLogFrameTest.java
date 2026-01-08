@@ -60,7 +60,7 @@ class SwingLogFrameTest {
         SwingLogFrame frame = null;
         try {
             String customTitle = "Custom Log Title";
-            LogBuffer buffer = new LogBuffer(100);
+            LogBuffer buffer = new LogBuffer(customTitle, 100);
             frame = new SwingLogFrame(customTitle, buffer);
             assertEquals(customTitle, frame.getTitle(), "Title should be the custom title");
             assertInstanceOf(SwingLogPane.class, frame.getContentPane(), "Content pane should be a SwingLogPane");

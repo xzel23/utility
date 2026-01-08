@@ -2,10 +2,10 @@ package com.dua3.utility.logging.slf4j;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.logging.LogEntryFilter;
-import com.dua3.utility.logging.LogEntryHandler;
+import com.dua3.utility.logging.LogFilter;
+import com.dua3.utility.logging.LogHandler;
 import com.dua3.utility.logging.ConsoleHandler;
-import com.dua3.utility.logging.LogEntryDispatcher;
+import com.dua3.utility.logging.LogDispatcher;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.event.Level;
@@ -24,9 +24,9 @@ import java.util.Optional;
 import java.util.Properties;
 
 /**
- * The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogEntryDispatcher interfaces.
+ * The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogDispatcher interfaces.
  */
-public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
+public class LoggerFactorySlf4j implements ILoggerFactory, LogDispatcher {
     /**
      * Specifies the logging level for the {@code LoggerFactorySlf4j}.
      *
@@ -55,10 +55,10 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     private static final String SYSTEM_ERR = "system.err";
 
     private final List<Pair<String, Level>> prefixes = new ArrayList<>();
-    private final List<WeakReference<LogEntryHandler>> handlers = new ArrayList<>();
+    private final List<WeakReference<LogHandler>> handlers = new ArrayList<>();
 
-    private final @Nullable LogEntryHandler defaultHandler;
-    private volatile LogEntryFilter filter = LogEntryFilter.ALL_PASS_FILTER;
+    private final @Nullable LogHandler defaultHandler;
+    private volatile LogFilter filter = LogFilter.ALL_PASS_FILTER;
 
     /**
      * Constructs a new instance of LoggerFactorySlf4j.
@@ -121,7 +121,7 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
             default ->
                     throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_COLORED + ": '" + propertyConsoleColored + "'");
         };
-        this.defaultHandler = stream != null ? new ConsoleHandler(stream, colored) : null;
+        this.defaultHandler = stream != null ? new ConsoleHandler("cosole", stream, colored) : null;
         if (defaultHandler != null) {
             handlers.add(new WeakReference<>(defaultHandler));
         }
@@ -159,36 +159,36 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     }
 
     @Override
-    public void addLogEntryHandler(LogEntryHandler handler) {
+    public void addLogHandler(LogHandler handler) {
         handlers.add(new WeakReference<>(handler));
     }
 
     @Override
-    public void removeLogEntryHandler(LogEntryHandler handler) {
+    public void removeLogHandler(LogHandler handler) {
         handlers.removeIf(h -> h.get() == handler);
     }
 
     @Override
-    public void setFilter(LogEntryFilter filter) {
+    public void setFilter(LogFilter filter) {
         this.filter = filter;
     }
 
     @Override
-    public LogEntryFilter getFilter() {
+    public LogFilter getFilter() {
         return filter;
     }
 
     @Override
-    public Collection<LogEntryHandler> getLogEntryHandlers() {
+    public Collection<LogHandler> getLogHandlers() {
         return handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList();
     }
 
     /**
-     * Returns the default {@code LogEntryHandler}.
+     * Returns the default {@code LogHandler}.
      *
      * @return the default log entry handler
      */
-    public Optional<LogEntryHandler> getDefaultHandler() {
+    public Optional<LogHandler> getDefaultHandler() {
         return Optional.ofNullable(defaultHandler);
     }
 }

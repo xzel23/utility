@@ -23,13 +23,14 @@ public record SimpleLogEntry(
         @Nullable Throwable throwable
 ) implements LogEntry {
     @Deprecated(forRemoval = true) // for compatibility with existing code
-    public SimpleLogEntry (       String message,
-                                  String loggerName,
-                                  Instant time,
-                                  LogLevel level,
-                                  String marker,
-                                  @Nullable Throwable throwable,
-                                  @Nullable String location) {
+    public SimpleLogEntry (
+            String message,
+            String loggerName,
+            Instant time,
+            LogLevel level,
+            String marker,
+            @Nullable Throwable throwable,
+            @Nullable String location) {
         this(time, loggerName, level, marker, message, location, throwable);
     }
 }

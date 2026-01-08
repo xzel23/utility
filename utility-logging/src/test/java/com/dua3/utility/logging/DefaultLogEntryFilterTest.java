@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit tests for the {@link LogFilter} class.
+ * Unit tests for the {@link StandardLogFilter} class.
  */
 class DefaultLogEntryFilterTest {
 

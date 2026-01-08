@@ -1,10 +1,10 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.logging.SimpleLogEntry;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.LogBuffer;
-import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
 
@@ -52,10 +52,10 @@ import java.util.stream.Collectors;
 public class SwingLogPane extends JPanel {
 
     static final Column[] COLUMNS = {
-            new Column(LogEntryField.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
-            new Column(LogEntryField.LOGGER, "com.example.class".length(), true),
-            new Column(LogEntryField.LEVEL, -"ERROR".length(), true),
-            new Column(LogEntryField.MESSAGE, 80, false)
+            new Column(SimpleLogEntryField.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
+            new Column(SimpleLogEntryField.LOGGER, "com.example.class".length(), true),
+            new Column(SimpleLogEntryField.LEVEL, -"ERROR".length(), true),
+            new Column(SimpleLogEntryField.MESSAGE, 80, false)
     };
     private static final String ESCAPE = "escape";
 
@@ -65,26 +65,26 @@ public class SwingLogPane extends JPanel {
     private final LogTableModel model;
     private final JSplitPane splitPane;
     private final java.util.List<TableColumn> tableColumns = new ArrayList<>();
-    private final transient Function<LogEntry, Color> colorize;
+    private final transient Function<SimpleLogEntry, Color> colorize;
     private final transient TableRowSorter<AbstractTableModel> tableRowSorter;
-    private transient Function<? super LogEntry, String> format = SwingLogPane::formatLogEntry;
+    private transient Function<? super SimpleLogEntry, String> format = SwingLogPane::formatSimpleLogEntry;
 
-    private static String formatLogEntry(LogEntry logEntry) {
+    private static String formatSimpleLogEntry(SimpleLogEntry SimpleLogEntry) {
         StringBuilder sb = new StringBuilder(80);
-        sb.append('[').append(logEntry.level()).append(']');
+        sb.append('[').append(SimpleLogEntry.level()).append(']');
         sb.append(' ');
-        sb.append(DateTimeFormatter.ISO_INSTANT.format(logEntry.time()));
+        sb.append(DateTimeFormatter.ISO_INSTANT.format(SimpleLogEntry.time()));
         sb.append(' ');
-        sb.append(logEntry.loggerName());
+        sb.append(SimpleLogEntry.loggerName());
         sb.append('\n');
-        if (!logEntry.location().isEmpty()) {
-            sb.append(logEntry.location());
+        if (!SimpleLogEntry.location().isEmpty()) {
+            sb.append(SimpleLogEntry.location());
             sb.append('\n');
         }
-        sb.append(logEntry.message());
-        if (logEntry.throwable() != null) {
+        sb.append(SimpleLogEntry.message());
+        if (SimpleLogEntry.throwable() != null) {
             sb.append(System.lineSeparator());
-            appendThrowable(sb, logEntry.throwable());
+            appendThrowable(sb, SimpleLogEntry.throwable());
         }
         return sb.toString();
     }
@@ -100,7 +100,7 @@ public class SwingLogPane extends JPanel {
 
     private volatile double dividerLocation = 0.5;
     private final JScrollPane scrollPaneTable;
-    private transient List<LogEntry> selectedEntries = Collections.emptyList();
+    private transient List<SimpleLogEntry> selectedEntries = Collections.emptyList();
 
     /**
      * Creates a new instance of SwingLogPane with the default buffer size and connects all known loggers.
@@ -125,8 +125,8 @@ public class SwingLogPane extends JPanel {
      * @return the created LogBuffer
      */
     private static LogBuffer createBuffer(int bufferSize) {
-        LogBuffer buffer = new LogBuffer(bufferSize);
-        LogUtil.getGlobalDispatcher().addLogEntryHandler(buffer);
+        LogBuffer buffer = new LogBuffer("SwingLogPane log buffer", bufferSize);
+        LogUtil.getGlobalDispatcher().addLogHandler(buffer);
         return buffer;
     }
 
@@ -146,7 +146,7 @@ public class SwingLogPane extends JPanel {
      * @param logBuffer the LogBuffer instance to be used for log messages
      * @param colorize the colorize function that determines the color for each log entry
      */
-    public SwingLogPane(@Nullable LogBuffer logBuffer, Function<LogEntry, Color> colorize) {
+    public SwingLogPane(@Nullable LogBuffer logBuffer, Function<SimpleLogEntry, Color> colorize) {
         super(new BorderLayout());
 
         this.buffer = logBuffer == null ? createBuffer(LogBuffer.DEFAULT_CAPACITY) : logBuffer;
@@ -223,13 +223,13 @@ public class SwingLogPane extends JPanel {
             }
 
             SwingUtilities.invokeLater(() -> {
-                final List<LogEntry> newEntries = getSelectedLogEntries(lsm);
+                final List<SimpleLogEntry> newEntries = getSelectedLogEntries(lsm);
 
                 if (!hasChangedLogEntries(newEntries)) {
                     return;
                 }
 
-                Function<? super LogEntry, String> fmt = format;
+                Function<? super SimpleLogEntry, String> fmt = format;
                 String text = newEntries.stream().map(entry -> fmt.apply(entry) + "\n").collect(Collectors.joining());
 
                 details.setText(text);
@@ -248,12 +248,12 @@ public class SwingLogPane extends JPanel {
      * in the same order. If either the size or the content differs, it indicates that there have
      * been changes.
      *
-     * @param newEntries the list of {@code LogEntry} objects to compare with the currently
+     * @param newEntries the list of {@code SimpleLogEntry} objects to compare with the currently
      *                   selected entries
      * @return {@code true} if the new list of log entries differs in size or content from
      *         the selected entries; {@code false} otherwise
      */
-    private boolean hasChangedLogEntries(List<LogEntry> newEntries) {
+    private boolean hasChangedLogEntries(List<SimpleLogEntry> newEntries) {
         boolean changed = newEntries.size() != selectedEntries.size();
         if (!changed) {
             for (int i = 0; i < newEntries.size(); i++) {
@@ -272,10 +272,10 @@ public class SwingLogPane extends JPanel {
      * converts them to the model's row indices using the table row sorter, and fetches log entries from the model.
      *
      * @param lsm the {@code ListSelectionModel} that provides the selected row indices in the view
-     * @return a list of {@code LogEntry} objects corresponding to the selected rows in the model
+     * @return a list of {@code SimpleLogEntry} objects corresponding to the selected rows in the model
      */
-    private List<LogEntry> getSelectedLogEntries(ListSelectionModel lsm) {
-        final List<LogEntry> newEntries = new ArrayList<>(lsm.getMaxSelectionIndex() - lsm.getMinSelectionIndex() + 1);
+    private List<SimpleLogEntry> getSelectedLogEntries(ListSelectionModel lsm) {
+        final List<SimpleLogEntry> newEntries = new ArrayList<>(lsm.getMaxSelectionIndex() - lsm.getMinSelectionIndex() + 1);
         for (int i = lsm.getMinSelectionIndex(); i <= lsm.getMaxSelectionIndex(); i++) {
             if (lsm.isSelectedIndex(i)) {
                 int idxModel = tableRowSorter.convertRowIndexToModel(i);
@@ -308,7 +308,7 @@ public class SwingLogPane extends JPanel {
         for (int i = 0; i < columnModel.getColumnCount(); i++) {
             Column cd = COLUMNS[i];
             TableColumn column = columnModel.getColumn(i);
-            TableCellRenderer r = new LogEntryFieldCellRenderer(cd.field());
+            TableCellRenderer r = new SimpleLogEntryFieldCellRenderer(cd.field());
             column.setCellRenderer(r);
 
             java.awt.Font font = t.getFont();
@@ -362,7 +362,7 @@ public class SwingLogPane extends JPanel {
         return toolBar;
     }
 
-    private static Color defaultColorize(LogEntry entry) {
+    private static Color defaultColorize(SimpleLogEntry entry) {
         return switch (entry.level()) {
             case ERROR -> Color.DARKRED;
             case WARN -> Color.RED;
@@ -447,7 +447,7 @@ public class SwingLogPane extends JPanel {
      *
      * @param format the formatting function
      */
-    public void setLogFormatter(Function<? super LogEntry, String> format) {
+    public void setLogFormatter(Function<? super SimpleLogEntry, String> format) {
         this.format = format;
     }
 
@@ -511,39 +511,39 @@ public class SwingLogPane extends JPanel {
         );
     }
 
-    enum LogEntryField {
+    enum SimpleLogEntryField {
         LOGGER {
             @Override
-            public String get(LogEntry entry) {
+            public String get(SimpleLogEntry entry) {
                 return entry.loggerName();
             }
         },
         TIME {
             @Override
-            public String get(LogEntry entry) {
+            public String get(SimpleLogEntry entry) {
                 return entry.time().toString();
             }
         },
         LEVEL {
             @Override
-            public String get(LogEntry entry) {
+            public String get(SimpleLogEntry entry) {
                 return entry.level().name();
             }
         },
         MESSAGE {
             @Override
-            public String get(LogEntry entry) {
+            public String get(SimpleLogEntry entry) {
                 return entry.message();
             }
         },
         THROWABLE {
             @Override
-            public String get(LogEntry entry) {
+            public String get(SimpleLogEntry entry) {
                 return Objects.toString(entry.throwable());
             }
         };
 
-        public abstract String get(LogEntry entry);
+        public abstract String get(SimpleLogEntry entry);
     }
 
     private static class RowFilter extends javax.swing.RowFilter<AbstractTableModel, Integer> {
@@ -555,18 +555,18 @@ public class SwingLogPane extends JPanel {
 
         @Override
         public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
-            LogEntry value = (LogEntry) entry.getValue(0);
+            SimpleLogEntry value = (SimpleLogEntry) entry.getValue(0);
             return value == null || value.level().compareTo(c) >= 0;
         }
     }
 
-    record Column(LogEntryField field, int preferredCharWidth, boolean hideable) {
+    record Column(SimpleLogEntryField field, int preferredCharWidth, boolean hideable) {
     }
 
-    private final class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
-        private final LogEntryField f;
+    private final class SimpleLogEntryFieldCellRenderer extends DefaultTableCellRenderer {
+        private final SimpleLogEntryField f;
 
-        private LogEntryFieldCellRenderer(LogEntryField f) {
+        private SimpleLogEntryFieldCellRenderer(SimpleLogEntryField f) {
             this.f = f;
         }
 
@@ -575,7 +575,7 @@ public class SwingLogPane extends JPanel {
             java.awt.Color color;
 
             Object v;
-            if (value instanceof LogEntry entry) {
+            if (value instanceof SimpleLogEntry entry) {
                 color = SwingUtil.convert(colorize.apply(entry));
                 v = f.get(entry);
             } else {

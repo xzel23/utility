@@ -1,15 +1,15 @@
 package com.dua3.utility.logging.slf4j;
 
-import com.dua3.utility.logging.ILogEntryDispatcherFactory;
-import com.dua3.utility.logging.LogEntryDispatcher;
+import com.dua3.utility.logging.LogDispatcherFactory;
+import com.dua3.utility.logging.LogDispatcher;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is an implementation of the ILogEntryDispatcherFactory interface.
- * It provides the functionality to create a SLF4J LogEntryDispatcher instance.
+ * This class is an implementation of the ILogDispatcherFactory interface.
+ * It provides the functionality to create a SLF4J LogDispatcher instance.
  */
-public final class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcherFactory {
+public final class LogDispatcherFactorySlf4j implements LogDispatcherFactory {
 
     private static final class SingletonHolder {
         private static final LoggerFactorySlf4j INSTANCE = initInstance();
@@ -25,15 +25,15 @@ public final class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcher
     }
 
     /**
-     * Default constructor for the class LogEntryDispatcherFactorySlf4j.
+     * Default constructor for the class LogDispatcherFactorySlf4j.
      * <p>
      * This constructor initializes an instance of the factory, which is used to create and retrieve
-     * LogEntryDispatcher instances based on the SLF4J logging framework.
+     * LogDispatcher instances based on the SLF4J logging framework.
      */
-    public LogEntryDispatcherFactorySlf4j() { /* nothing to do */ }
+    public LogDispatcherFactorySlf4j() { /* nothing to do */ }
 
     /**
-     * Retrieves the instance of the LoggerFactorySlf4j class, which is a singleton implementation of the ILoggerFactory interface and LogEntryDispatcher interface.
+     * Retrieves the instance of the LoggerFactorySlf4j class, which is a singleton implementation of the ILoggerFactory interface and LogDispatcher interface.
      *
      * @return The instance of the LoggerFactorySlf4j class.
      */
@@ -42,7 +42,7 @@ public final class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcher
     }
 
     @Override
-    public LogEntryDispatcher getDispatcher() {
+    public LogDispatcher getDispatcher() {
         return getFactory();
     }
 }

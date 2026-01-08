@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -34,7 +35,7 @@ class ConsoleHandlerTest {
         PrintStream testOut = new PrintStream(outContent, true, StandardCharsets.UTF_8);
 
         // Create a ConsoleHandler with the test PrintStream
-        handler = new ConsoleHandler(testOut, true);
+        handler = new ConsoleHandler("ConsoleHandlerTest", testOut, true);
 
         // Create a test log entry
         testEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "TEST_MARKER", "Test message", "com.example.TestClass.testMethod(TestClass.java:123)", null);
@@ -52,14 +53,22 @@ class ConsoleHandlerTest {
         assertTrue(handler.isColored(), "Handler should be colored by default when constructed with colored=true");
 
         // Create a non-colored handler
-        ConsoleHandler nonColoredHandler = new ConsoleHandler(new PrintStream(outContent, true, StandardCharsets.UTF_8), false);
+        ConsoleHandler nonColoredHandler = new ConsoleHandler("NonColoredHandler", new PrintStream(outContent, true, StandardCharsets.UTF_8), false);
         assertFalse(nonColoredHandler.isColored(), "Handler should not be colored when constructed with colored=false");
     }
 
     @Test
-    void testHandleEntry() {
+    void testHandle() {
         // Handle the test entry
-        handler.handleEntry(testEntry);
+        handler.handle(
+                testEntry.time(),
+                testEntry.loggerName(),
+                testEntry.level(),
+                testEntry.marker(),
+                testEntry::message,
+                testEntry.location(),
+                testEntry.throwable()
+        );
 
         // Get the output
         String output = outContent.toString(StandardCharsets.UTF_8);
@@ -72,13 +81,21 @@ class ConsoleHandlerTest {
     }
 
     @Test
-    void testHandleEntryWithThrowable() {
+    void testHandleWithThrowable() {
         // Create a test entry with a throwable
         Throwable throwable = new RuntimeException("Test exception");
         LogEntry entryWithThrowable = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.ERROR, "TEST_MARKER", "Test message with exception", "com.example.TestClass.testMethod(TestClass.java:123)", throwable);
 
         // Handle the entry
-        handler.handleEntry(entryWithThrowable);
+        handler.handle(
+                entryWithThrowable.time(),
+                entryWithThrowable.loggerName(),
+                entryWithThrowable.level(),
+                entryWithThrowable.marker(),
+                entryWithThrowable::message,
+                entryWithThrowable.location(),
+                entryWithThrowable.throwable()
+        );
 
         // Get the output
         String output = outContent.toString(StandardCharsets.UTF_8);
@@ -112,7 +129,15 @@ class ConsoleHandlerTest {
     void testColoredOutput() {
         // Handle the test entry with colored output
         handler.setColored(true);
-        handler.handleEntry(testEntry);
+        handler.handle(
+                testEntry.time(),
+                testEntry.loggerName(),
+                testEntry.level(),
+                testEntry.marker(),
+                testEntry::message,
+                testEntry.location(),
+                testEntry.throwable()
+        );
 
         // Get the colored output
         String coloredOutput = outContent.toString(StandardCharsets.UTF_8);
@@ -120,7 +145,15 @@ class ConsoleHandlerTest {
 
         // Handle the test entry with non-colored output
         handler.setColored(false);
-        handler.handleEntry(testEntry);
+        handler.handle(
+                testEntry.time(),
+                testEntry.loggerName(),
+                testEntry.level(),
+                testEntry.marker(),
+                testEntry::message,
+                testEntry.location(),
+                testEntry.throwable()
+        );
 
         // Get the non-colored output
         String nonColoredOutput = outContent.toString(StandardCharsets.UTF_8);
@@ -132,11 +165,21 @@ class ConsoleHandlerTest {
     @Test
     void testSetAndGetFilter() {
         // Test the default filter
-        LogEntryFilter defaultFilter = handler.getFilter();
-        assertEquals(LogEntryFilter.allPass(), defaultFilter, "Default filter should be the all-pass filter");
+        LogFilter defaultFilter = handler.getFilter();
+        assertEquals(LogFilter.allPass(), defaultFilter, "Default filter should be the all-pass filter");
 
         // Set a custom filter that only allows ERROR level entries
-        LogEntryFilter customFilter = entry -> entry.level() == LogLevel.ERROR;
+        LogFilter customFilter = new LogFilter() {
+            @Override
+            public String name() {
+                return "error only";
+            }
+
+            @Override
+            public boolean test(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, Throwable t) {
+                return lvl == LogLevel.ERROR;
+            }
+        };
         handler.setFilter(customFilter);
 
         // Test the new filter
@@ -147,7 +190,15 @@ class ConsoleHandlerTest {
         // First, handle an INFO level entry (should be filtered out)
         outContent.reset(); // Clear previous output
         LogEntry infoEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.INFO, "TEST_MARKER", "Info message", "com.example.TestClass.testMethod(TestClass.java:123)", null);
-        handler.handleEntry(infoEntry);
+        handler.handle(
+                infoEntry.time(),
+                infoEntry.loggerName(),
+                infoEntry.level(),
+                infoEntry.marker(),
+                infoEntry::message,
+                infoEntry.location(),
+                infoEntry.throwable()
+        );
 
         // The output should be empty because the INFO entry should be filtered out
         String infoOutput = outContent.toString(StandardCharsets.UTF_8);
@@ -156,7 +207,15 @@ class ConsoleHandlerTest {
         // Now, handle an ERROR level entry (should pass through the filter)
         outContent.reset(); // Clear previous output
         LogEntry errorEntry = new SimpleLogEntry(Instant.now(), "TestLogger", LogLevel.ERROR, "TEST_MARKER", "Error message", "com.example.TestClass.testMethod(TestClass.java:123)", null);
-        handler.handleEntry(errorEntry);
+        handler.handle(
+                errorEntry.time(),
+                errorEntry.loggerName(),
+                errorEntry.level(),
+                errorEntry.marker(),
+                errorEntry::message,
+                errorEntry.location(),
+                errorEntry.throwable()
+        );
 
         // The output should contain the error message because the ERROR entry should pass through the filter
         String errorOutput = outContent.toString(StandardCharsets.UTF_8);
