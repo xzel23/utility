@@ -26,7 +26,6 @@ include("utility-samples:utility-samples-slf4j")
 include("utility-samples:utility-samples-log4j")
 include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
-include("utility-native-image-test")
 
 // define dependency versions and repositories
 dependencyResolutionManagement {

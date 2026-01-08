@@ -7,7 +7,6 @@ plugins {
 jdk {
     version = 25
     javaFxBundled = true
-    nativeImageCapable = false
 }
 
 java {
