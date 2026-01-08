@@ -36,7 +36,9 @@ public final class LogUtil {
                 }
             }
 
-            throw new ServiceConfigurationError("no factories left to try - could not create a dispatcher");
+            // noe configuration found, using unified logging
+            initUnifiedLogging();
+            LogManager.getLogger(LogUtil.class).trace("no SPI procreated unified dispatcher");
         }
     }
 

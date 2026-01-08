@@ -50,7 +50,7 @@ class FxLogPaneTest extends FxTestBase {
     @Test
     void testConstructorWithLogBuffer() throws Throwable {
         FxTestBase.runOnFxThreadAndWait(() -> {
-            LogBuffer buffer = new LogBuffer(150);
+            LogBuffer buffer = new LogBuffer("log buffer", 150);
             FxLogPane pane = new FxLogPane(buffer);
             assertNotNull(pane, "FxLogPane should be created successfully with custom LogBuffer");
 
@@ -63,7 +63,7 @@ class FxLogPaneTest extends FxTestBase {
     void testGetLogBuffer() throws Throwable {
         FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a pane with a specific buffer
-            LogBuffer buffer = new LogBuffer(250);
+            LogBuffer buffer = new LogBuffer("log buffer", 250);
             FxLogPane pane = new FxLogPane(buffer);
 
             // Test the getLogBuffer method
