@@ -15,6 +15,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Builder for {@link ComboBox}.
@@ -25,6 +26,7 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
     private final ObservableList<T> items;
     private final Property<@Nullable T> property;
     private @Nullable Consumer<@Nullable T> onChange;
+    private @Nullable Function<@Nullable T, String> stringRenderer;
     private boolean localized = true;
 
     /**
@@ -87,23 +89,57 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
         return self();
     }
 
+    /**
+     * Sets the function used to render the items in the combo box as strings.
+     * This function is used to convert each item of type {@code T} into its textual
+     * representation for display in the combo box.
+     * <p>
+     * <strong>Note:</strong> the supplied function must correctly handle null values.
+     *
+     * @param stringRenderer a {@link Function} that accepts an item of type {@code T}
+     *                       and returns its corresponding string representation
+     * @return this instance of {@code ComboBoxBuilder} for method chaining
+     */
+    public ComboBoxBuilder<T> stringRenderer(Function<@Nullable T, String> stringRenderer) {
+        this.stringRenderer = stringRenderer;
+        return self();
+    }
+
+    /**
+     * Sets the function used to render the items in the combo box as strings.
+     * This function is used to convert each item of type {@code T} into its textual
+     * representation for display in the combo box.
+     *
+     * @param stringRenderer a {@link Function} that accepts an item of type {@code T}
+     *                       and returns its corresponding string representation
+     * @param valueIfNull the string representation to use for {@code null} items
+     * @return this instance of {@code ComboBoxBuilder} for method chaining
+     */
+    public ComboBoxBuilder<T> stringRenderer(Function<T, String> stringRenderer, String valueIfNull) {
+        this.stringRenderer = item -> item == null ? valueIfNull : stringRenderer.apply(item);
+        return self();
+    }
+
     @Override
     public ComboBox<T> build() {
         ComboBox<T> comboBox = super.build();
         comboBox.setItems(items);
 
-        if (localized) {
+        if (stringRenderer == null && localized) {
+            stringRenderer = TextUtil::toLocalizedString;
+        }
+        if (stringRenderer != null) {
             comboBox.setCellFactory(lv -> new ListCell<>() {
                 @Override
                 protected void updateItem(@Nullable T item, boolean empty) {
                     super.updateItem(item, empty);
-                    setText(empty || item == null ? "" : TextUtil.toLocalizedString(item));
+                    setText(stringRenderer.apply(item));
                 }
             });
             comboBox.setConverter(new StringConverter<>() {
                 @Override
                 public String toString(@Nullable T item) {
-                    return item == null ? "" : TextUtil.toLocalizedString(item);
+                    return item == null ? "" : stringRenderer.apply(item);
                 }
 
                 @Override

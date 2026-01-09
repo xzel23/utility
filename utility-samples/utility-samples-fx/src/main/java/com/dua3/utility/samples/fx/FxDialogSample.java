@@ -50,6 +50,8 @@ import java.util.stream.Stream;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class FxDialogSample extends Application {
 
+    private static final Locale LOCALE_WHEN_STARTED = Locale.getDefault();
+
     static {
         ApplicationUtil.initApplicationPreferences(Preferences.userNodeForPackage(FxDialogSample.class));
         ApplicationUtil.addDarkModeListener(FxDialogSample::setDarkMode);
@@ -116,7 +118,7 @@ public class FxDialogSample extends Application {
 
         // Locale
         List<Locale> locales = Stream.of(
-                        "ar", "bg", "cs", "da", "de", "el", "en", "es", "et", "fi", "fr", "ga", "hi", "hr", "hu", "id", "it", "ja", "ko", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "ru", "sk", "sl", "sv", "th", "tr", "zh", "zh_Hant"
+                        "ar", "bg", "cs", "da", "de", "el", "en", "es", "et", "fi", "fr", "ga", "hi", "hr", "hu", "id", "it", "ja", "ko", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "ru", "sk", "sl", "sv", "th", "tr", "zh", "zh-Hant"
                 )
                 .map(Locale::forLanguageTag)
                 .sorted(Comparator.comparing(l -> l.getDisplayName(l)))
@@ -126,6 +128,7 @@ public class FxDialogSample extends Application {
                 .onChange(this::setLocale)
                 .initialValue(currentLocale)
                 .maxWidth(Double.MAX_VALUE)
+                .stringRenderer(locale -> locale.getDisplayName(LOCALE_WHEN_STARTED), "")
                 .build();
         HBox.setHgrow(comboLocale, Priority.ALWAYS);
         Label lblLocale = new Label(I18NInstance.get().get("dua3.utility.samples.fx.locale"));

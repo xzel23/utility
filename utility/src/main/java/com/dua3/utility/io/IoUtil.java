@@ -1273,7 +1273,7 @@ public final class IoUtil {
         // When a fixed path prefix was extracted in glob, p and base have different root
         // and relativize will throw an exception. To make sure all paths share a common root,
         // call relativize with absolute paths.
-        return base.resolve(base.toAbsolutePath().relativize(p.toAbsolutePath()));
+        return base.resolve(base.toAbsolutePath().relativize(p.toAbsolutePath())).normalize();
     }
 
     private static int findFirstGlobChar(String pattern) {
