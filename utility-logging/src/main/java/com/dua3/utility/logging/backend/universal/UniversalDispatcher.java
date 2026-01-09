@@ -8,6 +8,7 @@ import com.dua3.utility.logging.LogLevel;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.message.Message;
+import org.apache.logging.log4j.message.ReusableMessage;
 import org.apache.logging.log4j.spi.StandardLevel;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.helpers.MessageFormatter;
@@ -148,7 +149,15 @@ public class UniversalDispatcher implements LogDispatcher {
     public void dispatchLog4j(String name, Level level, @Nullable Marker marker, Message message, @Nullable Throwable t) {
         Instant instant = Instant.now();
         String mrk = marker == null ? "" : marker.getName();
-        Supplier<String> msg = LangUtil.cachingStringSupplier(message::getFormattedMessage);
+
+        Supplier<String> msg;
+        if (message instanceof ReusableMessage rm) {
+            // for reusable messages, do eager evaluation
+            String m = rm.getFormattedMessage();
+            msg = () -> m;
+        } else {
+            msg = LangUtil.cachingStringSupplier(message::getFormattedMessage);
+        }
 
         LogLevel lvl = translateLog4jLevel(level);
 
@@ -185,17 +194,6 @@ public class UniversalDispatcher implements LogDispatcher {
             return LogLevel.WARN;
         }
         return LogLevel.ERROR;
-    }
-
-    /**
-     * Formats a Log4j {@link Message} instance into its string representation.
-     * This method retrieves the formatted message from the input {@code Message} object.
-     *
-     * @param message the Log4j {@link Message} object to format; must not be null
-     * @return the formatted string representation of the provided {@link Message} object
-     */
-    private static String formatLog4jMessage(Message message) {
-        return message.getFormattedMessage();
     }
 
     /**

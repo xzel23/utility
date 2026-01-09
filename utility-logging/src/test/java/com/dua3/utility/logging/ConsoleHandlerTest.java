@@ -229,6 +229,36 @@ class ConsoleHandlerTest {
     }
 
     @Test
+    void testIssueReportedFormat() {
+        // Format reported by user: "%Cstart%d{HH:mm:ss} %-5p %-20c{1} - %m%Cend%n"
+        String format = "%Cstart%d{HH:mm:ss} %-5p %-20c{1} - %m%Cend%n";
+        handler.setFormat(format);
+        
+        // We need a fixed time for testing
+        Instant instant = Instant.parse("2024-05-24T17:11:05Z");
+        
+        handler.handle(
+                instant,
+                "com.dua3.utility.i18n.I18N",
+                LogLevel.TRACE,
+                "MARKER",
+                () -> "creating an instance for dua3.polyglot with requested locale de_DE",
+                "location",
+                null
+        );
+
+        String output = outContent.toString(StandardCharsets.UTF_8);
+        
+        // The reported failing output was something like:
+        // 17H:mm:ss TRACE com.dua3.utility.i18n.I18N{1} - creating an instance for dua3.polyglot with requested locale de_DE
+        
+        // Expected output (assuming UTC for simplicity in this test or whatever ZONE_ID is)
+        // We should check if it contains the correctly formatted time and NO {1}
+        assertFalse(output.contains("{1}"), "Output should not contain {1} suffix from logger name");
+        assertTrue(output.matches("(?s).*\\d{2}:\\d{2}:\\d{2}.*"), "Output should contain correctly formatted time (HH:mm:ss), but was: " + output);
+    }
+
+    @Test
     void testDefaultFormat() {
         // Handle the test entry with default format and colors disabled
         handler.setColored(false);

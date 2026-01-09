@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.PrintStream;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -34,12 +35,13 @@ public final class ConsoleHandler implements LogHandler {
             LogLevel.WARN, Pair.of("", ""),
             LogLevel.ERROR, Pair.of("", "")
     );
+    public static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
     private final String name;
     private final PrintStream out;
     private volatile LogFilter filter = LogFilter.allPass();
     private volatile Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
-    private volatile String format = translateLog4jFormatString("%Cstart%d{HH:mm:ss} %-5p %-20c{1} - %m%Cend%n");
+    private volatile String format = translateLog4jFormatString("%Cstart[%p] %d{HH:mm:ss} %c %marker %m %l %ex%Cend%n");
 
     /**
      * Set the format string.
@@ -63,8 +65,8 @@ public final class ConsoleHandler implements LogHandler {
                 .replaceAll("%(-?\\d*(\\.\\d+)?)Cstart", "%1\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)level", "%2\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)p", "%2\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)logger", "%3\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)c", "%3\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)logger(\\{\\d+})?", "%3\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)c(\\{\\d+})?", "%3\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)marker", "%4\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)message", "%5\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)msg", "%5\\$$1s")
@@ -75,6 +77,11 @@ public final class ConsoleHandler implements LogHandler {
                 .replaceAll("%(-?\\d*(\\.\\d+)?)throwable", "%7\\$$1s%8\\$s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)ex", "%7\\$$1s%8\\$s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)Cend", "%9\\$$1s")
+                .replaceAll("%d\\{HH:mm:ss,SSS}", "%10\\$tT,%10\\$tL")
+                .replaceAll("%d\\{HH:mm:ss}", "%10\\$tT")
+                .replaceAll("%d\\{yyyy-MM-dd HH:mm:ss,SSS}", "%10\\$tF %10\\$tT,%10\\$tL")
+                .replaceAll("%d\\{yyyy-MM-dd HH:mm:ss}", "%10\\$tF %10\\$tT")
+                .replaceAll("%d\\{ISO8601}", "%10\\$tFT%10\\$tT%10\\$tL%10\\$tz")
                 .replaceAll("%d\\{([^}]*)}", "%10\\$t$1")
                 .replaceAll("%d", "%10\\$tT")
                 .replace("\u0000", "%%");
@@ -91,6 +98,10 @@ public final class ConsoleHandler implements LogHandler {
                 .replaceAll("%6\\$(-?\\d*(\\.\\d+)?)s", "%$1l")
                 .replaceAll("%7\\$(-?\\d*(\\.\\d+)?)s%8\\$s", "%$1ex")
                 .replaceAll("%9\\$(-?\\d*(\\.\\d+)?)s", "%$1Cend")
+                .replaceAll("%10\\$tFT%10\\$tT%10\\$tL%10\\$tz", "%d{ISO8601}")
+                .replaceAll("%10\\$tT,%10\\$tL", "%d{HH:mm:ss,SSS}")
+                .replaceAll("%10\\$tF %10\\$tT,%10\\$tL", "%d{yyyy-MM-dd HH:mm:ss,SSS}")
+                .replaceAll("%10\\$tF %10\\$tT", "%d{yyyy-MM-dd HH:mm:ss}")
                 .replaceAll("%10\\$tT", "%d")
                 .replaceAll("%10\\$t(\\S+)", "%d{$1}")
                 .replace("\u0000", "%%");
@@ -148,7 +159,7 @@ public final class ConsoleHandler implements LogHandler {
                     t == null ? "" : t.getClass().getName() + ": " + t.getMessage(),
                     t == null ? "" : NEWLINE,
                     colorCodes.second(),
-                    instant
+                    instant.atZone(ZONE_ID)
             );
         }
     }
