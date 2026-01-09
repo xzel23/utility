@@ -64,6 +64,8 @@ loadScripts(document, 'script');</script>
 <li><a href="#onChange(java.util.function.Consumer)" tabindex="0">onChange(Consumer)</a></li>
 <li><a href="#bind(javafx.beans.property.Property)" tabindex="0">bind(Property)</a></li>
 <li><a href="#localized(boolean)" tabindex="0">localized(boolean)</a></li>
+<li><a href="#stringRenderer(java.util.function.Function)" tabindex="0">stringRenderer(Function)</a></li>
+<li><a href="#stringRenderer(java.util.function.Function,java.lang.String)" tabindex="0">stringRenderer(Function, String)</a></li>
 <li><a href="#build()" tabindex="0">build()</a></li>
 </ol>
 </li>
@@ -142,6 +144,17 @@ synchronization of items between the two properties.</div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onChange(java.util.function.Consumer)" class="member-name-link">onChange</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;@Nullable <a href="#type-param-T" title="type parameter in ComboBoxBuilder">T</a>&gt;&nbsp;onChange)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets a callback to be invoked whenever the selected value in the choice menu changes.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a><wbr>&lt;<a href="#type-param-T" title="type parameter in ComboBoxBuilder">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stringRenderer(java.util.function.Function)" class="member-name-link">stringRenderer</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable <a href="#type-param-T" title="type parameter in ComboBoxBuilder">T</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;stringRenderer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the function used to render the items in the combo box as strings.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a><wbr>&lt;<a href="#type-param-T" title="type parameter in ComboBoxBuilder">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stringRenderer(java.util.function.Function,java.lang.String)" class="member-name-link">stringRenderer</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="#type-param-T" title="type parameter in ComboBoxBuilder">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;stringRenderer,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;valueIfNull)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the function used to render the items in the combo box as strings.</div>
 </div>
 </div>
 </div>
@@ -228,6 +241,46 @@ synchronization of items between the two properties.</div>
 <dd><code>localized</code> - true, if items should be localized</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="stringRenderer(java.util.function.Function)">
+<h3>stringRenderer</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a>&lt;<a href="#type-param-T" title="type parameter in ComboBoxBuilder">T</a>&gt;</span>&nbsp;<span class="element-name">stringRenderer</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@Nullable <a href="#type-param-T" title="type parameter in ComboBoxBuilder">T</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;stringRenderer)</span></div>
+<div class="block">Sets the function used to render the items in the combo box as strings.
+This function is used to convert each item of type <code>T</code> into its textual
+representation for display in the combo box.
+<p>
+<strong>Note:</strong> the supplied function must correctly handle null values.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>stringRenderer</code> - a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a> that accepts an item of type <code>T</code>
+                      and returns its corresponding string representation</dd>
+<dt>Returns:</dt>
+<dd>this instance of <code>ComboBoxBuilder</code> for method chaining</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="stringRenderer(java.util.function.Function,java.lang.String)">
+<h3>stringRenderer</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ComboBoxBuilder.html" title="class in com.dua3.utility.fx.controls">ComboBoxBuilder</a>&lt;<a href="#type-param-T" title="type parameter in ComboBoxBuilder">T</a>&gt;</span>&nbsp;<span class="element-name">stringRenderer</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="#type-param-T" title="type parameter in ComboBoxBuilder">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;stringRenderer,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;valueIfNull)</span></div>
+<div class="block">Sets the function used to render the items in the combo box as strings.
+This function is used to convert each item of type <code>T</code> into its textual
+representation for display in the combo box.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>stringRenderer</code> - a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a> that accepts an item of type <code>T</code>
+                      and returns its corresponding string representation</dd>
+<dd><code>valueIfNull</code> - the string representation to use for <code>null</code> items</dd>
+<dt>Returns:</dt>
+<dd>this instance of <code>ComboBoxBuilder</code> for method chaining</dd>
 </dl>
 </div>
 </section>
