@@ -117,27 +117,35 @@ that filters log entries based on their log level and a user-defined filter.</di
 <div class="col-last even-row-color">
 <div class="block">Interface for Listeners on changes of a <a href="LogBuffer.html" title="class in com.dua3.utility.logging"><code>LogBuffer</code></a> instance's contents.</div>
 </div>
-<div class="col-first odd-row-color"><a href="class-use/LogEntry.html#com.dua3.utility.logging">LogEntry</a></div>
+<div class="col-first odd-row-color"><a href="class-use/LogDispatcher.html#com.dua3.utility.logging">LogDispatcher</a></div>
 <div class="col-last odd-row-color">
+<div class="block">This interface defines the contract for classes that dispatch log entries to registered handlers.</div>
+</div>
+<div class="col-first even-row-color"><a href="class-use/LogEntry.html#com.dua3.utility.logging">LogEntry</a></div>
+<div class="col-last even-row-color">
 <div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
 <div class="deprecation-comment">will be removed in version 21</div>
 </div>
 </div>
-<div class="col-first even-row-color"><a href="class-use/LogEntryDispatcher.html#com.dua3.utility.logging">LogEntryDispatcher</a></div>
-<div class="col-last even-row-color">
-<div class="block">This interface defines the contract for classes that dispatch log entries to registered handlers.</div>
-</div>
 <div class="col-first odd-row-color"><a href="class-use/LogEntryFilter.html#com.dua3.utility.logging">LogEntryFilter</a></div>
 <div class="col-last odd-row-color">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+</div>
+<div class="col-first even-row-color"><a href="class-use/LogFilter.html#com.dua3.utility.logging">LogFilter</a></div>
+<div class="col-last even-row-color">
 <div class="block">The LogEntryFilter interface represents a filter used to determine if a LogEntry should be included or excluded.</div>
 </div>
-<div class="col-first even-row-color"><a href="class-use/LogEntryHandler.html#com.dua3.utility.logging">LogEntryHandler</a></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><a href="class-use/LogHandler.html#com.dua3.utility.logging">LogHandler</a></div>
+<div class="col-last odd-row-color">
 <div class="block">Represents a functional interface for handling log entries.</div>
 </div>
-<div class="col-first odd-row-color"><a href="class-use/LogLevel.html#com.dua3.utility.logging">LogLevel</a></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><a href="class-use/LogLevel.html#com.dua3.utility.logging">LogLevel</a></div>
+<div class="col-last even-row-color">
 <div class="block">Enumeration representing different log levels.</div>
+</div>
+<div class="col-first odd-row-color"><a href="class-use/SimpleLogEntry.html#com.dua3.utility.logging">SimpleLogEntry</a></div>
+<div class="col-last odd-row-color">
+<div class="block">Represents a single log entry containing details about a logging event.</div>
 </div>
 </div>
 </section>
@@ -148,15 +156,15 @@ that filters log entries based on their log level and a user-defined filter.</di
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><a href="class-use/LogEntryDispatcher.html#com.dua3.utility.logging.backend.universal">LogEntryDispatcher</a></div>
+<div class="col-first even-row-color"><a href="class-use/LogDispatcher.html#com.dua3.utility.logging.backend.universal">LogDispatcher</a></div>
 <div class="col-last even-row-color">
 <div class="block">This interface defines the contract for classes that dispatch log entries to registered handlers.</div>
 </div>
-<div class="col-first odd-row-color"><a href="class-use/LogEntryFilter.html#com.dua3.utility.logging.backend.universal">LogEntryFilter</a></div>
+<div class="col-first odd-row-color"><a href="class-use/LogFilter.html#com.dua3.utility.logging.backend.universal">LogFilter</a></div>
 <div class="col-last odd-row-color">
 <div class="block">The LogEntryFilter interface represents a filter used to determine if a LogEntry should be included or excluded.</div>
 </div>
-<div class="col-first even-row-color"><a href="class-use/LogEntryHandler.html#com.dua3.utility.logging.backend.universal">LogEntryHandler</a></div>
+<div class="col-first even-row-color"><a href="class-use/LogHandler.html#com.dua3.utility.logging.backend.universal">LogHandler</a></div>
 <div class="col-last even-row-color">
 <div class="block">Represents a functional interface for handling log entries.</div>
 </div>
@@ -173,25 +181,25 @@ that filters log entries based on their log level and a user-defined filter.</di
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><a href="class-use/ILogEntryDispatcherFactory.html#com.dua3.utility.logging.log4j">ILogEntryDispatcherFactory</a></div>
+<div class="col-first even-row-color"><a href="class-use/LogDispatcher.html#com.dua3.utility.logging.log4j">LogDispatcher</a></div>
 <div class="col-last even-row-color">
-<div class="block">Interface for a factory that provides an instance of the LogEntryDispatcher.</div>
+<div class="block">This interface defines the contract for classes that dispatch log entries to registered handlers.</div>
 </div>
-<div class="col-first odd-row-color"><a href="class-use/LogEntry.html#com.dua3.utility.logging.log4j">LogEntry</a></div>
+<div class="col-first odd-row-color"><a href="class-use/LogDispatcherFactory.html#com.dua3.utility.logging.log4j">LogDispatcherFactory</a></div>
 <div class="col-last odd-row-color">
+<div class="block">Interface for a factory that provides an instance of the LogDispatcher.</div>
+</div>
+<div class="col-first even-row-color"><a href="class-use/LogEntry.html#com.dua3.utility.logging.log4j">LogEntry</a></div>
+<div class="col-last even-row-color">
 <div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
 <div class="deprecation-comment">will be removed in version 21</div>
 </div>
 </div>
-<div class="col-first even-row-color"><a href="class-use/LogEntryDispatcher.html#com.dua3.utility.logging.log4j">LogEntryDispatcher</a></div>
-<div class="col-last even-row-color">
-<div class="block">This interface defines the contract for classes that dispatch log entries to registered handlers.</div>
-</div>
-<div class="col-first odd-row-color"><a href="class-use/LogEntryFilter.html#com.dua3.utility.logging.log4j">LogEntryFilter</a></div>
+<div class="col-first odd-row-color"><a href="class-use/LogFilter.html#com.dua3.utility.logging.log4j">LogFilter</a></div>
 <div class="col-last odd-row-color">
 <div class="block">The LogEntryFilter interface represents a filter used to determine if a LogEntry should be included or excluded.</div>
 </div>
-<div class="col-first even-row-color"><a href="class-use/LogEntryHandler.html#com.dua3.utility.logging.log4j">LogEntryHandler</a></div>
+<div class="col-first even-row-color"><a href="class-use/LogHandler.html#com.dua3.utility.logging.log4j">LogHandler</a></div>
 <div class="col-last even-row-color">
 <div class="block">Represents a functional interface for handling log entries.</div>
 </div>
@@ -208,25 +216,25 @@ that filters log entries based on their log level and a user-defined filter.</di
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><a href="class-use/ILogEntryDispatcherFactory.html#com.dua3.utility.logging.slf4j">ILogEntryDispatcherFactory</a></div>
+<div class="col-first even-row-color"><a href="class-use/LogDispatcher.html#com.dua3.utility.logging.slf4j">LogDispatcher</a></div>
 <div class="col-last even-row-color">
-<div class="block">Interface for a factory that provides an instance of the LogEntryDispatcher.</div>
+<div class="block">This interface defines the contract for classes that dispatch log entries to registered handlers.</div>
 </div>
-<div class="col-first odd-row-color"><a href="class-use/LogEntry.html#com.dua3.utility.logging.slf4j">LogEntry</a></div>
+<div class="col-first odd-row-color"><a href="class-use/LogDispatcherFactory.html#com.dua3.utility.logging.slf4j">LogDispatcherFactory</a></div>
 <div class="col-last odd-row-color">
+<div class="block">Interface for a factory that provides an instance of the LogDispatcher.</div>
+</div>
+<div class="col-first even-row-color"><a href="class-use/LogEntry.html#com.dua3.utility.logging.slf4j">LogEntry</a></div>
+<div class="col-last even-row-color">
 <div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
 <div class="deprecation-comment">will be removed in version 21</div>
 </div>
 </div>
-<div class="col-first even-row-color"><a href="class-use/LogEntryDispatcher.html#com.dua3.utility.logging.slf4j">LogEntryDispatcher</a></div>
-<div class="col-last even-row-color">
-<div class="block">This interface defines the contract for classes that dispatch log entries to registered handlers.</div>
-</div>
-<div class="col-first odd-row-color"><a href="class-use/LogEntryFilter.html#com.dua3.utility.logging.slf4j">LogEntryFilter</a></div>
+<div class="col-first odd-row-color"><a href="class-use/LogFilter.html#com.dua3.utility.logging.slf4j">LogFilter</a></div>
 <div class="col-last odd-row-color">
 <div class="block">The LogEntryFilter interface represents a filter used to determine if a LogEntry should be included or excluded.</div>
 </div>
-<div class="col-first even-row-color"><a href="class-use/LogEntryHandler.html#com.dua3.utility.logging.slf4j">LogEntryHandler</a></div>
+<div class="col-first even-row-color"><a href="class-use/LogHandler.html#com.dua3.utility.logging.slf4j">LogHandler</a></div>
 <div class="col-last even-row-color">
 <div class="block">Represents a functional interface for handling log entries.</div>
 </div>
@@ -248,11 +256,9 @@ that filters log entries based on their log level and a user-defined filter.</di
 <div class="block">A thread-safe log buffer class intended to provide a buffer for log messages
 to display in GUI applications.</div>
 </div>
-<div class="col-first odd-row-color"><a href="class-use/LogEntry.html#com.dua3.utility.swing">LogEntry</a></div>
+<div class="col-first odd-row-color"><a href="class-use/SimpleLogEntry.html#com.dua3.utility.swing">SimpleLogEntry</a></div>
 <div class="col-last odd-row-color">
-<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
-<div class="deprecation-comment">will be removed in version 21</div>
-</div>
+<div class="block">Represents a single log entry containing details about a logging event.</div>
 </div>
 </div>
 </section>

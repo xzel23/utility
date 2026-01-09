@@ -64,16 +64,6 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Classes and utilities related to logging.</div>
 </div>
-<div class="col-first odd-row-color"><a href="#com.dua3.utility.logging.backend.universal">com.dua3.utility.logging.backend.universal</a></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><a href="#com.dua3.utility.logging.log4j">com.dua3.utility.logging.log4j</a></div>
-<div class="col-last even-row-color">
-<div class="block">Classes and utilities related to logging (LOG4J).</div>
-</div>
-<div class="col-first odd-row-color"><a href="#com.dua3.utility.logging.slf4j">com.dua3.utility.logging.slf4j</a></div>
-<div class="col-last odd-row-color">
-<div class="block">Classes and utilities related to logging (SLF4J).</div>
-</div>
 </div>
 <section class="class-uses">
 <ul class="block-list">
@@ -91,12 +81,6 @@ loadScripts(document, 'script');</script>
 <div class="block">The DefaultLogEntryFilter class is an implementation of the LogEntryFilter interface
 that filters log entries based on their log level and a user-defined filter.</div>
 </div>
-<div class="col-first odd-row-color"><code>class&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="../LogFilter.html" class="type-name-link" title="class in com.dua3.utility.logging">LogFilter</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">The LogFilter class is an implementation of the LogEntryFilter interface
-that filters log entries based on their name and log levels defined on package/class levels.</div>
-</div>
 </div>
 <div class="caption"><span>Fields in <a href="../package-summary.html">com.dua3.utility.logging</a> declared as <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span></div>
 <div class="summary-table three-column-summary">
@@ -106,6 +90,7 @@ that filters log entries based on their name and log levels defined on package/c
 <div class="col-first even-row-color"><code>static final <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
 <div class="col-second even-row-color"><span class="type-name-label">LogEntryFilter.</span><code><a href="../LogEntryFilter.html#ALL_PASS_FILTER" class="member-name-link">ALL_PASS_FILTER</a></code></div>
 <div class="col-last even-row-color">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
 <div class="block">A LogEntryFilter that allows all log entries to pass through.</div>
 </div>
 </div>
@@ -117,114 +102,10 @@ that filters log entries based on their name and log levels defined on package/c
 <div class="col-first even-row-color"><code>static <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
 <div class="col-second even-row-color"><span class="type-name-label">LogEntryFilter.</span><code><a href="../LogEntryFilter.html#allPass()" class="member-name-link">allPass</a>()</code></div>
 <div class="col-last even-row-color">
-<div class="block">Returns a LogEntryFilter that allows all log entries to pass through.</div>
-</div>
-<div class="col-first odd-row-color"><code><a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">ConsoleHandler.</span><code><a href="../ConsoleHandler.html#getFilter()" class="member-name-link">getFilter</a>()</code></div>
-<div class="col-last odd-row-color">
-<div class="block">Retrieves the filter for log entries.</div>
-</div>
-<div class="col-first even-row-color"><code><a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">LogEntryDispatcher.</span><code><a href="../LogEntryDispatcher.html#getFilter()" class="member-name-link">getFilter</a>()</code></div>
-<div class="col-last even-row-color">
-<div class="block">Get the <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging"><code>LogEntryFilter</code></a>.</div>
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="../LogFilter.html#allPass()"><code>LogFilter.allPass()</code></a></div>
 </div>
 </div>
-<div class="caption"><span>Methods in <a href="../package-summary.html">com.dua3.utility.logging</a> with parameters of type <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Method</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>void</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">ConsoleHandler.</span><code><a href="../ConsoleHandler.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter</a><wbr>(<a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&nbsp;filter)</code></div>
-<div class="col-last even-row-color">
-<div class="block">Sets the filter for log entries.</div>
-</div>
-<div class="col-first odd-row-color"><code>void</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">LogEntryDispatcher.</span><code><a href="../LogEntryDispatcher.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter</a><wbr>(<a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&nbsp;filter)</code></div>
-<div class="col-last odd-row-color">
-<div class="block">Sets the <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging"><code>LogEntryFilter</code></a> for log entry events.</div>
-</div>
-</div>
-<div class="caption"><span>Method parameters in <a href="../package-summary.html">com.dua3.utility.logging</a> with type arguments of type <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Method</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static void</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">LoggingConfigurator.</span><code><a href="../LoggingConfigurator.html#configure(java.util.Properties,java.util.function.Consumer,java.util.function.Consumer)" class="member-name-link">configure</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;properties,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&gt;&nbsp;setFilter,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a>&gt;&nbsp;addHandler)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="com.dua3.utility.logging.backend.universal">
-<h2>Uses of <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a> in <a href="../backend/universal/package-summary.html">com.dua3.utility.logging.backend.universal</a></h2>
-<div class="caption"><span>Methods in <a href="../backend/universal/package-summary.html">com.dua3.utility.logging.backend.universal</a> that return <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Method</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code><a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">UniversalDispatcher.</span><code><a href="../backend/universal/UniversalDispatcher.html#getFilter()" class="member-name-link">getFilter</a>()</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
-<div class="caption"><span>Methods in <a href="../backend/universal/package-summary.html">com.dua3.utility.logging.backend.universal</a> with parameters of type <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Method</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>void</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">UniversalDispatcher.</span><code><a href="../backend/universal/UniversalDispatcher.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter</a><wbr>(<a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&nbsp;filter)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="com.dua3.utility.logging.log4j">
-<h2>Uses of <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a> in <a href="../log4j/package-summary.html">com.dua3.utility.logging.log4j</a></h2>
-<div class="caption"><span>Methods in <a href="../log4j/package-summary.html">com.dua3.utility.logging.log4j</a> that return <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Method</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code><a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">LogAppenderLog4j.LogEntryDispatcherLog4J.</span><code><a href="../log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html#getFilter()" class="member-name-link">getFilter</a>()</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
-<div class="caption"><span>Methods in <a href="../log4j/package-summary.html">com.dua3.utility.logging.log4j</a> with parameters of type <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Method</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>void</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">LogAppenderLog4j.LogEntryDispatcherLog4J.</span><code><a href="../log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter</a><wbr>(<a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&nbsp;filter)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="com.dua3.utility.logging.slf4j">
-<h2>Uses of <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a> in <a href="../slf4j/package-summary.html">com.dua3.utility.logging.slf4j</a></h2>
-<div class="caption"><span>Methods in <a href="../slf4j/package-summary.html">com.dua3.utility.logging.slf4j</a> that return <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Method</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code><a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">LoggerFactorySlf4j.</span><code><a href="../slf4j/LoggerFactorySlf4j.html#getFilter()" class="member-name-link">getFilter</a>()</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
-<div class="caption"><span>Methods in <a href="../slf4j/package-summary.html">com.dua3.utility.logging.slf4j</a> with parameters of type <a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Method</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>void</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">LoggerFactorySlf4j.</span><code><a href="../slf4j/LoggerFactorySlf4j.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter</a><wbr>(<a href="../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&nbsp;filter)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>

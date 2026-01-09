@@ -408,15 +408,15 @@ description, and switches.</div>
 <dd>
 <div class="block">Add LogBufferListener.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#addLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">addLogEntryHandler(LogEntryHandler)</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
+<dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#addLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">addLogHandler(LogHandler)</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html#addLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">addLogEntryHandler(LogEntryHandler)</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogEntryDispatcherLog4J</a></dt>
+<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html#addLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">addLogHandler(LogHandler)</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogDispatcherLog4J</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/LogEntryDispatcher.html#addLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">addLogEntryHandler(LogEntryHandler)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></dt>
+<dt><a href="com/dua3/utility/logging/LogDispatcher.html#addLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">addLogHandler(LogHandler)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></dt>
 <dd>
 <div class="block">Adds a handler for log entry events.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#addLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">addLogEntryHandler(LogEntryHandler)</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
+<dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#addLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">addLogHandler(LogHandler)</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/math/geometry/Dimension2f.html#addMargin(float)" class="member-name-link">addMargin(float)</a> - Method in record class com.dua3.utility.math.geometry.<a href="com/dua3/utility/math/geometry/Dimension2f.html" title="class in com.dua3.utility.math.geometry">Dimension2f</a></dt>
 <dd>
@@ -625,6 +625,11 @@ Provides both encryption and authentication with a 256-bit key by default</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/LogEntryFilter.html#ALL_PASS_FILTER" class="member-name-link">ALL_PASS_FILTER</a> - Static variable in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></dt>
 <dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">A LogEntryFilter that allows all log entries to pass through.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/LogFilter.html#ALL_PASS_FILTER" class="member-name-link">ALL_PASS_FILTER</a> - Static variable in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></dt>
+<dd>
 <div class="block">A LogEntryFilter that allows all log entries to pass through.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/FileType.html#allForExtension(com.dua3.utility.io.OpenMode,java.lang.String)" class="member-name-link">allForExtension(OpenMode, String)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/FileType.html" title="class in com.dua3.utility.io">FileType</a></dt>
@@ -644,6 +649,12 @@ Provides both encryption and authentication with a 256-bit key by default</div>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/options/Param.html#param-allowedValues"><code>allowedValues</code></a> record component.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/LogEntryFilter.html#allPass()" class="member-name-link">allPass()</a> - Static method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="com/dua3/utility/logging/LogFilter.html#allPass()"><code>LogFilter.allPass()</code></a></div>
+</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/LogFilter.html#allPass()" class="member-name-link">allPass()</a> - Static method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></dt>
 <dd>
 <div class="block">Returns a LogEntryFilter that allows all log entries to pass through.</div>
 </dd>
@@ -1625,7 +1636,7 @@ the Java security environment.</div>
 <dd>
 <div class="block">The color BROWN.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogBuffer.BufferState.html#%3Cinit%3E(com.dua3.utility.logging.LogEntry%5B%5D,long,long)" class="member-name-link">BufferState(LogEntry[], long, long)</a> - Constructor for record class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.BufferState.html" title="class in com.dua3.utility.logging">LogBuffer.BufferState</a></dt>
+<dt><a href="com/dua3/utility/logging/LogBuffer.BufferState.html#%3Cinit%3E(com.dua3.utility.logging.SimpleLogEntry%5B%5D,long,long)" class="member-name-link">BufferState(SimpleLogEntry[], long, long)</a> - Constructor for record class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.BufferState.html" title="class in com.dua3.utility.logging">LogBuffer.BufferState</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>BufferState</code> record class.</div>
 </dd>
@@ -1846,6 +1857,11 @@ within an <a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="cla
 <dt><a href="com/dua3/utility/data/Cache.ReferenceType.html" class="type-name-link" title="enum class in com.dua3.utility.data">Cache.ReferenceType</a> - Enum Class in <a href="com/dua3/utility/data/package-summary.html">com.dua3.utility.data</a></dt>
 <dd>
 <div class="block">Enum representing the different types of reference to be used in the Cache class.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/LangUtil.html#cachingStringSupplier(java.util.function.Supplier)" class="member-name-link">cachingStringSupplier(Supplier)</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
+<dd>
+<div class="block">Wraps a supplier of a string to defer execution of the string creation
+until its actual usage.</div>
 </dd>
 <dt><a href="com/dua3/utility/data/Color.html#CADETBLUE" class="member-name-link">CADETBLUE</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
@@ -2419,8 +2435,6 @@ from remaining in memory.</div>
 <dd>
 <div class="block">This package defines a set of classes to define geometric shapes and transformations.</div>
 </dd>
-<dt><a href="com/dua3/utility/native_test/package-summary.html">com.dua3.utility.native_test</a> - package com.dua3.utility.native_test</dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/options/package-summary.html">com.dua3.utility.options</a> - package com.dua3.utility.options</dt>
 <dd>
 <div class="block">This package contains a set of options classes to facilitate command line handling and
@@ -2664,6 +2678,12 @@ textual data efficiently.</div>
 <div class="block">The ConsoleHandler class is an implementation of the LogEntryHandler interface.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/ConsoleHandler.html#%3Cinit%3E(java.io.PrintStream,boolean)" class="member-name-link">ConsoleHandler(PrintStream, boolean)</a> - Constructor for class com.dua3.utility.logging.<a href="com/dua3/utility/logging/ConsoleHandler.html" title="class in com.dua3.utility.logging">ConsoleHandler</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="com/dua3/utility/logging/ConsoleHandler.html#%3Cinit%3E(java.lang.String,java.io.PrintStream,boolean)"><code>ConsoleHandler(String, PrintStream, boolean)</code></a> instead</div>
+</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/ConsoleHandler.html#%3Cinit%3E(java.lang.String,java.io.PrintStream,boolean)" class="member-name-link">ConsoleHandler(String, PrintStream, boolean)</a> - Constructor for class com.dua3.utility.logging.<a href="com/dua3/utility/logging/ConsoleHandler.html" title="class in com.dua3.utility.logging">ConsoleHandler</a></dt>
 <dd>
 <div class="block">Constructs a ConsoleHandler with the specified PrintStream and colored flag.</div>
 </dd>
@@ -4035,7 +4055,7 @@ in the file system.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.html#dispatcher()" class="member-name-link">dispatcher()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j</a></dt>
 <dd>
-<div class="block">Returns the LogEntryDispatcher associated with the LogAppenderLog4j instance.</div>
+<div class="block">Returns the LogDispatcher associated with the LogAppenderLog4j instance.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#dispatchJcl(java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.Object,java.lang.Throwable)" class="member-name-link">dispatchJcl(String, LogLevel, Object, Throwable)</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
 <dd>
@@ -4047,11 +4067,11 @@ in the file system.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#dispatchLog4j(java.lang.String,org.apache.logging.log4j.Level,org.apache.logging.log4j.Marker,org.apache.logging.log4j.message.Message,java.lang.Throwable)" class="member-name-link">dispatchLog4j(String, Level, Marker, Message, Throwable)</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
 <dd>
-<div class="block">Dispatches a Log4j log event to all registered <a href="com/dua3/utility/logging/LogEntryHandler.html" title="interface in com.dua3.utility.logging"><code>LogEntryHandler</code></a> instances.</div>
+<div class="block">Dispatches a Log4j log event to all registered <a href="com/dua3/utility/logging/LogHandler.html" title="interface in com.dua3.utility.logging"><code>LogHandler</code></a> instances.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#dispatchSlf4j(java.lang.String,org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Object%5B%5D,java.lang.Throwable)" class="member-name-link">dispatchSlf4j(String, Level, Marker, String, Object[], Throwable)</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
 <dd>
-<div class="block">Dispatches an SLF4J logging event to all registered <a href="com/dua3/utility/logging/LogEntryHandler.html" title="interface in com.dua3.utility.logging"><code>LogEntryHandler</code></a> instances.</div>
+<div class="block">Dispatches an SLF4J logging event to all registered <a href="com/dua3/utility/logging/LogHandler.html" title="interface in com.dua3.utility.logging"><code>LogHandler</code></a> instances.</div>
 </dd>
 <dt><a href="com/dua3/utility/options/Option.html#displayName()" class="member-name-link">displayName()</a> - Method in class com.dua3.utility.options.<a href="com/dua3/utility/options/Option.html" title="class in com.dua3.utility.options">Option</a></dt>
 <dd>
@@ -4823,10 +4843,6 @@ statement.</div>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/backend/jcl/LoggerJcl.html#fatal(java.lang.Object,java.lang.Throwable)" class="member-name-link">fatal(Object, Throwable)</a> - Method in class com.dua3.utility.logging.backend.jcl.<a href="com/dua3/utility/logging/backend/jcl/LoggerJcl.html" title="class in com.dua3.utility.logging.backend.jcl">LoggerJcl</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/native_test/FfmTestApp.html" class="type-name-link" title="class in com.dua3.utility.native_test">FfmTestApp</a> - Class in <a href="com/dua3/utility/native_test/package-summary.html">com.dua3.utility.native_test</a></dt>
-<dd>
-<div class="block">Minimal application to exercise FFM-based features for GraalVM configuration generation.</div>
-</dd>
 <dt><a href="com/dua3/utility/io/AnsiCode.html#fg(int,int,int)" class="member-name-link">fg(int, int, int)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/AnsiCode.html" title="class in com.dua3.utility.io">AnsiCode</a></dt>
 <dd>
 <div class="block">Set text color.</div>
@@ -5891,9 +5907,9 @@ loaded before access.</div>
 <dd>
 <div class="block">Retrieves the actual dimensions of the text as a <code>Dimension2f</code> object.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html#getAppender()" class="member-name-link">getAppender()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogEntryDispatcherLog4J</a></dt>
+<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html#getAppender()" class="member-name-link">getAppender()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogDispatcherLog4J</a></dt>
 <dd>
-<div class="block">Returns the LogAppenderLog4j instance associated with this LogEntryDispatcherLog4J instance.</div>
+<div class="block">Returns the LogAppenderLog4j instance associated with this LogDispatcherLog4J instance.</div>
 </dd>
 <dt><a href="com/dua3/utility/io/IoUtil.html#getApplicationDataDir(java.lang.String)" class="member-name-link">getApplicationDataDir(String)</a> - Static method in class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.html" title="class in com.dua3.utility.io">IoUtil</a></dt>
 <dd>
@@ -6131,7 +6147,7 @@ Certificate Authority (CA) certificates.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#getDefaultHandler()" class="member-name-link">getDefaultHandler()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>
-<div class="block">Returns the default <code>LogEntryHandler</code>.</div>
+<div class="block">Returns the default <code>LogHandler</code>.</div>
 </dd>
 <dt><a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html#getDefaultKeySize()" class="member-name-link">getDefaultKeySize()</a> - Method in enum class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/AsymmetricAlgorithm.html" title="enum class in com.dua3.utility.crypt">AsymmetricAlgorithm</a></dt>
 <dd>
@@ -6191,13 +6207,13 @@ Certificate Authority (CA) certificates.</div>
 <dd>
 <div class="block">Get the dimension (size) of this {code Graphics} instance in screen units.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/ILogEntryDispatcherFactory.html#getDispatcher()" class="member-name-link">getDispatcher()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/ILogEntryDispatcherFactory.html" title="interface in com.dua3.utility.logging">ILogEntryDispatcherFactory</a></dt>
-<dd>
-<div class="block">Retrieves the LogEntryDispatcher instance and connects all available loggers to it.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogEntryDispatcherFactoryLog4j.html#getDispatcher()" class="member-name-link">getDispatcher()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogEntryDispatcherFactoryLog4j.html" title="class in com.dua3.utility.logging.log4j">LogEntryDispatcherFactoryLog4j</a></dt>
+<dt><a href="com/dua3/utility/logging/log4j/LogDispatcherFactoryLog4j.html#getDispatcher()" class="member-name-link">getDispatcher()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogDispatcherFactoryLog4j.html" title="class in com.dua3.utility.logging.log4j">LogDispatcherFactoryLog4j</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/slf4j/LogEntryDispatcherFactorySlf4j.html#getDispatcher()" class="member-name-link">getDispatcher()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LogEntryDispatcherFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LogEntryDispatcherFactorySlf4j</a></dt>
+<dt><a href="com/dua3/utility/logging/LogDispatcherFactory.html#getDispatcher()" class="member-name-link">getDispatcher()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogDispatcherFactory.html" title="interface in com.dua3.utility.logging">LogDispatcherFactory</a></dt>
+<dd>
+<div class="block">Retrieves the LogDispatcher instance and connects all available loggers to it.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/slf4j/LogDispatcherFactorySlf4j.html#getDispatcher()" class="member-name-link">getDispatcher()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LogDispatcherFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LogDispatcherFactorySlf4j</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/fx/controls/PinBoard.html#getDisplayScale()" class="member-name-link">getDisplayScale()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/PinBoard.html" title="class in com.dua3.utility.fx.controls">PinBoard</a></dt>
 <dd>
@@ -6273,9 +6289,9 @@ Certificate Authority (CA) certificates.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/log4j/Log4jLoggerContext.html#getExternalContext()" class="member-name-link">getExternalContext()</a> - Method in class com.dua3.utility.logging.backend.log4j.<a href="com/dua3/utility/logging/backend/log4j/Log4jLoggerContext.html" title="class in com.dua3.utility.logging.backend.log4j">Log4jLoggerContext</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/slf4j/LogEntryDispatcherFactorySlf4j.html#getFactory()" class="member-name-link">getFactory()</a> - Static method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LogEntryDispatcherFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LogEntryDispatcherFactorySlf4j</a></dt>
+<dt><a href="com/dua3/utility/logging/slf4j/LogDispatcherFactorySlf4j.html#getFactory()" class="member-name-link">getFactory()</a> - Static method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LogDispatcherFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LogDispatcherFactorySlf4j</a></dt>
 <dd>
-<div class="block">Retrieves the instance of the LoggerFactorySlf4j class, which is a singleton implementation of the ILoggerFactory interface and LogEntryDispatcher interface.</div>
+<div class="block">Retrieves the instance of the LoggerFactorySlf4j class, which is a singleton implementation of the ILoggerFactory interface and LogDispatcher interface.</div>
 </dd>
 <dt><a href="com/dua3/utility/text/Font.html#getFamilies()" class="member-name-link">getFamilies()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/Font.html" title="class in com.dua3.utility.text">Font</a></dt>
 <dd>
@@ -6343,11 +6359,21 @@ Certificate Authority (CA) certificates.</div>
 <dd>
 <div class="block">Retrieves the filter for log entries.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html#getFilter()" class="member-name-link">getFilter()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogEntryDispatcherLog4J</a></dt>
+<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html#getFilter()" class="member-name-link">getFilter()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogDispatcherLog4J</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/LogEntryDispatcher.html#getFilter()" class="member-name-link">getFilter()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></dt>
+<dt><a href="com/dua3/utility/logging/LogBuffer.html#getFilter()" class="member-name-link">getFilter()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogDispatcher.html#getFilter()" class="member-name-link">getFilter()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></dt>
 <dd>
-<div class="block">Get the <a href="com/dua3/utility/logging/LogEntryFilter.html" title="interface in com.dua3.utility.logging"><code>LogEntryFilter</code></a>.</div>
+<div class="block">Get the <a href="com/dua3/utility/logging/LogFilter.html" title="interface in com.dua3.utility.logging"><code>LogFilter</code></a>.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/LogEntryHandler.html#getFilter()" class="member-name-link">getFilter()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogHandler.html#getFilter()" class="member-name-link">getFilter()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></dt>
+<dd>
+<div class="block">Retrieves the current filter used for determining which log entries should be processed.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#getFilter()" class="member-name-link">getFilter()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>&nbsp;</dd>
@@ -6449,12 +6475,12 @@ Certificate Authority (CA) certificates.</div>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/LogUtil.html#getGlobalDispatcher()" class="member-name-link">getGlobalDispatcher()</a> - Static method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogUtil.html" title="class in com.dua3.utility.logging">LogUtil</a></dt>
 <dd>
-<div class="block">Returns the global LogEntryDispatcher by using the available ILogEntryDispatcherFactory implementations loaded
+<div class="block">Returns the global LogDispatcher by using the available ILogDispatcherFactory implementations loaded
 through ServiceLoader and connects all known loggers to it.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LogUtilSlf4j.html#getGlobalDispatcher()" class="member-name-link">getGlobalDispatcher()</a> - Static method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LogUtilSlf4j.html" title="class in com.dua3.utility.logging.slf4j">LogUtilSlf4j</a></dt>
 <dd>
-<div class="block">Returns the global LogEntryDispatcher by using the available ILogEntryDispatcherFactory implementations loaded
+<div class="block">Returns the global LogDispatcher by using the available ILogDispatcherFactory implementations loaded
 through ServiceLoader and connects all known loggers to it.</div>
 </dd>
 <dt><a href="com/dua3/utility/text/FragmentedText.html#getHDelta()" class="member-name-link">getHDelta()</a> - Method in record class com.dua3.utility.text.<a href="com/dua3/utility/text/FragmentedText.html" title="class in com.dua3.utility.text">FragmentedText</a></dt>
@@ -6647,15 +6673,15 @@ through ServiceLoader and connects all known loggers to it.</div>
 <dd>
 <div class="block">Retrieves the log level of the DefaultLogEntryFilter.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogFilter.html#getLevel()" class="member-name-link">getLevel()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="class in com.dua3.utility.logging">LogFilter</a></dt>
-<dd>
-<div class="block">Retrieves the global log level of the filter.</div>
-</dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggerSlf4j.html#getLevel()" class="member-name-link">getLevel()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerSlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerSlf4j</a></dt>
 <dd>
 <div class="block">Retrieves the current logging level.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogFilter.html#getLevel(java.lang.String)" class="member-name-link">getLevel(String)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="class in com.dua3.utility.logging">LogFilter</a></dt>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html#getLevel()" class="member-name-link">getLevel()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/StandardLogFilter.html" title="class in com.dua3.utility.logging">StandardLogFilter</a></dt>
+<dd>
+<div class="block">Retrieves the global log level of the filter.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html#getLevel(java.lang.String)" class="member-name-link">getLevel(String)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/StandardLogFilter.html" title="class in com.dua3.utility.logging">StandardLogFilter</a></dt>
 <dd>
 <div class="block">Retrieves the log level associated with the specified logger name.</div>
 </dd>
@@ -6689,16 +6715,6 @@ through ServiceLoader and connects all known loggers to it.</div>
 <dd>
 <div class="block">Retrieves the LogBuffer associated with this FxLogWindow.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#getLogEntryHandlers()" class="member-name-link">getLogEntryHandlers()</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html#getLogEntryHandlers()" class="member-name-link">getLogEntryHandlers()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogEntryDispatcherLog4J</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/LogEntryDispatcher.html#getLogEntryHandlers()" class="member-name-link">getLogEntryHandlers()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></dt>
-<dd>
-<div class="block">Get the registered log entry handlers.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#getLogEntryHandlers()" class="member-name-link">getLogEntryHandlers()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/backend/log4j/Log4jLoggerContext.html#getLogger(java.lang.String)" class="member-name-link">getLogger(String)</a> - Method in class com.dua3.utility.logging.backend.log4j.<a href="com/dua3/utility/logging/backend/log4j/Log4jLoggerContext.html" title="class in com.dua3.utility.logging.backend.log4j">Log4jLoggerContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/backend/slf4j/LoggerFactorySlf4j.html#getLogger(java.lang.String)" class="member-name-link">getLogger(String)</a> - Method in class com.dua3.utility.logging.backend.slf4j.<a href="com/dua3/utility/logging/backend/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.backend.slf4j">LoggerFactorySlf4j</a></dt>
@@ -6710,6 +6726,16 @@ through ServiceLoader and connects all known loggers to it.</div>
 <dt><a href="com/dua3/utility/logging/backend/slf4j/LoggingServiceProviderSlf4j.html#getLoggerFactory()" class="member-name-link">getLoggerFactory()</a> - Method in class com.dua3.utility.logging.backend.slf4j.<a href="com/dua3/utility/logging/backend/slf4j/LoggingServiceProviderSlf4j.html" title="class in com.dua3.utility.logging.backend.slf4j">LoggingServiceProviderSlf4j</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggingServiceProviderSlf4j.html#getLoggerFactory()" class="member-name-link">getLoggerFactory()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggingServiceProviderSlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggingServiceProviderSlf4j</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#getLogHandlers()" class="member-name-link">getLogHandlers()</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html#getLogHandlers()" class="member-name-link">getLogHandlers()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogDispatcherLog4J</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogDispatcher.html#getLogHandlers()" class="member-name-link">getLogHandlers()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></dt>
+<dd>
+<div class="block">Get the registered log entry handlers.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#getLogHandlers()" class="member-name-link">getLogHandlers()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/db/JdbcDataSource.html#getLoginTimeout()" class="member-name-link">getLoginTimeout()</a> - Method in class com.dua3.utility.db.<a href="com/dua3/utility/db/JdbcDataSource.html" title="class in com.dua3.utility.db">JdbcDataSource</a></dt>
 <dd>&nbsp;</dd>
@@ -6900,6 +6926,10 @@ if the property is not set.</div>
 </dd>
 <dt><a href="com/dua3/utility/xml/SimpleNamespaceContext.html#getPrefixes(java.lang.String)" class="member-name-link">getPrefixes(String)</a> - Method in class com.dua3.utility.xml.<a href="com/dua3/utility/xml/SimpleNamespaceContext.html" title="class in com.dua3.utility.xml">SimpleNamespaceContext</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/ConsoleHandler.html#getPrintStream()" class="member-name-link">getPrintStream()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/ConsoleHandler.html" title="class in com.dua3.utility.logging">ConsoleHandler</a></dt>
+<dd>
+<div class="block">Retrieves the PrintStream for log entries.</div>
+</dd>
 <dt><a href="com/dua3/utility/crypt/BouncyCastle.html#getProvider()" class="member-name-link">getProvider()</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/BouncyCastle.html" title="class in com.dua3.utility.crypt">BouncyCastle</a></dt>
 <dd>
 <div class="block">Retrieves the BouncyCastle security provider instance, if available.</div>
@@ -6976,6 +7006,11 @@ if the property is not set.</div>
 <dt><a href="com/dua3/utility/io/CsvReader.html#getRowsRead()" class="member-name-link">getRowsRead()</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/CsvReader.html" title="class in com.dua3.utility.io">CsvReader</a></dt>
 <dd>
 <div class="block">Returns the total number of rows read by the CSV reader.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html#getRules()" class="member-name-link">getRules()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/StandardLogFilter.html" title="class in com.dua3.utility.logging">StandardLogFilter</a></dt>
+<dd>
+<div class="block">Retrieves the current set of log rules, where each rule associates a logger name or prefix
+with a specific log level.</div>
 </dd>
 <dt><a href="com/dua3/utility/math/geometry/AffineTransformation2f.html#getScaleX()" class="member-name-link">getScaleX()</a> - Method in record class com.dua3.utility.math.geometry.<a href="com/dua3/utility/math/geometry/AffineTransformation2f.html" title="class in com.dua3.utility.math.geometry">AffineTransformation2f</a></dt>
 <dd>
@@ -7498,9 +7533,15 @@ ensures their validation state.</div>
 <dd>
 <div class="block">Call the handlers for all passed options.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/ConsoleHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" class="member-name-link">handle(Instant, String, LogLevel, String, String, String, Throwable)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/ConsoleHandler.html" title="class in com.dua3.utility.logging">ConsoleHandler</a></dt>
+<dt><a href="com/dua3/utility/logging/ConsoleHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle(Instant, String, LogLevel, String, Supplier, String, Throwable)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/ConsoleHandler.html" title="class in com.dua3.utility.logging">ConsoleHandler</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/LogEntryHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" class="member-name-link">handle(Instant, String, LogLevel, String, String, String, Throwable)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></dt>
+<dt><a href="com/dua3/utility/logging/LogBuffer.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle(Instant, String, LogLevel, String, Supplier, String, Throwable)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogEntryHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle(Instant, String, LogLevel, String, Supplier, String, Throwable)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle(Instant, String, LogLevel, String, Supplier, String, Throwable)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></dt>
 <dd>
 <div class="block">Handles a log entry.</div>
 </dd>
@@ -7508,16 +7549,10 @@ ensures their validation state.</div>
 <dd>
 <div class="block">Handle changes in attributes.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/ConsoleHandler.html#handleEntry(com.dua3.utility.logging.LogEntry)" class="member-name-link">handleEntry(LogEntry)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/ConsoleHandler.html" title="class in com.dua3.utility.logging">ConsoleHandler</a></dt>
-<dd>
-<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
-</dd>
-<dt><a href="com/dua3/utility/logging/LogBuffer.html#handleEntry(com.dua3.utility.logging.LogEntry)" class="member-name-link">handleEntry(LogEntry)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/LogEntryHandler.html#handleEntry(com.dua3.utility.logging.LogEntry)" class="member-name-link">handleEntry(LogEntry)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
-<div class="deprecation-comment">use <a href="com/dua3/utility/logging/LogEntryHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)"><code>LogEntryHandler.handle(Instant, String, LogLevel, String, String, String, Throwable)</code></a></div>
+<div class="deprecation-comment">use <a href="com/dua3/utility/logging/LogEntryHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)"><code>LogEntryHandler.handle(Instant, String, LogLevel, String, Supplier, String, Throwable)</code></a></div>
 </div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/slf4j/LoggerSlf4j.html#handleNormalizedLoggingCall(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Object%5B%5D,java.lang.Throwable)" class="member-name-link">handleNormalizedLoggingCall(Level, Marker, String, Object[], Throwable)</a> - Method in class com.dua3.utility.logging.backend.slf4j.<a href="com/dua3/utility/logging/backend/slf4j/LoggerSlf4j.html" title="class in com.dua3.utility.logging.backend.slf4j">LoggerSlf4j</a></dt>
@@ -8011,7 +8046,9 @@ accessing the globale <a href="com/dua3/utility/i18n/I18N.html" title="class in 
 accessing the globale <a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n"><code>I18N</code></a> instance.</div>
 </dd>
 <dt><a href="com/dua3/utility/i18n/I18NProxy.html#%3Cinit%3E(java.lang.String)" class="member-name-link">I18NProxy(String)</a> - Constructor for class com.dua3.utility.i18n.<a href="com/dua3/utility/i18n/I18NProxy.html" title="class in com.dua3.utility.i18n">I18NProxy</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Constructs a new instance of <code>I18NProxy</code> with the specified base name for the resource bundle.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/Controls.html#icon(java.lang.String)" class="member-name-link">icon(String)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
 <dd>
 <div class="block">Get icon by name.</div>
@@ -8206,10 +8243,6 @@ that provides icons using the Ikonli library.</div>
 <dd>
 <div class="block">Calculate ceil(log10(x)).</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/ILogEntryDispatcherFactory.html" class="type-name-link" title="interface in com.dua3.utility.logging">ILogEntryDispatcherFactory</a> - Interface in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
-<dd>
-<div class="block">Interface for a factory that provides an instance of the LogEntryDispatcher.</div>
-</dd>
 <dt><a href="com/dua3/utility/data/Image.html" class="type-name-link" title="interface in com.dua3.utility.data">Image</a> - Interface in <a href="com/dua3/utility/data/package-summary.html">com.dua3.utility.data</a></dt>
 <dd>
 <div class="block">Raster image interface.</div>
@@ -8396,7 +8429,10 @@ or state required before the pane is displayed.</div>
 <div class="block">Sets the initial value for the choice menu.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/LogUtil.html#initUnifiedLogging()" class="member-name-link">initUnifiedLogging()</a> - Static method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogUtil.html" title="class in com.dua3.utility.logging">LogUtil</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Initializes the unified logging system by setting up various logging frameworks
+to work with a global dispatch mechanism.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/HtmlConverter.html#inlineTextDecorations(java.util.Map)" class="member-name-link">inlineTextDecorations(Map)</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/HtmlConverter.html" title="class in com.dua3.utility.text">HtmlConverter</a></dt>
 <dd>
 <div class="block">Replace font declarations with declarations for single properties.</div>
@@ -9195,7 +9231,7 @@ that can be used for command line parsing.</div>
 <dd>
 <div class="block">Determines if logging is enabled for a specific <a href="com/dua3/utility/logging/LogLevel.html" title="enum class in com.dua3.utility.logging"><code>LogLevel</code></a>.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogEntryHandler.html#isEnabled(com.dua3.utility.logging.LogLevel)" class="member-name-link">isEnabled(LogLevel)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></dt>
+<dt><a href="com/dua3/utility/logging/LogHandler.html#isEnabled(com.dua3.utility.logging.LogLevel)" class="member-name-link">isEnabled(LogLevel)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></dt>
 <dd>
 <div class="block">Determines whether logging is enabled for a specific log level.</div>
 </dd>
@@ -9706,7 +9742,9 @@ for managing cryptographic keys, certificates, and trusted certificate chains.</
 the global <a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal"><code>UniversalDispatcher</code></a>.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/jul/JulHandler.html#%3Cinit%3E()" class="member-name-link">JulHandler()</a> - Constructor for class com.dua3.utility.logging.backend.jul.<a href="com/dua3/utility/logging/backend/jul/JulHandler.html" title="class in com.dua3.utility.logging.backend.jul">JulHandler</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Constructs a new instance of the <code>JulHandler</code>.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/Alignment.html#JUSTIFY" class="member-name-link">JUSTIFY</a> - Enum constant in enum class com.dua3.utility.text.<a href="com/dua3/utility/text/Alignment.html" title="enum class in com.dua3.utility.text">Alignment</a></dt>
 <dd>
 <div class="block">Align justified.</div>
@@ -9979,10 +10017,6 @@ exceptions on its <code>apply()</code> method.</div>
 <dt><a href="com/dua3/utility/text/HtmlConverter.HeaderStyle.html#level()" class="member-name-link">level()</a> - Method in record class com.dua3.utility.text.<a href="com/dua3/utility/text/HtmlConverter.HeaderStyle.html" title="class in com.dua3.utility.text">HtmlConverter.HeaderStyle</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/text/HtmlConverter.HeaderStyle.html#param-level"><code>level</code></a> record component.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/LoggingConfigurator.html#LEVEL" class="member-name-link">LEVEL</a> - Static variable in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LoggingConfigurator.html" title="class in com.dua3.utility.logging">LoggingConfigurator</a></dt>
-<dd>
-<div class="block">Specifies the logging level for the <code>LoggerFactorySlf4j</code>.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#LEVEL" class="member-name-link">LEVEL</a> - Static variable in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>
@@ -10419,10 +10453,12 @@ for formatting using the provided locale.</div>
 <div class="block">Represents a context implementation for managing and retrieving Log4j loggers.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/log4j/Log4jLoggerContext.html#%3Cinit%3E()" class="member-name-link">Log4jLoggerContext()</a> - Constructor for class com.dua3.utility.logging.backend.log4j.<a href="com/dua3/utility/logging/backend/log4j/Log4jLoggerContext.html" title="class in com.dua3.utility.logging.backend.log4j">Log4jLoggerContext</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Default constructor for the Log4jLoggerContext class.</div>
+</dd>
 <dt><a href="com/dua3/utility/logging/backend/log4j/Log4jLoggerContextFactory.html" class="type-name-link" title="class in com.dua3.utility.logging.backend.log4j">Log4jLoggerContextFactory</a> - Class in <a href="com/dua3/utility/logging/backend/log4j/package-summary.html">com.dua3.utility.logging.backend.log4j</a></dt>
 <dd>
-<div class="block">A factory class for creating LogEntryDispatcher instances using Log4j.</div>
+<div class="block">A factory class for creating LogDispatcher instances using Log4j.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/log4j/Log4jLoggerContextFactory.html#%3Cinit%3E()" class="member-name-link">Log4jLoggerContextFactory()</a> - Constructor for class com.dua3.utility.logging.backend.log4j.<a href="com/dua3/utility/logging/backend/log4j/Log4jLoggerContextFactory.html" title="class in com.dua3.utility.logging.backend.log4j">Log4jLoggerContextFactory</a></dt>
 <dd>
@@ -10430,15 +10466,15 @@ for formatting using the provided locale.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.html" class="type-name-link" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j</a> - Class in <a href="com/dua3/utility/logging/log4j/package-summary.html">com.dua3.utility.logging.log4j</a></dt>
 <dd>
-<div class="block">This class is an implementation of the Log4j Appender and LogEntryHandlerPool interfaces.</div>
+<div class="block">This class is an implementation of the Log4j Appender and LogHandlerPool interfaces.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.html#%3Cinit%3E(java.lang.String,org.apache.logging.log4j.core.Filter,org.apache.logging.log4j.core.Layout,boolean)" class="member-name-link">LogAppenderLog4j(String, Filter, Layout, boolean)</a> - Constructor for class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j</a></dt>
 <dd>
 <div class="block">Constructs a new instance of LogAppenderLog4j with the specified parameters.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html" class="type-name-link" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogEntryDispatcherLog4J</a> - Class in <a href="com/dua3/utility/logging/log4j/package-summary.html">com.dua3.utility.logging.log4j</a></dt>
+<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html" class="type-name-link" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogDispatcherLog4J</a> - Class in <a href="com/dua3/utility/logging/log4j/package-summary.html">com.dua3.utility.logging.log4j</a></dt>
 <dd>
-<div class="block">This class represents an implementation of the LogEntryDispatcher interface using Log4J.</div>
+<div class="block">This class represents an implementation of the LogDispatcher interface using Log4J.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/LogBuffer.html" class="type-name-link" title="class in com.dua3.utility.logging">LogBuffer</a> - Class in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
 <dd>
@@ -10447,9 +10483,13 @@ to display in GUI applications.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/LogBuffer.html#%3Cinit%3E()" class="member-name-link">LogBuffer()</a> - Constructor for class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
 <dd>
+<div class="block">Constructs a new LogBuffer instance with a default name "unnamed" and default capacity.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/LogBuffer.html#%3Cinit%3E(java.lang.String)" class="member-name-link">LogBuffer(String)</a> - Constructor for class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
+<dd>
 <div class="block">Construct a new LogBuffer instance with default capacity.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogBuffer.html#%3Cinit%3E(int)" class="member-name-link">LogBuffer(int)</a> - Constructor for class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
+<dt><a href="com/dua3/utility/logging/LogBuffer.html#%3Cinit%3E(java.lang.String,int)" class="member-name-link">LogBuffer(String, int)</a> - Constructor for class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
 <dd>
 <div class="block">Construct a new LogBuffer instance.</div>
 </dd>
@@ -10460,6 +10500,34 @@ to display in GUI applications.</div>
 <dt><a href="com/dua3/utility/logging/LogBuffer.LogBufferListener.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogBuffer.LogBufferListener</a> - Interface in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
 <dd>
 <div class="block">Interface for Listeners on changes of a <a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging"><code>LogBuffer</code></a> instance's contents.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/LogDispatcher.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogDispatcher</a> - Interface in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
+<dd>
+<div class="block">This interface defines the contract for classes that dispatch log entries to registered handlers.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/LogDispatcherFactory.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogDispatcherFactory</a> - Interface in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
+<dd>
+<div class="block">Interface for a factory that provides an instance of the LogDispatcher.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/log4j/LogDispatcherFactoryLog4j.html" class="type-name-link" title="class in com.dua3.utility.logging.log4j">LogDispatcherFactoryLog4j</a> - Class in <a href="com/dua3/utility/logging/log4j/package-summary.html">com.dua3.utility.logging.log4j</a></dt>
+<dd>
+<div class="block">A factory class for creating LogDispatcher instances using Log4j.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/log4j/LogDispatcherFactoryLog4j.html#%3Cinit%3E()" class="member-name-link">LogDispatcherFactoryLog4j()</a> - Constructor for class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogDispatcherFactoryLog4j.html" title="class in com.dua3.utility.logging.log4j">LogDispatcherFactoryLog4j</a></dt>
+<dd>
+<div class="block">Constructor, called by SPI.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/slf4j/LogDispatcherFactorySlf4j.html" class="type-name-link" title="class in com.dua3.utility.logging.slf4j">LogDispatcherFactorySlf4j</a> - Class in <a href="com/dua3/utility/logging/slf4j/package-summary.html">com.dua3.utility.logging.slf4j</a></dt>
+<dd>
+<div class="block">This class is an implementation of the ILogDispatcherFactory interface.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/slf4j/LogDispatcherFactorySlf4j.html#%3Cinit%3E()" class="member-name-link">LogDispatcherFactorySlf4j()</a> - Constructor for class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LogDispatcherFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LogDispatcherFactorySlf4j</a></dt>
+<dd>
+<div class="block">Default constructor for the class LogDispatcherFactorySlf4j.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html#%3Cinit%3E()" class="member-name-link">LogDispatcherLog4J()</a> - Constructor for class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogDispatcherLog4J</a></dt>
+<dd>
+<div class="block">Constructor.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/Stopwatch.html#logElapsed(com.dua3.utility.lang.Stopwatch.Format)" class="member-name-link">logElapsed(Stopwatch.Format)</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/Stopwatch.html" title="class in com.dua3.utility.lang">Stopwatch</a></dt>
 <dd>
@@ -10475,37 +10543,15 @@ to display in GUI applications.</div>
 <div class="deprecation-comment">will be removed in version 21</div>
 </div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogEntryDispatcher.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a> - Interface in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
-<dd>
-<div class="block">This interface defines the contract for classes that dispatch log entries to registered handlers.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogEntryDispatcherFactoryLog4j.html" class="type-name-link" title="class in com.dua3.utility.logging.log4j">LogEntryDispatcherFactoryLog4j</a> - Class in <a href="com/dua3/utility/logging/log4j/package-summary.html">com.dua3.utility.logging.log4j</a></dt>
-<dd>
-<div class="block">A factory class for creating LogEntryDispatcher instances using Log4j.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogEntryDispatcherFactoryLog4j.html#%3Cinit%3E()" class="member-name-link">LogEntryDispatcherFactoryLog4j()</a> - Constructor for class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogEntryDispatcherFactoryLog4j.html" title="class in com.dua3.utility.logging.log4j">LogEntryDispatcherFactoryLog4j</a></dt>
-<dd>
-<div class="block">Constructor, called by SPI.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/slf4j/LogEntryDispatcherFactorySlf4j.html" class="type-name-link" title="class in com.dua3.utility.logging.slf4j">LogEntryDispatcherFactorySlf4j</a> - Class in <a href="com/dua3/utility/logging/slf4j/package-summary.html">com.dua3.utility.logging.slf4j</a></dt>
-<dd>
-<div class="block">This class is an implementation of the ILogEntryDispatcherFactory interface.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/slf4j/LogEntryDispatcherFactorySlf4j.html#%3Cinit%3E()" class="member-name-link">LogEntryDispatcherFactorySlf4j()</a> - Constructor for class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LogEntryDispatcherFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LogEntryDispatcherFactorySlf4j</a></dt>
-<dd>
-<div class="block">Default constructor for the class LogEntryDispatcherFactorySlf4j.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html#%3Cinit%3E()" class="member-name-link">LogEntryDispatcherLog4J()</a> - Constructor for class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogEntryDispatcherLog4J</a></dt>
-<dd>
-<div class="block">Constructor.</div>
-</dd>
 <dt><a href="com/dua3/utility/logging/LogEntryFilter.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogEntryFilter</a> - Interface in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
 <dd>
-<div class="block">The LogEntryFilter interface represents a filter used to determine if a LogEntry should be included or excluded.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 </dd>
 <dt><a href="com/dua3/utility/logging/LogEntryHandler.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogEntryHandler</a> - Interface in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
 <dd>
-<div class="block">Represents a functional interface for handling log entries.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="com/dua3/utility/logging/LogHandler.html" title="interface in com.dua3.utility.logging"><code>LogHandler</code></a></div>
+</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/log4j/LogEntryLog4J.html" class="type-name-link" title="class in com.dua3.utility.logging.log4j">LogEntryLog4J</a> - Class in <a href="com/dua3/utility/logging/log4j/package-summary.html">com.dua3.utility.logging.log4j</a></dt>
 <dd>
@@ -10523,24 +10569,13 @@ to display in GUI applications.</div>
 <dd>
 <div class="block">Creates a new instance of LogEntrySlf4j.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogFilter.html" class="type-name-link" title="class in com.dua3.utility.logging">LogFilter</a> - Class in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
+<dt><a href="com/dua3/utility/logging/LogFilter.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogFilter</a> - Interface in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
 <dd>
-<div class="block">The LogFilter class is an implementation of the LogEntryFilter interface
-that filters log entries based on their name and log levels defined on package/class levels.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/LogFilter.html#%3Cinit%3E()" class="member-name-link">LogFilter()</a> - Constructor for class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="class in com.dua3.utility.logging">LogFilter</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/LoggingConfigurator.html#LOGGER_CONSOLE_COLORED" class="member-name-link">LOGGER_CONSOLE_COLORED</a> - Static variable in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LoggingConfigurator.html" title="class in com.dua3.utility.logging">LoggingConfigurator</a></dt>
-<dd>
-<div class="block">Property key to enable or disable colored output for the console logger.</div>
+<div class="block">The LogEntryFilter interface represents a filter used to determine if a LogEntry should be included or excluded.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#LOGGER_CONSOLE_COLORED" class="member-name-link">LOGGER_CONSOLE_COLORED</a> - Static variable in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>
 <div class="block">Property key to enable or disable colored output for the console logger.</div>
-</dd>
-<dt><a href="com/dua3/utility/logging/LoggingConfigurator.html#LOGGER_CONSOLE_STREAM" class="member-name-link">LOGGER_CONSOLE_STREAM</a> - Static variable in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LoggingConfigurator.html" title="class in com.dua3.utility.logging">LoggingConfigurator</a></dt>
-<dd>
-<div class="block">Configuration key used to specify the stream to which log entries are written for console logging.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#LOGGER_CONSOLE_STREAM" class="member-name-link">LOGGER_CONSOLE_STREAM</a> - Static variable in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>
@@ -10548,11 +10583,11 @@ that filters log entries based on their name and log levels defined on package/c
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/slf4j/LoggerFactorySlf4j.html" class="type-name-link" title="class in com.dua3.utility.logging.backend.slf4j">LoggerFactorySlf4j</a> - Class in <a href="com/dua3/utility/logging/backend/slf4j/package-summary.html">com.dua3.utility.logging.backend.slf4j</a></dt>
 <dd>
-<div class="block">The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogEntryDispatcher interfaces.</div>
+<div class="block">The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogDispatcher interfaces.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" class="type-name-link" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a> - Class in <a href="com/dua3/utility/logging/slf4j/package-summary.html">com.dua3.utility.logging.slf4j</a></dt>
 <dd>
-<div class="block">The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogEntryDispatcher interfaces.</div>
+<div class="block">The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogDispatcher interfaces.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/slf4j/LoggerFactorySlf4j.html#%3Cinit%3E()" class="member-name-link">LoggerFactorySlf4j()</a> - Constructor for class com.dua3.utility.logging.backend.slf4j.<a href="com/dua3/utility/logging/backend/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.backend.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>
@@ -10563,13 +10598,23 @@ that filters log entries based on their name and log levels defined on package/c
 <div class="block">Constructs a new instance of LoggerFactorySlf4j.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/backend/jcl/LoggerJcl.html" class="type-name-link" title="class in com.dua3.utility.logging.backend.jcl">LoggerJcl</a> - Class in <a href="com/dua3/utility/logging/backend/jcl/package-summary.html">com.dua3.utility.logging.backend.jcl</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">LoggerJcl is an implementation of the Apache commons Log interfac that forwards all logging
+calls to the global universal dispatcher instance.</div>
+</dd>
 <dt><a href="com/dua3/utility/logging/backend/jcl/LoggerJcl.html#%3Cinit%3E(java.lang.String)" class="member-name-link">LoggerJcl(String)</a> - Constructor for class com.dua3.utility.logging.backend.jcl.<a href="com/dua3/utility/logging/backend/jcl/LoggerJcl.html" title="class in com.dua3.utility.logging.backend.jcl">LoggerJcl</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Creates an instance of the LoggerJcl class with the specified logger name.</div>
+</dd>
 <dt><a href="com/dua3/utility/logging/backend/log4j/LoggerLog4j.html" class="type-name-link" title="class in com.dua3.utility.logging.backend.log4j">LoggerLog4j</a> - Class in <a href="com/dua3/utility/logging/backend/log4j/package-summary.html">com.dua3.utility.logging.backend.log4j</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">LoggerLog4j is an implementation of the Log4J AbstractLogger class that forwards all logging
+calls to the global UniversalDispatcher instance.</div>
+</dd>
 <dt><a href="com/dua3/utility/logging/backend/log4j/LoggerLog4j.html#%3Cinit%3E(java.lang.String)" class="member-name-link">LoggerLog4j(String)</a> - Constructor for class com.dua3.utility.logging.backend.log4j.<a href="com/dua3/utility/logging/backend/log4j/LoggerLog4j.html" title="class in com.dua3.utility.logging.backend.log4j">LoggerLog4j</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Constructs a new LoggerLog4j instance with the specified logger name.</div>
+</dd>
 <dt><a href="com/dua3/utility/logging/log4j/LogEntryLog4J.html#loggerName()" class="member-name-link">loggerName()</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogEntryLog4J.html" title="class in com.dua3.utility.logging.log4j">LogEntryLog4J</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/LogEntry.html#loggerName()" class="member-name-link">loggerName()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a></dt>
@@ -10618,6 +10663,10 @@ that filters log entries based on their name and log levels defined on package/c
 <dt><a href="com/dua3/utility/logging/slf4j/LoggingServiceProviderSlf4j.html#%3Cinit%3E()" class="member-name-link">LoggingServiceProviderSlf4j()</a> - Constructor for class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggingServiceProviderSlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggingServiceProviderSlf4j</a></dt>
 <dd>
 <div class="block">Constructor, called by SPI</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/LogHandler.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogHandler</a> - Interface in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
+<dd>
+<div class="block">Represents a functional interface for handling log entries.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/LogLevel.html" class="type-name-link" title="enum class in com.dua3.utility.logging">LogLevel</a> - Enum Class in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
 <dd>
@@ -10671,10 +10720,6 @@ that filters log entries based on their name and log levels defined on package/c
 <dt><a href="com/dua3/utility/fx/controls/AboutDialogBuilder.html#mail(java.net.URI,java.lang.String,java.lang.Object...)" class="member-name-link">mail(URI, String, Object...)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></dt>
 <dd>
 <div class="block">Sets the email address and corresponding email content for the AboutDialog.</div>
-</dd>
-<dt><a href="com/dua3/utility/native_test/FfmTestApp.html#main(java.lang.String%5B%5D)" class="member-name-link">main(String[])</a> - Static method in class com.dua3.utility.native_test.<a href="com/dua3/utility/native_test/FfmTestApp.html" title="class in com.dua3.utility.native_test">FfmTestApp</a></dt>
-<dd>
-<div class="block">The main entry point for the JavaFX application.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/Version.html#major()" class="member-name-link">major()</a> - Method in record class com.dua3.utility.lang.<a href="com/dua3/utility/lang/Version.html" title="class in com.dua3.utility.lang">Version</a></dt>
 <dd>
@@ -11401,6 +11446,28 @@ coordinates while preserving the current width and height.</div>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/lang/NamedFunction.html#param-name"><code>name</code></a> record component.</div>
 </dd>
+<dt><a href="com/dua3/utility/logging/ConsoleHandler.html#name()" class="member-name-link">name()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/ConsoleHandler.html" title="class in com.dua3.utility.logging">ConsoleHandler</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogBuffer.html#name()" class="member-name-link">name()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogEntryFilter.html#name()" class="member-name-link">name()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogEntryHandler.html#name()" class="member-name-link">name()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogFilter.html#name()" class="member-name-link">name()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></dt>
+<dd>
+<div class="block">Retrieves the name associated with this filter.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/LogHandler.html#name()" class="member-name-link">name()</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></dt>
+<dd>
+<div class="block">Retrieves the name of the log entry handler.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html#name()" class="member-name-link">name()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/StandardLogFilter.html" title="class in com.dua3.utility.logging">StandardLogFilter</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/math/geometry/Arc2f.html#name()" class="member-name-link">name()</a> - Method in class com.dua3.utility.math.geometry.<a href="com/dua3/utility/math/geometry/Arc2f.html" title="class in com.dua3.utility.math.geometry">Arc2f</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/math/geometry/ClosePath2f.html#name()" class="member-name-link">name()</a> - Method in class com.dua3.utility.math.geometry.<a href="com/dua3/utility/math/geometry/ClosePath2f.html" title="class in com.dua3.utility.math.geometry">ClosePath2f</a></dt>
@@ -13283,15 +13350,15 @@ that match the given predicate.</div>
 <dd>
 <div class="block">Remove LogBufferListener.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#removeLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">removeLogEntryHandler(LogEntryHandler)</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
+<dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#removeLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">removeLogHandler(LogHandler)</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html#removeLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">removeLogEntryHandler(LogEntryHandler)</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogEntryDispatcherLog4J</a></dt>
+<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html#removeLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">removeLogHandler(LogHandler)</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogDispatcherLog4J</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/LogEntryDispatcher.html#removeLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">removeLogEntryHandler(LogEntryHandler)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></dt>
+<dt><a href="com/dua3/utility/logging/LogDispatcher.html#removeLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">removeLogHandler(LogHandler)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></dt>
 <dd>
 <div class="block">Removes a previously added log entry handler.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#removeLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">removeLogEntryHandler(LogEntryHandler)</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
+<dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#removeLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">removeLogHandler(LogHandler)</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/application/EphemeralPreferences.html#removeNodeSpi()" class="member-name-link">removeNodeSpi()</a> - Method in class com.dua3.utility.application.<a href="com/dua3/utility/application/EphemeralPreferences.html" title="class in com.dua3.utility.application">EphemeralPreferences</a></dt>
 <dd>&nbsp;</dd>
@@ -14441,19 +14508,29 @@ using the provided format string and arguments.</div>
 <dd>
 <div class="block">Sets the fill color for drawing operations.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter(LogEntryFilter)</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
+<dt><a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter(LogFilter)</a> - Method in class com.dua3.utility.logging.backend.universal.<a href="com/dua3/utility/logging/backend/universal/UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/ConsoleHandler.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter(LogEntryFilter)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/ConsoleHandler.html" title="class in com.dua3.utility.logging">ConsoleHandler</a></dt>
+<dt><a href="com/dua3/utility/logging/ConsoleHandler.html#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter(LogFilter)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/ConsoleHandler.html" title="class in com.dua3.utility.logging">ConsoleHandler</a></dt>
 <dd>
 <div class="block">Sets the filter for log entries.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter(LogEntryFilter)</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogEntryDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogEntryDispatcherLog4J</a></dt>
+<dt><a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter(LogFilter)</a> - Method in class com.dua3.utility.logging.log4j.<a href="com/dua3/utility/logging/log4j/LogAppenderLog4j.LogDispatcherLog4J.html" title="class in com.dua3.utility.logging.log4j">LogAppenderLog4j.LogDispatcherLog4J</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/LogEntryDispatcher.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter(LogEntryFilter)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></dt>
+<dt><a href="com/dua3/utility/logging/LogBuffer.html#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter(LogFilter)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogDispatcher.html#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter(LogFilter)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></dt>
 <dd>
-<div class="block">Sets the <a href="com/dua3/utility/logging/LogEntryFilter.html" title="interface in com.dua3.utility.logging"><code>LogEntryFilter</code></a> for log entry events.</div>
+<div class="block">Sets the <a href="com/dua3/utility/logging/LogFilter.html" title="interface in com.dua3.utility.logging"><code>LogFilter</code></a> for log entry events.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter(LogEntryFilter)</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
+<dt><a href="com/dua3/utility/logging/LogEntryHandler.html#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter(LogFilter)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/LogHandler.html#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter(LogFilter)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></dt>
+<dd>
+<div class="block">Sets the filter to be used for determining which log entries should be processed.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter(LogFilter)</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LoggerFactorySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LoggerFactorySlf4j</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/logging/DefaultLogEntryFilter.html#setFilterLoggerName(java.util.function.BiPredicate)" class="member-name-link">setFilterLoggerName(BiPredicate)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/DefaultLogEntryFilter.html" title="class in com.dua3.utility.logging">DefaultLogEntryFilter</a></dt>
 <dd>
@@ -14575,11 +14652,11 @@ using the provided format string and arguments.</div>
 <dd>
 <div class="block">Sets the log level of the DefaultLogEntryFilter.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogFilter.html#setLevel(com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel(LogLevel)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="class in com.dua3.utility.logging">LogFilter</a></dt>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html#setLevel(com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel(LogLevel)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/StandardLogFilter.html" title="class in com.dua3.utility.logging">StandardLogFilter</a></dt>
 <dd>
 <div class="block">Sets the global log level of the filter.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogFilter.html#setLevel(java.lang.String,com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel(String, LogLevel)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="class in com.dua3.utility.logging">LogFilter</a></dt>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html#setLevel(java.lang.String,com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel(String, LogLevel)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/StandardLogFilter.html" title="class in com.dua3.utility.logging">StandardLogFilter</a></dt>
 <dd>
 <div class="block">Sets the log level for a given logger name or prefix.</div>
 </dd>
@@ -15267,6 +15344,15 @@ for formatting, using <code>Locale.getDefault()</code> as locale.</div>
 <dd>
 <div class="block">Enum class with entries for standard font mappers.</div>
 </dd>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html" class="type-name-link" title="class in com.dua3.utility.logging">StandardLogFilter</a> - Class in <a href="com/dua3/utility/logging/package-summary.html">com.dua3.utility.logging</a></dt>
+<dd>
+<div class="block">The LogFilter class is an implementation of the LogEntryFilter interface
+that filters log entries based on their name and log levels defined on package/class levels.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html#%3Cinit%3E(java.lang.String)" class="member-name-link">StandardLogFilter(String)</a> - Constructor for class com.dua3.utility.logging.<a href="com/dua3/utility/logging/StandardLogFilter.html" title="class in com.dua3.utility.logging">StandardLogFilter</a></dt>
+<dd>
+<div class="block">Constructs a LogFilter instance with the specified name.</div>
+</dd>
 <dt><a href="com/dua3/utility/concurrent/ProgressTracker.TaskUpdater.html#start()" class="member-name-link">start()</a> - Method in class com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/ProgressTracker.TaskUpdater.html" title="class in com.dua3.utility.concurrent">ProgressTracker.TaskUpdater</a></dt>
 <dd>
 <div class="block">Mark task as started.</div>
@@ -15286,8 +15372,6 @@ for formatting, using <code>Locale.getDefault()</code> as locale.</div>
 <dt><a href="com/dua3/utility/text/RichTextMatcher.html#start()" class="member-name-link">start()</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichTextMatcher.html" title="class in com.dua3.utility.text">RichTextMatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/text/RichTextMatcher.html#start(int)" class="member-name-link">start(int)</a> - Method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichTextMatcher.html" title="class in com.dua3.utility.text">RichTextMatcher</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/native_test/FfmTestApp.html#start(javafx.stage.Stage)" class="member-name-link">start(Stage)</a> - Method in class com.dua3.utility.native_test.<a href="com/dua3/utility/native_test/FfmTestApp.html" title="class in com.dua3.utility.native_test">FfmTestApp</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/concurrent/ProgressTracker.html#start(T)" class="member-name-link">start(T)</a> - Method in interface com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/ProgressTracker.html" title="interface in com.dua3.utility.concurrent">ProgressTracker</a></dt>
 <dd>
@@ -15951,12 +16035,8 @@ Java runtime details, and JavaFX version if available.</div>
 <dt><a href="com/dua3/utility/logging/LogEntryFilter.html#test(com.dua3.utility.logging.LogEntry)" class="member-name-link">test(LogEntry)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
-<div class="deprecation-comment">use <a href="com/dua3/utility/logging/LogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)"><code>LogEntryFilter.test(Instant, String, LogLevel, String, String, String, Throwable)</code></a></div>
+<div class="deprecation-comment">use <a href="com/dua3/utility/logging/LogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)"><code>LogEntryFilter.test(Instant, String, LogLevel, String, Supplier, String, Throwable)</code></a></div>
 </div>
-</dd>
-<dt><a href="com/dua3/utility/logging/LogFilter.html#test(com.dua3.utility.logging.LogEntry)" class="member-name-link">test(LogEntry)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="class in com.dua3.utility.logging">LogFilter</a></dt>
-<dd>
-<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span></div>
 </dd>
 <dt><a href="com/dua3/utility/io/IoUtil.FileNameRule.html#test(java.lang.String)" class="member-name-link">test(String)</a> - Method in enum class com.dua3.utility.io.<a href="com/dua3/utility/io/IoUtil.FileNameRule.html" title="enum class in com.dua3.utility.io">IoUtil.FileNameRule</a></dt>
 <dd>
@@ -15967,13 +16047,18 @@ Java runtime details, and JavaFX version if available.</div>
 <div class="block">Tests whether a given filename satisfies the rules represented by this instance
 for a specific platform.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/DefaultLogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" class="member-name-link">test(Instant, String, LogLevel, String, String, String, Throwable)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/DefaultLogEntryFilter.html" title="class in com.dua3.utility.logging">DefaultLogEntryFilter</a></dt>
+<dt><a href="com/dua3/utility/logging/DefaultLogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test(Instant, String, LogLevel, String, Supplier, String, Throwable)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/DefaultLogEntryFilter.html" title="class in com.dua3.utility.logging">DefaultLogEntryFilter</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/logging/LogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" class="member-name-link">test(Instant, String, LogLevel, String, String, String, Throwable)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></dt>
+<dt><a href="com/dua3/utility/logging/LogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test(Instant, String, LogLevel, String, Supplier, String, Throwable)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Tests if a log entry, specified by its components, should be processed.</div>
+</dd>
+<dt><a href="com/dua3/utility/logging/LogFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test(Instant, String, LogLevel, String, Supplier, String, Throwable)</a> - Method in interface com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></dt>
 <dd>
 <div class="block">Tests if a log entry, specified by its components, should be processed.</div>
 </dd>
-<dt><a href="com/dua3/utility/logging/LogFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" class="member-name-link">test(Instant, String, LogLevel, String, String, String, Throwable)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/LogFilter.html" title="class in com.dua3.utility.logging">LogFilter</a></dt>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test(Instant, String, LogLevel, String, Supplier, String, Throwable)</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/StandardLogFilter.html" title="class in com.dua3.utility.logging">StandardLogFilter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/text/FragmentedText.Fragment.html#text()" class="member-name-link">text()</a> - Method in record class com.dua3.utility.text.<a href="com/dua3/utility/text/FragmentedText.Fragment.html" title="class in com.dua3.utility.text">FragmentedText.Fragment</a></dt>
 <dd>
@@ -16617,6 +16702,8 @@ character stream using UTF-8 encoding.</div>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
 <dt><a href="com/dua3/utility/logging/slf4j/LogEntrySlf4j.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.logging.slf4j.<a href="com/dua3/utility/logging/slf4j/LogEntrySlf4j.html" title="class in com.dua3.utility.logging.slf4j">LogEntrySlf4j</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/logging/StandardLogFilter.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.logging.<a href="com/dua3/utility/logging/StandardLogFilter.html" title="class in com.dua3.utility.logging">StandardLogFilter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/math/geometry/AbstractCurve2f.html#toString()" class="member-name-link">toString()</a> - Method in class com.dua3.utility.math.geometry.<a href="com/dua3/utility/math/geometry/AbstractCurve2f.html" title="class in com.dua3.utility.math.geometry">AbstractCurve2f</a></dt>
 <dd>&nbsp;</dd>

@@ -64,12 +64,12 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" class="type-name-link external-link" title="class or interface in java.lang">Object</a>
 <ul>
-<li class="circle">com.dua3.utility.logging.<a href="ConsoleHandler.html" class="type-name-link" title="class in com.dua3.utility.logging">ConsoleHandler</a> (implements com.dua3.utility.logging.<a href="LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a>)</li>
+<li class="circle">com.dua3.utility.logging.<a href="ConsoleHandler.html" class="type-name-link" title="class in com.dua3.utility.logging">ConsoleHandler</a> (implements com.dua3.utility.logging.<a href="LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a>)</li>
 <li class="circle">com.dua3.utility.logging.<a href="DefaultLogEntryFilter.html" class="type-name-link" title="class in com.dua3.utility.logging">DefaultLogEntryFilter</a> (implements com.dua3.utility.logging.<a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>)</li>
-<li class="circle">com.dua3.utility.logging.<a href="LogBuffer.html" class="type-name-link" title="class in com.dua3.utility.logging">LogBuffer</a> (implements java.io.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Externalizable.html" title="class or interface in java.io" class="external-link">Externalizable</a>, com.dua3.utility.logging.<a href="LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a>)</li>
-<li class="circle">com.dua3.utility.logging.<a href="LogFilter.html" class="type-name-link" title="class in com.dua3.utility.logging">LogFilter</a> (implements com.dua3.utility.logging.<a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>)</li>
+<li class="circle">com.dua3.utility.logging.<a href="LogBuffer.html" class="type-name-link" title="class in com.dua3.utility.logging">LogBuffer</a> (implements java.io.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Externalizable.html" title="class or interface in java.io" class="external-link">Externalizable</a>, com.dua3.utility.logging.<a href="LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a>)</li>
 <li class="circle">com.dua3.utility.logging.<a href="LoggingConfigurator.html" class="type-name-link" title="class in com.dua3.utility.logging">LoggingConfigurator</a></li>
 <li class="circle">com.dua3.utility.logging.<a href="LogUtil.html" class="type-name-link" title="class in com.dua3.utility.logging">LogUtil</a></li>
+<li class="circle">com.dua3.utility.logging.<a href="StandardLogFilter.html" class="type-name-link" title="class in com.dua3.utility.logging">StandardLogFilter</a> (implements com.dua3.utility.logging.<a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a>)</li>
 </ul>
 </li>
 </ul>
@@ -77,14 +77,23 @@ loadScripts(document, 'script');</script>
 <section class="hierarchy">
 <h2 title="Interface Hierarchy">Interface Hierarchy</h2>
 <ul>
-<li class="circle">com.dua3.utility.logging.<a href="ILogEntryDispatcherFactory.html" class="type-name-link" title="interface in com.dua3.utility.logging">ILogEntryDispatcherFactory</a></li>
 <li class="circle">com.dua3.utility.logging.<a href="LogBuffer.LogBufferListener.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogBuffer.LogBufferListener</a></li>
+<li class="circle">com.dua3.utility.logging.<a href="LogDispatcher.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogDispatcher</a></li>
+<li class="circle">com.dua3.utility.logging.<a href="LogDispatcherFactory.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogDispatcherFactory</a></li>
 <li class="circle">com.dua3.utility.logging.<a href="LogEntry.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogEntry</a></li>
-<li class="circle">com.dua3.utility.logging.<a href="LogEntryDispatcher.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></li>
+<li class="circle">com.dua3.utility.logging.<a href="LogFilter.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogFilter</a>
+<ul>
+<li class="circle">com.dua3.utility.logging.<a href="LogEntryFilter.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogEntryFilter</a> (also extends java.util.function.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;T&gt;)</li>
+</ul>
+</li>
+<li class="circle">com.dua3.utility.logging.<a href="LogHandler.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogHandler</a>
+<ul>
 <li class="circle">com.dua3.utility.logging.<a href="LogEntryHandler.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogEntryHandler</a></li>
+</ul>
+</li>
 <li class="circle">java.util.function.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" class="type-name-link external-link" title="class or interface in java.util.function">Predicate</a>&lt;T&gt;
 <ul>
-<li class="circle">com.dua3.utility.logging.<a href="LogEntryFilter.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogEntryFilter</a></li>
+<li class="circle">com.dua3.utility.logging.<a href="LogEntryFilter.html" class="type-name-link" title="interface in com.dua3.utility.logging">LogEntryFilter</a> (also extends com.dua3.utility.logging.<a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a>)</li>
 </ul>
 </li>
 </ul>

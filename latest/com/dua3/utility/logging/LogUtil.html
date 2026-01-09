@@ -100,15 +100,18 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the globalDispatcher variable is null and initializes it by calling the init() method if necessary.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getGlobalDispatcher()" class="member-name-link">getGlobalDispatcher</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns the global LogEntryDispatcher by using the available ILogEntryDispatcherFactory implementations loaded
+<div class="block">Returns the global LogDispatcher by using the available ILogDispatcherFactory implementations loaded
 through ServiceLoader and connects all known loggers to it.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#initUnifiedLogging()" class="member-name-link">initUnifiedLogging</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Initializes the unified logging system by setting up various logging frameworks
+to work with a global dispatch mechanism.</div>
+</div>
 </div>
 </div>
 </div>
@@ -131,6 +134,22 @@ through ServiceLoader and connects all known loggers to it.</div>
 <h3>initUnifiedLogging</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">initUnifiedLogging</span>()</div>
+<div class="block">Initializes the unified logging system by setting up various logging frameworks
+to work with a global dispatch mechanism.
+<p>
+Once invoked, this method performs the following:
+1. Acquires an instance of the global dispatcher.
+2. Wires several logging frameworks, including:
+   - Log4j
+   - SLF4J
+   - Java Util Logging (JUL)
+   - Jakarta Commons Logging (JCL)
+3. Optionally configures logging properties using a custom logging configurator
+   if logging properties are present.
+<p>
+This method ensures that all supported logging frameworks are unified under a
+single global dispatcher, allowing centralized logging management. It is not
+necessary to install any bridge libraries for the various frameworks.</div>
 </div>
 </section>
 </li>
@@ -142,7 +161,7 @@ through ServiceLoader and connects all known loggers to it.</div>
 <div class="block">Checks if the globalDispatcher variable is null and initializes it by calling the init() method if necessary.</div>
 <dl class="notes">
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceConfigurationError.html" title="class or interface in java.util" class="external-link">ServiceConfigurationError</a></code> - if no factories can create a LogEntryDispatcher</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceConfigurationError.html" title="class or interface in java.util" class="external-link">ServiceConfigurationError</a></code> - if no factories can create a LogDispatcher</dd>
 </dl>
 </div>
 </section>
@@ -151,14 +170,14 @@ through ServiceLoader and connects all known loggers to it.</div>
 <section class="detail" id="getGlobalDispatcher()">
 <h3>getGlobalDispatcher</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></span>&nbsp;<span class="element-name">getGlobalDispatcher</span>()</div>
-<div class="block">Returns the global LogEntryDispatcher by using the available ILogEntryDispatcherFactory implementations loaded
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></span>&nbsp;<span class="element-name">getGlobalDispatcher</span>()</div>
+<div class="block">Returns the global LogDispatcher by using the available ILogDispatcherFactory implementations loaded
 through ServiceLoader and connects all known loggers to it.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>The global LogEntryDispatcher instance.</dd>
+<dd>The global LogDispatcher instance.</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceConfigurationError.html" title="class or interface in java.util" class="external-link">ServiceConfigurationError</a></code> - if no factories can create a LogEntryDispatcher.</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceConfigurationError.html" title="class or interface in java.util" class="external-link">ServiceConfigurationError</a></code> - if no factories can create a LogDispatcher.</dd>
 </dl>
 </div>
 </section>

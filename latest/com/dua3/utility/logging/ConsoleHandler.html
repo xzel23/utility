@@ -60,16 +60,18 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
 <ol class="toc-list">
+<li><a href="#%3Cinit%3E(java.lang.String,java.io.PrintStream,boolean)" tabindex="0">ConsoleHandler(String, PrintStream, boolean)</a></li>
 <li><a href="#%3Cinit%3E(java.io.PrintStream,boolean)" tabindex="0">ConsoleHandler(PrintStream, boolean)</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" tabindex="0">handle(Instant, String, LogLevel, String, String, String, Throwable)</a></li>
-<li><a href="#handleEntry(com.dua3.utility.logging.LogEntry)" tabindex="0">handleEntry(LogEntry)</a></li>
+<li><a href="#name()" tabindex="0">name()</a></li>
+<li><a href="#getPrintStream()" tabindex="0">getPrintStream()</a></li>
+<li><a href="#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" tabindex="0">handle(Instant, String, LogLevel, String, Supplier, String, Throwable)</a></li>
 <li><a href="#setColored(boolean)" tabindex="0">setColored(boolean)</a></li>
 <li><a href="#isColored()" tabindex="0">isColored()</a></li>
-<li><a href="#setFilter(com.dua3.utility.logging.LogEntryFilter)" tabindex="0">setFilter(LogEntryFilter)</a></li>
+<li><a href="#setFilter(com.dua3.utility.logging.LogFilter)" tabindex="0">setFilter(LogFilter)</a></li>
 <li><a href="#getFilter()" tabindex="0">getFilter()</a></li>
 </ol>
 </li>
@@ -86,13 +88,13 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></code></dd>
+<dd><code><a href="LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ConsoleHandler</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></span></div>
+implements <a href="LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></span></div>
 <div class="block">The ConsoleHandler class is an implementation of the LogEntryHandler interface.
 It handles log entries by writing them to the console.</div>
 </div>
@@ -110,6 +112,14 @@ It handles log entries by writing them to the console.</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.io.PrintStream,boolean)" class="member-name-link">ConsoleHandler</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/PrintStream.html" title="class or interface in java.io" class="external-link">PrintStream</a>&nbsp;out,
  boolean&nbsp;colored)</code></div>
 <div class="col-last even-row-color">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#%3Cinit%3E(java.lang.String,java.io.PrintStream,boolean)"><code>ConsoleHandler(String, PrintStream, boolean)</code></a> instead</div>
+</div>
+</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.lang.String,java.io.PrintStream,boolean)" class="member-name-link">ConsoleHandler</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/PrintStream.html" title="class or interface in java.io" class="external-link">PrintStream</a>&nbsp;out,
+ boolean&nbsp;colored)</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Constructs a ConsoleHandler with the specified PrintStream and colored flag.</div>
 </div>
 </div>
@@ -120,46 +130,51 @@ It handles log entries by writing them to the console.</div>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFilter()" class="member-name-link">getFilter</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the filter for log entries.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/PrintStream.html" title="class or interface in java.io" class="external-link">PrintStream</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPrintStream()" class="member-name-link">getPrintStream</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves the PrintStream for log entries.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles a log entry.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#handleEntry(com.dua3.utility.logging.LogEntry)" class="member-name-link">handleEntry</a><wbr>(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;entry)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
-<div class="block"><span class="deprecated-label">Deprecated.</span></div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isColored()" class="member-name-link">isColored</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Check if colored output is enabled.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setColored(boolean)" class="member-name-link">setColored</a><wbr>(boolean&nbsp;colored)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#name()" class="member-name-link">name</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Enable/Disable colored output using ANSI codes.</div>
+<div class="block">Retrieves the name of the log entry handler.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter</a><wbr>(<a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&nbsp;filter)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setColored(boolean)" class="member-name-link">setColored</a><wbr>(boolean&nbsp;colored)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Enable/Disable colored output using ANSI codes.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter</a><wbr>(<a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a>&nbsp;filter)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the filter for log entries.</div>
 </div>
 </div>
@@ -169,8 +184,8 @@ It handles log entries by writing them to the console.</div>
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#method-summary" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 <div class="inherited-list">
-<h3 id="methods-inherited-from-class-com.dua3.utility.logging.LogEntryHandler">Methods inherited from interface&nbsp;<a href="LogEntryHandler.html#method-summary" title="interface in com.dua3.utility.logging">LogEntryHandler</a></h3>
-<code><a href="LogEntryHandler.html#isEnabled(com.dua3.utility.logging.LogLevel)" title="isEnabled(LogLevel)">isEnabled</a></code></div>
+<h3 id="methods-inherited-from-class-com.dua3.utility.logging.LogHandler">Methods inherited from interface&nbsp;<a href="LogHandler.html#method-summary" title="interface in com.dua3.utility.logging">LogHandler</a></h3>
+<code><a href="LogHandler.html#isEnabled(com.dua3.utility.logging.LogLevel)" title="isEnabled(LogLevel)">isEnabled</a></code></div>
 </section>
 </li>
 </ul>
@@ -183,11 +198,32 @@ It handles log entries by writing them to the console.</div>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="&lt;init&gt;(java.lang.String,java.io.PrintStream,boolean)">
+<h3>ConsoleHandler</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ConsoleHandler</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/PrintStream.html" title="class or interface in java.io" class="external-link">PrintStream</a>&nbsp;out,
+ boolean&nbsp;colored)</span></div>
+<div class="block">Constructs a ConsoleHandler with the specified PrintStream and colored flag.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - the name of the handler</dd>
+<dd><code>out</code> - the PrintStream to which log messages will be written</dd>
+<dd><code>colored</code> - flag indicating whether to use colored brackets for different log levels</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="&lt;init&gt;(java.io.PrintStream,boolean)">
 <h3>ConsoleHandler</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ConsoleHandler</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/PrintStream.html" title="class or interface in java.io" class="external-link">PrintStream</a>&nbsp;out,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">public</span>&nbsp;<span class="element-name">ConsoleHandler</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/PrintStream.html" title="class or interface in java.io" class="external-link">PrintStream</a>&nbsp;out,
  boolean&nbsp;colored)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#%3Cinit%3E(java.lang.String,java.io.PrintStream,boolean)"><code>ConsoleHandler(String, PrintStream, boolean)</code></a> instead</div>
+</div>
 <div class="block">Constructs a ConsoleHandler with the specified PrintStream and colored flag.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -206,21 +242,50 @@ It handles log entries by writing them to the console.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)">
+<section class="detail" id="name()">
+<h3>name</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">name</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="LogHandler.html#name()">LogHandler</a></code></span></div>
+<div class="block">Retrieves the name of the log entry handler.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="LogHandler.html#name()">name</a></code>&nbsp;in interface&nbsp;<code><a href="LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></code></dd>
+<dt>Returns:</dt>
+<dd>the name of the log entry handler as a String</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getPrintStream()">
+<h3>getPrintStream</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/PrintStream.html" title="class or interface in java.io" class="external-link">PrintStream</a></span>&nbsp;<span class="element-name">getPrintStream</span>()</div>
+<div class="block">Retrieves the PrintStream for log entries.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the PrintStream for log entries</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)">
 <h3>handle</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handle</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="LogEntryHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)">LogEntryHandler</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="LogHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)">LogHandler</a></code></span></div>
 <div class="block">Handles a log entry.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="LogEntryHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)">handle</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></code></dd>
+<dd><code><a href="LogHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)">handle</a></code>&nbsp;in interface&nbsp;<code><a href="LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>instant</code> - the timestamp of the log entry</dd>
 <dd><code>loggerName</code> - the name of the logger</dd>
@@ -229,24 +294,6 @@ It handles log entries by writing them to the console.</div>
 <dd><code>msg</code> - the message of the log entry</dd>
 <dd><code>location</code> - the location in the code where the log entry was created</dd>
 <dd><code>t</code> - the throwable associated with the log entry, or <code>null</code> if none</dd>
-</dl>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="handleEntry(com.dua3.utility.logging.LogEntry)">
-<h3>handleEntry</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleEntry</span><wbr><span class="parameters">(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;entry)</span></div>
-<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="LogEntryHandler.html#handleEntry(com.dua3.utility.logging.LogEntry)">LogEntryHandler</a></code></span></div>
-<div class="block">Handles a log entry.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="LogEntryHandler.html#handleEntry(com.dua3.utility.logging.LogEntry)">handleEntry</a></code>&nbsp;in interface&nbsp;<code><a href="LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a></code></dd>
-<dt>Parameters:</dt>
-<dd><code>entry</code> - the log entry to be handled</dd>
 </dl>
 </div>
 </section>
@@ -278,14 +325,16 @@ It handles log entries by writing them to the console.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="setFilter(com.dua3.utility.logging.LogEntryFilter)">
+<section class="detail" id="setFilter(com.dua3.utility.logging.LogFilter)">
 <h3>setFilter</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setFilter</span><wbr><span class="parameters">(<a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&nbsp;filter)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setFilter</span><wbr><span class="parameters">(<a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a>&nbsp;filter)</span></div>
 <div class="block">Sets the filter for log entries.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="LogHandler.html#setFilter(com.dua3.utility.logging.LogFilter)">setFilter</a></code>&nbsp;in interface&nbsp;<code><a href="LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>filter</code> - the LogEntryFilter to be set as the filter for log entries</dd>
+<dd><code>filter</code> - the LogFilter to be set as the filter for log entries</dd>
 </dl>
 </div>
 </section>
@@ -294,14 +343,16 @@ It handles log entries by writing them to the console.</div>
 <section class="detail" id="getFilter()">
 <h3>getFilter</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span>&nbsp;<span class="element-name">getFilter</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></span>&nbsp;<span class="element-name">getFilter</span>()</div>
 <div class="block">Retrieves the filter for log entries.
 <p>
 This method returns the current filter that is being used to determine if a log entry should
 be included or excluded.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="LogHandler.html#getFilter()">getFilter</a></code>&nbsp;in interface&nbsp;<code><a href="LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a></code></dd>
 <dt>Returns:</dt>
-<dd>the LogEntryFilter that is currently set as the filter for log entries.</dd>
+<dd>the LogFilter that is currently set as the filter for log entries.</dd>
 </dl>
 </div>
 </section>

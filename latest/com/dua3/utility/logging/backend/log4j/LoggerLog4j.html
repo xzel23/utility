@@ -107,6 +107,8 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">LoggerLog4j</span>
 <span class="extends-implements">extends org.apache.logging.log4j.spi.AbstractLogger</span></div>
+<div class="block">LoggerLog4j is an implementation of the Log4J AbstractLogger class that forwards all logging
+calls to the global UniversalDispatcher instance.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -137,7 +139,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String)" class="member-name-link">LoggerLog4j</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Constructs a new LoggerLog4j instance with the specified logger name.</div>
+</div>
 </div>
 </section>
 </li>
@@ -327,6 +331,11 @@ loadScripts(document, 'script');</script>
 <h3>LoggerLog4j</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">LoggerLog4j</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
+<div class="block">Constructs a new LoggerLog4j instance with the specified logger name.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - the name of the logger to be associated with this instance</dd>
+</dl>
 </div>
 </section>
 </li>

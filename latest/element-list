@@ -26,7 +26,6 @@ com.dua3.utility.logging.log4j
 com.dua3.utility.logging.slf4j
 com.dua3.utility.math
 com.dua3.utility.math.geometry
-com.dua3.utility.native_test
 com.dua3.utility.options
 com.dua3.utility.spi
 com.dua3.utility.swing

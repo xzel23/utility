@@ -66,11 +66,11 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#getInstance()" tabindex="0">getInstance()</a></li>
-<li><a href="#addLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" tabindex="0">addLogEntryHandler(LogEntryHandler)</a></li>
-<li><a href="#removeLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" tabindex="0">removeLogEntryHandler(LogEntryHandler)</a></li>
-<li><a href="#setFilter(com.dua3.utility.logging.LogEntryFilter)" tabindex="0">setFilter(LogEntryFilter)</a></li>
+<li><a href="#addLogHandler(com.dua3.utility.logging.LogHandler)" tabindex="0">addLogHandler(LogHandler)</a></li>
+<li><a href="#removeLogHandler(com.dua3.utility.logging.LogHandler)" tabindex="0">removeLogHandler(LogHandler)</a></li>
+<li><a href="#setFilter(com.dua3.utility.logging.LogFilter)" tabindex="0">setFilter(LogFilter)</a></li>
 <li><a href="#getFilter()" tabindex="0">getFilter()</a></li>
-<li><a href="#getLogEntryHandlers()" tabindex="0">getLogEntryHandlers()</a></li>
+<li><a href="#getLogHandlers()" tabindex="0">getLogHandlers()</a></li>
 <li><a href="#isEnabledLog4j(java.lang.String,org.apache.logging.log4j.Level,org.apache.logging.log4j.Marker)" tabindex="0">isEnabledLog4j(String, Level, Marker)</a></li>
 <li><a href="#isEnabledSlf4j(org.slf4j.event.Level)" tabindex="0">isEnabledSlf4j(Level)</a></li>
 <li><a href="#isEnabled(com.dua3.utility.logging.LogLevel)" tabindex="0">isEnabled(LogLevel)</a></li>
@@ -93,13 +93,13 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../../LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></code></dd>
+<dd><code><a href="../../LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">UniversalDispatcher</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="../../LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></span></div>
+implements <a href="../../LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></span></div>
 <div class="block">A centralized dispatcher for handling and processing log events across different logging frameworks.
 <p>
 The CommonDispatcher acts as a bridge between multiple logging APIs, providing unified log event
@@ -138,7 +138,7 @@ The class follows a singleton pattern to ensure a single instance is used throug
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">addLogEntryHandler</a><wbr>(<a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a>&nbsp;handler)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">addLogHandler</a><wbr>(<a href="../../LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a>&nbsp;handler)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds a handler for log entry events.</div>
 </div>
@@ -162,7 +162,7 @@ The class follows a singleton pattern to ensure a single instance is used throug
  org.apache.logging.log4j.message.Message&nbsp;message,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Dispatches a Log4j log event to all registered <a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging"><code>LogEntryHandler</code></a> instances.</div>
+<div class="block">Dispatches a Log4j log event to all registered <a href="../../LogHandler.html" title="interface in com.dua3.utility.logging"><code>LogHandler</code></a> instances.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dispatchSlf4j(java.lang.String,org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Object%5B%5D,java.lang.Throwable)" class="member-name-link">dispatchSlf4j</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
@@ -172,20 +172,20 @@ The class follows a singleton pattern to ensure a single instance is used throug
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> @Nullable []&nbsp;arguments,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;throwable)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Dispatches an SLF4J logging event to all registered <a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging"><code>LogEntryHandler</code></a> instances.</div>
+<div class="block">Dispatches an SLF4J logging event to all registered <a href="../../LogHandler.html" title="interface in com.dua3.utility.logging"><code>LogHandler</code></a> instances.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFilter()" class="member-name-link">getFilter</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Get the <a href="../../LogEntryFilter.html" title="interface in com.dua3.utility.logging"><code>LogEntryFilter</code></a>.</div>
+<div class="block">Get the <a href="../../LogFilter.html" title="interface in com.dua3.utility.logging"><code>LogFilter</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="UniversalDispatcher.html" title="class in com.dua3.utility.logging.backend.universal">UniversalDispatcher</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getInstance()" class="member-name-link">getInstance</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Provides the singleton instance of the CommonDispatcher.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLogEntryHandlers()" class="member-name-link">getLogEntryHandlers</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="../../LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLogHandlers()" class="member-name-link">getLogHandlers</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the registered log entry handlers.</div>
 </div>
@@ -207,14 +207,14 @@ The class follows a singleton pattern to ensure a single instance is used throug
 <div class="block">Checks if logging is enabled for the provided SLF4J log level.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)" class="member-name-link">removeLogEntryHandler</a><wbr>(<a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a>&nbsp;handler)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeLogHandler(com.dua3.utility.logging.LogHandler)" class="member-name-link">removeLogHandler</a><wbr>(<a href="../../LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a>&nbsp;handler)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Removes a previously added log entry handler.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setFilter(com.dua3.utility.logging.LogEntryFilter)" class="member-name-link">setFilter</a><wbr>(<a href="../../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&nbsp;filter)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setFilter(com.dua3.utility.logging.LogFilter)" class="member-name-link">setFilter</a><wbr>(<a href="../../LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a>&nbsp;filter)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the <a href="../../LogEntryFilter.html" title="interface in com.dua3.utility.logging"><code>LogEntryFilter</code></a> for log entry events.</div>
+<div class="block">Sets the <a href="../../LogFilter.html" title="interface in com.dua3.utility.logging"><code>LogFilter</code></a> for log entry events.</div>
 </div>
 </div>
 </div>
@@ -270,16 +270,16 @@ across the application using a holder class for lazy initialization.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="addLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)">
-<h3>addLogEntryHandler</h3>
+<section class="detail" id="addLogHandler(com.dua3.utility.logging.LogHandler)">
+<h3>addLogHandler</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addLogEntryHandler</span><wbr><span class="parameters">(<a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a>&nbsp;handler)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogEntryDispatcher.html#addLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)">LogEntryDispatcher</a></code></span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addLogHandler</span><wbr><span class="parameters">(<a href="../../LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a>&nbsp;handler)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogDispatcher.html#addLogHandler(com.dua3.utility.logging.LogHandler)">LogDispatcher</a></code></span></div>
 <div class="block">Adds a handler for log entry events. The handler will be invoked
 whenever a log entry is received.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../LogEntryDispatcher.html#addLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)">addLogEntryHandler</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></code></dd>
+<dd><code><a href="../../LogDispatcher.html#addLogHandler(com.dua3.utility.logging.LogHandler)">addLogHandler</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>handler</code> - The log entry handler to be added.</dd>
 </dl>
@@ -287,16 +287,16 @@ whenever a log entry is received.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="removeLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)">
-<h3>removeLogEntryHandler</h3>
+<section class="detail" id="removeLogHandler(com.dua3.utility.logging.LogHandler)">
+<h3>removeLogHandler</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeLogEntryHandler</span><wbr><span class="parameters">(<a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a>&nbsp;handler)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogEntryDispatcher.html#removeLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)">LogEntryDispatcher</a></code></span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeLogHandler</span><wbr><span class="parameters">(<a href="../../LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a>&nbsp;handler)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogDispatcher.html#removeLogHandler(com.dua3.utility.logging.LogHandler)">LogDispatcher</a></code></span></div>
 <div class="block">Removes a previously added log entry handler. The handler will no longer be invoked
 for any log entries.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../LogEntryDispatcher.html#removeLogEntryHandler(com.dua3.utility.logging.LogEntryHandler)">removeLogEntryHandler</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></code></dd>
+<dd><code><a href="../../LogDispatcher.html#removeLogHandler(com.dua3.utility.logging.LogHandler)">removeLogHandler</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>handler</code> - The log entry handler to be removed.</dd>
 </dl>
@@ -304,17 +304,17 @@ for any log entries.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="setFilter(com.dua3.utility.logging.LogEntryFilter)">
+<section class="detail" id="setFilter(com.dua3.utility.logging.LogFilter)">
 <h3>setFilter</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setFilter</span><wbr><span class="parameters">(<a href="../../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a>&nbsp;filter)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogEntryDispatcher.html#setFilter(com.dua3.utility.logging.LogEntryFilter)">LogEntryDispatcher</a></code></span></div>
-<div class="block">Sets the <a href="../../LogEntryFilter.html" title="interface in com.dua3.utility.logging"><code>LogEntryFilter</code></a> for log entry events.
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setFilter</span><wbr><span class="parameters">(<a href="../../LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a>&nbsp;filter)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogDispatcher.html#setFilter(com.dua3.utility.logging.LogFilter)">LogDispatcher</a></code></span></div>
+<div class="block">Sets the <a href="../../LogFilter.html" title="interface in com.dua3.utility.logging"><code>LogFilter</code></a> for log entry events.
 
 <p>Only entries that pass the filter will be dispatched to handlers.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../LogEntryDispatcher.html#setFilter(com.dua3.utility.logging.LogEntryFilter)">setFilter</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></code></dd>
+<dd><code><a href="../../LogDispatcher.html#setFilter(com.dua3.utility.logging.LogFilter)">setFilter</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>filter</code> - The filter to be set for log entry events.</dd>
 </dl>
@@ -325,12 +325,12 @@ for any log entries.</div>
 <section class="detail" id="getFilter()">
 <h3>getFilter</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span>&nbsp;<span class="element-name">getFilter</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogEntryDispatcher.html#getFilter()">LogEntryDispatcher</a></code></span></div>
-<div class="block">Get the <a href="../../LogEntryFilter.html" title="interface in com.dua3.utility.logging"><code>LogEntryFilter</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></span>&nbsp;<span class="element-name">getFilter</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogDispatcher.html#getFilter()">LogDispatcher</a></code></span></div>
+<div class="block">Get the <a href="../../LogFilter.html" title="interface in com.dua3.utility.logging"><code>LogFilter</code></a>.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../LogEntryDispatcher.html#getFilter()">getFilter</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></code></dd>
+<dd><code><a href="../../LogDispatcher.html#getFilter()">getFilter</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></code></dd>
 <dt>Returns:</dt>
 <dd>the filter in use</dd>
 </dl>
@@ -338,16 +338,16 @@ for any log entries.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="getLogEntryHandlers()">
-<h3>getLogEntryHandlers</h3>
+<section class="detail" id="getLogHandlers()">
+<h3>getLogHandlers</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging">LogEntryHandler</a>&gt;</span>&nbsp;<span class="element-name">getLogEntryHandlers</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogEntryDispatcher.html#getLogEntryHandlers()">LogEntryDispatcher</a></code></span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="../../LogHandler.html" title="interface in com.dua3.utility.logging">LogHandler</a>&gt;</span>&nbsp;<span class="element-name">getLogHandlers</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../LogDispatcher.html#getLogHandlers()">LogDispatcher</a></code></span></div>
 <div class="block">Get the registered log entry handlers. Note that implementations usually hold weak references
 to the handlers, so unused handlers may already have been removed from the list.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../LogEntryDispatcher.html#getLogEntryHandlers()">getLogEntryHandlers</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogEntryDispatcher.html" title="interface in com.dua3.utility.logging">LogEntryDispatcher</a></code></dd>
+<dd><code><a href="../../LogDispatcher.html#getLogHandlers()">getLogHandlers</a></code>&nbsp;in interface&nbsp;<code><a href="../../LogDispatcher.html" title="interface in com.dua3.utility.logging">LogDispatcher</a></code></dd>
 <dt>Returns:</dt>
 <dd>collection containing the registered log entry handlers</dd>
 </dl>
@@ -416,7 +416,7 @@ logging should proceed.</div>
  @Nullable org.apache.logging.log4j.Marker&nbsp;marker,
  org.apache.logging.log4j.message.Message&nbsp;message,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</span></div>
-<div class="block">Dispatches a Log4j log event to all registered <a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging"><code>LogEntryHandler</code></a> instances.
+<div class="block">Dispatches a Log4j log event to all registered <a href="../../LogHandler.html" title="interface in com.dua3.utility.logging"><code>LogHandler</code></a> instances.
 This method determines if the log event should be processed based on the
 translated log level and forwards the event to handlers enabled for that level.</div>
 <dl class="notes">
@@ -440,7 +440,7 @@ translated log level and forwards the event to handlers enabled for that level.<
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;messagePattern,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> @Nullable []&nbsp;arguments,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;throwable)</span></div>
-<div class="block">Dispatches an SLF4J logging event to all registered <a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging"><code>LogEntryHandler</code></a> instances.
+<div class="block">Dispatches an SLF4J logging event to all registered <a href="../../LogHandler.html" title="interface in com.dua3.utility.logging"><code>LogHandler</code></a> instances.
 This method determines if the log event should be processed based on the log level and
 forwards the event to handlers that are enabled for the translated log level.</div>
 <dl class="notes">
@@ -463,7 +463,7 @@ forwards the event to handlers that are enabled for the translated log level.</d
 <div class="block">Dispatches a log event derived from a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.logging/java/util/logging/LogRecord.html" title="class or interface in java.util.logging" class="external-link"><code>LogRecord</code></a>.
 This method translates the JUL (Java Util Logging) level to the appropriate
 <a href="../../LogLevel.html" title="enum class in com.dua3.utility.logging"><code>LogLevel</code></a>, formats the log message, and forwards the log record to all
-registered <a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging"><code>LogEntryHandler</code></a> instances that are enabled for the translated log level.</div>
+registered <a href="../../LogHandler.html" title="interface in com.dua3.utility.logging"><code>LogHandler</code></a> instances that are enabled for the translated log level.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>logRecord</code> - the <code>LogRecord</code> containing the log information; must not be null</dd>
@@ -481,7 +481,7 @@ registered <a href="../../LogEntryHandler.html" title="interface in com.dua3.uti
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</span></div>
 <div class="block">Dispatches a log event using the JCL (Jakarta Commons Logging) mechanism.
 The method determines whether the log event should be handled based on its log level
-and dispatches it to all registered <a href="../../LogEntryHandler.html" title="interface in com.dua3.utility.logging"><code>LogEntryHandler</code></a> instances that are enabled
+and dispatches it to all registered <a href="../../LogHandler.html" title="interface in com.dua3.utility.logging"><code>LogHandler</code></a> instances that are enabled
 for the specified log level.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

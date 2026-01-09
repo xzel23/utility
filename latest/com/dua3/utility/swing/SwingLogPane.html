@@ -175,7 +175,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Constructs a new SwingLogPane with the given LogBuffer instance.</div>
 </div>
 <div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.dua3.utility.logging.LogBuffer,java.util.function.Function)" class="member-name-link">SwingLogPane</a><wbr>(@Nullable <a href="../logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a>&nbsp;logBuffer,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="../logging/LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>,<wbr><a href="../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;colorize)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="../logging/SimpleLogEntry.html" title="class in com.dua3.utility.logging">SimpleLogEntry</a>, <a href="../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;colorize)</code></div>
 <div class="col-last odd-row-color">
 <div class="block">Constructs a new SwingLogPane with the given LogBuffer instance and colorize function.</div>
 </div>
@@ -235,7 +235,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Set the divider location.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLogFormatter(java.util.function.Function)" class="member-name-link">setLogFormatter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="../logging/LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;format)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLogFormatter(java.util.function.Function)" class="member-name-link">setLogFormatter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="../logging/SimpleLogEntry.html" title="class in com.dua3.utility.logging">SimpleLogEntry</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;format)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set the formatter used to convert log entries to text.</div>
 </div>
@@ -317,7 +317,7 @@ This constructor calls another constructor with the defaultColorize method as th
 <h3>SwingLogPane</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SwingLogPane</span><wbr><span class="parameters">(@Nullable <a href="../logging/LogBuffer.html" title="class in com.dua3.utility.logging">LogBuffer</a>&nbsp;logBuffer,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="../logging/LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>,<wbr><a href="../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;colorize)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="../logging/SimpleLogEntry.html" title="class in com.dua3.utility.logging">SimpleLogEntry</a>, <a href="../data/Color.html" title="interface in com.dua3.utility.data">Color</a>&gt;&nbsp;colorize)</span></div>
 <div class="block">Constructs a new SwingLogPane with the given LogBuffer instance and colorize function.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -365,7 +365,7 @@ This constructor calls another constructor with the defaultColorize method as th
 <section class="detail" id="setLogFormatter(java.util.function.Function)">
 <h3>setLogFormatter</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setLogFormatter</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="../logging/LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;format)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setLogFormatter</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="../logging/SimpleLogEntry.html" title="class in com.dua3.utility.logging">SimpleLogEntry</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;format)</span></div>
 <div class="block">Set the formatter used to convert log entries to text.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

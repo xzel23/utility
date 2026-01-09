@@ -65,8 +65,9 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
+<li><a href="#name()" tabindex="0">name()</a></li>
 <li><a href="#test(com.dua3.utility.logging.LogEntry)" tabindex="0">test(LogEntry)</a></li>
-<li><a href="#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" tabindex="0">test(Instant, String, LogLevel, String, String, String, Throwable)</a></li>
+<li><a href="#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" tabindex="0">test(Instant, String, LogLevel, String, Supplier, String, Throwable)</a></li>
 <li><a href="#allPass()" tabindex="0">allPass()</a></li>
 </ol>
 </li>
@@ -80,16 +81,23 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Superinterfaces:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&gt;</code></dd>
+<dd><code><a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&gt;</code></dd>
 </dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="DefaultLogEntryFilter.html" title="class in com.dua3.utility.logging">DefaultLogEntryFilter</a>, <a href="LogFilter.html" title="class in com.dua3.utility.logging">LogFilter</a></code></dd>
+<dd><code><a href="DefaultLogEntryFilter.html" title="class in com.dua3.utility.logging">DefaultLogEntryFilter</a></code></dd>
+</dl>
+<dl class="notes">
+<dt>Functional Interface:</dt>
+<dd>This is a functional interface and can therefore be used as the assignment target for a lambda expression or method reference.</dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">LogEntryFilter</span><span class="extends-implements">
-extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&gt;</span></div>
+<div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/FunctionalInterface.html" title="class or interface in java.lang" class="external-link">@FunctionalInterface</a>
+</span><span class="modifiers">public interface </span><span class="element-name type-name-label">LogEntryFilter</span><span class="extends-implements">
+extends <a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&gt;</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <div class="block">The LogEntryFilter interface represents a filter used to determine if a LogEntry should be included or excluded.
 
 <p>The LogEntryFilter interface is a functional interface and can therefore be used as the assignment target for a lambda expression or method reference.
@@ -120,6 +128,7 @@ boolean shouldInclude = filter.test(logEntry);
 <div class="col-first even-row-color"><code>static final <a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
 <div class="col-second even-row-color"><code><a href="#ALL_PASS_FILTER" class="member-name-link">ALL_PASS_FILTER</a></code></div>
 <div class="col-last even-row-color">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
 <div class="block">A LogEntryFilter that allows all log entries to pass through.</div>
 </div>
 </div>
@@ -136,27 +145,36 @@ boolean shouldInclude = filter.test(logEntry);
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#allPass()" class="member-name-link">allPass</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Returns a LogEntryFilter that allows all log entries to pass through.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#test(com.dua3.utility.logging.LogEntry)" class="member-name-link">test</a><wbr>(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;logEntry)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab6"><code>static <a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab6"><code><a href="#allPass()" class="member-name-link">allPass</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
-<div class="deprecation-comment">use <a href="#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)"><code>test(Instant, String, LogLevel, String, String, String, Throwable)</code></a></div>
+<div class="deprecation-comment">use <a href="LogFilter.html#allPass()"><code>LogFilter.allPass()</code></a></div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#name()" class="member-name-link">name</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Retrieves the name associated with this filter.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#test(com.dua3.utility.logging.LogEntry)" class="member-name-link">test</a><wbr>(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;logEntry)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)"><code>test(Instant, String, LogLevel, String, Supplier, String, Throwable)</code></a></div>
+</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
 <div class="block">Tests if a log entry, specified by its components, should be processed.</div>
 </div>
 </div>
@@ -181,6 +199,7 @@ boolean shouldInclude = filter.test(logEntry);
 <h3>ALL_PASS_FILTER</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type"><a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span>&nbsp;<span class="element-name">ALL_PASS_FILTER</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <div class="block">A LogEntryFilter that allows all log entries to pass through.
 
 <p>This filter implementation always returns true, indicating that all log entries should be included and
@@ -197,13 +216,30 @@ none filtered out.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="name()">
+<h3>name</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">name</span>()</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="LogFilter.html#name()">LogFilter</a></code></span></div>
+<div class="block">Retrieves the name associated with this filter.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="LogFilter.html#name()">name</a></code>&nbsp;in interface&nbsp;<code><a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></code></dd>
+<dt>Returns:</dt>
+<dd>the name of the filter as a String</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="test(com.dua3.utility.logging.LogEntry)">
 <h3>test</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
 </span><span class="return-type">boolean</span>&nbsp;<span class="element-name">test</span><wbr><span class="parameters">(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;logEntry)</span></div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
-<div class="deprecation-comment">use <a href="#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)"><code>test(Instant, String, LogLevel, String, String, String, Throwable)</code></a></div>
+<div class="deprecation-comment">use <a href="#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)"><code>test(Instant, String, LogLevel, String, Supplier, String, Throwable)</code></a></div>
 </div>
 <div class="block">Test if a <a href="LogEntry.html" title="interface in com.dua3.utility.logging"><code>LogEntry</code></a> should be processed.</div>
 <dl class="notes">
@@ -218,18 +254,21 @@ none filtered out.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.lang.String,java.lang.String,java.lang.Throwable)">
+<section class="detail" id="test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)">
 <h3>test</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">test</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <div class="block">Tests if a log entry, specified by its components, should be processed.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="LogFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)">test</a></code>&nbsp;in interface&nbsp;<code><a href="LogFilter.html" title="interface in com.dua3.utility.logging">LogFilter</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>instant</code> - the timestamp of the log entry</dd>
 <dd><code>loggerName</code> - the name of the logger that generated the log entry</dd>
@@ -248,7 +287,11 @@ none filtered out.</div>
 <section class="detail" id="allPass()">
 <h3>allPass</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span>&nbsp;<span class="element-name">allPass</span>()</div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#forRemoval()" title="class or interface in java.lang" class="external-link">forRemoval</a>=true)
+</span><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="LogEntryFilter.html" title="interface in com.dua3.utility.logging">LogEntryFilter</a></span>&nbsp;<span class="element-name">allPass</span>()</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">use <a href="LogFilter.html#allPass()"><code>LogFilter.allPass()</code></a></div>
+</div>
 <div class="block">Returns a LogEntryFilter that allows all log entries to pass through.</div>
 <dl class="notes">
 <dt>Returns:</dt>
