@@ -39,15 +39,13 @@ public final class ConsoleHandler implements LogHandler {
     private final PrintStream out;
     private volatile LogFilter filter = LogFilter.allPass();
     private volatile Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
-    private volatile String formatString = "%Cstart[%p] %c %marker %m %l %ex%Cend%n";
-    private volatile String format = translateLog4jFormatString(formatString);
+    private volatile String format = translateLog4jFormatString("%Cstart%d{HH:mm:ss} %-5p %-20c{1} - %m%Cend%n");
 
     /**
      * Set the format string.
      * @param format the format string
      */
     public void setFormat(String format) {
-        this.formatString = format;
         this.format = translateLog4jFormatString(format);
     }
 
@@ -56,29 +54,45 @@ public final class ConsoleHandler implements LogHandler {
      * @return the format string
      */
     public String getFormat() {
-        return formatString;
+        return untranslateLog4jFormatString(format);
     }
 
     private static String translateLog4jFormatString(String format) {
         return format
                 .replace("%%", "\u0000") // Temporary replacement for literal %
                 .replaceAll("%(-?\\d*(\\.\\d+)?)Cstart", "%1\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)p", "%2\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)level", "%2\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)c", "%3\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)p", "%2\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)logger", "%3\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)c", "%3\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)marker", "%4\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)m", "%5\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)msg", "%5\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)message", "%5\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)l", "%6\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)msg", "%5\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)m", "%5\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)location", "%6\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)ex", "%7\\$$1s%8\\$s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)l", "%6\\$$1s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)exception", "%7\\$$1s%8\\$s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)throwable", "%7\\$$1s%8\\$s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)ex", "%7\\$$1s%8\\$s")
                 .replaceAll("%(-?\\d*(\\.\\d+)?)Cend", "%9\\$$1s")
                 .replaceAll("%d\\{([^}]*)}", "%10\\$t$1")
                 .replaceAll("%d", "%10\\$tT")
+                .replace("\u0000", "%%");
+    }
+
+    private static String untranslateLog4jFormatString(String format) {
+        return format
+                .replace("%%", "\u0000") // Temporary replacement for literal %
+                .replaceAll("%1\\$(-?\\d*(\\.\\d+)?)s", "%$1Cstart")
+                .replaceAll("%2\\$(-?\\d*(\\.\\d+)?)s", "%$1p")
+                .replaceAll("%3\\$(-?\\d*(\\.\\d+)?)s", "%$1c")
+                .replaceAll("%4\\$(-?\\d*(\\.\\d+)?)s", "%$1marker")
+                .replaceAll("%5\\$(-?\\d*(\\.\\d+)?)s", "%$1m")
+                .replaceAll("%6\\$(-?\\d*(\\.\\d+)?)s", "%$1l")
+                .replaceAll("%7\\$(-?\\d*(\\.\\d+)?)s%8\\$s", "%$1ex")
+                .replaceAll("%9\\$(-?\\d*(\\.\\d+)?)s", "%$1Cend")
+                .replaceAll("%10\\$tT", "%d")
+                .replaceAll("%10\\$t(\\S+)", "%d{$1}")
                 .replace("\u0000", "%%");
     }
 

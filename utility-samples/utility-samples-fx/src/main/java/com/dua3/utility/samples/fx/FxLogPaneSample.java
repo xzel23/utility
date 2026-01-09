@@ -32,19 +32,11 @@ public class FxLogPaneSample extends Application {
     static {
         // this has to be done before the first logger is initialized!
         LogUtil.initUnifiedLogging();
-        if (LogUtil.getGlobalDispatcher().getFilter() instanceof StandardLogFilter filter) {
-            filter.setLevel("", LogLevel.TRACE);
-            filter.setLevel("java", LogLevel.ERROR);
-            filter.setLevel("javax", LogLevel.ERROR);
-            filter.setLevel("javafx", LogLevel.ERROR);
-            filter.setLevel("sun", LogLevel.ERROR);
-        }
-
         ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT);
     }
 
     private static final int AVERAGE_SLEEP_MILLIS = 5;
-    private static final int LOG_BUFFER_SIZE = 10000;
+    private static final int LOG_BUFFER_SIZE = 100_000;
     private static final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + FxLogPaneSample.class.getName());
     private static final Log JCL_LOGGER = LogFactory.getLog("JCL." + FxLogPaneSample.class.getName());
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + FxLogPaneSample.class.getName());

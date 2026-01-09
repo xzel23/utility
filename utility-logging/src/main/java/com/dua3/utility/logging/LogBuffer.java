@@ -187,16 +187,18 @@ public class LogBuffer implements LogHandler, Externalizable {
 
     @Override
     public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, @Nullable Throwable t) {
-        SimpleLogEntry entry = new SimpleLogEntry(instant, loggerName, lvl, mrk, msg.get(), location, t);
-        int removed;
-        synchronized (buffer) {
-            removed = buffer.put(entry) ? 0 : 1;
-            totalAdded.incrementAndGet();
-            totalRemoved.addAndGet(removed);
-        }
+        if (filter.test(instant, loggerName, lvl, mrk, msg, location, t)) {
+            SimpleLogEntry entry = new SimpleLogEntry(instant, loggerName, lvl, mrk, msg.get(), location, t);
+            int removed;
+            synchronized (buffer) {
+                removed = buffer.put(entry) ? 0 : 1;
+                totalAdded.incrementAndGet();
+                totalRemoved.addAndGet(removed);
+            }
 
-        // Notify listeners outside the buffer synchronization to avoid deadlock
-        listeners.forEach(listener -> listener.entries(removed, 1));
+            // Notify listeners outside the buffer synchronization to avoid deadlock
+            listeners.forEach(listener -> listener.entries(removed, 1));
+        }
     }
 
     @Override

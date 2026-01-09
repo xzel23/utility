@@ -185,6 +185,31 @@ class ConsoleHandlerTest {
     }
 
     @Test
+    void testGetFormatReconstruction() {
+        // Test various formats and their reconstruction
+        String[] formats = {
+                "%p %c %marker %m %l %ex %Cstart %Cend %n",
+                "%-5p %.10c %10.20m",
+                "%d %d{HH:mm:ss,SSS} %p",
+                "[%level] %logger %msg %exception",
+                "%% %p %%"
+        };
+
+        String[] expectedReconstructed = {
+                "%p %c %marker %m %l %ex %Cstart %Cend %n",
+                "%-5p %.10c %10.20m",
+                "%d %d{HH:mm:ss,SSS} %p",
+                "[%p] %c %m %ex", // Note: aliases like %level are converted to preferred ones like %p
+                "%% %p %%"
+        };
+
+        for (int i = 0; i < formats.length; i++) {
+            handler.setFormat(formats[i]);
+            assertEquals(expectedReconstructed[i], handler.getFormat(), "Reconstructed format mismatch for: " + formats[i]);
+        }
+    }
+
+    @Test
     void testSetFormatLog4jWithPadding() {
         // Set a Log4j-style format with padding
         handler.setFormat("%-5p %c - %m%n");

@@ -25,7 +25,7 @@ public class StandardLogFilter implements LogFilter {
      */
     public StandardLogFilter(String name) {
         this.name = name;
-        this.level = LogLevel.INFO;
+        this.level = LogLevel.TRACE;
         this.levelMap = new LevelMap(level);
     }
 

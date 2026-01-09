@@ -3,6 +3,8 @@ package com.dua3.utility.fx;
 import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.logging.DefaultLogEntryFilter;
+import com.dua3.utility.logging.LogFilter;
+import com.dua3.utility.logging.StandardLogFilter;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
@@ -247,7 +249,7 @@ public class FxLogPane extends BorderPane {
             } else {
                 selectedItem.set(newSelection);
                 autoScroll = false;
-                details.setText(newSelection.toString());
+                details.setText(newSelection.format("", ""));
             }
         });
 
@@ -427,6 +429,10 @@ public class FxLogPane extends BorderPane {
      */
     private static LogBuffer createBuffer(int bufferSize) {
         LogBuffer buffer = new LogBuffer("Log Buffer", bufferSize);
+        StandardLogFilter filter = new StandardLogFilter("filter");
+        filter.setLevel("", LogLevel.TRACE);
+        filter.setLevel("javafx", LogLevel.INFO);
+        buffer.setFilter(filter);
         LogUtil.getGlobalDispatcher().addLogHandler(buffer);
         return buffer;
     }

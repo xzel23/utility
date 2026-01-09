@@ -155,9 +155,14 @@ public class LogAppenderLog4j extends AbstractAppender {
         var evtInstant = event.getInstant();
         var instant = Instant.ofEpochSecond(evtInstant.getEpochSecond(), evtInstant.getNanoOfSecond());
         LogLevel level = LogUtilLog4J.translate(event.getLevel());
-        Supplier<String> msg = event.getMessage() instanceof ReusableMessage rm
-                ? () -> rm.getFormattedMessage()
-                : LangUtil.cachingStringSupplier(event.getMessage()::getFormattedMessage);
+        Supplier<String> msg;
+        if (event.getMessage() instanceof ReusableMessage rm) {
+            // for reusable messages, do eager evaluation
+            String m = rm.getFormattedMessage();
+            msg = () -> m;
+        } else {
+            msg = LangUtil.cachingStringSupplier(event.getMessage()::getFormattedMessage);
+        }
 
         String mrk = event.getMarker() == null ? "" : event.getMarker().getName();
         boolean pass = dispatcher.filter.test(
