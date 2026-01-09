@@ -47,7 +47,7 @@ import java.util.stream.Stream;
 public final class I18N {
     private static final Logger LOG = LogManager.getLogger(I18N.class);
 
-    private static final AtomicReference<@Nullable I18N> INSTANCE = new AtomicReference<>(initFromSPI());
+    private static final AtomicReference<@Nullable I18N> INSTANCE = new AtomicReference<>(null);
 
     private final ResourceBundle mainBundle;
     private final Map<String, ResourceBundle> bundleMap = new HashMap<>();
