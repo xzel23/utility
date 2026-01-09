@@ -1,0 +1,28 @@
+[
+  {
+    "name": "com.dua3.utility.application.imp.NativeHelperWindows",
+    "methods": [
+      {
+        "name": "onWindowEvent",
+        "parameterTypes": [
+          "java.lang.foreign.MemorySegment",
+          "int",
+          "java.lang.foreign.MemorySegment",
+          "int",
+          "int",
+          "int",
+          "int"
+        ]
+      },
+      {
+        "name": "processWindow",
+        "parameterTypes": [
+          "java.util.List",
+          "int",
+          "java.lang.foreign.MemorySegment",
+          "long"
+        ]
+      }
+    ]
+  }
+]

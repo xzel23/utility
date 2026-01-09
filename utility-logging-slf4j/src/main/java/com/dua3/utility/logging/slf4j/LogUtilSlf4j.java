@@ -20,7 +20,10 @@ import java.util.ServiceConfigurationError;
  *     </pre>
  *     <li><b>Log4J:</b> add {@code log4j-to-slf4j} to your dependencies. Do not add any {@code log4j-core}.
  * </ul>
+ *
+ * @deprecated will be removed in the next major version and functionality moved to {@link LogUtil}
  */
+@Deprecated(forRemoval = true)
 public final class LogUtilSlf4j {
     private LogUtilSlf4j() {
     }

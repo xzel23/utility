@@ -1,12 +1,10 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.lang.Platform;
-import com.dua3.utility.logging.DefaultLogEntryFilter;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntryFilter;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
-import com.dua3.utility.logging.log4j.LogEntryLog4J;
 import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.options.Repetitions;

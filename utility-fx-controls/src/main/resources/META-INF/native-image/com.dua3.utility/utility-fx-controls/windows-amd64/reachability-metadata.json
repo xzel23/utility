@@ -1,0 +1,111 @@
+{
+  "foreign": {
+    "upcalls": [
+      {
+        "returnType": "int",
+        "parameterTypes": [
+          "void*",
+          "long"
+        ]
+      },
+      {
+        "returnType": "void",
+        "parameterTypes": [
+          "void*",
+          "int",
+          "void*",
+          "int",
+          "int",
+          "int",
+          "int"
+        ]
+      }
+    ],
+    "downcalls": [
+      {
+        "returnType": "int",
+        "parameterTypes": [
+          "int",
+          "void*"
+        ]
+      },
+      {
+        "returnType": "int",
+        "parameterTypes": [
+          "void*",
+          "void*",
+          "int",
+          "int",
+          "void*"
+        ]
+      },
+      {
+        "returnType": "int",
+        "parameterTypes": [
+          "void*",
+          "void*",
+          "void*",
+          "int",
+          "void*",
+          "void*",
+          "void*"
+        ]
+      },
+      {
+        "returnType": "int",
+        "parameterTypes": [
+          "void*",
+          "int",
+          "int",
+          "void*",
+          "int"
+        ]
+      },
+      {
+        "returnType": "int",
+        "parameterTypes": [
+          "void*"
+        ]
+      },
+      {
+        "returnType": "int",
+        "parameterTypes": [
+          "void*",
+          "int",
+          "void*",
+          "int"
+        ]
+      },
+      {
+        "returnType": "int",
+        "parameterTypes": [
+          "void*",
+          "long"
+        ]
+      },
+      {
+        "returnType": "int",
+        "parameterTypes": [
+          "void*",
+          "void*"
+        ]
+      },
+      {
+        "returnType": "int",
+        "parameterTypes": []
+      },
+      {
+        "returnType": "void*",
+        "parameterTypes": [
+          "int",
+          "int",
+          "void*",
+          "void*",
+          "int",
+          "int",
+          "int"
+        ]
+      }
+    ]
+  }
+}

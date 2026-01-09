@@ -26,7 +26,10 @@ import java.util.regex.Pattern;
  *     <li><b>SLF4J:</b> add {@code log4j-slf4j2-impl} to your dependencies. Do not add any other logging implementation
  *     based on SLF4J (i.e., SimpleLogger, Logback).
  * </ul>
+ *
+ * @deprecated will be removed in the next major version and functionality moved to {@link LogUtil}
  */
+@Deprecated(forRemoval = true)
 @SuppressWarnings("MagicCharacter")
 public final class LogUtilLog4J {
     // NOTE: do not use logging in this class as it interferes with LogManager creation!
