@@ -2,7 +2,7 @@
   "resources": {
     "includes": [
       {
-        "pattern": "com/dua3/utility/fx/controls/messages.*\\.properties"
+        "pattern": "com/dua3/utility/fx/controls/.*\\.css"
       }
     ]
   },

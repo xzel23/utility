@@ -1,11 +1,4 @@
 {
-  "resources": {
-    "includes": [
-      {
-        "pattern": "com/dua3/utility/messages.*\\.properties"
-      }
-    ]
-  },
   "bundles": [
     {
       "name": "com.dua3.utility.messages"

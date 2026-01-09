@@ -3,9 +3,6 @@
     "includes": [
       {
         "pattern": "com/dua3/utility/fx/.*\\.css"
-      },
-      {
-        "pattern": "com/dua3/utility/fx/messages.*\\.properties"
       }
     ]
   },
