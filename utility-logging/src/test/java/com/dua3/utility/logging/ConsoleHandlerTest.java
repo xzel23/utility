@@ -163,6 +163,73 @@ class ConsoleHandlerTest {
     }
 
     @Test
+    void testSetFormatLog4j() {
+        // Set a Log4j-style format
+        String format = "%p %c - %m%n";
+        handler.setFormat(format);
+        assertEquals(format, handler.getFormat());
+
+        handler.handle(
+                testEntry.time(),
+                testEntry.loggerName(),
+                testEntry.level(),
+                testEntry.marker(),
+                testEntry::message,
+                testEntry.location(),
+                testEntry.throwable()
+        );
+
+        // Get the output
+        String output = outContent.toString(StandardCharsets.UTF_8);
+        assertEquals("INFO TestLogger - Test message" + System.lineSeparator(), output);
+    }
+
+    @Test
+    void testSetFormatLog4jWithPadding() {
+        // Set a Log4j-style format with padding
+        handler.setFormat("%-5p %c - %m%n");
+        handler.handle(
+                testEntry.time(),
+                testEntry.loggerName(),
+                testEntry.level(),
+                testEntry.marker(),
+                testEntry::message,
+                testEntry.location(),
+                testEntry.throwable()
+        );
+
+        // Get the output
+        String output = outContent.toString(StandardCharsets.UTF_8);
+        assertEquals("INFO  TestLogger - Test message" + System.lineSeparator(), output);
+    }
+
+    @Test
+    void testDefaultFormat() {
+        // Handle the test entry with default format and colors disabled
+        handler.setColored(false);
+        handler.handle(
+                testEntry.time(),
+                testEntry.loggerName(),
+                testEntry.level(),
+                testEntry.marker(),
+                testEntry::message,
+                testEntry.location(),
+                testEntry.throwable()
+        );
+
+        // Get the output
+        String output = outContent.toString(StandardCharsets.UTF_8);
+        // Default format: "%Cstart[%p] %c %marker %m %l %ex%Cend%n"
+        // Since colored is false, Cstart and Cend are empty.
+        // Also marker is "TEST_MARKER", level is "INFO", etc.
+        assertTrue(output.contains("[INFO]"), "Output should contain the log level");
+        assertTrue(output.contains("TestLogger"), "Output should contain the logger name");
+        assertTrue(output.contains("TEST_MARKER"), "Output should contain the marker");
+        assertTrue(output.contains("Test message"), "Output should contain the message");
+        assertTrue(output.contains("com.example.TestClass.testMethod(TestClass.java:123)"), "Output should contain the location");
+    }
+
+    @Test
     void testSetAndGetFilter() {
         // Test the default filter
         LogFilter defaultFilter = handler.getFilter();

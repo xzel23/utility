@@ -39,22 +39,47 @@ public final class ConsoleHandler implements LogHandler {
     private final PrintStream out;
     private volatile LogFilter filter = LogFilter.allPass();
     private volatile Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
-    private volatile String formatString = "%1$s[%2$s] %3$s %4$s %5$s %6$s %7$s %8$s%9$s%n";
+    private volatile String formatString = "%Cstart[%p] %c %marker %m %l %ex%Cend%n";
+    private volatile String format = translateLog4jFormatString(formatString);
 
     /**
      * Set the format string.
-     * @param formatString the format string
+     * @param format the format string
      */
-    public void setFormatString(String formatString) {
-        this.formatString = formatString;
+    public void setFormat(String format) {
+        this.formatString = format;
+        this.format = translateLog4jFormatString(format);
     }
 
     /**
      * Get the format string.
      * @return the format string
      */
-    public String getFormatString() {
+    public String getFormat() {
         return formatString;
+    }
+
+    private static String translateLog4jFormatString(String format) {
+        return format
+                .replace("%%", "\u0000") // Temporary replacement for literal %
+                .replaceAll("%(-?\\d*(\\.\\d+)?)Cstart", "%1\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)p", "%2\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)level", "%2\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)c", "%3\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)logger", "%3\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)marker", "%4\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)m", "%5\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)msg", "%5\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)message", "%5\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)l", "%6\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)location", "%6\\$$1s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)ex", "%7\\$$1s%8\\$s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)exception", "%7\\$$1s%8\\$s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)throwable", "%7\\$$1s%8\\$s")
+                .replaceAll("%(-?\\d*(\\.\\d+)?)Cend", "%9\\$$1s")
+                .replaceAll("%d\\{([^}]*)}", "%10\\$t$1")
+                .replaceAll("%d", "%10\\$tT")
+                .replace("\u0000", "%%");
     }
 
     /**
@@ -99,7 +124,7 @@ public final class ConsoleHandler implements LogHandler {
     public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, @Nullable Throwable t) {
         if (filter.test(instant, loggerName, lvl, mrk, msg, location, t)) {
             Pair<String, String> colorCodes = colorMap.get(lvl);
-            out.format(formatString,
+            out.format(format,
                     colorCodes.first(),
                     lvl.name(),
                     loggerName,
@@ -108,7 +133,8 @@ public final class ConsoleHandler implements LogHandler {
                     location,
                     t == null ? "" : t.getClass().getName() + ": " + t.getMessage(),
                     t == null ? "" : NEWLINE,
-                    colorCodes.second()
+                    colorCodes.second(),
+                    instant
             );
         }
     }
