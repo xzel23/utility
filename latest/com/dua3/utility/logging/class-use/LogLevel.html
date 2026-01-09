@@ -162,16 +162,20 @@ with a specific log level.</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>void</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">ConsoleHandler.</span><code><a href="../ConsoleHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+<div class="col-second even-row-color"><span class="type-name-label">LogFormat.</span><code><a href="../LogFormat.html#formatLogEntry(java.io.PrintStream,java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable,com.dua3.utility.data.Pair)" class="member-name-link">formatLogEntry</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/PrintStream.html" title="class or interface in java.io" class="external-link">PrintStream</a>&nbsp;out,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
- @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t,
+ <a href="../../data/Pair.html" title="class in com.dua3.utility.data">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;colorCodes)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Formats a log entry.</div>
+</div>
 <div class="col-first odd-row-color"><code>void</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">LogBuffer.</span><code><a href="../LogBuffer.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+<div class="col-second odd-row-color"><span class="type-name-label">ConsoleHandler.</span><code><a href="../ConsoleHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
@@ -179,51 +183,8 @@ with a specific log level.</div>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>default void</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">LogEntryHandler.</span><code><a href="../LogEntryHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
- <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
- @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
-<div class="col-last even-row-color">
-<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span></div>
-&nbsp;</div>
-<div class="col-first odd-row-color"><code>void</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">LogHandler.</span><code><a href="../LogHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
- <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
- @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
-<div class="col-last odd-row-color">
-<div class="block">Handles a log entry.</div>
-</div>
-<div class="col-first even-row-color"><code>default boolean</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">LogHandler.</span><code><a href="../LogHandler.html#isEnabled(com.dua3.utility.logging.LogLevel)" class="member-name-link">isEnabled</a><wbr>(<a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl)</code></div>
-<div class="col-last even-row-color">
-<div class="block">Determines whether logging is enabled for a specific log level.</div>
-</div>
-<div class="col-first odd-row-color"><code>void</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">DefaultLogEntryFilter.</span><code><a href="../DefaultLogEntryFilter.html#setLevel(com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel</a><wbr>(<a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level)</code></div>
-<div class="col-last odd-row-color">
-<div class="block">Sets the log level of the DefaultLogEntryFilter.</div>
-</div>
 <div class="col-first even-row-color"><code>void</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">StandardLogFilter.</span><code><a href="../StandardLogFilter.html#setLevel(com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel</a><wbr>(<a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level)</code></div>
-<div class="col-last even-row-color">
-<div class="block">Sets the global log level of the filter.</div>
-</div>
-<div class="col-first odd-row-color"><code>void</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">StandardLogFilter.</span><code><a href="../StandardLogFilter.html#setLevel(java.lang.String,com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
- <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level)</code></div>
-<div class="col-last odd-row-color">
-<div class="block">Sets the log level for a given logger name or prefix.</div>
-</div>
-<div class="col-first even-row-color"><code>boolean</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">DefaultLogEntryFilter.</span><code><a href="../DefaultLogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+<div class="col-second even-row-color"><span class="type-name-label">LogBuffer.</span><code><a href="../LogBuffer.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
@@ -231,8 +192,8 @@ with a specific log level.</div>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>default boolean</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">LogEntryFilter.</span><code><a href="../LogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+<div class="col-first odd-row-color"><code>default void</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">LogEntryHandler.</span><code><a href="../LogEntryHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
@@ -240,32 +201,84 @@ with a specific log level.</div>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
 <div class="col-last odd-row-color">
+<div class="block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span></div>
+&nbsp;</div>
+<div class="col-first even-row-color"><code>void</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">LogHandler.</span><code><a href="../LogHandler.html#handle(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
+ <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Handles a log entry.</div>
+</div>
+<div class="col-first odd-row-color"><code>default boolean</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">LogHandler.</span><code><a href="../LogHandler.html#isEnabled(com.dua3.utility.logging.LogLevel)" class="member-name-link">isEnabled</a><wbr>(<a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Determines whether logging is enabled for a specific log level.</div>
+</div>
+<div class="col-first even-row-color"><code>void</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">DefaultLogEntryFilter.</span><code><a href="../DefaultLogEntryFilter.html#setLevel(com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel</a><wbr>(<a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Sets the log level of the DefaultLogEntryFilter.</div>
+</div>
+<div class="col-first odd-row-color"><code>void</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">StandardLogFilter.</span><code><a href="../StandardLogFilter.html#setLevel(com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel</a><wbr>(<a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Sets the global log level of the filter.</div>
+</div>
+<div class="col-first even-row-color"><code>void</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">StandardLogFilter.</span><code><a href="../StandardLogFilter.html#setLevel(java.lang.String,com.dua3.utility.logging.LogLevel)" class="member-name-link">setLevel</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;level)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Sets the log level for a given logger name or prefix.</div>
+</div>
+<div class="col-first odd-row-color"><code>boolean</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">DefaultLogEntryFilter.</span><code><a href="../DefaultLogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
+ <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>default boolean</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">LogEntryFilter.</span><code><a href="../LogEntryFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
+ <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
+<div class="col-last even-row-color">
 <div class="block"><span class="deprecated-label">Deprecated.</span></div>
 <div class="block">Tests if a log entry, specified by its components, should be processed.</div>
 </div>
-<div class="col-first even-row-color"><code>boolean</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">LogFilter.</span><code><a href="../LogFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+<div class="col-first odd-row-color"><code>boolean</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">LogFilter.</span><code><a href="../LogFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last odd-row-color">
 <div class="block">Tests if a log entry, specified by its components, should be processed.</div>
 </div>
-<div class="col-first odd-row-color"><code>boolean</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">StandardLogFilter.</span><code><a href="../StandardLogFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+<div class="col-first even-row-color"><code>boolean</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">StandardLogFilter.</span><code><a href="../StandardLogFilter.html#test(java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable)" class="member-name-link">test</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
  <a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code><a href="../DefaultLogEntryFilter.html" title="class in com.dua3.utility.logging">DefaultLogEntryFilter</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">DefaultLogEntryFilter.</span><code><a href="../DefaultLogEntryFilter.html#withLevel(com.dua3.utility.logging.LogLevel)" class="member-name-link">withLevel</a><wbr>(<a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;newLevel)</code></div>
-<div class="col-last even-row-color">
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code><a href="../DefaultLogEntryFilter.html" title="class in com.dua3.utility.logging">DefaultLogEntryFilter</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">DefaultLogEntryFilter.</span><code><a href="../DefaultLogEntryFilter.html#withLevel(com.dua3.utility.logging.LogLevel)" class="member-name-link">withLevel</a><wbr>(<a href="../LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;newLevel)</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Returns a new DefaultLogEntryFilter with the same filter and the specified log level.</div>
 </div>
 </div>

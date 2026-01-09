@@ -72,12 +72,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">This package provides some general utility classes.</div>
 </div>
-<div class="col-first odd-row-color"><a href="#com.dua3.utility.swing">com.dua3.utility.swing</a></div>
+<div class="col-first odd-row-color"><a href="#com.dua3.utility.logging">com.dua3.utility.logging</a></div>
 <div class="col-last odd-row-color">
+<div class="block">Classes and utilities related to logging.</div>
+</div>
+<div class="col-first even-row-color"><a href="#com.dua3.utility.swing">com.dua3.utility.swing</a></div>
+<div class="col-last even-row-color">
 <div class="block">Classes and utilities for creating Swing-based user interfaces.</div>
 </div>
-<div class="col-first even-row-color"><a href="#com.dua3.utility.text">com.dua3.utility.text</a></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><a href="#com.dua3.utility.text">com.dua3.utility.text</a></div>
+<div class="col-last odd-row-color">
 <div class="block">This package contains utilities for handling java.lang.String and to create, manipulate and convert
 rich text.</div>
 </div>
@@ -230,6 +234,30 @@ rich text.</div>
 <div class="col-first even-row-color"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Deque.html" title="class or interface in java.util" class="external-link">Deque</a>&lt;<a href="../Pair.html" title="class in com.dua3.utility.data">Pair</a>&lt;<a href="../../lang/BatchCollector.html#type-param-K" title="type parameter in BatchCollector">K</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../lang/BatchCollector.html#type-param-T" title="type parameter in BatchCollector">T</a>&gt;&gt;&gt;&gt;</code></div>
 <div class="col-second even-row-color"><span class="type-name-label">BatchCollector.</span><code><a href="../../lang/BatchCollector.html#supplier()" class="member-name-link">supplier</a>()</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="com.dua3.utility.logging">
+<h2>Uses of <a href="../Pair.html" title="class in com.dua3.utility.data">Pair</a> in <a href="../../logging/package-summary.html">com.dua3.utility.logging</a></h2>
+<div class="caption"><span>Methods in <a href="../../logging/package-summary.html">com.dua3.utility.logging</a> with parameters of type <a href="../Pair.html" title="class in com.dua3.utility.data">Pair</a></span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Method</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>void</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">LogFormat.</span><code><a href="../../logging/LogFormat.html#formatLogEntry(java.io.PrintStream,java.time.Instant,java.lang.String,com.dua3.utility.logging.LogLevel,java.lang.String,java.util.function.Supplier,java.lang.String,java.lang.Throwable,com.dua3.utility.data.Pair)" class="member-name-link">formatLogEntry</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/PrintStream.html" title="class or interface in java.io" class="external-link">PrintStream</a>&nbsp;out,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;instant,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loggerName,
+ <a href="../../logging/LogLevel.html" title="enum class in com.dua3.utility.logging">LogLevel</a>&nbsp;lvl,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mrk,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;location,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t,
+ <a href="../Pair.html" title="class in com.dua3.utility.data">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;colorCodes)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Formats a log entry.</div>
+</div>
 </div>
 </section>
 </li>
