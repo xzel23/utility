@@ -39,6 +39,23 @@ public final class ConsoleHandler implements LogHandler {
     private final PrintStream out;
     private volatile LogFilter filter = LogFilter.allPass();
     private volatile Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
+    private volatile String formatString = "%1$s[%2$s] %3$s %4$s %5$s %6$s %7$s %8$s%9$s%n";
+
+    /**
+     * Set the format string.
+     * @param formatString the format string
+     */
+    public void setFormatString(String formatString) {
+        this.formatString = formatString;
+    }
+
+    /**
+     * Get the format string.
+     * @return the format string
+     */
+    public String getFormatString() {
+        return formatString;
+    }
 
     /**
      * Constructs a ConsoleHandler with the specified PrintStream and colored flag.
@@ -82,7 +99,7 @@ public final class ConsoleHandler implements LogHandler {
     public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, @Nullable Throwable t) {
         if (filter.test(instant, loggerName, lvl, mrk, msg, location, t)) {
             Pair<String, String> colorCodes = colorMap.get(lvl);
-            out.format("%s[%s] %s %s %s %s %s %s%s%n",
+            out.format(formatString,
                     colorCodes.first(),
                     lvl.name(),
                     loggerName,
