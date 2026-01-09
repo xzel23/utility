@@ -41,14 +41,14 @@ public final class ConsoleHandler implements LogHandler {
     private final PrintStream out;
     private volatile LogFilter filter = LogFilter.allPass();
     private volatile Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
-    private volatile String format = translateLog4jFormatString("%Cstart[%p] %d{HH:mm:ss} %c %marker %m %l %ex%Cend%n");
+    private final LogFormat logFormat = new LogFormat();
 
     /**
      * Set the format string.
      * @param format the format string
      */
     public void setFormat(String format) {
-        this.format = translateLog4jFormatString(format);
+        logFormat.setFormat(format);
     }
 
     /**
@@ -56,56 +56,9 @@ public final class ConsoleHandler implements LogHandler {
      * @return the format string
      */
     public String getFormat() {
-        return untranslateLog4jFormatString(format);
+        return logFormat.getFormat();
     }
 
-    private static String translateLog4jFormatString(String format) {
-        return format
-                .replace("%%", "\u0000") // Temporary replacement for literal %
-                .replaceAll("%(-?\\d*(\\.\\d+)?)Cstart", "%1\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)level", "%2\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)p", "%2\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)logger(\\{\\d+})?", "%3\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)c(\\{\\d+})?", "%3\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)marker", "%4\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)message", "%5\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)msg", "%5\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)m", "%5\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)location", "%6\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)l", "%6\\$$1s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)exception", "%7\\$$1s%8\\$s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)throwable", "%7\\$$1s%8\\$s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)ex", "%7\\$$1s%8\\$s")
-                .replaceAll("%(-?\\d*(\\.\\d+)?)Cend", "%9\\$$1s")
-                .replaceAll("%d\\{HH:mm:ss,SSS}", "%10\\$tT,%10\\$tL")
-                .replaceAll("%d\\{HH:mm:ss}", "%10\\$tT")
-                .replaceAll("%d\\{yyyy-MM-dd HH:mm:ss,SSS}", "%10\\$tF %10\\$tT,%10\\$tL")
-                .replaceAll("%d\\{yyyy-MM-dd HH:mm:ss}", "%10\\$tF %10\\$tT")
-                .replaceAll("%d\\{ISO8601}", "%10\\$tFT%10\\$tT%10\\$tL%10\\$tz")
-                .replaceAll("%d\\{([^}]*)}", "%10\\$t$1")
-                .replaceAll("%d", "%10\\$tT")
-                .replace("\u0000", "%%");
-    }
-
-    private static String untranslateLog4jFormatString(String format) {
-        return format
-                .replace("%%", "\u0000") // Temporary replacement for literal %
-                .replaceAll("%1\\$(-?\\d*(\\.\\d+)?)s", "%$1Cstart")
-                .replaceAll("%2\\$(-?\\d*(\\.\\d+)?)s", "%$1p")
-                .replaceAll("%3\\$(-?\\d*(\\.\\d+)?)s", "%$1c")
-                .replaceAll("%4\\$(-?\\d*(\\.\\d+)?)s", "%$1marker")
-                .replaceAll("%5\\$(-?\\d*(\\.\\d+)?)s", "%$1m")
-                .replaceAll("%6\\$(-?\\d*(\\.\\d+)?)s", "%$1l")
-                .replaceAll("%7\\$(-?\\d*(\\.\\d+)?)s%8\\$s", "%$1ex")
-                .replaceAll("%9\\$(-?\\d*(\\.\\d+)?)s", "%$1Cend")
-                .replaceAll("%10\\$tFT%10\\$tT%10\\$tL%10\\$tz", "%d{ISO8601}")
-                .replaceAll("%10\\$tT,%10\\$tL", "%d{HH:mm:ss,SSS}")
-                .replaceAll("%10\\$tF %10\\$tT,%10\\$tL", "%d{yyyy-MM-dd HH:mm:ss,SSS}")
-                .replaceAll("%10\\$tF %10\\$tT", "%d{yyyy-MM-dd HH:mm:ss}")
-                .replaceAll("%10\\$tT", "%d")
-                .replaceAll("%10\\$t(\\S+)", "%d{$1}")
-                .replace("\u0000", "%%");
-    }
 
     /**
      * Constructs a ConsoleHandler with the specified PrintStream and colored flag.
@@ -149,18 +102,7 @@ public final class ConsoleHandler implements LogHandler {
     public void handle(Instant instant, String loggerName, LogLevel lvl, String mrk, Supplier<String> msg, String location, @Nullable Throwable t) {
         if (filter.test(instant, loggerName, lvl, mrk, msg, location, t)) {
             Pair<String, String> colorCodes = colorMap.get(lvl);
-            out.format(format,
-                    colorCodes.first(),
-                    lvl.name(),
-                    loggerName,
-                    mrk,
-                    msg.get(),
-                    location,
-                    t == null ? "" : t.getClass().getName() + ": " + t.getMessage(),
-                    t == null ? "" : NEWLINE,
-                    colorCodes.second(),
-                    instant.atZone(ZONE_ID)
-            );
+            logFormat.formatLogEntry(out, instant, loggerName, lvl, mrk, msg, location, t, colorCodes);
         }
     }
 
