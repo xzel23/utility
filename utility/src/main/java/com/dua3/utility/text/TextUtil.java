@@ -67,7 +67,6 @@ public final class TextUtil {
     private static final Pattern PATTERN_SPLIT_PRESERVING_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
     private static final Pattern PATTERN_SPLIT_LINES = Pattern.compile("\\R");
 
-    private static final FontUtil FONT_UTIL = FontUtil.getInstance();
     private static final double POINTS_PER_MILLIMETER = 720.0 / 254.0;
 
     private TextUtil() {
@@ -894,7 +893,7 @@ public final class TextUtil {
      * @return the text height
      */
     public static double getTextHeight(CharSequence text, Font font) {
-        return FONT_UTIL.getTextWidth(text, font);
+        return FontUtil.getInstance().getTextWidth(text, font);
     }
 
     /**
@@ -905,7 +904,7 @@ public final class TextUtil {
      * @return the text width
      */
     public static double getTextWidth(CharSequence text, Font font) {
-        return FONT_UTIL.getTextWidth(text, font);
+        return FontUtil.getInstance().getTextWidth(text, font);
     }
 
     /**
@@ -916,7 +915,7 @@ public final class TextUtil {
      * @return the text bounds
      */
     public static Rectangle2f getTextDimension(CharSequence text, Font font) {
-        return FONT_UTIL.getTextDimension(text, font);
+        return FontUtil.getInstance().getTextDimension(text, font);
     }
 
     /**
@@ -929,7 +928,7 @@ public final class TextUtil {
      * @return the text bounds
      */
     public static Rectangle2f getRichTextDimension(CharSequence text, Font font) {
-        return FONT_UTIL.getRichTextDimension(text, font);
+        return FontUtil.getInstance().getRichTextDimension(text, font);
     }
 
     /**
