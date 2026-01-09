@@ -121,7 +121,7 @@ public class FxDialogSample extends Application {
                         "ar", "bg", "cs", "da", "de", "el", "en", "es", "et", "fi", "fr", "ga", "hi", "hr", "hu", "id", "it", "ja", "ko", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "ru", "sk", "sl", "sv", "th", "tr", "zh", "zh-Hant"
                 )
                 .map(Locale::forLanguageTag)
-                .sorted(Comparator.comparing(l -> l.getDisplayName(l)))
+                .sorted(Comparator.comparing(l -> l.getDisplayName(LOCALE_WHEN_STARTED)))
                 .toList();
         Locale currentLocale = comboLocale == null ? Locale.getDefault() : comboLocale.getValue();
         comboLocale = Controls.comboBox(locales)
