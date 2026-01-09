@@ -285,6 +285,36 @@ class ConsoleHandlerTest {
     }
 
     @Test
+    void testTruncation() {
+        // Test logger name truncation (should be from the left)
+        handler.setFormat("%.5c %m%n");
+        handler.handle(
+                testEntry.time(),
+                "com.example.Logger",
+                LogLevel.INFO,
+                "",
+                () -> "msg",
+                "",
+                null
+        );
+        assertEquals("ogger msg" + System.lineSeparator(), outContent.toString(StandardCharsets.UTF_8));
+        outContent.reset();
+
+        // Test other field truncation (should be from the right)
+        handler.setFormat("%c %.3m%n");
+        handler.handle(
+                testEntry.time(),
+                "Logger",
+                LogLevel.INFO,
+                "",
+                () -> "message",
+                "",
+                null
+        );
+        assertEquals("Logger mes" + System.lineSeparator(), outContent.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
     void testSetAndGetFilter() {
         // Test the default filter
         LogFilter defaultFilter = handler.getFilter();
