@@ -4,7 +4,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "20.4.3-SNAPSHOT"
+val projectVersion = "20.1.0-SNAPSHOT"
 
 // define subprojects
 include("utility")
@@ -17,9 +17,6 @@ include("utility-fx-icons-ikonli")
 include("utility-fx-controls")
 include("utility-fx-db")
 include("utility-fx-web")
-include("utility-logging")
-include("utility-logging-slf4j")
-include("utility-logging-log4j")
 include("utility-samples")
 include("utility-samples:utility-samples-commonlogger")
 include("utility-samples:utility-samples-slf4j")
@@ -63,6 +60,7 @@ dependencyResolutionManagement {
             version("junit-bom", "6.0.1")
             version("log4j-bom", "2.25.3")
             version("miglayout", "11.4.2")
+            version("sawmill", "0.1-SNAPSHOT")
             version("slf4j", "2.0.17")
             version("spotbugs", "4.9.8")
             version("bouncycastle", "1.83")
@@ -82,11 +80,6 @@ dependencyResolutionManagement {
 
             library("log4j-bom", "org.apache.logging.log4j", "log4j-bom").versionRef("log4j-bom")
             library("log4j-api", "org.apache.logging.log4j", "log4j-api").withoutVersion()
-            library("log4j-core", "org.apache.logging.log4j", "log4j-core").withoutVersion()
-            library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").withoutVersion()
-            library("log4j-jcl", "org.apache.logging.log4j", "log4j-jcl").withoutVersion()
-            library("log4j-slf4j2", "org.apache.logging.log4j", "log4j-slf4j2-impl").withoutVersion()
-            library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").withoutVersion()
 
             library("ikonli-fontawesome6", "org.kordamp.ikonli", "ikonli-fontawesome6-pack").versionRef("ikonli")
             library("ikonli-javafx", "org.kordamp.ikonli", "ikonli-javafx").versionRef("ikonli")
@@ -102,6 +95,8 @@ dependencyResolutionManagement {
             library("bouncycastle-pkix", "org.bouncycastle", "bcpkix-jdk18on").versionRef("bouncycastle")
 
             library("commons-logging", "commons-logging", "commons-logging").versionRef("commons-logging")
+
+            library("sawmill-lumberjack", "com.dua3.sawmill", "lumberjack").versionRef("sawmill")
         }
     }
 
@@ -131,6 +126,8 @@ dependencyResolutionManagement {
 
         if (isSnapshot) {
             println("snapshot version detected, adding Maven snapshot repositories")
+
+            mavenLocal()
 
             // Sonatype Snapshots
             maven {

@@ -3,10 +3,9 @@ project.description = "Java utilities (common logger sample)"
 dependencies {
     implementation(project(":utility"))
     implementation(project(":utility-swing"))
-    implementation(project(":utility-logging"))
     implementation(project(":utility-samples"))
-    implementation(project(":utility-logging-log4j"))
     implementation(rootProject.libs.miglayout.swing)
+    implementation(rootProject.libs.sawmill.lumberjack)
     implementation(rootProject.libs.log4j.api)
     implementation(rootProject.libs.slf4j.api)
     implementation(rootProject.libs.commons.logging)

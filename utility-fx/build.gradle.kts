@@ -2,13 +2,10 @@ project.description = "Java utilities (JavaFX)"
 
 dependencies {
     implementation(project(":utility"))
-    compileOnly(project(":utility-logging"))
-    compileOnly(project(":utility-logging-log4j"))
 
     // Add dependency on javaTestUtil for tests
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
-    testImplementation(project(":utility-logging"))
-    testRuntimeOnly(project(":utility-logging-log4j"))
+    testImplementation(rootProject.libs.sawmill.lumberjack)
 }
 
 // Configure tests to run in a forked JVM

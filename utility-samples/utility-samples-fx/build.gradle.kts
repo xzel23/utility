@@ -20,12 +20,9 @@ dependencies {
     implementation(project(":utility-fx-controls"))
     implementation(project(":utility-fx-icons"))
     implementation(project(":utility-fx-icons-ikonli"))
-    implementation(project(":utility-logging"))
     implementation(rootProject.libs.atlantafx)
-    implementation(rootProject.libs.log4j.jcl)
-    implementation(rootProject.libs.log4j.jul)
-    implementation(rootProject.libs.log4j.slf4j2)
     implementation(rootProject.libs.slf4j.api)
+    implementation(rootProject.libs.sawmill.lumberjack)
     runtimeOnly(rootProject.libs.ikonli.fontawesome6)
     runtimeOnly(rootProject.libs.ikonli.javafx)
 }

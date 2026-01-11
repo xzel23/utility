@@ -74,9 +74,6 @@ dependencies {
     jacocoAggregation(project(":utility-fx-controls"))
     jacocoAggregation(project(":utility-fx-db"))
     jacocoAggregation(project(":utility-fx-web"))
-    jacocoAggregation(project(":utility-logging"))
-    jacocoAggregation(project(":utility-logging-slf4j"))
-    jacocoAggregation(project(":utility-logging-log4j"))
 }
 
 tasks.named<JacocoReport>("testCodeCoverageReport") {
@@ -213,7 +210,7 @@ subprojects {
                 val test by getting(JvmTestSuite::class) {
                     useJUnitJupiter()
                     dependencies {
-                        implementation(rootProject.libs.log4j.core)
+                        implementation(rootProject.libs.sawmill.lumberjack)
                         implementation(rootProject.libs.jimfs)
                     }
                     targets {

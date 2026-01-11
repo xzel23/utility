@@ -37,8 +37,6 @@ open module com.dua3.utility.fx {
             with FxImageUtilProvider;
 
     requires com.dua3.utility;
-    requires static com.dua3.utility.logging;
-    requires static com.dua3.utility.logging.log4j;
     requires java.desktop;
     requires javafx.base;
     requires javafx.controls;

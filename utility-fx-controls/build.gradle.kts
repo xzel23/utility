@@ -4,14 +4,12 @@ dependencies {
     implementation(project(":utility"))
     implementation(project(":utility-fx"))
     implementation(project(":utility-fx-icons"))
-    compileOnly(project(":utility-logging"))
 
     // Add dependency on javaTestUtil for tests
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
-    testImplementation(project(":utility-logging"))
-    testRuntimeOnly(project(":utility-logging-log4j"))
     testRuntimeOnly(project(":utility-fx-icons-ikonli"))
     testRuntimeOnly(libs.ikonli.fontawesome6)
+    testRuntimeOnly(libs.sawmill.lumberjack)
 }
 
 // Configure tests to run in a forked JVM

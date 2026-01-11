@@ -1,12 +1,8 @@
 dependencies {
     implementation(project(":utility"))
-    compileOnly(project(":utility-logging"))
-
-    // Test dependencies
-    testImplementation(project(":utility-logging"))
 
     // Use the regular logging setup for tests
-    testImplementation(rootProject.libs.log4j.core)
+    testImplementation(rootProject.libs.sawmill.lumberjack)
     testImplementation(rootProject.libs.jimfs)
 
     // Add dependency on javaTestUtil for tests
