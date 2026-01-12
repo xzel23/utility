@@ -147,18 +147,6 @@ public abstract class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuil
      *
      * @param tooltip the tooltip text
      * @return this MenuItemBuilder instance
-     * @deprecated use {@link #tooltip(ObservableValue)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public B bindTooltip(ObservableValue<String> tooltip) {
-        return tooltip(tooltip);
-    }
-
-    /**
-     * Set the tooltip for the MenuItem.
-     *
-     * @param tooltip the tooltip text
-     * @return this MenuItemBuilder instance
      */
     public B tooltip(ObservableValue<String> tooltip) {
         this.tooltip = tooltip;
@@ -181,18 +169,6 @@ public abstract class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuil
      *
      * @param text the text
      * @return this MenuItemBuilder instance
-     * @deprecated use {@link #text(ObservableValue)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public B bindText(ObservableValue<String> text) {
-        return text(text);
-    }
-
-    /**
-     * Set the text for the MenuItem.
-     *
-     * @param text the text
-     * @return this MenuItemBuilder instance
      */
     public B text(ObservableValue<String> text) {
         this.text = text;
@@ -208,18 +184,6 @@ public abstract class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuil
     public B graphic(Node graphic) {
         this.graphic = new SimpleObjectProperty<>(graphic);
         return self();
-    }
-
-    /**
-     * Set the graphic for the MenuItem.
-     *
-     * @param graphic the graphic to use
-     * @return this MenuItemBuilder instance
-     * @deprecated use {@link #graphic(ObservableValue)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public B bindGraphic(ObservableValue<Node> graphic) {
-        return graphic(graphic);
     }
 
     /**
@@ -259,18 +223,6 @@ public abstract class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuil
      *
      * @param action the action to perform when pressed
      * @return this MenuItemBuilder instance
-     * @deprecated use {@link #action(ObservableValue)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public B bindAction(ObservableValue<? extends Runnable> action) {
-        return action(action);
-    }
-
-    /**
-     * Set action for the MenuItem.
-     *
-     * @param action the action to perform when pressed
-     * @return this MenuItemBuilder instance
      */
     public B action(ObservableValue<? extends Runnable> action) {
         this.action = PropertyConverter.convertReadOnly(action, r -> event -> r.run());
@@ -286,18 +238,6 @@ public abstract class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuil
     public B accelerator(KeyCombination accelerator) {
         this.accelerator = new SimpleObjectProperty<>(accelerator);
         return self();
-    }
-
-    /**
-     * Set the accelerator for the MenuItem.
-     *
-     * @param accelerator the {@link KeyCombination}
-     * @return this MenuItemBuilder instance
-     * @deprecated use {@link #accelerator(ObservableValue)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public B bindAccelerator(ObservableValue<KeyCombination> accelerator) {
-        return accelerator(accelerator);
     }
 
     /**
@@ -332,38 +272,10 @@ public abstract class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuil
      *
      * @param disabled the value to bind the MenuItem's disableProperty to
      * @return this MenuItemBuilder instance
-     * @deprecated use {@link #disabled(ObservableValue)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public B bindDisabled(ObservableValue<Boolean> disabled) {
-        return disabled(disabled);
-    }
-
-    /**
-     * Bind the MenuItem's disabled state to an {@link ObservableValue}.
-     *
-     * <p><strong>NOTE: </strong>Use either this method or {@link #enabled(ObservableValue)}, not both.
-     *
-     * @param disabled the value to bind the MenuItem's disableProperty to
-     * @return this MenuItemBuilder instance
      */
     public B disabled(ObservableValue<Boolean> disabled) {
         this.disabled = disabled;
         return self();
-    }
-
-    /**
-     * Bind the MenuItem's enabled state to an {@link ObservableValue}.
-     *
-     * <p><strong>NOTE: </strong>Use either this method or {@link #disabled(ObservableValue)}, not both.
-     *
-     * @param enabled the value to bind the MenuItem's disableProperty to
-     * @return this MenuItemBuilder instance
-     * @deprecated use {@link #enabled(ObservableValue)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public B bindEnabled(ObservableValue<Boolean> enabled) {
-        return enabled(enabled);
     }
 
     /**

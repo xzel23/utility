@@ -13,10 +13,8 @@ import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * The I18N class provides internationalization support for applications.
@@ -39,9 +37,6 @@ import java.util.stream.Stream;
  * This makes it possible for the application to customize library resources
  * by adding a mapping for the library resource key to be customized.
  * <p>
- * The application should implement the {@link I18NProvider} interface to announce the I18N instance to libraries.
- * Once initialised, libraries can get the instance using {@link I18N#getInstance()} and merge their own bundles.
- * <p>
  * If multiple providers are found, class initialization fails with an {@link IllegalStateException}.
  */
 public final class I18N {
@@ -51,22 +46,6 @@ public final class I18N {
 
     private final ResourceBundle mainBundle;
     private final Map<String, ResourceBundle> bundleMap = new HashMap<>();
-
-    private static I18N initFromSPI() {
-        try (Stream<ServiceLoader.Provider<I18NProvider>> stream = ServiceLoader.load(I18NProvider.class).stream()) {
-            return stream
-                    .findFirst()
-                    .map(provider -> {
-                        I18NProvider i18nProvider = provider.get();
-                        LOG.debug("I18N.Provider: {}", i18nProvider.getClass().getName());
-                        return i18nProvider.i18n();
-                    })
-                    .orElseGet(() -> {
-                        LOG.debug("no I18N.Provider found, creating empty instance");
-                        return create(emptyBundle(Locale.getDefault()));
-                    });
-        }
-    }
 
     private static ListResourceBundle emptyBundle(Locale locale) {
         return new ListResourceBundle() {
@@ -89,7 +68,7 @@ public final class I18N {
      * @return the singleton instance.
      */
     public static I18N getInstance() {
-        return INSTANCE.updateAndGet(inst -> inst == null ? initFromSPI() : inst);
+        return INSTANCE.updateAndGet(inst -> inst == null ? create("", Locale.getDefault()) : inst);
     }
 
     /**

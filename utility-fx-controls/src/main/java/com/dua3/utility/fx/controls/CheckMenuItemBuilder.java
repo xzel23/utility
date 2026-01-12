@@ -60,18 +60,6 @@ public class CheckMenuItemBuilder extends MenuItemBuilder<CheckMenuItem, CheckMe
     }
 
     /**
-     * Bind the selected state for the CheckMenuItem.
-     *
-     * @param selected the selected state observable
-     * @return this CheckMenuItemBuilder instance
-     * @deprecated use {@link #selected(ObservableValue)} instead
-     */
-    @Deprecated(since = "21", forRemoval = true)
-    public CheckMenuItemBuilder bindSelected(ObservableValue<Boolean> selected) {
-        return selected(selected);
-    }
-
-    /**
      * Set the action for the CheckMenuItem.
      *
      * @param action the action to perform when the selected state changes, receives the new state

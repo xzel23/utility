@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.PlatformHelper;
+import com.dua3.utility.i18n.I18N;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -10,6 +11,7 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -26,6 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * in sequence.
  */
 public abstract class FxTestBase {
+
+    static {
+        I18N.init(Dialogs.class.getPackageName() + ".messages", Locale.getDefault());
+    }
 
     private static boolean platformInitialized = false;
     private static Stage stage;

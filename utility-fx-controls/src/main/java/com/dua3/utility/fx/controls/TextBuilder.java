@@ -81,39 +81,11 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
      *
      * @param fill the {@link ObservableValue} representing the fill value to be bound
      * @return this instance of the builder
-     * @deprecated use {@link #fillFx(ObservableValue)} instead
-     */
-    @Override
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public TextBuilder bindFillFx(ObservableValue<Paint> fill) {
-        return fillFx(fill);
-    }
-
-    /**
-     * Binds the given {@link ObservableValue} to the fill property of the node being built.
-     * This allows the fill property of the node to dynamically reflect the value of the provided observable.
-     *
-     * @param fill the {@link ObservableValue} representing the fill value to be bound
-     * @return this instance of the builder
      */
     @Override
     public TextBuilder fillFx(ObservableValue<Paint> fill) {
         this.fill = fill;
         return self();
-    }
-
-    /**
-     * Binds the given {@link ObservableValue} to the fill property of the node being built.
-     * This allows the fill property of the node to dynamically reflect the value of the provided observable.
-     *
-     * @param fill the {@link ObservableValue} representing the fill value to be bound
-     * @return this instance of the builder
-     * @deprecated use {@link #fill(ObservableValue)} instead
-     */
-    @Override
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public TextBuilder bindFill(ObservableValue<com.dua3.utility.data.Color> fill) {
-        return fill(fill);
     }
 
     /**
@@ -160,40 +132,10 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
      *
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
      * @return this {@code TextBuilder} instance for method chaining
-     * @deprecated use {@link #fontFx(ObservableValue)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public TextBuilder bindFontFx(ObservableValue<javafx.scene.text.Font> font) {
-        return fontFx(font);
-    }
-
-    /**
-     * Binds the {@link com.dua3.utility.text.Font} property of the {@link Text} node to the specified {@link ObservableValue}.
-     *
-     * <p>This allows the font property of the node to dynamically update whenever the value
-     * in the provided observable changes.
-     *
-     * @param font the {@link ObservableValue} providing the font to bind to the node's font property
-     * @return this {@code TextBuilder} instance for method chaining
      */
     public TextBuilder fontFx(ObservableValue<javafx.scene.text.Font> font) {
         this.font = font;
         return self();
-    }
-
-    /**
-     * Binds the {@link com.dua3.utility.text.Font} property of the {@link Text} node to the specified {@link ObservableValue}.
-     *
-     * <p>This allows the font property of the node to dynamically update whenever the value
-     * in the provided observable changes.
-     *
-     * @param font the {@link ObservableValue} providing the font to bind to the node's font property
-     * @return this {@code TextBuilder} instance for method chaining
-     * @deprecated use {@link #font(ObservableValue)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public TextBuilder bindFont(ObservableValue<com.dua3.utility.text.Font> font) {
-        return font(font);
     }
 
     /**

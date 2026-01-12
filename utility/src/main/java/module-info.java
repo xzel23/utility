@@ -4,7 +4,6 @@
 // https://opensource.org/licenses/MIT
 
 import com.dua3.utility.data.ImageUtilProvider;
-import com.dua3.utility.i18n.I18NProvider;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.text.FontUtilProvider;
 import org.jspecify.annotations.NullMarked;
@@ -68,7 +67,6 @@ open module com.dua3.utility {
     requires static javafx.graphics;
 
     uses FileType;
-    uses I18NProvider;
     uses FontUtilProvider;
     uses ImageUtilProvider;
 }

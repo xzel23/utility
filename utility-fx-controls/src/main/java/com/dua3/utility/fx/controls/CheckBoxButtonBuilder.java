@@ -32,17 +32,6 @@ public class CheckBoxButtonBuilder extends ButtonBaseBuilder<CheckBox, CheckBoxB
      * Bind the button's selected state to a {@link Property<Boolean>}.
      * @param selected the property to bind this button's selected state to
      * @return this CheckBoxBuilder instance
-     * @deprecated use {@link #selected(Property)} instead
-     */
-    @Deprecated(since = "20.0.4", forRemoval = true)
-    public CheckBoxButtonBuilder bindSelected(Property<Boolean> selected) {
-        return selected(selected);
-    }
-
-    /**
-     * Bind the button's selected state to a {@link Property<Boolean>}.
-     * @param selected the property to bind this button's selected state to
-     * @return this CheckBoxBuilder instance
      */
     public CheckBoxButtonBuilder selected(Property<Boolean> selected) {
         selectedList.add(selected);

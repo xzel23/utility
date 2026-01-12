@@ -59,7 +59,7 @@ class ControlsTest extends FxTestBase {
             assertFalse(toggleButton.isSelected());
 
             // Test toggle button with initial selection
-            ToggleButton selectedToggleButton = Controls.toggleButton(true).text("Selected Toggle").build();
+            ToggleButton selectedToggleButton = Controls.toggleButton().selected(true).text("Selected Toggle").build();
             assertNotNull(selectedToggleButton);
             assertEquals("Selected Toggle", selectedToggleButton.getText());
             assertTrue(selectedToggleButton.isSelected());
@@ -71,7 +71,7 @@ class ControlsTest extends FxTestBase {
             assertFalse(checkbox.isSelected());
 
             // Test checkbox with initial selection
-            CheckBox selectedCheckbox = Controls.checkbox(true).text("Selected Checkbox").build();
+            CheckBox selectedCheckbox = Controls.checkbox().selected(true).text("Selected Checkbox").build();
             assertNotNull(selectedCheckbox);
             assertEquals("Selected Checkbox", selectedCheckbox.getText());
             assertTrue(selectedCheckbox.isSelected());
@@ -432,12 +432,6 @@ class ControlsTest extends FxTestBase {
             property.set("C");
             assertTrue(((javafx.scene.control.RadioMenuItem) menu.getItems().get(2)).isSelected());
             assertFalse(((javafx.scene.control.RadioMenuItem) menu.getItems().get(1)).isSelected());
-
-            // Test deprecated method
-            Menu deprecatedMenu = Controls.choiceMenu("Deprecated", property, values);
-            assertEquals("Deprecated", deprecatedMenu.getText());
-            assertEquals(3, deprecatedMenu.getItems().size());
-            assertTrue(((javafx.scene.control.RadioMenuItem) deprecatedMenu.getItems().get(2)).isSelected());
         });
     }
 
@@ -451,7 +445,7 @@ class ControlsTest extends FxTestBase {
             // Test menu creation with text only
             MenuItem item1 = new MenuItem("Item 1");
             MenuItem item2 = new MenuItem("Item 2");
-            Menu menu = Controls.menu("Test Menu", item1, item2);
+            Menu menu = Controls.menu().text("Test Menu").items(item1, item2).build();
             assertNotNull(menu);
             assertEquals("Test Menu", menu.getText());
             assertEquals(2, menu.getItems().size());
@@ -460,7 +454,7 @@ class ControlsTest extends FxTestBase {
 
             // Test menu creation with text and graphic
             Node graphic = new Region();
-            Menu menuWithGraphic = Controls.menu("Test Menu with Graphic", graphic, item1, item2);
+            Menu menuWithGraphic = Controls.menu().text("Test Menu with Graphic").graphic(graphic).items(item1, item2).build();
             assertNotNull(menuWithGraphic);
             assertEquals("Test Menu with Graphic", menuWithGraphic.getText());
             assertEquals(graphic, menuWithGraphic.getGraphic());
@@ -477,7 +471,7 @@ class ControlsTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             // Test menu item with text and action
             AtomicBoolean actionCalled = new AtomicBoolean(false);
-            MenuItem menuItem = Controls.menuItem("Test MenuItem", () -> actionCalled.set(true));
+            MenuItem menuItem = Controls.menuItem().text("Test MenuItem").action(() -> actionCalled.set(true)).build();
             assertNotNull(menuItem);
             assertEquals("Test MenuItem", menuItem.getText());
             assertTrue(menuItem.isVisible());
@@ -490,7 +484,7 @@ class ControlsTest extends FxTestBase {
             // Test menu item with text, graphic, and action
             AtomicBoolean action2Called = new AtomicBoolean(false);
             Node graphic = new Region();
-            MenuItem menuItemWithGraphic = Controls.menuItem("Test MenuItem with Graphic", graphic, () -> action2Called.set(true));
+            MenuItem menuItemWithGraphic = Controls.menuItem().text("Test MenuItem with Graphic").graphic(graphic).action(() -> action2Called.set(true)).build();
             assertNotNull(menuItemWithGraphic);
             assertEquals("Test MenuItem with Graphic", menuItemWithGraphic.getText());
             assertEquals(graphic, menuItemWithGraphic.getGraphic());
@@ -500,14 +494,14 @@ class ControlsTest extends FxTestBase {
             assertTrue(action2Called.get());
 
             // Test menu item with enabled state
-            MenuItem disabledMenuItem = Controls.menuItem("Disabled MenuItem", () -> {}, false);
+            MenuItem disabledMenuItem = Controls.menuItem().text("Disabled MenuItem").disabled(true).build();
             assertNotNull(disabledMenuItem);
             assertEquals("Disabled MenuItem", disabledMenuItem.getText());
             assertTrue(disabledMenuItem.isDisable());
 
             // Test menu item with observable enabled state
             SimpleBooleanProperty enabledProperty = new SimpleBooleanProperty(true);
-            MenuItem observableMenuItem = Controls.menuItem("Observable MenuItem", () -> {}, enabledProperty);
+            MenuItem observableMenuItem = Controls.menuItem().text("Observable MenuItem").enabled(enabledProperty).build();
             assertNotNull(observableMenuItem);
             assertEquals("Observable MenuItem", observableMenuItem.getText());
             assertFalse(observableMenuItem.isDisable());
@@ -527,7 +521,7 @@ class ControlsTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             // Test check menu item with text, action, and selection
             AtomicReference<Boolean> selectionState = new AtomicReference<>();
-            CheckMenuItem checkMenuItem = Controls.checkMenuItem("Test CheckMenuItem", selectionState::set, true);
+            CheckMenuItem checkMenuItem = Controls.checkMenuItem().text("Test CheckMenuItem").action(selectionState::set).selected(true).build();
             assertNotNull(checkMenuItem);
             assertEquals("Test CheckMenuItem", checkMenuItem.getText());
             assertTrue(checkMenuItem.isSelected());
@@ -541,7 +535,7 @@ class ControlsTest extends FxTestBase {
 
             // Test check menu item with property binding
             SimpleBooleanProperty selectedProperty = new SimpleBooleanProperty(true);
-            CheckMenuItem boundCheckMenuItem = Controls.checkMenuItem("Bound CheckMenuItem", selectedProperty);
+            CheckMenuItem boundCheckMenuItem = Controls.checkMenuItem().text("Bound CheckMenuItem").selected(selectedProperty).build();
             assertNotNull(boundCheckMenuItem);
             assertEquals("Bound CheckMenuItem", boundCheckMenuItem.getText());
             assertTrue(boundCheckMenuItem.isSelected());
@@ -554,8 +548,8 @@ class ControlsTest extends FxTestBase {
             boundCheckMenuItem.setSelected(true);
             assertTrue(selectedProperty.get());
 
-            // Test check menu item with enabled state
-            CheckMenuItem disabledCheckMenuItem = Controls.checkMenuItem("Disabled CheckMenuItem", selectedProperty, FxUtil.FALSE);
+            // Test check menu item with disabled state
+            CheckMenuItem disabledCheckMenuItem = Controls.checkMenuItem().text("Disabled CheckMenuItem").selected(selectedProperty).disabled(true).build();
             assertNotNull(disabledCheckMenuItem);
             assertEquals("Disabled CheckMenuItem", disabledCheckMenuItem.getText());
             assertTrue(disabledCheckMenuItem.isDisable());

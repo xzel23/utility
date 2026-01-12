@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.Node;
 import javafx.scene.control.Dialog;
