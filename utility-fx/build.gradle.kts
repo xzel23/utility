@@ -2,6 +2,7 @@ project.description = "Java utilities (JavaFX)"
 
 dependencies {
     implementation(project(":utility"))
+    compileOnly(rootProject.libs.sawmill.lumberjack)
 
     // Add dependency on javaTestUtil for tests
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))

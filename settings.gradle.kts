@@ -18,9 +18,6 @@ include("utility-fx-controls")
 include("utility-fx-db")
 include("utility-fx-web")
 include("utility-samples")
-include("utility-samples:utility-samples-commonlogger")
-include("utility-samples:utility-samples-slf4j")
-include("utility-samples:utility-samples-log4j")
 include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
 
@@ -97,6 +94,9 @@ dependencyResolutionManagement {
             library("commons-logging", "commons-logging", "commons-logging").versionRef("commons-logging")
 
             library("sawmill-lumberjack", "com.dua3.sawmill", "lumberjack").versionRef("sawmill")
+            library("sawmill-carpenter", "com.dua3.sawmill", "carpenter").versionRef("sawmill")
+//            library("sawmill-carpenter-fx", "com.dua3.sawmill", "carpenter-fx").versionRef("sawmill")
+            library("sawmill-carpenter-swing", "com.dua3.sawmill", "carpenter-swing").versionRef("sawmill")
         }
     }
 
