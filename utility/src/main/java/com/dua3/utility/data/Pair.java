@@ -168,7 +168,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @throws UnsupportedOperationException when called
      */
     @Override
-    @Deprecated
+    @Deprecated(forRemoval = false)
     public T2 setValue(T2 value) {
         throw new UnsupportedOperationException("class is immutable");
     }
