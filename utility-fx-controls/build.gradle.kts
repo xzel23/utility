@@ -9,7 +9,7 @@ dependencies {
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
     testRuntimeOnly(project(":utility-fx-icons-ikonli"))
     testRuntimeOnly(libs.ikonli.fontawesome6)
-    testRuntimeOnly(libs.sawmill.lumberjack)
+    testRuntimeOnly(libs.slb4j)
 }
 
 // Configure tests to run in a forked JVM

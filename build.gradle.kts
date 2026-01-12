@@ -210,7 +210,7 @@ subprojects {
                 val test by getting(JvmTestSuite::class) {
                     useJUnitJupiter()
                     dependencies {
-                        implementation(rootProject.libs.sawmill.lumberjack)
+                        implementation(rootProject.libs.slb4j)
                         implementation(rootProject.libs.jimfs)
                     }
                     targets {

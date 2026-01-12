@@ -2,11 +2,11 @@ project.description = "Java utilities (JavaFX)"
 
 dependencies {
     implementation(project(":utility"))
-    compileOnly(rootProject.libs.sawmill.lumberjack)
+    compileOnly(rootProject.libs.slb4j)
 
     // Add dependency on javaTestUtil for tests
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
-    testImplementation(rootProject.libs.sawmill.lumberjack)
+    testImplementation(rootProject.libs.slb4j)
 }
 
 // Configure tests to run in a forked JVM

@@ -6,7 +6,7 @@ dependencies {
     implementation(rootProject.libs.miglayout.swing)
     implementation(rootProject.libs.log4j.api)
     implementation(rootProject.libs.slf4j.api)
-    implementation(rootProject.libs.sawmill.lumberjack)
+    implementation(rootProject.libs.slb4j)
 }
 
 tasks.register<JavaExec>("runSwingComboBoxExSample") {

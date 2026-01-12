@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":utility-fx"))
     implementation(project(":utility-fx-controls"))
     implementation(project(":utility-swing"))
-    implementation(rootProject.libs.sawmill.lumberjack)
+    implementation(rootProject.libs.slb4j)
 }
 
 fun createJavaFxRunTask(taskName: String, mainClassName: String, taskDescription: String) {

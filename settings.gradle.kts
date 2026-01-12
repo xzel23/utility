@@ -57,7 +57,7 @@ dependencyResolutionManagement {
             version("junit-bom", "6.0.1")
             version("log4j-bom", "2.25.3")
             version("miglayout", "11.4.2")
-            version("sawmill", "0.1-SNAPSHOT")
+            version("slb4j", "0.1-SNAPSHOT")
             version("slf4j", "2.0.17")
             version("spotbugs", "4.9.8")
             version("bouncycastle", "1.83")
@@ -93,10 +93,10 @@ dependencyResolutionManagement {
 
             library("commons-logging", "commons-logging", "commons-logging").versionRef("commons-logging")
 
-            library("sawmill-lumberjack", "com.dua3.sawmill", "lumberjack").versionRef("sawmill")
-            library("sawmill-carpenter", "com.dua3.sawmill", "carpenter").versionRef("sawmill")
-//            library("sawmill-carpenter-fx", "com.dua3.sawmill", "carpenter-fx").versionRef("sawmill")
-            library("sawmill-carpenter-swing", "com.dua3.sawmill", "carpenter-swing").versionRef("sawmill")
+            library("slb4j", "org.slb4j", "slb4j").versionRef("slb4j")
+            library("sawmill-carpenter", "com.dua3.sawmill", "carpenter").versionRef("slb4j")
+//            library("sawmill-carpenter-fx", "com.dua3.sawmill", "carpenter-fx").versionRef("slb4j")
+            library("sawmill-carpenter-swing", "com.dua3.sawmill", "carpenter-swing").versionRef("slb4j")
         }
     }
 

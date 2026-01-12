@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":utility-fx-icons-ikonli"))
     implementation(rootProject.libs.atlantafx)
     implementation(rootProject.libs.slf4j.api)
-    implementation(rootProject.libs.sawmill.lumberjack)
+    implementation(rootProject.libs.slb4j)
     runtimeOnly(rootProject.libs.ikonli.fontawesome6)
     runtimeOnly(rootProject.libs.ikonli.javafx)
 }
@@ -50,11 +50,6 @@ createJavaFxRunTask(
     "runFxDialogSample",
     "com.dua3.utility.samples.fx.FxDialogSample",
     "Run the DialogSample application."
-)
-createJavaFxRunTask(
-    "runFxLogPaneSample",
-    "com.dua3.utility.samples.fx.FxLogPaneSample",
-    "Run the FxLogPaneSample application."
 )
 createJavaFxRunTask(
     "runIconViewSample",
