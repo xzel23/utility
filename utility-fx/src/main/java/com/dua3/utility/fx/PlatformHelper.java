@@ -104,8 +104,7 @@ public final class PlatformHelper {
      * Throws an exception if it is not.
      */
     public static void checkApplicationThread() {
-        boolean isFxApplicationThread = Platform.isFxApplicationThread();
-        if (!isFxApplicationThread) {
+        if (!Platform.isFxApplicationThread()) {
             LOG.error("not on FX Application Thread");
             throw new IllegalStateException("not on FX Application Thread");
         }
