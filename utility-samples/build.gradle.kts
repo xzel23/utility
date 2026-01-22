@@ -1,5 +1,10 @@
 project.description = "Java utilities (samples)"
 
+jdk {
+    version = 25
+    javaFxBundled = true
+}
+
 dependencies {
     implementation(project(":utility"))
     implementation(project(":utility-swing"))
