@@ -108,29 +108,8 @@ val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snaps
 // Subprojects configuration
 /////////////////////////////////////////////////////////////////////////////
 
-subprojects {
-
-    // Set project version from root libs.versions
-    project.version = rootProject.libs.versions.projectVersion.get()
-
-    // Apply common plugins
-    apply(plugin = "maven-publish")
-    apply(plugin = "version-catalog")
-    apply(plugin = "signing")
-    apply(plugin = "idea")
+allprojects {
     apply(plugin = rootProject.libs.plugins.jdk.get().pluginId)
-    apply(plugin = rootProject.libs.plugins.versions.get().pluginId)
-    apply(plugin = rootProject.libs.plugins.test.logger.get().pluginId)
-
-    // Skip some plugins for BOM project
-    if (!project.name.endsWith("-bom")) {
-        apply(plugin = "jacoco")
-        apply(plugin = "java-library")
-        apply(plugin = "jvm-test-suite")
-        apply(plugin = rootProject.libs.plugins.spotbugs.get().pluginId)
-        apply(plugin = rootProject.libs.plugins.cabe.get().pluginId)
-        apply(plugin = rootProject.libs.plugins.jmh.get().pluginId)
-    }
 
     jdk {
         version = 21
@@ -146,6 +125,29 @@ subprojects {
                 javaFxBundled = true
             }
         }
+    }
+}
+
+subprojects {
+    // Set project version from root libs.versions
+    project.version = rootProject.libs.versions.projectVersion.get()
+
+    // Apply common plugins
+    apply(plugin = "maven-publish")
+    apply(plugin = "version-catalog")
+    apply(plugin = "signing")
+    apply(plugin = "idea")
+    apply(plugin = rootProject.libs.plugins.versions.get().pluginId)
+    apply(plugin = rootProject.libs.plugins.test.logger.get().pluginId)
+
+    // Skip some plugins for BOM project
+    if (!project.name.endsWith("-bom")) {
+        apply(plugin = "jacoco")
+        apply(plugin = "java-library")
+        apply(plugin = "jvm-test-suite")
+        apply(plugin = rootProject.libs.plugins.spotbugs.get().pluginId)
+        apply(plugin = rootProject.libs.plugins.cabe.get().pluginId)
+        apply(plugin = rootProject.libs.plugins.jmh.get().pluginId)
     }
 
     // Java configuration for non-BOM projects
@@ -432,11 +434,12 @@ tasks.register("publishToStagingDirectory") {
 tasks.register<Javadoc>("aggregateJavadoc") {
     group = "documentation"
     description = "Generates aggregated Javadoc for all subprojects"
-    executable = jdk.jdkHome.get()
-        .file("bin/javadoc${if (System.getProperty("os.name").contains("Windows", ignoreCase = true)) ".exe" else ""}")
-        .toString()
     setDestinationDir(layout.buildDirectory.dir("docs/javadoc").get().asFile)
     setTitle("${rootProject.name} ${project.version} API")
+
+    // Set executable in doFirst to keep it lazy
+    val extension = if (System.getProperty("os.name").contains("Windows", ignoreCase = true)) ".exe" else ""
+    executable = jdk.jdkHome.get().file("bin/javadoc$extension").asFile.absolutePath
 
     // Disable module path inference
     modularity.inferModulePath.set(false)
