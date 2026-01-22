@@ -40,6 +40,9 @@ import java.util.function.Supplier;
  */
 public class ArgumentsDialog extends JDialog {
 
+    /**
+     * The {@link ArgumentsPanel} instance that contains the input fields.
+     */
     private final ArgumentsPanel panel;
 
     /**

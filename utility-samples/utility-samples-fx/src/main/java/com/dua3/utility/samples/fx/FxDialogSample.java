@@ -31,6 +31,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.slb4j.SLB4J;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -52,6 +53,7 @@ public class FxDialogSample extends Application {
     private static final Locale LOCALE_WHEN_STARTED = Locale.getDefault();
 
     static {
+        SLB4J.init();
         ApplicationUtil.initApplicationPreferences(Preferences.userNodeForPackage(FxDialogSample.class));
         ApplicationUtil.addDarkModeListener(FxDialogSample::setDarkMode);
         ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT);

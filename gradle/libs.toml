@@ -11,7 +11,7 @@ jspecify = "1.0.0"
 junit-bom = "6.0.2"
 log4j-bom = "2.25.3"
 miglayout = "11.4.2"
-slb4j = "0.1-beta"
+slb4j = "0.1-beta2"
 slf4j = "2.0.17"
 spotbugs = "4.9.8"
 
@@ -46,6 +46,8 @@ miglayout-swing = { group = "com.miglayout", name = "miglayout-swing", version.r
 sawmill-carpenter = { group = "com.dua3.sawmill", name = "carpenter", version.ref = "slb4j" }
 sawmill-carpenter-swing = { group = "com.dua3.sawmill", name = "carpenter-swing", version.ref = "slb4j" }
 slb4j = { group = "org.slb4j", name = "slb4j", version.ref = "slb4j" }
+slb4j-ext = { group = "org.slb4j", name = "slb4j-ext", version.ref = "slb4j" }
+slb4j-ext-fx = { group = "org.slb4j", name = "slb4j-ext-fx", version.ref = "slb4j" }
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
 
 [plugins]

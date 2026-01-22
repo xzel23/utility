@@ -3,10 +3,14 @@ project.description = "Java utilities (JavaFX)"
 dependencies {
     implementation(project(":utility"))
     compileOnly(rootProject.libs.slb4j)
+    compileOnly(rootProject.libs.slb4j.ext)
+    compileOnly(rootProject.libs.slb4j.ext.fx)
 
     // Add dependency on javaTestUtil for tests
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
     testImplementation(rootProject.libs.slb4j)
+    testImplementation(rootProject.libs.slb4j.ext)
+    testImplementation(rootProject.libs.slb4j.ext.fx)
 }
 
 // Configure tests to run in a forked JVM

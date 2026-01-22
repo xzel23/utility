@@ -5,12 +5,18 @@ import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.options.Repetitions;
 import javafx.application.Application;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
+import org.slb4j.LogFilter;
+import org.slb4j.LogLevel;
+import org.slb4j.SLB4J;
+import org.slb4j.ext.LogBuffer;
+import org.slb4j.ext.LogEntryFilter;
+import org.slb4j.ext.fx.FxLogPane;
+import org.slb4j.ext.fx.FxLogWindow;
+import org.slb4j.filter.LoggerNameFilter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -70,7 +76,23 @@ public final class FxLauncher {
      */
     public static final int RC_ERROR = 1;
 
+    private static final @Nullable Method LOGUTIL_INITIALISER;
+    private static final String LOG_MESSAGES = I18NInstance.get().get("dua3.utility.fx.controls.launcher.log.messages");
+
+    static {
+        Method initialiser = null;
+        try {
+            Class<?> clazz = Class.forName("com.dua3.utility.logging.log4j.LogUtilLog4J");
+            initialiser = clazz.getDeclaredMethod("init", LogLevel.class);
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            // do nothing
+        }
+        LOGUTIL_INITIALISER = initialiser;
+    }
+
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
+    static @Nullable LogBuffer logBuffer = null;
+    static boolean showLogWindow = false;
     static boolean debug = false;
     static boolean enableAssertions = false;
 
@@ -261,8 +283,37 @@ public final class FxLauncher {
             );
         }
 
-        if (com.dua3.utility.fx.FxLauncherLogging.isLoggingSupported()) {
-            com.dua3.utility.fx.FxLauncherLogging.addLoggingOptions(agp);
+        if (LOGUTIL_INITIALISER != null) {
+            agp.addFlag(
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.description"),
+                    v -> showLogWindow = v,
+                    "--log-window", "-lw"
+            );
+            agp.addFlag(
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.description"),
+                    v -> debug = v,
+                    "--debug"
+            );
+            agp.addStringOption(
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_filter.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_filter.description"),
+                    Repetitions.ZERO_OR_ONE,
+                    "regex",
+                    pattern -> {
+                        SLB4J.getDispatcher().setFilter(new LoggerNameFilter("regex", Pattern.compile(pattern).asPredicate()));
+                    },
+                    "--log-filter", "-lf"
+            );
+            agp.addIntegerOption(
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.description"),
+                    Repetitions.ZERO_OR_ONE,
+                    "size",
+                    size -> logBuffer = new LogBuffer("Application Log Buffer", size),
+                    "--log-buffer-size", "-ls"
+            );
         }
 
         for (Consumer<ArgumentsParserBuilder> addOption : addOptions) {
@@ -281,9 +332,7 @@ public final class FxLauncher {
 
         arguments.handle();
 
-                    /*
-        if ((showLogWindow || debug)) {
-            FxLauncherLogging.configureLogging();
+        if ((showLogWindow || debug) && LOGUTIL_INITIALISER != null) {
             try {
                 LOGUTIL_INITIALISER.invoke(null, LogLevel.TRACE);
             } catch (IllegalAccessException | InvocationTargetException e) {
@@ -292,10 +341,8 @@ public final class FxLauncher {
             if (logBuffer == null) {
                 logBuffer = new LogBuffer();
             }
-            LogUtil.getGlobalDispatcher().addLogHandler(logBuffer);
-
+            SLB4J.getDispatcher().addLogHandler(logBuffer);
         }
-                     */
 
         Logger log = LogManager.getLogger(FxLauncher.class);
         int rc;
@@ -309,7 +356,7 @@ public final class FxLauncher {
             @SuppressWarnings("unchecked")
             Class<? extends Application> applicationClass = (Class<? extends Application>) loader.loadClass(applicationClassName);
             log.info("starting application: {}", applicationClass.getName());
-            showLogWindow(null, appName + " - Log");
+            showLogWindow(null, appName + " - " + LOG_MESSAGES);
             launch(applicationClass, args);
             rc = RC_SUCCESS;
         } catch (Exception e) {
@@ -319,6 +366,15 @@ public final class FxLauncher {
 
         log.info("application finished with rc: {}", rc);
         return rc;
+    }
+
+    /**
+     * Retrieves the current LogBuffer instance if it is available.
+     *
+     * @return an {@link Optional} containing the LogBuffer instance if it exists, or an empty {@link Optional} if not.
+     */
+    public static Optional<LogBuffer> getLogBuffer() {
+        return Optional.ofNullable(logBuffer);
     }
 
     /**
@@ -336,7 +392,7 @@ public final class FxLauncher {
      * @return true if the log window is configured to be displayed, false otherwise.
      */
     public static boolean isShowLogWindow() {
-        return com.dua3.utility.fx.FxLauncherLogging.showLogWindow;
+        return showLogWindow;
     }
 
     /**
@@ -344,25 +400,49 @@ public final class FxLauncher {
      *
      * @param owner the owner window for the log window; can be null if no parent stage is specified.
      * @param title the title of the log window to be displayed.
-     * @return an {@link Optional} containing the {@link Stage} of the FxLogWindow instance if the log window is displayed,
+     * @return an {@link Optional} containing the {@link FxLogWindow} instance if the log window is displayed,
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
-    public static Optional<Stage> showLogWindow(@Nullable Window owner, String title) {
-        return com.dua3.utility.fx.FxLauncherLogging.showLogWindow(owner, title);
+    public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner, String title) {
+        return PlatformGuard.run(() -> {
+            if (logBuffer != null) {
+                FxLogWindow logWindow = PlatformHelper.runAndWait(() -> {
+                    FxLogWindow window = new FxLogWindow(title, getLogBuffer().orElseThrow());
+                    window.initOwner(owner);
+                    window.show();
+                    return window;
+                });
+                return Optional.ofNullable(logWindow);
+            } else {
+                return Optional.empty();
+            }
+        });
     }
 
     /**
      * Displays a log window for the application, if configured to do so.
      *
      * @param owner the owner window for the log window; can be null if no parent stage is specified.
-     * @return an {@link Optional} containing the {@link Stage} of the FxLogWindow instance if the log window is displayed,
+     * @return an {@link Optional} containing the {@link FxLogWindow} instance if the log window is displayed,
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
-    public static Optional<Stage> showLogWindow(@Nullable Window owner) {
-        return com.dua3.utility.fx.FxLauncherLogging.showLogWindow(owner);
+    public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner) {
+        return showLogWindow(owner, LOG_MESSAGES);
     }
 
-    public static Optional<Pane> getLogPane() {
-        return com.dua3.utility.fx.FxLauncherLogging.getLogPane();
+    /**
+     * Retrieves an instance of the {@link FxLogPane} if the log pane is configured to be displayed.
+     *
+     * @return an {@link Optional} containing the {@link FxLogPane} instance if the log pane is enabled,
+     *         or an empty {@link Optional} if the log pane is disabled.
+     */
+    public static Optional<FxLogPane> getLogPane() {
+        return PlatformGuard.run(() -> {
+            if (!debug) {
+                return Optional.empty();
+            }
+
+            return Optional.of(new FxLogPane(getLogBuffer().orElseThrow()));
+        });
     }
 }
