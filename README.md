@@ -13,7 +13,6 @@ Some libraries with utility classes.
 | utility         | general purpose utilities                           | com.dua3.utility         |
 | utility-db      | database utilities                                  | com.dua3.utility.db      |
 | utility-fx      | JavaFX utilities                                    | com.dua3.utility.fx      |
-| utility-logging | logging utilities and simple logging implementation | com.dua3.utility.logging |
 | utility-samples | samples                                             | com.dua3.utility.samples |
 | utility-swing   | swing utilities                                     | com.dua3.utility.swing   |
 
@@ -239,9 +238,29 @@ could not be loaded.
 
 ## Changes
 
-### 20.4.3 (in development)
+### 21 (in development)
 
-- IMPORTANT: deprecate for removal the I18NProvider interface; use `I18N.init(basename, locale)` instead
+#### Breaking Changes
+
+- The I18NProvider interface has been removed; use `I18N.init(basename, locale)` instead, it is recommended to
+  do this in a static initializer block.
+- The utility-logging, utility-logging-slf4j, and logging-utility-log4j modules have been removed. A new independent
+  project, SLB4J, was started to provide an easy to use logging backend compatible with the four
+  major logging facades/frameworks (JUL, JCL, SLF4J, and Log4J). SLB4J has zero runtime dependencies,
+  does not introduce any runtime dependencies and works without any bridge handlers for the different
+  frontends. The logging performance is comparable to and in many cases superior to Log4J and Logback.
+- The UI logging components SwingLogPane/FxLogPane and SwingLogWindow/FxLogWindow have also been moved
+  to the SLB4J project (artifact slb4j-ext-swing/slb4j-ext-fx).
+
+#### Changes to the Build Process
+
+- It is now possible to build the library directly on Windows ARM.
+- Instead of Gradle Toolchains, the Jdkprovider Gradle plugin is used to manage JDK versions. This was necessary to
+  support building on Windows ARM.
+- The versions catalogue previously defined in settings.gradle.kts has been moved to gradle/libs.versions.toml.
+
+#### Other Changes
+
 - fix: remove --enable-native-access=javafx.graphics from native-image configuration for base project that does not use
   JavaFX
 - fix: required field message should only be shown when a required field marker is set and should contain the configured symbol
