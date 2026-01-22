@@ -48,7 +48,7 @@ jobs:
             toolchains
 
       - name: 'Execute Gradle build'
-        run: gradle --no-daemon --build-cache assemble testClasses aggregateJavadoc publishToStagingDirectory
+        run: gradle --no-daemon --build-cache assemble testClasses publishToStagingDirectory
         id: compile
 
       # Upload build artifacts for other jobs to use
