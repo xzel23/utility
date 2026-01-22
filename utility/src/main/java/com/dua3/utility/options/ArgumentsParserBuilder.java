@@ -690,7 +690,6 @@ public class ArgumentsParserBuilder {
      * @return an {@link Option} representing the configured option for the specified record type
      * @throws IllegalArgumentException if a record component's type is unsupported
      */
-    @SuppressWarnings("unchecked")
     public <T extends Record> Option<T> addRecordOption(
             String displayName,
             String description,

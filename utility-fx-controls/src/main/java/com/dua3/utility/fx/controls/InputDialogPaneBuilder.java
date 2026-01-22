@@ -277,6 +277,17 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
         return this;
     }
 
+    /**
+     * Sets the validation logic for the dialog inputs.
+     *
+     * @param validate a function that takes a map of input field values, where the keys represent
+     *                 field identifiers and the values represent their corresponding input values.
+     *                 The function returns a map where the keys are the input field identifiers,
+     *                 and the values are {@code Optional} instances containing validation error
+     *                 messages, if any. An empty {@code Optional} indicates no validation error
+     *                 for the corresponding field.
+     * @return this {@code InputDialogPaneBuilder} instance for method chaining.
+     */
     public InputDialogPaneBuilder validate(Function<Map<String, Object>, Map<String, Optional<String>>> validate) {
         pb.validate(validate);
         return this;

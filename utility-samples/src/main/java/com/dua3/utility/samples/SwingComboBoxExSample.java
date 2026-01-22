@@ -26,7 +26,6 @@ import java.util.stream.Stream;
  * This class extends {@code JFrame} to create the Swing GUI and uses the
  * {@code MigLayout} layout manager for flexible component positioning.
  */
-@SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait", "NonConstantLogger", "UseOfSystemOutOrSystemErr"})
 public class SwingComboBoxExSample extends JFrame {
 
     /**

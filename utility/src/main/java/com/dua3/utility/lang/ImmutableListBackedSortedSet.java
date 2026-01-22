@@ -224,7 +224,6 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
      *         where the element would be added to maintain sorted order
      */
     private int getIndex(@Nullable Object element) {
-        @SuppressWarnings("unchecked")
         Comparator<? super T> cmp = LangUtil.orNaturalOrder(comparator);
         @SuppressWarnings("unchecked")
         T e = (T) element;

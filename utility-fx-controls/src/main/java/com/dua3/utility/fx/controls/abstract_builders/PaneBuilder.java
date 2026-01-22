@@ -45,7 +45,6 @@ public abstract class PaneBuilder<D extends Pane & Supplier<R>, B extends PaneBu
      * @param s the next string to be set
      * @return this builder instance
      */
-    @SuppressWarnings("unchecked")
     public B next(String s) {
         this.next = Map.of(ButtonType.NEXT, s);
         return self();

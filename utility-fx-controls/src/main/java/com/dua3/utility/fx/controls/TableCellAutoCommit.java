@@ -136,7 +136,7 @@ public class TableCellAutoCommit<S, T> extends TableCell<S, T> {
             TableView<S> table = getTableView();
             if (table != null) {
                 TableColumn<S, T> column = getTableColumn();
-                @SuppressWarnings("DataFlowIssue") CellEditEvent<S, T> event = new CellEditEvent<>(
+                CellEditEvent<S, T> event = new CellEditEvent<>(
                         table, new TablePosition<>(table, getIndex(), column), TableColumn.editCommitEvent(), newValue
                 );
                 Event.fireEvent(column, event);

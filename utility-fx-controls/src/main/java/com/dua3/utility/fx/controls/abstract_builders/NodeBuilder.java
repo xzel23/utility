@@ -18,7 +18,10 @@ import java.util.function.Supplier;
  * @param <B> the type of the concrete builder
  */
 public abstract class NodeBuilder<N extends Node, B extends NodeBuilder<N, B>> {
+
+    /** The supplier that provides new instances of the node type to be built. */
     protected Supplier<? extends N> factory;
+
     private @Nullable ObservableValue<Boolean> disabled = null;
 
     /**

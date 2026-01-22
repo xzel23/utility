@@ -1,7 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import javafx.beans.property.Property;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckMenuItem;

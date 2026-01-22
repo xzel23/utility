@@ -48,7 +48,6 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static final ImmutableSortedMap<?, ?> EMPTY_MAP = new ImmutableSortedMap<>(new Comparable[0], new Object[0], null);
 
     private final K[] keys;
@@ -220,7 +219,6 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public V get(Object key) {
         int idx = keyIndex(key);

@@ -654,7 +654,6 @@ public record Param<T>(
      * @param repetitions Specifies the allowed repetition rules for the parameter.
      * @return A parameter representing a list of strings.
      */
-    @SuppressWarnings("unchecked")
     public static Param<List<String>> ofStrings(
             String displayName, String description, String argName,
             Repetitions repetitions

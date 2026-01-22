@@ -196,7 +196,6 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
         );
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T> @Nullable T getValue(Option<T> option, Arguments values) {
         return values.get(option).orElseGet(() -> option.getDefault().orElse(null));
     }

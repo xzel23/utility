@@ -67,7 +67,6 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
      * @param args the arguments passed to the formatter
      * @return {@code this}
      */
-    @SuppressWarnings("unchecked")
     public B title(String fmt, Object... args) {
         this.title = format(fmt, args);
         return self();

@@ -2633,11 +2633,11 @@ public final class LangUtil {
         return app;
     }
 
-    private static final class CachingStringSupplier implements Supplier<String>{
+    private static final class CachingStringSupplier implements Supplier<String> {
         private final Supplier<String> supplier;
         private @Nullable String s;
 
-        CachingStringSupplier (Supplier<String> supplier) {
+        CachingStringSupplier(Supplier<String> supplier) {
             this.supplier = supplier;
             s = null;
         }

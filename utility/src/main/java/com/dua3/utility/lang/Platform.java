@@ -146,7 +146,8 @@ public enum Platform {
             detected = (Boolean) imageInfoClass
                     .getMethod("inImageRuntimeCode")
                     .invoke(null);
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                 InvocationTargetException e) {
             // ignore
             detected = false;
         }

@@ -44,7 +44,6 @@ public final class PromptBuilder extends DialogBuilder<PromptDialog, PromptBuild
      * @param parentWindow the parent window of the dialog, or null if there is no parent
      * @param formatter    the message formatter to format strings for the dialog
      */
-    @SuppressWarnings("unchecked")
     PromptBuilder(@Nullable Window parentWindow, MessageFormatter formatter) {
         super(formatter, parentWindow);
         setDialogSupplier(this::createDialog);

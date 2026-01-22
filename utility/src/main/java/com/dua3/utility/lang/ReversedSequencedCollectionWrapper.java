@@ -48,7 +48,6 @@ public class ReversedSequencedCollectionWrapper<T extends @Nullable Object> impl
         return delegate.contains(o);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Iterator<T> iterator() {
         return new ArrayList<>(delegate).reversed().iterator();

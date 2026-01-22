@@ -135,7 +135,7 @@ public record MarkerSymbols(
     /**
      * Returns the symbol associated with the 'required' state, prioritizing the 'empty',
      * 'error', and 'filled' states in that order.
-     *
+     * <p>
      * Specifically:
      * - If the requiredEmpty symbol is not empty, it is returned.
      * - Otherwise, if the requiredError symbol is not empty, it is returned.
