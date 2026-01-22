@@ -16,12 +16,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Setup JDK 21 for build
-      - name: 'Set up JDK 21'
+      # Setup the JDK for the build
+      - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '25'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -88,11 +88,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: 'Set up JDK 21'
+      - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '25'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -147,11 +147,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: 'Set up JDK 21'
+      - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '25'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -194,11 +194,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 'Set up JDK 21'
+      - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '25'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -258,8 +258,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Setup JDK 25 with JavaFX
-      - name: 'Set up JDK 25 with JavaFX'
+      # Set up JDK
+      - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
@@ -306,11 +306,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: 'Set up JDK 21'
+      - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '25'
           java-package: 'jdk+fx'
           cache: 'gradle'
 
