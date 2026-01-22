@@ -17,16 +17,12 @@ dependencies {
         api("com.dua3.utility:utility-fx-controls:${project.version}")
         api("com.dua3.utility:utility-fx-db:${project.version}")
         api("com.dua3.utility:utility-fx-web:${project.version}")
-        api("com.dua3.utility:utility-logging:${project.version}")
-        api("com.dua3.utility:utility-logging-slf4j:${project.version}")
-        api("com.dua3.utility:utility-logging-log4j:${project.version}")
 
         // Common dependencies
         api(rootProject.libs.jspecify)
 
         // Logging dependencies
         api("org.apache.logging.log4j:log4j-api:${rootProject.libs.versions.log4j.bom.get()}")
-        api("org.slf4j:slf4j-api:${rootProject.libs.versions.slf4j.get()}")
 
         // JavaFX and UI dependencies
         api(rootProject.libs.ikonli.javafx)

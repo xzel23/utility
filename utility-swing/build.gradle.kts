@@ -1,7 +1,6 @@
 dependencies {
     implementation(project(":utility"))
 
-    // Use the regular logging setup for tests
     testImplementation(rootProject.libs.slb4j)
     testImplementation(rootProject.libs.jimfs)
 
