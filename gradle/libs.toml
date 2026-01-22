@@ -36,7 +36,6 @@ ikonli-fontawesome6 = { group = "org.kordamp.ikonli", name = "ikonli-fontawesome
 ikonli-javafx = { group = "org.kordamp.ikonli", name = "ikonli-javafx", version.ref = "ikonli" }
 jimfs = { group = "com.google.jimfs", name = "jimfs", version.ref = "jimfs" }
 jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }
-jul-to-slf4j = { group = "org.slf4j", name = "jul-to-slf4j", version.ref = "slf4j" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit-bom" }
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api" }
 junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine" }
@@ -48,7 +47,6 @@ sawmill-carpenter = { group = "com.dua3.sawmill", name = "carpenter", version.re
 sawmill-carpenter-swing = { group = "com.dua3.sawmill", name = "carpenter-swing", version.ref = "slb4j" }
 slb4j = { group = "org.slb4j", name = "slb4j", version.ref = "slb4j" }
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
-slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j" }
 
 [plugins]
 cabe = { id = "com.dua3.cabe", version.ref = "cabe-plugin" }
