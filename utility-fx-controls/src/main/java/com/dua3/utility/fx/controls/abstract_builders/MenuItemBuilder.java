@@ -279,6 +279,20 @@ public abstract class MenuItemBuilder<M extends MenuItem, B extends MenuItemBuil
     }
 
     /**
+     * Set the MenuItem's enabled state to the supplied value.
+     *
+     * <p><strong>NOTE: </strong>Do not use together with {@link #enabled(ObservableValue)} and
+     * {@link #disabled(ObservableValue)}.
+     *
+     * @param enabled the inverse value to bind the MenuItem's disableProperty to
+     * @return this MenuItemBuilder instance
+     */
+    public B enabled(boolean enabled) {
+        this.disabled = new SimpleBooleanProperty(!enabled);
+        return self();
+    }
+
+    /**
      * Bind the MenuItem's enabled state to an {@link ObservableValue}.
      *
      * <p><strong>NOTE: </strong>Use either this method or {@link #disabled(ObservableValue)}, not both.
