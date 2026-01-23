@@ -242,6 +242,7 @@ could not be loaded.
 
 #### Breaking Changes
 
+- All classes aand methods that have previously been marked as deprecated for removal have been removed.
 - The I18NProvider interface has been removed; use `I18N.init(basename, locale)` instead, it is recommended to
   do this in a static initializer block.
 - The utility-logging, utility-logging-slf4j, and logging-utility-log4j modules have been removed. A new independent
