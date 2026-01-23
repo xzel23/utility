@@ -7,6 +7,7 @@ import com.dua3.utility.swing.ArgumentsDialog;
 import com.dua3.utility.swing.ComboBoxEx;
 import com.dua3.utility.swing.SwingUtil;
 import net.miginfocom.swing.MigLayout;
+import org.slb4j.SLB4J;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -27,6 +28,10 @@ import java.util.stream.Stream;
  * {@code MigLayout} layout manager for flexible component positioning.
  */
 public class SwingComboBoxExSample extends JFrame {
+
+    static {
+        SLB4J.init();
+    }
 
     /**
      * The entry point to execute the `SwingComboBoxExSample` application.

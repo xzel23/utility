@@ -16,4 +16,5 @@ open module com.dua3.utility.samples {
     requires org.apache.logging.log4j;
     requires org.slf4j;
     requires java.logging;
+    requires org.slb4j;
 }

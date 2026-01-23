@@ -24,4 +24,5 @@ open module com.dua3.utility.samples.graphics {
     requires javafx.graphics;
     requires com.dua3.utility.fx.controls;
     requires java.desktop;
+    requires org.slb4j;
 }

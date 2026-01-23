@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import org.slb4j.SLB4J;
 
 /**
  * The IconViewSample class is a JavaFX application that displays an icon from the icon provider.
@@ -14,6 +15,10 @@ import javafx.stage.Stage;
  * The start method sets up the primary stage with an IconView displaying an icon with specified parameters.
  */
 public class IconViewSample extends Application {
+
+    static {
+        SLB4J.init();
+    }
 
     /**
      * The main entry point for the application.

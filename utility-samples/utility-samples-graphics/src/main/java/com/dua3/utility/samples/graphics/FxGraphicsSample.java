@@ -7,6 +7,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
+import org.slb4j.SLB4J;
 
 import java.util.function.Supplier;
 
@@ -16,6 +17,10 @@ import java.util.function.Supplier;
  * The start method sets up the primary stage with an IconView displaying an icon with specified parameters.
  */
 public class FxGraphicsSample extends Application implements IGraphicsSample<Tab> {
+
+    static {
+        SLB4J.init();
+    }
 
     /**
      * The main entry point for the application.

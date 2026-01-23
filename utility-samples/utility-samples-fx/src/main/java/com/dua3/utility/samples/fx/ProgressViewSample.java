@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.slb4j.SLB4J;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,6 +17,10 @@ import java.util.concurrent.Executors;
  * It uses an ExecutorService to manage a fixed pool of threads for task execution.
  */
 public class ProgressViewSample extends Application {
+
+    static {
+        SLB4J.init();
+    }
 
     final ExecutorService pool = Executors.newFixedThreadPool(3,
             Thread.ofVirtual().name("sample-").factory()

@@ -2,6 +2,7 @@ package com.dua3.utility.samples;
 
 import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.application.UiMode;
+import org.slb4j.SLB4J;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
@@ -23,6 +24,10 @@ import java.awt.event.WindowEvent;
  * and renders in light/dark according to ApplicationUtil's active dark mode.
  */
 public final class DarkModeSample {
+
+    static {
+        SLB4J.init();
+    }
 
     private DarkModeSample() {
         // no instances

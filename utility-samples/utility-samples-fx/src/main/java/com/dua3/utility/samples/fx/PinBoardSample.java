@@ -23,6 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
+import org.slb4j.SLB4J;
 
 import java.security.SecureRandom;
 import java.util.Formatter;
@@ -34,6 +35,10 @@ import java.util.Formatter;
  * information about the board's content.
  */
 public class PinBoardSample extends Application {
+
+    static {
+        SLB4J.init();
+    }
 
     private static final SecureRandom RANDOM = new SecureRandom();
     private final PinBoard pinBoard = new PinBoard();
