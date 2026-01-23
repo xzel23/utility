@@ -242,7 +242,7 @@ could not be loaded.
 
 #### Breaking Changes
 
-- All classes aand methods that have previously been marked as deprecated for removal have been removed.
+- All classes and methods that have previously been marked as deprecated for removal have been removed.
 - The I18NProvider interface has been removed; use `I18N.init(basename, locale)` instead, it is recommended to
   do this in a static initializer block.
 - The utility-logging, utility-logging-slf4j, and logging-utility-log4j modules have been removed. A new independent
@@ -252,6 +252,19 @@ could not be loaded.
   frontends. The logging performance is comparable to and in many cases superior to Log4J and Logback.
 - The UI logging components SwingLogPane/FxLogPane and SwingLogWindow/FxLogWindow have also been moved
   to the SLB4J project (artifact slb4j-ext-swing/slb4j-ext-fx).
+
+#### I18N
+
+All JavaFX components support I18N for use in localized applications. Make sure to initialize the global
+I18N instance at application start with a locale supported by your application.
+
+Translations have been added for the following languages:
+
+- The official EU languages: Bulgarian, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French,
+  German, Greek, Hungarian, Irish (Gaelic), Italian, Latvian, Lithuanian, Maltese, Polish, Portuguese, Romanian,
+  Slovak, Slovenian, Spanish, Swedish.
+- The CJK languages: Chinese (simplified and traditional), Japanese, Korean
+- Arabic, Hindi, Indonesian, Russian, Thai, Turkish
 
 #### Changes to the Build Process
 
