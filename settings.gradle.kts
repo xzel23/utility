@@ -4,7 +4,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "21-beta2-SNAPSHOT"
+val projectVersion = "21-rc"
 
 // define subprojects
 include("utility")
