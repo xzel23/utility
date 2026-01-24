@@ -11,7 +11,7 @@ jspecify = "1.0.0"
 junit-bom = "6.0.2"
 log4j-bom = "2.25.3"
 miglayout = "11.4.2"
-slb4j = "0.1-rc"
+slb4j = "0.1-rc2"
 slf4j = "2.0.17"
 spotbugs = "4.9.8"
 
