@@ -90,6 +90,14 @@ public class ArgumentsDialog extends JDialog {
                                   Consumer<Collection<String>> setParameter) {
         }
 
+        /**
+         * A map storing the relationships between options and their corresponding input components.
+         * The keys are {@link Option} instances, representing individual configuration options.
+         * The values are {@link OptionInput} instances, representing the input components associated
+         * with each option.
+         * <p>
+         * This map uses an identity-based comparison for key equality.
+         */
         private final Map<Option<?>, OptionInput> inputs = new IdentityHashMap<>();
 
         /**

@@ -39,15 +39,103 @@ import java.util.function.Supplier;
 public class ComboBoxEx<T> extends JPanel {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
+    /**
+     * A transient Comparator used to define the order of items in the ComboBoxEx.
+     * If non-null, the items in the ComboBoxEx will be sorted using this Comparator.
+     * If null, the natural order of the items will be used by default.
+     */
     private transient @Nullable Comparator<? super T> comparator;
+    /**
+     * A function that provides editing capability for items in the ComboBoxEx.
+     * The function takes an item as input and returns the modified item. If editing is disabled,
+     * this function is null. If the function returns null for a given input, the item remains unchanged.
+     * <p>
+     * This variable allows customization of how items are edited. The intended use is to provide a
+     * function that when alled displays an editor where the item value can be editid.
+     * <p>
+     * The type parameter {@code T} corresponds to the type of the items in the ComboBoxEx.
+     */
     private final transient @Nullable Function<T, @Nullable T> edit;
+
+    /**
+     * A Supplier that provides new items to be added to the ComboBoxEx.
+     * This supplier can be used to dynamically generate, fetch content,
+     * or show a dialog where the user can add a new item value.
+     * <p>
+     * The value is optional and can be null, indicating that adding new
+     * items is not enabled or supported. If non-null, the supplier
+     * returns a possibly null item of type {@code T} when invoked.
+     * <p>
+     * If the function returns {@code }
+     * The type parameter {@code T} corresponds to the type of the items in the ComboBoxEx.
+     */
     private final transient @Nullable Supplier<? extends @Nullable T> add;
+    /**
+     * A BiPredicate that determines whether an item can be removed from the ComboBoxEx.
+     * This predicate is used as part of the "removing" functionality in the ComboBoxEx component.
+     * If it evaluates to true for a given ComboBoxEx instance and item, the removal is allowed.
+     * Otherwise, the removal is disallowed.
+     * <p>
+     * The first parameter of the BiPredicate is the ComboBoxEx instance from which the item
+     * might be removed, and the second parameter is the item to be potentially removed.
+     * <p>
+     * If null, removing functionality is disabled in the ComboBoxEx.
+     */
     private final transient @Nullable BiPredicate<ComboBoxEx<T>, ? super @Nullable T> remove;
+    /**
+     * A Function used to format the items in the ComboBoxEx as strings.
+     * This formatting is applied to each item displayed in the dropdown or selected in the ComboBoxEx.
+     * It is passed as a parameter to the constructor of the ComboBoxEx.
+     * <p>
+     * The input to this function is an item of type T, and the output is the corresponding string representation.
+     * This allows customization of how items are displayed in the ComboBoxEx.
+     * <p>
+     * Immutable and transient, meaning it cannot be modified after construction of ComboBoxEx
+     * and will not be serialized if the ComboBoxEx object is serialized.
+     */
     private final transient Function<T, String> format;
+    /**
+     * The internal data model holding the items for the ComboBoxEx.
+     * This model provides the underlying storage and management of the items
+     * displayed in the ComboBoxEx, supporting modifications such as adding,
+     * removing, or updating items.
+     */
     private final DefaultComboBoxModel<T> model;
+    /**
+     * A JComboBox instance that serves as the primary dropdown component for the ComboBoxEx class.
+     * This component allows the selection of items of type {@code T}.
+     * <p>
+     * It is designed to work in conjunction with the additional features provided by the ComboBoxEx class,
+     * such as editing, adding, and removing items, as well as custom item formatting and optional sorting.
+     */
     private final JComboBox<T> comboBox;
+    /**
+     * Represents the "Edit" button within the ComboBoxEx component, which can be used to
+     * modify an existing item in the ComboBoxEx. This button may be null if editing
+     * functionality is not enabled.
+     * <p>
+     * The button's availability and behavior are influenced by the editing logic
+     * provided during the construction of the ComboBoxEx. When enabled, this button
+     * allows users to interact with a selected item in the ComboBoxEx to perform editing
+     * operations.
+     */
     private final @Nullable JButton buttonEdit;
+    /**
+     * A button component in the ComboBoxEx that facilitates the addition of new items.
+     * <p>
+     * This button's functionality is defined by the {@code add} parameter passed to the
+     * ComboBoxEx constructor. If the {@code add} parameter is null, this button may be
+     * disabled or entirely omitted in the UI.
+     * <p>
+     * This field is marked as {@code @Nullable} to reflect that the button may not
+     * always be initialized, depending on the configuration of the ComboBoxEx instance.
+     */
     private final @Nullable JButton buttonAdd;
+    /**
+     * A button that may be used to trigger the removal of selected items in a ComboBoxEx.
+     * This field is optional and may be null, indicating that removal functionality is not enabled
+     * or the button has not been initialized.
+     */
     private final @Nullable JButton buttonRemove;
 
     /**
