@@ -9,6 +9,7 @@ import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+@NullUnmarked
 class TextUtilTest {
 
     @Test
@@ -136,6 +138,7 @@ class TextUtilTest {
         Assertions.assertEquals(expected, actual);
     }
 
+    @NullUnmarked
     record TestDataAlign(String text, String expected, int width, Alignment align, Character fill) {}
 
     @ParameterizedTest

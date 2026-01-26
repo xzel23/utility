@@ -1,5 +1,6 @@
 package com.dua3.utility.text;
 
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Test class for {@link StandardFontMapper}.
  */
+@NullUnmarked
 class StandardFontMapperTest {
 
     private static Stream<Arguments> provideTestCases() {
