@@ -51,7 +51,6 @@ object Meta {
 // Root project configuration
 /////////////////////////////////////////////////////////////////////////////
 
-project.version = libs.versions.projectVersion.get()
 project.description = Meta.DESCRIPTION
 
 tasks.register("printVersion") {
@@ -161,7 +160,7 @@ subprojects {
             if (isReleaseVersion) {
                 config.set(Configuration.parse("publicApi=THROW_NPE:privateApi=ASSERT"))
             } else {
-                config.set(Configuration.DEVELOPMENT)
+                config.set(Configuration.DEVELOPMENT.withStrict(true))
             }
         }
 
