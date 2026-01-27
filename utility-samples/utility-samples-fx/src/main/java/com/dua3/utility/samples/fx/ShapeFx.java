@@ -15,7 +15,6 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.QuadCurveTo;
 import javafx.stage.Stage;
 import javafx.scene.shape.Path;
-import org.slb4j.SLB4J;
 
 /**
  * The ShapeFx class extends the JavaFX Application class to create and display a window
@@ -23,10 +22,6 @@ import org.slb4j.SLB4J;
  * demonstrating the use of both JavaFX Path elements and a custom Path2f class with segmented paths.
  */
 public class ShapeFx extends Application {
-
-    static {
-        SLB4J.init();
-    }
 
     /**
      * The main entry point for the application.

@@ -7,7 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import org.slb4j.SLB4J;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The IconViewSample class is a JavaFX application that displays an icon from the icon provider.
@@ -16,9 +17,7 @@ import org.slb4j.SLB4J;
  */
 public class IconViewSample extends Application {
 
-    static {
-        SLB4J.init();
-    }
+    private static final Logger LOG = LogManager.getLogger(IconViewSample.class.getName());
 
     /**
      * The main entry point for the application.
@@ -27,7 +26,7 @@ public class IconViewSample extends Application {
      */
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
-        System.out.println("available icon providers: " + IconUtil.iconProviderNames());
+        LOG.info("available icon providers: {}", IconUtil.iconProviderNames());
         launch(args);
     }
 

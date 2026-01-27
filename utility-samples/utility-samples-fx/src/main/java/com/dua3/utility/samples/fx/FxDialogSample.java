@@ -31,7 +31,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.slb4j.SLB4J;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -50,10 +51,11 @@ import java.util.stream.Stream;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class FxDialogSample extends Application {
 
+    private static final Logger LOG = LogManager.getLogger(FxDialogSample.class);
+
     private static final Locale LOCALE_WHEN_STARTED = Locale.getDefault();
 
     static {
-        SLB4J.init();
         ApplicationUtil.initApplicationPreferences(Preferences.userNodeForPackage(FxDialogSample.class));
         ApplicationUtil.addDarkModeListener(FxDialogSample::setDarkMode);
         ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT);
@@ -63,16 +65,13 @@ public class FxDialogSample extends Application {
     private static final String NO_ANSWER = "dua3.utility.samples.fx.no_answer";
     private static final FileChooser.ExtensionFilter FILTER_ALL_FILES = new FileChooser.ExtensionFilter("all files", "*.*", "*");
 
-    private static void println(Object o) {
-        System.out.println(o);
-    }
-
     /**
      * The main entry point for the application.
      *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        LOG.info("starting FxDialogSample");
         launch(args);
     }
 
@@ -148,7 +147,7 @@ public class FxDialogSample extends Application {
                     .modality(Modality.NONE)
                     .build()
                     .show();
-            println("About Dialog shown");
+            LOG.info("About Dialog shown");
         });
         container.getChildren().add(btnAbout);
 
@@ -163,7 +162,7 @@ public class FxDialogSample extends Application {
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    println(I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
                 }
             });
         });
@@ -178,7 +177,7 @@ public class FxDialogSample extends Application {
                     .modality(Modality.NONE)
                     .build()
                     .show();
-            println("Info Dialog shown");
+            LOG.info("Info Dialog shown");
         });
         container.getChildren().add(btnInfo);
 
@@ -191,7 +190,7 @@ public class FxDialogSample extends Application {
                     .modality(Modality.NONE)
                     .build()
                     .show();
-            println("Warning Dialog shown");
+            LOG.info("Warning Dialog shown");
         });
         container.getChildren().add(btnWarning);
 
@@ -204,7 +203,7 @@ public class FxDialogSample extends Application {
                     .modality(Modality.NONE)
                     .build()
                     .show();
-            println("Error Dialog shown");
+            LOG.info("Error Dialog shown");
         });
         container.getChildren().add(btnError);
 
@@ -218,7 +217,7 @@ public class FxDialogSample extends Application {
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    println(I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
                 }
             });
         });
@@ -235,7 +234,7 @@ public class FxDialogSample extends Application {
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    println(I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
                 }
             });
         });
@@ -245,7 +244,7 @@ public class FxDialogSample extends Application {
         Button btnFileSelection = createButton(I18NInstance.get().get("dua3.utility.samples.fx.file_selection"), () ->
                 Dialogs.chooseFile(primaryStage)
                         .showOpenDialog()
-                        .ifPresentOrElse(answer -> println(I18NInstance.get().format(ANSWER, answer)), () -> println(I18NInstance.get().get(NO_ANSWER)))
+                        .ifPresentOrElse(answer -> LOG.info("{}", I18NInstance.get().format(ANSWER, answer)), () -> LOG.info("{}", I18NInstance.get().get(NO_ANSWER)))
         );
         container.getChildren().add(btnFileSelection);
 
@@ -253,7 +252,7 @@ public class FxDialogSample extends Application {
         Button btnDirectorySelection = createButton(I18NInstance.get().get("dua3.utility.samples.fx.directory_selection"), () ->
                 Dialogs.chooseDirectory(primaryStage)
                         .showDialog()
-                        .ifPresentOrElse(answer -> println(I18NInstance.get().format(ANSWER, answer)), () -> println(I18NInstance.get().get(NO_ANSWER)))
+                        .ifPresentOrElse(answer -> LOG.info("{}", I18NInstance.get().format(ANSWER, answer)), () -> LOG.info("{}", I18NInstance.get().get(NO_ANSWER)))
         );
         container.getChildren().add(btnDirectorySelection);
 
@@ -296,7 +295,7 @@ public class FxDialogSample extends Application {
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    println(I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
                 }
             });
         });
@@ -313,7 +312,7 @@ public class FxDialogSample extends Application {
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    println(I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
                 }
             });
         });
@@ -337,7 +336,7 @@ public class FxDialogSample extends Application {
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    println(I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
                 }
             });
         });

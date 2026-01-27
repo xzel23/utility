@@ -23,7 +23,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.slb4j.SLB4J;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +42,6 @@ import java.util.function.Consumer;
  * rotating graphics and dynamically updated angles using animation.
  */
 public class FxTextRendering extends Application {
-
-    static {
-        SLB4J.init();
-    }
 
     /**
      * A predefined {@link RichText} constant that demonstrates the usage of rotated text with various

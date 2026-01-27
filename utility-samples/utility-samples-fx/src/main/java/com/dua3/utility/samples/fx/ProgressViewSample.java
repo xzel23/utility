@@ -6,7 +6,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.slb4j.SLB4J;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,9 +19,7 @@ import java.util.concurrent.Executors;
  */
 public class ProgressViewSample extends Application {
 
-    static {
-        SLB4J.init();
-    }
+    private static final Logger LOG = LogManager.getLogger(ProgressViewSample.class.getName());
 
     final ExecutorService pool = Executors.newFixedThreadPool(3,
             Thread.ofVirtual().name("sample-").factory()
@@ -89,6 +88,7 @@ public class ProgressViewSample extends Application {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
+            LOG.debug("Task interrupted", e);
             Thread.currentThread().interrupt();
         }
     }

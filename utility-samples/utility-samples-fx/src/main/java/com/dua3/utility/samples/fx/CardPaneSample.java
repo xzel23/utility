@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.slb4j.SLB4J;
 
 /**
  * Minimal sample showcasing the CardPane control.
@@ -24,10 +23,6 @@ import org.slb4j.SLB4J;
  * The sample creates three simple cards and a few buttons to switch between them.
  */
 public class CardPaneSample extends Application {
-
-    static {
-        SLB4J.init();
-    }
 
     /**
      * The main entry point for the JavaFX application.

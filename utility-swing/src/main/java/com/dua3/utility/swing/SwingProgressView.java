@@ -19,8 +19,16 @@ import java.awt.Label;
  */
 public final class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
 
-    private final ProgressView<T> imp;
-    private int rowCount;
+    /**
+     * The {@link ProgressView} instance used by {@code SwingProgressView} to manage and display
+     * the progress of tasks.
+     */
+    private final transient ProgressView<T> imp;
+
+    /**
+     * The number of rows currently tracked or rendered in the progress view.
+     */
+    private int rowCount = 0;
 
     /**
      * Constructor.
@@ -105,6 +113,10 @@ public final class SwingProgressView<T> extends JPanel implements ProgressTracke
         imp.update(task, percentDone);
     }
 
+    /**
+     * Implementation of {@code ProgressView.ProgressIndicator} that uses a {@link JProgressBar}
+     * to display the progress of a task within a {@link SwingProgressView}.
+     */
     private static class ProgressBarIndicator implements ProgressView.ProgressIndicator {
 
         /**

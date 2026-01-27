@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;
 import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.ArgumentsParserBuilder;
@@ -9,15 +10,12 @@ import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
-import org.slb4j.LogLevel;
 import org.slb4j.SLB4J;
 import org.slb4j.ext.LogBuffer;
 import org.slb4j.ext.fx.FxLogPane;
 import org.slb4j.ext.fx.FxLogWindow;
 import org.slb4j.filter.LoggerNameFilter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -65,6 +63,11 @@ import java.util.regex.Pattern;
 public final class FxLauncher {
 
     /**
+     * Logger instance.
+     */
+    public static final Logger LOG = LogManager.getLogger(FxLauncher.class);
+
+    /**
      * Exit code indicating successful execution of the application.
      */
     public static final int RC_SUCCESS = 0;
@@ -73,19 +76,9 @@ public final class FxLauncher {
      */
     public static final int RC_ERROR = 1;
 
-    private static final @Nullable Method LOGUTIL_INITIALISER;
-    private static final String LOG_MESSAGES = I18NInstance.get().get("dua3.utility.fx.controls.launcher.log.messages");
+    private static boolean HAS_SLB4J = LangUtil.isClassOnClasspath("org.slb4j.SLB4J");
 
-    static {
-        Method initialiser = null;
-        try {
-            Class<?> clazz = Class.forName("com.dua3.utility.logging.log4j.LogUtilLog4J");
-            initialiser = clazz.getDeclaredMethod("init", LogLevel.class);
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            // do nothing
-        }
-        LOGUTIL_INITIALISER = initialiser;
-    }
+    private static final String LOG_MESSAGES = I18NInstance.get().get("dua3.utility.fx.controls.launcher.log.messages");
 
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
     static @Nullable LogBuffer logBuffer = null;
@@ -105,7 +98,7 @@ public final class FxLauncher {
                     latch.await();
                     break;
                 } catch (InterruptedException e) {
-                    LogManager.getLogger(FxLauncher.class).debug("interrupted while waiting for platform startup", e);
+                    LOG.debug("interrupted while waiting for platform startup", e);
                     Thread.currentThread().interrupt(); // Restore the interrupt status
                 }
             }
@@ -121,7 +114,7 @@ public final class FxLauncher {
 
         public static <A extends Application>
         void launch(Class<A> cls, String... args) {
-            LogManager.getLogger(FxLauncher.class).debug("arguments: {}", (Object) args);
+            LOG.debug("arguments: {}", (Object) args);
 
             if (launched.getAndSet(true)) {
                 throw new IllegalStateException("Application already launched.");
@@ -224,7 +217,7 @@ public final class FxLauncher {
         }
 
         // !!! Do NOT use a static Logger instance as that interferes with setting up logging !!!
-        Logger log = LogManager.getLogger(FxLauncher.class);
+        Logger log = LOG;
         log.trace("original arguments: {}", (Object) args);
         log.trace("re-parsed arguments: {}", argL);
 
@@ -280,7 +273,7 @@ public final class FxLauncher {
             );
         }
 
-        if (LOGUTIL_INITIALISER != null) {
+        if (HAS_SLB4J) {
             agp.addFlag(
                     I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.name"),
                     I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.description"),
@@ -329,19 +322,14 @@ public final class FxLauncher {
 
         arguments.handle();
 
-        if ((showLogWindow || debug) && LOGUTIL_INITIALISER != null) {
-            try {
-                LOGUTIL_INITIALISER.invoke(null, LogLevel.TRACE);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalStateException(e);
-            }
+        if (HAS_SLB4J && (showLogWindow || debug)) {
             if (logBuffer == null) {
                 logBuffer = new LogBuffer();
             }
             SLB4J.getDispatcher().addLogHandler(logBuffer);
         }
 
-        Logger log = LogManager.getLogger(FxLauncher.class);
+        Logger log = LOG;
         int rc;
         try {
             ClassLoader loader = ClassLoader.getSystemClassLoader();
@@ -402,7 +390,7 @@ public final class FxLauncher {
      */
     public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner, String title) {
         return PlatformGuard.run(() -> {
-            if (logBuffer != null) {
+            if (HAS_SLB4J && logBuffer != null) {
                 FxLogWindow logWindow = PlatformHelper.runAndWait(() -> {
                     FxLogWindow window = new FxLogWindow(title, getLogBuffer().orElseThrow());
                     window.initOwner(owner);
@@ -435,11 +423,11 @@ public final class FxLauncher {
      */
     public static Optional<FxLogPane> getLogPane() {
         return PlatformGuard.run(() -> {
-            if (!debug) {
-                return Optional.empty();
+            if (HAS_SLB4J && debug) {
+                return Optional.of(new FxLogPane(getLogBuffer().orElseThrow()));
             }
+            return Optional.empty();
 
-            return Optional.of(new FxLogPane(getLogBuffer().orElseThrow()));
         });
     }
 }

@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":utility-fx-icons-ikonli"))
     implementation(rootProject.libs.atlantafx)
     implementation(rootProject.libs.slf4j.api)
-    implementation(rootProject.libs.slb4j)
+    runtimeOnly(rootProject.libs.slb4j)
     runtimeOnly(rootProject.libs.ikonli.fontawesome6)
     runtimeOnly(rootProject.libs.ikonli.javafx)
 }

@@ -2,7 +2,6 @@ package com.dua3.utility.samples.graphics;
 
 import com.dua3.utility.swing.SwingGraphics;
 import com.dua3.utility.swing.SwingUtil;
-import org.slb4j.SLB4J;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -33,10 +32,6 @@ import java.util.function.Supplier;
  * - The createSlide method renders a graphical slide on a JPanel for any given slide factory.
  */
 public class SwingGraphicsSample extends JFrame implements IGraphicsSample<JComponent> {
-
-    static {
-        SLB4J.init();
-    }
 
     /**
      * The name of the application. This constant holds the name of the Swing-based graphical sample application.
