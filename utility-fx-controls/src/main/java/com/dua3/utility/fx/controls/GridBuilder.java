@@ -34,6 +34,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
@@ -75,9 +76,15 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     private static final FxFontUtil FU = FxFontUtil.getInstance();
     private static final String INPUT_WITH_ID_ALREADY_DEFINED = "Input with id '%s' already defined";
 
-    private static final SectionStyle[] DEFAULT_SECTION_STYLES = {new SectionStyle(1.0f, 0.5f, true, 1.5f), new SectionStyle(0.5f, 0.25f, true, 1.25f), new SectionStyle(0.5f, 0.125f, true, 1.0f)};
+    private static final float SECTION_FONT_SCALE = 1.333f;
+    private static final SectionStyle[] DEFAULT_SECTION_STYLES = {
+            new SectionStyle(1.5f, 0.5f, true, SECTION_FONT_SCALE * SECTION_FONT_SCALE * SECTION_FONT_SCALE),
+            new SectionStyle(0.75f, 0.25f, true, SECTION_FONT_SCALE * SECTION_FONT_SCALE),
+            new SectionStyle(0.5f, 0.125f, true, SECTION_FONT_SCALE)
+    };
 
-    private static final SectionStyle DEFAULT_SECTION_STYLE = new SectionStyle(0.0f, 0.0f, false, 1.0f);
+    private static final SectionStyle DEFAULT_SECTION_STYLE = new SectionStyle(0.0625f, 0.0f, false, 1.0f);
+
     private final Set<String> ids = new HashSet<>();
     private final List<Meta<?>> data = new ArrayList<>();
     private final @Nullable Window owner;
@@ -120,7 +127,9 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public SectionStyle getSectionStyle(int level) {
-        return level < sectionStyles.length ? sectionStyles[level] : DEFAULT_SECTION_STYLE;
+        LangUtil.checkArg(level > 0, "level must be 1 or greater");
+        int idx = level - 1;
+        return idx < sectionStyles.length ? sectionStyles[idx] : DEFAULT_SECTION_STYLE;
     }
 
     @Override
@@ -222,13 +231,17 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public GridBuilder section(int level, String fmt, Object... args) {
+        LangUtil.checkArg(level > 0, "level must be 1 or greeater");
+
         String title = format(fmt, args);
 
         SectionStyle style = getSectionStyle(level);
 
+        List<Node> nodes = new ArrayList<>();
+
         // add spacing before the title
         if (style.vspaceBefore() > 0) {
-            node(FxUtil.vspace(style.vspaceBefore() * defaultFont.getHeight()));
+            nodes.add(FxUtil.vspace(style.vspaceBefore() * defaultFont.getHeight()));
         }
 
         // add title
@@ -242,11 +255,20 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
         Label label = new Label(title);
         label.setFont(FU.convert(FU.deriveFont(defaultFont, fd)));
-        node(label);
+        nodes.add(label);
 
         // add spacing after the title
         if (style.vspaceAfter() > 0) {
-            node(FxUtil.vspace(style.vspaceAfter() * FU.deriveFont(defaultFont, fd).getHeight()));
+            nodes.add(FxUtil.vspace(style.vspaceAfter() * FU.deriveFont(defaultFont, fd).getHeight()));
+        }
+
+        // add to grid
+        if (nodes.size() == 1) {
+            node(nodes.getFirst());
+        } else {
+            VBox box = new VBox(0.0);
+            box.getChildren().addAll(nodes);
+            node(box);
         }
 
         return this;
