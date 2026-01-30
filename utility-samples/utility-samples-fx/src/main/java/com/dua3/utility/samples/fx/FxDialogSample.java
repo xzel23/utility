@@ -34,12 +34,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.List;
@@ -47,7 +47,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.prefs.Preferences;
-import java.util.stream.Stream;
 
 /**
  * Sample Application.
@@ -84,9 +83,9 @@ public class FxDialogSample extends Application {
      */
     public FxDialogSample() { /* nothing to do */ }
 
-    private ComboBox<UiMode> comboUiMode;
-    private ComboBox<LabelPlacement> comboLabelPlacement;
-    private ComboBox<Locale> comboLocale;
+    private @Nullable ComboBox<UiMode> comboUiMode;
+    private @Nullable ComboBox<LabelPlacement> comboLabelPlacement;
+    private @Nullable ComboBox<Locale> comboLocale;
 
     @Override
     public void start(Stage primaryStage) {
