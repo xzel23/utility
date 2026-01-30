@@ -70,11 +70,11 @@ class SwingDocumentFilterTest {
     }
 
     /**
-     * Test the filter with different locales.
+     * Test the filter with different languageTags.
      */
     @Test
     void testLocaleSpecificConversion() {
-        // Create filters with different locales
+        // Create filters with different languageTags
         DocumentFilter filterTurkish = SwingDocumentFilter.getUppercaseInstance(Locale.forLanguageTag("tr"));
         DocumentFilter filterUS = SwingDocumentFilter.getUppercaseInstance(Locale.US);
 

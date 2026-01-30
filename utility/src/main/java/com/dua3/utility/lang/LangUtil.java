@@ -720,6 +720,24 @@ public final class LangUtil {
     }
 
     /**
+     * Loads properties from a resource file associated with the specified class.
+     *
+     * @param clazz the class whose associated resource file is to be loaded.
+     * @param filename the name of the resource file to load.
+     * @return an {@code Optional} containing the loaded {@code Properties} if the resource file is found and successfully loaded,
+     *         or an empty {@code Optional} if the resource file is missing.
+     * @throws IOException if an I/O error occurs while reading the resource file.
+     */
+    @SuppressWarnings("OptionalContainsCollection")
+    public static Optional<Properties> loadProperties(Class<?> clazz, String filename) throws IOException {
+        try (InputStream in = getResourceURL(clazz, filename).openStream()) {
+            return Optional.of(loadProperties(in));
+        } catch (MissingResourceException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Load a properties file in UTF-8 encoding.
      *
      * @param uri URI to read from

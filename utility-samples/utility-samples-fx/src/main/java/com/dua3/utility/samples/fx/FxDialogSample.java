@@ -10,6 +10,7 @@ import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.LabelPlacement;
 import com.dua3.utility.fx.controls.PromptMode;
 import com.dua3.utility.i18n.I18N;
+import com.dua3.utility.i18n.I18NInfo;
 import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.FileDialogMode;
@@ -34,8 +35,11 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.List;
@@ -96,7 +100,7 @@ public class FxDialogSample extends Application {
                 .maxWidth(Double.MAX_VALUE)
                 .build();
         HBox.setHgrow(comboUiMode, Priority.ALWAYS);
-        Label lblUiMode = new Label(I18NInstance.get().get("dua3.utility.samples.fx.ui_mode"));
+        Label lblUiMode = new Label(i18n().get("dua3.utility.samples.fx.ui_mode"));
         lblUiMode.setPrefWidth(120);
         HBox hboxUiMode = new HBox(8, lblUiMode, comboUiMode);
         hboxUiMode.setAlignment(Pos.CENTER_LEFT);
@@ -108,40 +112,45 @@ public class FxDialogSample extends Application {
         comboLabelPlacement.setValue(currentLabelPlacement);
         comboLabelPlacement.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(comboLabelPlacement, Priority.ALWAYS);
-        Label lblLabelPlacement = new Label(I18NInstance.get().get("dua3.utility.samples.fx.label_placement"));
+        Label lblLabelPlacement = new Label(i18n().get("dua3.utility.samples.fx.label_placement"));
         lblLabelPlacement.setPrefWidth(120);
         HBox hboxLabelPlacement = new HBox(8, lblLabelPlacement, comboLabelPlacement);
         hboxLabelPlacement.setAlignment(Pos.CENTER_LEFT);
         container.getChildren().add(hboxLabelPlacement);
 
         // Locale
-        List<Locale> locales = Stream.of(
-                        "ar", "bg", "cs", "da", "de", "el", "en", "es", "et", "fi", "fr", "ga", "hi", "hr", "hu", "id", "it", "ja", "ko", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "ru", "sk", "sl", "sv", "th", "tr", "zh", "zh-Hant"
-                )
-                .map(Locale::forLanguageTag)
-                .sorted(Comparator.comparing(l -> l.getDisplayName(LOCALE_WHEN_STARTED)))
-                .toList();
-        Locale currentLocale = comboLocale == null ? Locale.getDefault() : comboLocale.getValue();
-        comboLocale = Controls.comboBox(locales)
-                .onChange(this::setLocale)
-                .initialValue(currentLocale)
-                .maxWidth(Double.MAX_VALUE)
-                .stringRenderer(locale -> locale.getDisplayName(LOCALE_WHEN_STARTED), "")
-                .build();
-        HBox.setHgrow(comboLocale, Priority.ALWAYS);
-        Label lblLocale = new Label(I18NInstance.get().get("dua3.utility.samples.fx.locale"));
-        lblLocale.setPrefWidth(120);
-        HBox hboxLocale = new HBox(8, lblLocale, comboLocale);
-        hboxLocale.setAlignment(Pos.CENTER_LEFT);
-        container.getChildren().add(hboxLocale);
+        try {
+            List<Locale> locales = I18NInfo.load(getClass())
+                    .stream()
+                    .map(I18NInfo::languageTags)
+                    .flatMap(Collection::stream)
+                    .map(Locale::forLanguageTag)
+                    .sorted(Comparator.comparing(locale -> locale.getDisplayName(LOCALE_WHEN_STARTED)))
+                    .toList();
+            Locale currentLocale = comboLocale == null ? Locale.getDefault() : comboLocale.getValue();
+            comboLocale = Controls.comboBox(locales)
+                    .onChange(this::setLocale)
+                    .initialValue(currentLocale)
+                    .maxWidth(Double.MAX_VALUE)
+                    .stringRenderer(locale -> locale.getDisplayName(LOCALE_WHEN_STARTED), "")
+                    .build();
+            HBox.setHgrow(comboLocale, Priority.ALWAYS);
+            Label lblLocale = new Label(i18n().get("dua3.utility.samples.fx.locale"));
+            lblLocale.setPrefWidth(120);
+            HBox hboxLocale = new HBox(8, lblLocale, comboLocale);
+            hboxLocale.setAlignment(Pos.CENTER_LEFT);
+            container.getChildren().add(hboxLocale);
+        } catch (IOException e) {
+            LOG.warn("cannot load locales", e);
+        }
 
         // About
-        Button btnAbout = createButton(I18NInstance.get().get("dua3.utility.samples.fx.about"), () -> {
+        Button btnAbout = createButton(i18n().get("dua3.utility.samples.fx.about"), () -> {
             Dialogs.about(primaryStage)
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.about.title"))
-                    .applicationName(I18NInstance.get().get("dua3.utility.samples.fx.about.app_name"))
-                    .version(I18NInstance.get().get("dua3.utility.samples.fx.about.version"))
-                    .copyright(I18NInstance.get().get("dua3.utility.samples.fx.about.copyright"))
+                    .title(i18n().get("dua3.utility.samples.fx.about.title"))
+                    .applicationName(i18n().get("dua3.utility.samples.fx.about.app_name"))
+                    .version(i18n().get("dua3.utility.samples.fx.about.version"))
+                    .copyright(i18n().get("dua3.utility.samples.fx.about.copyright"))
                     .mail(URI.create("mailto:info@example.com"))
                     .expandableContent(SystemInfo.getSystemInfo().formatted())
                     .modality(Modality.NONE)
@@ -152,28 +161,28 @@ public class FxDialogSample extends Application {
         container.getChildren().add(btnAbout);
 
         // Confirmation
-        Button btnConfirmation = createButton(I18NInstance.get().get("dua3.utility.samples.fx.confirmation"), () -> {
+        Button btnConfirmation = createButton(i18n().get("dua3.utility.samples.fx.confirmation"), () -> {
             var dlg = Dialogs.alert(primaryStage, AlertType.CONFIRMATION, MessageFormatter.standard())
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.confirmation.title"))
-                    .header(I18NInstance.get().get("dua3.utility.samples.fx.confirmation.header"))
-                    .text(I18NInstance.get().get("dua3.utility.samples.fx.confirmation.text"))
+                    .title(i18n().get("dua3.utility.samples.fx.confirmation.title"))
+                    .header(i18n().get("dua3.utility.samples.fx.confirmation.header"))
+                    .text(i18n().get("dua3.utility.samples.fx.confirmation.text"))
                     .modality(Modality.NONE)
                     .build();
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", i18n().format(ANSWER, newVal));
                 }
             });
         });
         container.getChildren().add(btnConfirmation);
 
         // Information
-        Button btnInfo = createButton(I18NInstance.get().get("dua3.utility.samples.fx.info"), () -> {
+        Button btnInfo = createButton(i18n().get("dua3.utility.samples.fx.info"), () -> {
             Dialogs.alert(primaryStage, AlertType.INFORMATION, MessageFormatter.standard())
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.info.title"))
-                    .header(I18NInstance.get().get("dua3.utility.samples.fx.info.header"))
-                    .text(I18NInstance.get().get("dua3.utility.samples.fx.info.text"))
+                    .title(i18n().get("dua3.utility.samples.fx.info.title"))
+                    .header(i18n().get("dua3.utility.samples.fx.info.header"))
+                    .text(i18n().get("dua3.utility.samples.fx.info.text"))
                     .modality(Modality.NONE)
                     .build()
                     .show();
@@ -182,11 +191,11 @@ public class FxDialogSample extends Application {
         container.getChildren().add(btnInfo);
 
         // Warning
-        Button btnWarning = createButton(I18NInstance.get().get("dua3.utility.samples.fx.warning"), () -> {
+        Button btnWarning = createButton(i18n().get("dua3.utility.samples.fx.warning"), () -> {
             Dialogs.alert(primaryStage, AlertType.WARNING, MessageFormatter.standard())
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.warning.title"))
-                    .header(I18NInstance.get().get("dua3.utility.samples.fx.warning.header"))
-                    .text(I18NInstance.get().get("dua3.utility.samples.fx.warning.text"))
+                    .title(i18n().get("dua3.utility.samples.fx.warning.title"))
+                    .header(i18n().get("dua3.utility.samples.fx.warning.header"))
+                    .text(i18n().get("dua3.utility.samples.fx.warning.text"))
                     .modality(Modality.NONE)
                     .build()
                     .show();
@@ -195,11 +204,11 @@ public class FxDialogSample extends Application {
         container.getChildren().add(btnWarning);
 
         // Error
-        Button btnError = createButton(I18NInstance.get().get("dua3.utility.samples.fx.error"), () -> {
+        Button btnError = createButton(i18n().get("dua3.utility.samples.fx.error"), () -> {
             Dialogs.alert(primaryStage, AlertType.ERROR, MessageFormatter.standard())
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.error.title"))
-                    .header(I18NInstance.get().get("dua3.utility.samples.fx.error.header"))
-                    .text(I18NInstance.get().get("dua3.utility.samples.fx.error.text"))
+                    .title(i18n().get("dua3.utility.samples.fx.error.title"))
+                    .header(i18n().get("dua3.utility.samples.fx.error.header"))
+                    .text(i18n().get("dua3.utility.samples.fx.error.text"))
                     .modality(Modality.NONE)
                     .build()
                     .show();
@@ -208,139 +217,139 @@ public class FxDialogSample extends Application {
         container.getChildren().add(btnError);
 
         // Prompt
-        Button btnPrompt = createButton(I18NInstance.get().get("dua3.utility.samples.fx.prompt"), () -> {
+        Button btnPrompt = createButton(i18n().get("dua3.utility.samples.fx.prompt"), () -> {
             var dlg = Dialogs.prompt(primaryStage, MessageFormatter.standard())
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.prompt.title"))
-                    .header(I18NInstance.get().get("dua3.utility.samples.fx.prompt.header"))
+                    .title(i18n().get("dua3.utility.samples.fx.prompt.title"))
+                    .header(i18n().get("dua3.utility.samples.fx.prompt.header"))
                     .modality(Modality.NONE)
                     .build();
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", i18n().format(ANSWER, newVal));
                 }
             });
         });
         container.getChildren().add(btnPrompt);
 
         // Password
-        Button btnPassword = createButton(I18NInstance.get().get("dua3.utility.samples.fx.password"), () -> {
+        Button btnPassword = createButton(i18n().get("dua3.utility.samples.fx.password"), () -> {
             var dlg = Dialogs.prompt(primaryStage, MessageFormatter.standard())
                     .mode(PromptMode.PASSWORD)
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.password.title"))
-                    .header(I18NInstance.get().get("dua3.utility.samples.fx.password.header"))
+                    .title(i18n().get("dua3.utility.samples.fx.password.title"))
+                    .header(i18n().get("dua3.utility.samples.fx.password.header"))
                     .modality(Modality.NONE)
                     .build();
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", i18n().format(ANSWER, newVal));
                 }
             });
         });
         container.getChildren().add(btnPassword);
 
         // File selection
-        Button btnFileSelection = createButton(I18NInstance.get().get("dua3.utility.samples.fx.file_selection"), () ->
+        Button btnFileSelection = createButton(i18n().get("dua3.utility.samples.fx.file_selection"), () ->
                 Dialogs.chooseFile(primaryStage)
                         .showOpenDialog()
-                        .ifPresentOrElse(answer -> LOG.info("{}", I18NInstance.get().format(ANSWER, answer)), () -> LOG.info("{}", I18NInstance.get().get(NO_ANSWER)))
+                        .ifPresentOrElse(answer -> LOG.info("{}", i18n().format(ANSWER, answer)), () -> LOG.info("{}", i18n().get(NO_ANSWER)))
         );
         container.getChildren().add(btnFileSelection);
 
         // Directory selection
-        Button btnDirectorySelection = createButton(I18NInstance.get().get("dua3.utility.samples.fx.directory_selection"), () ->
+        Button btnDirectorySelection = createButton(i18n().get("dua3.utility.samples.fx.directory_selection"), () ->
                 Dialogs.chooseDirectory(primaryStage)
                         .showDialog()
-                        .ifPresentOrElse(answer -> LOG.info("{}", I18NInstance.get().format(ANSWER, answer)), () -> LOG.info("{}", I18NInstance.get().get(NO_ANSWER)))
+                        .ifPresentOrElse(answer -> LOG.info("{}", i18n().format(ANSWER, answer)), () -> LOG.info("{}", i18n().get(NO_ANSWER)))
         );
         container.getChildren().add(btnDirectorySelection);
 
         // Input
-        Button btnInput = createButton(I18NInstance.get().get("dua3.utility.samples.fx.input"), () -> {
+        Button btnInput = createButton(i18n().get("dua3.utility.samples.fx.input"), () -> {
             var dlg = Dialogs.input(primaryStage, MessageFormatter.standard())
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.input.title"))
-                    .header(I18NInstance.get().get("dua3.utility.samples.fx.input.header"))
+                    .title(i18n().get("dua3.utility.samples.fx.input.title"))
+                    .header(i18n().get("dua3.utility.samples.fx.input.header"))
                     .labelPlacement(comboLabelPlacement.getValue())
-                    .section(1, I18NInstance.get().get("dua3.utility.samples.fx.input.section.1"))
-                    .text(I18NInstance.get().get("dua3.utility.samples.fx.input.text"))
-                    .section(2, I18NInstance.get().get("dua3.utility.samples.fx.input.section.1.1"))
-                    .labeledText(I18NInstance.get().get("dua3.utility.samples.fx.input.labeled_text"), I18NInstance.get().get("dua3.utility.samples.fx.input.labeled_text.value"))
-                    .section(3, I18NInstance.get().get("dua3.utility.samples.fx.input.section.1.1.1"))
-                    .inputConstant("readonly", I18NInstance.get().get("dua3.utility.samples.fx.input.readonly"), I18NInstance.get().get("dua3.utility.samples.fx.input.readonly.value"))
-                    .inputConstant("readonly2", I18NInstance.get().get("dua3.utility.samples.fx.input.readonly2"), LocalDate::now, LocalDate.class)
-                    .section(1, I18NInstance.get().get("dua3.utility.samples.fx.input.section.2"))
-                    .inputString("txt", I18NInstance.get().get("dua3.utility.samples.fx.input.txt"), () -> "dflt")
-                    .inputText("longtext", I18NInstance.get().get("dua3.utility.samples.fx.input.longtext"), () -> "")
+                    .section(1, i18n().get("dua3.utility.samples.fx.input.section.1"))
+                    .text(i18n().get("dua3.utility.samples.fx.input.text"))
+                    .section(2, i18n().get("dua3.utility.samples.fx.input.section.1.1"))
+                    .labeledText(i18n().get("dua3.utility.samples.fx.input.labeled_text"), i18n().get("dua3.utility.samples.fx.input.labeled_text.value"))
+                    .section(3, i18n().get("dua3.utility.samples.fx.input.section.1.1.1"))
+                    .inputConstant("readonly", i18n().get("dua3.utility.samples.fx.input.readonly"), i18n().get("dua3.utility.samples.fx.input.readonly.value"))
+                    .inputConstant("readonly2", i18n().get("dua3.utility.samples.fx.input.readonly2"), LocalDate::now, LocalDate.class)
+                    .section(1, i18n().get("dua3.utility.samples.fx.input.section.2"))
+                    .inputString("txt", i18n().get("dua3.utility.samples.fx.input.txt"), () -> "dflt")
+                    .inputText("longtext", i18n().get("dua3.utility.samples.fx.input.longtext"), () -> "")
                     .inputHidden("secret1", "A")
                     .inputHidden("secret2", "B")
-                    .inputInteger("integer", I18NInstance.get().get("dua3.utility.samples.fx.input.integer"), () -> 0L)
-                    .inputInteger("integer from 4 to 7", I18NInstance.get().get("dua3.utility.samples.fx.input.integer_range"), () -> null,
-                            i -> i != null && i >= 4 && i <= 7 ? Optional.empty() : Optional.of(I18NInstance.get().format("dua3.utility.samples.fx.input.error.between_4_and_7", i)))
-                    .inputDecimal("decimal", I18NInstance.get().get("dua3.utility.samples.fx.input.decimal"), () -> null)
-                    .inputComboBox("list", I18NInstance.get().get("dua3.utility.samples.fx.input.list"), () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
+                    .inputInteger("integer", i18n().get("dua3.utility.samples.fx.input.integer"), () -> 0L)
+                    .inputInteger("integer from 4 to 7", i18n().get("dua3.utility.samples.fx.input.integer_range"), () -> null,
+                            i -> i != null && i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i18n().format("dua3.utility.samples.fx.input.error.between_4_and_7", i)))
+                    .inputDecimal("decimal", i18n().get("dua3.utility.samples.fx.input.decimal"), () -> null)
+                    .inputComboBox("list", i18n().get("dua3.utility.samples.fx.input.list"), () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
                     .verticalSpace(10, LayoutUnit.PIXELS)
-                    .inputCheckBox("bool", I18NInstance.get().get("dua3.utility.samples.fx.input.bool"), () -> false, I18NInstance.get().get("dua3.utility.samples.fx.input.bool.yes"))
-                    .inputFile("file", I18NInstance.get().get("dua3.utility.samples.fx.input.file"), () -> null, FileDialogMode.OPEN, true, List.of(FILTER_ALL_FILES))
-                    .inputFile("directory", I18NInstance.get().get("dua3.utility.samples.fx.input.directory"), () -> null, FileDialogMode.DIRECTORY, true, List.of(FILTER_ALL_FILES))
+                    .inputCheckBox("bool", i18n().get("dua3.utility.samples.fx.input.bool"), () -> false, i18n().get("dua3.utility.samples.fx.input.bool.yes"))
+                    .inputFile("file", i18n().get("dua3.utility.samples.fx.input.file"), () -> null, FileDialogMode.OPEN, true, List.of(FILTER_ALL_FILES))
+                    .inputFile("directory", i18n().get("dua3.utility.samples.fx.input.directory"), () -> null, FileDialogMode.DIRECTORY, true, List.of(FILTER_ALL_FILES))
                     .inputComboBoxEx(
                             "listEx",
-                            I18NInstance.get().get("dua3.utility.samples.fx.input.list_ex"),
-                            s -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title(I18NInstance.get().get("dua3.utility.samples.fx.input.edit_item")).defaultValue("%s", s).build().showAndWait().orElse(null),
-                            () -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title(I18NInstance.get().get("dua3.utility.samples.fx.input.add_item")).build().showAndWait().orElse(null),
+                            i18n().get("dua3.utility.samples.fx.input.list_ex"),
+                            s -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title(i18n().get("dua3.utility.samples.fx.input.edit_item")).defaultValue("%s", s).build().showAndWait().orElse(null),
+                            () -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title(i18n().get("dua3.utility.samples.fx.input.add_item")).build().showAndWait().orElse(null),
                             (cb, item) -> true,
                             Objects::toString,
                             () -> null,
                             String.class,
                             List.of("1", "2", "3"),
-                            v -> v != null ? Optional.empty() : Optional.of(I18NInstance.get().get("dua3.utility.samples.fx.input.error.select_item")))
+                            v -> v != null ? Optional.empty() : Optional.of(i18n().get("dua3.utility.samples.fx.input.error.select_item")))
                     .modality(Modality.NONE)
                     .build();
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", i18n().format(ANSWER, newVal));
                 }
             });
         });
         container.getChildren().add(btnInput);
 
         // Options
-        Button btnOptions = createButton(I18NInstance.get().get("dua3.utility.samples.fx.options"), () -> {
+        Button btnOptions = createButton(i18n().get("dua3.utility.samples.fx.options"), () -> {
             var dlg = Dialogs.options(primaryStage, MessageFormatter.standard())
                     .options(CsvIo.getOptions())
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.options.title"))
-                    .header(I18NInstance.get().get("dua3.utility.samples.fx.options.header"))
+                    .title(i18n().get("dua3.utility.samples.fx.options.title"))
+                    .header(i18n().get("dua3.utility.samples.fx.options.header"))
                     .modality(Modality.NONE)
                     .build();
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", i18n().format(ANSWER, newVal));
                 }
             });
         });
         container.getChildren().add(btnOptions);
 
         // Wizard
-        Button btnWizard = createButton(I18NInstance.get().get("dua3.utility.samples.fx.wizard"), () -> {
+        Button btnWizard = createButton(i18n().get("dua3.utility.samples.fx.wizard"), () -> {
             var dlg = Dialogs.wizard(primaryStage)
-                    .title(I18NInstance.get().get("dua3.utility.samples.fx.wizard.title"))
+                    .title(i18n().get("dua3.utility.samples.fx.wizard.title"))
                     .page("start",
                             Dialogs.alertPane(AlertType.INFORMATION, MessageFormatter.standard())
-                                    .header(I18NInstance.get().get("dua3.utility.samples.fx.wizard.start.header"))
-                                    .text(I18NInstance.get().get("dua3.utility.samples.fx.wizard.start.text")))
+                                    .header(i18n().get("dua3.utility.samples.fx.wizard.start.header"))
+                                    .text(i18n().get("dua3.utility.samples.fx.wizard.start.text")))
                     .page("dbms",
                             Dialogs.inputDialogPane(MessageFormatter.standard())
-                                    .header(I18NInstance.get().get("dua3.utility.samples.fx.wizard.dbms.header"))
-                                    .inputRadioList("rdbms", I18NInstance.get().get("dua3.utility.samples.fx.wizard.dbms.rdbms"), () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
+                                    .header(i18n().get("dua3.utility.samples.fx.wizard.dbms.header"))
+                                    .inputRadioList("rdbms", i18n().get("dua3.utility.samples.fx.wizard.dbms.rdbms"), () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
                     )
                     .modality(Modality.NONE)
                     .build();
             dlg.show();
             dlg.resultProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
-                    LOG.info("{}", I18NInstance.get().format(ANSWER, newVal));
+                    LOG.info("{}", i18n().format(ANSWER, newVal));
                 }
             });
         });
@@ -353,6 +362,10 @@ public class FxDialogSample extends Application {
         primaryStage.setTitle("Dialogs");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private static I18N i18n() {
+        return I18NInstance.get();
     }
 
     private void setLocale(Locale locale) {
