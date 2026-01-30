@@ -238,7 +238,7 @@ could not be loaded.
 
 ## Changes
 
-### 21 (in development)
+### 21
 
 #### Breaking Changes
 
