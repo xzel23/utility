@@ -76,11 +76,12 @@ public final class FxLauncher {
      */
     public static final int RC_ERROR = 1;
 
-    private static boolean HAS_SLB4J = LangUtil.isClassOnClasspath("org.slb4j.SLB4J");
+    private static final boolean HAS_SLB4J = LangUtil.isClassOnClasspath("org.slb4j.SLB4J");
 
     private static final String LOG_MESSAGES = I18NInstance.get().get("dua3.utility.fx.controls.launcher.log.messages");
 
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
+
     static @Nullable LogBuffer logBuffer = null;
     static boolean showLogWindow = false;
     static boolean debug = false;
