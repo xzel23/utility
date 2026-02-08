@@ -1,6 +1,7 @@
 package com.dua3.utility.fx;
 
 import javafx.scene.layout.Pane;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -10,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the FxRefresh class.
@@ -26,13 +25,12 @@ class FxRefreshTest extends FxTestBase {
             Runnable task = () -> taskExecuted.set(true);
 
             FxRefresh refresher = FxRefresh.create("TestRefresher", task);
-            assertNotNull(refresher, "FxRefresh should be created successfully");
-            assertTrue(refresher.isRunning(), "Refresher should be running after creation");
-            assertTrue(refresher.isActive(), "Refresher should be active by default");
+            Assertions.assertNotNull(refresher, "FxRefresh should be created successfully");
+            Assertions.assertTrue(refresher.isActive(), "Refresher should be active by default");
 
             // Clean up
             refresher.stop();
-            assertFalse(refresher.isRunning(), "Refresher should not be running after stop");
+            Assertions.assertFalse(refresher.isActive(), "Refresher should not be running after stop");
         });
     }
 
@@ -44,9 +42,8 @@ class FxRefreshTest extends FxTestBase {
 
             // Create with inactive state
             FxRefresh refresher = FxRefresh.create("TestRefresher", task, false);
-            assertNotNull(refresher, "FxRefresh should be created successfully");
-            assertTrue(refresher.isRunning(), "Refresher should be running after creation");
-            assertFalse(refresher.isActive(), "Refresher should be inactive as specified");
+            Assertions.assertNotNull(refresher, "FxRefresh should be created successfully");
+            Assertions.assertFalse(refresher.isActive(), "Refresher should be inactive as specified");
 
             // Clean up
             refresher.stop();
@@ -61,9 +58,8 @@ class FxRefreshTest extends FxTestBase {
             Pane node = new Pane();
 
             FxRefresh refresher = FxRefresh.create("TestRefresher", task, node);
-            assertNotNull(refresher, "FxRefresh should be created successfully with node");
-            assertTrue(refresher.isRunning(), "Refresher should be running after creation");
-            assertTrue(refresher.isActive(), "Refresher should be active by default");
+            Assertions.assertNotNull(refresher, "FxRefresh should be created successfully with node");
+            Assertions.assertTrue(refresher.isActive(), "Refresher should be active by default");
 
             // Clean up
             refresher.stop();
@@ -79,9 +75,8 @@ class FxRefreshTest extends FxTestBase {
 
             // Create with inactive state
             FxRefresh refresher = FxRefresh.create("TestRefresher", task, node, false);
-            assertNotNull(refresher, "FxRefresh should be created successfully with node");
-            assertTrue(refresher.isRunning(), "Refresher should be running after creation");
-            assertFalse(refresher.isActive(), "Refresher should be inactive as specified");
+            Assertions.assertNotNull(refresher, "FxRefresh should be created successfully with node");
+            Assertions.assertFalse(refresher.isActive(), "Refresher should be inactive as specified");
 
             // Clean up
             refresher.stop();
@@ -104,8 +99,8 @@ class FxRefreshTest extends FxTestBase {
         });
 
         // Wait for the refresh to complete
-        assertTrue(latch.await(5, TimeUnit.SECONDS), "Refresh should complete within timeout");
-        assertEquals(1, counter.get(), "Task should be executed exactly once");
+        Assertions.assertTrue(latch.await(5, TimeUnit.SECONDS), "Refresh should complete within timeout");
+        Assertions.assertEquals(1, counter.get(), "Task should be executed exactly once");
     }
 
     @Test
@@ -136,14 +131,14 @@ class FxRefreshTest extends FxTestBase {
         });
 
         // Wait for at least one refresh to complete
-        assertTrue(latch.await(5, TimeUnit.SECONDS), "At least one refresh should complete within timeout");
+        Assertions.assertTrue(latch.await(5, TimeUnit.SECONDS), "At least one refresh should complete within timeout");
 
         // Sleep a bit more to allow any additional refreshes to complete
         Thread.sleep(500);
 
         // The exact number might vary, but it should be less than the number of requests
         // due to the skipping of intermediate frames
-        assertTrue(counter.get() <= 3, "Some refresh requests should be skipped");
+        Assertions.assertTrue(counter.get() <= 3, "Some refresh requests should be skipped");
     }
 
     @Test
@@ -168,7 +163,7 @@ class FxRefreshTest extends FxTestBase {
 
         // Wait a bit to ensure the refresh would have happened if active
         Thread.sleep(500);
-        assertEquals(0, counter.get(), "Task should not be executed when refresher is inactive");
+        Assertions.assertEquals(0, counter.get(), "Task should not be executed when refresher is inactive");
 
         // Activate the refresher
         runOnFxThreadAndWait(() -> {
@@ -178,8 +173,8 @@ class FxRefreshTest extends FxTestBase {
         });
 
         // Wait for the refresh to complete
-        assertTrue(latch.await(5, TimeUnit.SECONDS), "Refresh should complete after activation");
-        assertTrue(counter.get() > 0, "Task should be executed after activation");
+        Assertions.assertTrue(latch.await(5, TimeUnit.SECONDS), "Refresh should complete after activation");
+        Assertions.assertTrue(counter.get() > 0, "Task should be executed after activation");
 
         // Clean up
         runOnFxThreadAndWait(() -> {
@@ -222,8 +217,8 @@ class FxRefreshTest extends FxTestBase {
         });
 
         // Wait for the refresh to complete
-        assertTrue(latch.await(5, TimeUnit.SECONDS), "Timeout while waiting for refresh to complete");
-        assertEquals(1, counter.get(), "Task should be executed only when node is visible");
+        Assertions.assertTrue(latch.await(5, TimeUnit.SECONDS), "Timeout while waiting for refresh to complete");
+        Assertions.assertEquals(1, counter.get(), "Task should be executed only when node is visible");
 
         // Clean up
         refresherReference.get().stop();
@@ -244,7 +239,7 @@ class FxRefreshTest extends FxTestBase {
 
             FxRefresh r = FxRefresh.create("TestRefresher", task, childNode);
             refresherRef.set(r);
-            assertTrue(r.isRunning(), "Refresher should be running initially");
+            Assertions.assertTrue(r.isActive(), "Refresher should be running initially");
         });
 
         // Remove node from parent
@@ -259,9 +254,9 @@ class FxRefreshTest extends FxTestBase {
             }
 
             FxRefresh refresher = refresherRef.get();
-            refresherStopped.set(!refresher.isRunning());
+            refresherStopped.set(!refresher.isActive());
         });
 
-        assertTrue(refresherStopped.get(), "Refresher should be stopped when node is removed from parent");
+        Assertions.assertTrue(refresherStopped.get(), "Refresher should be stopped when node is removed from parent");
     }
 }

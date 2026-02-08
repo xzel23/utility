@@ -3,13 +3,10 @@ package com.dua3.utility.fx;
 import javafx.scene.Node;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.Nullable;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A class intended for controlling possibly long-running update operations. Refreshs happen mutually exclusive, i.e.,
@@ -37,21 +34,19 @@ public final class FxRefresh {
     private final AtomicLong requestedRevision = new AtomicLong();
 
     // synchronization
-    private final ReentrantLock lock = new ReentrantLock();
-    private final Condition trigger = lock.newCondition();
+    private final Semaphore signal = new Semaphore(0);
 
-    /**
-     * The active state. Refresh requests in inactive state are put on hold until activated again.
-     */
-    private final AtomicBoolean active = new AtomicBoolean(false);
+    private static final int STATE_INACTIVE = 0;
+    private static final int STATE_ACTIVE = 1;
+    private static final int STATE_TERMINATING = 2;
+    private static final int STATE_TERMINATED = 3;
+
+    private AtomicInteger state = new AtomicInteger(STATE_INACTIVE);
+
     /**
      * the update task to execute.
      */
     private final Runnable task;
-    /**
-     * The update thread, null if not running or stop requested.
-     */
-    private volatile @Nullable Thread updateThread;
 
     /**
      * Constructor.
@@ -65,7 +60,6 @@ public final class FxRefresh {
 
         Thread thread = new Thread(this::refreshLoop);
         thread.setDaemon(true);
-        this.updateThread = thread;
 
         thread.start();
     }
@@ -77,44 +71,31 @@ public final class FxRefresh {
         LOG.trace("[{}] entering refresh loop", name);
 
         while (true) {
-            lock.lock();
             try {
-                // Wait for conditions to be met: thread not stopped, active, and new revision requested
-                while (updateThread != null && (!active.get() || requestedRevision.get() <= currentRevision.get())) {
-                    if (!trigger.await(MAX_WAIT_MILLISECONDS, TimeUnit.MILLISECONDS)) {
-                        LOG.trace("[{}] timeout, force check", name);
-                    }
-                }
+                // Wait for a signal
+                signal.acquire();
 
-                // Check if we should exit
-                if (updateThread == null) {
-                    break;
-                }
+                int st = state.get();
+                if (st == STATE_TERMINATING) break;
+                if (st != STATE_ACTIVE) continue;
 
-                // Execute task if still active and there's a new revision
-                if (active.get()) {
-                    long myRevision = requestedRevision.get();
-                    if (myRevision > currentRevision.get()) {
-                        try {
-                            LOG.trace("[{}] starting refresh with revision: {}", name, myRevision);
-                            task.run();
-                            LOG.trace("[{}] refreshed to revision: {}", name, myRevision);
-                        } catch (Exception e) {
-                            LOG.warn("task aborted, exception swallowed, current revision {} might have inconsistent state", myRevision, e);
-                        }
-                        currentRevision.set(myRevision);
-                    } else {
-                        LOG.trace("[{}] already at revision: {}", name, myRevision);
+                long req = requestedRevision.get();
+                long curr = currentRevision.get();
+
+                if (req > curr) {
+                    try {
+                        task.run();
+                    } catch (Exception e) {
+                        LOG.warn("Task failed.", e);
                     }
+                    currentRevision.set(req);
                 }
             } catch (InterruptedException e) {
-                LOG.trace("[{}] interrupted", name);
                 Thread.currentThread().interrupt();
                 break;
-            } finally {
-                lock.unlock();
             }
         }
+        state.set(STATE_TERMINATED);
 
         LOG.trace("[{}] exiting refresh loop", name);
     }
@@ -123,15 +104,8 @@ public final class FxRefresh {
      * Stop the refresher.
      */
     public void stop() {
-        LOG.trace("[{}] stopping", name);
-        lock.lock();
-        try {
-            active.set(false);
-            this.updateThread = null;
-            trigger.signalAll();
-        } finally {
-            lock.unlock();
-        }
+        int newState = state.updateAndGet(st -> Math.max(st, STATE_TERMINATING));
+        LOG.trace("[{}] stop() - state changed to {}", name, newState);
     }
 
     /**
@@ -215,27 +189,12 @@ public final class FxRefresh {
     }
 
     /**
-     * Check if the refresher has been started. Note that it's possible that the refresher is running,
-     * but inactive, i.e., if the window is hidden.
-     *
-     * @return true, if the refresher is running
-     */
-    public boolean isRunning() {
-        lock.lock();
-        try {
-            return updateThread != null;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
      * Check active state.
      *
      * @return true if active
      */
     public boolean isActive() {
-        return active.get();
+        return state.get() == STATE_ACTIVE;
     }
 
     /**
@@ -244,15 +203,27 @@ public final class FxRefresh {
      * @param flag whether to activate or deactivate the refresher
      */
     public void setActive(boolean flag) {
-        lock.lock();
-        try {
-            if (active.compareAndSet(!flag, flag)) {
-                LOG.trace("[{}] setActive({})", name, flag);
-                trigger.signalAll();
+        int newState = state.updateAndGet(st -> {
+            int newSt = st;
+            if (flag) {
+                switch (st) {
+                    case STATE_INACTIVE -> newSt = STATE_ACTIVE;
+                    case STATE_ACTIVE -> LOG.debug("[{}] already active", name);
+                    case STATE_TERMINATING, STATE_TERMINATED -> LOG.debug("[{}] already stopped", name);
+                    default -> throw new IllegalStateException("invalid state: " + st);
+                }
+            } else {
+                switch (st) {
+                    case STATE_INACTIVE -> LOG.debug("[{}] already inactive", name);
+                    case STATE_ACTIVE -> newSt = STATE_INACTIVE;
+                    case STATE_TERMINATING, STATE_TERMINATED -> LOG.debug("[{}] already stopped", name);
+                    default -> throw new IllegalStateException("invalid state: " + st);
+                }
             }
-        } finally {
-            lock.unlock();
-        }
+            return newSt;
+        });
+
+        LOG.trace("[{}] setActive({}) - state changed to {}", name, flag, newState);
     }
 
     /**
@@ -265,17 +236,12 @@ public final class FxRefresh {
      * </ul>
      */
     public void refresh() {
-        LOG.trace("[{}] refresh requested", name);
-        lock.lock();
-        try {
-            if (updateThread == null) {
-                return;
-            }
-            long revision = requestedRevision.incrementAndGet();
-            LOG.trace("[{}] requested revision {}", name, revision);
-            trigger.signalAll();
-        } finally {
-            lock.unlock();
+        if (!isActive()) {
+            LOG.trace("[{}] refresh() - mot active, ignoring", name);
+            return;
         }
+
+        requestedRevision.incrementAndGet();
+        signal.release(); // Wake up the thread
     }
 }
