@@ -6,6 +6,10 @@ plugins {
 
 application {
     mainClass.set("com.dua3.utility.samples.graphics.FxGraphicsSample")
+    applicationDefaultJvmArgs = listOf(
+        "--enable-native-access=javafx.graphics,javafx.media,javafx.web",
+        "--enable-native-access=ALL-UNNAMED"
+    )
 }
 
 project.description = "samples"
