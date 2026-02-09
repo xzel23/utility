@@ -238,8 +238,9 @@ could not be loaded.
 
 ## Changes
 
-### 21.0.1
+### 21.0.2
 
+- fix release version
 - Change synchronization mechanisms in FxRefresh to avoid possible deadlocks
 
 ### 21
