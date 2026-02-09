@@ -238,6 +238,10 @@ could not be loaded.
 
 ## Changes
 
+### 21.0.1
+
+- Change synchronization mechanisms in FxRefresh to avoid possible deadlocks
+
 ### 21
 
 #### Breaking Changes

@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public final class FxRefresh {
     private static final Logger LOG = LogManager.getLogger(FxRefresh.class);
-    private static final long MAX_WAIT_MILLISECONDS = 1000;
 
     /**
      * The instance name (used in logging).
@@ -41,7 +40,7 @@ public final class FxRefresh {
     private static final int STATE_TERMINATING = 2;
     private static final int STATE_TERMINATED = 3;
 
-    private AtomicInteger state = new AtomicInteger(STATE_INACTIVE);
+    private final AtomicInteger state = new AtomicInteger(STATE_INACTIVE);
 
     /**
      * the update task to execute.
@@ -195,6 +194,15 @@ public final class FxRefresh {
      */
     public boolean isActive() {
         return state.get() == STATE_ACTIVE;
+    }
+
+    /**
+     * Checks if the refresher is currently running.
+     *
+     * @return true if the current state is not in the terminating state, false otherwise
+     */
+    public boolean isRunning() {
+        return state.get() < STATE_TERMINATING;
     }
 
     /**
