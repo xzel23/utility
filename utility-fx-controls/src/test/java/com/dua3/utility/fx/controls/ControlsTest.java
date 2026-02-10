@@ -2,7 +2,6 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.application.UiMode;
-import com.dua3.utility.fx.FxUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Orientation;
