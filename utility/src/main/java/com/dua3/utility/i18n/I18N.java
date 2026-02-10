@@ -68,7 +68,7 @@ public final class I18N {
      * @return the singleton instance.
      */
     public static I18N getInstance() {
-        return INSTANCE.updateAndGet(inst -> inst == null ? create("", Locale.getDefault()) : inst);
+        return INSTANCE.updateAndGet(inst -> inst == null ? init("", Locale.getDefault()) : inst);
     }
 
     /**
