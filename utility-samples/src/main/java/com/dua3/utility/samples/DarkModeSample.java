@@ -40,7 +40,7 @@ public final class DarkModeSample {
         // Use system L&F where possible to keep it minimalistic
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             // keep defaults
         }
 
