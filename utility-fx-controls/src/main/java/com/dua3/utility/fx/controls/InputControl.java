@@ -276,8 +276,8 @@ public interface InputControl<T> {
      * @param validate a {@link Function} that takes a Boolean value and returns an {@link Optional} containing an error message if validation fails
      * @return a new instance of {@link SimpleInputControl} configured with a {@link CheckBox} and the provided parameters
      */
-    static SimpleInputControl<CheckBox, Boolean> checkBoxInput(BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
-        CheckBox control = new CheckBox(text);
+    static SimpleInputControl<CheckBox, Boolean> checkBoxInput(BooleanSupplier dflt, @Nullable String text, Function<@Nullable Boolean, Optional<String>> validate) {
+        CheckBox control = text == null ? new CheckBox() : new CheckBox(text);
         BooleanProperty value = control.selectedProperty();
         return new SimpleInputControl<>(control, value.asObject(), dflt::getAsBoolean, validate);
     }

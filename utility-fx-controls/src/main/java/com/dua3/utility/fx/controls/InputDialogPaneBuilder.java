@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -140,20 +141,20 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
-    public InputDialogPaneBuilder section(int level, String fmt, Object... args) {
-        pb.section(level, fmt, args);
+    public InputDialogPaneBuilder section(int level, MessageFormatter.MessageFormatterArgs args) {
+        pb.section(level, args);
         return this;
     }
 
     @Override
-    public InputDialogPaneBuilder text(String fmt, Object... args) {
-        pb.text(fmt, args);
+    public InputDialogPaneBuilder text(MessageFormatter.MessageFormatterArgs args) {
+        pb.text(args);
         return this;
     }
 
     @Override
-    public InputDialogPaneBuilder labeledText(String fmtLabel, String fmtText, Object... args) {
-        pb.labeledText(fmtLabel, fmtText, args);
+    public InputDialogPaneBuilder labeledText(MessageFormatter.MessageFormatterArgs label, MessageFormatter.MessageFormatterArgs text) {
+        pb.labeledText(label, text);
         return this;
     }
 
@@ -212,7 +213,7 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
-    public InputDialogPaneBuilder inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
+    public InputDialogPaneBuilder inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, MessageFormatter.MessageFormatterArgs text, Function<@Nullable Boolean, Optional<String>> validate) {
         pb.inputCheckBox(id, label, dflt, text, validate);
         return this;
     }
@@ -274,6 +275,24 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     @Override
     public InputDialogPaneBuilder node(Node node) {
         pb.node(node);
+        return this;
+    }
+
+    @Override
+    public InputDialogPaneBuilder apply(Consumer<Node> action) {
+        pb.apply(action);
+        return this;
+    }
+
+    @Override
+    public InputDialogPaneBuilder startRow(MessageFormatter.MessageFormatterArgs label) {
+        pb.startRow(label);
+        return this;
+    }
+
+    @Override
+    public InputDialogPaneBuilder endRow() {
+        pb.endRow();
         return this;
     }
 

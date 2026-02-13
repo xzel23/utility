@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -139,20 +140,20 @@ public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, M
     }
 
     @Override
-    public InputPaneBuilder section(int level, String fmt, Object... args) {
-        pb.section(level, fmt, args);
+    public InputPaneBuilder section(int level, MessageFormatter.MessageFormatterArgs args) {
+        pb.section(level, args);
         return this;
     }
 
     @Override
-    public InputPaneBuilder text(String fmt, Object... args) {
-        pb.text(fmt, args);
+    public InputPaneBuilder text(MessageFormatter.MessageFormatterArgs args) {
+        pb.text(args);
         return this;
     }
 
     @Override
-    public InputPaneBuilder labeledText(String fmtLabel, String fmtText, Object... args) {
-        pb.labeledText(fmtLabel, fmtText, args);
+    public InputPaneBuilder labeledText(MessageFormatter.MessageFormatterArgs label, MessageFormatter.MessageFormatterArgs text) {
+        pb.labeledText(label, text);
         return this;
     }
 
@@ -211,7 +212,7 @@ public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, M
     }
 
     @Override
-    public InputPaneBuilder inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
+    public InputPaneBuilder inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, MessageFormatter.MessageFormatterArgs text, Function<@Nullable Boolean, Optional<String>> validate) {
         pb.inputCheckBox(id, label, dflt, text, validate);
         return this;
     }
@@ -276,4 +277,21 @@ public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, M
         return this;
     }
 
+    @Override
+    public InputPaneBuilder apply(Consumer<Node> action) {
+        pb.apply(action);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder startRow(MessageFormatter.MessageFormatterArgs label) {
+        pb.startRow(label);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder endRow() {
+        pb.endRow();
+        return this;
+    }
 }

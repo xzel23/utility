@@ -30,9 +30,12 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -53,6 +56,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -177,12 +181,12 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public <T> GridBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
-        return doAdd(id, format(label), type, dflt, control, visible);
+        return doAdd(id, format(label), type, dflt, control, row != null, visible);
     }
 
     @Override
     public <T> GridBuilder addInput(String id, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
-        return doAdd(id, null, type, dflt, control, true);
+        return doAdd(id, null, type, dflt, control, row != null, true);
     }
 
     @Override
@@ -211,29 +215,29 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public GridBuilder verticalSpace(double height, LayoutUnit unit) {
-        data.add(new Meta<>(null, null, Void.class, () -> null, new ControlWrapper(new Region()), true, markerWidth, height, unit));
+        data.add(new Meta<>(null, null, Void.class, () -> null, new ControlWrapper(new Region()), row != null, true, markerWidth, height, unit));
         return this;
     }
 
     @Override
     public GridBuilder node(Node node) {
-        return doAdd(null, null, Void.class, () -> null, new ControlWrapper(node), true);
+        return doAdd(null, null, Void.class, () -> null, new ControlWrapper(node), row != null, true);
     }
 
     @Override
     public GridBuilder node(MessageFormatter.MessageFormatterArgs label, Node node) {
-        return doAdd(null, format(label), Void.class, () -> null, new ControlWrapper(node), true);
+        return doAdd(null, format(label), Void.class, () -> null, new ControlWrapper(node), row != null, true);
     }
 
-    private String format(MessageFormatter.MessageFormatterArgs mfargs) {
+    private @Nullable String format(MessageFormatter.MessageFormatterArgs mfargs) {
         return format(mfargs.fmt(), mfargs.args());
     }
 
     @Override
-    public GridBuilder section(int level, String fmt, Object... args) {
+    public GridBuilder section(int level, MessageFormatter.MessageFormatterArgs args) {
         LangUtil.checkArg(level > 0, "level must be 1 or greeater");
 
-        String title = format(fmt, args);
+        String title = format(args);
 
         SectionStyle style = getSectionStyle(level);
 
@@ -274,29 +278,37 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return this;
     }
 
-    private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+    private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean inline, boolean visible) {
         // check for duplicate IDs
         if (id != null && !id.isEmpty() && !ids.add(id)) {
             throw new IllegalArgumentException(String.format(INPUT_WITH_ID_ALREADY_DEFINED, id));
         }
 
+        // add inline nodes to the current row
+        if (inline && row != null) {
+            if (label != null) {
+                row.getChildren().add(new Label(label));
+            }
+            row.getChildren().add(control.node());
+        }
+
         // add
-        Meta<T> meta = new Meta<>(id, label, type, dflt, control, visible, markerWidth);
+        Meta<T> meta = new Meta<>(id, label, type, dflt, control, inline, visible, markerWidth);
         data.add(meta);
 
         return this;
     }
 
     @Override
-    public GridBuilder text(String fmt, Object... args) {
-        Label node = new Label(format(fmt, args));
+    public GridBuilder text(MessageFormatter.MessageFormatterArgs args) {
+        Label node = new Label(format(args));
         return node(node);
     }
 
     @Override
-    public GridBuilder labeledText(String fmtLabel, String fmtText, Object... args) {
-        Label node = new Label(format(fmtText, args));
-        return node(MessageFormatter.args(fmtLabel, args), node);
+    public GridBuilder labeledText(MessageFormatter.MessageFormatterArgs label, MessageFormatter.MessageFormatterArgs text) {
+        Label node = new Label(format(label));
+        return node(text, node);
     }
 
     @Override
@@ -358,8 +370,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public GridBuilder inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
-        return addInput(id, label, Boolean.class, dflt::getAsBoolean, InputControl.checkBoxInput(dflt, text, validate), true);
+    public GridBuilder inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, MessageFormatter.MessageFormatterArgs text, Function<@Nullable Boolean, Optional<String>> validate) {
+        return addInput(id, label, Boolean.class, dflt::getAsBoolean, InputControl.checkBoxInput(dflt, format(text), validate), true);
     }
 
     @Override
@@ -399,12 +411,43 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public <T> GridBuilder inputControl(String id, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
-        return doAdd(id, null, type, dflt, control, true);
+        return doAdd(id, null, type, dflt, control, row != null, true);
     }
 
     @Override
     public <T> GridBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
-        return doAdd(null, format(label), type, dflt, control, true);
+        return doAdd(id, format(label), type, dflt, control, row != null, true);
+    }
+
+    @Override
+    public GridBuilder apply(Consumer<Node> action) {
+        Node node;
+        if (row != null) {
+            ObservableList<Node> children = row.getChildren();
+            LangUtil.check(!children.isEmpty(), "no inline nodes defined for current row");
+            node = children.getLast();
+        } else {
+            LangUtil.check(!data.isEmpty(), "no inline nodes defined for current row");
+            node = data.getLast().control.node();
+        }
+        action.accept(node);
+        return this;
+    }
+
+    private @Nullable HBox row = null;
+
+    @Override
+    public GridBuilder startRow(MessageFormatter.MessageFormatterArgs label) {
+        LangUtil.check(row == null, "nested rows are not supported");
+        row = new HBox();
+        row.setAlignment(Pos.BASELINE_LEFT);
+        row.setStyle("-fx-spacing: 1em;");
+        return doAdd(null, format(label), Void.class, () -> null, new ControlWrapper(row), false, true);
+    }
+
+    public GridBuilder endRow() {
+        row = null;
+        return this;
     }
 
     /**

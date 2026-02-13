@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -40,7 +41,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param args    the arguments to be formatted and substituted into the message template
      * @return the formatted message as a String
      */
-    default String format(String message, @Nullable Object... args) {
+    default @Nullable String format(String message, @Nullable Object... args) {
         return getMessageFormatter().format(message, args);
     }
 
@@ -72,7 +73,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default <T> B addInput(String id, String label, Class<T> type, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
-        return addInput(id, new MessageFormatter.MessageFormatterArgs(label), type, dflt, control, visible);
+        return addInput(id, MessageFormatter.args(label), type, dflt, control, visible);
     }
 
     /**
@@ -226,7 +227,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return the updated instance of the current object
      */
     default B node(String label, Node node) {
-        return node(new MessageFormatter.MessageFormatterArgs(label), node);
+        return node(MessageFormatter.args(label), node);
     }
 
     /**
@@ -247,16 +248,38 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param args  the arguments referenced by the format specifiers in the format string
      * @return {@code this}
      */
-    B section(int level, String fmt, Object... args);
+    default B section(int level, String fmt, Object... args) {
+        return section(level, MessageFormatter.args(fmt, args));
+    }
+
+    /**
+     * Appends a section to the current builder instance with a specified heading level
+     * and formatted message arguments.
+     *
+     * @param level the heading level of the section, typically represented as an integer.
+     * @param args the message formatter arguments used to format the content within the section.
+     * @return the updated builder instance after appending the section.
+     */
+    B section(int level, MessageFormatter.MessageFormatterArgs args);
+
+    /**
+     * Formats the provided message template with the given arguments and returns the result.
+     *
+     * @param fmt the message format string
+     * @param args the arguments to replace placeholders in the format string
+     * @return an instance of type B with the formatted message
+     */
+    default B text(String fmt, Object... args) {
+        return text(MessageFormatter.args(fmt, args));
+    }
 
     /**
      * Add a static text without a label.
      *
-     * @param fmt  the formatting pattern
-     * @param args the formatting arguments
+     * @param text the text to be added
      * @return {@code this}
      */
-    B text(String fmt, Object... args);
+    B text(MessageFormatter.MessageFormatterArgs text);
 
     /**
      * Add a static text without a label.
@@ -269,7 +292,18 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param args     the formatting arguments
      * @return {@code this}
      */
-    B labeledText(String fmtLabel, String fmtText, Object... args);
+    default B labeledText(String fmtLabel, String fmtText, Object... args) {
+        return labeledText(MessageFormatter.args(fmtLabel, args), MessageFormatter.args(fmtText, args));
+    }
+
+    /**
+     * Creates and returns a labeled text object by combining the provided label and text.
+     *
+     * @param label the MessageFormatterArgs instance representing the label.
+     * @param text the MessageFormatterArgs instance representing the text.
+     * @return a labeled text object of type B.
+     */
+    B labeledText(MessageFormatter.MessageFormatterArgs label, MessageFormatter.MessageFormatterArgs text);
 
     /**
      * Creates a disabled input field with the specified configurations.
@@ -284,7 +318,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return An instance of `B` representing the configured disabled input field.
      */
     default <T> B inputConstant(String id, String label, Supplier<T> value, Class<T> cls) {
-        return inputConstant(id, new MessageFormatter.MessageFormatterArgs(label), value, cls);
+        return inputConstant(id, MessageFormatter.args(label), value, cls);
     }
 
     /**
@@ -313,7 +347,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return an instance of type B representing the configured disabled input field
      */
     default <T> B inputConstant(String id, String label, T value) {
-        return inputConstant(id, new MessageFormatter.MessageFormatterArgs(label), value);
+        return inputConstant(id, MessageFormatter.args(label), value);
     }
 
     /**
@@ -382,7 +416,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputText(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
-        return inputText(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
+        return inputText(id, MessageFormatter.args(label), dflt, validate);
     }
 
     /**
@@ -442,7 +476,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputString(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
-        return inputString(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
+        return inputString(id, MessageFormatter.args(label), dflt, validate);
     }
 
     /**
@@ -496,7 +530,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputPassword(String id, String label, Supplier<@Nullable String> dflt, Function<@Nullable String, Optional<String>> validate) {
-        return inputPassword(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
+        return inputPassword(id, MessageFormatter.args(label), dflt, validate);
     }
 
     /**
@@ -532,7 +566,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return an instance of the builder type B after the password input process
      */
     default B inputPasswordWithVerification(String id, String label, String labelRepeat) {
-        return inputPasswordWithVerification(id, new MessageFormatter.MessageFormatterArgs(label), new MessageFormatter.MessageFormatterArgs(labelRepeat));
+        return inputPasswordWithVerification(id, MessageFormatter.args(label), MessageFormatter.args(labelRepeat));
     }
 
     /**
@@ -578,11 +612,11 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param id       the ID
      * @param label    the label text
      * @param dflt     supplier of default value
-     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @param validate validation callback, return an error message if invalid, empty optional if valid
      * @return {@code this}
      */
     default B inputInteger(String id, String label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
-        return inputInteger(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
+        return inputInteger(id, MessageFormatter.args(label), dflt, validate);
     }
 
     /**
@@ -591,7 +625,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param id       the ID
      * @param label    the label text
      * @param dflt     supplier of default value
-     * @param validate validation callback, return error message if invalid, empty optional if valid
+     * @param validate validation callback, return an error message if invalid, empty optional if valid
      * @return {@code this}
      */
     B inputInteger(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate);
@@ -630,7 +664,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputDecimal(String id, String label, Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
-        return inputDecimal(id, new MessageFormatter.MessageFormatterArgs(label), dflt, validate);
+        return inputDecimal(id, MessageFormatter.args(label), dflt, validate);
     }
 
     /**
@@ -680,7 +714,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputCheckBox(String id, String label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
-        return inputCheckBox(id, new MessageFormatter.MessageFormatterArgs(label), dflt, text, validate);
+        return inputCheckBox(id, MessageFormatter.args(label), dflt, MessageFormatter.args(text), validate);
     }
 
     /**
@@ -693,7 +727,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate a function that takes a Boolean value and returns an optional validation message
      * @return {@code this}
      */
-    B inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, String text, Function<@Nullable Boolean, Optional<String>> validate);
+    B inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, MessageFormatter.MessageFormatterArgs text, Function<@Nullable Boolean, Optional<String>> validate);
 
     /**
      * Add a labeled checkbox.
@@ -704,7 +738,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param text  the checkbox text
      * @return {@code this}
      */
-    default B inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, String text) {
+    default B inputCheckBox(String id, MessageFormatter.MessageFormatterArgs label, BooleanSupplier dflt, MessageFormatter.MessageFormatterArgs text) {
         return inputCheckBox(id, label, dflt, text, b -> Optional.empty());
     }
 
@@ -751,7 +785,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default <T> B inputComboBox(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
-        return inputComboBox(id, new MessageFormatter.MessageFormatterArgs(label), dflt, cls, items, validate);
+        return inputComboBox(id, MessageFormatter.args(label), dflt, cls, items, validate);
     }
 
     /**
@@ -924,7 +958,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default <T> B inputComboBoxEx(String id, String label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
-        return inputComboBoxEx(id, new MessageFormatter.MessageFormatterArgs(label), edit, add, remove, format, dflt, cls, items, validate);
+        return inputComboBoxEx(id, MessageFormatter.args(label), edit, add, remove, format, dflt, cls, items, validate);
     }
 
     /**
@@ -992,7 +1026,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default <T> B inputRadioList(String id, String label, Supplier<? extends @Nullable T> dflt, Class<T> cls, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
-        return inputRadioList(id, new MessageFormatter.MessageFormatterArgs(label), dflt, cls, items, validate);
+        return inputRadioList(id, MessageFormatter.args(label), dflt, cls, items, validate);
     }
 
     /**
@@ -1035,7 +1069,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputSlider(String id, String label, Supplier<@Nullable Double> dflt, double min, double max) {
-        return inputSlider(id, new MessageFormatter.MessageFormatterArgs(label), dflt, min, max);
+        return inputSlider(id, MessageFormatter.args(label), dflt, min, max);
     }
 
     /**
@@ -1060,7 +1094,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputOptions(String id, String label, Supplier<@Nullable Arguments> dflt, Supplier<Collection<Option<?>>> options) {
-        return inputOptions(id, new MessageFormatter.MessageFormatterArgs(label), dflt, options);
+        return inputOptions(id, MessageFormatter.args(label), dflt, options);
     }
 
     /**
@@ -1099,7 +1133,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter) {
-        return inputFile(id, new MessageFormatter.MessageFormatterArgs(label), dflt, mode, existingOnly, filter, FileInput.defaultValidate(mode, existingOnly));
+        return inputFile(id, MessageFormatter.args(label), dflt, mode, existingOnly, filter, FileInput.defaultValidate(mode, existingOnly));
     }
 
     /**
@@ -1146,7 +1180,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
-        return inputFile(id, new MessageFormatter.MessageFormatterArgs(label), dflt, mode, existingOnly, filter, validate);
+        return inputFile(id, MessageFormatter.args(label), dflt, mode, existingOnly, filter, validate);
     }
 
     /**
@@ -1156,10 +1190,10 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param label        the display label for the input field
      * @param dflt         a supplier providing the default selected folder path, which can be null
      * @param existingOnly a boolean indicating if only existing directories should be selectable
-     * @return an instance of type B after configuring the folder input field
+     * @return {@code this}
      */
     default B inputFolder(String id, String label, Supplier<@Nullable Path> dflt, boolean existingOnly) {
-        return inputFolder(id, new MessageFormatter.MessageFormatterArgs(label), dflt, existingOnly, FileInput.defaultValidate(FileDialogMode.DIRECTORY, existingOnly));
+        return inputFolder(id, MessageFormatter.args(label), dflt, existingOnly, FileInput.defaultValidate(FileDialogMode.DIRECTORY, existingOnly));
     }
 
     /**
@@ -1170,7 +1204,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt         a supplier providing the default folder path
      * @param existingOnly a flag indicating whether only existing folders are allowed
      * @param validate     a function to validate the selected folder path
-     * @return an instance of the builder configured with the folder input
+     * @return {@code this}
      */
     default B inputFolder(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, boolean existingOnly, Function<@Nullable Path, Optional<String>> validate) {
         return inputFile(id, label, dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
@@ -1183,7 +1217,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param label        the display label for the input field
      * @param dflt         a supplier providing the default selected folder path, which can be null
      * @param existingOnly a boolean indicating if only existing directories should be selectable
-     * @return an instance of type B after configuring the folder input field
+     * @return {@code this}
      */
     default B inputFolder(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, boolean existingOnly) {
         return inputFolder(id, label, dflt, existingOnly, FileInput.defaultValidate(FileDialogMode.DIRECTORY, existingOnly));
@@ -1197,10 +1231,10 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt         a supplier providing the default folder path
      * @param existingOnly a flag indicating whether only existing folders are allowed
      * @param validate     a function to validate the selected folder path
-     * @return an instance of the builder configured with the folder input
+     * @return {@code this}
      */
     default B inputFolder(String id, String label, Supplier<@Nullable Path> dflt, boolean existingOnly, Function<@Nullable Path, Optional<String>> validate) {
-        return inputFile(id, new MessageFormatter.MessageFormatterArgs(label), dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
+        return inputFile(id, MessageFormatter.args(label), dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
     }
 
     /**
@@ -1211,7 +1245,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param control the input control to be associated
      * @param type    the class type of the value managed by the input control
      * @param dflt    a supplier for the default value, which may produce a null value
-     * @return an instance of type B for method chaining or further configuration
+     * @return {@code this}
      */
     <T> B inputControl(String id, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt);
 
@@ -1224,10 +1258,10 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param control the input control instance to be configured
      * @param type    the type of the input value
      * @param dflt    a supplier providing the default value for the input control; may be null
-     * @return an instance of type B, representing the configured input control
+     * @return {@code this}
      */
     default <T> B inputControl(String id, String label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt) {
-        return inputControl(id, new MessageFormatter.MessageFormatterArgs(label), control, type, dflt);
+        return inputControl(id, MessageFormatter.args(label), control, type, dflt);
     }
 
     /**
@@ -1239,7 +1273,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param control the input control instance to be configured
      * @param type    the type of the input value
      * @param dflt    a supplier providing the default value for the input control; may be null
-     * @return an instance of type B, representing the configured input control
+     * @return {@code this}
      */
     <T> B inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Class<T> type, Supplier<? extends @Nullable T> dflt);
 
@@ -1254,4 +1288,48 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param scale        A scaling factor to adjust the size of the font for the section title.
      */
     record SectionStyle(float vspaceBefore, float vspaceAfter, boolean makeBold, float scale) {}
+
+    /**
+     * Applies the specified action to the last added node.
+     *
+     * @param action a Consumer representing the action to apply to the node
+     * @return {@code this}
+     */
+    B apply(Consumer<Node> action);
+
+    /**
+     * Starts a new row without a label.
+     *
+     * @return {@code this}
+     */
+    default B startRow() {
+        return startRow(MessageFormatter.empty());
+    }
+
+    /**
+     * Starts a new row with the specified label.
+     *
+     * @param format the format string used to define the label text
+     * @param args the arguments to be used in the format string
+     * @return {@code this}
+     */
+    default B startRow(String format, Object... args) {
+        return startRow(MessageFormatter.args(format, args));
+    }
+
+    /**
+     * Starts a new row with the specified label.
+     *
+     * @param label the {@code MessageFormatter.MessageFormatterArgs} object
+     *              containing the label for the row to be started
+     * @return {@code this}
+     */
+    B startRow(MessageFormatter.MessageFormatterArgs label);
+
+    /**
+     * Marks the end of a row in the current operation or construction process.
+     *
+     * @return {@code this}
+     */
+    B endRow();
 }

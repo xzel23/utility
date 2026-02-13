@@ -287,7 +287,7 @@ public class Grid extends GridPane {
             updateMarker(entry, false);
             controls.add(entry.control);
 
-            if (!entry.visible) {
+            if (!entry.visible || entry.inline) {
                 // do not add controls for non-visible (hidden) fields
                 continue;
             }
@@ -337,10 +337,6 @@ public class Grid extends GridPane {
 
                 getRowConstraints().add(rc);
                 y++;
-            }
-
-            if (entry.control.node() == null) {
-                continue;
             }
 
             // add markers, label and control
@@ -534,15 +530,16 @@ public class Grid extends GridPane {
         final @Nullable Label label;
         final Label requiredMarker;
         final Label errorMarker;
+        final boolean inline;
         final boolean visible;
         final double space;
         final LayoutUnit spaceUnit;
 
-        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean visible, double markerWidth) {
-            this(id, label, cls, dflt, control, visible, markerWidth, 0.0, LayoutUnit.PIXELS);
+        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth) {
+            this(id, label, cls, dflt, control, inline, visible, markerWidth, 0.0, LayoutUnit.PIXELS);
         }
 
-        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean visible, double markerWidth, double space, LayoutUnit spaceUnit) {
+        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth, double space, LayoutUnit spaceUnit) {
             this.id = id == null || id.isEmpty() ? null : id;
             if (label != null) {
                 this.label = new Label(label);
@@ -557,6 +554,7 @@ public class Grid extends GridPane {
             this.cls = cls;
             this.dflt = dflt;
             this.control = control;
+            this.inline = inline;
             this.visible = visible;
             this.space = space;
             this.spaceUnit = spaceUnit;
