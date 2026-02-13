@@ -136,6 +136,15 @@ public interface MessageFormatter {
     }
 
     /**
+     * Creates an empty {@code MessageFormatterArgs} instance with no format string and no arguments.
+     *
+     * @return an empty {@code MessageFormatterArgs} instance
+     */
+    static MessageFormatterArgs empty() {
+        return new MessageFormatterArgs("");
+    }
+
+    /**
      * Formats the given format string by replacing placeholders with the provided arguments.
      * <p>
      * <strong>NOTE:</strong> The formatting process is implementation defined.
@@ -144,7 +153,7 @@ public interface MessageFormatter {
      * @param args the arguments to replace the placeholders in the format string
      * @return the formatted string where placeholders are replaced with the corresponding arguments
      */
-    String format(String fmt, @Nullable Object... args);
+    @Nullable String format(String fmt, @Nullable Object... args);
 
     /**
      * Returns the input string as is, without any formatting applied.
@@ -241,7 +250,11 @@ public interface MessageFormatter {
         private static final MessageFormatterStringFormat DEFAULT_INSTANCE = new MessageFormatterStringFormat(Locale.getDefault());
 
         @Override
-        public String format(String fmt, @Nullable Object... args) {
+        public @Nullable String format(String fmt, @Nullable Object... args) {
+            // empty text
+            if (fmt.isEmpty() && args.length == 0) {
+                return null;
+            }
             // literal string
             if (fmt.equals("\0")) {
                 return Stream.of(args).map(String::valueOf).collect(Collectors.joining(" "));
@@ -282,6 +295,10 @@ public interface MessageFormatter {
 
         @Override
         public String format(String fmt, @Nullable Object... args) {
+            // empty text
+            if (fmt.isEmpty() && args.length == 0) {
+                return null;
+            }
             // literal string
             if (fmt.equals("\0")) {
                 return Stream.of(args).map(String::valueOf).collect(Collectors.joining(" "));
@@ -314,7 +331,11 @@ public interface MessageFormatter {
      */
     record MessageFormatterI18n(I18N i18n) implements MessageFormatter {
         @Override
-        public String format(String fmt, @Nullable Object... args) {
+        public @Nullable String format(String fmt, @Nullable Object... args) {
+            // empty text
+            if (fmt.isEmpty() && args.length == 0) {
+                return null;
+            }
             // literal string
             if (fmt.equals("\0")) {
                 return Stream.of(args).map(String::valueOf).collect(Collectors.joining(" "));
