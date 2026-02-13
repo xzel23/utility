@@ -29,6 +29,20 @@ public final class FontDef {
 
     private static final Predicate<String> IS_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?").asMatchPredicate();
     private static final String INHERIT = "inherit";
+    private static final String BOLD = "bold";
+    private static final String REGULAR = "regular";
+    private static final String ITALIC = "italic";
+    private static final String NORMAL = "normal";
+    private static final String UNDERLINE = "underline";
+    private static final String NONE = "none";
+    private static final String STRIKETHROUGH = "strikethrough";
+    private static final String NOLINE = "noline";
+    private static final String FONT_FAMILY = "font-family: ";
+    private static final String FONT_SIZE = "font-size: ";
+    private static final String FONT_WEIGHT = "font-weight: ";
+    private static final String FONT_STYLE = "font-style: ";
+    private static final String TEXT_DECORATION = "text-decoration:";
+    private static final String LINE_THROUGH = "line-through";
 
     private @Nullable Color color;
     private @Nullable Float size;
@@ -146,10 +160,13 @@ public final class FontDef {
      * @param fontspec the fontspec
      * @return FontDef instance matching fontspec
      * @throws IllegalArgumentException if the ont definition could not be parsed
-     * @throws NumberFormatException    if a numeric value could not be parsed
      */
     public static FontDef parseFontspec(String fontspec) {
         String[] parts = fontspec.split("-");
+
+        if (parts.length < 1) {
+            throw new IllegalArgumentException("invalid fontspec: " + fontspec);
+        }
 
         FontDef fd = new FontDef();
 
@@ -157,29 +174,33 @@ public final class FontDef {
         fd.setFamily(parts[0]);
 
         // check remaining parts
-        for (int i = 1; i < parts.length; i++) {
-            String s = parts[i];
-            // check for text-decoration
-            switch (s) {
-                case "bold" -> fd.setBold(true);
-                case "regular" -> fd.setBold(false);
-                case "italic" -> fd.setItalic(true);
-                case "normal" -> fd.setItalic(false);
-                case "underline" -> fd.setUnderline(true);
-                case "none" -> fd.setUnderline(false);
-                case "strikethrough" -> fd.setStrikeThrough(true);
-                case "noline" -> fd.setStrikeThrough(false);
-                default -> {
-                    // check for font size
-                    if (IS_FONT_SIZE.test(s)) {
-                        fd.setSize(Float.parseFloat(s));
-                        break;
-                    }
+        try {
+            for (int i = 1; i < parts.length; i++) {
+                String s = parts[i];
+                // check for text-decoration
+                switch (s) {
+                    case BOLD -> fd.setBold(true);
+                    case REGULAR -> fd.setBold(false);
+                    case ITALIC -> fd.setItalic(true);
+                    case NORMAL -> fd.setItalic(false);
+                    case UNDERLINE -> fd.setUnderline(true);
+                    case NONE -> fd.setUnderline(false);
+                    case STRIKETHROUGH -> fd.setStrikeThrough(true);
+                    case NOLINE -> fd.setStrikeThrough(false);
+                    default -> {
+                        // check for font size
+                        if (IS_FONT_SIZE.test(s)) {
+                            fd.setSize(Float.parseFloat(s));
+                            break;
+                        }
 
-                    // check for color
-                    fd.setColor(Color.valueOf(s));
+                        // check for color
+                        fd.setColor(Color.valueOf(s));
+                    }
                 }
             }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("invalid fontspec: " + fontspec, e);
         }
 
         return fd;
@@ -230,8 +251,8 @@ public final class FontDef {
 
     private static @Nullable Boolean parseFontWeight(String value) {
         return switch (value.toLowerCase(Locale.ROOT)) {
-            case "bold" -> Boolean.TRUE;
-            case "normal" -> Boolean.FALSE;
+            case BOLD -> Boolean.TRUE;
+            case NORMAL -> Boolean.FALSE;
             case INHERIT -> null;
             default -> throw new IllegalArgumentException("invalid value for font-weight: " + value);
         };
@@ -239,8 +260,8 @@ public final class FontDef {
 
     private static @Nullable Boolean parseFontStyle(String value) {
         return switch (value.toLowerCase(Locale.ROOT)) {
-            case "italic", "oblique" -> Boolean.TRUE;
-            case "normal" -> Boolean.FALSE;
+            case ITALIC, "oblique" -> Boolean.TRUE;
+            case NORMAL -> Boolean.FALSE;
             case INHERIT -> null;
             default -> throw new IllegalArgumentException("invalid value for font-style: " + value);
         };
@@ -646,16 +667,16 @@ public final class FontDef {
         boolean isStrikeThrough = strikeThrough != null && strikeThrough;
         //noinspection StringConcatenationMissingWhitespace
         String css =
-                (families == null ? "" : "font-family: " + families.stream()
+                (families == null ? "" : FONT_FAMILY + families.stream()
                         .map(InternalUtil::quoteIfNeeded)
                         .collect(Collectors.joining(", ")) + "; ") +
-                        textIfNonNull(size, () -> "font-size: " + size + "pt; ") +
-                        textIfNonNull(bold, () -> "font-weight: " + (bold ? "bold" : "normal") + "; ") +
-                        textIfNonNull(italic, () -> "font-style: " + (italic ? "italic" : "normal") + "; ") +
+                        textIfNonNull(size, () -> FONT_SIZE + size + "pt; ") +
+                        textIfNonNull(bold, () -> FONT_WEIGHT + (bold ? BOLD : NORMAL) + "; ") +
+                        textIfNonNull(italic, () -> FONT_STYLE + (italic ? ITALIC : NORMAL) + "; ") +
                         (isStrikeThrough || isUnderline
-                                ? "text-decoration:" +
-                                (isUnderline ? " underline" : "") +
-                                (isStrikeThrough ? " line-through" : "") +
+                                ? TEXT_DECORATION +
+                                (isUnderline ? " " + UNDERLINE : "") +
+                                (isStrikeThrough ? " " + LINE_THROUGH : "") +
                                 "; "
                                 : "") +
                         textIfNonNull(color, () -> "color: " + color + "; ");
