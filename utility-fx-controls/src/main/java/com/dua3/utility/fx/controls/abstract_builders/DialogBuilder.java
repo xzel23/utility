@@ -114,6 +114,7 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
     @Override
     public D build() {
         D dlg = super.build();
+        dlg.initOwner(parentWindow);
 
         // set scene to transparent to prevent visual flicker during initialization
         Scene scene = dlg.getDialogPane().getScene();
