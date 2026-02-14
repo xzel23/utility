@@ -6,7 +6,11 @@ import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.Node;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -1296,6 +1300,89 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     B apply(Consumer<Node> action);
+
+    /**
+     * Sets the number of text columns for the last added node.
+     * <p>
+     * Logs a warning if the last added node does not support the operation.
+     *
+     * @param cols the number of text columns to be set
+     * @return this
+     */
+    default B setTextColumns(int cols) {
+        return apply(node -> setTextColumns(node, cols));
+    }
+
+    /**
+     * Sets the number of rows for the last added node.
+     * <p>
+     * Logs a warning if the last added node does not support the operation.
+     *
+     * @param rows the number of rows to set for the text element
+     * @return the updated instance for method chaining
+     */
+    default B setTextRows(int rows) {
+        return apply(node -> setTextRows(node, rows));
+    }
+
+    /**
+     * Sets the text dimensions by specifying the number of rows and columns
+     * for the last added node.
+     * <p>
+     * Logs a warning if the last added node does not support the operation.
+     *
+     * @param rows the number of text rows to set
+     * @param cols the number of text columns to set
+     * @return the updated builder instance with the new text dimensions applied
+     */
+    default B setTextDimensions(int rows, int cols) {
+        return apply(node -> {
+            setTextRows(node, rows);
+            setTextColumns(node, cols);
+        });
+    }
+
+    /**
+     * Sets the preferred column count for the specified {@link Node}.
+     * <p>
+     * Logs a warning if the last added node does not support the operation.
+     *
+     * @param node The node for which the column count should be set. Expected to be a TextField or TextArea.
+     * @param cols The number of columns to set as the preferred column count.
+     */
+    private void setTextColumns(Node node, int cols) {
+        switch (node) {
+            case TextField tf -> tf.setPrefColumnCount(cols);
+            case TextArea ta -> ta.setPrefColumnCount(cols);
+            default -> getLogger().warn("setting text columns not supported for node of type {}", node.getClass());
+        }
+    }
+
+    /**
+     * Sets the number of text rows for the specified {@code Node}.
+     *
+     * @param node the node whose text rows are to be set; must be an instance of {@code TextField} or {@code TextArea}
+     * @param rows the number of rows to set for the node; only applicable for {@code TextArea},
+     *             and ignored for {@code TextField} when rows is greater than 1
+     */
+    private void setTextRows(Node node, int rows) {
+        switch (node) {
+            case TextField tf when rows == 1 -> { /* ignore */ }
+            case TextField tf ->
+                    getLogger().warn("{} only supports a single row of text, ignoring argument rows = {}", node.getClass(), rows);
+            case TextArea ta -> ta.setPrefRowCount(rows);
+            default -> getLogger().warn("setting text rows not supported for nodes of type {}", node.getClass());
+        }
+    }
+
+    /**
+     * Retrieves a logger instance for the current class.
+     *
+     * @return a Logger instance specific to the current class.
+     */
+    private Logger getLogger() {
+        return LogManager.getLogger(getClass());
+    }
 
     /**
      * Starts a new row without a label.
