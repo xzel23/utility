@@ -238,6 +238,15 @@ could not be loaded.
 
 ## Changes
 
+### 21.1 (in development)
+
+- fix: DialogBuilder did not set the parent window
+- Improve error handling in `FontDef.parseFontspec`
+- InputBuilder: implement `startRow()`/`endRow()` for grouping multiple nodes or inputs per row.
+- InputBuilder: add overloads taking `MessageFormatterArgs` for several methods.
+- InputBuilder: add `apply()` method for custom node configurations.
+- MessageFormatter: add method `empty()`
+
 ### 21.0.2
 
 - fix release version
