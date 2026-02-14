@@ -79,9 +79,23 @@ public record InputResult(ButtonType result, Map<String, @Nullable Object> data)
      * @param key  the key whose associated value is to be returned
      * @param type the class of the type to which the value should be cast
      * @return the value associated with the specified key, cast to the specified type, or {@code null} if the key is not present
-     * @throws ClassCastException if the value associated with the key cannot be cast to the specified type
+     * @throws IllegalStateException if the value associated with the key cannot be converted to the specified type
      */
     public <T> T get(String key, Class<T> type) {
-        return type.cast(data.get(key));
+        Object raw = Objects.requireNonNull(data.get(key));
+
+        if (type.isAssignableFrom(raw.getClass())) {
+            return type.cast(raw);
+        }
+
+        if (type == String.class) return type.cast(raw.toString());
+
+        if (Number.class.isAssignableFrom(type) && raw instanceof Number n) {
+            if (type == Short.class) return type.cast(n.shortValue());
+            if (type == Integer.class) return type.cast(n.intValue());
+            if (type == Long.class) return type.cast(n.longValue());
+        }
+
+        throw new IllegalStateException("invalid value for key " + key + " cannot cast value " + raw.getClass() + " to " + type);
     }
 }
