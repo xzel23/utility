@@ -218,7 +218,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add combo box
             List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
-            builder.inputComboBox("id", "Label", () -> "Item 1", String.class, items, s -> Optional.empty());
+            builder.inputComboBox("id", "Label", () -> "Item 1", items, s -> Optional.empty());
 
             // Build a dialog
             InputDialog dialog = builder.build();
@@ -243,7 +243,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add extended combo box
             List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
-            builder.inputComboBoxEx("id", "Label", s -> s + " (edited)", () -> "New Item", (cb, s) -> true, s -> s, () -> "Item 1", String.class, items, s -> Optional.empty());
+            builder.inputComboBoxEx("id", "Label", s -> s + " (edited)", () -> "New Item", (cb, s) -> true, s -> s, () -> "Item 1", items, s -> Optional.empty());
 
             // Build a dialog
             InputDialog dialog = builder.build();
@@ -268,7 +268,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add radio list
             List<String> items = Arrays.asList("Option 1", "Option 2", "Option 3");
-            builder.inputRadioList("id", "Label", () -> "Option 1", String.class, items, s -> Optional.empty());
+            builder.inputRadioList("id", "Label", () -> "Option 1", items, s -> Optional.empty());
 
             // Build a dialog
             InputDialog dialog = builder.build();
@@ -414,7 +414,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add constant
-            builder.inputConstant("id", "Label", () -> "Constant value", String.class);
+            builder.inputConstant("id", "Label", () -> "Constant value");
 
             // Build a dialog
             InputDialog dialog = builder.build();
@@ -462,7 +462,7 @@ class InputDialogBuilderTest extends FxTestBase {
             InputDialogBuilder builder = new InputDialogBuilder(null, MessageFormatter.standard());
 
             // Add visible value
-            builder.inputHidden("id", () -> "Hidden value", String.class);
+            builder.inputHidden("id", () -> "Hidden value");
 
             // Build a dialog
             InputDialog dialog = builder.build();
@@ -511,7 +511,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add custom input control
             InputControl<String> control = new TestInputControl();
-            builder.addInput("id", "Label", String.class, () -> "Default", control, false);
+            builder.addInput("id", "Label", () -> "Default", control, false);
 
             // Build a dialog
             InputDialog dialog = builder.build();
@@ -536,7 +536,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add custom input control without label
             InputControl<String> control = new TestInputControl();
-            builder.addInput("id", String.class, () -> "Default", control);
+            builder.addInput("id", () -> "Default", control);
 
             // Build a dialog
             InputDialog dialog = builder.build();

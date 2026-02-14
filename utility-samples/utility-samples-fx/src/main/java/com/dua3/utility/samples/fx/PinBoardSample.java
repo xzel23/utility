@@ -84,7 +84,7 @@ public class PinBoardSample extends Application {
                         Controls.button().text("scrollTo(x, y, xRelVP, yRelVP)").action(this::scrollToRelVP).build(),
                         Controls.button().text("scrollIntoView()").action(this::scrollIntoView).build()
                 ))
-                .addInput("Scale", Double.class, () -> 1.0, Controls.slider().min(0.25).max(2.0).setDefault(pinBoard::getDisplayScale).onChange(pinBoard::setDisplayScale).build())
+                .addInput("Scale", () -> 1.0, Controls.slider().min(0.25).max(2.0).setDefault(pinBoard::getDisplayScale).onChange(pinBoard::setDisplayScale).build())
                 .build();
         inputValid.bind(input.validProperty());
         root.setLeft(new VBox(textArea, input));

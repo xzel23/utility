@@ -524,7 +524,6 @@ public class Grid extends GridPane {
      */
     static final class Meta<T extends @Nullable Object> {
         final @Nullable String id;
-        final Class<T> cls;
         final Supplier<? extends T> dflt;
         final InputControl<? super T> control;
         final @Nullable Label label;
@@ -535,11 +534,11 @@ public class Grid extends GridPane {
         final double space;
         final LayoutUnit spaceUnit;
 
-        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth) {
-            this(id, label, cls, dflt, control, inline, visible, markerWidth, 0.0, LayoutUnit.PIXELS);
+        Meta(@Nullable String id, @Nullable String label, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth) {
+            this(id, label, dflt, control, inline, visible, markerWidth, 0.0, LayoutUnit.PIXELS);
         }
 
-        Meta(@Nullable String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth, double space, LayoutUnit spaceUnit) {
+        Meta(@Nullable String id, @Nullable String label, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth, double space, LayoutUnit spaceUnit) {
             this.id = id == null || id.isEmpty() ? null : id;
             if (label != null) {
                 this.label = new Label(label);
@@ -551,7 +550,6 @@ public class Grid extends GridPane {
             this.requiredMarker.getStyleClass().add("required-marker");
             this.errorMarker = new Label();
             this.errorMarker.getStyleClass().add("error-marker");
-            this.cls = cls;
             this.dflt = dflt;
             this.control = control;
             this.inline = inline;
@@ -569,7 +567,7 @@ public class Grid extends GridPane {
 
         @Override
         public String toString() {
-            return "Meta<" + cls.getSimpleName() + ">[" + id + "]";
+            return "Meta[" + id + "]";
         }
     }
 

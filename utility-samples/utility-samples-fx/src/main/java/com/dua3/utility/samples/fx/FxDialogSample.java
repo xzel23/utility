@@ -276,7 +276,7 @@ public class FxDialogSample extends Application {
                     .labeledText(i18n().get("dua3.utility.samples.fx.input.labeled_text"), i18n().get("dua3.utility.samples.fx.input.labeled_text.value"))
                     .section(3, i18n().get("dua3.utility.samples.fx.input.section.1.1.1"))
                     .inputConstant("readonly", i18n().get("dua3.utility.samples.fx.input.readonly"), i18n().get("dua3.utility.samples.fx.input.readonly.value"))
-                    .inputConstant("readonly2", i18n().get("dua3.utility.samples.fx.input.readonly2"), LocalDate::now, LocalDate.class)
+                    .inputConstant("readonly2", i18n().get("dua3.utility.samples.fx.input.readonly2"), LocalDate::now)
                     .section(1, i18n().get("dua3.utility.samples.fx.input.section.2"))
                     .inputString("txt", i18n().get("dua3.utility.samples.fx.input.txt"), () -> "dflt")
                     .inputText("longtext", i18n().get("dua3.utility.samples.fx.input.longtext"), () -> "")
@@ -286,7 +286,7 @@ public class FxDialogSample extends Application {
                     .inputInteger("integer from 4 to 7", i18n().get("dua3.utility.samples.fx.input.integer_range"), () -> null,
                             i -> i != null && i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i18n().format("dua3.utility.samples.fx.input.error.between_4_and_7", i)))
                     .inputDecimal("decimal", i18n().get("dua3.utility.samples.fx.input.decimal"), () -> null)
-                    .inputComboBox("list", i18n().get("dua3.utility.samples.fx.input.list"), () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
+                    .inputComboBox("list", i18n().get("dua3.utility.samples.fx.input.list"), () -> "Maybe", List.of("Yes", "No", "Maybe"))
                     .verticalSpace(10, LayoutUnit.PIXELS)
                     .inputCheckBox("bool", i18n().get("dua3.utility.samples.fx.input.bool"), () -> false, i18n().get("dua3.utility.samples.fx.input.bool.yes"))
                     .inputFile("file", i18n().get("dua3.utility.samples.fx.input.file"), () -> null, FileDialogMode.OPEN, true, List.of(FILTER_ALL_FILES))
@@ -299,7 +299,6 @@ public class FxDialogSample extends Application {
                             (cb, item) -> true,
                             Objects::toString,
                             () -> null,
-                            String.class,
                             List.of("1", "2", "3"),
                             v -> v != null ? Optional.empty() : Optional.of(i18n().get("dua3.utility.samples.fx.input.error.select_item")))
                     .modality(Modality.NONE)
@@ -341,7 +340,7 @@ public class FxDialogSample extends Application {
                     .page("dbms",
                             Dialogs.inputDialogPane(MessageFormatter.standard())
                                     .header(i18n().get("dua3.utility.samples.fx.wizard.dbms.header"))
-                                    .inputRadioList("rdbms", i18n().get("dua3.utility.samples.fx.wizard.dbms.rdbms"), () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
+                                    .inputRadioList("rdbms", i18n().get("dua3.utility.samples.fx.wizard.dbms.rdbms"), () -> null, List.of("H2", "PostgreSQL", "MySQL"))
                     )
                     .modality(Modality.NONE)
                     .build();
