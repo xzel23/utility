@@ -26,7 +26,7 @@ import java.util.Objects;
  *            This should also match with the first generic type in TableColumn.
  * @param <T> The type of the item contained within the Cell.
  */
-public class TableCellAutoCommit<S, T> extends TableCell<S, T> {
+public final class TableCellAutoCommit<S, T> extends TableCell<S, T> {
 
     /**
      * The {@link TextField} used to edit the cell's content.

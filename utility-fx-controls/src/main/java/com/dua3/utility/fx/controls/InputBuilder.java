@@ -7,10 +7,8 @@ import com.dua3.utility.options.Option;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -23,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.SequencedCollection;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
@@ -1231,14 +1230,41 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param label the message formatter arguments for the table label
      * @param dflt the default value supplier for the table input
      * @param validate the validation function to check the table input, returning an optional error message
+     * @param columns the table columns
      * @param <S> the type of elements contained in the table
      * @return an instance of {@code B} representing the configured input control
      */
-    default <S> B inputTable(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends List<S>> dflt, Function<List<S>, Optional<String>> validate) {
-        ObservableList<S> items = FXCollections.observableArrayList();
-        TableView<S> tableView = new TableView<>(items);
-        Property<List<S>> v = new SimpleObjectProperty<>(items);
-        InputControl<List<S>> inputControl = new SimpleInputControl<>(tableView, v, dflt, validate);
+    default <S> B inputTable(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            Supplier<? extends List<S>> dflt,
+            Function<List<S>, Optional<String>> validate,
+            TableViews.ColumnDef<S, ?>... columns) {
+        return inputTable(id, label, dflt, validate, List.of(columns));
+    }
+
+    /**
+     * Creates an input table with the specified parameters.
+     *
+     * @param id the unique identifier for the input control
+     * @param label the message formatter arguments for the table label
+     * @param dflt the default value supplier for the table input
+     * @param validate the validation function to check the table input, returning an optional error message
+     * @param columns the table columns
+     * @param <S> the type of elements contained in the table
+     * @return an instance of {@code B} representing the configured input control
+     */
+    default <S> B inputTable(
+            String id,
+            MessageFormatter.MessageFormatterArgs label,
+            Supplier<? extends List<S>> dflt,
+            Function<List<S>, Optional<String>> validate,
+            SequencedCollection<TableViews.ColumnDef<S, ?>> columns
+    ) {
+        var tv = TableViews.newTableView(columns, dflt.get());
+        ObservableList<S> items = tv.getItems();
+        Property<List<S>> value = new SimpleObjectProperty<>(items);
+        InputControl<List<S>> inputControl = new SimpleInputControl<>(tv, value, dflt, validate);
         return inputControl(id, label, inputControl, dflt);
     }
 
