@@ -24,6 +24,7 @@ import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.SequencedCollection;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -52,15 +53,40 @@ public final class TableViews {
     /**
      * Represents the definition of a column in a TableView.
      *
-     * @param <S> The type of the objects displayed in the TableView rows.
-     * @param <T> The type of the value displayed in the cells of this column.
-     *
-     * @param header        The header text of the column.
-     * @param editable      Specifies whether the column values are editable.
-     * @param valueProvider A function that extracts the cell value from the row object.
-     * @param converter     A StringConverter for converting between the cell value and its string representation.
+     * @param <S>         The type of the objects displayed in the TableView rows.
+     * @param <T>         The type of the value displayed in the cells of this column.
+     * @param header      The header text of the column.
+     * @param editable    Specifies whether the column values are editable.
+     * @param valueGetter A function that extracts the cell value from the row object.
+     * @param valueSetter A function that extracts the cell value from the row object.
+     * @param converter   A StringConverter for converting between the cell value and its string representation.
      */
-    public record ColumnDef<S,T>(String header, boolean editable, Function<S,T> valueProvider, StringConverter<@Nullable T> converter) {}
+    public record ColumnDef<S, T>(
+            String header,
+            boolean editable,
+            Function<S,T> valueGetter,
+            BiConsumer<S,T> valueSetter,
+            StringConverter<@Nullable T> converter) {
+        /**
+         * Retrieves the value of the cell in this column for the specified row object.
+         *
+         * @param row The row object from which the cell value is to be extracted.
+         * @return The value of the cell corresponding to the specified row object.
+         */
+        public T get(S row) {
+            return valueGetter.apply(row);
+        }
+
+        /**
+         * Sets the value for a specific row in this column.
+         *
+         * @param row   The row object where the value should be set.
+         * @param value The value to be set for the specified row.
+         */
+        public void set(S row, T value) {
+            valueSetter.accept(row, value);
+        }
+    }
 
     /**
      * Creates a new {@link TableView} instance configured with the specified columns.
@@ -94,7 +120,8 @@ public final class TableViews {
                 columns.stream().map(cd -> {
                     TableColumn<S, Object> tc = new TableColumn<>(cd.header());
                     tc.setCellFactory(TableCellAutoCommit.forTableColumn((StringConverter) cd.converter()));
-                    tc.setCellValueFactory(f -> new ReadOnlyObjectWrapper<>(cd.valueProvider().apply(f.getValue())));
+                    tc.setCellValueFactory(f -> new ReadOnlyObjectWrapper<>(cd.valueGetter().apply(f.getValue())));
+                    tc.setOnEditCommit(event -> ((ColumnDef) cd).set(event.getRowValue(), event.getNewValue()));
                     tc.setEditable(cd.editable());
                     editable[0] = editable[0] || cd.editable();
                     return tc;
