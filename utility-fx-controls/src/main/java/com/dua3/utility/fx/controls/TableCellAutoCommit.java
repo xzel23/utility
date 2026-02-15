@@ -89,13 +89,20 @@ public final class TableCellAutoCommit<S, T> extends TableCell<S, T> {
                     event.consume();
                 }
                 case RIGHT -> {
-                    getTableView().getSelectionModel().selectRightCell();
-                    event.consume();
+                    // Only move to next cell if caret is at the end of the text
+                    if (textField.getCaretPosition() >= textField.getText().length()) {
+                        getTableView().getSelectionModel().selectRightCell();
+                        event.consume();
+                    }
                 }
                 case LEFT -> {
-                    getTableView().getSelectionModel().selectLeftCell();
-                    event.consume();
+                    // Only move to previous cell if caret is at the beginning
+                    if (textField.getCaretPosition() <= 0) {
+                        getTableView().getSelectionModel().selectLeftCell();
+                        event.consume();
+                    }
                 }
+                // UP and DOWN can usually stay as is, since TextField is single-line
                 case UP -> {
                     getTableView().getSelectionModel().selectAboveCell();
                     event.consume();
