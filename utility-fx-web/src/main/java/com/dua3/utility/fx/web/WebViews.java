@@ -250,6 +250,10 @@ public final class WebViews {
     /**
      * EventDispatcher implementation for use by
      * {@link #filterEvents(WebView, Predicate, Predicate)}.
+     *
+     * @param originalDispatcher the original event dispatcher
+     * @param filterKey          the key event filter
+     * @param filterMouse        the mouse event filter
      */
     private record WebEventDispatcher(
             EventDispatcher originalDispatcher,
