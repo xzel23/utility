@@ -599,7 +599,9 @@ public final class FxUtil {
      * It accepts two values of type T and calls the {@link InvalidationListener#invalidated(Observable)}
      * method of the invalidationListener, passing the observable object.
      *
-     * @param <T> The type of the values accepted by the adapter.
+     * @param <T>                  The type of the values accepted by the adapter.
+     * @param observable           the observable object
+     * @param invalidationListener the invalidation listener
      */
     private record InvalidationListenerAdapter<T>(Observable observable, InvalidationListener invalidationListener)
             implements BiConsumer<T, T> {
@@ -612,7 +614,9 @@ public final class FxUtil {
     /**
      * A class that adapts a {@code ChangeListener} to a {@code BiConsumer}.
      *
-     * @param <T> the type of the value being observed by the {@code ObservableValue}
+     * @param <T>              the type of the value being observed by the {@code ObservableValue}
+     * @param observableValue  the observable value
+     * @param changeListener   the change listener
      */
     private record ChangeListenerAdapter<T>(ObservableValue<T> observableValue,
                                             ChangeListener<? super T> changeListener)
