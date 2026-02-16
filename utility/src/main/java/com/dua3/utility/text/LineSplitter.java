@@ -34,7 +34,11 @@ final class LineSplitter<S extends CharSequence> {
     /**
      * Represents a chunk of text with a specific type.
      *
-     * @param <S> the type of the text chunk
+     * @param <S>   the type of the text chunk
+     * @param type  the type of the chunk
+     * @param text  the character sequence containing the chunk's text
+     * @param start the start index of the chunk in the character sequence
+     * @param end   the end index of the chunk in the character sequence
      */
     private record Chunk<S extends CharSequence>(ChunkType type, S text, int start, int end) {
         public int length() {
@@ -282,6 +286,14 @@ final class LineSplitter<S extends CharSequence> {
         return buffer;
     }
 
+    /**
+     * Represents the result of a paragraph break handling operation.
+     *
+     * @param <R>       the type of the buffer
+     * @param <S>       the type of the character sequence
+     * @param newBuffer the new buffer to use
+     * @param newLines  the new list of lines to use
+     */
     private record Result<R, S>(R newBuffer, List<S> newLines) {
     }
 }

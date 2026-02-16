@@ -480,6 +480,10 @@ public final class TextUtil {
     /**
      * A private implementation of the {@link CharSequence} interface that wraps a portion of a character array.
      * This class provides an immutable, read-only view of a specific range within a given character array.
+     *
+     * @param charArray the character array to wrap
+     * @param start     the starting offset (inclusive) within the character array
+     * @param end       the ending offset (exclusive) within the character array
      */
     private record CharSequenceWrapper(char[] charArray, int start, int end) implements CharSequence {
         /**
@@ -1013,6 +1017,12 @@ public final class TextUtil {
                     yield s.toString();
                 }
                 String[] fragments = PATTERN_SPLIT_PRESERVING_WHITESPACE.split(s);
+                /**
+                 * Represents statistics about blank space in the text.
+                 *
+                 * @param blankChars     the total number of blank characters
+                 * @param blankFragments the total number of blank fragments (sequences of blank characters)
+                 */
                 record Stats(int blankChars, int blankFragments) {}
                 Stats stats = Arrays.stream(fragments)
                         .filter(String::isBlank)

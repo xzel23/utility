@@ -253,6 +253,11 @@ final class EmptyHtmlTag implements HtmlTag {
  * This class implements the {@link HtmlTag} interface, providing basic functionality
  * for handling HTML tags such as retrieving the opening and closing tags, and determining
  * whether the tag should be placed on an extra line.
+ *
+ * @param open           the text for the opening tag
+ * @param close          the text for the closing tag
+ * @param formattingHint the formatting hint for line breaks
+ * @param headerChange   the header level change, if any
  */
 record SimpleHtmlTag(String open, String close, FormattingHint formattingHint,
                      int headerChange) implements HtmlTag {
