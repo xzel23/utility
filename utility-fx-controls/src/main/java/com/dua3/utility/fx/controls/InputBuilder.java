@@ -1239,7 +1239,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             MessageFormatter.MessageFormatterArgs label,
             Supplier<? extends List<S>> dflt,
             Function<List<S>, Optional<String>> validate,
-            TableViews.ColumnDef<S, ?>... columns) {
+            ColumnDef<S, ?>... columns) {
         return inputTable(id, label, dflt, validate, List.of(columns));
     }
 
@@ -1259,7 +1259,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             MessageFormatter.MessageFormatterArgs label,
             Supplier<? extends List<S>> dflt,
             Function<List<S>, Optional<String>> validate,
-            SequencedCollection<TableViews.ColumnDef<S, ?>> columns
+            SequencedCollection<ColumnDef<S, ?>> columns
     ) {
         var tv = TableViews.newTableView(columns, dflt.get());
         ObservableList<S> items = tv.getItems();

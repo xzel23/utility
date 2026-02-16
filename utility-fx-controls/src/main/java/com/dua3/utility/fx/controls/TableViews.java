@@ -21,11 +21,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.StringConverter;
-import org.jspecify.annotations.Nullable;
 
 import java.util.SequencedCollection;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 /**
  * Utility class providing methods for manipulating TableView instances.
@@ -51,49 +48,11 @@ public final class TableViews {
     }
 
     /**
-     * Represents the definition of a column in a TableView.
-     *
-     * @param <S>         The type of the objects displayed in the TableView rows.
-     * @param <T>         The type of the value displayed in the cells of this column.
-     * @param header      The header text of the column.
-     * @param editable    Specifies whether the column values are editable.
-     * @param valueGetter A function that extracts the cell value from the row object.
-     * @param valueSetter A function that extracts the cell value from the row object.
-     * @param converter   A StringConverter for converting between the cell value and its string representation.
-     */
-    public record ColumnDef<S, T>(
-            String header,
-            boolean editable,
-            Function<S,T> valueGetter,
-            BiConsumer<S,T> valueSetter,
-            StringConverter<@Nullable T> converter) {
-        /**
-         * Retrieves the value of the cell in this column for the specified row object.
-         *
-         * @param row The row object from which the cell value is to be extracted.
-         * @return The value of the cell corresponding to the specified row object.
-         */
-        public T get(S row) {
-            return valueGetter.apply(row);
-        }
-
-        /**
-         * Sets the value for a specific row in this column.
-         *
-         * @param row   The row object where the value should be set.
-         * @param value The value to be set for the specified row.
-         */
-        public void set(S row, T value) {
-            valueSetter.accept(row, value);
-        }
-    }
-
-    /**
      * Creates a new {@link TableView} instance configured with the specified columns.
      *
      * @param <S>          The type of the items to be displayed in the {@link TableView}.
-     * @param columns      A {@link SequencedCollection} of {@link ColumnDef} that defines the columns of the {@link TableView}.
-     *                     Each {@link ColumnDef} includes information such as the column header, value provider, and cell converter.
+     * @param columns      A {@link SequencedCollection} of {@link ColumnDefText} that defines the columns of the {@link TableView}.
+     *                     Each {@link ColumnDefText} includes information such as the column header, value provider, and cell converter.
      *
      * @return A configured {@link TableView} instance containing the defined columns.
      */
@@ -105,8 +64,8 @@ public final class TableViews {
      * Creates a new {@link TableView} instance configured with the specified columns and initial items.
      *
      * @param <S>          The type of the items to be displayed in the {@link TableView}.
-     * @param columns      A {@link SequencedCollection} of {@link ColumnDef} that defines the columns of the {@link TableView}.
-     *                     Each {@link ColumnDef} includes information such as the column header, value provider, and cell converter.
+     * @param columns      A {@link SequencedCollection} of {@link ColumnDefText} that defines the columns of the {@link TableView}.
+     *                     Each {@link ColumnDefText} includes information such as the column header, value provider, and cell converter.
      * @param initialItems A {@link SequencedCollection} containing the initial items to be displayed in the {@link TableView}.
      *
      * @return A configured {@link TableView} instance containing the defined columns and initial items.
@@ -119,8 +78,11 @@ public final class TableViews {
         tv.getColumns().setAll(
                 columns.stream().map(cd -> {
                     TableColumn<S, Object> tc = new TableColumn<>(cd.header());
-                    tc.setCellFactory(TableCellAutoCommit.forTableColumn((StringConverter) cd.converter()));
-                    tc.setCellValueFactory(f -> new ReadOnlyObjectWrapper<>(cd.valueGetter().apply(f.getValue())));
+                    switch (cd) {
+                        case ColumnDefText cdt -> tc.setCellFactory(TableCellAutoCommit.forTableColumn(cdt.converter()));
+                        case ColumnDefGeneric cdg -> tc.setCellFactory(new GenericTableCellFactory<>(cdg.nodeFactory(), cdg.startEdit(), cdg.cancelEdit()));
+                    }
+                    tc.setCellValueFactory(f -> new ReadOnlyObjectWrapper<>(cd.get(f.getValue())));
                     tc.setOnEditCommit(event -> ((ColumnDef) cd).set(event.getRowValue(), event.getNewValue()));
                     tc.setEditable(cd.editable());
                     editable[0] = editable[0] || cd.editable();
