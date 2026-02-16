@@ -36,8 +36,11 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
      * entries and the {@link Comparable} interface to enable comparison between instances of
      * this record.
      *
-     * @param <K> The type of the key, which must implement {@link Comparable}.
-     * @param <V> The type of the value, which can be any nullable object.
+     * @param <K>        The type of the key, which must implement {@link Comparable}.
+     * @param <V>        The type of the value, which can be any nullable object.
+     * @param getKey     the key of the entry
+     * @param getValue   the value of the entry
+     * @param comparator the comparator used to order the keys
      */
     @SuppressWarnings("unchecked")
     record Entry<K, V extends @Nullable Object>(K getKey, V getValue, @Nullable Comparator<? super K> comparator)
