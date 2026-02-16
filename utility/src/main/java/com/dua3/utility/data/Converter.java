@@ -249,6 +249,8 @@ record InverseConverter<A extends @Nullable Object, B extends @Nullable Object>(
  *
  * @param <A> the source type
  * @param <B> the target type
+ * @param a2b the function to convert from A to B
+ * @param b2a the function to convert from B to A
  */
 record SimpleConverter<A extends @Nullable Object, B extends @Nullable Object>(Function<A, B> a2b, Function<B, A> b2a)
         implements Converter<A, B> {}
