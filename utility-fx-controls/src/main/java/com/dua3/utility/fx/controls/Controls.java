@@ -35,7 +35,9 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Utility class for creating and managing UI controls.
@@ -450,4 +452,55 @@ public final class Controls {
         VBox.setVgrow(spacer, priority);
         return spacer;
     }
+
+    /**
+     * Creates a validator function that checks if the given value is non-null.
+     * <p>
+     * The returned function takes an input of type T and returns an {@code Optional<String>}
+     * containing an error message if the input is null, or an empty {@code Optional} otherwise.
+     *
+     * @param <T> the type of the value to be validated
+     * @return a {@code Function} that validates whether the input is non-null
+     */
+    public static <T> Function<@Nullable T, Optional<String>> validatorNonNull() {
+        return v -> v == null ? Optional.of(I18NInstance.get().format("dua3.utlity.fx.controls.validator.error.null")) : Optional.empty();
+    }
+
+    /**
+     * Creates a validator function that checks if a given value lies within a specified range.
+     * <p>
+     * If the input value is null or outside the range, an error message is returned.
+     *
+     * @param <T> the type of the value to be validated; must be comparable
+     * @param min the minimum allowable value in the range (inclusive)
+     * @param max the maximum allowable value in the range (inclusive)
+     * @return a {@code Function} that validates the value and returns either an empty {@link Optional}, if the value
+     *         is valid, or an error message if validation fails
+     */
+    public static <T extends Comparable<T>> Function<@Nullable T, Optional<String>> validatorInRange(T min, T max) {
+        return v -> {
+            if (v == null) {
+                return Optional.of(I18NInstance.get().format("dua3.utlity.fx.controls.validator.error.null"));
+            }
+            if (v.compareTo(min) < 0 || v.compareTo(max) > 0) {
+                return Optional.of(I18NInstance.get().format(
+                        "dua3.utlity.fx.controls.validator.out.of.range",
+                        v, min, max
+                ));
+            }
+            return Optional.empty();
+        };
+    }
+
+    /**
+     * Creates a validator function that checks if the given value is non-null and not blank.
+     * <p>
+     * If the input value is null or blank, an error message is returned.
+     *
+     * @return a {@code Function} that validates whether the input is non-null and non-blank
+     */
+    public static Function<@Nullable String, Optional<String>> validatorNotBlank() {
+        return v -> v == null || v.isBlank() ? Optional.of(I18NInstance.get().format("dua3.utlity.fx.controls.validator.error.blank")) : Optional.empty();
+    }
+
 }
