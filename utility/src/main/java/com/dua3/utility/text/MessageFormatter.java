@@ -156,6 +156,18 @@ public interface MessageFormatter {
     @Nullable String format(String fmt, @Nullable Object... args);
 
     /**
+     * Formats the given format string by replacing placeholders with the provided arguments.
+     * <p>
+     * <strong>NOTE:</strong> The formatting process is implementation defined.
+     *
+     * @param args an instance of {@link MessageFormatterArgs} holding the format string and arguments
+     * @return the formatted string where placeholders are replaced with the corresponding arguments
+     */
+    default @Nullable String format(MessageFormatterArgs args) {
+        return format(args.fmt(), args.args());
+    }
+
+    /**
      * Returns the input string as is, without any formatting applied.
      *
      * @param s the input string to be returned

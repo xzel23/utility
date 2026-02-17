@@ -1,5 +1,6 @@
 package com.dua3.utility.i18n;
 
+import com.dua3.utility.text.MessageFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -278,6 +279,17 @@ public final class I18N {
         }
         String pattern = keyOrPattern.contains("{") ? keyOrPattern : lookupBundle(keyOrPattern).getString(keyOrPattern);
         return MessageFormat.format(pattern, args);
+    }
+
+    /**
+     * Formats a string using either a pattern or a localization key with optional arguments.
+     *
+     * @param args a {@link com.dua3.utility.text.MessageFormatter.MessageFormatterArgs} instance holding the pattern
+     *             and the arguments to format
+     * @return the formatted string or an empty string if the format is empty
+     */
+    public String format(MessageFormatter.MessageFormatterArgs args) {
+        return format(args.fmt(), args.args());
     }
 
     /**

@@ -9,8 +9,10 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.Control;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.stage.FileChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,6 +53,16 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     default @Nullable String format(String message, @Nullable Object... args) {
         return getMessageFormatter().format(message, args);
+    }
+
+    /**
+     * Formats the given message using the specified arguments.
+     *
+     * @param args the message template and arguments
+     * @return the formatted message as a String
+     */
+    default @Nullable String format(MessageFormatter.MessageFormatterArgs args) {
+        return getMessageFormatter().format(args);
     }
 
     /**
@@ -1324,6 +1336,23 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     B apply(Consumer<Node> action);
+
+    /**
+     * Sets a tooltip on the last added node with the provided message.
+     * If the node is not an instance of a control, a warning is logged.
+     *
+     * @param message the formatted message to display in the tooltip
+     * @return the updated instance for method chaining
+     */
+    default B toolTip(MessageFormatter.MessageFormatterArgs message) {
+        return apply(node -> {
+            if (node instanceof Control c) {
+                c.setTooltip(new Tooltip(I18NInstance.get().format(message)));
+            } else {
+                getLogger().warn("Cannot set tooltip on node of type {}: {}", node.getClass().getName(), node);
+            }
+        });
+    }
 
     /**
      * Sets the number of text columns for the last added node.

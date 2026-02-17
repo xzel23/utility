@@ -78,11 +78,11 @@ public class AboutDialogBuilder {
         this.messageFormatter = messageFormatter;
     }
 
-    private String format(MessageFormatter.MessageFormatterArgs mfargs) {
+    private @Nullable String format(MessageFormatter.MessageFormatterArgs mfargs) {
         return format(mfargs.fmt(), mfargs.args());
     }
 
-    private String format(String fmt, @Nullable Object... args) {
+    private @Nullable String format(String fmt, @Nullable Object... args) {
         return messageFormatter.format(fmt, args);
     }
 
@@ -340,7 +340,7 @@ public class AboutDialogBuilder {
      */
     public AboutDialogBuilder expandableContent(String fmt, Object... args) {
         String text = format(fmt, args);
-        if (text.isBlank()) {
+        if (text == null || text.isBlank()) {
             expandableContent = null;
             return this;
         }
@@ -459,7 +459,7 @@ public class AboutDialogBuilder {
      */
     private void addLabel(Collection<Node> nodes, String id, String fmt, Object... args) {
         String text = format(fmt, args);
-        if (!text.isEmpty()) {
+        if (text != null && !text.isEmpty()) {
             Label label = new Label(text);
             label.setId(id);
             nodes.add(label);

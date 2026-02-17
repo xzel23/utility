@@ -230,10 +230,6 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return doAdd(null, format(label), () -> null, new ControlWrapper(node), row != null, true);
     }
 
-    private @Nullable String format(MessageFormatter.MessageFormatterArgs mfargs) {
-        return format(mfargs.fmt(), mfargs.args());
-    }
-
     @Override
     public GridBuilder section(int level, MessageFormatter.MessageFormatterArgs args) {
         LangUtil.checkArg(level > 0, "level must be 1 or greeater");
