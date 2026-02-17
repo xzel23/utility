@@ -137,7 +137,7 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
     public StringConverter<@Nullable T> converter() {return converter;}
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (ColumnDefText) obj;
