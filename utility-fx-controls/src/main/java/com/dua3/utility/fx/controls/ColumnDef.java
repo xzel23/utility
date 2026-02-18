@@ -1,5 +1,8 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.scene.Node;
+
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -44,7 +47,14 @@ public sealed interface ColumnDef<S, T> permits ColumnDefText, ColumnDefGeneric 
      *
      * @return A string representing the header text of this column.
      */
-    String header();
+    String text();
+
+    /**
+     * Retrieves the header text of the column.
+     *
+     * @return A string representing the header text of this column.
+     */
+    Optional<Node> graphic();
 
     /**
      * Determines whether the cells in this column are editable.

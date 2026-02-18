@@ -12,7 +12,6 @@ import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.icons.Icon;
 import com.dua3.utility.fx.icons.IconUtil;
-import com.dua3.utility.fx.icons.IconView;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxUtil;
 import javafx.geometry.Orientation;
@@ -249,6 +248,37 @@ public final class Controls {
     }
 
     /**
+     * Create a Node with a tooltip using default size and color.
+     *
+     * @param name  the icon name
+     * @param tooltipText the text to display as tooltip
+     * @return a node for the graphic
+     * @throws IllegalStateException if no icon with a matching name is found
+     * @see #graphic(String)
+     */
+    public static Node tooltipIcon(String name, String tooltipText) {
+        Node node = graphic(name);
+        Tooltip.install(node, new Tooltip(tooltipText));
+        return node;
+    }
+
+    /**
+     * Create a Node with a tooltip using default size and color.
+     *
+     * @param name  the icon name
+     * @param size  the requested size
+     * @param tooltipText the text to display as tooltip
+     * @return a node for the graphic
+     * @throws IllegalStateException if no icon with a matching name is found
+     * @see #graphic(String)
+     */
+    public static Node tooltipIcon(String name, int size, String tooltipText) {
+        Node node = graphic(name, size);
+        Tooltip.install(node, new Tooltip(tooltipText));
+        return node;
+    }
+
+    /**
      * Create an Icon with a tooltip.
      *
      * @param name  the icon name
@@ -257,14 +287,12 @@ public final class Controls {
      * @param tooltipText the text to display as tooltip
      * @return a node for the graphic
      * @throws IllegalStateException if no icon with a matching name is found
-     * @see IconUtil#iconFromName(String)
+     * @see #graphic(String)
      */
     public static Node tooltipIcon(String name, int size, Paint paint, String tooltipText) {
-        IconView iv = new IconView(name, size, paint);
-        if (!tooltipText.isBlank()) {
-            iv.setTooltip(new Tooltip(tooltipText));
-        }
-        return iv;
+        Node node = graphic(name, size, paint);
+        Tooltip.install(node, new Tooltip(tooltipText));
+        return node;
     }
 
     /**
@@ -276,10 +304,12 @@ public final class Controls {
      * @param tooltipText the text to display as tooltip
      * @return a node for the graphic
      * @throws IllegalStateException if no icon with a matching name is found
-     * @see IconUtil#iconFromName(String)
+     * @see #graphic(String)
      */
     public static Node tooltipIcon(String name, int size, Color color, String tooltipText) {
-        return tooltipIcon(name, size, FxUtil.convert(color), tooltipText);
+        Node node = graphic(name, size, color);
+        Tooltip.install(node, new Tooltip(tooltipText));
+        return node;
     }
 
     /**

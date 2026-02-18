@@ -9,7 +9,6 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Control;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -1344,14 +1343,8 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param message the formatted message to display in the tooltip
      * @return the updated instance for method chaining
      */
-    default B toolTip(MessageFormatter.MessageFormatterArgs message) {
-        return apply(node -> {
-            if (node instanceof Control c) {
-                c.setTooltip(new Tooltip(I18NInstance.get().format(message)));
-            } else {
-                getLogger().warn("Cannot set tooltip on node of type {}: {}", node.getClass().getName(), node);
-            }
-        });
+    default B tooltip(MessageFormatter.MessageFormatterArgs message) {
+        return apply(node -> Tooltip.install(node, new Tooltip(I18NInstance.get().format(message))));
     }
 
     /**

@@ -80,7 +80,8 @@ public final class TableViews {
         tv.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         tv.getColumns().setAll(
                 columns.stream().map(cd -> {
-                    TableColumn<S, Object> tc = new TableColumn<>(cd.header());
+                    TableColumn<S, Object> tc = new TableColumn<>(cd.text());
+                    cd.graphic().ifPresent(tc::setGraphic);
                     switch (cd) {
                         case ColumnDefText cdt -> tc.setCellFactory(TableCellAutoCommit.forTableColumn(cdt.converter()));
                         case ColumnDefGeneric cdg -> tc.setCellFactory(new GenericTableCellFactory<>(cdg.nodeFactory(), cdg.startEdit(), cdg.cancelEdit()));

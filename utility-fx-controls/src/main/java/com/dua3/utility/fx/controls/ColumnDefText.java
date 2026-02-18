@@ -1,9 +1,11 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.scene.Node;
 import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -14,7 +16,8 @@ import java.util.function.Function;
  * @param <T>         The type of the value displayed in the cells of this column.
  */
 public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
-    private final String header;
+    private final String text;
+    private final @Nullable Node graphic;
     private final boolean editable;
     private final double minWidth;
     private final double maxWidth;
@@ -27,7 +30,8 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
     /**
      * Creates a new instance.
      *
-     * @param header      The header text of the column.
+     * @param text        The header text of the column.
+     * @param graphic     The node to display in the column header.
      * @param editable    Specifies whether the column values are editable.
      * @param minWidth    The minimum width of the column.
      * @param maxWidth    The maximum width of the column.
@@ -38,7 +42,8 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
      * @param converter   A StringConverter for converting between the cell value and its string representation.
      */
     public ColumnDefText(
-            String header,
+            String text,
+            @Nullable Node graphic,
             boolean editable,
             double minWidth,
             double maxWidth,
@@ -47,7 +52,8 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
             Function<S, T> valueGetter,
             BiConsumer<S, T> valueSetter,
             StringConverter<@Nullable T> converter) {
-        this.header = header;
+        this.text = text;
+        this.graphic = graphic;
         this.editable = editable;
         this.minWidth = minWidth;
         this.maxWidth = maxWidth;
@@ -61,21 +67,22 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
     /**
      * Constructs a new instance using default values for width and resizable properties.
      *
-     * @param header      The header text of the column.
+     * @param text      The header text of the column.
      * @param editable    Specifies whether the column values are editable.
      * @param valueGetter A function that extracts the cell value from the row object.
      * @param valueSetter A consumer that sets the cell value in the row object.
      * @param converter   A StringConverter for converting between the cell value and its string representation.
      */
     public ColumnDefText(
-            String header,
+            String text,
             boolean editable,
             Function<S, T> valueGetter,
             BiConsumer<S, T> valueSetter,
             StringConverter<@Nullable T> converter
     ) {
         this(
-                header,
+                text,
+                null,
                 editable,
                 0.0,
                 Double.MAX_VALUE,
@@ -98,7 +105,12 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
     }
 
     @Override
-    public String header() {return header;}
+    public String text() {return text;}
+
+    @Override
+    public Optional<Node> graphic() {
+        return Optional.ofNullable(graphic);
+    }
 
     @Override
     public boolean editable() {return editable;}
@@ -141,7 +153,7 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (ColumnDefText) obj;
-        return Objects.equals(this.header, that.header) &&
+        return Objects.equals(this.text, that.text) &&
                 this.editable == that.editable &&
                 Double.doubleToLongBits(this.minWidth) == Double.doubleToLongBits(that.minWidth) &&
                 Double.doubleToLongBits(this.maxWidth) == Double.doubleToLongBits(that.maxWidth) &&
@@ -154,13 +166,13 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(header, editable, minWidth, maxWidth, weight, resizable, valueGetter, valueSetter, converter);
+        return Objects.hash(text, editable, minWidth, maxWidth, weight, resizable, valueGetter, valueSetter, converter);
     }
 
     @Override
     public String toString() {
         return "ColumnDefText[" +
-                "header=" + header + ", " +
+                "header=" + text + ", " +
                 "editable=" + editable + ", " +
                 "minWidth=" + minWidth + ", " +
                 "maxWidth=" + maxWidth + ", " +
