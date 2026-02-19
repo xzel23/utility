@@ -50,17 +50,9 @@ public class Grid extends GridPane {
      */
     protected static final Logger LOG = LogManager.getLogger(Grid.class);
 
-    /**
-     * Property holding the valid state.
-     *
-     * @see #validProperty()
-     */
-    protected final BooleanProperty valid = new SimpleBooleanProperty(false);
+    private final BooleanProperty valid = new SimpleBooleanProperty(false);
 
-    /**
-     * Property holding the label placement.
-     */
-    protected final ObjectProperty<LabelPlacement> labelPlacement = new SimpleObjectProperty<>(LabelPlacement.BEFORE);
+    private final ObjectProperty<LabelPlacement> labelPlacement = new SimpleObjectProperty<>(LabelPlacement.BEFORE);
 
     private static final FxFontUtil FU = FxFontUtil.getInstance();
     private final Font defaultFont;

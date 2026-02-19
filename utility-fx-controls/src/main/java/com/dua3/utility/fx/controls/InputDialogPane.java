@@ -57,11 +57,6 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         getStylesheets().setAll(url.toExternalForm());
     }
 
-    /**
-     * Property holding the valid state.
-     *
-     * @see #validProperty()
-     */
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
     /**
