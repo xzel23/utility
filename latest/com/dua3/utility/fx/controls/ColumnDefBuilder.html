@@ -138,33 +138,38 @@ loadScripts(document, 'script');</script>
 <div class="block">Represents the minimum width constraint for the column in pixels.</div>
 </div>
 <div class="col-first even-row-color"><code>protected boolean</code></div>
-<div class="col-second even-row-color"><code><a href="#resizable" class="member-name-link">resizable</a></code></div>
+<div class="col-second even-row-color"><code><a href="#reorderable" class="member-name-link">reorderable</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Determines whether the column is resizable by the user.</div>
+<div class="block">Determines whether the column is reorderable by the user.</div>
 </div>
 <div class="col-first odd-row-color"><code>protected boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#sortable" class="member-name-link">sortable</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#resizable" class="member-name-link">resizable</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Determines whether the column is resizable by the user.</div>
+</div>
+<div class="col-first even-row-color"><code>protected boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#sortable" class="member-name-link">sortable</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Indicates whether the column is sortable.</div>
 </div>
-<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#text" class="member-name-link">text</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#text" class="member-name-link">text</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Represents the header text for a column.</div>
 </div>
-<div class="col-first odd-row-color"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a><wbr>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#valueGetter" class="member-name-link">valueGetter</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a><wbr>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#valueGetter" class="member-name-link">valueGetter</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">A function used to extract a value of type <code>T</code> from an object of type <code>S</code>.</div>
 </div>
-<div class="col-first even-row-color"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a><wbr>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#valueSetter" class="member-name-link">valueSetter</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a><wbr>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#valueSetter" class="member-name-link">valueSetter</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A <code>BiConsumer</code> used to set a new value in a row's backing object for this column.</div>
 </div>
-<div class="col-first odd-row-color"><code>protected double</code></div>
-<div class="col-second odd-row-color"><code><a href="#weight" class="member-name-link">weight</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>protected double</code></div>
+<div class="col-second even-row-color"><code><a href="#weight" class="member-name-link">weight</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The weight of the column, expressed as a relative value used for layout calculations.</div>
 </div>
 </div>
@@ -322,6 +327,13 @@ loadScripts(document, 'script');</script>
 <h3>resizable</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">resizable</span></div>
 <div class="block">Determines whether the column is resizable by the user.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="reorderable">
+<h3>reorderable</h3>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">reorderable</span></div>
+<div class="block">Determines whether the column is reorderable by the user.</div>
 </section>
 </li>
 <li>

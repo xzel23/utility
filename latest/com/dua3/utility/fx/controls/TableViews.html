@@ -115,15 +115,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Clear TableView.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;S&gt;&nbsp;javafx.scene.control.TableView<wbr>&lt;S&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newTableView(java.util.SequencedCollection)" class="member-name-link">newTableView</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;<a href="ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a>&lt;S,<wbr>?&gt;&gt;&nbsp;columns)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newTableView(java.util.SequencedCollection,com.dua3.utility.fx.controls.TableViewOptions)" class="member-name-link">newTableView</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;<a href="ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a>&lt;S,<wbr>?&gt;&gt;&nbsp;columns,
+ <a href="TableViewOptions.html" title="class in com.dua3.utility.fx.controls">TableViewOptions</a>&nbsp;options)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new <code>TableView</code> instance configured with the specified columns.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;S&gt;&nbsp;javafx.scene.control.TableView<wbr>&lt;S&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newTableView(java.util.SequencedCollection,java.util.SequencedCollection)" class="member-name-link">newTableView</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;<a href="ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a>&lt;S,<wbr>?&gt;&gt;&nbsp;columns,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newTableView(java.util.SequencedCollection,com.dua3.utility.fx.controls.TableViewOptions,java.util.SequencedCollection)" class="member-name-link">newTableView</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;<a href="ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a>&lt;S,<wbr>?&gt;&gt;&nbsp;columns,
+ <a href="TableViewOptions.html" title="class in com.dua3.utility.fx.controls">TableViewOptions</a>&nbsp;options,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;S&gt;&nbsp;initialItems)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a new <code>TableView</code> instance configured with the specified columns and initial items.</div>
+<div class="block">Creates a new <code>TableView</code> instance configured with the specified columns, initial items,
+ and optional row-draggability behavior.</div>
 </div>
 </div>
 </div>
@@ -158,9 +161,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="newTableView(java.util.SequencedCollection)">
+<section class="detail" id="newTableView(java.util.SequencedCollection,com.dua3.utility.fx.controls.TableViewOptions)">
 <h3>newTableView</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;S&gt;</span>&nbsp;<span class="return-type">javafx.scene.control.TableView&lt;S&gt;</span>&nbsp;<span class="element-name">newTableView</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;<a href="ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a>&lt;S,<wbr>?&gt;&gt;&nbsp;columns)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;S&gt;</span>&nbsp;<span class="return-type">javafx.scene.control.TableView&lt;S&gt;</span>&nbsp;<span class="element-name">newTableView</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;<a href="ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a>&lt;S,<wbr>?&gt;&gt;&nbsp;columns,
+ <a href="TableViewOptions.html" title="class in com.dua3.utility.fx.controls">TableViewOptions</a>&nbsp;options)</span></div>
 <div class="block">Creates a new <code>TableView</code> instance configured with the specified columns.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
@@ -168,26 +172,32 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>columns</code> - A <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link"><code>SequencedCollection</code></a> of <a href="ColumnDefText.html" title="class in com.dua3.utility.fx.controls"><code>ColumnDefText</code></a> that defines the columns of the <code>TableView</code>.
                      Each <a href="ColumnDefText.html" title="class in com.dua3.utility.fx.controls"><code>ColumnDefText</code></a> includes information such as the column header, value provider, and cell converter.</dd>
+<dd><code>options</code> - A <a href="TableViewOptions.html" title="class in com.dua3.utility.fx.controls"><code>TableViewOptions</code></a> instance specifying configuration options.</dd>
 <dt>Returns:</dt>
 <dd>A configured <code>TableView</code> instance containing the defined columns.</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="newTableView(java.util.SequencedCollection,java.util.SequencedCollection)">
+<section class="detail" id="newTableView(java.util.SequencedCollection,com.dua3.utility.fx.controls.TableViewOptions,java.util.SequencedCollection)">
 <h3>newTableView</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;S&gt;</span>&nbsp;<span class="return-type">javafx.scene.control.TableView&lt;S&gt;</span>&nbsp;<span class="element-name">newTableView</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;<a href="ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a>&lt;S,<wbr>?&gt;&gt;&nbsp;columns,
+ <a href="TableViewOptions.html" title="class in com.dua3.utility.fx.controls">TableViewOptions</a>&nbsp;options,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;S&gt;&nbsp;initialItems)</span></div>
-<div class="block">Creates a new <code>TableView</code> instance configured with the specified columns and initial items.</div>
+<div class="block">Creates a new <code>TableView</code> instance configured with the specified columns, initial items,
+ and optional row-draggability behavior.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
 <dd><code>S</code> - The type of the items to be displayed in the <code>TableView</code>.</dd>
 <dt>Parameters:</dt>
-<dd><code>columns</code> - A <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link"><code>SequencedCollection</code></a> of <a href="ColumnDefText.html" title="class in com.dua3.utility.fx.controls"><code>ColumnDefText</code></a> that defines the columns of the <code>TableView</code>.
-                     Each <a href="ColumnDefText.html" title="class in com.dua3.utility.fx.controls"><code>ColumnDefText</code></a> includes information such as the column header, value provider, and cell converter.</dd>
+<dd><code>columns</code> - A <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link"><code>SequencedCollection</code></a> of <a href="ColumnDef.html" title="interface in com.dua3.utility.fx.controls"><code>ColumnDef</code></a> defining the table columns.
+                      Each <a href="ColumnDef.html" title="interface in com.dua3.utility.fx.controls"><code>ColumnDef</code></a> contains information such as header, value provider,
+                      cell properties, and customization options.</dd>
+<dd><code>options</code> - A <a href="TableViewOptions.html" title="class in com.dua3.utility.fx.controls"><code>TableViewOptions</code></a> instance specifying configuration options.</dd>
 <dd><code>initialItems</code> - A <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link"><code>SequencedCollection</code></a> containing the initial items to be displayed in the <code>TableView</code>.</dd>
 <dt>Returns:</dt>
-<dd>A configured <code>TableView</code> instance containing the defined columns and initial items.</dd>
+<dd>A configured <code>TableView</code> instance containing the specified columns, initial items,
+         and row-draggability behavior (if enabled).</dd>
 </dl>
 </section>
 </li>
