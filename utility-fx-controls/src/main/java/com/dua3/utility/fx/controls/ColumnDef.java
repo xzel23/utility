@@ -143,6 +143,13 @@ public sealed interface ColumnDef<S, T> permits ColumnDefText, ColumnDefGeneric 
     boolean resizable();
 
     /**
+     * Indicates whether the column can be reordered (dragged to another position using the mouse).
+     *
+     * @return true if the column is reorderable; false otherwise.
+     */
+    boolean reorderable();
+
+    /**
      * Indicates whether the column is sortable.
      *
      * @return true if the column is sortable; false otherwise.

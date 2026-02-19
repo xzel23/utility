@@ -19,7 +19,12 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,28 +59,38 @@ public final class TableViews {
      * @param <S>          The type of the items to be displayed in the {@link TableView}.
      * @param columns      A {@link SequencedCollection} of {@link ColumnDefText} that defines the columns of the {@link TableView}.
      *                     Each {@link ColumnDefText} includes information such as the column header, value provider, and cell converter.
+     * @param options       A {@link TableViewOptions} instance specifying configuration options.
      *
      * @return A configured {@link TableView} instance containing the defined columns.
      */
-    public static <S> TableView<S> newTableView(SequencedCollection<ColumnDef<S, ?>> columns) {
-        return newTableView(columns, FXCollections.observableArrayList());
+    public static <S> TableView<S> newTableView(SequencedCollection<ColumnDef<S, ?>> columns, TableViewOptions options) {
+        return newTableView(columns, options, FXCollections.observableArrayList());
     }
 
     /**
-     * Creates a new {@link TableView} instance configured with the specified columns and initial items.
+     * Creates a new {@link TableView} instance configured with the specified columns, initial items,
+     * and optional row-draggability behavior.
      *
-     * @param <S>          The type of the items to be displayed in the {@link TableView}.
-     * @param columns      A {@link SequencedCollection} of {@link ColumnDefText} that defines the columns of the {@link TableView}.
-     *                     Each {@link ColumnDefText} includes information such as the column header, value provider, and cell converter.
-     * @param initialItems A {@link SequencedCollection} containing the initial items to be displayed in the {@link TableView}.
-     *
-     * @return A configured {@link TableView} instance containing the defined columns and initial items.
+     * @param <S>           The type of the items to be displayed in the {@link TableView}.
+     * @param columns       A {@link SequencedCollection} of {@link ColumnDef} defining the table columns.
+     *                      Each {@link ColumnDef} contains information such as header, value provider,
+     *                      cell properties, and customization options.
+     * @param options       A {@link TableViewOptions} instance specifying configuration options.
+     * @param initialItems  A {@link SequencedCollection} containing the initial items to be displayed in the {@link TableView}.
+     * @return A configured {@link TableView} instance containing the specified columns, initial items,
+     *         and row-draggability behavior (if enabled).
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <S> TableView<S> newTableView(SequencedCollection<ColumnDef<S, ?>> columns, SequencedCollection<S> initialItems) {
+    public static <S> TableView<S> newTableView(
+            SequencedCollection<ColumnDef<S, ?>> columns,
+            TableViewOptions options,
+            SequencedCollection<S> initialItems) {
+        boolean editable = options.isEnabled(TableViewOptions.EDITABLE);
+        boolean sortable = options.isEnabled(TableViewOptions.SORTABLE);
+        boolean reorderableColumns = options.isEnabled(TableViewOptions.REORDERABLE_COLUMNS);
+        boolean reorderableRows = options.isEnabled(TableViewOptions.REORDERABLE_ROWS);
+
         ObservableList<S> items = FXCollections.observableArrayList(initialItems);
         TableView<S> tv = new TableView<>(items);
-        boolean[] editable = {false};
         Map<TableColumn<?, ?>, ColumnDef<?, ?>> configMap = new HashMap<>();
         tv.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         tv.getColumns().setAll(
@@ -83,26 +98,33 @@ public final class TableViews {
                     TableColumn<S, Object> tc = new TableColumn<>(cd.text());
                     cd.graphic().ifPresent(tc::setGraphic);
                     switch (cd) {
-                        case ColumnDefText cdt -> tc.setCellFactory(TableCellAutoCommit.forTableColumn(cdt.converter()));
-                        case ColumnDefGeneric cdg -> tc.setCellFactory(new GenericTableCellFactory<>(cdg.nodeFactory(), cdg.startEdit(), cdg.cancelEdit()));
+                        case ColumnDefText cdt ->
+                                tc.setCellFactory(TableCellAutoCommit.forTableColumn(cdt.converter()));
+                        case ColumnDefGeneric cdg ->
+                                tc.setCellFactory(new GenericTableCellFactory<>(cdg.nodeFactory(), cdg.startEdit(), cdg.cancelEdit()));
                     }
                     tc.setCellValueFactory(f -> new ReadOnlyObjectWrapper<>(cd.get(f.getValue())));
                     tc.setOnEditCommit(event -> ((ColumnDef) cd).set(event.getRowValue(), event.getNewValue()));
-                    tc.setEditable(cd.editable());
-                    tc.setSortable(cd.sortable());
+                    tc.setEditable(editable && cd.editable());
+                    tc.setSortable(sortable && cd.sortable());
+                    tc.setReorderable(reorderableColumns && cd.reorderable());
                     tc.setMinWidth(cd.minWidth());
                     tc.setMaxWidth(cd.maxWidth());
                     tc.setResizable(cd.resizable());
-                    editable[0] = editable[0] || cd.editable();
 
                     configMap.put(tc, cd);
 
                     return tc;
                 }).toList()
         );
-        tv.setEditable(editable[0]);
+
+        tv.setEditable(editable);
 
         FlexibleColumnCoordinator.apply(tv, configMap);
+
+        if (reorderableRows) {
+            tv.setRowFactory(t -> new DraggableRow<>());
+        }
 
         return tv;
     }
@@ -198,6 +220,63 @@ public final class TableViews {
             }
 
             isInternalAdjusting = false;
+        }
+    }
+
+    /**
+     * Represents a draggable row within a {@link TableView}, enabling drag-and-drop functionality
+     * for reordering rows. This class extends {@link TableRow} and adds event handling
+     * for drag initiation, drag over, and drop events to achieve row rearrangement.
+     *
+     * @param <T> The type of the items contained in the {@link TableView}.
+     */
+    private static final class DraggableRow<T> extends TableRow<T> {
+        private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
+
+        public DraggableRow() {
+            super();
+
+            // 1. Initiate Drag
+            this.setOnDragDetected(event -> {
+                if (!isEmpty()) {
+                    Integer index = getIndex();
+                    Dragboard db = startDragAndDrop(TransferMode.MOVE);
+                    db.setDragView(snapshot(null, null));
+
+                    ClipboardContent cc = new ClipboardContent();
+                    cc.put(SERIALIZED_MIME_TYPE, index);
+                    db.setContent(cc);
+                    event.consume();
+                }
+            });
+
+            // 2. Handle Drag Over
+            this.setOnDragOver(event -> {
+                Dragboard db = event.getDragboard();
+                if (db.hasContent(SERIALIZED_MIME_TYPE) && getIndex() != (Integer) db.getContent(SERIALIZED_MIME_TYPE)) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                    event.consume();
+                }
+            });
+
+            // 3. Handle Drop and List Mutation
+            this.setOnDragDropped(event -> {
+                Dragboard db = event.getDragboard();
+                if (db.hasContent(SERIALIZED_MIME_TYPE)) {
+                    int draggedIndex = (Integer) db.getContent(SERIALIZED_MIME_TYPE);
+                    TableView<T> tableView = getTableView();
+
+                    T draggedItem = tableView.getItems().remove(draggedIndex);
+
+                    int dropIndex = isEmpty() ? tableView.getItems().size() : getIndex();
+
+                    tableView.getItems().add(dropIndex, draggedItem);
+                    tableView.getSelectionModel().select(dropIndex);
+
+                    event.setDropCompleted(true);
+                    event.consume();
+                }
+            });
         }
     }
 }

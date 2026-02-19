@@ -33,6 +33,7 @@ public class ColumnDefTextBuilder<S, T> extends ColumnDefBuilder<S, T, ColumnDef
                 maxWidth,
                 weight,
                 resizable,
+                reorderable,
                 sortable,
                 valueGetter,
                 valueSetter,

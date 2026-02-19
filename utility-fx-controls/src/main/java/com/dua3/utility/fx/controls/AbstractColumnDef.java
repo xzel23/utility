@@ -45,6 +45,10 @@ public abstract class AbstractColumnDef<S, T> {
      */
     protected final boolean resizable;
     /**
+     * Determines whether the column is reorderable.
+     */
+    protected final boolean reorderable;
+    /**
      * Indicates whether the column is sortable.
      */
     protected final boolean sortable;
@@ -67,6 +71,7 @@ public abstract class AbstractColumnDef<S, T> {
      * @param maxWidth    The maximum allowable width of the column.
      * @param weight      A weight value that determines the proportional size of the column relative to others.
      * @param resizable   Indicates whether the column can be resized by the user.
+     * @param reorderable Indicates whether the column can be reordered by the user.
      * @param sortable    Indicates whether the column supports sorting.
      * @param valueGetter The function used to retrieve the column's value for a row object.
      * @param valueSetter The function used to set the column's value for a row object.
@@ -79,6 +84,7 @@ public abstract class AbstractColumnDef<S, T> {
             double maxWidth,
             double weight,
             boolean resizable,
+            boolean reorderable,
             boolean sortable,
             Function<S, T> valueGetter,
             BiConsumer<S, T> valueSetter) {
@@ -89,6 +95,7 @@ public abstract class AbstractColumnDef<S, T> {
         this.maxWidth = maxWidth;
         this.weight = weight;
         this.resizable = resizable;
+        this.reorderable = reorderable;
         this.sortable = sortable;
         this.valueGetter = valueGetter;
         this.valueSetter = valueSetter;
@@ -188,6 +195,15 @@ public abstract class AbstractColumnDef<S, T> {
      */
     public boolean resizable() {
         return resizable;
+    }
+
+    /**
+     * Indicates whether the column can be resized by the user.
+     *
+     * @return true if the column is resizable, false otherwise.
+     */
+    public boolean reorderable() {
+        return reorderable;
     }
 
     /**

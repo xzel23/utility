@@ -1241,6 +1241,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param label the message formatter arguments for the table label
      * @param dflt the default value supplier for the table input
      * @param validate the validation function to check the table input, returning an optional error message
+     * @param options the {@link TableViewOptions} to apply to the table view
      * @param columns the table columns
      * @param <S> the type of elements contained in the table
      * @return an instance of {@code B} representing the configured input control
@@ -1250,8 +1251,9 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             MessageFormatter.MessageFormatterArgs label,
             Supplier<? extends List<S>> dflt,
             Function<List<S>, Optional<String>> validate,
+            TableViewOptions options,
             ColumnDef<S, ?>... columns) {
-        return inputTable(id, label, dflt, validate, List.of(columns));
+        return inputTable(id, label, dflt, validate, options, List.of(columns));
     }
 
     /**
@@ -1261,6 +1263,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param label the message formatter arguments for the table label
      * @param dflt the default value supplier for the table input
      * @param validate the validation function to check the table input, returning an optional error message
+     * @param options the {@link TableViewOptions} to apply to the table view
      * @param columns the table columns
      * @param <S> the type of elements contained in the table
      * @return an instance of {@code B} representing the configured input control
@@ -1270,9 +1273,10 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             MessageFormatter.MessageFormatterArgs label,
             Supplier<? extends List<S>> dflt,
             Function<List<S>, Optional<String>> validate,
+            TableViewOptions options,
             SequencedCollection<ColumnDef<S, ?>> columns
     ) {
-        var tv = TableViews.newTableView(columns, dflt.get());
+        var tv = TableViews.newTableView(columns, options, dflt.get());
         ObservableList<S> items = tv.getItems();
         Property<List<S>> value = new SimpleObjectProperty<>(items);
         InputControl<List<S>> inputControl = new SimpleInputControl<>(tv, value, dflt, validate);

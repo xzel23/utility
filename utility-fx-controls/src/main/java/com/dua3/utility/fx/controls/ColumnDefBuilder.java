@@ -46,6 +46,10 @@ public abstract class ColumnDefBuilder<S, T, B extends ColumnDefBuilder<S, T, B>
      */
     protected boolean resizable = true;
     /**
+     * Determines whether the column is reorderable by the user.
+     */
+    protected boolean reorderable = true;
+    /**
      * Indicates whether the column is sortable.
      */
     protected boolean sortable = true;
