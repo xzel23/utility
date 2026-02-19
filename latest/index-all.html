@@ -110,8 +110,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Abstract base class for <a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls"><code>ColumnDef</code></a> implementations.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#%3Cinit%3E(java.lang.String,javafx.scene.Node,boolean,double,double,double,boolean,java.util.function.Function,java.util.function.BiConsumer)" class="member-name-link">AbstractColumnDef(String, Node, boolean, double, double, double, boolean, Function&lt;S, T&gt;, BiConsumer&lt;S, T&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#%3Cinit%3E(java.lang.String,javafx.scene.Node,boolean,double,double,double,boolean,boolean,java.util.function.Function,java.util.function.BiConsumer)" class="member-name-link">AbstractColumnDef(String, Node, boolean, double, double, double, boolean, boolean, Function&lt;S, T&gt;, BiConsumer&lt;S, T&gt;)</a> - Constructor for class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
+<dd>
+<div class="block">Constructs an instance of AbstractColumnDef with the specified properties.</div>
+</dd>
 <dt><a href="com/dua3/utility/math/geometry/AbstractCurve2f.html" class="type-name-link" title="class in com.dua3.utility.math.geometry">AbstractCurve2f</a> - Class in <a href="com/dua3/utility/math/geometry/package-summary.html">com.dua3.utility.math.geometry</a></dt>
 <dd>
 <div class="block">Abstract Base class for 2-dimensional curves.</div>
@@ -3860,11 +3862,17 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets an edit function that allows modifying a given item when triggered.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#editable" class="member-name-link">editable</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Indicates whether the column is editable.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#editable" class="member-name-link">editable</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A flag indicating whether the column is editable.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#editable()" class="member-name-link">editable()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Indicates whether the column values can be edited.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#editable()" class="member-name-link">editable()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Determines whether the cells in this column are editable.</div>
@@ -5570,7 +5578,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets the value associated with the specified key.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#get(S)" class="member-name-link">get(S)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Retrieves the value of a specified row using the column's value getter function.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#get(S)" class="member-name-link">get(S)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Retrieves the value of the cell in this column for the specified row object.</div>
@@ -6906,11 +6916,17 @@ loadScripts(document, 'script');</script>
 <div class="block">The color GOLDENROD.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#graphic" class="member-name-link">graphic</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The graphic representation associated with a column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#graphic" class="member-name-link">graphic</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Holds a reference to the graphic node associated with the column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#graphic()" class="member-name-link">graphic()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Retrieves an optional graphic associated with the column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#graphic()" class="member-name-link">graphic()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Retrieves the header text of the column.</div>
@@ -10057,11 +10073,17 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets the maximum width and height for the node being built.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#maxWidth" class="member-name-link">maxWidth</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The maximum width constraint for a column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#maxWidth" class="member-name-link">maxWidth</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Represents the maximum allowable width for a column in pixels.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#maxWidth()" class="member-name-link">maxWidth()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Retrieves the maximum allowable width of the column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#maxWidth()" class="member-name-link">maxWidth()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Retrieves the maximum width of the column.</div>
@@ -10342,11 +10364,17 @@ loadScripts(document, 'script');</script>
 <div class="block">m:ss.sss.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#minWidth" class="member-name-link">minWidth</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Specifies the minimum width of the column in pixels.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#minWidth" class="member-name-link">minWidth</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Represents the minimum width constraint for the column in pixels.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#minWidth()" class="member-name-link">minWidth()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Retrieves the minimum width of the column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#minWidth()" class="member-name-link">minWidth()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Retrieves the minimum width of the column.</div>
@@ -12733,11 +12761,17 @@ loadScripts(document, 'script');</script>
 <div class="block">Resets the clipping area to the default state.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#resizable" class="member-name-link">resizable</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Determines whether the column is resizable.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#resizable" class="member-name-link">resizable</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Determines whether the column is resizable by the user.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#resizable()" class="member-name-link">resizable()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Indicates whether the column can be resized by the user.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#resizable()" class="member-name-link">resizable()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Indicates whether the column can be resized.</div>
@@ -13381,7 +13415,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets the content to the given collection of items to the PinBoard and refreshes the skin.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#set(S,T)" class="member-name-link">set(S, T)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets the value of the specified row using the valueSetter function.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#set(S,T)" class="member-name-link">set(S, T)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Sets the value for a specific cell in the column, corresponding to the given row.</div>
@@ -13899,7 +13935,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets the vertical scrollbar policy of the PinBoardSkin's ScrollPane.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#setWeight(double)" class="member-name-link">setWeight(double)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets the weight of the column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#setWeight(double)" class="member-name-link">setWeight(double)</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Set a new weight value.</div>
@@ -14231,6 +14269,26 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/io/SoftResource.ResourceHolder.html" class="type-name-link" title="class in com.dua3.utility.io">SoftResource.ResourceHolder&lt;T&gt;</a> - Class in <a href="com/dua3/utility/io/package-summary.html">com.dua3.utility.io</a></dt>
 <dd>
 <div class="block">Helper class to prevent the resource from being garbage collected.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#sortable" class="member-name-link">sortable</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
+<dd>
+<div class="block">Indicates whether the column is sortable.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#sortable" class="member-name-link">sortable</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
+<dd>
+<div class="block">Indicates whether the column is sortable.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#sortable()" class="member-name-link">sortable()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
+<dd>
+<div class="block">Indicates whether the column can be sorted.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#sortable()" class="member-name-link">sortable()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
+<dd>
+<div class="block">Indicates whether the column is sortable.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#sortable(boolean)" class="member-name-link">sortable(boolean)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
+<dd>
+<div class="block">Sets whether the column is sortable.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/ComboBoxEx.html#sortItems()" class="member-name-link">sortItems()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ComboBoxEx.html" title="class in com.dua3.utility.fx.controls">ComboBoxEx</a></dt>
 <dd>
@@ -15005,11 +15063,17 @@ loadScripts(document, 'script');</script>
  for a specific platform.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#text" class="member-name-link">text</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The display text associated with the column definition.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#text" class="member-name-link">text</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Represents the header text for a column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#text()" class="member-name-link">text()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Retrieves the header text for the column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#text()" class="member-name-link">text()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Retrieves the header text of the column.</div>
@@ -16257,11 +16321,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Retrieves the value changing property of the slider.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#valueGetter" class="member-name-link">valueGetter</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A function that retrieves the value of type <code>T</code> for a given row of type <code>S</code>.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#valueGetter" class="member-name-link">valueGetter</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A function used to extract a value of type <code>T</code> from an object of type <code>S</code>.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#valueGetter()" class="member-name-link">valueGetter()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the function responsible for retrieving the value of the column
+ from a given row object.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#valueGetter()" class="member-name-link">valueGetter()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Retrieves the function used to extract the cell value from the row object.</div>
@@ -16682,11 +16753,18 @@ the order they are declared.</div>
 the order they are declared.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#valueSetter" class="member-name-link">valueSetter</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link"><code>BiConsumer</code></a> responsible for updating the value.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#valueSetter" class="member-name-link">valueSetter</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A <code>BiConsumer</code> used to set a new value in a row's backing object for this column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#valueSetter()" class="member-name-link">valueSetter()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Retrieves the BiConsumer function responsible for setting the value of the column
+ for a given object of type S and value of type T.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#valueSetter()" class="member-name-link">valueSetter()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Retrieves the value setter function for this column.</div>
@@ -16883,11 +16961,17 @@ the order they are declared.</div>
 <div class="block">The JSLogger class is a utility class for logging messages from JavaScript code.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#weight" class="member-name-link">weight</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Represents the relative importance of this column during layout computations.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html#weight" class="member-name-link">weight</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDefBuilder.html" title="class in com.dua3.utility.fx.controls">ColumnDefBuilder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The weight of the column, expressed as a relative value used for layout calculations.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/AbstractColumnDef.html#weight()" class="member-name-link">weight()</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/AbstractColumnDef.html" title="class in com.dua3.utility.fx.controls">AbstractColumnDef</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the weight associated with this column.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/ColumnDef.html#weight()" class="member-name-link">weight()</a> - Method in interface com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/ColumnDef.html" title="interface in com.dua3.utility.fx.controls">ColumnDef</a></dt>
 <dd>
 <div class="block">Retrieves the weight of the column, which represents its relative proportion

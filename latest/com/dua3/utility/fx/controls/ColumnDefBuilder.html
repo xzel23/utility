@@ -119,31 +119,54 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>protected boolean</code></div>
 <div class="col-second even-row-color"><code><a href="#editable" class="member-name-link">editable</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">A flag indicating whether the column is editable.</div>
+</div>
 <div class="col-first odd-row-color"><code>protected @Nullable javafx.scene.Node</code></div>
 <div class="col-second odd-row-color"><code><a href="#graphic" class="member-name-link">graphic</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Holds a reference to the graphic node associated with the column.</div>
+</div>
 <div class="col-first even-row-color"><code>protected double</code></div>
 <div class="col-second even-row-color"><code><a href="#maxWidth" class="member-name-link">maxWidth</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Represents the maximum allowable width for a column in pixels.</div>
+</div>
 <div class="col-first odd-row-color"><code>protected double</code></div>
 <div class="col-second odd-row-color"><code><a href="#minWidth" class="member-name-link">minWidth</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Represents the minimum width constraint for the column in pixels.</div>
+</div>
 <div class="col-first even-row-color"><code>protected boolean</code></div>
 <div class="col-second even-row-color"><code><a href="#resizable" class="member-name-link">resizable</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#text" class="member-name-link">text</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a><wbr>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#valueGetter" class="member-name-link">valueGetter</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a><wbr>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#valueSetter" class="member-name-link">valueSetter</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected double</code></div>
-<div class="col-second even-row-color"><code><a href="#weight" class="member-name-link">weight</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Determines whether the column is resizable by the user.</div>
+</div>
+<div class="col-first odd-row-color"><code>protected boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#sortable" class="member-name-link">sortable</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Indicates whether the column is sortable.</div>
+</div>
+<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#text" class="member-name-link">text</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Represents the header text for a column.</div>
+</div>
+<div class="col-first odd-row-color"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a><wbr>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#valueGetter" class="member-name-link">valueGetter</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">A function used to extract a value of type <code>T</code> from an object of type <code>S</code>.</div>
+</div>
+<div class="col-first even-row-color"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a><wbr>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#valueSetter" class="member-name-link">valueSetter</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">A <code>BiConsumer</code> used to set a new value in a row's backing object for this column.</div>
+</div>
+<div class="col-first odd-row-color"><code>protected double</code></div>
+<div class="col-second odd-row-color"><code><a href="#weight" class="member-name-link">weight</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The weight of the column, expressed as a relative value used for layout calculations.</div>
+</div>
 </div>
 </section>
 </li>
@@ -212,19 +235,24 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns the builder instance cast to the appropriate subclass type.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueGetter(java.util.function.Function)" class="member-name-link">valueGetter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;&nbsp;valueGetter)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#sortable(boolean)" class="member-name-link">sortable</a><wbr>(boolean&nbsp;sortable)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets whether the column is sortable.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueGetter(java.util.function.Function)" class="member-name-link">valueGetter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;&nbsp;valueGetter)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the function used to extract the value from an object of type <code>S</code>
  and assigns it to the cells of this column.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueSetter(java.util.function.BiConsumer)" class="member-name-link">valueSetter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;&nbsp;valueSetter)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueSetter(java.util.function.BiConsumer)" class="member-name-link">valueSetter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;&nbsp;valueSetter)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the value setter function for this column.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#weight(double)" class="member-name-link">weight</a><wbr>(double&nbsp;weight)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#weight(double)" class="member-name-link">weight</a><wbr>(double&nbsp;weight)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the weight of the column.</div>
 </div>
 </div>
@@ -248,54 +276,73 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="text">
 <h3>text</h3>
 <div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">text</span></div>
+<div class="block">Represents the header text for a column.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="graphic">
 <h3>graphic</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">@Nullable javafx.scene.Node</span>&nbsp;<span class="element-name">graphic</span></div>
+<div class="block">Holds a reference to the graphic node associated with the column.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="editable">
 <h3>editable</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">editable</span></div>
+<div class="block">A flag indicating whether the column is editable.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="minWidth">
 <h3>minWidth</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">minWidth</span></div>
+<div class="block">Represents the minimum width constraint for the column in pixels.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="maxWidth">
 <h3>maxWidth</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">maxWidth</span></div>
+<div class="block">Represents the maximum allowable width for a column in pixels.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="weight">
 <h3>weight</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">weight</span></div>
+<div class="block">The weight of the column, expressed as a relative value used for layout calculations.
+ This value determines how much space the column should occupy in proportion to other
+ columns when a flexible layout is applied. A higher weight indicates that the column
+ should take up more space relative to columns with lower weights.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="resizable">
 <h3>resizable</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">resizable</span></div>
+<div class="block">Determines whether the column is resizable by the user.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="sortable">
+<h3>sortable</h3>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">sortable</span></div>
+<div class="block">Indicates whether the column is sortable.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="valueGetter">
 <h3>valueGetter</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</span>&nbsp;<span class="element-name">valueGetter</span></div>
+<div class="block">A function used to extract a value of type <code>T</code> from an object of type <code>S</code>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="valueSetter">
 <h3>valueSetter</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;<a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">S</a>,<wbr><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">T</a>&gt;</span>&nbsp;<span class="element-name">valueSetter</span></div>
+<div class="block">A <code>BiConsumer</code> used to set a new value in a row's backing object for this column.</div>
 </section>
 </li>
 </ul>
@@ -413,6 +460,19 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>resizable</code> - true if the column should be resizable, false otherwise</dd>
+<dt>Returns:</dt>
+<dd>the builder instance for method chaining</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="sortable(boolean)">
+<h3>sortable</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ColumnDefBuilder.html" title="type parameter in ColumnDefBuilder">B</a></span>&nbsp;<span class="element-name">sortable</span><wbr><span class="parameters">(boolean&nbsp;sortable)</span></div>
+<div class="block">Sets whether the column is sortable.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>sortable</code> - true if the column should be sortable, false otherwise</dd>
 <dt>Returns:</dt>
 <dd>the builder instance for method chaining</dd>
 </dl>
