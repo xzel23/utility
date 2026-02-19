@@ -160,7 +160,17 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Creates a <code>MessageFormatterArgs</code> instance using the provided format string and arguments.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#empty()" class="member-name-link">empty</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates an empty <code>MessageFormatterArgs</code> instance with no format string and no arguments.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#format(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)" class="member-name-link">format</a><wbr>(<a href="MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;args)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Formats the given format string by replacing placeholders with the provided arguments.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#format(java.lang.String,java.lang.Object...)" class="member-name-link">format</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -286,9 +296,20 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="empty()">
+<h3>empty</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a></span>&nbsp;<span class="element-name">empty</span>()</div>
+<div class="block">Creates an empty <code>MessageFormatterArgs</code> instance with no format string and no arguments.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>an empty <code>MessageFormatterArgs</code> instance</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="format(java.lang.String,java.lang.Object...)">
 <h3>format</h3>
-<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">format</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
+<div class="member-signature"><span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">format</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fmt,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
 <div class="block">Formats the given format string by replacing placeholders with the provided arguments.
  <p>
@@ -297,6 +318,21 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>fmt</code> - the format string containing placeholders to be replaced</dd>
 <dd><code>args</code> - the arguments to replace the placeholders in the format string</dd>
+<dt>Returns:</dt>
+<dd>the formatted string where placeholders are replaced with the corresponding arguments</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="format(com.dua3.utility.text.MessageFormatter.MessageFormatterArgs)">
+<h3>format</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">format</span><wbr><span class="parameters">(<a href="MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a>&nbsp;args)</span></div>
+<div class="block">Formats the given format string by replacing placeholders with the provided arguments.
+ <p>
+ <strong>NOTE:</strong> The formatting process is implementation defined.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>args</code> - an instance of <a href="MessageFormatter.MessageFormatterArgs.html" title="class in com.dua3.utility.text"><code>MessageFormatter.MessageFormatterArgs</code></a> holding the format string and arguments</dd>
 <dt>Returns:</dt>
 <dd>the formatted string where placeholders are replaced with the corresponding arguments</dd>
 </dl>
