@@ -268,7 +268,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds a button definition to the dialog pane builder.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/InputDialogPane.html#addButton(javafx.scene.control.ButtonType,com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler,java.util.function.Consumer,java.util.function.Function)" class="member-name-link">addButton(ButtonType, DialogPaneBuilder.ResultHandler&lt;? super R&gt;, Consumer&lt;? super InputDialogPane&lt;?&gt;&gt;, Function&lt;InputDialogPane&lt;?&gt;, BooleanExpression&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/InputDialogPane.html#addButton(javafx.scene.control.ButtonType,com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler,java.util.function.Consumer,java.util.function.Function)" class="member-name-link">addButton(ButtonType, DialogPaneBuilder.ResultHandler&lt;? super R&gt;, Consumer&lt;? super InputDialogPane&lt;?&gt;&gt;, Function&lt;? super InputDialogPane&lt;?&gt;, ? extends BooleanExpression&gt;)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a></dt>
 <dd>
 <div class="block">Adds a button to the dialog pane with the specified type, result handler, action,
  and enablement state.</div>
@@ -9242,10 +9242,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the label formatter property of the slider.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/Grid.html#labelPlacement" class="member-name-link">labelPlacement</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Grid.html" title="class in com.dua3.utility.fx.controls">Grid</a></dt>
-<dd>
-<div class="block">Property holding the label placement.</div>
-</dd>
 <dt><a href="com/dua3/utility/fx/controls/GridBuilder.html#labelPlacement(com.dua3.utility.fx.controls.LabelPlacement)" class="member-name-link">labelPlacement(LabelPlacement)</a> - Method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/GridBuilder.html" title="class in com.dua3.utility.fx.controls">GridBuilder</a></dt>
 <dd>
 <div class="block">Set the label placement.</div>
@@ -10655,14 +10651,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns RichText containing a single newline character.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/TableViews.html#newTableView(java.util.SequencedCollection,com.dua3.utility.fx.controls.TableViewOptions)" class="member-name-link">newTableView(SequencedCollection&lt;ColumnDef&lt;S, ?&gt;&gt;, TableViewOptions)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TableViews.html" title="class in com.dua3.utility.fx.controls">TableViews</a></dt>
-<dd>
-<div class="block">Creates a new <code>TableView</code> instance configured with the specified columns.</div>
-</dd>
-<dt><a href="com/dua3/utility/fx/controls/TableViews.html#newTableView(java.util.SequencedCollection,com.dua3.utility.fx.controls.TableViewOptions,java.util.SequencedCollection)" class="member-name-link">newTableView(SequencedCollection&lt;ColumnDef&lt;S, ?&gt;&gt;, TableViewOptions, SequencedCollection&lt;S&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TableViews.html" title="class in com.dua3.utility.fx.controls">TableViews</a></dt>
+<dt><a href="com/dua3/utility/fx/controls/TableViews.html#newTableView(java.util.SequencedCollection,com.dua3.utility.fx.controls.TableViewOptions,java.util.SequencedCollection)" class="member-name-link">newTableView(SequencedCollection&lt;? extends ColumnDef&lt;S, ?&gt;&gt;, TableViewOptions, SequencedCollection&lt;? extends S&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TableViews.html" title="class in com.dua3.utility.fx.controls">TableViews</a></dt>
 <dd>
 <div class="block">Creates a new <code>TableView</code> instance configured with the specified columns, initial items,
  and optional row-draggability behavior.</div>
+</dd>
+<dt><a href="com/dua3/utility/fx/controls/TableViews.html#newTableView(java.util.SequencedCollection,com.dua3.utility.fx.controls.TableViewOptions)" class="member-name-link">newTableView(SequencedCollection&lt;ColumnDef&lt;S, ?&gt;&gt;, TableViewOptions)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TableViews.html" title="class in com.dua3.utility.fx.controls">TableViews</a></dt>
+<dd>
+<div class="block">Creates a new <code>TableView</code> instance configured with the specified columns.</div>
 </dd>
 <dt><a href="com/dua3/utility/concurrent/TaskProcessorBase.html#newThreadFactory()" class="member-name-link">newThreadFactory()</a> - Method in class com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/TaskProcessorBase.html" title="class in com.dua3.utility.concurrent">TaskProcessorBase</a></dt>
 <dd>
@@ -16273,14 +16269,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/data/HSVColor.html#param-v"><code>v</code></a> record component.</div>
 </dd>
-<dt><a href="com/dua3/utility/fx/controls/Grid.html#valid" class="member-name-link">valid</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Grid.html" title="class in com.dua3.utility.fx.controls">Grid</a></dt>
-<dd>
-<div class="block">Property holding the valid state.</div>
-</dd>
 <dt><a href="com/dua3/utility/fx/controls/InputDialogPane.html#valid" class="member-name-link">valid</a> - Variable in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/InputDialogPane.html" title="class in com.dua3.utility.fx.controls">InputDialogPane</a></dt>
-<dd>
-<div class="block">Property holding the valid state.</div>
-</dd>
+<dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/options/Param.html#validate()" class="member-name-link">validate()</a> - Method in record class com.dua3.utility.options.<a href="com/dua3/utility/options/Param.html" title="class in com.dua3.utility.options">Param</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/dua3/utility/options/Param.html#param-validate"><code>validate</code></a> record component.</div>
