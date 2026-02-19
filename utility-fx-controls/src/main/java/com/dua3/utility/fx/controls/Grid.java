@@ -510,7 +510,7 @@ public class Grid extends GridPane {
     }
 
     /**
-     * Meta data for a single input field consisting of ID, label text, default value etc.
+     * Meta-data for a single input field consisting of ID, label text, default value etc.
      *
      * @param <T> the input's value type
      */
