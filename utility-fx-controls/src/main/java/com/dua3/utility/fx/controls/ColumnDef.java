@@ -1,9 +1,12 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.scene.Node;
+import javafx.util.StringConverter;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -16,6 +19,44 @@ import java.util.function.Function;
  * @param <T> The type of the values contained within the cells of this column.
  */
 public sealed interface ColumnDef<S, T> permits ColumnDefText, ColumnDefGeneric {
+
+    /**
+     * Creates a new instance of {@link ColumnDefTextBuilder}.
+     *
+     * @param <S> The type of the objects displayed in the rows of the table or grid.
+     * @param <T> The type of the values contained within the cells of this column.
+     * @param name The name of the column, representing its header text.
+     * @param converter A {@link StringConverter} responsible for converting between
+     *                  the cell value type and its string representation.
+     * @return A new {@link ColumnDefTextBuilder} instance for configuring and building
+     *         a text-based column definition.
+     */
+    static <S, T> ColumnDefTextBuilder<S, T> builder(
+            String name,
+            StringConverter<T> converter
+    ) {
+        return new ColumnDefTextBuilder<>(name, converter);
+    }
+
+    /**
+     * Creates a new instance of {@link ColumnDefGenericBuilder} for defining the properties
+     * of a column with custom cell rendering logic.
+     *
+     * @param <S> The type of the objects displayed in the rows of the table or grid.
+     * @param <T> The type of the values contained within the cells of this column.
+     * @param name The name of the column, which is typically used as the header text.
+     * @param nodeFactory A {@link BiFunction} that takes an optional {@link Node} (representing
+     *                    an existing cell node or {@code null}) and a value of type {@code T},
+     *                    then produces an optional {@link Node} to display the value.
+     * @return A {@link ColumnDefGenericBuilder} instance for further configuration of the column.
+     */
+    static <S, T> ColumnDefGenericBuilder<S, T> builder(
+            String name,
+            BiFunction<@Nullable Node, T, @Nullable Node> nodeFactory
+    ) {
+        return new ColumnDefGenericBuilder<>(name, nodeFactory);
+    }
+
     /**
      * A constant defining the default weight of a column.
      * The weight determines the relative allocation of space for the column

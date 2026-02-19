@@ -7,8 +7,8 @@ dependencies {
 
     // Add dependency on javaTestUtil for tests
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
+    testImplementation(libs.ikonli.fontawesome6)
     testRuntimeOnly(project(":utility-fx-icons-ikonli"))
-    testRuntimeOnly(libs.ikonli.fontawesome6)
     testRuntimeOnly(libs.slb4j)
 }
 

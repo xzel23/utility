@@ -5,7 +5,6 @@ import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -15,16 +14,7 @@ import java.util.function.Function;
  * @param <S>         The type of the objects displayed in the TableView rows.
  * @param <T>         The type of the value displayed in the cells of this column.
  */
-public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
-    private final String text;
-    private final @Nullable Node graphic;
-    private final boolean editable;
-    private final double minWidth;
-    private final double maxWidth;
-    private double weight;
-    private final boolean resizable;
-    private final Function<S, T> valueGetter;
-    private final BiConsumer<S, T> valueSetter;
+public final class ColumnDefText<S, T> extends AbstractColumnDef<S, T> implements ColumnDef<S, T> {
     private final StringConverter<@Nullable T> converter;
 
     /**
@@ -41,7 +31,7 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
      * @param valueSetter A consumer that sets the cell value in the row object.
      * @param converter   A StringConverter for converting between the cell value and its string representation.
      */
-    public ColumnDefText(
+    ColumnDefText(
             String text,
             @Nullable Node graphic,
             boolean editable,
@@ -52,91 +42,9 @@ public final class ColumnDefText<S, T> implements ColumnDef<S, T> {
             Function<S, T> valueGetter,
             BiConsumer<S, T> valueSetter,
             StringConverter<@Nullable T> converter) {
-        this.text = text;
-        this.graphic = graphic;
-        this.editable = editable;
-        this.minWidth = minWidth;
-        this.maxWidth = maxWidth;
-        this.weight = weight;
-        this.resizable = resizable;
-        this.valueGetter = valueGetter;
-        this.valueSetter = valueSetter;
+        super(text, graphic, editable, minWidth, maxWidth, weight, resizable, valueGetter, valueSetter);
         this.converter = converter;
     }
-
-    /**
-     * Constructs a new instance using default values for width and resizable properties.
-     *
-     * @param text      The header text of the column.
-     * @param editable    Specifies whether the column values are editable.
-     * @param valueGetter A function that extracts the cell value from the row object.
-     * @param valueSetter A consumer that sets the cell value in the row object.
-     * @param converter   A StringConverter for converting between the cell value and its string representation.
-     */
-    public ColumnDefText(
-            String text,
-            boolean editable,
-            Function<S, T> valueGetter,
-            BiConsumer<S, T> valueSetter,
-            StringConverter<@Nullable T> converter
-    ) {
-        this(
-                text,
-                null,
-                editable,
-                0.0,
-                Double.MAX_VALUE,
-                DEFAULT_WEIGHT,
-                true,
-                valueGetter,
-                valueSetter,
-                converter
-        );
-    }
-
-    @Override
-    public T get(S row) {
-        return valueGetter.apply(row);
-    }
-
-    @Override
-    public void set(S row, T value) {
-        valueSetter.accept(row, value);
-    }
-
-    @Override
-    public String text() {return text;}
-
-    @Override
-    public Optional<Node> graphic() {
-        return Optional.ofNullable(graphic);
-    }
-
-    @Override
-    public boolean editable() {return editable;}
-
-    @Override
-    public double minWidth() {return minWidth;}
-
-    @Override
-    public double maxWidth() {return maxWidth;}
-
-    @Override
-    public double weight() {return weight;}
-
-    @Override
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    @Override
-    public boolean resizable() {return resizable;}
-
-    @Override
-    public Function<S, T> valueGetter() {return valueGetter;}
-
-    @Override
-    public BiConsumer<S, T> valueSetter() {return valueSetter;}
 
     /**
      * Retrieves the StringConverter associated with the column. The converter is

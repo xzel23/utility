@@ -21,6 +21,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
 
 import java.util.List;
 import java.util.Locale;
@@ -161,7 +162,7 @@ class ControlsTest extends FxTestBase {
     void testTooltipIconCreation() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Test tooltip icon with Paint
-            Node tooltipIcon = Controls.tooltipIcon("info", 24, javafx.scene.paint.Color.BLUE, "Information");
+            Node tooltipIcon = Controls.tooltipIcon(FontAwesomeRegular.FILE.getDescription(), 24, javafx.scene.paint.Color.BLUE, "Information");
             assertNotNull(tooltipIcon);
 
             // Add to scene to ensure tooltip is created
@@ -169,7 +170,7 @@ class ControlsTest extends FxTestBase {
             assertNotNull(scene);
 
             // Test tooltip icon with Color
-            tooltipIcon = Controls.tooltipIcon("info", 24, Color.BLUE, "Information");
+            tooltipIcon = Controls.tooltipIcon(FontAwesomeRegular.FILE.getDescription(), 24, Color.BLUE, "Information");
             assertNotNull(tooltipIcon);
 
             // Add to scene to ensure tooltip is created
