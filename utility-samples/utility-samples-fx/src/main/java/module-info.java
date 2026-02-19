@@ -21,6 +21,7 @@ open module com.dua3.utility.samples.fx {
     requires javafx.controls;
     requires javafx.graphics;
     requires org.apache.logging.log4j;
+    requires org.kordamp.ikonli.fontawesome6;
     requires org.jspecify;
     requires org.slf4j;
     requires java.prefs;

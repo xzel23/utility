@@ -9,6 +9,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 /**
  * The IconViewSample class is a JavaFX application that displays an icon from the icon provider.
@@ -37,7 +38,7 @@ public class IconViewSample extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        IconView iv = new IconView("fas-exclamation-triangle", 80, Paint.valueOf("DARKBLUE"));
+        IconView iv = new IconView(FontAwesomeSolid.EXCLAMATION_TRIANGLE.getDescription(), 80, Paint.valueOf("DARKBLUE"));
 
         StackPane root = new StackPane(iv);
 

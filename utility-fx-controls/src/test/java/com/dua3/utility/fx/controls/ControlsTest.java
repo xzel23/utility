@@ -22,6 +22,7 @@ import javafx.scene.layout.Region;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 import java.util.List;
 import java.util.Locale;
@@ -137,19 +138,19 @@ class ControlsTest extends FxTestBase {
     void testGraphicAndIconCreation() throws Exception {
         runOnFxThreadAndWait(() -> {
             // Test graphic creation
-            Node graphic = Controls.graphic("fas-check");
+            Node graphic = Controls.graphic(FontAwesomeSolid.CHECK.getDescription());
             assertNotNull(graphic);
 
             // Test icon creation
-            com.dua3.utility.fx.icons.Icon icon = Controls.icon("fas-check");
+            com.dua3.utility.fx.icons.Icon icon = Controls.icon(FontAwesomeSolid.CHECK.getDescription());
             assertNotNull(icon);
 
             // Test graphic with size
-            graphic = Controls.graphic("fas-check", 24);
+            graphic = Controls.graphic(FontAwesomeSolid.CHECK.getDescription(), 24);
             assertNotNull(graphic);
 
             // Test graphic with size and color
-            graphic = Controls.graphic("fas-check", 24, Color.RED);
+            graphic = Controls.graphic(FontAwesomeSolid.CHECK.getDescription(), 24, Color.RED);
             assertNotNull(graphic);
         });
     }
