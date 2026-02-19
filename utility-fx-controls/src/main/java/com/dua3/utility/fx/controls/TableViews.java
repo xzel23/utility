@@ -80,10 +80,11 @@ public final class TableViews {
      * @return A configured {@link TableView} instance containing the specified columns, initial items,
      *         and row-draggability behavior (if enabled).
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static <S> TableView<S> newTableView(
-            SequencedCollection<ColumnDef<S, ?>> columns,
+            SequencedCollection<? extends ColumnDef<S, ?>> columns,
             TableViewOptions options,
-            SequencedCollection<S> initialItems) {
+            SequencedCollection<? extends S> initialItems) {
         boolean editable = options.isEnabled(TableViewOptions.EDITABLE);
         boolean sortable = options.isEnabled(TableViewOptions.SORTABLE);
         boolean reorderableColumns = options.isEnabled(TableViewOptions.REORDERABLE_COLUMNS);
@@ -92,7 +93,7 @@ public final class TableViews {
         ObservableList<S> items = FXCollections.observableArrayList(initialItems);
         TableView<S> tv = new TableView<>(items);
         Map<TableColumn<?, ?>, ColumnDef<?, ?>> configMap = new HashMap<>();
-        tv.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        tv.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tv.getColumns().setAll(
                 columns.stream().map(cd -> {
                     TableColumn<S, Object> tc = new TableColumn<>(cd.text());
