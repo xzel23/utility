@@ -89,6 +89,7 @@ public final class TableViews {
                     tc.setCellValueFactory(f -> new ReadOnlyObjectWrapper<>(cd.get(f.getValue())));
                     tc.setOnEditCommit(event -> ((ColumnDef) cd).set(event.getRowValue(), event.getNewValue()));
                     tc.setEditable(cd.editable());
+                    tc.setSortable(cd.sortable());
                     tc.setMinWidth(cd.minWidth());
                     tc.setMaxWidth(cd.maxWidth());
                     tc.setResizable(cd.resizable());

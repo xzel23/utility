@@ -31,7 +31,13 @@ class ColumnDefBuilderTest {
         Assertions.assertEquals(Double.MAX_VALUE, columnDef.maxWidth());
         Assertions.assertEquals(ColumnDef.DEFAULT_WEIGHT, columnDef.weight());
         Assertions.assertTrue(columnDef.resizable());
+        Assertions.assertTrue(columnDef.sortable());
         Assertions.assertNotNull(columnDef.converter());
+
+        columnDef = ColumnDef.<String, String>builder(title, new DefaultStringConverter())
+                .sortable(false)
+                .build();
+        Assertions.assertFalse(columnDef.sortable());
     }
 
     @Test
@@ -50,5 +56,11 @@ class ColumnDefBuilderTest {
         Assertions.assertNotNull(columnDef.nodeFactory());
         Assertions.assertNotNull(columnDef.startEdit());
         Assertions.assertNotNull(columnDef.cancelEdit());
+        Assertions.assertTrue(columnDef.sortable());
+
+        columnDef = ColumnDef.<String, String>builder(title, (node, text) -> new Label(text))
+                .sortable(false)
+                .build();
+        Assertions.assertFalse(columnDef.sortable());
     }
 }

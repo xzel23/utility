@@ -143,6 +143,13 @@ public sealed interface ColumnDef<S, T> permits ColumnDefText, ColumnDefGeneric 
     boolean resizable();
 
     /**
+     * Indicates whether the column is sortable.
+     *
+     * @return true if the column is sortable; false otherwise.
+     */
+    boolean sortable();
+
+    /**
      * Retrieves the function used to extract the cell value from the row object.
      *
      * @return A function that takes a row object of type S and returns the cell value of type T.

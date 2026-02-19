@@ -71,6 +71,7 @@ public class ColumnDefGenericBuilder<S, T> extends ColumnDefBuilder<S, T, Column
                 maxWidth,
                 weight,
                 resizable,
+                sortable,
                 valueGetter,
                 valueSetter,
                 nodeFactory,

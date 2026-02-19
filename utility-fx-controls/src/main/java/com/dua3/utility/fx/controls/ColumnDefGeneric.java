@@ -32,6 +32,7 @@ public final class ColumnDefGeneric<S, T> extends AbstractColumnDef<S, T> implem
      * @param maxWidth    The maximum width of the column.
      * @param weight      The column weight used to distribute the available width when resizing columns.
      * @param resizable   Specifies whether the column can be resized by the user.
+     * @param sortable    Specifies whether the column is sortable.
      * @param valueGetter A function that extracts the cell value from the row object.
      * @param valueSetter A consumer that sets the cell value in the row object.
      * @param nodeFactory A function that creates a Node representation of the cell content.
@@ -46,12 +47,13 @@ public final class ColumnDefGeneric<S, T> extends AbstractColumnDef<S, T> implem
             double maxWidth,
             double weight,
             boolean resizable,
+            boolean sortable,
             Function<S, T> valueGetter,
             BiConsumer<S, T> valueSetter,
             BiFunction<@Nullable Node, T, @Nullable Node> nodeFactory,
             BiFunction<@Nullable Node, Consumer<@Nullable T>, @Nullable Node> startEdit,
             Function<@Nullable Node, @Nullable Node> cancelEdit) {
-        super(text, graphic, editable, minWidth, maxWidth, weight, resizable, valueGetter, valueSetter);
+        super(text, graphic, editable, minWidth, maxWidth, weight, resizable, sortable, valueGetter, valueSetter);
         this.nodeFactory = nodeFactory;
         this.startEdit = startEdit;
         this.cancelEdit = cancelEdit;
@@ -100,6 +102,7 @@ public final class ColumnDefGeneric<S, T> extends AbstractColumnDef<S, T> implem
                 Double.doubleToLongBits(this.maxWidth) == Double.doubleToLongBits(that.maxWidth) &&
                 Double.doubleToLongBits(this.weight) == Double.doubleToLongBits(that.weight) &&
                 this.resizable == that.resizable &&
+                this.sortable == that.sortable &&
                 Objects.equals(this.valueGetter, that.valueGetter) &&
                 Objects.equals(this.valueSetter, that.valueSetter) &&
                 Objects.equals(this.nodeFactory, that.nodeFactory) &&
@@ -109,7 +112,7 @@ public final class ColumnDefGeneric<S, T> extends AbstractColumnDef<S, T> implem
 
     @Override
     public int hashCode() {
-        return Objects.hash(text, editable, minWidth, maxWidth, weight, resizable, valueGetter, valueSetter, nodeFactory, startEdit, cancelEdit);
+        return Objects.hash(text, editable, minWidth, maxWidth, weight, resizable, sortable, valueGetter, valueSetter, nodeFactory, startEdit, cancelEdit);
     }
 
     @Override
@@ -121,6 +124,7 @@ public final class ColumnDefGeneric<S, T> extends AbstractColumnDef<S, T> implem
                 "maxWidth=" + maxWidth + ", " +
                 "weight=" + weight + ", " +
                 "resizable=" + resizable + ", " +
+                "sortable=" + sortable + ", " +
                 "valueGetter=" + valueGetter + ", " +
                 "valueSetter=" + valueSetter + ", " +
                 "nodeFactory=" + nodeFactory + ", " +

@@ -14,14 +14,48 @@ import java.util.function.Function;
  * @param <B> The type of the builder itself.
  */
 public abstract class ColumnDefBuilder<S, T, B extends ColumnDefBuilder<S, T, B>> {
+    /**
+     * Represents the header text for a column.
+     */
     protected final String text;
+    /**
+     * Holds a reference to the graphic node associated with the column.
+     */
     protected @Nullable Node graphic = null;
+    /**
+     * A flag indicating whether the column is editable.
+     */
     protected boolean editable = false;
+    /**
+     * Represents the minimum width constraint for the column in pixels.
+     */
     protected double minWidth = 0.0;
+    /**
+     * Represents the maximum allowable width for a column in pixels.
+     */
     protected double maxWidth = Double.MAX_VALUE;
+    /**
+     * The weight of the column, expressed as a relative value used for layout calculations.
+     * This value determines how much space the column should occupy in proportion to other
+     * columns when a flexible layout is applied. A higher weight indicates that the column
+     * should take up more space relative to columns with lower weights.
+     */
     protected double weight = ColumnDef.DEFAULT_WEIGHT;
+    /**
+     * Determines whether the column is resizable by the user.
+     */
     protected boolean resizable = true;
+    /**
+     * Indicates whether the column is sortable.
+     */
+    protected boolean sortable = true;
+    /**
+     * A function used to extract a value of type {@code T} from an object of type {@code S}.
+     */
     protected Function<S, T> valueGetter = s -> null;
+    /**
+     * A {@code BiConsumer} used to set a new value in a row's backing object for this column.
+     */
     protected BiConsumer<S, T> valueSetter = (s, t) -> {};
 
     /**
@@ -110,6 +144,17 @@ public abstract class ColumnDefBuilder<S, T, B extends ColumnDefBuilder<S, T, B>
      */
     public B resizable(boolean resizable) {
         this.resizable = resizable;
+        return self();
+    }
+
+    /**
+     * Sets whether the column is sortable.
+     *
+     * @param sortable true if the column should be sortable, false otherwise
+     * @return the builder instance for method chaining
+     */
+    public B sortable(boolean sortable) {
+        this.sortable = sortable;
         return self();
     }
 
