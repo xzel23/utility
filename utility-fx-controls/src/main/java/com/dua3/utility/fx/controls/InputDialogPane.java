@@ -131,7 +131,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
             ButtonType type,
             DialogPaneBuilder.@Nullable ResultHandler<? super @Nullable R> resultHandler,
             Consumer<? super InputDialogPane<?>> action,
-            @Nullable Function<InputDialogPane<?>, BooleanExpression> enabled
+            @Nullable Function<? super InputDialogPane<?>, ? extends BooleanExpression> enabled
     ) {
         ObservableList<ButtonType> bt = getButtonTypes();
 
