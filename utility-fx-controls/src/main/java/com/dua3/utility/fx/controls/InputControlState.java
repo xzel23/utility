@@ -106,7 +106,10 @@ public final class InputControlState<R> {
         reset();
     }
 
-    private void invalidateState() {
+    /**
+     * Invalidates the current state, triggering a revalidation of its value and properties.
+     */
+    public void invalidateState() {
         LOG.trace("invalidateState()");
         PlatformHelper.runLater(this::validate);
     }
@@ -177,6 +180,7 @@ public final class InputControlState<R> {
      */
     public void reset() {
         value.setValue(dflt.get());
+        validate();
     }
 
     /**

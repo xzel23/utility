@@ -30,12 +30,10 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -284,9 +282,9 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         // add inline nodes to the current row
         if (inline && row != null) {
             if (label != null) {
-                row.getChildren().add(new Label(label));
+                row.add(new Label(label));
             }
-            row.getChildren().add(control.node());
+            row.add(control);
         }
 
         // add
@@ -416,9 +414,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     public GridBuilder apply(Consumer<Node> action) {
         Node node;
         if (row != null) {
-            ObservableList<Node> children = row.getChildren();
-            LangUtil.check(!children.isEmpty(), "no inline nodes defined for current row");
-            node = children.getLast();
+            node = row.getLast();
+            LangUtil.check(node != null, "no inline nodes defined for current row");
         } else {
             LangUtil.check(!data.isEmpty(), "no inline nodes defined for current row");
             node = data.getLast().control.node();
@@ -427,18 +424,15 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return this;
     }
 
-    private @Nullable HBox row = null;
+    private @Nullable InputControlContainer row = null;
 
     @Override
     public GridBuilder startRow(MessageFormatter.MessageFormatterArgs label) {
         LangUtil.check(row == null, "nested rows are not supported");
 
-        row = new HBox();
+        row = new InputControlContainer(Orientation.HORIZONTAL);
 
-        row.setAlignment(Pos.BASELINE_LEFT);
-        row.setStyle("-fx-spacing: 1em;");
-
-        return doAdd(null, format(label), () -> null, new ControlWrapper(row), false, true);
+        return doAdd(null, format(label), () -> null, row, false, true);
     }
 
     @Override

@@ -86,6 +86,15 @@ public class Grid extends GridPane {
 
         updateColumnConstraints();
     }
+    
+    /**
+     * Retrieves the sequenced collection of {@link Meta} objects associated with this grid.
+     *
+     * @return the sequenced collection of {@link Meta} objects representing the grid's metadata.
+     */
+    protected SequencedCollection<Meta<?>> data() {
+        return Collections.unmodifiableSequencedCollection(data);
+    }
 
     private boolean validatePage(boolean fieldsValid) {
         Map<String, Optional<String>> results = validate.apply(get());

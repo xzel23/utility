@@ -57,7 +57,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         getStylesheets().setAll(url.toExternalForm());
     }
 
-    protected final BooleanProperty valid = new SimpleBooleanProperty(false);
+    private final BooleanProperty valid = new SimpleBooleanProperty(false);
 
     /**
      * A collection of button definitions used to configure actions and behavior
@@ -81,7 +81,9 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
      * Concrete implementations must define the behavior for initializing
      * input fields, validation logic, and any other setup needed for the dialog pane.
      */
-    public abstract void init();
+    public void init() {
+        valid.set(true);
+    }
 
     /**
      * Get the valid state property.
@@ -99,6 +101,15 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
      * @return the valid property
      */
     public ReadOnlyBooleanProperty validProperty() {
+        return valid;
+    }
+
+    /**
+     * Retrieves the modifiable boolean property representing the validity state of the input.
+     *
+     * @return the boolean property representing the validity state of the input
+     */
+    protected final BooleanProperty valid() {
         return valid;
     }
 

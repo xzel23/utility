@@ -29,7 +29,7 @@ public class GridInputDialogPane extends InputDialogPane<Map<String, Object>> {
     public GridInputDialogPane(Grid grid) {
         this.grid = grid;
 
-        valid.bind(grid.validProperty());
+        valid().bind(grid.validProperty());
 
         // get the screen the window will be on (fallback to primary)
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();

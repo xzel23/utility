@@ -29,7 +29,7 @@ class ButtonDefTest extends FxTestBase {
         InputDialogPane<String> inputDialogPane = createMockInputDialogPane();
 
         // Act
-        ButtonDef<String> buttonDef = ButtonDef.of(buttonType, resultHandler, pane -> pane.valid.set(true), enabled);
+        ButtonDef<String> buttonDef = ButtonDef.of(buttonType, resultHandler, pane -> pane.valid().set(true), enabled);
 
         // Assert
         assertNotNull(buttonDef);

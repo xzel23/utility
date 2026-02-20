@@ -25,7 +25,7 @@ public class PromptPane extends InputDialogPane<String> {
      */
     public PromptPane() {
         text = new TextField();
-        valid.bind(text.textProperty().map(s -> s != null && !s.isEmpty()));
+        valid().bind(text.textProperty().map(s -> s != null && !s.isEmpty()));
         setContent(new StackPane(text));
     }
 

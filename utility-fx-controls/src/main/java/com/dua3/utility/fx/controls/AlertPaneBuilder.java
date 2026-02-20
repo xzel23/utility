@@ -39,7 +39,7 @@ public class AlertPaneBuilder
         return new InputDialogPane<>() {
             @Override
             public void init() {
-                valid.set(true);
+                valid().set(true);
             }
 
             @Override
