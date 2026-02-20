@@ -432,14 +432,19 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     @Override
     public GridBuilder startRow(MessageFormatter.MessageFormatterArgs label) {
         LangUtil.check(row == null, "nested rows are not supported");
+
         row = new HBox();
+
         row.setAlignment(Pos.BASELINE_LEFT);
         row.setStyle("-fx-spacing: 1em;");
+
         return doAdd(null, format(label), () -> null, new ControlWrapper(row), false, true);
     }
 
     @Override
     public GridBuilder endRow() {
+        LangUtil.check(row != null, "endRow() called without matching startRow()");
+
         row = null;
         return this;
     }
