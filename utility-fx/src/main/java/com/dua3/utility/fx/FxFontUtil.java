@@ -40,9 +40,6 @@ import java.util.Objects;
 import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Utility class for working with fonts in JavaFX.
@@ -228,10 +225,31 @@ public final class FxFontUtil implements FontUtil {
         private static final LinkedHashSet<String> PROPORTIONAL_FONTS;
 
         static {
-            AVAILABLE_FONTS = Font.getFamilies().stream().collect(Collectors.toUnmodifiableMap(Function.identity(), FontList::isMonospaced, (a, b) -> b));
-            ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new));
-            MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
-            PROPORTIONAL_FONTS = ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
+            // build available fonts map
+            Map<String, Boolean> map = new java.util.LinkedHashMap<>();
+            List<String> families = Font.getFamilies();
+            for (String family : families) {
+                map.put(family, isMonospaced(family));
+            }
+            AVAILABLE_FONTS = Collections.unmodifiableMap(map);
+
+            // build sorted set of all fonts
+            List<String> names = new ArrayList<>(AVAILABLE_FONTS.keySet());
+            Collections.sort(names);
+            ALL_FONTS = new LinkedHashSet<>(names);
+
+            // build derived lists preserving alphabetical order
+            LinkedHashSet<String> monospace = new LinkedHashSet<>();
+            LinkedHashSet<String> proportional = new LinkedHashSet<>();
+            for (String name : ALL_FONTS) {
+                if (Boolean.TRUE.equals(AVAILABLE_FONTS.get(name))) {
+                    monospace.add(name);
+                } else {
+                    proportional.add(name);
+                }
+            }
+            MONOSPACE_FONTS = monospace;
+            PROPORTIONAL_FONTS = proportional;
         }
 
         private static boolean isMonospaced(String family) {
@@ -306,12 +324,19 @@ public final class FxFontUtil implements FontUtil {
     }
 
     private Font getFxFont(List<String> families, float size, boolean bold, boolean italic) {
-        String family = families.stream().filter(FontList.ALL_FONTS::contains).findFirst().orElse(families.getFirst());
+        String family = families.getFirst();
+        for (String s : families) {
+            if (FontList.ALL_FONTS.contains(s)) {
+                family = s;
+                break;
+            }
+        }
         FxFontData fxf = new FxFontData(
                 family,
                 bold ? FontWeight.BOLD : FontWeight.NORMAL,
                 italic ? FontPosture.ITALIC : FontPosture.REGULAR,
-                size);
+                size
+        );
 
         return fxFontData2fxFont.computeIfAbsent(fxf, k -> Font.font(fxf.family, fxf.weight(), fxf.posture(), fxf.size()));
     }

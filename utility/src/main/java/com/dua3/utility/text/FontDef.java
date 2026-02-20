@@ -14,9 +14,7 @@ import java.util.Objects;
 import java.util.SequencedCollection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * A mutable class holding font attributes to help create immutable font
@@ -665,26 +663,38 @@ public final class FontDef {
     public String getCssStyle() {
         boolean isUnderline = underline != null && underline;
         boolean isStrikeThrough = strikeThrough != null && strikeThrough;
-        //noinspection StringConcatenationMissingWhitespace
-        String css =
-                (families == null ? "" : FONT_FAMILY + families.stream()
-                        .map(InternalUtil::quoteIfNeeded)
-                        .collect(Collectors.joining(", ")) + "; ") +
-                        textIfNonNull(size, () -> FONT_SIZE + size + "pt; ") +
-                        textIfNonNull(bold, () -> FONT_WEIGHT + (bold ? BOLD : NORMAL) + "; ") +
-                        textIfNonNull(italic, () -> FONT_STYLE + (italic ? ITALIC : NORMAL) + "; ") +
-                        (isStrikeThrough || isUnderline
-                                ? TEXT_DECORATION +
-                                (isUnderline ? " " + UNDERLINE : "") +
-                                (isStrikeThrough ? " " + LINE_THROUGH : "") +
-                                "; "
-                                : "") +
-                        textIfNonNull(color, () -> "color: " + color + "; ");
-        return css.stripTrailing();
+        StringBuilder css = new StringBuilder(100);
+        // Appends font families to CSS string
+        if (families != null) {
+            css.append(FONT_FAMILY);
+            String sep = "";
+            for (String family : families) {
+                css.append(sep).append(InternalUtil.quoteIfNeeded(family));
+                sep = ", ";
+            }
+            css.append("; ");
+        }
+        appendIfNonNull(css, size, FONT_SIZE, size, "pt; ");
+        appendIfNonNull(css, bold, FONT_WEIGHT, bold ? BOLD : NORMAL, "; ");
+        appendIfNonNull(css, italic, FONT_STYLE, italic ? ITALIC : NORMAL, "; ");
+
+        // Appends underline/strike‑through styles when specified
+        if (isStrikeThrough || isUnderline) {
+            css.append(TEXT_DECORATION)
+                    .append(isUnderline ? " " + UNDERLINE : "")
+                    .append(isStrikeThrough ? " " + LINE_THROUGH : "")
+                    .append("; ");
+        }
+
+        appendIfNonNull(css, color, "color: ", color, ";");
+
+        return css.toString().stripTrailing();
     }
 
-    private static String textIfNonNull(@Nullable Object obj, Supplier<String> sIfTrue) {
-        return obj != null ? sIfTrue.get() : "";
+    private static void appendIfNonNull(StringBuilder sb, @Nullable Object obj, String attribute, @Nullable Object value, String delimiter) {
+        if (obj != null) {
+            sb.append(attribute).append(value).append(delimiter);
+        }
     }
 
     /**

@@ -67,6 +67,7 @@ import java.awt.GraphicsConfiguration;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -75,7 +76,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongConsumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -394,9 +394,13 @@ public final class FxUtil {
      */
     public static boolean matches(FileChooser.ExtensionFilter filter, String filename) {
         String fext = IoUtil.getExtension(filename).toLowerCase(Locale.ROOT);
-        return filter.getExtensions().stream()
-                .map(ext -> PATTERN_FILENAME_AND_DOT.matcher(ext).replaceFirst("").toLowerCase(Locale.ROOT))
-                .anyMatch(Predicate.isEqual(fext));
+        for (String ext : filter.getExtensions()) {
+            String s = PATTERN_FILENAME_AND_DOT.matcher(ext).replaceFirst("").toLowerCase(Locale.ROOT);
+            if (fext.equals(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -483,7 +487,10 @@ public final class FxUtil {
     public static void copyToClipboard(Collection<? extends Path> paths) {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
-        List<File> files = paths.stream().map(Path::toAbsolutePath).map(Path::toFile).toList();
+        List<File> files = new ArrayList<>(paths.size());
+        for (Path path : paths) {
+            files.add(path.toAbsolutePath().toFile());
+        }
         content.putFiles(files);
         clipboard.setContent(content);
     }
@@ -643,9 +650,11 @@ public final class FxUtil {
 
             @Override
             public void removeListener(ChangeListener<? super T> listener) {
-                List.copyOf(value.getChangeListeners()).stream()
-                        .filter(changeListener -> changeListener instanceof ChangeListenerAdapter<?> a && a.changeListener == listener)
-                        .forEach(value::removeChangeListener);
+                for (var changeListener : List.copyOf(value.getChangeListeners())) {
+                    if (changeListener instanceof ChangeListenerAdapter<?> a && a.changeListener == listener) {
+                        value.removeChangeListener(changeListener);
+                    }
+                }
             }
 
             @Override
@@ -660,7 +669,11 @@ public final class FxUtil {
 
             @Override
             public void removeListener(InvalidationListener listener) {
-                List.copyOf(value.getChangeListeners()).stream().filter(changeListener -> changeListener instanceof InvalidationListenerAdapter<?> cla && cla.invalidationListener == listener).forEach(value::removeChangeListener);
+                for (var changeListener : List.copyOf(value.getChangeListeners())) {
+                    if (changeListener instanceof InvalidationListenerAdapter<?> cla && cla.invalidationListener == listener) {
+                        value.removeChangeListener(changeListener);
+                    }
+                }
             }
         };
     }
