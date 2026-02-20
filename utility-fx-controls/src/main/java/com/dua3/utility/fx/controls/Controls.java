@@ -515,7 +515,7 @@ public final class Controls {
             if (v.compareTo(min) < 0 || v.compareTo(max) > 0) {
                 return Optional.of(I18NInstance.get().format(
                         "dua3.utlity.fx.controls.validator.out.of.range",
-                        v, min, max
+                        min, max, v
                 ));
             }
             return Optional.empty();
