@@ -240,12 +240,18 @@ could not be loaded.
 
 ### 21.1 (in development)
 
+- BREAKING: moved TableViews utility class to com.dua3.utility.fx.controls
+- added TableViews.newTableView(), with options to make rows and columns reorderable,
+  resizeable and sortable; support for text based and generic node based cells.
+- enhance `TableViews` with flexible column resizing and weight-based layout
 - fix: DialogBuilder did not set the parent window
 - Improve error handling in `FontDef.parseFontspec`
 - InputBuilder: implement `startRow()`/`endRow()` for grouping multiple nodes or inputs per row.
 - InputBuilder: add overloads taking `MessageFormatterArgs` for several methods.
 - InputBuilder: add `apply()` method for custom node configurations.
 - MessageFormatter: add method `empty()`
+- add some validation methods to Controls utility class
+- small fixes and improvements
 
 ### 21.0.2
 
