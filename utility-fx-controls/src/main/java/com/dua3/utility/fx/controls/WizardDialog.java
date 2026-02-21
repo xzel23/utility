@@ -148,16 +148,15 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
                         InputDialogPane::validProperty
                 );
             } else {
-                next.forEach((k, v) -> {
-                    page.addButton(
-                            k,
-                            p -> {
-                                addPageToStack(Pair.of(name, page));
-                                setPage(v);
-                            },
-                            InputDialogPane::validProperty
-                    );
-                });
+                next.forEach((k, v) ->
+                        page.addButton(
+                                k,
+                                p -> {
+                                    addPageToStack(Pair.of(name, page));
+                                    setPage(v);
+                                },
+                                InputDialogPane::validProperty
+                        ));
             }
 
             // prev button

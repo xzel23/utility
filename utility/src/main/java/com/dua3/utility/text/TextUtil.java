@@ -1017,12 +1017,7 @@ public final class TextUtil {
                     yield s.toString();
                 }
                 String[] fragments = PATTERN_SPLIT_PRESERVING_WHITESPACE.split(s);
-                /**
-                 * Represents statistics about blank space in the text.
-                 *
-                 * @param blankChars     the total number of blank characters
-                 * @param blankFragments the total number of blank fragments (sequences of blank characters)
-                 */
+                // statistics about blank space in the text.
                 record Stats(int blankChars, int blankFragments) {}
                 Stats stats = Arrays.stream(fragments)
                         .filter(String::isBlank)

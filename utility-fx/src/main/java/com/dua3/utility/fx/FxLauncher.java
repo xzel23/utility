@@ -292,9 +292,7 @@ public final class FxLauncher {
                     I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_filter.description"),
                     Repetitions.ZERO_OR_ONE,
                     "regex",
-                    pattern -> {
-                        SLB4J.getDispatcher().setFilter(new LoggerNameFilter("regex", Pattern.compile(pattern).asPredicate()));
-                    },
+                    pattern -> SLB4J.getDispatcher().setFilter(new LoggerNameFilter("regex", Pattern.compile(pattern).asPredicate())),
                     "--log-filter", "-lf"
             );
             agp.addIntegerOption(

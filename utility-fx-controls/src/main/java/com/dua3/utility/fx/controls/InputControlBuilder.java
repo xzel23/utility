@@ -78,7 +78,7 @@ public abstract class InputControlBuilder<B extends InputControlBuilder<B, V>, V
      * @param obj the object to check for nullability and pass to the consumer if non-null
      * @param consumer the operation to apply to the object if it is not null
      */
-    protected <T> void applyIfNonNull(@Nullable T obj, Consumer<T> consumer) {
+    protected static <T> void applyIfNonNull(@Nullable T obj, Consumer<T> consumer) {
         if (obj != null) {
             consumer.accept(obj);
         }
