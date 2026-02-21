@@ -5,8 +5,6 @@
 
 package com.dua3.utility.data;
 
-import com.dua3.utility.lang.LangUtil;
-
 /**
  * Color in ARGB format.
  *
@@ -46,7 +44,7 @@ public record RGBColor(int argb) implements Color {
     }
 
     private static int shiftComponentValue(int value, int bits) {
-        LangUtil.checkArg(value >= 0 && value <= 255, () -> "value out of range: " + value);
+        assert value >= 0 && value <= 255: "value out of range: " + value;
         return value << bits;
     }
 
