@@ -69,7 +69,7 @@ public final class RandomUtil {
      * @throws IllegalArgumentException if min >= max
      */
     public static int nextInt(int min, int max) {
-        LangUtil.checkArg(min < max, "min must be < max");
+        LangUtil.checkArg(min < max, "min must be < max", min);
         return min + RandomHolder.RANDOM.nextInt(max - min);
     }
 }

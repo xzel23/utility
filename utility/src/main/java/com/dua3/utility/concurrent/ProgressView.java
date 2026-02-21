@@ -114,7 +114,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
 
     @Override
     public void finish(T task, State s) {
-        LangUtil.checkArg(s.isTerminal(), () -> "not a terminal state: " + s);
+        LangUtil.checkArg(s.isTerminal(), "not a terminal state: %s", s);
 
         TaskRecord r = getTaskRecord(task);
         State oldState = r.getState();

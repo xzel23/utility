@@ -54,7 +54,7 @@ public final class RecentlyUsedDocuments {
      * @param capacity the maximum number of entries to retain; must be positive
      */
     public RecentlyUsedDocuments(Preferences prefs, int capacity) {
-        LangUtil.checkArg("capacity", v -> v > 0, capacity);
+        LangUtil.checkArg(capacity > 0, "invalid argument 'capacity': %d", capacity);
         this.capacity = capacity;
         this.prefs = prefs;
         load();

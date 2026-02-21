@@ -99,7 +99,7 @@ public final class CompressedBytes {
      */
     private CompressedBytes(byte[] data, boolean isCompressed) {
         if (isCompressed) {
-            LangUtil.checkArg(data.length > 0, () -> "compressed data cannot have length 0");
+            LangUtil.checkArg(data.length > 0, "compressed data cannot have length 0", data.length);
             this.data = data;
             return;
         }

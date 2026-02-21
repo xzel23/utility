@@ -100,7 +100,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
 
     @Override
     public X509CertificateBuilder validityDays(int days) {
-        LangUtil.checkArg("days", d -> d > 0, days);
+        LangUtil.checkArg(days > 0, "invalid argument 'days': %d", days);
         this.validityDays = days;
         return this;
     }

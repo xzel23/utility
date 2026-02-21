@@ -121,7 +121,7 @@ public final class CryptUtil {
      */
     public static String encrypt(byte[] input, char[] password, InputBufferHandling inputBufferHandling) {
         try {
-            LangUtil.checkArg(password.length >= 8, "password must have at least 8 characters");
+            LangUtil.checkArg(password.length >= 8, "password must have at least 8 characters: %d", password.length);
             byte[] salt = RandomUtil.generateRandomBytes(16);
             SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
             byte[] encrypted = encryptSymmetric(SymmetricAlgorithm.AES, key, input, inputBufferHandling);
@@ -154,7 +154,7 @@ public final class CryptUtil {
     public static byte[] decrypt(String input, char[] password) {
         try {
             int splitIndex = input.indexOf('$');
-            LangUtil.checkArg(splitIndex > 0, "Invalid input");
+            LangUtil.checkArg(splitIndex > 0, "Invalid input", splitIndex);
             byte[] salt = TextUtil.base64Decode(input.substring(0, splitIndex));
             byte[] encoded = TextUtil.base64Decode(input.substring(splitIndex + 1));
             SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
@@ -511,7 +511,7 @@ public final class CryptUtil {
      * @throws IllegalStateException If the hash could not be generated.
      */
     public static byte[] secureHash(byte[] input, String pepper) throws IllegalStateException {
-        LangUtil.checkArg(pepper.length() > 16, "pepper must have at least 16 characters");
+        LangUtil.checkArg(pepper.length() > 16, "pepper must have at least 16 characters: %d", pepper.length());
         try {
             // compute a HMAC as salt
             Mac hmacSha256 = Mac.getInstance(HMAC_SHA_256);
@@ -533,7 +533,7 @@ public final class CryptUtil {
      * @return a non-null byte array representation of the input pepper string in UTF-8 encoding
      */
     private static byte[] getPepperBytes(String pepper) {
-        LangUtil.checkArg(pepper.length() >= 16, "pepper must have at least 16 characters");
+        LangUtil.checkArg(pepper.length() >= 16, "pepper must have at least 16 characters: %d", pepper.length());
         return pepper.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -565,7 +565,7 @@ public final class CryptUtil {
      * @throws IllegalArgumentException If the salt is not 16 bytes in length.
      */
     public static byte[] getArgon2idBytes(byte[] input, byte[] salt, byte[] secret) {
-        LangUtil.checkArg(salt.length >= 16, "salt must be at least 16 bytes");
+        LangUtil.checkArg(salt.length >= 16, "salt must be at least 16 bytes: %d", salt.length);
 
         BouncyCastle.ensureAvailable();
 
@@ -716,7 +716,7 @@ public final class CryptUtil {
      */
     public static boolean verifyArgon2id(byte[] input, byte[] secret, String saltAndHash) {
         int splitAt = saltAndHash.indexOf('$');
-        LangUtil.checkArg(splitAt > 0, "Invalid saltAndHash format");
+        LangUtil.checkArg(splitAt > 0, "Invalid saltAndHash format", splitAt);
 
         String saltBase64 = saltAndHash.substring(0, splitAt);
         String expectedHashBase64 = saltAndHash.substring(splitAt + 1);

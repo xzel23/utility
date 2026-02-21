@@ -1390,10 +1390,10 @@ public final class TextUtil {
     public static String normalizeEmail(CharSequence email) {
         String normalizedEmail = normalize(unescapeHtml(email)).toLowerCase(Locale.ROOT).strip();
 
-        LangUtil.checkArg(!normalizedEmail.isEmpty(), "email is empty");
-        LangUtil.checkArg(normalizedEmail.indexOf('\n') < 0, "email contains newline");
+        LangUtil.checkArg(!normalizedEmail.isEmpty(), "email is empty", normalizedEmail);
+        LangUtil.checkArg(normalizedEmail.indexOf('\n') < 0, "email contains newline", normalizedEmail);
         int indexOfAt = normalizedEmail.indexOf('@');
-        LangUtil.checkArg(indexOfAt > 0 && indexOfAt < normalizedEmail.length() - 1, "email does not contain '@' symbol or symbol is found at invalid position");
+        LangUtil.checkArg(indexOfAt > 0 && indexOfAt < normalizedEmail.length() - 1, "email does not contain '@' symbol or symbol is found at invalid position", normalizedEmail);
 
         return normalizedEmail;
     }

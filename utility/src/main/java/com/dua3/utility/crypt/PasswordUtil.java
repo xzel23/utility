@@ -535,7 +535,7 @@ public final class PasswordUtil {
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public static char[] generatePassword(int length) {
-        LangUtil.checkArg(length >= 8, "length must be at least 8");
+        LangUtil.checkArg(length >= 8, "length must be at least 8: %d", length);
         char[] password = new char[length];
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < length; j++) {

@@ -119,6 +119,76 @@ public final class LangUtil {
     }
 
     /**
+     * Checks the provided condition and throws an IllegalArgumentException
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
+    public static void checkArg(boolean condition, String fmt) {
+        assert isFormatValid(fmt) : INVALID_FORMATTING;
+        if (!condition) {
+            throw new IllegalArgumentException(fmt.formatted());
+        }
+    }
+
+    /**
+     * Validates a condition and throws an {@link IllegalArgumentException} if the condition is false.
+     * This method uses a formatted string to construct the exception message.
+     *
+     * @param condition The boolean condition to evaluate. If false, an exception is thrown.
+     * @param fmt The format string used to construct the exception message.
+     * @param value The value to be formatted into the message based on the format string. Can be null.
+     */
+    public static void checkArg(boolean condition, String fmt, @Nullable Object value) {
+        assert isFormatValid(fmt, value) : INVALID_FORMATTING;
+        if (!condition) {
+            throw new IllegalArgumentException(fmt.formatted(value));
+        }
+    }
+
+    /**
+     * Validates a condition and throws an {@code IllegalArgumentException} if the condition is not met.
+     * The exception message is formatted using the provided format string and arguments.
+     *
+     * @param condition The boolean condition to validate. If false, an exception is thrown.
+     * @param fmt The format string used to create the exception message. Must conform to {@code String.format()} rules.
+     * @param v1 The first argument to be substituted into the format string, may be null.
+     * @param v2 The second argument to be substituted into the format string, may be null.
+     * @throws IllegalArgumentException If the condition is false.
+     * @throws AssertionError If the format string or arguments are invalid according to internal validation.
+     */
+    public static void checkArg(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2) {
+        assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
+        if (!condition) {
+            throw new IllegalArgumentException(fmt.formatted(v1, v2));
+        }
+    }
+
+    /**
+     * Validates a condition and throws an {@link IllegalArgumentException} with a formatted
+     * message if the condition is not met. The formatting of the message is validated
+     * before it is applied.
+     *
+     * @param condition The condition to validate. If false, an exception will be thrown.
+     * @param fmt The format string used to generate the exception message.
+     * @param v1 The first argument to be used in the format string, may be null.
+     * @param v2 The second argument to be used in the format string, may be null.
+     * @param v3 The third argument to be used in the format string, may be null.
+     * @throws IllegalArgumentException If the condition is false, and a formatted message
+     *         will describe the failure.
+     * @throws AssertionError If the format string validation fails.
+     */
+    public static void checkArg(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2, @Nullable Object v3) {
+        assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
+        if (!condition) {
+            throw new IllegalArgumentException(fmt.formatted(v1, v2, v3));
+        }
+    }
+
+    /**
      * Validates the provided argument based on the specified condition. If the condition is not met,
      * an IllegalArgumentException is thrown with a descriptive message.
      *
@@ -127,7 +197,9 @@ public final class LangUtil {
      * @param condition A Predicate representing the condition that the argument must satisfy.
      * @param value The value of the argument to validate against the specified condition.
      * @throws IllegalArgumentException if the provided value does not satisfy the condition.
+     * @deprecated use the allocation-free alternative {@link #checkArg(boolean, String, Object)} instead
      */
+    @Deprecated
     public static <T> void checkArg(String argName, Predicate<T> condition, T value) {
         if (!condition.test(value)) {
             throw new IllegalArgumentException("invalid argument '" + argName + "': " + value);
@@ -141,7 +213,9 @@ public final class LangUtil {
      * @param condition the boolean condition to be checked
      * @param msg a supplier that provides the exception message if the condition is false
      * @throws IllegalArgumentException if the condition is false
+     * @deprecated use the allocation-free alternative {@link #checkArg(boolean, String, Object)} instead
      */
+    @Deprecated
     public static void checkArg(boolean condition, Supplier<String> msg) throws IllegalArgumentException {
         if (!condition) {
             throw new IllegalArgumentException(msg.get());
@@ -156,7 +230,9 @@ public final class LangUtil {
      * @param fmt the format string used to construct the exception message
      * @param fmtArgs the arguments referenced by the format specifiers in the format string
      * @throws IllegalArgumentException if the specified condition is false
+     * @deprecated use the allocation-free alternative {@link #checkArg(boolean, String, Object)} instead
      */
+    @Deprecated
     public static void checkArg(boolean condition, String fmt, Object... fmtArgs) throws IllegalArgumentException {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!condition) {
@@ -174,7 +250,7 @@ public final class LangUtil {
      * @return true if the format string is valid with the provided arguments, false otherwise
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static boolean isFormatValid(String fmt, Object[] fmtArgs) {
+    private static boolean isFormatValid(String fmt, Object... fmtArgs) {
         try {
             String.format(fmt, fmtArgs);
             return true;

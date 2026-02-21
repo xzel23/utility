@@ -129,7 +129,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public SectionStyle getSectionStyle(int level) {
-        LangUtil.checkArg(level > 0, "level must be 1 or greater");
+        LangUtil.checkArg(level > 0, "level must be 1 or greater: %d", level);
         int idx = level - 1;
         return idx < sectionStyles.length ? sectionStyles[idx] : DEFAULT_SECTION_STYLE;
     }
@@ -230,7 +230,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public GridBuilder section(int level, MessageFormatter.MessageFormatterArgs args) {
-        LangUtil.checkArg(level > 0, "level must be 1 or greeater");
+        LangUtil.checkArg(level > 0, "level must be 1 or greater: %d", level);
 
         String title = format(args);
 

@@ -56,7 +56,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
             int maxArgs
     ) {
         LangUtil.checkArg(minArgs >= 0, "minArgs must be non-negative: %d", minArgs);
-        LangUtil.check(maxArgs >= minArgs, "maxArgs must be greater than or equal to minArgs (%d): %d", minArgs, maxArgs);
+        LangUtil.checkArg(maxArgs >= minArgs, "maxArgs must be greater than or equal to minArgs (%d): %d", minArgs, maxArgs);
 
         this.options = List.copyOf(options);
         this.args = List.copyOf(args);

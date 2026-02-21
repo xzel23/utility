@@ -233,7 +233,7 @@ public final class IoUtil {
      * @return filename with replaced extension
      */
     public static String replaceExtension(String path, String extension) {
-        LangUtil.checkArg(!path.isEmpty(), () -> "path must ot be empty");
+        LangUtil.checkArg(!path.isEmpty(), "path must ot be empty", path);
         FileNameInfo fi = getFilenameInfo(path);
 
         // find dot
@@ -901,7 +901,7 @@ public final class IoUtil {
      * @throws ZipException if the extraction exceeds any of the safety limits.
      */
     public static void unzip(URL zipUrl, Path destination, long maxFiles, long maxBytes, double maxCompressionRatio) throws IOException {
-        LangUtil.checkArg(Files.isDirectory(destination), "Destination does not exist or is not a directory: " + destination);
+        LangUtil.checkArg(Files.isDirectory(destination), "Destination does not exist or is not a directory: %s", destination);
 
         FileSystem fs = destination.getFileSystem();
 

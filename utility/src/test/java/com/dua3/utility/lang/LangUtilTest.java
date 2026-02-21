@@ -101,6 +101,16 @@ class LangUtilTest {
     }
 
     @Test
+    void testCheckArg_newOverload() {
+        // valid
+        assertDoesNotThrow(() -> LangUtil.checkArg(5 > 0, "value is invalid: %d", 5));
+        // invalid -> message contains value
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> LangUtil.checkArg(-1 > 0, "value is invalid: %d", -1));
+        assertEquals("value is invalid: -1", ex.getMessage());
+    }
+
+    @Test
     void testCheckArg_predicateOverload() {
         // valid
         assertDoesNotThrow(() -> LangUtil.checkArg("x", (Integer i) -> i > 0, 5));

@@ -33,8 +33,6 @@ Source code is available at https://github.com/xzel23/utility.
 
 - JDK 21 or later, version 17 of the library requires JDK 17 or later (except for for JavaFX related modules that
   already require at least Java 21).
-- Version 17 that still supports Java 17 will receive important bugfix updates until the next LTS release (Java 25) is
-  released.
 - The project uses Gradle toolchains to automatically download the required JDKs.
 - JavaFX dependencies are managed by the JavaFX plugin.
 - Building on Windows ARM is not supported because of missing support in Gradle and the toolchain resolver and
@@ -238,7 +236,7 @@ could not be loaded.
 
 ## Changes
 
-### 21.1 (in development)
+### 21.1.0
 
 - BREAKING: moved TableViews utility class to com.dua3.utility.fx.controls
 - added TableViews.newTableView(), with options to make rows and columns reorderable,

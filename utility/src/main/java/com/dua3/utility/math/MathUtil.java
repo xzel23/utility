@@ -285,7 +285,7 @@ public final class MathUtil {
      * @return x rounded to p digits precision
      */
     public static double roundToPrecision(double x, int p) {
-        LangUtil.checkArg(p > 0, () -> "p must be positive: " + p);
+        LangUtil.checkArg(p > 0, "p must be positive: %d", p);
 
         if (x == 0 || Double.isNaN(x) || Double.isInfinite(x)) {
             return x;

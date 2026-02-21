@@ -130,7 +130,7 @@ public final class CertificateUtil {
             X509Certificate... parentCertificateChain
     ) throws GeneralSecurityException {
         try {
-            LangUtil.checkArg(validityDays > 0, () -> "Validity days must be positive: " + validityDays);
+            LangUtil.checkArg(validityDays > 0, "Validity days must be positive: %d", validityDays);
 
             if (parentCertificateChain.length == 0) {
                 throw new IllegalArgumentException("parent certificate chain must not be empty");
