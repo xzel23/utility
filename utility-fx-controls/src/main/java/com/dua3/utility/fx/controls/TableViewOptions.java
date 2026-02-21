@@ -68,6 +68,9 @@ public final class TableViewOptions {
 
     /**
      * Allow inserting rows.
+     * <p>
+     * Note: The unconventional method name is intentional to match the other options
+     * that are simple constants.
      *
      * @param <S> the generic item type
      * @param itemFactory the item factory used to create new rows
