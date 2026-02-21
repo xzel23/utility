@@ -75,7 +75,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
         this.options = options;
         this.dflt = dflt;
         Property<@Nullable Arguments> value = new SimpleObjectProperty<>();
-        this.state = new InputControlState<>(value, dflt);
+        this.state = new ObjectInputControlState<>(value, dflt);
     }
 
     @Override

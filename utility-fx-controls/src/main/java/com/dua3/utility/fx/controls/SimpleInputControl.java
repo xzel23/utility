@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * @param <C> the type of the control, which must extend from Control
  * @param <R> the type of the value held by the input control
  */
-public final class SimpleInputControl<C extends Control, R> implements InputControl<R> {
+public sealed class SimpleInputControl<C extends Control, R> implements InputControl<R> permits ListInputControl {
 
     private final C control;
     private final InputControlState<R> state;
@@ -31,12 +31,16 @@ public final class SimpleInputControl<C extends Control, R> implements InputCont
      * @param validate a function that validates the value and returns an optional error message
      */
     SimpleInputControl(C control, Property<R> value, Supplier<? extends @Nullable R> dflt, Function<@Nullable R, Optional<String>> validate) {
-        this(control, value, dflt, validate, value);
+        this(control, new ObjectInputControlState<>(value, dflt, validate, value));
     }
 
     SimpleInputControl(C control, Property<R> value, Supplier<? extends @Nullable R> dflt, Function<@Nullable R, Optional<String>> validate, ObservableValue<?> contentBase) {
+        this(control, new ObjectInputControlState<>(value, dflt, validate, contentBase));
+    }
+
+    SimpleInputControl(C control, InputControlState<R> state) {
         this.control = control;
-        this.state = new InputControlState<>(value, dflt, validate, contentBase);
+        this.state = state;
 
         state.requiredProperty().addListener((v, o, n) -> {
             if (n) {

@@ -3,15 +3,10 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.PlatformHelper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -21,241 +16,225 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * The InputControlState class encapsulates the value, validation logic, error message, and validity state
+ * The InputControlState interface encapsulates the value, validation logic, error message, and validity state
  * of an {@link InputControl}.
  *
  * @param <R> the type of the value being managed
  */
-public final class InputControlState<R> {
-    private static final Logger LOG = LogManager.getLogger(InputControlState.class);
+abstract class InputControlState<R> {
 
     private final BooleanProperty required = new SimpleBooleanProperty(true);
-    private final Property<@Nullable R> value;
     private final BooleanProperty valid = new SimpleBooleanProperty(true);
     private final StringProperty error = new SimpleStringProperty("");
     private final Function<? super @Nullable R, Optional<String>> validate;
     private final Collection<Runnable> validationListeners = new ArrayList<>();
     private final Supplier<? extends @Nullable R> dflt;
-    private final ObservableValue<?> baseValue;
 
     /**
-     * Creates an InputControlState instance configured to manage a property of type Void.
+     * Constructs an {@code InputControlState} instance with a provided default value supplier
+     * and a validation function to validate the input's value.
      *
-     * @return an InputControlState instance with a property of type Void and default value supplier
+     * @param dflt    A {@link Supplier} that provides the default value for the control's state.
+     *                This can supply {@code null} if no default value is needed.
+     * @param validate A {@link Function} that applies validation logic to the input value.
+     *                 It accepts a value of type {@code R} or {@code null} and returns an
+     *                 {@link Optional} containing an error message if validation fails,
+     *                 or an empty {@code Optional} if the value is valid.
      */
-    public static InputControlState<Void> voidState() {
-        return new InputControlState<>(new SimpleObjectProperty<>(), freeze(new SimpleObjectProperty<>()));
-    }
-
-    /**
-     * Creates a supplier that always returns the current value of the given ObservableValue,
-     * capturing its value at the moment this method is called.
-     *
-     * @param value the ObservableValue whose current value is to be captured
-     * @return a Supplier that returns the captured value
-     */
-    private static <R> Supplier<R> freeze(ObservableValue<? extends R> value) {
-        final R frozen = value.getValue();
-        return () -> frozen;
-    }
-
-    /**
-     * Constructs a State object with the given value and default value supplier.
-     *
-     * @param value the property representing the value managed by this State
-     * @param dflt  a supplier that provides the default value for the property
-     */
-    public InputControlState(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt) {
-        this(value, dflt, s -> Optional.empty());
-    }
-
-    /**
-     * Constructs a State object with the given value, default value supplier, and validation function.
-     *
-     * @param value    the property representing the value managed by this State
-     * @param dflt     a supplier that provides the default value for the property
-     * @param validate a function that validates the value and returns an optional error message
-     */
-    public InputControlState(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate) {
-        this(value, dflt, validate, value);
-    }
-
-    /**
-     * Creates an InputControlState object with the specified value, default value supplier,
-     * validation function, and base value.
-     *
-     * @param value    the property representing the value managed by this State
-     * @param dflt     a supplier that provides the default value for the property
-     * @param validate a function that validates the value and returns an optional error message
-     * @param baseValue the observable base value, which may differ from the value property in certain contexts
-     */
-    public InputControlState(Property<@Nullable R> value, Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate, ObservableValue<?> baseValue) {
-        this.required.set(validate.apply(null).isPresent());
-        this.value = value;
+    protected InputControlState(Supplier<? extends @Nullable R> dflt, Function<? super @Nullable R, Optional<String>> validate) {
         this.dflt = dflt;
-        this.baseValue = baseValue;
         this.validate = validate;
-        this.valid.set(validate.apply(value.getValue()).isEmpty());
-        this.error.setValue("");
-
-        if (this.baseValue != this.value) {
-            this.baseValue.addListener((ObservableValue<?> v, @Nullable Object o, @Nullable Object n) -> invalidateState());
-        }
-        this.value.addListener((ObservableValue<? extends @Nullable R> v, @Nullable R o, @Nullable R n) -> validate());
-
-        reset();
     }
 
     /**
-     * Invalidates the current state, triggering a revalidation of its value and properties.
-     */
-    public void invalidateState() {
-        LOG.trace("invalidateState()");
-        PlatformHelper.runLater(this::validate);
-    }
-
-    /**
-     * Adds a validation listener to the State. The listener will be executed when
-     * the validation process occurs, allowing custom logic to be triggered based
-     * on validation events.
+     * Provides a property representing whether the input is required or not.
+     * The property's value determines if the input control mandates a value.
      *
-     * @param listener the Runnable that will be executed during validation
+     * @return a BooleanProperty that indicates whether the input is required
      */
-    public void addValidationListener(Runnable listener) {
-        validationListeners.add(listener);
-    }
-
-    /**
-     * Removes a validation listener from the state.
-     *
-     * @param listener the validation listener to be removed
-     * @return true if the specified listener was successfully removed, false otherwise
-     */
-    public boolean removeValidationListener(Runnable listener) {
-        return validationListeners.remove(listener);
-    }
-
-    /**
-     * Provides a read-only boolean property indicating whether this State is marked as required.
-     *
-     * @return a {@link ReadOnlyBooleanProperty} representing the required status of this State
-     */
-    public ReadOnlyBooleanProperty requiredProperty() {
+    protected final BooleanProperty requiredProperty() {
         return required;
     }
 
     /**
-     * Returns the property representing the value managed by this State.
+     * Provides access to the property representing the current value of the input control.
+     * The value can be updated or observed for changes.
      *
-     * @return the property representing the value
+     * @return the property holding the value of type {@code R}, which may be {@code null}
      */
-    public Property<@Nullable R> valueProperty() {
-        return value;
-    }
+    protected abstract Property<@Nullable R> valueProperty();
 
     /**
-     * Provides a read-only boolean property indicating the validity state.
+     * Returns the property indicating the validity of the input control's state.
      *
-     * @return a {@link ReadOnlyBooleanProperty} representing whether the current state is valid
+     * @return a BooleanProperty representing whether the current state is valid.
      */
-    public ReadOnlyBooleanProperty validProperty() {
+    protected final BooleanProperty validProperty() {
         return valid;
     }
 
     /**
-     * Returns a read-only string property representing the current error message.
-     * If the value is valid, the error message will be an empty string.
+     * Provides access to the property that holds error messages related to validation.
+     * This property can be used to observe or update the error state of an input control.
      *
-     * @return ReadOnlyStringProperty representing the error message.
+     * @return a {@code StringProperty} representing the current error message.
+     *         If no error is present, the property will hold an empty string.
      */
-    public ReadOnlyStringProperty errorProperty() {
+    protected final StringProperty errorProperty() {
         return error;
     }
 
     /**
-     * Resets the state to its default value.
+     * Returns a function that performs validation on the value managed by this {@code InputControlState}.
+     * The function accepts a value of type {@code R} or {@code null} and returns an {@code Optional<String>}
+     * representing the validation result. If the {@code Optional} is empty, the value is considered valid;
+     * otherwise, it contains an error message describing the validation failure.
      *
-     * <p>This method sets the current value of the property managed by this
-     * state to the default value supplied during the creation of the state.
+     * @return a function used to validate the value of this control state
      */
-    public void reset() {
-        value.setValue(dflt.get());
+    protected final Function<? super @Nullable R, Optional<String>> validateFunction() {
+        return validate;
+    }
+
+    /**
+     * Returns a collection of validation listeners associated with the input control state.
+     * These listeners are executed whenever the validation logic is triggered, allowing for
+     * custom behaviors or updates in response to validation changes.
+     *
+     * @return a collection of {@link Runnable} instances representing the validation listeners
+     */
+    protected final Collection<Runnable> validationListeners() {
+        return validationListeners;
+    }
+
+    /**
+     * Provides a supplier for the default value of the control's state.
+     *
+     * @return a {@link Supplier} that supplies the default value, or null if there is no default value.
+     */
+    protected final Supplier<? extends @Nullable R> defaultValueSupplier() {
+        return dflt;
+    }
+
+    /**
+     * Invalidates the current state of the input control and triggers a validation of its value.
+     * This method ensures that the validation logic is executed on the JavaFX application thread.
+     * <p>
+     * The validation process may update the control's validation status, error messages, and invoke
+     * any associated validation listeners. By default, this operation is scheduled to run later
+     * on the JavaFX thread, ensuring thread safety.
+     * <p>
+     * It uses the {@link PlatformHelper#runLater(Runnable)} utility to schedule the validation logic.
+     */
+    public void invalidateState() {
+        PlatformHelper.runLater(this::validate);
+    }
+
+    /**
+     * Adds a validation listener to the collection of listeners associated with the input control state.
+     * The provided listener will be executed whenever the validation logic is triggered, allowing for
+     * custom behaviors or updates in response to validation changes.
+     *
+     * @param listener a {@link Runnable} instance representing the validation listener to be added
+     */
+    public void addValidationListener(Runnable listener) {
+        validationListeners().add(listener);
+    }
+
+    /**
+     * Removes a validation listener from the collection of validation listeners associated
+     * with the input control state. If the specified listener is present, it will be removed.
+     *
+     * @param listener the {@link Runnable} instance representing the validation listener to remove
+     * @return {@code true} if the listener was removed successfully, {@code false} otherwise
+     */
+    public boolean removeValidationListener(Runnable listener) {
+        return validationListeners().remove(listener);
+    }
+
+    /**
+     * Resets the state of the input control to its default value and triggers validation.
+     * <p>
+     * This method invokes the default value supplier to retrieve the default value
+     * and assigns it to the input control's state through the {@code setValue} method.
+     * After setting the default value, it performs validation by calling the {@code validate} method
+     * to ensure the state reflects the appropriate validation results.
+     */
+    public final void reset() {
+        setValue(defaultValueSupplier().get());
         validate();
     }
 
     /**
-     * Validates the current state based on the value and validation function provided during
-     * the creation of the State object or set later and updates the valid state of the control.
+     * Validates the current value of the input control using the provided validation function.
+     * Updates the validity state and error message based on the result of the validation.
+     * Executes any registered validation listeners after the validation process.
      *
-     * @return true if the current value of the property is valid, otherwise false
+     * @return {@code true} if the value is valid; {@code false} otherwise
      */
-    boolean validate() {
-        LOG.trace("validate()");
+    public boolean validate() {
         Optional<String> result;
         try {
-            result = validate.apply(valueProperty().getValue());
+            result = validateFunction().apply(valueProperty().getValue());
         } catch (Exception e) {
             result = Optional.of(InputControl.INVALID_VALUE);
         }
-        LOG.trace("validation result: {}", result);
 
-        valid.setValue(result.isEmpty());
+        validProperty().setValue(result.isEmpty());
         setError(result.orElse(""));
 
-        validationListeners.forEach(Runnable::run);
+        validationListeners().forEach(Runnable::run);
 
         return result.isEmpty();
     }
 
     /**
-     * Determines whether the current state is valid.
+     * Checks if the current state of the input control is valid.
+     * This method evaluates the validity based on the value of the {@code validProperty}.
      *
-     * @return true if the state is valid, otherwise false
+     * @return {@code true} if the input control's state is valid, otherwise {@code false}
      */
-    public boolean isValid() {
-        return valid.getValue();
+    public final boolean isValid() {
+        return validProperty().getValue();
     }
 
     /**
-     * Retrieves the current value managed by this State.
+     * Retrieves the current value of the input control managed by this state.
+     * The returned value represents the current state of the control's input and can be {@code null}.
      *
-     * @return the current value of the property.
+     * @return the current value of type {@code R}, or {@code null} if no value is set
      */
     public @Nullable R getValue() {
-        return value.getValue();
+        return valueProperty().getValue();
     }
 
     /**
-     * Determines whether the state is marked as required.
+     * Determines whether the input control mandates a value.
+     * This method checks the value of the required property to indicate if input is required.
      *
-     * @return true if the state is required; false otherwise
+     * @return {@code true} if the input is required, otherwise {@code false}
      */
-    public boolean isRequired() {
-        return required.getValue();
+    public final boolean isRequired() {
+        return requiredProperty().getValue();
     }
 
     /**
-     * Sets a new value for the property managed by this State.
+     * Sets a new value for the input control's state.
+     * Updates the current value managed by the {@code valueProperty}.
      *
-     * @param arg the new value to be assigned to the property
+     * @param arg the new value of type {@code R} to set, or {@code null} if no value is provided
      */
     public void setValue(@Nullable R arg) {
-        value.setValue(arg);
+        valueProperty().setValue(arg);
     }
 
     /**
-     * Tests if the control's base value is null.
-     * <p>
-     * In most controls, there will be no difference between a control's base value and its actual value.
-     * An example where both differ is an input field for numbers where the base value is the text entered
-     * into the input and the value is the text converted to a number. When conversion fails, the number
-     * value will cleared or at least not updated. To distuigish whether nothingg has been entered at all
-     * or some invalid input was entered that maps to null, we use the base value.
+     * Determines whether the input control's value is considered to be empty.
      *
-     * @return true, if the base value is null or the empty string
+     * @return {@code true} if the input control's value is empty, otherwise {@code false}.
      */
     public boolean isEmpty() {
-        return switch (baseValue.getValue()) {
+        return switch (getValue()) {
             case null -> true;
             case String s -> s.isEmpty();
             default -> false;
@@ -263,21 +242,35 @@ public final class InputControlState<R> {
     }
 
     /**
-     * Sets the error message for this state.
+     * Updates the error property with the provided error message and adjusts the validity state
+     * based on whether the error message is empty or not.
      *
-     * @param s the error message to be set; it may be an empty string to indicate no error
+     * @param s the error message to set; an empty string indicates no error
      */
-    public void setError(String s) {
-        error.setValue(s);
-        valid.setValue(s.isEmpty());
+    protected void setError(String s) {
+        errorProperty().setValue(s);
+        validProperty().setValue(s.isEmpty());
     }
 
     /**
-     * Retrieves the current error message for this state.
+     * Retrieves the current error message associated with the input control's state.
+     * The error message typically represents the result of the validation process.
      *
-     * @return the current error message as a String.
+     * @return the current error message as a {@code String}, or an empty string if no error is present
      */
-    public String getError() {
-        return error.getValue();
+    public final String getError() {
+        return errorProperty().getValue();
+    }
+
+    /**
+     * Creates and returns an {@code InputControlState} instance specifically designed for inputs
+     * that have no associated value (i.e., {@code Void} type). This state model is initialized
+     * with a default value supplier that always provides {@code null}.
+     *
+     * @return an {@code InputControlState<Void>} instance representing an input control state
+     *         that doesn't necessitate a specific value.
+     */
+    public static InputControlState<Void> voidState() {
+        return new ObjectInputControlState<>(new SimpleObjectProperty<>(), () -> null);
     }
 }

@@ -609,7 +609,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
         public TestInputControl() {
             this.label = new Label("Test Input");
-            this.state = new InputControlState<>(new SimpleObjectProperty<>(""), () -> "", v -> Optional.empty());
+            this.state = new ObjectInputControlState<>(new SimpleObjectProperty<>(""), () -> "", v -> Optional.empty());
         }
 
         @Override

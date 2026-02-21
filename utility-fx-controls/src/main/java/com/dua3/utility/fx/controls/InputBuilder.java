@@ -5,9 +5,8 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.text.MessageFormatter;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -1277,9 +1276,8 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             SequencedCollection<ColumnDef<S, ?>> columns
     ) {
         var tv = TableViews.newTableView(columns, options, dflt.get());
-        ObservableList<S> items = tv.getItems();
-        Property<List<S>> value = new SimpleObjectProperty<>(items);
-        InputControl<List<S>> inputControl = new SimpleInputControl<>(tv, value, dflt, validate);
+        ListProperty<S> value = new SimpleListProperty<>(tv.getItems());
+        InputControl<List<S>> inputControl = new ListInputControl<>(tv, value, dflt, validate);
         return inputControl(id, label, inputControl, dflt);
     }
 

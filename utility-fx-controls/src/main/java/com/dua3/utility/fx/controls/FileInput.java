@@ -84,7 +84,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
 
         this.mode = mode;
         this.filters = filters.toArray(FileChooser.ExtensionFilter[]::new);
-        this.state = new InputControlState<>(value, dflt, validate);
+        this.state = new ObjectInputControlState<>(value, dflt, validate);
 
         TextField tfFilename = new TextField();
         Button button = new Button(I18NInstance.get().get("dua3.utility.fx.controls.file.input.button"));

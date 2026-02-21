@@ -55,7 +55,7 @@ public class InputControlContainer implements InputControl<Void> {
 
         this.controls = new ArrayList<>();
 
-        this.state = new InputControlState<>(value, () -> null, this::validateContent);
+        this.state = new ObjectInputControlState<>(value, () -> null, this::validateContent);
     }
 
     private Optional<String> validateContent(@Nullable Void v) {
