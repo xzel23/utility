@@ -1,5 +1,9 @@
 package com.dua3.utility.fx.controls;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Supplier;
+
 /**
  * Represents configuration options for a table view. This class allows the
  * specification and retrieval of various behaviors associated with the
@@ -14,45 +18,66 @@ package com.dua3.utility.fx.controls;
  * {@code of} method by specifying the desired options.
  */
 public final class TableViewOptions {
+
+    static final String ITEM_FACTORY = "itemFactory";
+
     /**
      * Defines the set of configurable options for a table view. Each option
      * represents a specific behavior or property that can be applied to the
      * table view.
      */
-    public enum Option {
-        /** Make the TableView editable. */
-        EDITABLE,
-        /** Make the TableView sortable by clicking on a column header. */
-        SORTABLE,
-        /** Allow dragging columns for reordering. */
-        REORDERABLE_COLUMNS,
-        /** Allow dragging rows for reordering. */
-        REORDERABLE_ROWS;
+    public static final class Option {
+        private final String name;
+        private final Map<String, Object> params;
 
-        int bitmask() { return 1 << ordinal(); }
+        private Option(String name) {
+            this(name, Collections.emptyMap());
+        }
+
+        private Option(String name, Map<String, Object> params) {
+            this.name = name;
+            this.params = params;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
+
+    static final String EDITABLE_OPTION = "EDITABLE";
+    static final String SORTABLE_OPTION = "SORTABLE";
+    static final String REORDERABLE_COLUMNS_OPTION = "REORDERABLE_COLUMNS";
+    static final String REORDERABLE_ROWS_OPTION = "REORDERABLE_ROWS";
+    static final String MULTIPLE_ROWS_SELECTABLE_OPTION = "MULTIPLE_ROWS_SELECTABLE";
+    static final String ALLOW_DELETING_ROWS_OPTION = "ALLOW_DELETING_ROWS";
+    static final String ALLOW_INSERTING_ROWS_OPTION = "ALLOW_INSERTING_ROWS";
 
     /** Make the TableView editable. */
-    public static final Option EDITABLE = Option.EDITABLE;
+    public static final Option EDITABLE = new Option(EDITABLE_OPTION);
     /** Make the TableView sortable by clicking on a column header. */
-    public static final Option SORTABLE = Option.SORTABLE;
+    public static final Option SORTABLE = new Option(SORTABLE_OPTION);
     /** Allow dragging columns for reordering. */
-    public static final Option REORDERABLE_COLUMNS = Option.REORDERABLE_COLUMNS;
+    public static final Option REORDERABLE_COLUMNS = new Option(REORDERABLE_COLUMNS_OPTION);
     /** Allow dragging rows for reordering. */
-    public static final Option REORDERABLE_ROWS = Option.REORDERABLE_ROWS;
-
-    private final int value;
+    public static final Option REORDERABLE_ROWS = new Option(REORDERABLE_ROWS_OPTION);
+    /** Allow selecting multiple rows at once. */
+    public static final Option MULTIPLE_ROWS_SELECTABLE = new Option(MULTIPLE_ROWS_SELECTABLE_OPTION);
+    /** Allow deleting rows. */
+    public static final Option ALLOW_DELETING_ROWS = new Option(ALLOW_DELETING_ROWS_OPTION);
 
     /**
-     * Creates an instance of TableViewOptions with the specified configuration value.
-     * This constructor is private and is used internally to initialize
-     * the table view options with a bitmask value representing selected options.
+     * Allow inserting rows.
      *
-     * @param value an integer bitmask representing the combination of enabled options
+     * @param <S> the generic item type
+     * @param itemFactory the item factory used to create new rows
+     * @return the option to pass
      */
-    private TableViewOptions(int value) {
-        this.value = value;
+    public static <S> Option ALLOW_INSERTING_ROWS(Supplier<S> itemFactory) {
+        return new Option(ALLOW_INSERTING_ROWS_OPTION, Map.of(ITEM_FACTORY, itemFactory));
     }
+
+    private final Map<String, Option> options;
 
     /**
      * Creates an instance of TableViewOptions by combining the specified options.
@@ -64,11 +89,15 @@ public final class TableViewOptions {
      * @return a new {@code TableViewOptions} instance configured with the specified options.
      */
     public static TableViewOptions of(Option... options) {
-        int v = 0;
+        Map<String, Option> map = new java.util.HashMap<>();
         for (Option opt : options) {
-            v |= opt.bitmask();
+            map.put(opt.name, opt);
         }
-        return new TableViewOptions(v);
+        return new TableViewOptions(map);
+    }
+
+    private TableViewOptions(Map<String, Option> options) {
+        this.options = Map.copyOf(options);
     }
 
     /**
@@ -79,7 +108,29 @@ public final class TableViewOptions {
      * @return {@code true} if the specified option is enabled, {@code false} otherwise
      */
     public boolean isEnabled(Option option) {
-        return (value & option.bitmask()) != 0;
+        return isEnabled(option.name);
+    }
+
+    /**
+     * Checks if the specified option is enabled for this table view configuration.
+     *
+     * @param option the name of the option to check
+     * @return {@code true} if the specified option is enabled, otherwise {@code false}
+     */
+    public boolean isEnabled(String option) {
+        return options.containsKey(option);
+    }
+
+    /**
+     * Retrieves the parameters associated with the specified option.
+     *
+     * @param option the name of the option for which parameters are to be retrieved; must not be null
+     * @return a map of parameter keys and values associated with the specified option,
+     *         or an empty map if the option is not found
+     */
+    Map<String, Object> getParams(String option) {
+        Option opt = options.get(option);
+        return opt != null ? opt.params : Collections.emptyMap();
     }
 
     /**
@@ -92,11 +143,11 @@ public final class TableViewOptions {
      *         with the specified additional options.
      */
     public TableViewOptions with(Option... options) {
-        int v = value;
+        Map<String, Option> map = new java.util.HashMap<>(this.options);
         for (Option opt : options) {
-            v |= opt.bitmask();
+            map.put(opt.name, opt);
         }
-        return new TableViewOptions(v);
+        return new TableViewOptions(map);
     }
 
     /**
@@ -107,20 +158,20 @@ public final class TableViewOptions {
      * @return a new {@code TableViewOptions} instance with the specified options disabled.
      */
     public TableViewOptions without(Option... options) {
-        int v = value;
+        Map<String, Option> map = new java.util.HashMap<>(this.options);
         for (Option opt : options) {
-            v &= ~opt.bitmask();
+            map.remove(opt.name);
         }
-        return new TableViewOptions(v);
+        return new TableViewOptions(map);
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof TableViewOptions o && value == o.value;
+        return obj instanceof TableViewOptions o && options.equals(o.options);
     }
 
     @Override
     public int hashCode() {
-        return value;
+        return options.hashCode();
     }
 }

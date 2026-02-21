@@ -15,9 +15,16 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -25,10 +32,16 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.util.Callback;
+import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SequencedCollection;
+import java.util.function.Supplier;
 
 /**
  * Utility class providing methods for manipulating TableView instances.
@@ -85,10 +98,13 @@ public final class TableViews {
             SequencedCollection<? extends ColumnDef<S, ?>> columns,
             TableViewOptions options,
             SequencedCollection<? extends S> initialItems) {
-        boolean editable = options.isEnabled(TableViewOptions.EDITABLE);
-        boolean sortable = options.isEnabled(TableViewOptions.SORTABLE);
-        boolean reorderableColumns = options.isEnabled(TableViewOptions.REORDERABLE_COLUMNS);
-        boolean reorderableRows = options.isEnabled(TableViewOptions.REORDERABLE_ROWS);
+        boolean editable = options.isEnabled(TableViewOptions.EDITABLE_OPTION);
+        boolean sortable = options.isEnabled(TableViewOptions.SORTABLE_OPTION);
+        boolean reorderableColumns = options.isEnabled(TableViewOptions.REORDERABLE_COLUMNS_OPTION);
+        boolean reorderableRows = options.isEnabled(TableViewOptions.REORDERABLE_ROWS_OPTION);
+        boolean multiSelection = options.isEnabled(TableViewOptions.MULTIPLE_ROWS_SELECTABLE_OPTION);
+        boolean allowDeletingRows = options.isEnabled(TableViewOptions.ALLOW_DELETING_ROWS_OPTION);
+        boolean allowInsertingRows = options.isEnabled(TableViewOptions.ALLOW_INSERTING_ROWS_OPTION);
 
         ObservableList<S> items = FXCollections.observableArrayList(initialItems);
         TableView<S> tv = new TableView<>(items);
@@ -120,14 +136,114 @@ public final class TableViews {
         );
 
         tv.setEditable(editable);
+        tv.getSelectionModel().setSelectionMode(multiSelection ? SelectionMode.MULTIPLE : SelectionMode.SINGLE);
 
         FlexibleColumnCoordinator.apply(tv, configMap);
 
-        if (reorderableRows) {
-            tv.setRowFactory(t -> new DraggableRow<>());
+        if (reorderableRows || allowDeletingRows || allowInsertingRows) {
+            Supplier<S> itemFactory = (Supplier<S>) options.getParams(TableViewOptions.ALLOW_INSERTING_ROWS_OPTION).get(TableViewOptions.ITEM_FACTORY);
+            tv.setRowFactory(new CustomRowFactory<>(reorderableRows, allowDeletingRows, allowInsertingRows, itemFactory));
+        }
+
+        if (allowInsertingRows) {
+            ContextMenu tableMenu = new ContextMenu();
+            MenuItem insertItem = new MenuItem("Insert row");
+            insertItem.setOnAction(evt -> tv.getItems().add(null));
+            tableMenu.getItems().add(insertItem);
+            tv.setContextMenu(tableMenu);
         }
 
         return tv;
+    }
+
+    /**
+     * A custom implementation of the {@link Callback} interface for creating and managing {@link TableRow} instances
+     * within a {@link TableView}. This class provides customizable behavior for row interactions such as row reordering,
+     * deleting, and inserting.
+     *
+     * @param <S> The type of the items contained in the {@link TableView}.
+     */
+    private static final class CustomRowFactory<S> implements Callback<TableView<S>, TableRow<S>> {
+        private final boolean reorderableRows;
+        private final boolean allowDeletingRows;
+        private final boolean allowInsertingRows;
+        private final @Nullable Supplier<S> itemFactory;
+
+        CustomRowFactory(boolean reorderableRows, boolean allowDeletingRows, boolean allowInsertingRows, @Nullable Supplier<S> itemFactory) {
+            this.reorderableRows = reorderableRows;
+            this.allowDeletingRows = allowDeletingRows;
+            this.allowInsertingRows = allowInsertingRows;
+            this.itemFactory = itemFactory;
+        }
+
+        @Override
+        public TableRow<S> call(TableView<S> tv) {
+            TableRow<S> row = reorderableRows ? new DraggableRow<>() : new TableRow<>();
+
+            if (allowDeletingRows || allowInsertingRows) {
+                ContextMenu rowMenu = new ContextMenu();
+
+                if (allowDeletingRows) {
+                    MenuItem deleteItem = new MenuItem();
+                    deleteItem.setOnAction(evt -> {
+                        List<Integer> selectedIndices = new ArrayList<>(tv.getSelectionModel().getSelectedIndices());
+                        int count = selectedIndices.size();
+                        if (count == 0) return;
+
+                        String title = "Delete row" + (count > 1 ? "s" : "");
+                        String header = "Delete " + (count > 1 ? "selected rows" : "row") + "?";
+                        String text = "Do you really want to delete the selected " + (count > 1 ? "rows" : "row") + "?";
+                        Dialogs.alert(tv.getScene().getWindow(), AlertType.CONFIRMATION)
+                                .title(title)
+                                .header(header)
+                                .text(text)
+                                .showAndWait()
+                                .filter(bt -> bt == ButtonType.OK)
+                                .ifPresent(bt -> {
+                                    selectedIndices.sort(Comparator.reverseOrder());
+                                    for (int index : selectedIndices) {
+                                        tv.getItems().remove(index);
+                                    }
+                                });
+                    });
+                    rowMenu.setOnShowing(evt -> {
+                        int count = tv.getSelectionModel().getSelectedItems().size();
+                        deleteItem.setText(count > 1 ? "Delete rows" : "Delete row");
+                    });
+                    rowMenu.getItems().add(deleteItem);
+                }
+
+                if (allowInsertingRows) {
+                    assert itemFactory != null : "internal error: itemFactory must not be null when inserting rows is enabled";
+
+                    if (allowDeletingRows) {
+                        rowMenu.getItems().add(new SeparatorMenuItem());
+                    }
+
+                    MenuItem insertAbove = new MenuItem("Insert row above");
+                    insertAbove.setOnAction(evt -> {
+                        int index = row.getIndex();
+                        tv.getItems().add(index, itemFactory.get());
+                    });
+
+                    MenuItem insertBelow = new MenuItem("Insert row below");
+                    insertBelow.setOnAction(evt -> {
+                        int index = row.getIndex();
+                        tv.getItems().add(index + 1, itemFactory.get());
+                    });
+
+                    rowMenu.getItems().addAll(insertAbove, insertBelow);
+                }
+
+                row.contextMenuProperty().bind(
+                        Bindings.when(row.emptyProperty())
+                                .then((ContextMenu) null)
+                                .otherwise(rowMenu)
+                );
+            }
+
+            return row;
+        }
     }
 
     /**
@@ -142,6 +258,19 @@ public final class TableViews {
         private final Map<TableColumn<?, ?>, ColumnDef<?, ?>> configMap;
         private boolean isInternalAdjusting = false;
 
+        /**
+         * Applies the configuration map to the specified {@link TableView} by instantiating
+         * a {@link FlexibleColumnCoordinator}, which is responsible for managing the
+         * behavior and layout of the table's columns based on the provided configuration.
+         *
+         * @param table The {@link TableView} to which the column configurations will be applied.
+         *              This parameter must not be {@code null} and should contain all the columns
+         *              listed in the configuration map.
+         * @param configMap A map of {@link TableColumn} to {@link ColumnDef}, where each entry
+         *                  defines the behavior and properties of a specific column in the {@link TableView}.
+         *                  The key represents a table column, and the value contains its corresponding
+         *                  configuration details. This parameter must not be {@code null}.
+         */
         public static void apply(TableView<?> table, Map<TableColumn<?, ?>, ColumnDef<?, ?>> configMap) {
             new FlexibleColumnCoordinator(table, configMap);
         }
@@ -234,9 +363,7 @@ public final class TableViews {
     private static final class DraggableRow<T> extends TableRow<T> {
         private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
 
-        public DraggableRow() {
-            super();
-
+        DraggableRow() {
             // 1. Initiate Drag
             this.setOnDragDetected(event -> {
                 if (!isEmpty()) {
