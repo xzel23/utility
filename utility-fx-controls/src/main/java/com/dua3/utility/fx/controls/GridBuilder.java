@@ -179,12 +179,12 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public <T> GridBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
-        return doAdd(id, format(label), dflt, control, row != null, visible);
+        return doAdd(id, format(label), control, row != null, visible);
     }
 
     @Override
     public <T> GridBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
-        return doAdd(id, null, dflt, control, row != null, true);
+        return doAdd(id, null, control, row != null, true);
     }
 
     @Override
@@ -214,18 +214,18 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public GridBuilder verticalSpace(double height, LayoutUnit unit) {
-        data.add(new Meta<>(null, null, () -> null, new ControlWrapper(new Region()), row != null, true, markerWidth, height, unit));
+        data.add(new Meta<>(null, null, new ControlWrapper(new Region()), row != null, true, markerWidth, height, unit));
         return this;
     }
 
     @Override
     public GridBuilder node(Node node) {
-        return doAdd(null, null, () -> null, new ControlWrapper(node), row != null, true);
+        return doAdd(null, null, new ControlWrapper(node), row != null, true);
     }
 
     @Override
     public GridBuilder node(MessageFormatter.MessageFormatterArgs label, Node node) {
-        return doAdd(null, format(label), () -> null, new ControlWrapper(node), row != null, true);
+        return doAdd(null, format(label), new ControlWrapper(node), row != null, true);
     }
 
     @Override
@@ -273,7 +273,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return this;
     }
 
-    private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean inline, boolean visible) {
+    private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, InputControl<T> control, boolean inline, boolean visible) {
         // check for duplicate IDs
         if (id != null && !id.isEmpty() && !ids.add(id)) {
             throw new IllegalArgumentException(String.format(INPUT_WITH_ID_ALREADY_DEFINED, id));
@@ -288,7 +288,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         }
 
         // add
-        Meta<T> meta = new Meta<>(id, label, dflt, control, inline, visible, markerWidth);
+        Meta<T> meta = new Meta<>(id, label, control, inline, visible, markerWidth);
         data.add(meta);
 
         return this;
@@ -401,13 +401,13 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder inputControl(String id, InputControl<T> control, Supplier<? extends @Nullable T> dflt) {
-        return doAdd(id, null, dflt, control, row != null, true);
+    public <T> GridBuilder inputControl(String id, InputControl<T> control) {
+        return doAdd(id, null, control, row != null, true);
     }
 
     @Override
-    public <T> GridBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Supplier<? extends @Nullable T> dflt) {
-        return doAdd(id, format(label), dflt, control, row != null, true);
+    public <T> GridBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control) {
+        return doAdd(id, format(label), control, row != null, true);
     }
 
     @Override
@@ -432,7 +432,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
         row = new InputControlContainer(Orientation.HORIZONTAL);
 
-        return doAdd(null, format(label), () -> null, row, false, true);
+        return doAdd(null, format(label), row, false, true);
     }
 
     @Override

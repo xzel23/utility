@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * @param <C> the type of the control, which must extend from Control
  * @param <R> the type of the value held by the input control
  */
-public sealed class SimpleInputControl<C extends Control, R> implements InputControl<R> permits ListInputControl {
+public class SimpleInputControl<C extends Control, R> implements InputControl<R> {
 
     private final C control;
     private final InputControlState<R> state;

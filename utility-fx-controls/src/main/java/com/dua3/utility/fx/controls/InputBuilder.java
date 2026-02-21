@@ -7,6 +7,7 @@ import com.dua3.utility.options.Option;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -1277,8 +1278,8 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     ) {
         var tv = TableViews.newTableView(columns, options, dflt.get());
         ListProperty<S> value = new SimpleListProperty<>(tv.getItems());
-        InputControl<List<S>> inputControl = new ListInputControl<>(tv, value, dflt, validate);
-        return inputControl(id, label, inputControl, dflt);
+        InputControl<ObservableList<S>> inputControl = new ListInputControl<>(tv, value, dflt, validate);
+        return inputControl(id, label, inputControl);
     }
 
     /**
@@ -1287,10 +1288,9 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param <T>     the generic result type
      * @param id      the unique identifier for the input control
      * @param control the input control to be associated
-     * @param dflt    a supplier for the default value, which may produce a null value
      * @return {@code this}
      */
-    <T> B inputControl(String id, InputControl<T> control, Supplier<? extends @Nullable T> dflt);
+    <T> B inputControl(String id, InputControl<T> control);
 
     /**
      * Configures an input control with the specified parameters.
@@ -1299,11 +1299,10 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param id      the unique identifier for the input control
      * @param label   the label to be associated with the input control
      * @param control the input control instance to be configured
-     * @param dflt    a supplier providing the default value for the input control; may be null
      * @return {@code this}
      */
-    default <T> B inputControl(String id, String label, InputControl<T> control, Supplier<? extends @Nullable T> dflt) {
-        return inputControl(id, MessageFormatter.args(label), control, dflt);
+    default <T> B inputControl(String id, String label, InputControl<T> control) {
+        return inputControl(id, MessageFormatter.args(label), control);
     }
 
     /**
@@ -1313,10 +1312,9 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param id      the unique identifier for the input control
      * @param label   the label to be associated with the input control
      * @param control the input control instance to be configured
-     * @param dflt    a supplier providing the default value for the input control; may be null
      * @return {@code this}
      */
-    <T> B inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Supplier<? extends @Nullable T> dflt);
+    <T> B inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control);
 
     /**
      * Represents the styling attributes for a section or title label, such as spacing,

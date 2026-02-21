@@ -34,7 +34,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.SequencedCollection;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 
@@ -525,7 +524,6 @@ public class Grid extends GridPane {
      */
     static final class Meta<T extends @Nullable Object> {
         final @Nullable String id;
-        final Supplier<? extends T> dflt;
         final InputControl<? super T> control;
         final @Nullable Label label;
         final Label requiredMarker;
@@ -535,11 +533,11 @@ public class Grid extends GridPane {
         final double space;
         final LayoutUnit spaceUnit;
 
-        Meta(@Nullable String id, @Nullable String label, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth) {
-            this(id, label, dflt, control, inline, visible, markerWidth, 0.0, LayoutUnit.PIXELS);
+        Meta(@Nullable String id, @Nullable String label, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth) {
+            this(id, label, control, inline, visible, markerWidth, 0.0, LayoutUnit.PIXELS);
         }
 
-        Meta(@Nullable String id, @Nullable String label, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth, double space, LayoutUnit spaceUnit) {
+        Meta(@Nullable String id, @Nullable String label, InputControl<? super T> control, boolean inline, boolean visible, double markerWidth, double space, LayoutUnit spaceUnit) {
             this.id = id == null || id.isEmpty() ? null : id;
             if (label != null) {
                 this.label = new Label(label);
@@ -551,7 +549,6 @@ public class Grid extends GridPane {
             this.requiredMarker.getStyleClass().add("required-marker");
             this.errorMarker = new Label();
             this.errorMarker.getStyleClass().add("error-marker");
-            this.dflt = dflt;
             this.control = control;
             this.inline = inline;
             this.visible = visible;
@@ -563,7 +560,7 @@ public class Grid extends GridPane {
         }
 
         void reset() {
-            control.set(dflt.get());
+            control.reset();
         }
 
         @Override

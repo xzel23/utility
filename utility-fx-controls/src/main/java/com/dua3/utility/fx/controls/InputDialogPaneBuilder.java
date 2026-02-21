@@ -261,14 +261,14 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
-    public <T> InputDialogPaneBuilder inputControl(String id, InputControl<T> control, Supplier<? extends @Nullable T> dflt) {
-        pb.inputControl(id, control, dflt);
+    public <T> InputDialogPaneBuilder inputControl(String id, InputControl<T> control) {
+        pb.inputControl(id, control);
         return this;
     }
 
     @Override
-    public <T> InputDialogPaneBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Supplier<? extends @Nullable T> dflt) {
-        pb.inputControl(id, label, control, dflt);
+    public <T> InputDialogPaneBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control) {
+        pb.inputControl(id, label, control);
         return this;
     }
 

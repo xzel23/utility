@@ -293,14 +293,14 @@ public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBu
     }
 
     @Override
-    public <T> InputDialogBuilder inputControl(String id, InputControl<T> control, Supplier<? extends @Nullable T> dflt) {
-        pb.inputControl(id, control, dflt);
+    public <T> InputDialogBuilder inputControl(String id, InputControl<T> control) {
+        pb.inputControl(id, control);
         return this;
     }
 
     @Override
-    public <T> InputDialogBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control, Supplier<? extends @Nullable T> dflt) {
-        pb.inputControl(id, label, control, dflt);
+    public <T> InputDialogBuilder inputControl(String id, MessageFormatter.MessageFormatterArgs label, InputControl<T> control) {
+        pb.inputControl(id, label, control);
         return this;
     }
 

@@ -1,14 +1,16 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.SequencedCollection;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -17,7 +19,7 @@ import java.util.function.Supplier;
  *
  * @param <S> the type of elements in the list
  */
-public class ListInputControlState<S> extends InputControlState<List<S>> {
+public class ListInputControlState<S> extends InputControlState<ObservableList<S>> {
 
     private final ListProperty<S> value;
 
@@ -30,9 +32,8 @@ public class ListInputControlState<S> extends InputControlState<List<S>> {
      *                 It takes the list as input and returns an {@code Optional<String>} containing
      *                 a validation error message if the list is invalid, or an empty {@code Optional} if valid.
      */
-    @SuppressWarnings("unchecked")
-    public ListInputControlState(ListProperty<S> value, Supplier<? extends List<S>> dflt, Function<? super List<S>, Optional<String>> validate) {
-        super(dflt, validate);
+    public ListInputControlState(ListProperty<S> value, Supplier<? extends Collection<S>> dflt, Function<List<S>, Optional<String>> validate) {
+        super(toObservableListSupplier(dflt), validate);
         this.value = value;
 
         requiredProperty().set(validate.apply(null).isPresent());
@@ -61,8 +62,41 @@ public class ListInputControlState<S> extends InputControlState<List<S>> {
         validate();
     }
 
+    /**
+     * Converts a supplier of a {@code Collection<S>} into a supplier of an {@code ObservableList<S>}.
+     * If the supplied collection is already an {@code ObservableList}, it is returned directly.
+     * Otherwise, a new observable list is created from the collection.
+     * If the supplied collection is {@code null}, an empty {@code ObservableList} is returned.
+     *
+     * @param <S> the type of elements in the collection and observable list
+     * @param dflt a supplier that provides a {@code Collection<S>} or {@code null},
+     *             which will be converted to an {@code ObservableList<S>}
+     * @return a {@code Supplier<ObservableList<S>>} that provides an observable list
+     *         derived from the supplied collection
+     */
+    @SuppressWarnings("unchecked")
+    private static <S> Supplier<ObservableList<S>> toObservableListSupplier(Supplier<? extends @Nullable Collection<S>> dflt) {
+        return () -> (ObservableList<S>) switch (dflt.get()) {
+            case ObservableList<?> ol -> ol;
+            case Collection<?> col -> FXCollections.observableArrayList(col);
+            case null -> FXCollections.observableArrayList();
+        };
+    }
+
+    /**
+     * Sets the value of this input control state with the provided {@link SequencedCollection}.
+     * If the given collection is {@code null}, the current value will be cleared.
+     * Otherwise, the elements of the provided collection will replace the current value.
+     *
+     * @param arg the {@code SequencedCollection} containing the new elements to set,
+     *            or {@code null} to clear the current value
+     */
+    public void setItems(Collection<S> arg) {
+        value.setAll(arg);
+    }
+
     @Override
-    public void setValue(@Nullable List<S> arg) {
+    public void setValue(@Nullable ObservableList<S> arg) {
         if (arg == null) {
             value.clear();
         } else {
@@ -71,12 +105,12 @@ public class ListInputControlState<S> extends InputControlState<List<S>> {
     }
 
     @Override
-    protected Property<List<S>> valueProperty() {
-        return (Property<List<S>>) (Property<?>) value;
+    protected ListProperty<S> valueProperty() {
+        return value;
     }
 
     @Override
-    public List<S> getValue() {
+    public ObservableList<S> getValue() {
         return value;
     }
 
