@@ -82,6 +82,10 @@ import java.util.stream.Stream;
 public final class LangUtil {
     private static final Logger LOG = LogManager.getLogger(LangUtil.class);
     private static final String INVALID_FORMATTING = "format String does not match arguments";
+    private static final String VALUE_MUST_BE_NON_NEGATIVE_S = "value must be non-negative: %s";
+    private static final String VALUE_MUST_BE_POSITIVE_S = "value must be positive: %s";
+    private static final String VALUE_MUST_BE_NEGATIVE_S = "value must be negative: %s";
+    private static final String VALUE_MUST_BE_BETWEEN_S_AND_S_S = "value must be between %s and %s: %s";
 
     /**
      * A holder class for a securely initialized instance of {@link SecureRandom}.
@@ -1704,7 +1708,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or {@link Double#NaN}
      */
     public static double requireNonNegative(double value) {
-        checkArg(value >= 0, "value must be non-negative: %f", value);
+        checkArg(value >= 0, VALUE_MUST_BE_NON_NEGATIVE_S, value);
         return value;
     }
 
@@ -1736,7 +1740,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or {@link Float#NaN}
      */
     public static float requireNonNegative(float value) {
-        checkArg(value >= 0, "value must be non-negative: %f", value);
+        checkArg(value >= 0, VALUE_MUST_BE_NON_NEGATIVE_S, value);
         return value;
     }
 
@@ -1764,7 +1768,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative
      */
     public static long requireNonNegative(long value) {
-        checkArg(value >= 0, "value must be non-negative: %d", value);
+        checkArg(value >= 0, VALUE_MUST_BE_NON_NEGATIVE_S, value);
         return value;
     }
 
@@ -1796,7 +1800,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the given value is negative
      */
     public static int requireNonNegative(int value) {
-        checkArg(value >= 0, "value must be non-negative: %d", value);
+        checkArg(value >= 0, VALUE_MUST_BE_NON_NEGATIVE_S, value);
         return value;
     }
 
@@ -1824,7 +1828,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the given value is negative
      */
     public static short requireNonNegative(short value) {
-        checkArg(value >= 0, "value must be non-negative: %d", value);
+        checkArg(value >= 0, VALUE_MUST_BE_NON_NEGATIVE_S, value);
         return value;
     }
 
@@ -1852,7 +1856,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static double requirePositive(double value) {
-        checkArg(value > 0, "value must be positive: %f", value);
+        checkArg(value > 0, VALUE_MUST_BE_POSITIVE_S, value);
         return value;
     }
 
@@ -1884,7 +1888,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero or {@link Float#NaN}
      */
     public static float requirePositive(float value) {
-        checkArg(value > 0, "value must be positive: %f", value);
+        checkArg(value > 0, VALUE_MUST_BE_POSITIVE_S, value);
         return value;
     }
 
@@ -1912,7 +1916,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static long requirePositive(long value) {
-        checkArg(value > 0, "value must be positive: %d", value);
+        checkArg(value > 0, VALUE_MUST_BE_POSITIVE_S, value);
         return value;
     }
 
@@ -1945,7 +1949,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static int requirePositive(int value) {
-        checkArg(value > 0, "value must be positive: %d", value);
+        checkArg(value > 0, VALUE_MUST_BE_POSITIVE_S, value);
         return value;
     }
 
@@ -1974,7 +1978,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static short requirePositive(short value) {
-        checkArg(value > 0, "value must be positive: %d", value);
+        checkArg(value > 0, VALUE_MUST_BE_POSITIVE_S, value);
         return value;
     }
 
@@ -2002,7 +2006,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static double requireNegative(double value) {
-        checkArg(value < 0, "value must be negative: %f", value);
+        checkArg(value < 0, VALUE_MUST_BE_NEGATIVE_S, value);
         return value;
     }
 
@@ -2034,7 +2038,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative or {@link Float#NaN}
      */
     public static float requireNegative(float value) {
-        checkArg(value < 0, "value must be negative: %f", value);
+        checkArg(value < 0, VALUE_MUST_BE_NEGATIVE_S, value);
         return value;
     }
 
@@ -2062,7 +2066,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static long requireNegative(long value) {
-        checkArg(value < 0, "value must be negative: %d", value);
+        checkArg(value < 0, VALUE_MUST_BE_NEGATIVE_S, value);
         return value;
     }
 
@@ -2093,7 +2097,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static int requireNegative(int value) {
-        checkArg(value < 0, "value must be negative: %d", value);
+        checkArg(value < 0, VALUE_MUST_BE_NEGATIVE_S, value);
         return value;
     }
 
@@ -2121,7 +2125,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static short requireNegative(short value) {
-        checkArg(value < 0, "value must be negative: %d", value);
+        checkArg(value < 0, VALUE_MUST_BE_NEGATIVE_S, value);
         return value;
     }
 
@@ -2151,7 +2155,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not within the specified interval or {@link Double#NaN}
      */
     public static double requireInInterval(double value, double min, double max) {
-        checkArg(isBetween(value, min, max), "value must be between %f and %f: %f", min, max, value);
+        checkArg(isBetween(value, min, max), VALUE_MUST_BE_BETWEEN_S_AND_S_S, min, max, value);
         return value;
     }
 
@@ -2186,7 +2190,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not within the specified interval or {@link Float#NaN}
      */
     public static float requireInInterval(float value, float min, float max) {
-        checkArg(isBetween(value, min, max), "value must be between %f and %f: %f", min, max, value);
+        checkArg(isBetween(value, min, max), VALUE_MUST_BE_BETWEEN_S_AND_S_S, min, max, value);
         return value;
     }
 
@@ -2217,7 +2221,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not within the specified interval
      */
     public static long requireInInterval(long value, long min, long max) {
-        checkArg(isBetween(value, min, max), "value must be between %d and %d: %d", min, max, value);
+        checkArg(isBetween(value, min, max), VALUE_MUST_BE_BETWEEN_S_AND_S_S, min, max, value);
         return value;
     }
 
@@ -2253,7 +2257,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static int requireInInterval(int value, int min, int max) {
-        checkArg(isBetween(value, min, max), "value must be between %d and %d: %d", min, max, value);
+        checkArg(isBetween(value, min, max), VALUE_MUST_BE_BETWEEN_S_AND_S_S, min, max, value);
         return value;
     }
 
@@ -2285,7 +2289,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static short requireInInterval(short value, short min, short max) {
-        checkArg(isBetween(value, min, max), "value must be between %d and %d: %d", min, max, value);
+        checkArg(isBetween(value, min, max), VALUE_MUST_BE_BETWEEN_S_AND_S_S, min, max, value);
         return value;
     }
 
