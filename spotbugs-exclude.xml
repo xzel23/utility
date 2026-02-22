@@ -26,6 +26,10 @@
         </Or>
     </Match>
 
+    <Match>
+        <Bug pattern="RC_REF_COMPARISON_BAD_PRACTICE_BOOLEAN"/>
+    </Match>
+
     <Match class="com.dua3.utility.lang.LangUtil">
         <Method name="isFormatValid">
             <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
