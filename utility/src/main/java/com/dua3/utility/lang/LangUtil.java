@@ -3012,7 +3012,10 @@ public final class LangUtil {
 
         @Override
         public String get() {
-            return s != null ? s : (s = supplier.get());
+            if (s == null) {
+                s = supplier.get();
+            }
+            return s;
         }
 
         @Override
