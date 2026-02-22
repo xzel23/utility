@@ -129,63 +129,52 @@ public final class LangUtil {
      */
     public static void checkArg(boolean condition, String fmt) {
         assert isFormatValid(fmt) : INVALID_FORMATTING;
-        if (!condition) {
-            throw new IllegalArgumentException(fmt.formatted());
-        }
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt));
     }
 
-    /**
-     * Validates a condition and throws an {@link IllegalArgumentException} if the condition is false.
-     * This method uses a formatted string to construct the exception message.
-     *
-     * @param condition The boolean condition to evaluate. If false, an exception is thrown.
-     * @param fmt The format string used to construct the exception message.
-     * @param value The value to be formatted into the message based on the format string. Can be null.
-     */
     public static void checkArg(boolean condition, String fmt, @Nullable Object value) {
         assert isFormatValid(fmt, value) : INVALID_FORMATTING;
-        if (!condition) {
-            throw new IllegalArgumentException(fmt.formatted(value));
-        }
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, value));
     }
 
-    /**
-     * Validates a condition and throws an {@code IllegalArgumentException} if the condition is not met.
-     * The exception message is formatted using the provided format string and arguments.
-     *
-     * @param condition The boolean condition to validate. If false, an exception is thrown.
-     * @param fmt The format string used to create the exception message. Must conform to {@code String.format()} rules.
-     * @param v1 The first argument to be substituted into the format string, may be null.
-     * @param v2 The second argument to be substituted into the format string, may be null.
-     * @throws IllegalArgumentException If the condition is false.
-     * @throws AssertionError If the format string or arguments are invalid according to internal validation.
-     */
     public static void checkArg(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
-        if (!condition) {
-            throw new IllegalArgumentException(fmt.formatted(v1, v2));
-        }
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2));
     }
 
-    /**
-     * Validates a condition and throws an {@link IllegalArgumentException} with a formatted
-     * message if the condition is not met. The formatting of the message is validated
-     * before it is applied.
-     *
-     * @param condition The condition to validate. If false, an exception will be thrown.
-     * @param fmt The format string used to generate the exception message.
-     * @param v1 The first argument to be used in the format string, may be null.
-     * @param v2 The second argument to be used in the format string, may be null.
-     * @param v3 The third argument to be used in the format string, may be null.
-     * @throws IllegalArgumentException If the condition is false, and a formatted message
-     *         will describe the failure.
-     * @throws AssertionError If the format string validation fails.
-     */
     public static void checkArg(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2, @Nullable Object v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
-        if (!condition) {
-            throw new IllegalArgumentException(fmt.formatted(v1, v2, v3));
-        }
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2, v3));
+    }
+
+    public static void checkArg(boolean condition, String fmt, long value) {
+        assert isFormatValid(fmt, value) : INVALID_FORMATTING;
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, value));
+    }
+
+    public static void checkArg(boolean condition, String fmt, long v1, long v2) {
+        assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2));
+    }
+
+    public static void checkArg(boolean condition, String fmt, long v1, long v2, long v3) {
+        assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2, v3));
+    }
+
+    public static void checkArg(boolean condition, String fmt, double value) {
+        assert isFormatValid(fmt, value) : INVALID_FORMATTING;
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, value));
+    }
+
+    public static void checkArg(boolean condition, String fmt, double v1, double v2) {
+        assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2));
+    }
+
+    public static void checkArg(boolean condition, String fmt, double v1, double v2, double v3) {
+        assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
+        if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2, v3));
     }
 
     /**
@@ -236,7 +225,7 @@ public final class LangUtil {
     public static void checkArg(boolean condition, String fmt, Object... fmtArgs) throws IllegalArgumentException {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!condition) {
-            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
         }
     }
 
@@ -267,9 +256,7 @@ public final class LangUtil {
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
     public static void check(boolean condition) {
-        if (!condition) {
-            throw new FailedCheckException("condition failed");
-        }
+        if (!condition) throw new FailedCheckException("condition failed");
     }
 
     /**
@@ -292,15 +279,56 @@ public final class LangUtil {
      * @param condition condition to test
      * @param fmt       message format (@see
      *                  {@link String#format(String, Object...)})
-     * @param fmtArgs      format arguments
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
-    public static void check(boolean condition, String fmt, Object... fmtArgs) {
-        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
-        if (!condition) {
-            String message = String.format(Locale.ROOT, fmt, fmtArgs);
-            throw new FailedCheckException(message);
-        }
+    public static void check(boolean condition, String fmt) {
+        assert isFormatValid(fmt) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt));
+    }
+
+    public static void check(boolean condition, String fmt, @Nullable Object v1) {
+        assert isFormatValid(fmt, v1) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1));
+    }
+
+    public static void check(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2) {
+        assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2));
+    }
+
+    public static void check(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2, @Nullable Object v3) {
+        assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2, v3));
+    }
+
+    public static void check(boolean condition, String fmt, long v1) {
+        assert isFormatValid(fmt, v1) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1));
+    }
+
+    public static void check(boolean condition, String fmt, long v1, long v2) {
+        assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2));
+    }
+
+    public static void check(boolean condition, String fmt, long v1, long v2, long v3) {
+        assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2, v3));
+    }
+
+    public static void check(boolean condition, String fmt, double v1) {
+        assert isFormatValid(fmt, v1) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1));
+    }
+
+    public static void check(boolean condition, String fmt, double v1, double v2) {
+        assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2));
+    }
+
+    public static void check(boolean condition, String fmt, double v1, double v2, double v3) {
+        assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
+        if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2, v3));
     }
 
     /**
@@ -1515,7 +1543,7 @@ public final class LangUtil {
         if (value >= 0.0) {
             return value;
         }
-        throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+        throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
     }
 
     /**
@@ -1567,7 +1595,7 @@ public final class LangUtil {
     public static long requireNonNegative(long value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value < 0) {
-            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
         }
         return value;
     }
@@ -1646,7 +1674,7 @@ public final class LangUtil {
         if (value > 0.0) {
             return value;
         }
-        throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+        throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
     }
 
     /**
@@ -1698,7 +1726,7 @@ public final class LangUtil {
     public static long requirePositive(long value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value <= 0) {
-            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
         }
         return value;
     }
@@ -1780,7 +1808,7 @@ public final class LangUtil {
         if (value < 0.0) {
             return value;
         }
-        throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+        throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
     }
 
     /**
@@ -1830,7 +1858,7 @@ public final class LangUtil {
     public static long requireNegative(long value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value >= 0) {
-            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
         }
         return value;
     }
@@ -1914,7 +1942,7 @@ public final class LangUtil {
     public static double requireInInterval(double value, double min, double max, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!isBetween(value, min, max)) {
-            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
         }
         return value;
     }
@@ -1974,7 +2002,7 @@ public final class LangUtil {
     public static long requireInInterval(long value, long min, long max, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!isBetween(value, min, max)) {
-            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
         }
         return value;
     }

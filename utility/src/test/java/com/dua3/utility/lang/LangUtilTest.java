@@ -1585,10 +1585,10 @@ class LangUtilTest {
         assertEquals(validNegative, LangUtil.requireNegative(validNegative, "Error: %f must be negative", validNegative));
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> LangUtil.requireNegative(positiveValue, "Error: %f must be negative", positiveValue));
-        assertTrue(exception.getMessage().contains(String.format(Locale.getDefault(), "%f", 1.0)));
+        assertTrue(exception.getMessage().contains(String.format(Locale.ROOT, "%f", 1.0)));
         exception = assertThrows(IllegalArgumentException.class,
                 () -> LangUtil.requireNegative(zeroValue, "Error: %f must be negative", zeroValue));
-        assertTrue(exception.getMessage().contains(String.format(Locale.getDefault(), "%f", 0.0)));
+        assertTrue(exception.getMessage().contains(String.format(Locale.ROOT, "%f", 0.0)));
     }
 
     @Test
@@ -1621,7 +1621,10 @@ class LangUtilTest {
             assertEquals(value, LangUtil.requireNegative(value, "Error: %f is not negative", value));
         } else {
             IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value, "Error: %f is not negative", value));
-            assertTrue(ex.getMessage().contains("%f".formatted(value)));
+            assertTrue(
+                    ex.getMessage().contains(String.format(Locale.ROOT, "%f", value)),
+                    () -> String.format(Locale.ROOT, "Expected message to contain '%f' but got '%s'", value, ex.getMessage())
+            );
         }
     }
 
@@ -1692,7 +1695,7 @@ class LangUtilTest {
             assertEquals(value, LangUtil.requirePositive(value, "Error: %f must be positive", value));
         } else {
             IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(value, "Error: %f must be positive", value));
-            assertTrue(ex.getMessage().contains("%f".formatted(value)));
+            assertTrue(ex.getMessage().contains(String.format(Locale.ROOT, "%f", value)));
         }
     }
     @Test
