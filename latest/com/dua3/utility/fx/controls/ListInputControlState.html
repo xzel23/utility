@@ -88,7 +88,9 @@ loadScripts(document, 'script');</script>
 <h1 title="Class ListInputControlState" class="title">Class ListInputControlState&lt;S&gt;</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
+<div class="inheritance"><a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">com.dua3.utility.fx.controls.InputControlState</a>&lt;javafx.collections.ObservableList&lt;S&gt;&gt;
 <div class="inheritance">com.dua3.utility.fx.controls.ListInputControlState&lt;S&gt;</div>
+</div>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
@@ -97,7 +99,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ListInputControlState&lt;S&gt;</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<span class="extends-implements">extends <a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a>&lt;javafx.collections.ObservableList&lt;S&gt;&gt;</span></div>
 <div class="block">InputControlState for list-based input controls.</div>
 </section>
 <section class="summary">
@@ -111,27 +113,15 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Type</div>
 <div class="table-header col-second">Property</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>protected final javafx.beans.property.StringProperty</code></div>
-<div class="col-second even-row-color"><code><a href="#errorProperty" class="member-name-link">error</a></code></div>
+<div class="col-first even-row-color"><code>protected javafx.beans.property.ListProperty<wbr>&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Provides access to the property that holds error messages related to validation.</div>
-</div>
-<div class="col-first odd-row-color"><code>protected final javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second odd-row-color"><code><a href="#requiredProperty" class="member-name-link">required</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">Provides a property representing whether the input is required or not.</div>
-</div>
-<div class="col-first even-row-color"><code>protected final javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second even-row-color"><code><a href="#validProperty" class="member-name-link">valid</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Returns the property indicating the validity of the input control's state.</div>
-</div>
-<div class="col-first odd-row-color"><code>protected javafx.beans.property.ListProperty<wbr>&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#valueProperty" class="member-name-link">value</a></code></div>
-<div class="col-last odd-row-color">
 <div class="block">Provides access to the property representing the current value of the input control.</div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="properties-inherited-from-class-com.dua3.utility.fx.controls.InputControlState">Properties inherited from class&nbsp;com.dua3.utility.fx.controls.<a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a></h3>
+<code><a href="InputControlState.html#errorProperty">error</a>, <a href="InputControlState.html#requiredProperty">required</a>, <a href="InputControlState.html#validProperty">valid</a></code></div>
 </section>
 </li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -156,123 +146,43 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addValidationListener(java.lang.Runnable)" class="member-name-link">addValidationListener</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;listener)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds a validation listener to the collection of listeners associated with the input control state.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a><wbr>&lt;? extends javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultValueSupplier()" class="member-name-link">defaultValueSupplier</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Provides a supplier for the default value of the control's state.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final javafx.beans.property.StringProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#errorProperty()" class="member-name-link">errorProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Provides access to the property that holds error messages related to validation.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getError()" class="member-name-link">getError</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Retrieves the current error message associated with the input control's state.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.collections.ObservableList<wbr>&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getValue()" class="member-name-link">getValue</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the value of the <code>value</code> property.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#invalidateState()" class="member-name-link">invalidateState</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEmpty()" class="member-name-link">isEmpty</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Invalidates the current state of the input control and triggers a validation of its value.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEmpty()" class="member-name-link">isEmpty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Determines whether the input control's value is considered to be empty.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isRequired()" class="member-name-link">isRequired</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Determines whether the input control mandates a value.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isValid()" class="member-name-link">isValid</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setItems(java.util.Collection)" class="member-name-link">setItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&nbsp;arg)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks if the current state of the input control is valid.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeValidationListener(java.lang.Runnable)" class="member-name-link">removeValidationListener</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;listener)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Removes a validation listener from the collection of validation listeners associated
- with the input control state.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requiredProperty()" class="member-name-link">requiredProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Provides a property representing whether the input is required or not.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Resets the state of the input control to its default value and triggers validation.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setError(java.lang.String)" class="member-name-link">setError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Updates the error property with the provided error message and adjusts the validity state
- based on whether the error message is empty or not.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setItems(java.util.Collection)" class="member-name-link">setItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&nbsp;arg)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the value of this input control state with the provided <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link"><code>SequencedCollection</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setValue(javafx.collections.ObservableList)" class="member-name-link">setValue</a><wbr>(@Nullable javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&nbsp;arg)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setValue(javafx.collections.ObservableList)" class="member-name-link">setValue</a><wbr>(@Nullable javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&nbsp;arg)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the value of the <code>value</code> property.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validate()" class="member-name-link">validate</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Validates the current value of the input control using the provided validation function.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a><wbr>&lt;? super javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validateFunction()" class="member-name-link">validateFunction</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected javafx.beans.property.ListProperty<wbr>&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns a function that performs validation on the value managed by this <code>InputControlState</code>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validationListeners()" class="member-name-link">validationListeners</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns a collection of validation listeners associated with the input control state.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final javafx.beans.property.BooleanProperty</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the property indicating the validity of the input control's state.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected javafx.beans.property.ListProperty<wbr>&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#valueProperty()" class="member-name-link">valueProperty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Provides access to the property representing the current value of the input control.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.dua3.utility.fx.controls.InputControlState<wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#voidState()" class="member-name-link">voidState</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates and returns an <code>InputControlState</code> instance specifically designed for inputs
- that have no associated value (i.e., <code>Void</code> type).</div>
 </div>
 </div>
 </div>
-</div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-com.dua3.utility.fx.controls.InputControlState">Methods inherited from class&nbsp;com.dua3.utility.fx.controls.<a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a></h3>
+<code><a href="InputControlState.html#addValidationListener(java.lang.Runnable)">addValidationListener</a>, <a href="InputControlState.html#defaultValueSupplier()">defaultValueSupplier</a>, <a href="InputControlState.html#errorProperty()">errorProperty</a>, <a href="InputControlState.html#getError()">getError</a>, <a href="InputControlState.html#invalidateState()">invalidateState</a>, <a href="InputControlState.html#isRequired()">isRequired</a>, <a href="InputControlState.html#isValid()">isValid</a>, <a href="InputControlState.html#removeValidationListener(java.lang.Runnable)">removeValidationListener</a>, <a href="InputControlState.html#requiredProperty()">requiredProperty</a>, <a href="InputControlState.html#reset()">reset</a>, <a href="InputControlState.html#setError(java.lang.String)">setError</a>, <a href="InputControlState.html#validate()">validate</a>, <a href="InputControlState.html#validateFunction()">validateFunction</a>, <a href="InputControlState.html#validationListeners()">validationListeners</a>, <a href="InputControlState.html#validProperty()">validProperty</a>, <a href="InputControlState.html#voidState()">voidState</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -292,6 +202,8 @@ loadScripts(document, 'script');</script>
 <h3>value</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">javafx.beans.property.ListProperty&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;</span>&nbsp;<span class="element-name">valueProperty</span></div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputControlState.html#valueProperty()">valueProperty</a></code>&nbsp;in class&nbsp;<code><a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a>&lt;javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the property holding the value of type <code>R</code>, which may be <code>null</code></dd>
 <dt>See Also:</dt>
@@ -300,57 +212,6 @@ loadScripts(document, 'script');</script>
 <li><a href="#getValue()"><code>getValue()</code></a></li>
 <li><a href="#setValue(javafx.collections.ObservableList)"><code>setValue(ObservableList)</code></a></li>
 <li><a href="#valueProperty()"><code>valueProperty()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="requiredProperty">
-<h3>required</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">javafx.beans.property.BooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span></div>
-<div class="block">Provides a property representing whether the input is required or not.
- The property's value determines if the input control mandates a value.</div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="#isRequired()"><code>isRequired()</code></a></li>
-<li><a href="#requiredProperty()"><code>requiredProperty()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="validProperty">
-<h3>valid</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">javafx.beans.property.BooleanProperty</span>&nbsp;<span class="element-name">validProperty</span></div>
-<div class="block">Returns the property indicating the validity of the input control's state.</div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="#isValid()"><code>isValid()</code></a></li>
-<li><a href="#validProperty()"><code>validProperty()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="errorProperty">
-<h3>error</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">javafx.beans.property.StringProperty</span>&nbsp;<span class="element-name">errorProperty</span></div>
-<div class="block">Provides access to the property that holds error messages related to validation.
- This property can be used to observe or update the error state of an input control.</div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="#getError()"><code>getError()</code></a></li>
-<li><a href="#setError(java.lang.String)"><code>setError(String)</code></a></li>
-<li><a href="#errorProperty()"><code>errorProperty()</code></a></li>
 </ul>
 </dd>
 </dl>
@@ -409,6 +270,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setValue</span><wbr><span class="parameters">(@Nullable javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&nbsp;arg)</span></div>
 <div class="block">Sets the value of the <code>value</code> property.</div>
 <dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="InputControlState.html#setValue(R)">setValue</a></code>&nbsp;in class&nbsp;<code><a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a>&lt;javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&gt;</code></dd>
 <dt>Property description:</dt>
 <dt>Parameters:</dt>
 <dd><code>arg</code> - the value for the <code>value</code> property</dd>
@@ -426,9 +289,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="valueProperty()">
 <h3>valueProperty</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">javafx.beans.property.ListProperty&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;</span>&nbsp;<span class="element-name">valueProperty</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from class:&nbsp;<code><a href="InputControlState.html#valueProperty()">InputControlState</a></code></span></div>
 <div class="block">Provides access to the property representing the current value of the input control.
  The value can be updated or observed for changes.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="InputControlState.html#valueProperty()">valueProperty</a></code>&nbsp;in class&nbsp;<code><a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a>&lt;javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the <code>value</code> property</dd>
 <dt>See Also:</dt>
@@ -447,6 +313,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;</span>&nbsp;<span class="element-name">getValue</span>()</div>
 <div class="block">Gets the value of the <code>value</code> property.</div>
 <dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="InputControlState.html#getValue()">getValue</a></code>&nbsp;in class&nbsp;<code><a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a>&lt;javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&gt;</code></dd>
 <dt>Property description:</dt>
 <dt>Returns:</dt>
 <dd>the value of the <code>value</code> property</dd>
@@ -464,231 +332,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="isEmpty()">
 <h3>isEmpty</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isEmpty</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from class:&nbsp;<code><a href="InputControlState.html#isEmpty()">InputControlState</a></code></span></div>
 <div class="block">Determines whether the input control's value is considered to be empty.</div>
 <dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="InputControlState.html#isEmpty()">isEmpty</a></code>&nbsp;in class&nbsp;<code><a href="InputControlState.html" title="class in com.dua3.utility.fx.controls">InputControlState</a>&lt;javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd><code>true</code> if the input control's value is empty, otherwise <code>false</code>.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="requiredProperty()">
-<h3>requiredProperty</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">javafx.beans.property.BooleanProperty</span>&nbsp;<span class="element-name">requiredProperty</span>()</div>
-<div class="block">Provides a property representing whether the input is required or not.
- The property's value determines if the input control mandates a value.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a BooleanProperty that indicates whether the input is required</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="#isRequired()"><code>isRequired()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="validProperty()">
-<h3>validProperty</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">javafx.beans.property.BooleanProperty</span>&nbsp;<span class="element-name">validProperty</span>()</div>
-<div class="block">Returns the property indicating the validity of the input control's state.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a BooleanProperty representing whether the current state is valid.</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="#isValid()"><code>isValid()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="errorProperty()">
-<h3>errorProperty</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">javafx.beans.property.StringProperty</span>&nbsp;<span class="element-name">errorProperty</span>()</div>
-<div class="block">Provides access to the property that holds error messages related to validation.
- This property can be used to observe or update the error state of an input control.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a <code>StringProperty</code> representing the current error message.
-         If no error is present, the property will hold an empty string.</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="#getError()"><code>getError()</code></a></li>
-<li><a href="#setError(java.lang.String)"><code>setError(String)</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="validateFunction()">
-<h3>validateFunction</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</span>&nbsp;<span class="element-name">validateFunction</span>()</div>
-<div class="block">Returns a function that performs validation on the value managed by this <code>InputControlState</code>.
- The function accepts a value of type <code>R</code> or <code>null</code> and returns an <code>Optional&lt;String&gt;</code>
- representing the validation result. If the <code>Optional</code> is empty, the value is considered valid;
- otherwise, it contains an error message describing the validation failure.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a function used to validate the value of this control state</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="validationListeners()">
-<h3>validationListeners</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;</span>&nbsp;<span class="element-name">validationListeners</span>()</div>
-<div class="block">Returns a collection of validation listeners associated with the input control state.
- These listeners are executed whenever the validation logic is triggered, allowing for
- custom behaviors or updates in response to validation changes.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a collection of <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link"><code>Runnable</code></a> instances representing the validation listeners</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="defaultValueSupplier()">
-<h3>defaultValueSupplier</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends javafx.collections.ObservableList&lt;<a href="ListInputControlState.html" title="type parameter in ListInputControlState">S</a>&gt;&gt;</span>&nbsp;<span class="element-name">defaultValueSupplier</span>()</div>
-<div class="block">Provides a supplier for the default value of the control's state.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a> that supplies the default value, or null if there is no default value.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="invalidateState()">
-<h3>invalidateState</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">invalidateState</span>()</div>
-<div class="block">Invalidates the current state of the input control and triggers a validation of its value.
- This method ensures that the validation logic is executed on the JavaFX application thread.
- <p>
- The validation process may update the control's validation status, error messages, and invoke
- any associated validation listeners. By default, this operation is scheduled to run later
- on the JavaFX thread, ensuring thread safety.
- <p>
- It uses the <a href="../PlatformHelper.html#runLater(java.lang.Runnable)"><code>PlatformHelper.runLater(Runnable)</code></a> utility to schedule the validation logic.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="addValidationListener(java.lang.Runnable)">
-<h3>addValidationListener</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addValidationListener</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;listener)</span></div>
-<div class="block">Adds a validation listener to the collection of listeners associated with the input control state.
- The provided listener will be executed whenever the validation logic is triggered, allowing for
- custom behaviors or updates in response to validation changes.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>listener</code> - a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link"><code>Runnable</code></a> instance representing the validation listener to be added</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="removeValidationListener(java.lang.Runnable)">
-<h3>removeValidationListener</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">removeValidationListener</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;listener)</span></div>
-<div class="block">Removes a validation listener from the collection of validation listeners associated
- with the input control state. If the specified listener is present, it will be removed.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>listener</code> - the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link"><code>Runnable</code></a> instance representing the validation listener to remove</dd>
-<dt>Returns:</dt>
-<dd><code>true</code> if the listener was removed successfully, <code>false</code> otherwise</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="reset()">
-<h3>reset</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
-<div class="block">Resets the state of the input control to its default value and triggers validation.
- <p>
- This method invokes the default value supplier to retrieve the default value
- and assigns it to the input control's state through the <code>setValue</code> method.
- After setting the default value, it performs validation by calling the <code>validate</code> method
- to ensure the state reflects the appropriate validation results.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="validate()">
-<h3>validate</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">validate</span>()</div>
-<div class="block">Validates the current value of the input control using the provided validation function.
- Updates the validity state and error message based on the result of the validation.
- Executes any registered validation listeners after the validation process.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd><code>true</code> if the value is valid; <code>false</code> otherwise</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="isValid()">
-<h3>isValid</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isValid</span>()</div>
-<div class="block">Checks if the current state of the input control is valid.
- This method evaluates the validity based on the value of the <code>validProperty</code>.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd><code>true</code> if the input control's state is valid, otherwise <code>false</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="isRequired()">
-<h3>isRequired</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isRequired</span>()</div>
-<div class="block">Determines whether the input control mandates a value.
- This method checks the value of the required property to indicate if input is required.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd><code>true</code> if the input is required, otherwise <code>false</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="setError(java.lang.String)">
-<h3>setError</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</span></div>
-<div class="block">Updates the error property with the provided error message and adjusts the validity state
- based on whether the error message is empty or not.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>s</code> - the error message to set; an empty string indicates no error</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getError()">
-<h3>getError</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getError</span>()</div>
-<div class="block">Retrieves the current error message associated with the input control's state.
- The error message typically represents the result of the validation process.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the current error message as a <code>String</code>, or an empty string if no error is present</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="voidState()">
-<h3>voidState</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.dua3.utility.fx.controls.InputControlState&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</span>&nbsp;<span class="element-name">voidState</span>()</div>
-<div class="block">Creates and returns an <code>InputControlState</code> instance specifically designed for inputs
- that have no associated value (i.e., <code>Void</code> type). This state model is initialized
- with a default value supplier that always provides <code>null</code>.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>an <code>InputControlState&lt;Void&gt;</code> instance representing an input control state
-         that doesn't necessitate a specific value.</dd>
 </dl>
 </section>
 </li>
