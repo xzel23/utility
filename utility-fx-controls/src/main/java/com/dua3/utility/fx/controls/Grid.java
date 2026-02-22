@@ -322,7 +322,7 @@ public class Grid extends GridPane {
                         int rowStart = i;
                         for (int j = rowStart; j < Math.min(rowStart + columns, dataList.size()); j++) {
                             var rowEntry = dataList.get(j);
-                            if (rowEntry.visible && rowEntry.control.node() != null && rowEntry.label != null) {
+                            if (rowEntry.visible && rowEntry.label != null) {
                                 needsLabelRow = true;
                                 break;
                             }
@@ -448,7 +448,7 @@ public class Grid extends GridPane {
                 int rowStart = dataList.size() - c;
                 for (int j = rowStart; j < dataList.size(); j++) {
                     var rowEntry = dataList.get(j);
-                    if (rowEntry.visible && rowEntry.control.node() != null && rowEntry.label != null) {
+                    if (rowEntry.visible && rowEntry.label != null) {
                         needsLabelRow = true;
                         break;
                     }

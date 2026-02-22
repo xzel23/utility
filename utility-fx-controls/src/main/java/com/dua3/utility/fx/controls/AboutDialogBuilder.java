@@ -78,11 +78,11 @@ public class AboutDialogBuilder {
         this.messageFormatter = messageFormatter;
     }
 
-    private @Nullable String format(MessageFormatter.MessageFormatterArgs mfargs) {
+    private String format(MessageFormatter.MessageFormatterArgs mfargs) {
         return format(mfargs.fmt(), mfargs.args());
     }
 
-    private @Nullable String format(String fmt, @Nullable Object... args) {
+    private String format(String fmt, @Nullable Object... args) {
         return messageFormatter.format(fmt, args);
     }
 

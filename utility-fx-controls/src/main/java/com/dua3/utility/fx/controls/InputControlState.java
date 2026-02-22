@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  *
  * @param <R> the type of the value being managed
  */
-abstract class InputControlState<R> {
+public abstract class InputControlState<R> {
 
     private final BooleanProperty required = new SimpleBooleanProperty(true);
     private final BooleanProperty valid = new SimpleBooleanProperty(true);

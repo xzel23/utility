@@ -56,7 +56,7 @@ public abstract class ColumnDefBuilder<S, T, B extends ColumnDefBuilder<S, T, B>
     /**
      * A function used to extract a value of type {@code T} from an object of type {@code S}.
      */
-    protected Function<S, T> valueGetter = s -> null;
+    protected Function<S, T> valueGetter = s -> {throw new UnsupportedOperationException("Value getter not set");};
     /**
      * A {@code BiConsumer} used to set a new value in a row's backing object for this column.
      */

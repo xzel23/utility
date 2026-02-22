@@ -50,7 +50,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param args    the arguments to be formatted and substituted into the message template
      * @return the formatted message as a String
      */
-    default @Nullable String format(String message, @Nullable Object... args) {
+    default String format(String message, @Nullable Object... args) {
         return getMessageFormatter().format(message, args);
     }
 
@@ -60,7 +60,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param args the message template and arguments
      * @return the formatted message as a String
      */
-    default @Nullable String format(MessageFormatter.MessageFormatterArgs args) {
+    default String format(MessageFormatter.MessageFormatterArgs args) {
         return getMessageFormatter().format(args);
     }
 

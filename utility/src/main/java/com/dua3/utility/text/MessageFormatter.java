@@ -153,7 +153,7 @@ public interface MessageFormatter {
      * @param args the arguments to replace the placeholders in the format string
      * @return the formatted string where placeholders are replaced with the corresponding arguments
      */
-    @Nullable String format(String fmt, @Nullable Object... args);
+    String format(String fmt, @Nullable Object... args);
 
     /**
      * Formats the given format string by replacing placeholders with the provided arguments.
@@ -163,7 +163,7 @@ public interface MessageFormatter {
      * @param args an instance of {@link MessageFormatterArgs} holding the format string and arguments
      * @return the formatted string where placeholders are replaced with the corresponding arguments
      */
-    default @Nullable String format(MessageFormatterArgs args) {
+    default String format(MessageFormatterArgs args) {
         return format(args.fmt(), args.args());
     }
 
@@ -262,10 +262,10 @@ public interface MessageFormatter {
         private static final MessageFormatterStringFormat DEFAULT_INSTANCE = new MessageFormatterStringFormat(Locale.getDefault());
 
         @Override
-        public @Nullable String format(String fmt, @Nullable Object... args) {
+        public String format(String fmt, @Nullable Object... args) {
             // empty text
             if (fmt.isEmpty() && args.length == 0) {
-                return null;
+                return "";
             }
             // literal string
             if (fmt.equals("\0")) {
@@ -309,7 +309,7 @@ public interface MessageFormatter {
         public String format(String fmt, @Nullable Object... args) {
             // empty text
             if (fmt.isEmpty() && args.length == 0) {
-                return null;
+                return "";
             }
             // literal string
             if (fmt.equals("\0")) {
