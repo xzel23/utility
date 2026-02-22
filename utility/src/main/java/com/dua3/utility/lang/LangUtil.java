@@ -188,7 +188,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the provided value does not satisfy the condition.
      * @deprecated use the allocation-free alternative {@link #checkArg(boolean, String, Object)} instead
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static <T> void checkArg(String argName, Predicate<T> condition, T value) {
         if (!condition.test(value)) {
             throw new IllegalArgumentException("invalid argument '" + argName + "': " + value);
@@ -204,7 +204,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @deprecated use the allocation-free alternative {@link #checkArg(boolean, String, Object)} instead
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void checkArg(boolean condition, Supplier<String> msg) throws IllegalArgumentException {
         if (!condition) {
             throw new IllegalArgumentException(msg.get());
@@ -221,7 +221,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the specified condition is false
      * @deprecated use the allocation-free alternative {@link #checkArg(boolean, String, Object)} instead
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void checkArg(boolean condition, String fmt, Object... fmtArgs) throws IllegalArgumentException {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!condition) {
@@ -1524,7 +1524,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or {@link Double#NaN}
      */
     public static double requireNonNegative(double value) {
-        return requireNonNegative(value, "value is negative: %f", value);
+        checkArg(value >= 0, "value must be non-negative: %f", value);
+        return value;
     }
 
     /**
@@ -1536,7 +1537,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or {@link Double#NaN}
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static double requireNonNegative(double value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value >= 0.0) {
@@ -1553,7 +1556,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative
      */
     public static float requireNonNegative(float value) {
-        return requireNonNegative(value, "value is negative: %f", value);
+        checkArg(value >= 0, "value must be non-negative: %f", value);
+        return value;
     }
 
     /**
@@ -1565,7 +1569,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static float requireNonNegative(float value, String fmt, Object... fmtArgs) {
         return (float) requireNonNegative((double) value, fmt, fmtArgs);
     }
@@ -1578,7 +1584,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative
      */
     public static long requireNonNegative(long value) {
-        return requireNonNegative(value, "value is negative: %d", value);
+        checkArg(value >= 0, "value must be non-negative: %d", value);
+        return value;
     }
 
     /**
@@ -1590,7 +1597,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static long requireNonNegative(long value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value < 0) {
@@ -1607,7 +1616,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the given value is negative
      */
     public static int requireNonNegative(int value) {
-        return (int) requireNonNegative((long) value);
+        checkArg(value >= 0, "value must be non-negative: %d", value);
+        return value;
     }
 
     /**
@@ -1618,7 +1628,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static int requireNonNegative(int value, String fmt, Object... fmtArgs) {
         return (int) requireNonNegative((long) value, fmt, fmtArgs);
     }
@@ -1631,7 +1643,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the given value is negative
      */
     public static short requireNonNegative(short value) {
-        return (short) requireNonNegative((long) value);
+        checkArg(value >= 0, "value must be non-negative: %d", value);
+        return value;
     }
 
     /**
@@ -1642,7 +1655,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static short requireNonNegative(short value, String fmt, Object... fmtArgs) {
         return (short) requireNonNegative((long) value, fmt, fmtArgs);
     }
@@ -1655,7 +1670,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static double requirePositive(double value) {
-        return requirePositive(value, "value must be greater than 0: %f", value);
+        checkArg(value > 0, "value must be positive: %f", value);
+        return value;
     }
 
     /**
@@ -1667,7 +1683,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static double requirePositive(double value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value > 0.0) {
@@ -1684,7 +1702,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static float requirePositive(float value) {
-        return requirePositive(value, "value must be greater than 0: %f", value);
+        checkArg(value > 0, "value must be positive: %f", value);
+        return value;
     }
 
     /**
@@ -1696,7 +1715,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static float requirePositive(float value, String fmt, Object... fmtArgs) {
         return (float) requirePositive((double) value, fmt, fmtArgs);
     }
@@ -1709,7 +1730,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static long requirePositive(long value) {
-        return requirePositive(value, "value must be greater than 0: %d", value);
+        checkArg(value > 0, "value must be positive: %d", value);
+        return value;
     }
 
     /**
@@ -1721,7 +1743,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static long requirePositive(long value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value <= 0) {
@@ -1739,7 +1763,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static int requirePositive(int value) {
-        return (int) requirePositive((long) value);
+        checkArg(value > 0, "value must be positive: %d", value);
+        return value;
     }
 
     /**
@@ -1751,7 +1776,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static int requirePositive(int value, String fmt, Object... fmtArgs) {
         return (int) requirePositive((long) value, fmt, fmtArgs);
     }
@@ -1765,7 +1792,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static short requirePositive(short value) {
-        return (short) requirePositive((long) value);
+        checkArg(value > 0, "value must be positive: %d", value);
+        return value;
     }
 
     /**
@@ -1777,7 +1805,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static short requirePositive(short value, String fmt, Object... fmtArgs) {
         return (short) requirePositive((long) value, fmt, fmtArgs);
     }
@@ -1790,7 +1820,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static double requireNegative(double value) {
-        return requireNegative(value, "value must be less than 0: %f", value);
+        checkArg(value < 0, "value must be negative: %f", value);
+        return value;
     }
 
     /**
@@ -1801,7 +1832,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static double requireNegative(double value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value < 0.0) {
@@ -1818,7 +1851,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static float requireNegative(float value) {
-        return requireNegative(value, "value must be less than 0: %f", value);
+        checkArg(value < 0, "value must be negative: %f", value);
+        return value;
     }
 
     /**
@@ -1829,7 +1863,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static float requireNegative(float value, String fmt, Object... fmtArgs) {
         return (float) requireNegative((double) value, fmt, fmtArgs);
     }
@@ -1842,7 +1878,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static long requireNegative(long value) {
-        return requireNegative(value, "value must be less than 0: %d", value);
+        checkArg(value < 0, "value must be negative: %d", value);
+        return value;
     }
 
     /**
@@ -1853,7 +1890,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static long requireNegative(long value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value >= 0) {
@@ -1870,7 +1909,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static int requireNegative(int value) {
-        return (int) requireNegative((long) value);
+        checkArg(value < 0, "value must be negative: %d", value);
+        return value;
     }
 
     /**
@@ -1883,7 +1923,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static int requireNegative(int value, String fmt, Object... fmtArgs) {
         return (int) requireNegative((long) value, fmt, fmtArgs);
     }
@@ -1896,7 +1938,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static short requireNegative(short value) {
-        return (short) requireNegative((long) value);
+        checkArg(value < 0, "value must be negative: %d", value);
+        return value;
     }
 
     /**
@@ -1909,7 +1952,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static short requireNegative(short value, String fmt, Object... fmtArgs) {
         return (short) requireNegative((long) value, fmt, fmtArgs);
     }
@@ -1924,7 +1969,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not within the specified interval
      */
     public static double requireInInterval(double value, double min, double max) {
-        return requireInInterval(value, min, max, "value must be between %f and %f: %f", min, max, value);
+        checkArg(isBetween(value, min, max), "value must be between %f and %f: %f", min, max, value);
+        return value;
     }
 
     /**
@@ -1937,7 +1983,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not within the interval
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static double requireInInterval(double value, double min, double max, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!isBetween(value, min, max)) {
@@ -1956,7 +2004,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not within the specified interval
      */
     public static float requireInInterval(float value, float min, float max) {
-        return requireInInterval(value, min, max, "value must be between %f and %f: %f", min, max, value);
+        checkArg(isBetween(value, min, max), "value must be between %f and %f: %f", min, max, value);
+        return value;
     }
 
     /**
@@ -1969,7 +2018,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not within the interval
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static float requireInInterval(float value, float min, float max, String fmt, Object... fmtArgs) {
         return (float) requireInInterval(value, min, (double) max, fmt, fmtArgs);
     }
@@ -1984,7 +2035,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not within the specified interval
      */
     public static long requireInInterval(long value, long min, long max) {
-        return requireInInterval(value, min, max, "value must be between %d and %d: %d", min, max, value);
+        checkArg(isBetween(value, min, max), "value must be between %d and %d: %d", min, max, value);
+        return value;
     }
 
     /**
@@ -1997,7 +2049,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not within the interval
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static long requireInInterval(long value, long min, long max, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!isBetween(value, min, max)) {
@@ -2016,7 +2070,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static int requireInInterval(int value, int min, int max) {
-        return (int) requireInInterval(value, min, (long) max);
+        checkArg(isBetween(value, min, max), "value must be between %d and %d: %d", min, max, value);
+        return value;
     }
 
     /**
@@ -2030,7 +2085,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is outside the interval
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static int requireInInterval(int value, int min, int max, String fmt, Object... fmtArgs) {
         return (int) requireInInterval(value, min, (long) max, fmt, fmtArgs);
     }
@@ -2045,7 +2102,8 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static short requireInInterval(short value, short min, short max) {
-        return (short) requireInInterval(value, min, (long) max);
+        checkArg(isBetween(value, min, max), "value must be between %d and %d: %d", min, max, value);
+        return value;
     }
 
     /**
@@ -2059,7 +2117,9 @@ public final class LangUtil {
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is outside the interval
+     * @deprecated use the non-deprecate allocation-free version instead
      */
+    @Deprecated(forRemoval = true)
     public static short requireInInterval(short value, short min, short max, String fmt, Object... fmtArgs) {
         return (short) requireInInterval(value, min, (long) max, fmt, fmtArgs);
     }
