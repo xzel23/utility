@@ -239,6 +239,8 @@ could not be loaded.
 ### 21.1.0
 
 - BREAKING: moved TableViews utility class to com.dua3.utility.fx.controls
+- DEPRECATIONS: In LangUtil, non-allocation-free methods check(), checkArg(), and require...() have been marked
+  as deprecated for removal
 - added TableViews.newTableView(), with options to make rows and columns reorderable,
   resizeable and sortable; support for text based and generic node based cells.
 - enhance `TableViews` with flexible column resizing and weight-based layout
