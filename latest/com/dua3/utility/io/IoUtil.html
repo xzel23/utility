@@ -308,6 +308,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Load text with unknown character encoding.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link">Appendable</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nullAppendable()" class="member-name-link">nullAppendable</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns an instance of a no-op Appendable that silently ignores all appended data.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Formatter.html" title="class or interface in java.util" class="external-link">Formatter</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nullFormatter()" class="member-name-link">nullFormatter</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates and returns a new Formatter instance that discards all formatted output.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#openInputStream(java.net.URI)" class="member-name-link">openInputStream</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&nbsp;uri)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -1472,6 +1482,33 @@ loadScripts(document, 'script');</script>
 <dd><code>app</code> - the Appendable to be converted or wrapped as a Writer</dd>
 <dt>Returns:</dt>
 <dd>a Writer instance corresponding to the provided Appendable</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="nullAppendable()">
+<h3>nullAppendable</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link">Appendable</a></span>&nbsp;<span class="element-name">nullAppendable</span>()</div>
+<div class="block">Returns an instance of a no-op Appendable that silently ignores all appended data.
+ This can be useful in scenarios where an Appendable is required, but the output is not needed.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>an Appendable instance that performs no operations.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="nullFormatter()">
+<h3>nullFormatter</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Formatter.html" title="class or interface in java.util" class="external-link">Formatter</a></span>&nbsp;<span class="element-name">nullFormatter</span>()</div>
+<div class="block">Creates and returns a new Formatter instance that discards all formatted output.
+ <p>
+ Note that this method is not allocation-free since each call creates a new Formatter instance.
+ <p>
+ The returned Formatter uses the root locale for formatting.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a Formatter that writes to a null output destination, effectively ignoring all input.</dd>
 </dl>
 </section>
 </li>
