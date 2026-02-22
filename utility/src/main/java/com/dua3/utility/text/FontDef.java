@@ -661,8 +661,9 @@ public final class FontDef {
      * @return fontstyle definition
      */
     public String getCssStyle() {
-        boolean isUnderline = underline != null && underline;
-        boolean isStrikeThrough = strikeThrough != null && strikeThrough;
+        boolean isUnderline = underline == Boolean.TRUE;
+        boolean isStrikeThrough = strikeThrough == Boolean.TRUE;
+
         StringBuilder css = new StringBuilder(100);
         // Appends font families to CSS string
         if (families != null) {
@@ -675,8 +676,8 @@ public final class FontDef {
             css.append("; ");
         }
         appendIfNonNull(css, size, FONT_SIZE, size, "pt; ");
-        appendIfNonNull(css, bold, FONT_WEIGHT, bold ? BOLD : NORMAL, "; ");
-        appendIfNonNull(css, italic, FONT_STYLE, italic ? ITALIC : NORMAL, "; ");
+        appendIfNonNull(css, bold, FONT_WEIGHT, bold == Boolean.TRUE ? BOLD : NORMAL, "; ");
+        appendIfNonNull(css, italic, FONT_STYLE, italic == Boolean.TRUE? ITALIC : NORMAL, "; ");
 
         // Appends underline/strike‑through styles when specified
         if (isStrikeThrough || isUnderline) {
