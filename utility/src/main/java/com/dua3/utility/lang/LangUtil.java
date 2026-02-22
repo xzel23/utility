@@ -132,46 +132,145 @@ public final class LangUtil {
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt));
     }
 
+    /**
+     * Checks the provided condition and throws an {@link IllegalArgumentException}
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @param value the value to be formatted into the exception message
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
     public static void checkArg(boolean condition, String fmt, @Nullable Object value) {
         assert isFormatValid(fmt, value) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, value));
     }
 
+    /**
+     * Checks the provided condition and throws an {@link IllegalArgumentException}
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @param v1 the first value to be formatted into the exception message
+     * @param v2 the second value to be formatted into the exception message
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
     public static void checkArg(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2));
     }
 
+    /**
+     * Checks the provided condition and throws an {@link IllegalArgumentException}
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @param v1 the first value to be formatted into the exception message
+     * @param v2 the second value to be formatted into the exception message
+     * @param v3 the third value to be formatted into the exception message
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
     public static void checkArg(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2, @Nullable Object v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2, v3));
     }
 
+    /**
+     * Checks the provided condition and throws an {@link IllegalArgumentException}
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @param value the value to be formatted into the exception message
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
     public static void checkArg(boolean condition, String fmt, long value) {
         assert isFormatValid(fmt, value) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, value));
     }
 
+    /**
+     * Checks the provided condition and throws an {@link IllegalArgumentException}
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @param v1 the first value to be formatted into the exception message
+     * @param v2 the second value to be formatted into the exception message
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
     public static void checkArg(boolean condition, String fmt, long v1, long v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2));
     }
 
+    /**
+     * Checks the provided condition and throws an {@link IllegalArgumentException}
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @param v1 the first value to be formatted into the exception message
+     * @param v2 the second value to be formatted into the exception message
+     * @param v3 the third value to be formatted into the exception message
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
     public static void checkArg(boolean condition, String fmt, long v1, long v2, long v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2, v3));
     }
 
+    /**
+     * Checks the provided condition and throws an {@link IllegalArgumentException}
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @param value the value to be formatted into the exception message
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
     public static void checkArg(boolean condition, String fmt, double value) {
         assert isFormatValid(fmt, value) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, value));
     }
 
+    /**
+     * Checks the provided condition and throws an {@link IllegalArgumentException}
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @param v1 the first value to be formatted into the exception message
+     * @param v2 the second value to be formatted into the exception message
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
     public static void checkArg(boolean condition, String fmt, double v1, double v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2));
     }
 
+    /**
+     * Checks the provided condition and throws an {@link IllegalArgumentException}
+     * with a formatted message if the condition is false.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt the format string to use for the exception message; must be a valid format
+     * @param v1 the first value to be formatted into the exception message
+     * @param v2 the second value to be formatted into the exception message
+     * @param v3 the third value to be formatted into the exception message
+     * @throws IllegalArgumentException if the condition is false
+     * @throws AssertionError if the format string is invalid
+     */
     public static void checkArg(boolean condition, String fmt, double v1, double v2, double v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2, v3));
@@ -285,46 +384,127 @@ public final class LangUtil {
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt));
     }
 
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt       message format (see {@link String#format(String, Object...)})
+     * @param v1        the first value to be formatted into the exception message
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
+     */
     public static void check(boolean condition, String fmt, @Nullable Object v1) {
         assert isFormatValid(fmt, v1) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1));
     }
 
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt       message format (see {@link String#format(String, Object...)})
+     * @param v1        the first value to be formatted into the exception message
+     * @param v2        the second value to be formatted into the exception message
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
+     */
     public static void check(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2));
     }
 
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt       message format (see {@link String#format(String, Object...)})
+     * @param v1        the first value to be formatted into the exception message
+     * @param v2        the second value to be formatted into the exception message
+     * @param v3        the third value to be formatted into the exception message
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
+     */
     public static void check(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2, @Nullable Object v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2, v3));
     }
 
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt       message format (see {@link String#format(String, Object...)})
+     * @param v1        the value to be formatted into the exception message
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
+     */
     public static void check(boolean condition, String fmt, long v1) {
         assert isFormatValid(fmt, v1) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1));
     }
 
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt       message format (see {@link String#format(String, Object...)})
+     * @param v1        the first value to be formatted into the exception message
+     * @param v2        the second value to be formatted into the exception message
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
+     */
     public static void check(boolean condition, String fmt, long v1, long v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2));
     }
 
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt       message format (see {@link String#format(String, Object...)})
+     * @param v1        the first value to be formatted into the exception message
+     * @param v2        the second value to be formatted into the exception message
+     * @param v3        the third value to be formatted into the exception message
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
+     */
     public static void check(boolean condition, String fmt, long v1, long v2, long v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2, v3));
     }
 
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt       message format (see {@link String#format(String, Object...)})
+     * @param v1        the value to be formatted into the exception message
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
+     */
     public static void check(boolean condition, String fmt, double v1) {
         assert isFormatValid(fmt, v1) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1));
     }
 
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt       message format (see {@link String#format(String, Object...)})
+     * @param v1        the first value to be formatted into the exception message
+     * @param v2        the second value to be formatted into the exception message
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
+     */
     public static void check(boolean condition, String fmt, double v1, double v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2));
     }
 
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param condition the condition to check; if false, an exception is thrown
+     * @param fmt       message format (see {@link String#format(String, Object...)})
+     * @param v1        the first value to be formatted into the exception message
+     * @param v2        the second value to be formatted into the exception message
+     * @param v3        the third value to be formatted into the exception message
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
+     */
     public static void check(boolean condition, String fmt, double v1, double v2, double v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2, v3));
@@ -1093,7 +1273,7 @@ public final class LangUtil {
      * @param a the lower bound
      * @param b the upper bound
      * @return true, exactly if a ≤ x and x ≤ b
-     * @throws IllegalArgumentException if the intervall is invalid
+     * @throws IllegalArgumentException if the interval is invalid
      */
     public static boolean isBetween(long x, long a, long b) {
         if (a <= x && x <= b) {
@@ -1112,7 +1292,7 @@ public final class LangUtil {
      * @param a the lower bound
      * @param b the upper bound
      * @return true, exactly if a ≤ x and x ≤ b
-     * @throws IllegalArgumentException if the intervall is invalid
+     * @throws IllegalArgumentException if the interval is invalid
      */
     public static boolean isBetween(double x, double a, double b) {
         if (a <= x && x <= b) {
@@ -1529,10 +1709,10 @@ public final class LangUtil {
     }
 
     /**
-     * Ensures that a given long value is non-negative. If the value is negative, an {@link IllegalArgumentException}
+     * Ensures that a given double value is non-negative. If the value is negative or {@link Double#NaN}, an {@link IllegalArgumentException}
      * is thrown with the specified format string and arguments.
      *
-     * @param value the long value to ensure non-negativity
+     * @param value the double value to ensure non-negativity
      * @param fmt   the format string for the error message
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
@@ -1542,18 +1722,18 @@ public final class LangUtil {
     @Deprecated(forRemoval = true)
     public static double requireNonNegative(double value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
-        if (value >= 0.0) {
-            return value;
+        if (!(value >= 0.0)) {
+            throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
         }
-        throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
+        return value;
     }
 
     /**
-     * Returns the given value if it is non-negative, otherwise throws an IllegalArgumentException with a specified error message.
+     * Returns the given value if it is non-negative, otherwise throws an {@link IllegalArgumentException} with a specified error message.
      *
      * @param value the value to check
      * @return the given value
-     * @throws IllegalArgumentException if the value is negative
+     * @throws IllegalArgumentException if the value is negative or {@link Float#NaN}
      */
     public static float requireNonNegative(float value) {
         checkArg(value >= 0, "value must be non-negative: %f", value);
@@ -1561,14 +1741,14 @@ public final class LangUtil {
     }
 
     /**
-     * Ensures that a given long value is non-negative. If the value is negative, an {@link IllegalArgumentException}
+     * Ensures that a given float value is non-negative. If the value is negative or {@link Float#NaN}, an {@link IllegalArgumentException}
      * is thrown with the specified format string and arguments.
      *
-     * @param value the long value to ensure non-negativity
+     * @param value the float value to ensure non-negativity
      * @param fmt   the format string for the error message
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
-     * @throws IllegalArgumentException if the value is negative
+     * @throws IllegalArgumentException if the value is negative or {@link Float#NaN}
      * @deprecated use the non-deprecate allocation-free version instead
      */
     @Deprecated(forRemoval = true)
@@ -1621,7 +1801,8 @@ public final class LangUtil {
     }
 
     /**
-     * Checks if the given value is a non-negative integer.
+     * Checks if the given value is a non-negative integer. If the value is negative, an {@link IllegalArgumentException}
+     * is thrown with the specified format string and arguments.
      *
      * @param value The value to be checked.
      * @param fmt   the format string for the error message
@@ -1648,7 +1829,8 @@ public final class LangUtil {
     }
 
     /**
-     * Checks if the given value is a non-negative integer.
+     * Checks if the given value is non-negative. If the value is negative, an {@link IllegalArgumentException}
+     * is thrown with the specified format string and arguments.
      *
      * @param value The value to be checked.
      * @param fmt   the format string for the error message
@@ -1682,24 +1864,24 @@ public final class LangUtil {
      * @param fmt   the format string for the error message
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
-     * @throws IllegalArgumentException if the value is negative or zero
+     * @throws IllegalArgumentException if the value is negative or zero or {@link Double#NaN}
      * @deprecated use the non-deprecate allocation-free version instead
      */
     @Deprecated(forRemoval = true)
     public static double requirePositive(double value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
-        if (value > 0.0) {
-            return value;
+        if (!(value > 0.0)) {
+            throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
         }
-        throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
+        return value;
     }
 
     /**
-     * Returns the specified value if it is greater than 0. Otherwise, throws an IllegalArgumentException with a specific error message.
+     * Returns the specified value if it is greater than 0. Otherwise, throws an {@link IllegalArgumentException} with a specific error message.
      *
      * @param value the value to be checked
      * @return the given value
-     * @throws IllegalArgumentException if the value is negative or zero
+     * @throws IllegalArgumentException if the value is negative or zero or {@link Float#NaN}
      */
     public static float requirePositive(float value) {
         checkArg(value > 0, "value must be positive: %f", value);
@@ -1714,7 +1896,7 @@ public final class LangUtil {
      * @param fmt   the format string for the error message
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
-     * @throws IllegalArgumentException if the value is negative or zero
+     * @throws IllegalArgumentException if the value is negative or zero or {@link Float#NaN}
      * @deprecated use the non-deprecate allocation-free version instead
      */
     @Deprecated(forRemoval = true)
@@ -1768,8 +1950,8 @@ public final class LangUtil {
     }
 
     /**
-     * Returns the absolute value of the given integer if it is positive.
-     * If the value is negative, it throws an IllegalArgumentException with a specified error message formatted using the given format string and arguments.
+     * Ensures that the given value is positive. If it is not, throws an {@link IllegalArgumentException} with a specified
+     * error message formatted using the given format string and arguments.
      *
      * @param value The integer value to be checked.
      * @param fmt   the format string for the error message
@@ -1797,8 +1979,8 @@ public final class LangUtil {
     }
 
     /**
-     * Returns the absolute value of the given integer if it is positive.
-     * If the value is negative, it throws an IllegalArgumentException with a specified error message formatted using the given format string and arguments.
+     * Ensures that the given value is positive. If it is not, throws an {@link IllegalArgumentException} with a specified
+     * error message formatted using the given format string and arguments.
      *
      * @param value The integer value to be checked.
      * @param fmt   the format string for the error message
@@ -1825,22 +2007,23 @@ public final class LangUtil {
     }
 
     /**
-     * Throws an IllegalArgumentException if the specified value is not negative.
+     * Checks if the given value is negative. If it is not, throws an {@link IllegalArgumentException} with a formatted
+     * error message using the provided format string and arguments.
      *
      * @param value the value to check
      * @param fmt   the format string for the error message
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
-     * @throws IllegalArgumentException if the value is not negative
+     * @throws IllegalArgumentException if the value is not negative or {@link Double#NaN}
      * @deprecated use the non-deprecate allocation-free version instead
      */
     @Deprecated(forRemoval = true)
     public static double requireNegative(double value, String fmt, Object... fmtArgs) {
         assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
-        if (value < 0.0) {
-            return value;
+        if (!(value < 0.0)) {
+            throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
         }
-        throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, fmtArgs));
+        return value;
     }
 
     /**
@@ -1848,7 +2031,7 @@ public final class LangUtil {
      *
      * @param value the value to be checked
      * @return the given value
-     * @throws IllegalArgumentException if the value is not negative
+     * @throws IllegalArgumentException if the value is not negative or {@link Float#NaN}
      */
     public static float requireNegative(float value) {
         checkArg(value < 0, "value must be negative: %f", value);
@@ -1856,13 +2039,14 @@ public final class LangUtil {
     }
 
     /**
-     * Throws an IllegalArgumentException if the specified value is not negative.
+     * Checks if the given value is negative. If it is not, throws an {@link IllegalArgumentException} with a formatted
+     * error message using the provided format string and arguments.
      *
      * @param value the value to check
      * @param fmt   the format string for the error message
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
-     * @throws IllegalArgumentException if the value is not negative
+     * @throws IllegalArgumentException if the value is not negative or {@link Float#NaN}
      * @deprecated use the non-deprecate allocation-free version instead
      */
     @Deprecated(forRemoval = true)
@@ -1871,9 +2055,9 @@ public final class LangUtil {
     }
 
     /**
-     * Checks if the given value is a negative number.
+     * Ensures that the given value is negative. If it is not, throws an {@link IllegalArgumentException}.
      *
-     * @param value the value to be checked
+     * @param value the long value to be checked
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
      */
@@ -1902,9 +2086,9 @@ public final class LangUtil {
     }
 
     /**
-     * Returns the negative value of the given integer value. If the value is already negative, then it is returned as is.
+     * Ensures that the given value is negative. If it is not, throws an {@link IllegalArgumentException}.
      *
-     * @param value the integer value to be checked and converted to negative
+     * @param value the integer value to be checked
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
      */
@@ -1914,9 +2098,8 @@ public final class LangUtil {
     }
 
     /**
-     * Returns the negative value of the given integer if it is not already negative.
-     * Otherwise, it returns the same value. The optional format string and arguments
-     * can be used to specify a message if the value is not negative.
+     * Ensures that the given value is negative. If it is not, throws an {@link IllegalArgumentException} with a specified
+     * error message formatted using the given format string and arguments.
      *
      * @param value the integer value to be checked
      * @param fmt   the format string for the error message
@@ -1931,9 +2114,9 @@ public final class LangUtil {
     }
 
     /**
-     * Returns the negative value of the given integer value. If the value is already negative, then it is returned as is.
+     * Ensures that the given value is negative. If it is not, throws an {@link IllegalArgumentException}.
      *
-     * @param value the integer value to be checked and converted to negative
+     * @param value the short value to be checked
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
      */
@@ -1943,11 +2126,10 @@ public final class LangUtil {
     }
 
     /**
-     * Returns the negative value of the given integer if it is not already negative.
-     * Otherwise, it returns the same value. The optional format string and arguments
-     * can be used to specify a message if the value is not negative.
+     * Ensures that the given value is negative. If it is not, throws an {@link IllegalArgumentException} with a specified
+     * error message formatted using the given format string and arguments.
      *
-     * @param value the integer value to be checked
+     * @param value the short value to be checked
      * @param fmt   the format string for the error message
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
@@ -1966,7 +2148,7 @@ public final class LangUtil {
      * @param min the minimum value of the interval (inclusive)
      * @param max the maximum value of the interval (inclusive)
      * @return the given value
-     * @throws IllegalArgumentException if the value is not within the specified interval
+     * @throws IllegalArgumentException if the value is not within the specified interval or {@link Double#NaN}
      */
     public static double requireInInterval(double value, double min, double max) {
         checkArg(isBetween(value, min, max), "value must be between %f and %f: %f", min, max, value);
@@ -1982,7 +2164,7 @@ public final class LangUtil {
      * @param fmt   the format string for the error message
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
-     * @throws IllegalArgumentException if the value is not within the interval
+     * @throws IllegalArgumentException if the value is not within the interval or {@link Double#NaN}
      * @deprecated use the non-deprecate allocation-free version instead
      */
     @Deprecated(forRemoval = true)
@@ -2001,7 +2183,7 @@ public final class LangUtil {
      * @param min the minimum value of the interval (inclusive)
      * @param max the maximum value of the interval (inclusive)
      * @return the given value
-     * @throws IllegalArgumentException if the value is not within the specified interval
+     * @throws IllegalArgumentException if the value is not within the specified interval or {@link Float#NaN}
      */
     public static float requireInInterval(float value, float min, float max) {
         checkArg(isBetween(value, min, max), "value must be between %f and %f: %f", min, max, value);
@@ -2017,7 +2199,7 @@ public final class LangUtil {
      * @param fmt   the format string for the error message
      * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
-     * @throws IllegalArgumentException if the value is not within the interval
+     * @throws IllegalArgumentException if the value is not within the interval or {@link Float#NaN}
      * @deprecated use the non-deprecate allocation-free version instead
      */
     @Deprecated(forRemoval = true)
@@ -2040,7 +2222,8 @@ public final class LangUtil {
     }
 
     /**
-     * Checks if the given value is within the specified interval and throws an exception if it is not.
+     * Checks if the given value is within the specified interval. If the value is outside the interval, an {@link IllegalArgumentException}
+     * is thrown with the specified format string and arguments.
      *
      * @param value the value to check
      * @param min   the minimum value of the interval (inclusive)
@@ -2075,8 +2258,8 @@ public final class LangUtil {
     }
 
     /**
-     * Ensures that the given value is within the specified interval. If the value is outside the interval, an exception
-     * is thrown with a formatted error message.
+     * Checks if the given value is within the specified interval. If the value is outside the interval, an {@link IllegalArgumentException}
+     * is thrown with the specified format string and arguments.
      *
      * @param value the value to check
      * @param min   the minimum value in the interval (inclusive)
@@ -2107,8 +2290,8 @@ public final class LangUtil {
     }
 
     /**
-     * Ensures that the given value is within the specified interval. If the value is outside the interval, an exception
-     * is thrown with a formatted error message.
+     * Checks if the given value is within the specified interval. If the value is outside the interval, an {@link IllegalArgumentException}
+     * is thrown with the specified format string and arguments.
      *
      * @param value the value to check
      * @param min   the minimum value in the interval (inclusive)
