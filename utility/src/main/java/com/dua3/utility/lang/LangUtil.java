@@ -341,7 +341,7 @@ public final class LangUtil {
      * @param fmtArgs the arguments to be applied to the format string
      * @return true if the format string is valid with the provided arguments, false otherwise
      */
-    private static boolean isFormatValid(String fmt, Object... fmtArgs) {
+    private static boolean isFormatValid(String fmt, @Nullable Object... fmtArgs) {
         try {
             IoUtil.nullFormatter().format(fmt, fmtArgs);
             return true;
