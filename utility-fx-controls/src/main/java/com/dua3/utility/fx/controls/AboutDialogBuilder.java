@@ -340,7 +340,7 @@ public class AboutDialogBuilder {
      */
     public AboutDialogBuilder expandableContent(String fmt, Object... args) {
         String text = format(fmt, args);
-        if (text == null || text.isBlank()) {
+        if (text.isBlank()) {
             expandableContent = null;
             return this;
         }
@@ -459,7 +459,7 @@ public class AboutDialogBuilder {
      */
     private void addLabel(Collection<Node> nodes, String id, String fmt, Object... args) {
         String text = format(fmt, args);
-        if (text != null && !text.isEmpty()) {
+        if (!text.isEmpty()) {
             Label label = new Label(text);
             label.setId(id);
             nodes.add(label);

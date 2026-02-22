@@ -264,7 +264,7 @@ public interface MessageFormatter {
         @Override
         public String format(String fmt, @Nullable Object... args) {
             // empty text
-            if (fmt.isEmpty() && args.length == 0) {
+            if (fmt.isEmpty()) {
                 return "";
             }
             // literal string
@@ -308,7 +308,7 @@ public interface MessageFormatter {
         @Override
         public String format(String fmt, @Nullable Object... args) {
             // empty text
-            if (fmt.isEmpty() && args.length == 0) {
+            if (fmt.isEmpty()) {
                 return "";
             }
             // literal string
@@ -343,10 +343,10 @@ public interface MessageFormatter {
      */
     record MessageFormatterI18n(I18N i18n) implements MessageFormatter {
         @Override
-        public @Nullable String format(String fmt, @Nullable Object... args) {
+        public String format(String fmt, @Nullable Object... args) {
             // empty text
-            if (fmt.isEmpty() && args.length == 0) {
-                return null;
+            if (fmt.isEmpty()) {
+                return "";
             }
             // literal string
             if (fmt.equals("\0")) {
