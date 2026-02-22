@@ -238,10 +238,9 @@ public final class LangUtil {
      * @param fmtArgs the arguments to be applied to the format string
      * @return true if the format string is valid with the provided arguments, false otherwise
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static boolean isFormatValid(String fmt, Object... fmtArgs) {
         try {
-            String.format(fmt, fmtArgs);
+            IoUtil.nullFormatter().format(fmt, fmtArgs);
             return true;
         } catch (IllegalFormatException e) {
             LOG.error("Invalid format string: {}", fmt, e);

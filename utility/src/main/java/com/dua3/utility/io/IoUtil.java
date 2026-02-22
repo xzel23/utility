@@ -44,6 +44,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Formatter;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -1637,6 +1638,48 @@ public final class IoUtil {
         @Override
         public void close() throws IOException {
             // No action needed for Appendable
+        }
+    }
+
+    /**
+     * Returns an instance of a no-op Appendable that silently ignores all appended data.
+     * This can be useful in scenarios where an Appendable is required, but the output is not needed.
+     *
+     * @return an Appendable instance that performs no operations.
+     */
+    public static Appendable nullAppendable() {
+        return NullAppendable.INSTANCE;
+    }
+
+    /**
+     * Creates and returns a new Formatter instance that discards all formatted output.
+     * <p>
+     * Note that this method is not allocation-free since each call creates a new Formatter instance.
+     * <p>
+     * The returned Formatter uses the root locale for formatting.
+     *
+     * @return a Formatter that writes to a null output destination, effectively ignoring all input.
+     */
+    public static Formatter nullFormatter() {
+        return new Formatter(nullAppendable(), Locale.ROOT);
+    }
+
+    private static final class NullAppendable implements Appendable {
+        private static final NullAppendable INSTANCE = new NullAppendable();
+
+        @Override
+        public Appendable append(@Nullable CharSequence csq) throws IOException {
+            return this;
+        }
+
+        @Override
+        public Appendable append(@Nullable CharSequence csq, int start, int end) throws IOException {
+            return this;
+        }
+
+        @Override
+        public Appendable append(char c) throws IOException {
+            return this;
         }
     }
 }
