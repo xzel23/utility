@@ -402,7 +402,10 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
     }
 
     private void compactParts() {
-        parts.forEach(part -> part.attributes().compact());
+        // hot path: use indexed for loop for better performance
+        for (int i = 0; i < parts.size(); i++) {
+            parts.get(i).attributes().compact();
+        }
     }
 
     @SuppressWarnings("unchecked")
