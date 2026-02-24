@@ -236,6 +236,13 @@ could not be loaded.
 
 ## Changes
 
+### 21.1.1 (in development)
+
+- fix: text in WizardDialog is clipped
+- RichTextBuilder performance optimization
+- FxLauncher: command line option to set log level
+- small fixes and improvements
+
 ### 21.1.0
 
 - BREAKING: moved TableViews utility class to com.dua3.utility.fx.controls
