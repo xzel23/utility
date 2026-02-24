@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.DialogPane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
@@ -61,6 +62,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
      */
     WizardDialog(@Nullable Window parentWindow, boolean cancelable) {
         initOwner(parentWindow);
+        setResizable(true);
         this.cancelable = cancelable;
 
         setResultConverter(btn -> {
@@ -177,14 +179,13 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         for (var page : pages.values()) {
             InputDialogPane<?> pane = page.pane;
 
-            setDialogPane(pane);
             pane.applyCss();
             pane.layout();
 
-            double paneMinWidth = pane.minWidth(-1);
-            double paneMinHeight = pane.minHeight(-1);
-            double panePrefWidth = pane.prefWidth(-1);
-            double panePrefHeight = pane.prefHeight(-1);
+            double paneMinHeight = pane.minHeight(Region.USE_COMPUTED_SIZE);
+            double paneMinWidth = pane.minWidth(Region.USE_COMPUTED_SIZE);
+            double panePrefHeight = pane.prefHeight(Region.USE_COMPUTED_SIZE);
+            double panePrefWidth = pane.prefWidth(Region.USE_COMPUTED_SIZE);
 
             if (paneMinWidth > 0) {minWidth = Math.max(minWidth, paneMinWidth);}
             if (paneMinHeight > 0) {minHeight = Math.max(minHeight, paneMinHeight);}
@@ -195,8 +196,9 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         for (var page : pages.values()) {
             InputDialogPane<?> pane = page.pane;
             if (minWidth > 0) {pane.setMinWidth(minWidth);}
-            if (prefWidth > 0) {pane.setPrefWidth(prefWidth);}
-            if (prefHeight > 0) {pane.setPrefHeight(prefHeight);}
+            if (minHeight > 0) {pane.setMinHeight(minHeight);}
+            if (prefWidth > 0) {pane.setPrefWidth(Region.USE_COMPUTED_SIZE);}
+            if (prefHeight > 0) {pane.setPrefHeight(Region.USE_COMPUTED_SIZE);}
             pane.layout();
         }
     }
