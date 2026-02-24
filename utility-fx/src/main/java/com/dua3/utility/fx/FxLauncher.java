@@ -11,11 +11,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import org.slb4j.LogLevel;
+import org.slb4j.LoggingConfiguration;
 import org.slb4j.SLB4J;
 import org.slb4j.ext.LogBuffer;
 import org.slb4j.ext.fx.FxLogPane;
 import org.slb4j.ext.fx.FxLogWindow;
-import org.slb4j.filter.LoggerNamePrefixFilter;
+import org.slb4j.filter.LogLevelFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +91,7 @@ public final class FxLauncher {
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
 
     static @Nullable LogBuffer logBuffer = null;
-    static final LoggerNamePrefixFilter logFilter = new LoggerNamePrefixFilter("root");
+    static @Nullable LoggingConfiguration loggingConfiguration = null;
     static boolean showLogWindow = false;
     static boolean debug = false;
     static boolean enableAssertions = false;
@@ -283,6 +284,7 @@ public final class FxLauncher {
         }
 
         if (HAS_SLB4J) {
+            loggingConfiguration = SLB4J.getConfiguration();
             agp.addFlag(
                     I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.name"),
                     I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.description"),
@@ -296,31 +298,23 @@ public final class FxLauncher {
                     "--debug"
             );
             agp.addStringOption(
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_filter.name"),
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_filter.description"),
-                    Repetitions.ZERO_OR_ONE,
-                    "rules",
-                    v -> {
-                        String[] rules = v.split(",");
-                        for (String rule : rules) {
-                            String[] parts = rule.split("=");
-                            LangUtil.check(parts.length == 2, "Invalid log filter rule format: %s", rule);
-
-                            String prefix = parts[0];
-                            LangUtil.check(LOG_PREFIX_VALIDATOR.test(prefix), "Not a valid prefix: %s", prefix);
-
-                            String levelStr = parts[1];
-                            LogLevel level;
-                            try {
-                                level = LogLevel.valueOf(levelStr);
-                            } catch (IllegalArgumentException e) {
-                                throw new IllegalStateException("Not a valid log level: " + levelStr, e);
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_level.name"),
+                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_level.description"),
+                    Repetitions.ZERO_OR_MORE,
+                    "rule",
+                    rule -> {
+                        String[] parts = rule.split("=");
+                        switch (parts.length) {
+                            case 1 -> loggingConfiguration.setRootFilter(LogLevelFilter.pass(parseLogLevel(parts[0])));
+                            case 2 -> {
+                                String prefix = parts[0];
+                                LangUtil.check(LOG_PREFIX_VALIDATOR.test(prefix), "Not a valid logger name prefix: %s", prefix);
+                                loggingConfiguration.getLoggerFilter().setLevel(prefix, parseLogLevel(parts[1]));
                             }
-
-                            logFilter.setLevel(prefix, level);
+                            default -> throw new IllegalStateException("Invalid log level rule format: " + rule);
                         }
                     },
-                    "--log-filter", "-lf"
+                    "--log-level"
             );
             agp.addIntegerOption(
                     I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.name"),
@@ -329,15 +323,6 @@ public final class FxLauncher {
                     "size",
                     size -> logBuffer = new LogBuffer("Application Log Buffer", size),
                     "--log-buffer-size", "-ls"
-            );
-            agp.addEnumOption(
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log.level"),
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log.level.description"),
-                    Repetitions.ZERO_OR_ONE,
-                    "level",
-                    logFilter::setLevel,
-                    LogLevel.class,
-                    "--log-level"
             );
         }
 
@@ -358,7 +343,8 @@ public final class FxLauncher {
         arguments.handle();
 
         if (HAS_SLB4J) {
-            SLB4J.getDispatcher().setFilter(logFilter);
+            SLB4J.setConfiguration(loggingConfiguration);
+            LOG.debug("SLF4J configuration updated: {}", loggingConfiguration);
 
             if (showLogWindow || debug) {
                 if (logBuffer == null) {
@@ -390,6 +376,16 @@ public final class FxLauncher {
 
         log.info("application finished with rc: {}", rc);
         return rc;
+    }
+
+    private static LogLevel parseLogLevel(String levelStr) {
+        LogLevel level;
+        try {
+            level = LogLevel.valueOf(levelStr);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Not a valid log level: " + levelStr, e);
+        }
+        return level;
     }
 
     /**
