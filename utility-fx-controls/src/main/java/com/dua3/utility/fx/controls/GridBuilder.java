@@ -184,7 +184,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public <T> GridBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
-        return doAdd(id, null, control, row != null, true);
+        return doAdd(id, "", control, row != null, true);
     }
 
     @Override
@@ -220,7 +220,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public GridBuilder node(Node node) {
-        return doAdd(null, null, new ControlWrapper(node), row != null, true);
+        return doAdd(null, "", new ControlWrapper(node), row != null, true);
     }
 
     @Override
@@ -273,7 +273,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
         return this;
     }
 
-    private <T> GridBuilder doAdd(@Nullable String id, @Nullable String label, InputControl<T> control, boolean inline, boolean visible) {
+    private <T> GridBuilder doAdd(@Nullable String id, String label, InputControl<T> control, boolean inline, boolean visible) {
         // check for duplicate IDs
         if (id != null && !id.isEmpty() && !ids.add(id)) {
             throw new IllegalArgumentException(String.format(INPUT_WITH_ID_ALREADY_DEFINED, id));
@@ -281,7 +281,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
         // add inline nodes to the current row
         if (inline && row != null) {
-            if (label != null) {
+            if (!label.isEmpty()) {
                 row.add(new Label(label));
             }
             row.add(control);
@@ -402,7 +402,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public <T> GridBuilder inputControl(String id, InputControl<T> control) {
-        return doAdd(id, null, control, row != null, true);
+        return doAdd(id, "", control, row != null, true);
     }
 
     @Override

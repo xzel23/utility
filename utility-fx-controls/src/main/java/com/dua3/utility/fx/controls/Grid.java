@@ -85,7 +85,7 @@ public class Grid extends GridPane {
 
         updateColumnConstraints();
     }
-    
+
     /**
      * Retrieves the sequenced collection of {@link Meta} objects associated with this grid.
      *
