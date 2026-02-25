@@ -605,17 +605,42 @@ public final class LangUtil {
     }
 
     /**
-     * Re-throw checked exception as unchecked.
-     *
-     * @param e the exception
-     * @return RuntimeException, UncheckedIOException, or WrappedException depending on the type of e
+     * Converts a given {@link Throwable} into an appropriate unchecked exception and throws it.
+     * <ul>
+     * <li>If the throwable is a {@link RuntimeException}, it is rethrown as-is.
+     * <li>If the throwable is an {@link IOException}, it is wrapped in an {@link UncheckedIOException} and thrown.
+     * <li>For any other {@link Exception}, it is wrapped in a {@code WrappedException} and thrown.
+     * <li>For any remaining {@link Throwable}, a sneaky throw is performed, throwing the original Throwable.
+     * </ul>
+     * <p>
+     * The method is declared to return a generic value of type {@code <T>} to allow helping static analyzers with
+     * code like this without complaining about a missing return type::
+     * <pre>
+     * {@code
+     *     int foo() {
+     *         try {
+     *             return bar();
+     *         } catch (Exception e) {
+     *             return throwAsRuntimeException(e);
+     *         }
+     *     }
+     * }
+     * </pre>
+     * @param <T> the generic return type.
+     * @param t the throwable to be converted and thrown. Must not be null.
+     * @throws RuntimeException if the given throwable is a {@link RuntimeException}.
+     * @throws UncheckedIOException if the given throwable is an {@link IOException}.
+     * @throws WrappedException if the given throwable is a general {@link Exception}.
+     * @return nothing is returned as this method will always throw.
      */
-    public static RuntimeException wrapException(Exception e) {
-        return switch (e) {
-            case RuntimeException re -> re;
-            case IOException ioe -> new UncheckedIOException(ioe);
-            default -> new WrappedException(e);
-        };
+    public static <T> T throwAsRuntimeException(Throwable t) {
+        switch (t) {
+            case RuntimeException e -> throw e;
+            case IOException e -> throw new UncheckedIOException(e);
+            case Exception e -> throw new WrappedException(e);
+            default -> sneakyThrow(t);
+        }
+        return null;
     }
 
     /**
@@ -636,7 +661,7 @@ public final class LangUtil {
             try {
                 c.accept(arg);
             } catch (Exception e) {
-                throw wrapException(e);
+                throwAsRuntimeException(e);
             }
         };
     }
@@ -660,7 +685,7 @@ public final class LangUtil {
             try {
                 return s.get();
             } catch (Exception e) {
-                throw wrapException(e);
+                return throwAsRuntimeException(e);
             }
         };
     }
@@ -685,7 +710,7 @@ public final class LangUtil {
             try {
                 return f.apply(arg);
             } catch (Exception e) {
-                throw wrapException(e);
+                return throwAsRuntimeException(e);
             }
         };
     }
@@ -708,7 +733,7 @@ public final class LangUtil {
             try {
                 r.run();
             } catch (Exception e) {
-                throw wrapException(e);
+                throwAsRuntimeException(e);
             }
         };
     }
@@ -2623,6 +2648,20 @@ public final class LangUtil {
         String classResource = className.replace('.', '/') + ".class";
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         return loader.getResource(classResource) != null;
+    }
+
+    /**
+     * Throw any exception circumventing language checks for declared exceptions.
+     * <p>
+     * <strong>Warning: Do not use this method unless you know exactly what you are doing!.</strong>
+     *
+     * @param e   the {@link Throwable} to throw
+     * @param <E> the generic exception type
+     * @throws E always
+     */
+    @SuppressWarnings("unchecked")
+    private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
+        throw (E) e;
     }
 
 }

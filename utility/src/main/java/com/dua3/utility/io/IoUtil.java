@@ -734,20 +734,8 @@ public final class IoUtil {
             }
         }
         if (t != null) {
-            sneakyThrow(t);
+            LangUtil.throwAsRuntimeException(t);
         }
-    }
-
-    /**
-     * Throw any exception circumventing language checks for declared exceptions.
-     *
-     * @param e   the {@link Throwable} to throw
-     * @param <E> the generic exception type
-     * @throws E always
-     */
-    @SuppressWarnings("unchecked")
-    private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
-        throw (E) e;
     }
 
     /**

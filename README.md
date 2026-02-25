@@ -236,12 +236,23 @@ could not be loaded.
 
 ## Changes
 
-### 21.1.1 (in development)
+### 22.0.0 (in development)
 
-- fix: text in WizardDialog is clipped
-- RichTextBuilder performance optimization
-- FxLauncher: command line option to set log level
-- small fixes and improvements
+#### Breaking Changes 
+- removed deprecated overloads of `LangUtil.check()`, `LangUtil.checkArg()`, and `LangUtil.require...()` 
+  methods.
+- removed `LangUtil.wrapException()`, use `LangUtil.throwAsRuntimeException instead.
+- removed the Counter class - use LongAdder instead, it's standard and it's faster.
+
+#### Bugfixes
+
+- text in WizardDialog was sometimes clipped
+
+#### Other Changes
+
+- RichTextBuilder: performance optimization.
+- FxLauncher: command line option to set log level.
+- Some small fixes and improvements.
 
 ### 21.1.0
 

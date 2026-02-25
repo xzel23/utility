@@ -296,10 +296,8 @@ public final class DbUtil {
         default void doClose() {
             try {
                 close();
-            } catch (RuntimeException e) {
-                throw e;
             } catch (Exception e) {
-                throw new WrappedException(e);
+                LangUtil.throwAsRuntimeException(e);
             }
         }
 
