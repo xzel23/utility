@@ -34,7 +34,6 @@ public class InputControlContainer implements InputControl<Void> {
      *                    or {@link Orientation#VERTICAL}. Determines whether the controls are arranged
      *                    horizontally or vertically.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public InputControlContainer(Orientation orientation) {
         switch (orientation) {
             case HORIZONTAL -> {

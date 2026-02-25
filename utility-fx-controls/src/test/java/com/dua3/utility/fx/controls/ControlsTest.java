@@ -289,7 +289,7 @@ class ControlsTest extends FxTestBase {
                     .build();
             assertEquals("Menu", menu.getText());
             assertEquals(2, menu.getItems().size());
-            assertEquals(item1, menu.getItems().get(0));
+            assertEquals(item1, menu.getItems().getFirst());
             assertFalse(menu.isDisable());
             menuDisabled.set(true);
             assertTrue(menu.isDisable());

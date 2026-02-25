@@ -730,7 +730,6 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
-    @SuppressWarnings("ProhibitedExceptionThrown")
     public static <E extends Exception> Runnable uncheckedRunnable(RunnableThrows<E> r) {
         return () -> {
             try {

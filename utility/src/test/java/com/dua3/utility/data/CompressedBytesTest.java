@@ -1,5 +1,6 @@
 package com.dua3.utility.data;
 
+import com.dua3.utility.lang.LangUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +36,7 @@ class CompressedBytesTest {
     @Test
     void testToByteArrayWithEmptyByteArray() {
         // Initialize empty byte array
-        byte[] originalData = new byte[0];
+        byte[] originalData = LangUtil.EMPTY_BYTE_ARRAY;
 
         // Compress the data
         CompressedBytes compressedBytes = CompressedBytes.compress(originalData);
@@ -119,7 +120,7 @@ class CompressedBytesTest {
     @Test
     void testLoadCompressedDataWithEmptyData() {
         // Test with empty data
-        byte[] emptyData = new byte[0];
+        byte[] emptyData = LangUtil.EMPTY_BYTE_ARRAY;
 
         // Loading empty data should throw an exception
         assertThrows(IllegalArgumentException.class, () -> CompressedBytes.loadCompressedData(emptyData));

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GridBuilderInlineValidationTest extends FxTestBase {
 
+    @SuppressWarnings("unchecked")
     @Test
     void testInlineValidation() throws Exception {
         runOnFxThreadAndWait(() -> {

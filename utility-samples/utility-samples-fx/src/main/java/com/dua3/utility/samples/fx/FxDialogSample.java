@@ -51,7 +51,6 @@ import java.util.prefs.Preferences;
 /**
  * Sample Application.
  */
-@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class FxDialogSample extends Application {
 
     private static final Logger LOG = LogManager.getLogger(FxDialogSample.class);
