@@ -352,17 +352,15 @@ public class Grid extends GridPane {
                     getRowConstraints().add(rc);
                 }
 
-                int span;
                 if (entry.label != null) {
                     HBox labelBox = new HBox(entry.label, entry.requiredMarker);
                     labelBox.setSpacing(2);
                     labelBox.setAlignment(Pos.BASELINE_LEFT);
                     addToGrid(labelBox, gridX++, gridY, 1, insets);
-                    span = 1;
                 } else {
                     addToGrid(entry.requiredMarker, gridX++, gridY, 1, markerInsets);
-                    span = 1;
                 }
+                int span = 1;
 
                 Node node = entry.control.node();
                 node.focusedProperty().addListener((v, o, n) -> {

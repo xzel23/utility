@@ -83,7 +83,7 @@ class AwtFontUtilTest {
             // In headless mode, we might not have any fonts
             System.out.println("Running in headless mode, skipping font count assertions");
         } else {
-            assertTrue(families.size() > 0, "No fonts found");
+            assertFalse(families.isEmpty(), "No fonts found");
         }
 
         // Test getFamilies with specific types

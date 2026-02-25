@@ -353,7 +353,7 @@ class FileTypeTest {
         }
 
         @Override
-        public Object read(URI uri, Function<FileType<? extends Object>, Arguments> options) throws IOException {
+        public Object read(URI uri, Function<FileType<?>, Arguments> options) throws IOException {
             return new Object();
         }
 

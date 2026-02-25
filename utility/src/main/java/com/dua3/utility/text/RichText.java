@@ -1018,13 +1018,13 @@ public final class RichText
                 FontDef fda = runA.getFontDef();
                 FontDef fdb = runB.getFontDef();
 
-                if (!isIgnoredOrEqual(s.ignoreFontSize(), fda.getSize(), fdb.getSize())
-                        || !isIgnoredOrEqual(s.ignoreFontWeight(), fda.getBold(), fdb.getBold())
-                        || !isIgnoredOrEqual(s.ignoreItalic(), fda.getItalic(), fdb.getItalic())
-                        || !isIgnoredOrEqual(s.ignoreTextColor(), fda.getColor(), fdb.getColor())
-                        || !isIgnoredOrEqual(s.ignoreUnderline(), fda.getUnderline(), fdb.getUnderline())
-                        || !isIgnoredOrEqual(s.ignoreStrikeThrough(), fda.getStrikeThrough(), fdb.getStrikeThrough())
-                        || !isIgnoredOrEqual(s.ignoreFontFamily(), s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
+                if (isSignificantChange(s.ignoreFontSize(), fda.getSize(), fdb.getSize())
+                        || isSignificantChange(s.ignoreFontWeight(), fda.getBold(), fdb.getBold())
+                        || isSignificantChange(s.ignoreItalic(), fda.getItalic(), fdb.getItalic())
+                        || isSignificantChange(s.ignoreTextColor(), fda.getColor(), fdb.getColor())
+                        || isSignificantChange(s.ignoreUnderline(), fda.getUnderline(), fdb.getUnderline())
+                        || isSignificantChange(s.ignoreStrikeThrough(), fda.getStrikeThrough(), fdb.getStrikeThrough())
+                        || isSignificantChange(s.ignoreFontFamily(), s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
                     return false;
                 }
 
@@ -1044,8 +1044,8 @@ public final class RichText
      * @param b the second object to be compared, can be null
      * @return true if the condition is ignored, or if the two objects are equal; false otherwise
      */
-    private static boolean isIgnoredOrEqual(boolean ignored, @Nullable Object a, @Nullable Object b) {
-        return ignored || Objects.equals(a, b);
+    private static boolean isSignificantChange(boolean ignored, @Nullable Object a, @Nullable Object b) {
+        return !ignored && !Objects.equals(a, b);
     }
 
     /**

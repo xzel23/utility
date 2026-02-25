@@ -5,7 +5,9 @@ import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.Repetitions;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GraphicsEnvironment;
@@ -15,11 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SwingTestUtil {
+public final class SwingTestUtil {
+
+    private SwingTestUtil() {
+        // utility class
+    }
 
     /**
      * Creates a test frame that can be used in headless testing.
      * In headless mode, returns null since no window is needed for panel testing.
+     * @return the test frame or null if headless
      */
     public static JFrame createTestFrame() {
         if (GraphicsEnvironment.isHeadless()) {

@@ -680,7 +680,7 @@ class CertificateUtilTest {
         )[0];
 
         // Build chain (leaf first, then parent)
-        Certificate[] chain = new Certificate[]{intermediate, root};
+        Certificate[] chain = {intermediate, root};
 
         // Convert to PKCS#7 bytes
         byte[] pkcs7 = CertificateUtil.toPkcs7Bytes(chain);

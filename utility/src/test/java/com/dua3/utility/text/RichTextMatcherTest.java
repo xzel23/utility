@@ -167,12 +167,12 @@ class RichTextMatcherTest {
         LOG.debug("Second replacement runs: {}", secondReplacement.runs().size());
 
         // Check if the style was applied to the second replacement
-        if (secondReplacement.runs().size() > 0) {
-            LOG.debug("Second replacement styles: {}", secondReplacement.runs().getFirst().getStyles());
-            assertTrue(secondReplacement.runs().getFirst().getStyles().contains(Style.BOLD));
-        } else {
+        if (secondReplacement.runs().isEmpty()) {
             LOG.debug("Second replacement has no runs");
             fail("Second replacement has no runs");
+        } else {
+            LOG.debug("Second replacement styles: {}", secondReplacement.runs().getFirst().getStyles());
+            assertTrue(secondReplacement.runs().getFirst().getStyles().contains(Style.BOLD));
         }
     }
 

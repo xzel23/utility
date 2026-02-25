@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.lang.LangUtil;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -90,13 +91,7 @@ public abstract class FxTestBase {
         assertTrue(latch.await(20, TimeUnit.SECONDS), "JavaFX operation timed out");
         Throwable throwable = exception.get();
         if (throwable != null) {
-            if (throwable instanceof RuntimeException re) {
-                throw re;
-            } else if (throwable instanceof Error e) {
-                throw e;
-            } else {
-                throw new RuntimeException(throwable);
-            }
+            LangUtil.throwAsRuntimeException(throwable);
         }
     }
 
