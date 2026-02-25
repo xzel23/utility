@@ -65,6 +65,7 @@ open module com.dua3.utility {
     requires static java.desktop;
     requires static java.prefs;
     requires static javafx.graphics;
+    requires jdk.xml.dom;
 
     uses FileType;
     uses FontUtilProvider;

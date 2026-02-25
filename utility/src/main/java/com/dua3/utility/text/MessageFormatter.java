@@ -77,7 +77,7 @@ public interface MessageFormatter {
         @Override
         public boolean equals(@Nullable Object o) {
             if (!(o instanceof MessageFormatterArgs(String fmt1, Object[] args1))) return false;
-            return Objects.equals(fmt, fmt1) && Objects.deepEquals(args, args1);
+            return fmt.equals(fmt1) && Objects.deepEquals(args, args1);
         }
 
         @Override

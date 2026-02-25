@@ -1,11 +1,15 @@
 package com.dua3.utility.data;
 
+import org.w3c.dom.css.Counter;
+
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Stream;
 
 /**
@@ -24,14 +28,14 @@ public final class Histogram<T> {
      * <p>
      * This instance must not be mutated or returned directly to user code!
      */
-    private static final Counter ZERO = new Counter();
+    private static final LongAdder ZERO = new LongAdder();
 
     /**
      * A map that associates items of type {@code T} with their respective counts,
      * represented by instances of the {@link Counter} class.
      * This map serves as the underlying storage for maintaining the histogram's data.
      */
-    private final Map<T, Counter> map;
+    private final Map<T, LongAdder> map;
 
     /**
      * Constructs a {@code Histogram} instance using the provided map for internal storage.
@@ -39,7 +43,7 @@ public final class Histogram<T> {
      * @param map the map used to store items and their associated counts;
      *            must map items of type {@code T} to their respective {@code Counter} instances
      */
-    private Histogram(Map<T, Counter> map) {
+    private Histogram(Map<T, LongAdder> map) {
         this.map = map;
     }
 
@@ -74,7 +78,7 @@ public final class Histogram<T> {
      * @param item the item to be added to the histogram
      */
     public void add(T item) {
-        map.computeIfAbsent(item, k -> new Counter()).increment();
+        map.computeIfAbsent(item, k -> new LongAdder()).increment();
     }
 
     /**
@@ -96,8 +100,8 @@ public final class Histogram<T> {
      * @return an {@code Optional} containing the {@code Map.Entry} with the maximum value,
      *         or an empty {@code Optional} if the histogram is empty
      */
-    public Optional<Map.Entry<T, Counter>> getMaxEntry() {
-        return map.entrySet().stream().max(Map.Entry.comparingByValue());
+    public Optional<Map.Entry<T, LongAdder>> getMaxEntry() {
+        return map.entrySet().stream().max(Comparator.comparing(entry -> entry.getValue().sum()));
     }
 
     /**
@@ -108,7 +112,7 @@ public final class Histogram<T> {
      * @return the count of occurrences of the given item; returns zero if the item is not present
      */
     public long getCount(T item) {
-        return map.getOrDefault(item, ZERO).get();
+        return map.getOrDefault(item, ZERO).sum();
     }
 
     /**
@@ -143,6 +147,6 @@ public final class Histogram<T> {
      *         and its associated count
      */
     public Stream<Entry<T>> entries() {
-        return map.entrySet().stream().map(e -> new Entry<>(e.getKey(), e.getValue().get()));
+        return map.entrySet().stream().map(e -> new Entry<>(e.getKey(), e.getValue().sum()));
     }
 }

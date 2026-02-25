@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.LongAdder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -96,7 +97,7 @@ class HistogramTest {
         Histogram<String> histogram = Histogram.createHashBased();
 
         // Test empty histogram
-        Optional<Map.Entry<String, Counter>> maxEntry = histogram.getMaxEntry();
+        Optional<Map.Entry<String, LongAdder>> maxEntry = histogram.getMaxEntry();
         assertTrue(maxEntry.isEmpty());
 
         // Add items
@@ -110,7 +111,7 @@ class HistogramTest {
         maxEntry = histogram.getMaxEntry();
         assertTrue(maxEntry.isPresent());
         assertEquals("apple", maxEntry.get().getKey());
-        assertEquals(3, maxEntry.get().getValue().get());
+        assertEquals(3, maxEntry.get().getValue().sum());
     }
 
     @Test

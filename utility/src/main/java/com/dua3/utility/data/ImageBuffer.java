@@ -27,14 +27,9 @@ public record ImageBuffer(int[] data, int width, int height) implements Image {
 
     @Override
     public boolean equals(@Nullable Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ImageBuffer other)) return false;
 
-        ImageBuffer that = (ImageBuffer) o;
-
-        if (width != that.width) return false;
-        if (height != that.height) return false;
-        return Arrays.equals(data, that.data);
+        return width == other.width && height == other.height && Arrays.equals(data, other.data);
     }
 
     @Override

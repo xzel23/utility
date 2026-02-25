@@ -58,10 +58,7 @@ public final class SimpleValue<T extends @Nullable Object> implements Value<T> {
 
     @Override
     public boolean equals(@Nullable Object o) {
-        if (!(o instanceof SimpleValue<?> other)) {
-            return false;
-        }
-        return other == this || Objects.equals(v, other.v);
+        return o instanceof SimpleValue<?> other && Objects.equals(v, other.v);
     }
 
     @SuppressWarnings("NonFinalFieldReferencedInHashCode")

@@ -111,16 +111,6 @@ class LangUtilTest {
     }
 
     @Test
-    void testCheckArg_predicateOverload() {
-        // valid
-        assertDoesNotThrow(() -> LangUtil.checkArg("x", (Integer i) -> i > 0, 5));
-        // invalid -> message contains arg name and value
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> LangUtil.checkArg("x", (Integer i) -> i > 0, -1));
-        assertTrue(ex.getMessage().contains("invalid argument 'x': -1"));
-    }
-
-    @Test
     void testFormatThrowable_includesClassMessageAndStack() {
         // create a throwable with a stack trace
         Throwable t;
@@ -171,19 +161,6 @@ class LangUtilTest {
     }
 
     @Test
-    void testCheckArg_supplierOverload() {
-        AtomicInteger supplied = new AtomicInteger(0);
-        Supplier<String> supplier = () -> { supplied.incrementAndGet(); return "bad"; };
-        // true -> no exception and supplier not evaluated
-        assertDoesNotThrow(() -> LangUtil.checkArg(true, supplier));
-        assertEquals(0, supplied.get());
-        // false -> exception with supplied message and supplier evaluated exactly once
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.checkArg(false, supplier));
-        assertEquals("bad", ex.getMessage());
-        assertEquals(1, supplied.get());
-    }
-
-    @Test
     void testCheckArg_formatOverload() {
         assertDoesNotThrow(() -> LangUtil.checkArg(true, "value=%d", 1));
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.checkArg(false, "value=%d", 2));
@@ -196,26 +173,6 @@ class LangUtilTest {
         assert (assertionsEnabled = true);
         Assumptions.assumeTrue(assertionsEnabled, "Assertions are enabled, format string should be checked against arguments");
         assertThrows(AssertionError.class, () -> LangUtil.checkArg(true, "value=%f", "x"));
-    }
-
-    @Test
-    void testRequireNegativeShort_withMessage() {
-        short v = -5;
-        assertEquals(v, LangUtil.requireNegative(v, "msg %d", v));
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative((short)0, "not neg: %d", 0));
-        assertEquals("not neg: 0", ex.getMessage());
-        ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative((short)1, "not neg: %d", 1));
-        assertEquals("not neg: 1", ex.getMessage());
-    }
-
-    @Test
-    void testRequirePositiveShort_withMessage() {
-        short v = 5;
-        assertEquals(v, LangUtil.requirePositive(v, "msg %d", v));
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive((short)0, "not pos: %d", 0));
-        assertEquals("not pos: 0", ex.getMessage());
-        ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive((short)-1, "not pos: %d", -1));
-        assertEquals("not pos: -1", ex.getMessage());
     }
 
     @Test
@@ -944,13 +901,6 @@ class LangUtilTest {
     }
 
     @Test
-    void testRequireNonNegativeLongFmtArgs() {
-        assertEquals(5L, LangUtil.requireNonNegative(5L, "Error: %s", 5L));
-        assertEquals(0L, LangUtil.requireNonNegative(0L, "Error: %s", 0L));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5L, "Error: %s", -5L));
-    }
-
-    @Test
     void testRequireNonNegativeInt() {
         assertEquals(5, LangUtil.requireNonNegative(5));
         assertEquals(0, LangUtil.requireNonNegative(0));
@@ -958,22 +908,10 @@ class LangUtilTest {
     }
 
     @Test
-    void testRequireNonNegativeIntFmtArgs() {
-        assertEquals(5, LangUtil.requireNonNegative(5, "Error: %s", -5));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5, "Error: %s", -5));
-    }
-
-    @Test
     void testRequireNonNegativeShort() {
         assertEquals((short) 5, LangUtil.requireNonNegative((short) 5));
         assertEquals((short) 0, LangUtil.requireNonNegative((short) 0));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative((short) -5));
-    }
-
-    @Test
-    void testRequireNonNegativeShortFmtArgs() {
-        assertEquals((short) 5, LangUtil.requireNonNegative((short) 5, "Error: %s", -5));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5, "Error: %s", (short) -5));
     }
 
     @Test
@@ -1004,23 +942,10 @@ class LangUtilTest {
     }
 
     @Test
-    void testRequirePositiveLongFmtArgs() {
-        assertEquals(5L, LangUtil.requirePositive(5L, "Error: %s", 5L));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(0L, "Error: %s", 0L));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5L, "Error: %s", -5L));
-    }
-
-    @Test
     void testRequirePositiveInt() {
         assertEquals(5, LangUtil.requirePositive(5));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(0));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5));
-    }
-
-    @Test
-    void testRequirePositiveIntFmtArgs() {
-        assertEquals(5, LangUtil.requirePositive(5, "Error: %s", -5));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5, "Error: %s", -5));
     }
 
     @Test
@@ -1051,24 +976,10 @@ class LangUtilTest {
     }
 
     @Test
-    void testRequireNegativeLongFmtArgs() {
-        assertEquals(-5L, LangUtil.requireNegative(-5L, "Error: %s", 5L));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(0L, "Error: %s", 0L));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5L, "Error: %s", 5L));
-    }
-
-    @Test
     void testRequireNegativeInt() {
         assertEquals(-5, LangUtil.requireNegative(-5));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(0));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5));
-    }
-
-    @Test
-    void testRequireNegativeIntFmtArgs() {
-        assertEquals(-5, LangUtil.requireNegative(-5, "Error: %s", 5));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(0, "Error: %s", 0));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5, "Error: %s", 5));
     }
 
     @Test
@@ -1090,12 +1001,6 @@ class LangUtilTest {
     }
 
     @Test
-    void testRequireInIntervalLongFmtArgs() {
-        assertEquals(5L, LangUtil.requireInInterval(5L, 1L, 10L, "Error: %s", 5L));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5L, 6L, 10L, "Error: %s", 5L));
-    }
-
-    @Test
     void testRequireInIntervalInt() {
         assertEquals(5, LangUtil.requireInInterval(5, 1, 10));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5, 6, 10));
@@ -1114,18 +1019,6 @@ class LangUtilTest {
     void testRequireInIntervalShort() {
         assertEquals((short) 5, LangUtil.requireInInterval((short) 5, (short) 1, (short) 10));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval((short) 5, (short) 6, (short) 10));
-    }
-
-    @Test
-    void testRequireInIntervalShortFmtArgs() {
-        assertEquals((short) 5, LangUtil.requireInInterval((short) 5, (short) 1, (short) 10, "Error: %s", 5));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval((short) 5, (short) 6, (short) 10, "Error: %s", 5));
-    }
-
-    @Test
-    void testRequireInIntervalIntFmtArgs() {
-        assertEquals(5, LangUtil.requireInInterval(5, 1, 10, "Error: %s", 5));
-        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5, 6, 10, "Error: %s", 5));
     }
 
     @Test
@@ -1577,21 +1470,6 @@ class LangUtilTest {
     }
 
     @Test
-    void testRequireNegativeWithMessage() {
-        double validNegative = -1.0;
-        double zeroValue = 0.0;
-        double positiveValue = 1.0;
-
-        assertEquals(validNegative, LangUtil.requireNegative(validNegative, "Error: %f must be negative", validNegative));
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> LangUtil.requireNegative(positiveValue, "Error: %f must be negative", positiveValue));
-        assertTrue(exception.getMessage().contains(String.format(Locale.ROOT, "%f", 1.0)));
-        exception = assertThrows(IllegalArgumentException.class,
-                () -> LangUtil.requireNegative(zeroValue, "Error: %f must be negative", zeroValue));
-        assertTrue(exception.getMessage().contains(String.format(Locale.ROOT, "%f", 0.0)));
-    }
-
-    @Test
     void testRequireNegativeByte() {
         byte validNegative = -10;
         byte zeroValue = 0;
@@ -1612,20 +1490,6 @@ class LangUtilTest {
     @ValueSource(bytes = {0, 1, Byte.MAX_VALUE})
     void testRequireNegativeByteInvalid(byte value) {
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value));
-    }
-
-    @ParameterizedTest
-    @CsvSource({"-1.0, valid negative value", "-0.0001, valid negative value", "1.0, wrong value", "0.0, zero value"})
-    void testRequireNegativeDoubleWithMessage(double value, String description) {
-        if (value < 0) {
-            assertEquals(value, LangUtil.requireNegative(value, "Error: %f is not negative", value));
-        } else {
-            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(value, "Error: %f is not negative", value));
-            assertTrue(
-                    ex.getMessage().contains(String.format(Locale.ROOT, "%f", value)),
-                    () -> String.format(Locale.ROOT, "Expected message to contain '%f' but got '%s'", value, ex.getMessage())
-            );
-        }
     }
 
     @ParameterizedTest
@@ -1688,16 +1552,6 @@ class LangUtilTest {
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(value));
     }
 
-    @ParameterizedTest
-    @CsvSource({"1.0, Valid positive value", "0.0, Zero value", "-1.0, Negative value"})
-    void testRequirePositiveDoubleWithMessage(double value, String description) {
-        if (value > 0) {
-            assertEquals(value, LangUtil.requirePositive(value, "Error: %f must be positive", value));
-        } else {
-            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(value, "Error: %f must be positive", value));
-            assertTrue(ex.getMessage().contains(String.format(Locale.ROOT, "%f", value)));
-        }
-    }
     @Test
     void testMapOptionalNonNullValidInput() {
         String result = LangUtil.mapNonNull("hello", String::toUpperCase);
