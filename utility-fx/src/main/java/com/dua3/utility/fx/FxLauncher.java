@@ -16,7 +16,6 @@ import org.slb4j.SLB4J;
 import org.slb4j.ext.LogBuffer;
 import org.slb4j.ext.fx.FxLogPane;
 import org.slb4j.ext.fx.FxLogWindow;
-import org.slb4j.filter.LogLevelFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -305,11 +304,10 @@ public final class FxLauncher {
                     rule -> {
                         String[] parts = rule.split("=");
                         switch (parts.length) {
-                            case 1 -> loggingConfiguration.setRootFilter(LogLevelFilter.pass(parseLogLevel(parts[0])));
+                            case 1 -> loggingConfiguration.setRootLevel(parseLogLevel(parts[0]));
                             case 2 -> {
-                                String prefix = parts[0];
-                                LangUtil.check(LOG_PREFIX_VALIDATOR.test(prefix), "Not a valid logger name prefix: %s", prefix);
-                                loggingConfiguration.getLoggerFilter().setLevel(prefix, parseLogLevel(parts[1]));
+                                LangUtil.check(LOG_PREFIX_VALIDATOR.test(parts[0]), "Not a valid logger name prefix: %s", parts[0]);
+                                loggingConfiguration.getRootFilter().setLevel(parts[0], parseLogLevel(parts[1]));
                             }
                             default -> throw new IllegalStateException("Invalid log level rule format: " + rule);
                         }
