@@ -283,26 +283,26 @@ class LangUtilTest {
 
     @Test
     void uncheckedConsumer() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedConsumer(t -> {
+        assertThrows(UncheckedIOException.class, () -> LangUtil.unchecked(t -> {
             throw new IOException("test");
         }).accept(null), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedConsumer(t -> {
+        assertThrows(IllegalStateException.class, () -> LangUtil.unchecked(t -> {
             throw new IllegalStateException("test");
         }).accept(null), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.uncheckedConsumer(t -> {
+        assertThrows(WrappedException.class, () -> LangUtil.unchecked(t -> {
             throw new Exception("test");
         }).accept(null), "test");
     }
 
     @Test
     void uncheckedSupplier() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedSupplier(() -> {
+        assertThrows(UncheckedIOException.class, () -> LangUtil.unchecked(() -> {
             throw new IOException("test");
         }).get(), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedSupplier(() -> {
+        assertThrows(IllegalStateException.class, () -> LangUtil.unchecked(() -> {
             throw new IllegalStateException("test");
         }).get(), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.uncheckedSupplier(() -> {
+        assertThrows(WrappedException.class, () -> LangUtil.unchecked(() -> {
             throw new Exception("test");
         }).get(), "test");
     }
@@ -310,28 +310,28 @@ class LangUtilTest {
     @Test
     void uncheckedFunction() {
         // make sure IOException is converted
-        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedFunction(x -> {
+        assertThrows(UncheckedIOException.class, () -> LangUtil.unchecked(x -> {
             throw new IOException("test");
         }).apply(null), "test");
         // make sure unchecked exceptions are not converted
-        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedFunction(x -> {
+        assertThrows(IllegalStateException.class, () -> LangUtil.unchecked(x -> {
             throw new IllegalStateException("test");
         }).apply(null), "test");
         // make sure checked exceptions are conerted to unchecked
-        assertThrows(WrappedException.class, () -> LangUtil.uncheckedFunction(x -> {
+        assertThrows(WrappedException.class, () -> LangUtil.unchecked(x -> {
             throw new Exception("test");
         }).apply(null), "test");
     }
 
     @Test
     void uncheckedRunnable() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedRunnable(() -> {
+        assertThrows(UncheckedIOException.class, () -> LangUtil.unchecked(() -> {
             throw new IOException("test");
         }).run(), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedRunnable(() -> {
+        assertThrows(IllegalStateException.class, () -> LangUtil.unchecked(() -> {
             throw new IllegalStateException("test");
         }).run(), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.uncheckedRunnable(() -> {
+        assertThrows(WrappedException.class, () -> LangUtil.unchecked(() -> {
             throw new Exception("test");
         }).run(), "test");
     }

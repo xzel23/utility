@@ -644,30 +644,7 @@ public final class LangUtil {
     }
 
     /**
-     * Helper method that converts checked {@link java.io.IOException} to
-     * {@link java.io.UncheckedIOException} and other checked exceptions to {@link WrappedException}.
-     *
-     * @param <T> the argument type
-     * @param <E> the exception type
-     * @param c   the consumer to call (instance of {@link ConsumerThrows})
-     * @return instance of Consumer that invokes f and converts IOException to
-     * UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
-     * @throws RuntimeException     if {@link RuntimeException} is thrown during execution of the argument passed
-     * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
-     * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
-     */
-    public static <T extends @Nullable Object, E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<T, E> c) {
-        return (T arg) -> {
-            try {
-                c.accept(arg);
-            } catch (Exception e) {
-                throwAsRuntimeException(e);
-            }
-        };
-    }
-
-    /**
-     * Helper method that converts checked {@link java.io.IOException} to
+     * Helper method that converts checked exceptionsto  {@link java.io.IOException} to
      * {@link java.io.UncheckedIOException} and other checked exceptions to {@link WrappedException}.
      *
      * @param <T> the argument type
@@ -679,8 +656,9 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
-    @SuppressWarnings({"OverlyBroadCatchBlock", "ProhibitedExceptionThrown"})
-    public static <T extends @Nullable Object, E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T, E> s) {
+    @SuppressWarnings("OverlyBroadCatchBlock")
+    public static <T extends @Nullable Object, E extends Exception>
+    Source<T> unchecked(SupplierThrows<? extends T, E> s) {
         return () -> {
             try {
                 return s.get();
@@ -704,11 +682,36 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
-    @SuppressWarnings({"OverlyBroadCatchBlock", "ProhibitedExceptionThrown"})
-    public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, R, E> f) {
+    @SuppressWarnings("OverlyBroadCatchBlock")
+    public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception>
+    Sink<T, R> unchecked(FunctionThrows<T, R, E> f) {
         return (T arg) -> {
             try {
                 return f.apply(arg);
+            } catch (Exception e) {
+                return throwAsRuntimeException(e);
+            }
+        };
+    }
+
+    /**
+     * Wraps a {@link BiFunctionThrows} functional interface, handling any checked exceptions thrown during its execution
+     * by converting them into runtime exceptions. This allows the use of functions with checked exceptions without the need
+     * for explicit exception handling.
+     *
+     * @param <T> the type of the first input to the function
+     * @param <U> the type of the second input to the function
+     * @param <R> the type of the result of the function
+     * @param <E> the type of exception the original function may throw
+     * @param f the {@link BiFunctionThrows} instance to be wrapped
+     * @return a {@link BiSink} instance that wraps the given {@link BiFunctionThrows}, converting checked exceptions into runtime exceptions
+     */
+    @SuppressWarnings("OverlyBroadCatchBlock")
+    public static <T extends @Nullable Object, U extends @Nullable Object, R extends @Nullable Object, E extends Exception>
+    BiSink<T, U, R> unchecked(BiFunctionThrows<T, U, R, E> f) {
+        return (T t, U u) -> {
+            try {
+                return f.apply(t, u);
             } catch (Exception e) {
                 return throwAsRuntimeException(e);
             }
@@ -1422,6 +1425,80 @@ public final class LangUtil {
          * @throws E depending on implementation
          */
         R apply(T t) throws E;
+    }
+
+    /**
+     * Represents a function that accepts two arguments and produces a result,
+     * while allowing for a checked exception to be thrown.
+     * This is a functional interface whose functional method is {@link #apply(Object, Object)}.
+     *
+     * @param <T> the type of the first argument to the function
+     * @param <U> the type of the second argument to the function
+     * @param <R> the type of the result of the function
+     * @param <E> the type of exception that may be thrown by the function
+     */
+    @FunctionalInterface
+    public interface BiFunctionThrows<T extends @Nullable Object, U extends @Nullable Object, R extends @Nullable Object, E extends Exception> {
+        /**
+         * Applies this function to the given argument.
+         *
+         * @param t the first function argument
+         * @param u the second function argument
+         * @return the function result
+         * @throws E depending on implementation
+         */
+        R apply(T t, U u) throws E;
+    }
+
+    /**
+     * A functional interface that represents a sink for data, capable of consuming input and producing a result.
+     * <p>
+     * The Sink interface extends both {@link Function} and {@link Consumer}.
+     * It allows for the consumption of an input value and optionally returns a result after processing.
+     *
+     * @param <T> the type of input consumed by the sink; may be nullable.
+     * @param <R> the type of result produced by the sink; may be nullable.
+     */
+    @FunctionalInterface
+    public interface Sink<T extends @Nullable Object, R extends @Nullable Object>
+            extends Function<T, R>, Consumer<T> {
+        @Override
+        default void accept(T t) {
+            apply(t);
+        }
+    }
+
+    /**
+     * A functional interface that serves as a source of data by extending {@link Supplier}
+     * and {@link Runnable}. This interface allows instances to provide a value of the
+     * specified type or execute logic when run.
+     * <p>
+     * This interface is an abstraction of a method taking no arguments.
+     *
+     * @param <T> the type of the object supplied by this source, which may be nullable
+     */
+    @FunctionalInterface
+    public interface Source<T extends @Nullable Object> extends Supplier<T>, Runnable {
+        @Override
+        default void run() {
+            get();
+        }
+    }
+
+    /**
+     * A functional interface that represents a combination of {@link BiConsumer} and {@link BiFunction}.
+     * It defines methods to both consume and apply operations on two input arguments.
+     *
+     * @param <T> the type of the first input
+     * @param <U> the type of the second input
+     * @param <R> the type of the result of the function
+     */
+    @FunctionalInterface
+    public interface BiSink<T extends @Nullable Object, U extends @Nullable Object, R extends @Nullable Object>
+            extends BiFunction<T, U, R>, BiConsumer<T, U> {
+        default void accept(T t, U u) {
+            apply(t, u);
+        }
     }
 
     /**

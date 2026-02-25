@@ -243,6 +243,9 @@ could not be loaded.
   methods.
 - removed `LangUtil.wrapException()`, use `LangUtil.throwAsRuntimeException instead.
 - removed the Counter class - use LongAdder instead, it's standard and it's faster.
+- `LangUtil.uncheckedConsumer()`, `LangUtil.uncheckedFunction()`, `LangUtil.uncheckedSupplier()`, and
+  `LangUtil.uncheckedRunnable()` have been replaced by `LangUtil.unchecked()`; Two overloads have been
+  implemented that cover all the use cases (Supplier, Consumer, Function, Runnable).
 
 #### Bugfixes
 
