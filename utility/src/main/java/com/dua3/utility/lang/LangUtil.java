@@ -719,6 +719,44 @@ public final class LangUtil {
     }
 
     /**
+     * Represents an operation that accepts two input arguments and returns no result,
+     * while allowing for a checked exception to be thrown. This is a functional interface
+     * whose functional method is {@link #accept(Object, Object)}.
+     * <p>
+     * This interface extends {@code BiFunctionThrows} with a fixed result type of {@code Void},
+     * allowing the operation result to always be {@code null}. Its primary use case is for
+     * side-effect operations that might throw checked exceptions.
+     *
+     * @param <T> the type of the first argument to the operation
+     * @param <U> the type of the second argument to the operation
+     * @param <E> the type of exception that may be thrown by the operation
+     */
+    @FunctionalInterface
+    public interface BiConsumerThrows<T extends @Nullable Object, U extends @Nullable Object, E extends Exception>
+            extends BiFunctionThrows<T, U, @Nullable Void, E> {
+        /**
+         * Performs this operation on the given argument.
+         *
+         * @param t the first input argument
+         * @param u the second input argument
+         * @throws E depending on implementation
+         */
+        void accept(T t, U u) throws E;
+
+        /**
+         * Applies the operation to the given input and returns a {@code null} result.
+         *
+         * @param t the input argument, may be {@code null}
+         * @return a {@code null} value as the result of the operation
+         * @throws E if an exception occurs during the operation
+         */
+        default @Nullable Void apply(T t, U u) throws E {
+            accept(t, u);
+            return null;
+        }
+    }
+
+    /**
      * Helper method that converts checked {@link java.io.IOException} to
      * {@link java.io.UncheckedIOException}.
      *
@@ -1508,7 +1546,8 @@ public final class LangUtil {
      * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface ConsumerThrows<T extends @Nullable Object, E extends @Nullable Exception> {
+    public interface ConsumerThrows<T extends @Nullable Object, E extends Exception>
+    extends FunctionThrows<T, @Nullable Void, E> {
         /**
          * Performs this operation on the given argument.
          *
@@ -1516,6 +1555,18 @@ public final class LangUtil {
          * @throws E depending on implementation
          */
         void accept(@Nullable T t) throws E;
+
+        /**
+         * Applies the operation to the given input and returns a {@code null} result.
+         *
+         * @param t the input argument, may be {@code null}
+         * @return a {@code null} value as the result of the operation
+         * @throws E if an exception occurs during the operation
+         */
+        default Void apply(@Nullable T t) throws E {
+            accept(t);
+            return null;
+        }
 
         /**
          * Returns a composed {@code Consumer} that performs, in sequence, this
@@ -1566,7 +1617,7 @@ public final class LangUtil {
      * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface SupplierThrows<T extends @Nullable Object, E extends @Nullable Exception> {
+    public interface SupplierThrows<T extends @Nullable Object, E extends Exception> {
         /**
          * Gets a result.
          *
