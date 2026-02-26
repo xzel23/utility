@@ -1,5 +1,6 @@
 package com.dua3.utility.xml;
 
+import com.dua3.utility.lang.WrappedException;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
@@ -150,16 +151,6 @@ public final class XmlUtil {
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("Could not create XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
         }
-    }
-
-    private static <T> Consumer<T> consume(LangUtil.ConsumerThrows<? super T, ? extends XMLStreamException> c) {
-        return (T arg) -> {
-            try {
-                c.accept(arg);
-            } catch (XMLStreamException e) {
-                throw new WrappedXMLStreamException(e);
-            }
-        };
     }
 
     private static void skipWhitespace(XMLEventReader reader) throws XMLStreamException {
@@ -430,11 +421,11 @@ public final class XmlUtil {
                         //noinspection DataFlowIssue - false positive; getPrefix() returns "" for the default namespace
                         StreamUtil.stream(se.getNamespaces())
                                 .sorted(Comparator.comparing(Namespace::getPrefix))
-                                .forEach(consume(ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI())));
+                                .forEach(LangUtil.unchecked((LangUtil.ConsumerThrows<Namespace, Exception>) ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI())));
                         StreamUtil.stream(se.getAttributes())
                                 .filter(Objects::nonNull)
                                 .sorted(Comparator.comparing(Attribute::toString))
-                                .forEach(consume(attr -> {
+                                .forEach(LangUtil.uncheckedConsumer(attr -> {
                                     //noinspection DataFlowIssue - false positive
                                     QName attrName = attr.getName();
                                     writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
@@ -499,7 +490,10 @@ public final class XmlUtil {
             writer.flush();
 
             return TextUtil.toSystemLineEnds(out.toString());
-        } catch (IOException | XMLStreamException | WrappedXMLStreamException e) {
+        } catch (WrappedException e) {
+            LOG.warn("could not parse XML", e.getCause());
+            return xml;
+        } catch (IOException | XMLStreamException e) {
             LOG.warn("could not parse XML", e);
             return xml;
         }
@@ -918,17 +912,6 @@ public final class XmlUtil {
      */
     private static boolean isXmlnsAttribute(Node attr) {
         return attr.getNodeName().startsWith(XMLNS_SCHEME) || attr.getNodeName().equals(XMLNS);
-    }
-
-    /**
-     * A custom runtime exception that wraps an {@link XMLStreamException}.
-     * This class is used to rethrow checked {@code XMLStreamException} as an
-     * unchecked {@code RuntimeException}.
-     */
-    private static class WrappedXMLStreamException extends RuntimeException {
-        WrappedXMLStreamException(XMLStreamException e) {
-            super(e);
-        }
     }
 
     /**

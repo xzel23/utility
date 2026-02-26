@@ -685,11 +685,35 @@ public final class LangUtil {
     @SuppressWarnings("OverlyBroadCatchBlock")
     public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception>
     Sink<T, R> unchecked(FunctionThrows<T, R, E> f) {
-        return (T arg) -> {
+        return (T t) -> {
             try {
-                return f.apply(arg);
+                return f.apply(t);
             } catch (Exception e) {
                 return throwAsRuntimeException(e);
+            }
+        };
+    }
+
+    @SuppressWarnings("OverlyBroadCatchBlock")
+    public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception>
+    Consumer<T> uncheckedConsumer(ConsumerThrows<T, E> f) {
+        return (T t) -> {
+            try {
+                f.accept(t);
+            } catch (Exception e) {
+                throwAsRuntimeException(e);
+            }
+        };
+    }
+
+    @SuppressWarnings("OverlyBroadCatchBlock")
+    public static <T extends @Nullable Object, U extends @Nullable Object, R extends @Nullable Object, E extends Exception>
+    BiConsumer<T, U> uncheckedConsumer(BiConsumerThrows<T, U, E> f) {
+        return (T t, U u) -> {
+            try {
+                f.accept(t, u);
+            } catch (Exception e) {
+                throwAsRuntimeException(e);
             }
         };
     }
@@ -768,7 +792,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <E extends Exception> Runnable uncheckedRunnable(RunnableThrows<E> r) {
+    public static <E extends Exception> Runnable unchecked(RunnableThrows<E> r) {
         return () -> {
             try {
                 r.run();
@@ -1547,7 +1571,7 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface ConsumerThrows<T extends @Nullable Object, E extends Exception>
-    extends FunctionThrows<T, @Nullable Void, E> {
+    extends FunctionThrows<T, Void, E> {
         /**
          * Performs this operation on the given argument.
          *
@@ -1556,56 +1580,10 @@ public final class LangUtil {
          */
         void accept(@Nullable T t) throws E;
 
-        /**
-         * Applies the operation to the given input and returns a {@code null} result.
-         *
-         * @param t the input argument, may be {@code null}
-         * @return a {@code null} value as the result of the operation
-         * @throws E if an exception occurs during the operation
-         */
-        default Void apply(@Nullable T t) throws E {
+        @Override
+        default Void apply(T t) throws E {
             accept(t);
             return null;
-        }
-
-        /**
-         * Returns a composed {@code Consumer} that performs, in sequence, this
-         * operation followed by the {@code after} operation. If performing either
-         * operation throws an exception, it is relayed to the caller of the
-         * composed operation.  If performing this operation throws an exception,
-         * the {@code after} operation will not be performed.
-         *
-         * @param after the operation to perform after this operation
-         * @return a composed {@code Consumer} that performs in sequence this
-         * operation followed by the {@code after} operation
-         * @throws NullPointerException if {@code after} is null
-         * @throws E                    depending on implementation
-         */
-        default ConsumerThrows<T, E> andThenTry(ConsumerThrows<? super T, ? extends E> after) throws E {
-            return (T t) -> {
-                accept(t);
-                after.accept(t);
-            };
-        }
-
-        /**
-         * Returns a composed {@code Consumer} that performs, in sequence, this
-         * operation followed by the {@code after} operation. If performing either
-         * operation throws an exception, it is relayed to the caller of the
-         * composed operation.  If performing this operation throws an exception,
-         * the {@code after} operation will not be performed.
-         *
-         * @param after the operation to perform after this operation
-         * @return a composed {@code Consumer} that performs in sequence this
-         * operation followed by the {@code after} operation
-         * @throws NullPointerException if {@code after} is null
-         * @throws E                    depending on implementation
-         */
-        default ConsumerThrows<T, E> andThen(Consumer<? super T> after) throws E {
-            return (T t) -> {
-                accept(t);
-                after.accept(t);
-            };
         }
     }
 

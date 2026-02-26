@@ -49,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -283,44 +284,28 @@ class LangUtilTest {
 
     @Test
     void uncheckedConsumer() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.unchecked(t -> {
+        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedConsumer(t -> {
             throw new IOException("test");
         }).accept(null), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.unchecked(t -> {
+        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedConsumer(t -> {
             throw new IllegalStateException("test");
         }).accept(null), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.unchecked(t -> {
+        assertThrows(WrappedException.class, () -> LangUtil.uncheckedConsumer(t -> {
             throw new Exception("test");
         }).accept(null), "test");
     }
 
     @Test
     void uncheckedSupplier() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.unchecked(() -> {
-            throw new IOException("test");
-        }).get(), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.unchecked(() -> {
-            throw new IllegalStateException("test");
-        }).get(), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.unchecked(() -> {
-            throw new Exception("test");
-        }).get(), "test");
+        WrappedException trhown = assertThrows(WrappedException.class, () -> LangUtil.unchecked(() -> Class.forName("")).get(), "test");
+        assertInstanceOf(ClassNotFoundException.class, trhown.getCause());
     }
 
     @Test
     void uncheckedFunction() {
         // make sure IOException is converted
-        assertThrows(UncheckedIOException.class, () -> LangUtil.unchecked(x -> {
-            throw new IOException("test");
-        }).apply(null), "test");
-        // make sure unchecked exceptions are not converted
-        assertThrows(IllegalStateException.class, () -> LangUtil.unchecked(x -> {
-            throw new IllegalStateException("test");
-        }).apply(null), "test");
-        // make sure checked exceptions are conerted to unchecked
-        assertThrows(WrappedException.class, () -> LangUtil.unchecked(x -> {
-            throw new Exception("test");
-        }).apply(null), "test");
+        WrappedException thrown = assertThrows(WrappedException.class, () -> LangUtil.unchecked((String n) -> Class.forName(n)).apply(""), "");
+        assertInstanceOf(ClassNotFoundException.class, thrown.getCause());
     }
 
     @Test

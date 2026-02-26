@@ -85,7 +85,7 @@ class FxGraphicsTest extends AbstractGraphicsTest {
                 // Create the FxGraphics instance
                 setGraphics(new FxGraphics(gc, IMAGE_WIDTH, IMAGE_HEIGHT));
 
-                LangUtil.uncheckedRunnable(super::setUp).run();
+                LangUtil.unchecked(super::setUp).run();
             } finally {
                 latch.countDown();
             }
