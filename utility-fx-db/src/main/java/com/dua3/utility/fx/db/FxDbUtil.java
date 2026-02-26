@@ -109,10 +109,7 @@ public final class FxDbUtil {
                 case DECIMAL, NUMERIC -> {
                     if (scale > 0) {
                         //noinspection StringConcatenationInFormatCall,StringConcatenationMissingWhitespace
-                        format = item -> String.format(
-                                locale,
-                                "%.0" + scale + "f",
-                                ((Number) item).doubleValue());
+                        format = item -> String.format(locale, "%.0" + scale + "f", ((Number) item).doubleValue());
                     } else {
                         format = String::valueOf;
                     }
