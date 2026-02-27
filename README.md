@@ -238,6 +238,10 @@ could not be loaded.
 
 ### 22.0.0 (in development)
 
+#### Additions
+
+- ResourcePool for reusable resources.
+
 #### Breaking Changes 
 - removed deprecated overloads of `LangUtil.check()`, `LangUtil.checkArg()`, and `LangUtil.require...()` 
   methods.
