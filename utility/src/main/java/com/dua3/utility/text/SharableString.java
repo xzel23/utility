@@ -66,12 +66,6 @@ public final class SharableString implements CharSequence {
      *         if the character is not found
      */
     public int indexOf(char c, int start) {
-        final int haystackLength = length();
-        for (int i = start; i < haystackLength; i++) {
-            if (charAt(i) == c) {
-                return i;
-            }
-        }
-        return -1;
+        return base.indexOf(c, start);
     }
 }
