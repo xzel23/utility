@@ -180,13 +180,14 @@ final class ThreadResourcePool<T> implements ResourcePool<T> {
  */
 final class ListBackedResourcePool<T> implements ResourcePool<T> {
 
+    private final Object lock = new Object();
     private final Supplier<T> factory;
     private final Consumer<T> releaser;
     private final BlockingQueue<T> queue;
     private final int minCapacity;
     private final int maxCapacity;
-    private final AtomicInteger resourceCount;
-    private final AtomicInteger waitingCount;
+    private int resourceCount;
+    private int waitingCount;
 
     /**
      * A private implementation of the {@code LeaseImpl} class that extends its functionality to operate
@@ -237,8 +238,8 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
             queue.add(factory.get());
         }
 
-        this.resourceCount = new AtomicInteger(queue.size());
-        this.waitingCount = new AtomicInteger(0);
+        this.resourceCount = queue.size();
+        this.waitingCount = 0;
     }
 
     @Override
@@ -247,23 +248,24 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
             // try to get resource non-blocking
             T resource = queue.poll();
             if (resource != null) {
-                return new BlockingLeaseImpl(resource, releaser);
+                return new BlockingLeaseImpl(resource, releaser).acquire();
             }
 
             // if the max capacity is not reached, create and return a new resource
-            synchronized (queue) {
+            synchronized (lock) {
                 resource = queue.poll();
                 if (resource != null) {
-                    return new BlockingLeaseImpl(resource, releaser);
+                    return new BlockingLeaseImpl(resource, releaser).acquire();
                 }
 
-                if (resourceCount.get() < maxCapacity) {
+                if (resourceCount < maxCapacity) {
                     resource = factory.get();
-                    resourceCount.incrementAndGet();
-                    return new BlockingLeaseImpl(resource, releaser);
+                    resourceCount++;
+                    assert resourceCount <= maxCapacity : "internal error: resourceCount > maxCapacity";
+                    return new BlockingLeaseImpl(resource, releaser).acquire();
                 }
 
-                waitingCount.incrementAndGet();
+                waitingCount++;
             }
 
             // if the max capacity is reached, wait for a resource to become available
@@ -273,7 +275,10 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
                 resource = queue.take();
                 return new BlockingLeaseImpl(resource, releaser);
             } finally {
-                waitingCount.decrementAndGet();
+                synchronized (lock) {
+                    waitingCount--;
+                    assert waitingCount >= 0 : "internal error: waitingCount < 0";
+                }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -282,9 +287,10 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
     }
 
     private void putBack(T resource) {
-        synchronized (queue) {
-            if (resourceCount.get() > minCapacity && waitingCount.get() == 0) {
-                resourceCount.decrementAndGet();
+        synchronized (lock) {
+            if (resourceCount > minCapacity && waitingCount == 0) {
+                resourceCount--;
+                assert resourceCount >= 0 : "internal error: resourceCount < 0";
             } else {
                 boolean accepted = queue.offer(resource);
                 assert accepted : "internal error: queue is full";
