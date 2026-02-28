@@ -240,7 +240,7 @@ could not be loaded.
 
 #### Additions
 
-- ResourcePool for reusable resources.
+- ResourcePool for reusable resources (resource-per thread, fixed- and variable-sized pools).
 
 #### Breaking Changes 
 - removed deprecated overloads of `LangUtil.check()`, `LangUtil.checkArg()`, and `LangUtil.require...()` 

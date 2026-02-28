@@ -142,4 +142,200 @@ class ResourcePoolTest {
         assertNotSame(res1.get(), res2.get(), "Different threads must see different resource instances");
         assertEquals(2, created.get(), "Factory should be called once per thread");
     }
+
+    @Test
+    void fixedSizePoolBasics() {
+        AtomicInteger created = new AtomicInteger();
+        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(
+                () -> {
+                    created.incrementAndGet();
+                    return new Object();
+                },
+                r -> {
+                },
+                1
+        );
+
+        assertEquals(1, created.get(), "Should pre-create resource for fixed-size pool");
+
+        Object r1;
+        try (var lease = pool.acquire()) {
+            r1 = lease.get();
+            assertNotNull(r1);
+        }
+
+        try (var lease = pool.acquire()) {
+            assertSame(r1, lease.get(), "Should reuse the resource that was just returned");
+        }
+    }
+
+    @Test
+    void fixedSizePoolPreCreation() {
+        AtomicInteger created = new AtomicInteger();
+        ResourcePool.fixedSizeResourcePool(
+                () -> {
+                    created.incrementAndGet();
+                    return new Object();
+                },
+                r -> {
+                },
+                3
+        );
+        assertEquals(3, created.get(), "Should pre-create all resources for fixed size pool");
+    }
+
+    @Test
+    void fixedSizePoolExhaustion() throws InterruptedException {
+        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(Object::new, r -> {
+        }, 1);
+
+        var lease1 = pool.acquire();
+
+        AtomicReference<ResourcePool.Lease<Object>> lease2 = new AtomicReference<>();
+        CountDownLatch latch = new CountDownLatch(1);
+        Thread t = new Thread(() -> {
+            lease2.set(pool.acquire());
+            latch.countDown();
+        });
+        t.start();
+
+        assertFalse(latch.await(100, TimeUnit.MILLISECONDS), "Second acquire should block");
+
+        lease1.close();
+
+        assertTrue(latch.await(1, TimeUnit.SECONDS), "Second acquire should succeed after first is closed");
+        assertNotNull(lease2.get());
+        lease2.get().close();
+    }
+
+    @Test
+    void variableSizePoolGrowthAndShrinkage() {
+        AtomicInteger created = new AtomicInteger();
+        AtomicInteger released = new AtomicInteger();
+        ResourcePool<Object> pool = ResourcePool.resourcePool(
+                () -> {
+                    created.incrementAndGet();
+                    return new Object();
+                },
+                r -> released.incrementAndGet(),
+                1, 2
+        );
+
+        assertEquals(1, created.get(), "Should pre-create minCapacity resources");
+
+        var lease1 = pool.acquire();
+        assertEquals(1, created.get());
+
+        var lease2 = pool.acquire();
+        assertEquals(2, created.get(), "Should create second resource up to maxCapacity");
+
+        // now we have 2 resources (maxCapacity reached)
+
+        lease1.close();
+        assertEquals(1, released.get());
+        // Since resourceCount (2) > minCapacity (1) and waitingCount == 0, resourceCount becomes 1 (resource retired)
+
+        lease2.close();
+        assertEquals(2, released.get());
+        // Since resourceCount (1) == minCapacity (1), it should be put back in the queue
+
+        // Acquiring again should reuse the remaining resource in the queue
+        try (var lease3 = pool.acquire()) {
+            assertEquals(2, created.get(), "No new resource should be created");
+        }
+    }
+
+    @Test
+    void interruptionDuringAcquire() throws InterruptedException {
+        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(Object::new, r -> {
+        }, 1);
+        var lease1 = pool.acquire();
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<Throwable> error = new AtomicReference<>();
+        Thread t = new Thread(() -> {
+            try {
+                pool.acquire();
+            } catch (Throwable e) {
+                error.set(e);
+            } finally {
+                latch.countDown();
+            }
+        });
+        t.start();
+
+        t.interrupt();
+
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
+        assertInstanceOf(WrappedException.class, error.get());
+        assertInstanceOf(InterruptedException.class, error.get().getCause());
+
+        lease1.close();
+    }
+
+    @Test
+    void invalidCapacities() {
+        assertThrows(IllegalArgumentException.class, () -> ResourcePool.fixedSizeResourcePool(Object::new, r -> {
+        }, -1));
+        assertThrows(IllegalArgumentException.class, () -> ResourcePool.resourcePool(Object::new, r -> {
+        }, 2, 1));
+        assertThrows(IllegalArgumentException.class, () -> ResourcePool.resourcePool(Object::new, r -> {
+        }, -1, 1));
+    }
+
+    @Test
+    void concurrentAccess() throws InterruptedException {
+        int threadCount = 10;
+        int poolSize = 3;
+        int iterations = 100;
+        ResourcePool<Integer> pool = ResourcePool.fixedSizeResourcePool(new Supplier<>() {
+            int next = 0;
+            @Override
+            public synchronized Integer get() {
+                return next++;
+            }
+        }, r -> {}, poolSize);
+
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch endLatch = new CountDownLatch(threadCount);
+        AtomicInteger errorCount = new AtomicInteger();
+
+        for (int i = 0; i < threadCount; i++) {
+            new Thread(() -> {
+                try {
+                    startLatch.await();
+                    for (int j = 0; j < iterations; j++) {
+                        try (var lease = pool.acquire()) {
+                            assertNotNull(lease.get());
+                            Thread.yield();
+                        }
+                    }
+                } catch (Exception e) {
+                    errorCount.incrementAndGet();
+                } finally {
+                    endLatch.countDown();
+                }
+            }).start();
+        }
+
+        startLatch.countDown();
+        assertTrue(endLatch.await(10, TimeUnit.SECONDS));
+        assertEquals(0, errorCount.get(), "No errors should occur during concurrent access");
+    }
+
+    @Test
+    void listBackedPoolAllowsMultipleAcquiresFromSameThread() {
+        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(Object::new, r -> {
+        }, 2);
+
+        ResourcePool.Lease<Object> lease1 = pool.acquire();
+        ResourcePool.Lease<Object> lease2 = pool.acquire();
+
+        assertNotNull(lease1);
+        assertNotNull(lease2);
+        assertNotSame(lease1.get(), lease2.get());
+
+        lease1.close();
+        lease2.close();
+    }
 }
