@@ -85,13 +85,17 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">com.dua3.utility.lang</a></div>
-<h1 title="Interface LangUtil.ConsumerThrows" class="title">Interface LangUtil.ConsumerThrows&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>E extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</h1>
+<h1 title="Interface LangUtil.ConsumerThrows" class="title">Interface LangUtil.ConsumerThrows&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</h1>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Type Parameters:</dt>
 <dd><code>T</code> - the argument type</dd>
 <dd><code>E</code> - the exception type</dd>
+</dl>
+<dl class="notes">
+<dt>All Superinterfaces:</dt>
+<dd><code><a href="LangUtil.FunctionThrows.html" title="interface in com.dua3.utility.lang">LangUtil.FunctionThrows</a>&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr>E&gt;</code></dd>
 </dl>
 <dl class="notes">
 <dt>Enclosing class:</dt>
@@ -103,7 +107,8 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/FunctionalInterface.html" title="class or interface in java.lang" class="external-link">@FunctionalInterface</a>
-</span><span class="modifiers">public static interface </span><span class="element-name type-name-label">LangUtil.ConsumerThrows&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>E extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</span></div>
+</span><span class="modifiers">public static interface </span><span class="element-name type-name-label">LangUtil.ConsumerThrows&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</span><span class="extends-implements">
+extends <a href="LangUtil.FunctionThrows.html" title="interface in com.dua3.utility.lang">LangUtil.FunctionThrows</a>&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr>E&gt;</span></div>
 <div class="block">Interface similar to <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link"><code>Consumer</code></a> that declares thrown
  exceptions on its <code>apply()</code> method.</div>
 </section>
@@ -125,17 +130,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Performs this operation on the given argument.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="LangUtil.ConsumerThrows.html" title="interface in com.dua3.utility.lang">LangUtil.ConsumerThrows</a><wbr>&lt;<a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>,<wbr><a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">E</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#andThen(java.util.function.Consumer)" class="member-name-link">andThen</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super <a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>&gt;&nbsp;after)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#apply(T)" class="member-name-link">apply</a><wbr>(<a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>&nbsp;t)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Returns a composed <code>Consumer</code> that performs, in sequence, this
- operation followed by the <code>after</code> operation.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="LangUtil.ConsumerThrows.html" title="interface in com.dua3.utility.lang">LangUtil.ConsumerThrows</a><wbr>&lt;<a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>,<wbr><a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">E</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#andThenTry(com.dua3.utility.lang.LangUtil.ConsumerThrows)" class="member-name-link">andThenTry</a><wbr>(<a href="LangUtil.ConsumerThrows.html" title="interface in com.dua3.utility.lang">LangUtil.ConsumerThrows</a>&lt;? super <a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>,<wbr>? extends <a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">E</a>&gt;&nbsp;after)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Returns a composed <code>Consumer</code> that performs, in sequence, this
- operation followed by the <code>after</code> operation.</div>
+<div class="block">Applies this function to the given argument.</div>
 </div>
 </div>
 </div>
@@ -166,46 +164,21 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="andThenTry(com.dua3.utility.lang.LangUtil.ConsumerThrows)">
-<h3>andThenTry</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="LangUtil.ConsumerThrows.html" title="interface in com.dua3.utility.lang">LangUtil.ConsumerThrows</a>&lt;<a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>,<wbr><a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">E</a>&gt;</span>&nbsp;<span class="element-name">andThenTry</span><wbr><span class="parameters">(<a href="LangUtil.ConsumerThrows.html" title="interface in com.dua3.utility.lang">LangUtil.ConsumerThrows</a>&lt;? super <a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>,<wbr>? extends <a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">E</a>&gt;&nbsp;after)</span>
-                                         throws <span class="exceptions">E</span></div>
-<div class="block">Returns a composed <code>Consumer</code> that performs, in sequence, this
- operation followed by the <code>after</code> operation. If performing either
- operation throws an exception, it is relayed to the caller of the
- composed operation.  If performing this operation throws an exception,
- the <code>after</code> operation will not be performed.</div>
+<section class="detail" id="apply(T)">
+<h3 id="apply(java.lang.Object)">apply</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a></span>&nbsp;<span class="element-name">apply</span><wbr><span class="parameters">(<a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>&nbsp;t)</span>
+            throws <span class="exceptions">E</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="LangUtil.FunctionThrows.html#apply(T)">LangUtil.FunctionThrows</a></code></span></div>
+<div class="block">Applies this function to the given argument.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="LangUtil.FunctionThrows.html#apply(T)">apply</a></code>&nbsp;in interface&nbsp;<code><a href="LangUtil.FunctionThrows.html" title="interface in com.dua3.utility.lang">LangUtil.FunctionThrows</a>&lt;<a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a> extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr><a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">E</a> extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>after</code> - the operation to perform after this operation</dd>
+<dd><code>t</code> - the function argument</dd>
 <dt>Returns:</dt>
-<dd>a composed <code>Consumer</code> that performs in sequence this
- operation followed by the <code>after</code> operation</dd>
+<dd>the function result</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if <code>after</code> is null</dd>
-<dd><code>E</code> - depending on implementation</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="andThen(java.util.function.Consumer)">
-<h3>andThen</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="LangUtil.ConsumerThrows.html" title="interface in com.dua3.utility.lang">LangUtil.ConsumerThrows</a>&lt;<a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>,<wbr><a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">E</a>&gt;</span>&nbsp;<span class="element-name">andThen</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super <a href="LangUtil.ConsumerThrows.html" title="type parameter in LangUtil.ConsumerThrows">T</a>&gt;&nbsp;after)</span>
-                                      throws <span class="exceptions">E</span></div>
-<div class="block">Returns a composed <code>Consumer</code> that performs, in sequence, this
- operation followed by the <code>after</code> operation. If performing either
- operation throws an exception, it is relayed to the caller of the
- composed operation.  If performing this operation throws an exception,
- the <code>after</code> operation will not be performed.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>after</code> - the operation to perform after this operation</dd>
-<dt>Returns:</dt>
-<dd>a composed <code>Consumer</code> that performs in sequence this
- operation followed by the <code>after</code> operation</dd>
-<dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if <code>after</code> is null</dd>
-<dd><code>E</code> - depending on implementation</dd>
+<dd><code>E</code></dd>
 </dl>
 </section>
 </li>
