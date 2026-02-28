@@ -694,6 +694,16 @@ public final class LangUtil {
         };
     }
 
+    /**
+     * Wraps a {@link ConsumerThrows} into a standard {@link Consumer}, converting checked exceptions
+     * thrown by the input into unchecked runtime exceptions.
+     *
+     * @param <T> the type of the input to the consumer
+     * @param <R> a generic type parameter not used in this method
+     * @param <E> the type of exception that the input consumer may throw
+     * @param f the consumer that may throw a checked exception
+     * @return a standard {@link Consumer} that wraps the given {@link ConsumerThrows}, throwing any exceptions as runtime exceptions
+     */
     @SuppressWarnings("OverlyBroadCatchBlock")
     public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception>
     Consumer<T> uncheckedConsumer(ConsumerThrows<T, E> f) {
@@ -706,6 +716,17 @@ public final class LangUtil {
         };
     }
 
+    /**
+     * Creates a BiConsumer that wraps a lambda or method reference which throws a checked exception,
+     * rethrowing any checked exceptions as unchecked exceptions during execution.
+     *
+     * @param <T> the type of the first argument to the operation
+     * @param <U> the type of the second argument to the operation
+     * @param <R> an unused generic type parameter for potential return types (kept for compatibility or extension)
+     * @param <E> the type of exception thrown by the provided BiConsumerThrows
+     * @param f the BiConsumerThrows functional interface that may throw a checked exception
+     * @return a BiConsumer that wraps the given BiConsumerThrows and rethrows checked exceptions as unchecked
+     */
     @SuppressWarnings("OverlyBroadCatchBlock")
     public static <T extends @Nullable Object, U extends @Nullable Object, R extends @Nullable Object, E extends Exception>
     BiConsumer<T, U> uncheckedConsumer(BiConsumerThrows<T, U, E> f) {

@@ -20,10 +20,16 @@ public interface ResourcePool<T> {
      * @param <T> the type of the resource being leased
      */
     interface Lease<T> extends AutoCloseable {
-        /** @return the managed resource */
+        /**
+         * Get the managed resource.
+         *
+         * @return the managed resource
+         */
         T get();
 
-        /** Resets the resource for the next use. */
+        /**
+         *  Resets the resource for the next use.
+         */
         @Override
         void close();
     }
