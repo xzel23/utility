@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -15,6 +14,11 @@ import java.util.function.Supplier;
  * @param <T> the type of resource managed by the pool
  */
 public interface ResourcePool<T> {
+    /**
+     * Represents a contract for managing the lifecycle of a resource within a lease-based system.
+     *
+     * @param <T> the type of the resource being leased
+     */
     interface Lease<T> extends AutoCloseable {
         /** @return the managed resource */
         T get();
@@ -183,7 +187,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
     private final Object lock = new Object();
     private final Supplier<T> factory;
     private final Consumer<T> releaser;
-    private final BlockingQueue<T> queue;
+    private final BlockingQueue<BlockingLeaseImpl> queue;
     private final int minCapacity;
     private final int maxCapacity;
     private int resourceCount;
@@ -210,7 +214,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
             try {
                 super.close();
             } finally {
-                putBack(resource);
+                putBack(this);
             }
         }
     }
@@ -235,7 +239,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
         this.queue = new ArrayBlockingQueue<>(maxCapacity);
 
         for (int i = 0; i < minCapacity; i++) {
-            queue.add(factory.get());
+            queue.add(new BlockingLeaseImpl(factory.get(), releaser));
         }
 
         this.resourceCount = queue.size();
@@ -246,23 +250,23 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
     public Lease<T> acquire() {
         try {
             // try to get resource non-blocking
-            T resource = queue.poll();
-            if (resource != null) {
-                return new BlockingLeaseImpl(resource, releaser).acquire();
+            BlockingLeaseImpl lease = queue.poll();
+            if (lease != null) {
+                return lease.acquire();
             }
 
             // if the max capacity is not reached, create and return a new resource
             synchronized (lock) {
-                resource = queue.poll();
-                if (resource != null) {
-                    return new BlockingLeaseImpl(resource, releaser).acquire();
+                lease = queue.poll();
+                if (lease != null) {
+                    return lease.acquire();
                 }
 
                 if (resourceCount < maxCapacity) {
-                    resource = factory.get();
+                    lease = new BlockingLeaseImpl(factory.get(), releaser);
                     resourceCount++;
                     assert resourceCount <= maxCapacity : "internal error: resourceCount > maxCapacity";
-                    return new BlockingLeaseImpl(resource, releaser).acquire();
+                    return lease.acquire();
                 }
 
                 waitingCount++;
@@ -272,8 +276,8 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
             // DO NOT use try-with-resources!!! The try only makes sure the waiting count is always correct
             // The lifecycle of the returned Lease is managed by the caller.
             try {
-                resource = queue.take();
-                return new BlockingLeaseImpl(resource, releaser);
+                lease = queue.take();
+                return lease.acquire();
             } finally {
                 synchronized (lock) {
                     waitingCount--;
@@ -286,13 +290,13 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
         }
     }
 
-    private void putBack(T resource) {
+    private void putBack(BlockingLeaseImpl lease) {
         synchronized (lock) {
             if (resourceCount > minCapacity && waitingCount == 0) {
                 resourceCount--;
                 assert resourceCount >= 0 : "internal error: resourceCount < 0";
             } else {
-                boolean accepted = queue.offer(resource);
+                boolean accepted = queue.offer(lease);
                 assert accepted : "internal error: queue is full";
             }
         }
