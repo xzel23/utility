@@ -423,7 +423,7 @@ class KeyStoreUtilTest {
             String alias = aliasesBefore.nextElement();
             if (keyStore.isKeyEntry(alias)) {
                 Certificate[] chain = keyStore.getCertificateChain(alias);
-                LOG.debug("Alias '{}' has {} certificates in chain", alias, chain == null ? 0 : chain.length);
+                LOG.debug("BEFORE SAVE: Alias '{}' has {} certificates in chain", alias, chain == null ? 0 : chain.length);
             }
         }
 
@@ -443,7 +443,7 @@ class KeyStoreUtilTest {
             String alias = aliasesAfter.nextElement();
             if (reloadedKeyStore.isKeyEntry(alias)) {
                 Certificate[] chain = reloadedKeyStore.getCertificateChain(alias);
-                LOG.debug("Alias '{}' has {} certificates in chain", alias, chain == null ? 0 : chain.length);
+                LOG.debug("AFTER LOAD: Alias '{}' has {} certificates in chain", alias, chain == null ? 0 : chain.length);
             }
         }
 
