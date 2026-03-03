@@ -18,7 +18,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -76,7 +75,9 @@ class DbUtilTest {
     @BeforeEach
     void setUp() throws SQLException {
         // Set up an in-memory H2 database for testing
-        connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+        org.h2.jdbcx.JdbcDataSource dataSource = new org.h2.jdbcx.JdbcDataSource();
+        dataSource.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+        connection = dataSource.getConnection();
 
         // Create a test table
         try (Statement stmt = connection.createStatement()) {
@@ -86,7 +87,6 @@ class DbUtilTest {
             stmt.execute("INSERT INTO test_table VALUES (1, 'test1', 100, '2023-01-15', '14:30:15', '2023-01-15 14:30:15')");
         }
     }
-
     @AfterEach
     void tearDown() throws SQLException {
         // Drop the test table
