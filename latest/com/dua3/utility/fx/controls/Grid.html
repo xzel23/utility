@@ -49,7 +49,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Detail:</p>
 <ul>
-<li><a href="#field-detail">Field</a></li>
+<li>Field</li>
 <li><a href="#constructor-detail">Constr</a></li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -67,7 +67,7 @@ loadScripts(document, 'script');</script>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
-<li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor-detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -106,7 +106,7 @@ loadScripts(document, 'script');</script>
 <dd><code>javafx.css.Styleable</code>, <code>javafx.event.EventTarget</code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Grid</span>
+<div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">Grid</span>
 <span class="extends-implements">extends javafx.scene.layout.GridPane</span></div>
 <div class="block">The InputGrid class is an extension of GridPane that manages input controls and
  ensures their validation state. It organizes input controls in a grid layout and
@@ -152,17 +152,6 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="field-summary" id="field-summary">
 <h2>Field Summary</h2>
-<div class="caption"><span>Fields</span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Field</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>protected static final org.apache.logging.log4j.Logger</code></div>
-<div class="col-second even-row-color"><code><a href="#LOG" class="member-name-link">LOG</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Logger</div>
-</div>
-</div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-javafx.scene.layout.GridPane">Fields inherited from class&nbsp;javafx.scene.layout.GridPane</h3>
 <code>REMAINING</code></div>
@@ -201,45 +190,40 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a><wbr>&lt;com.dua3.utility.fx.controls.Grid.Meta&lt;?&gt;&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#data()" class="member-name-link">data</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get()" class="member-name-link">get</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Retrieves the sequenced collection of <code>Grid.Meta</code> objects associated with this grid.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get()" class="member-name-link">get</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves a map of IDs and their corresponding values from the input controls.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLabelPlacement()" class="member-name-link">getLabelPlacement</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLabelPlacement()" class="member-name-link">getLabelPlacement</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the label placement.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#init()" class="member-name-link">init</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#init()" class="member-name-link">init</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Initializes the InputGrid by clearing previous input controls,
  creating a new grid layout, and setting up input controls with labels and markers.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ObjectProperty<wbr>&lt;<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#labelPlacementProperty()" class="member-name-link">labelPlacementProperty</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ObjectProperty<wbr>&lt;<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#labelPlacementProperty()" class="member-name-link">labelPlacementProperty</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the label placement property.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Resets all input controls in the grid to their default values.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLabelPlacement(com.dua3.utility.fx.controls.LabelPlacement)" class="member-name-link">setLabelPlacement</a><wbr>(<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&nbsp;labelPlacement)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLabelPlacement(com.dua3.utility.fx.controls.LabelPlacement)" class="member-name-link">setLabelPlacement</a><wbr>(<a href="LabelPlacement.html" title="enum class in com.dua3.utility.fx.controls">LabelPlacement</a>&nbsp;labelPlacement)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set the label placement.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>javafx.beans.property.ReadOnlyBooleanProperty</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validProperty()" class="member-name-link">validProperty</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the valid state property.</div>
 </div>
 </div>
@@ -322,21 +306,6 @@ loadScripts(document, 'script');</script>
 </ul>
 </section>
 </li>
-<!-- ============ FIELD DETAIL =========== -->
-<li>
-<section class="field-details" id="field-detail">
-<h2>Field Details</h2>
-<ul class="member-list">
-<li>
-<section class="detail" id="LOG">
-<h3>LOG</h3>
-<div class="member-signature"><span class="modifiers">protected static final</span>&nbsp;<span class="return-type">org.apache.logging.log4j.Logger</span>&nbsp;<span class="element-name">LOG</span></div>
-<div class="block">Logger</div>
-</section>
-</li>
-</ul>
-</section>
-</li>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <li>
 <section class="constructor-details" id="constructor-detail">
@@ -369,17 +338,6 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="data()">
-<h3>data</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html" title="class or interface in java.util" class="external-link">SequencedCollection</a>&lt;com.dua3.utility.fx.controls.Grid.Meta&lt;?&gt;&gt;</span>&nbsp;<span class="element-name">data</span>()</div>
-<div class="block">Retrieves the sequenced collection of <code>Grid.Meta</code> objects associated with this grid.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the sequenced collection of <code>Grid.Meta</code> objects representing the grid's metadata.</dd>
-</dl>
-</section>
-</li>
 <li>
 <section class="detail" id="labelPlacementProperty()">
 <h3>labelPlacementProperty</h3>
