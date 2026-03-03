@@ -42,12 +42,12 @@ import java.util.stream.Stream;
  * ensures their validation state. It organizes input controls in a grid layout and
  * provides methods for initialization, resetting, and retrieving input values.
  */
-public class Grid extends GridPane {
+public final class Grid extends GridPane {
 
     /**
      * Logger
      */
-    protected static final Logger LOG = LogManager.getLogger(Grid.class);
+    private static final Logger LOG = LogManager.getLogger(Grid.class);
 
     private final BooleanProperty valid = new SimpleBooleanProperty(false);
 
@@ -91,7 +91,7 @@ public class Grid extends GridPane {
      *
      * @return the sequenced collection of {@link Meta} objects representing the grid's metadata.
      */
-    protected SequencedCollection<Meta<?>> data() {
+    SequencedCollection<Meta<?>> data() {
         return Collections.unmodifiableSequencedCollection(data);
     }
 
