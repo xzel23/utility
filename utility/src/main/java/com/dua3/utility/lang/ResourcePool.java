@@ -2,6 +2,7 @@ package com.dua3.utility.lang;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -28,7 +29,7 @@ public interface ResourcePool<T> {
         T get();
 
         /**
-         *  Resets the resource for the next use.
+         * Resets the resource for the next use.
          */
         @Override
         void close();
@@ -110,6 +111,20 @@ public interface ResourcePool<T> {
      * a resource from this pool and has not yet released it.
      */
     Lease<T> acquire();
+
+    /**
+     * Attempts to acquire a resource from the pool without blocking.
+     * <p>
+     * If a resource is available, this method returns a {@link Lease} providing
+     * access to the resource. If no resources are available, it returns {@code null}.
+     * <p>
+     * The returned {@link Lease}, if not {@code null}, must be closed after use
+     * to ensure proper resource management.
+     *
+     * @return a {@link Lease} containing the resource if one is available, or {@code null}
+     *         if no resources are currently available
+     */
+    @Nullable Lease<T> tryAcquire();
 }
 
 /**
@@ -178,6 +193,18 @@ final class ThreadResourcePool<T> implements ResourcePool<T> {
     @Override
     public Lease<T> acquire() {
         return threadLocalLease.get().acquire();
+    }
+
+    @Override
+    public @Nullable Lease<T> tryAcquire() {
+        LeaseImpl<T> lease = threadLocalLease.get();
+
+        if (lease.leased) {
+            return null;
+        } else {
+            lease.leased = true;
+            return lease;
+        }
     }
 }
 
@@ -294,6 +321,30 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
             Thread.currentThread().interrupt();
             throw new WrappedException(e);
         }
+    }
+
+    @Override
+    public @Nullable Lease<T> tryAcquire() {
+        BlockingLeaseImpl lease = queue.poll();
+        if (lease != null) {
+            return lease.acquire();
+        }
+
+        synchronized (lock) {
+            lease = queue.poll();
+            if (lease != null) {
+                return lease.acquire();
+            }
+
+            if (resourceCount < maxCapacity) {
+                lease = new BlockingLeaseImpl(factory.get(), releaser);
+                resourceCount++;
+                assert resourceCount <= maxCapacity : "internal error: resourceCount > maxCapacity";
+                return lease.acquire();
+            }
+        }
+
+        return null;
     }
 
     private void putBack(BlockingLeaseImpl lease) {

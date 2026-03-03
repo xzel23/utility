@@ -341,4 +341,51 @@ class ResourcePoolTest {
         lease1.close();
         lease2.close();
     }
+
+    @Test
+    void threadResourcePoolTryAcquire() {
+        ResourcePool<Object> pool = ResourcePool.newThreadBasedPool(Object::new, r -> {});
+
+        try (ResourcePool.Lease<Object> lease1 = pool.tryAcquire()) {
+            assertNotNull(lease1, "tryAcquire should succeed when no lease is held");
+            assertNotNull(lease1.get());
+
+            assertNull(pool.tryAcquire(), "tryAcquire should return null when already leased in this thread");
+        }
+
+        try (ResourcePool.Lease<Object> lease2 = pool.tryAcquire()) {
+            assertNotNull(lease2, "tryAcquire should succeed after closing previous lease");
+        }
+    }
+
+    @Test
+    void fixedSizePoolTryAcquire() {
+        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(Object::new, r -> {}, 1);
+
+        try (ResourcePool.Lease<Object> lease1 = pool.tryAcquire()) {
+            assertNotNull(lease1, "tryAcquire should succeed when resource is available");
+
+            assertNull(pool.tryAcquire(), "tryAcquire should return null when pool is exhausted");
+        }
+
+        try (ResourcePool.Lease<Object> lease2 = pool.tryAcquire()) {
+            assertNotNull(lease2, "tryAcquire should succeed after resource is returned to pool");
+        }
+    }
+
+    @Test
+    void variableSizePoolTryAcquireGrowth() {
+        ResourcePool<Object> pool = ResourcePool.resourcePool(Object::new, r -> {}, 1, 2);
+
+        // First one should succeed (from minCapacity=1)
+        ResourcePool.Lease<Object> lease1 = pool.tryAcquire();
+        assertNotNull(lease1, "tryAcquire should succeed when resource is in queue");
+
+        // Second one: should grow the pool up to maxCapacity=2
+        try (ResourcePool.Lease<Object> lease2 = pool.tryAcquire()) {
+            assertNotNull(lease2, "tryAcquire should grow the pool up to maxCapacity");
+        }
+        
+        lease1.close();
+    }
 }
