@@ -7,6 +7,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -293,6 +294,59 @@ public interface MessageFormatter {
     }
 
     /**
+     * A utility class that provides helper methods for formatting messages in various styles.
+     * This class contains no public constructors and only exposes static utility methods.
+     *
+     * It performs formatting for text based on specific conditions, such as handling empty strings,
+     * literal strings, non-internationalized (non-I18N) text, and internationalized (I18N) text.
+     *
+     * The formatting behavior supports:
+     * - Direct handling of empty text by returning an empty string.
+     * - Treating "\0" as a literal to concatenate array elements into a single string.
+     * - Formatting non-I18N text by applying {@code MessageFormat} to the format string (after a special prefix is removed).
+     * - Delegating I18N-specific formatting to the provided {@code BiFunction} implementation.
+     */
+    final class MessageFormatHelper {
+        private MessageFormatHelper() {
+            // utility class
+        }
+
+        /**
+         * Formats a string based on specific criteria, such as handling empty strings,
+         * literal strings, non-internationalized (non-I18N) text, and internationalized (I18N) text.
+         * <p>
+         * Behavior:
+         * <ul>
+         * <li>If the format string is empty, an empty string is returned.
+         * <li>If the format string equals "\0", the method concatenates the provided arguments into a single string.
+         * <li>If the format string starts with "\0", the method removes the prefix and applies {@code MessageFormat}.
+         * <li>Otherwise, the provided {@code BiFunction} is used for formatting.
+         * </ul>
+         *
+         * @param fmt        the format string indicating how the output should be structured
+         * @param args       an array of arguments to be used for formatting; can be null
+         * @param baseFormat a {@code BiFunction} defining the base formatting behavior for I18N text
+         * @return the formatted string based on the specified format and arguments
+         */
+        private static String format(String fmt, @Nullable Object[] args, BiFunction<String, @Nullable Object[], String> baseFormat) {
+            // empty text
+            if (fmt.isEmpty()) {
+                return "";
+            }
+            // literal string
+            if (fmt.equals("\0")) {
+                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(" "));
+            }
+            // non-I18N text
+            if (fmt.startsWith("\0")) {
+                return MessageFormat.format(fmt.substring(1), args);
+            }
+            // I18N text (no I18N used by this formatter)
+            return baseFormat.apply(fmt, args);
+        }
+    }
+
+    /**
      * The MessageFormatterMessageFormat class is an implementation of the MessageFormatter
      * interface that formats messages using the {@link MessageFormat#format(String, Object...)}
      * method. This class provides a mechanism to replace placeholders in a format string with the
@@ -307,20 +361,7 @@ public interface MessageFormatter {
 
         @Override
         public String format(String fmt, @Nullable Object... args) {
-            // empty text
-            if (fmt.isEmpty()) {
-                return "";
-            }
-            // literal string
-            if (fmt.equals("\0")) {
-                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(" "));
-            }
-            // non-I18N text
-            if (fmt.startsWith("\0")) {
-                return MessageFormat.format(fmt.substring(1), args);
-            }
-            // I18N text (no I18N used by this formatter)
-            return MessageFormat.format(fmt, args);
+            return MessageFormatHelper.format(fmt, args, MessageFormat::format);
         }
 
         @Override
@@ -344,20 +385,7 @@ public interface MessageFormatter {
     record MessageFormatterI18n(I18N i18n) implements MessageFormatter {
         @Override
         public String format(String fmt, @Nullable Object... args) {
-            // empty text
-            if (fmt.isEmpty()) {
-                return "";
-            }
-            // literal string
-            if (fmt.equals("\0")) {
-                return Stream.of(args).map(String::valueOf).collect(Collectors.joining(" "));
-            }
-            // non-I18N text
-            if (fmt.startsWith("\0")) {
-                return MessageFormat.format(fmt.substring(1), args);
-            }
-            // I18N text
-            return i18n.format(fmt, args);
+            return MessageFormatHelper.format(fmt, args, i18n::format);
         }
 
         @Override
