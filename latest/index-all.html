@@ -4896,10 +4896,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/dua3/utility/lang/ImmutableSortedMap.html#firstKey()" class="member-name-link">firstKey()</a> - Method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/ImmutableSortedMap.html" title="class in com.dua3.utility.lang">ImmutableSortedMap</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/dua3/utility/lang/ResourcePool.html#fixedSizeResourcePool(java.util.function.Supplier,java.util.function.Consumer,int)" class="member-name-link">fixedSizeResourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;, int)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
-<dd>
-<div class="block">Creates a fixed-size resource pool that maintains a constant number of resources.</div>
-</dd>
 <dt><a href="com/dua3/utility/options/ArgumentsParserBuilder.html#flagBuilder(java.lang.String,java.lang.String)" class="member-name-link">flagBuilder(String, String)</a> - Method in class com.dua3.utility.options.<a href="com/dua3/utility/options/ArgumentsParserBuilder.html" title="class in com.dua3.utility.options">ArgumentsParserBuilder</a></dt>
 <dd>
 <div class="block">Creates a new <a href="com/dua3/utility/options/FlagBuilder.html" title="class in com.dua3.utility.options"><code>FlagBuilder</code></a> that will add the created flag to this builder when its <code>build()</code> method
@@ -10369,6 +10365,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Defines the style of formatting to be used within the <code>MessageFormatter</code>.</div>
 </dd>
+<dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatHelper.html" class="type-name-link" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatHelper</a> - Class in <a href="com/dua3/utility/text/package-summary.html">com.dua3.utility.text</a></dt>
+<dd>
+<div class="block">A utility class that provides helper methods for formatting messages in various styles.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/MessageFormatter.MessageFormatterArgs.html" class="type-name-link" title="class in com.dua3.utility.text">MessageFormatter.MessageFormatterArgs</a> - Record Class in <a href="com/dua3/utility/text/package-summary.html">com.dua3.utility.text</a></dt>
 <dd>
 <div class="block">Represents a container for a format string and the corresponding arguments
@@ -10796,9 +10796,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a function that checks if a given number is negative and formats the result.</div>
 </dd>
+<dt><a href="com/dua3/utility/lang/ResourcePool.html#newFixedSizeResourcePool(java.util.function.Supplier,java.util.function.Consumer,int)" class="member-name-link">newFixedSizeResourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;, int)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
+<dd>
+<div class="block">Creates a fixed-size resource pool that maintains a constant number of resources.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/RichText.html#newline()" class="member-name-link">newline()</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichText.html" title="class in com.dua3.utility.text">RichText</a></dt>
 <dd>
 <div class="block">Returns RichText containing a single newline character.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/ResourcePool.html#newResourcePool(java.util.function.Supplier,java.util.function.Consumer,int,int)" class="member-name-link">newResourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;, int, int)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
+<dd>
+<div class="block">Creates a resource pool with a specified minimum and maximum capacity for managing reusable resources.</div>
 </dd>
 <dt><a href="com/dua3/utility/fx/controls/TableViews.html#newTableView(java.util.SequencedCollection,com.dua3.utility.fx.controls.TableViewOptions,java.util.SequencedCollection)" class="member-name-link">newTableView(SequencedCollection&lt;? extends ColumnDef&lt;S, ?&gt;&gt;, TableViewOptions, SequencedCollection&lt;? extends S&gt;)</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/TableViews.html" title="class in com.dua3.utility.fx.controls">TableViews</a></dt>
 <dd>
@@ -10809,7 +10817,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a new <code>TableView</code> instance configured with the specified columns.</div>
 </dd>
-<dt><a href="com/dua3/utility/lang/ResourcePool.html#newThreadBasedPool(java.util.function.Supplier,java.util.function.Consumer)" class="member-name-link">newThreadBasedPool(Supplier&lt;T&gt;, Consumer&lt;T&gt;)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
+<dt><a href="com/dua3/utility/lang/ResourcePool.html#newThreadBasedResourcePool(java.util.function.Supplier,java.util.function.Consumer)" class="member-name-link">newThreadBasedResourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
 <dd>
 <div class="block">Creates a new resource pool where resources are managed on a per-thread basis.</div>
 </dd>
@@ -12932,10 +12940,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/io/FileSystemView.html#resolve(java.lang.String)" class="member-name-link">resolve(String)</a> - Method in class com.dua3.utility.io.<a href="com/dua3/utility/io/FileSystemView.html" title="class in com.dua3.utility.io">FileSystemView</a></dt>
 <dd>
 <div class="block">Resolve path.</div>
-</dd>
-<dt><a href="com/dua3/utility/lang/ResourcePool.html#resourcePool(java.util.function.Supplier,java.util.function.Consumer,int,int)" class="member-name-link">resourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;, int, int)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
-<dd>
-<div class="block">Creates a resource pool with a specified minimum and maximum capacity for managing reusable resources.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/ResourcePool.html" class="type-name-link" title="interface in com.dua3.utility.lang">ResourcePool&lt;T&gt;</a> - Interface in <a href="com/dua3/utility/lang/package-summary.html">com.dua3.utility.lang</a></dt>
 <dd>
@@ -16165,6 +16169,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/fx/FxUtil.html#TRUE" class="member-name-link">TRUE</a> - Static variable in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxUtil.html" title="class in com.dua3.utility.fx">FxUtil</a></dt>
 <dd>
 <div class="block">A constant ObservableBooleanValue that always holds the value <code>true</code>.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/ResourcePool.html#tryAcquire()" class="member-name-link">tryAcquire()</a> - Method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
+<dd>
+<div class="block">Attempts to acquire a resource from the pool without blocking.</div>
 </dd>
 <dt><a href="com/dua3/utility/data/Color.html#TURQUOISE" class="member-name-link">TURQUOISE</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
