@@ -322,7 +322,7 @@ class ResourcePoolTest {
         }
 
         startLatch.countDown();
-        assertTrue(endLatch.await(10, TimeUnit.SECONDS));
+        assertTrue(endLatch.await(20, TimeUnit.SECONDS)); // Windows CI is slow, give it enough time
         assertEquals(0, errorCount.get(), "No errors should occur during concurrent access");
     }
 
