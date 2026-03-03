@@ -55,7 +55,7 @@ public interface ResourcePool<T> {
      * @param releaser a {@code Consumer} that handles the cleanup or release of the resource
      * @return a {@code ResourcePool} instance for managing thread-local resources
      */
-    static <T> ResourcePool<T> newThreadBasedPool(Supplier<T> factory, Consumer<T> releaser) {
+    static <T> ResourcePool<T> newThreadBasedResourcePool(Supplier<T> factory, Consumer<T> releaser) {
         return new ThreadResourcePool<>(factory, releaser);
     }
 
@@ -71,7 +71,7 @@ public interface ResourcePool<T> {
      * @return a {@code ResourcePool} instance that manages resources with a fixed size
      * @throws IllegalArgumentException if {@code size} is negative
      */
-    static <T> ResourcePool<T> fixedSizeResourcePool(Supplier<T> factory, Consumer<T> releaser, int size) {
+    static <T> ResourcePool<T> newFixedSizeResourcePool(Supplier<T> factory, Consumer<T> releaser, int size) {
         return new ListBackedResourcePool<>(factory, releaser, size, size);
     }
 
@@ -88,7 +88,7 @@ public interface ResourcePool<T> {
      * @return             a {@code ResourcePool} instance configured with the specified minimum and maximum capacities
      * @throws IllegalArgumentException if {@code minCapacity} is negative or {@code maxCapacity} is less than {@code minCapacity}
      */
-    static <T> ResourcePool<T> resourcePool(Supplier<T> factory, Consumer<T> releaser, int minCapacity, int maxCapacity) {
+    static <T> ResourcePool<T> newResourcePool(Supplier<T> factory, Consumer<T> releaser, int minCapacity, int maxCapacity) {
         return new ListBackedResourcePool<>(factory, releaser, minCapacity, maxCapacity);
     }
 
@@ -347,6 +347,15 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
         return null;
     }
 
+    /**
+     * Returns the given resource lease back to the resource pool. If the current resource count
+     * exceeds the minimum capacity and there are no threads waiting for resources, the resource
+     * count is decremented. Otherwise, the lease is added back to the internal queue.
+     *
+     * @param lease the resource lease to be returned to the pool
+     *              (should not be null and must belong to this pool)
+     * @throws AssertionError if the resource count goes below zero or if the queue is full
+     */
     private void putBack(BlockingLeaseImpl lease) {
         synchronized (lock) {
             if (resourceCount > minCapacity && waitingCount == 0) {

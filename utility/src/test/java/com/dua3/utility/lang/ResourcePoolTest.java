@@ -28,7 +28,7 @@ class ResourcePoolTest {
             lastReleased.set(r);
         };
 
-        ResourcePool<Object> pool = ResourcePool.newThreadBasedPool(factory, releaser);
+        ResourcePool<Object> pool = ResourcePool.newThreadBasedResourcePool(factory, releaser);
 
         // first lease
         Object r1;
@@ -52,7 +52,7 @@ class ResourcePoolTest {
 
     @Test
     void nonReentrantAcquireSameThread() {
-        ResourcePool<Object> pool = ResourcePool.newThreadBasedPool(Object::new, r -> {});
+        ResourcePool<Object> pool = ResourcePool.newThreadBasedResourcePool(Object::new, r -> {});
 
         ResourcePool.Lease<Object> lease = pool.acquire();
         // cannot acquire again in same thread until closed
@@ -69,7 +69,7 @@ class ResourcePoolTest {
 
     @Test
     void doubleCloseThrows() {
-        ResourcePool<Object> pool = ResourcePool.newThreadBasedPool(Object::new, r -> {});
+        ResourcePool<Object> pool = ResourcePool.newThreadBasedResourcePool(Object::new, r -> {});
 
         ResourcePool.Lease<Object> lease = pool.acquire();
         lease.close();
@@ -83,7 +83,7 @@ class ResourcePoolTest {
             released.incrementAndGet();
             throw new RuntimeException("boom");
         };
-        ResourcePool<Object> pool = ResourcePool.newThreadBasedPool(Object::new, badReleaser);
+        ResourcePool<Object> pool = ResourcePool.newThreadBasedResourcePool(Object::new, badReleaser);
 
         // close must not propagate exception
         ResourcePool.Lease<Object> lease1 = pool.acquire();
@@ -105,7 +105,7 @@ class ResourcePoolTest {
         CountDownLatch acquired = new CountDownLatch(2);
         CountDownLatch finished = new CountDownLatch(2);
 
-        ResourcePool<Object> pool = ResourcePool.newThreadBasedPool(() -> {
+        ResourcePool<Object> pool = ResourcePool.newThreadBasedResourcePool(() -> {
             created.incrementAndGet();
             return new Object();
         }, r -> {});
@@ -146,7 +146,7 @@ class ResourcePoolTest {
     @Test
     void fixedSizePoolBasics() {
         AtomicInteger created = new AtomicInteger();
-        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(
+        ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(
                 () -> {
                     created.incrementAndGet();
                     return new Object();
@@ -172,7 +172,7 @@ class ResourcePoolTest {
     @Test
     void fixedSizePoolPreCreation() {
         AtomicInteger created = new AtomicInteger();
-        ResourcePool.fixedSizeResourcePool(
+        ResourcePool.newFixedSizeResourcePool(
                 () -> {
                     created.incrementAndGet();
                     return new Object();
@@ -186,7 +186,7 @@ class ResourcePoolTest {
 
     @Test
     void fixedSizePoolExhaustion() throws InterruptedException {
-        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(Object::new, r -> {
+        ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(Object::new, r -> {
         }, 1);
 
         var lease1 = pool.acquire();
@@ -212,7 +212,7 @@ class ResourcePoolTest {
     void variableSizePoolGrowthAndShrinkage() {
         AtomicInteger created = new AtomicInteger();
         AtomicInteger released = new AtomicInteger();
-        ResourcePool<Object> pool = ResourcePool.resourcePool(
+        ResourcePool<Object> pool = ResourcePool.newResourcePool(
                 () -> {
                     created.incrementAndGet();
                     return new Object();
@@ -247,7 +247,7 @@ class ResourcePoolTest {
 
     @Test
     void interruptionDuringAcquire() throws InterruptedException {
-        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(Object::new, r -> {
+        ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(Object::new, r -> {
         }, 1);
         var lease1 = pool.acquire();
 
@@ -275,11 +275,11 @@ class ResourcePoolTest {
 
     @Test
     void invalidCapacities() {
-        assertThrows(IllegalArgumentException.class, () -> ResourcePool.fixedSizeResourcePool(Object::new, r -> {
+        assertThrows(IllegalArgumentException.class, () -> ResourcePool.newFixedSizeResourcePool(Object::new, r -> {
         }, -1));
-        assertThrows(IllegalArgumentException.class, () -> ResourcePool.resourcePool(Object::new, r -> {
+        assertThrows(IllegalArgumentException.class, () -> ResourcePool.newResourcePool(Object::new, r -> {
         }, 2, 1));
-        assertThrows(IllegalArgumentException.class, () -> ResourcePool.resourcePool(Object::new, r -> {
+        assertThrows(IllegalArgumentException.class, () -> ResourcePool.newResourcePool(Object::new, r -> {
         }, -1, 1));
     }
 
@@ -288,7 +288,7 @@ class ResourcePoolTest {
         int threadCount = 10;
         int poolSize = 3;
         int iterations = 100;
-        ResourcePool<Integer> pool = ResourcePool.fixedSizeResourcePool(new Supplier<>() {
+        ResourcePool<Integer> pool = ResourcePool.newFixedSizeResourcePool(new Supplier<>() {
             int next = 0;
             @Override
             public synchronized Integer get() {
@@ -328,7 +328,7 @@ class ResourcePoolTest {
 
     @Test
     void listBackedPoolAllowsMultipleAcquiresFromSameThread() {
-        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(Object::new, r -> {
+        ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(Object::new, r -> {
         }, 2);
 
         ResourcePool.Lease<Object> lease1 = pool.acquire();
@@ -344,7 +344,7 @@ class ResourcePoolTest {
 
     @Test
     void threadResourcePoolTryAcquire() {
-        ResourcePool<Object> pool = ResourcePool.newThreadBasedPool(Object::new, r -> {});
+        ResourcePool<Object> pool = ResourcePool.newThreadBasedResourcePool(Object::new, r -> {});
 
         try (ResourcePool.Lease<Object> lease1 = pool.tryAcquire()) {
             assertNotNull(lease1, "tryAcquire should succeed when no lease is held");
@@ -360,7 +360,7 @@ class ResourcePoolTest {
 
     @Test
     void fixedSizePoolTryAcquire() {
-        ResourcePool<Object> pool = ResourcePool.fixedSizeResourcePool(Object::new, r -> {}, 1);
+        ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(Object::new, r -> {}, 1);
 
         try (ResourcePool.Lease<Object> lease1 = pool.tryAcquire()) {
             assertNotNull(lease1, "tryAcquire should succeed when resource is available");
@@ -375,7 +375,7 @@ class ResourcePoolTest {
 
     @Test
     void variableSizePoolTryAcquireGrowth() {
-        ResourcePool<Object> pool = ResourcePool.resourcePool(Object::new, r -> {}, 1, 2);
+        ResourcePool<Object> pool = ResourcePool.newResourcePool(Object::new, r -> {}, 1, 2);
 
         // First one should succeed (from minCapacity=1)
         ResourcePool.Lease<Object> lease1 = pool.tryAcquire();
