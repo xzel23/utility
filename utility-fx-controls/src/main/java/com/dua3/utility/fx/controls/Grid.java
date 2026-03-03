@@ -363,14 +363,7 @@ public class Grid extends GridPane {
                 int span = 1;
 
                 Node node = entry.control.node();
-                node.focusedProperty().addListener((v, o, n) -> {
-                    if (Objects.equals(n, Boolean.FALSE)) {
-                        LOG.trace("input control lost focus: {}", entry.id);
-                        updateMarker(entry, true);
-                    }
-                });
-
-                entry.control.state().addValidationListener(() -> updateMarker(entry, true));
+                setupAutomaticMarkerUpdate(node, entry);
 
                 addToGrid(node, gridX, gridY, span, insets);
                 gridX += span;
@@ -412,14 +405,7 @@ public class Grid extends GridPane {
                 }
 
                 Node node = entry.control.node();
-                node.focusedProperty().addListener((v, o, n) -> {
-                    if (Objects.equals(n, Boolean.FALSE)) {
-                        LOG.trace("input control lost focus: {}", entry.id);
-                        updateMarker(entry, true);
-                    }
-                });
-
-                entry.control.state().addValidationListener(() -> updateMarker(entry, true));
+                setupAutomaticMarkerUpdate(node, entry);
 
                 if (needsLabelRow) {
                     addToGrid(node, gridX++, gridY + 1, 1, insets);
@@ -482,6 +468,26 @@ public class Grid extends GridPane {
         if (!data.isEmpty()) {
             data.getFirst().control.node().requestFocus();
         }
+    }
+
+    /**
+     * Sets up automatic updates for validation markers associated with the given input {@code node}.
+     * <p>
+     * This method attaches listeners to the {@code node}'s focus property and the validation state
+     * of the associated {@link Meta} object. When the {@code node} loses focus or when the validation
+     * state changes, the associated markers are updated accordingly.
+     *
+     * @param node the {@link Node} to monitor for focus changes
+     * @param entry the {@link Meta} object containing metadata and controls for the input field
+     */
+    private void setupAutomaticMarkerUpdate(Node node, Meta<?> entry) {
+        node.focusedProperty().addListener((v, o, n) -> {
+            if (Objects.equals(n, Boolean.FALSE)) {
+                LOG.trace("input control lost focus: {}", entry.id);
+                updateMarker(entry, true);
+            }
+        });
+        entry.control.state().addValidationListener(() -> updateMarker(entry, true));
     }
 
     private void updateMarker(Meta<?> entry, boolean showErrors) {
