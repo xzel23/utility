@@ -506,7 +506,10 @@ public final class IoUtil {
      */
     public static void deleteRecursive(Path path) throws IOException {
         try (Stream<Path> files = Files.walk(path, FileVisitOption.FOLLOW_LINKS)) {
-            files.sorted(Comparator.reverseOrder()).forEach(LangUtil.unchecked(p -> Files.deleteIfExists(p)));
+            files.sorted(Comparator.reverseOrder())
+                    .forEach(LangUtil.unchecked(
+                            (LangUtil.FunctionThrows<? super Path, ? extends Object, ? extends Exception>) Files::deleteIfExists)
+                    );
         } catch (UncheckedIOException e) {
             throw new IOException(e);
         }
