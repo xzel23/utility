@@ -171,7 +171,7 @@ final class ThreadResourcePool<T> implements ResourcePool<T> {
     ThreadResourcePool(Supplier<T> factory, Consumer<T> releaser) {
         // We store the wrapper itself in the ThreadLocal
         this.threadLocalLease = ThreadLocal.withInitial(() ->
-                new LeaseImpl<T>(factory.get(), releaser)
+                new LeaseImpl<>(factory.get(), releaser)
         );
     }
 
