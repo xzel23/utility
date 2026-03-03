@@ -959,7 +959,7 @@ public interface Color {
      * @param c the input color component, a double value in the range [0..1]
      * @return the linearized color component, a double value
      */
-    private double linear(double c) {
+    private static double linear(double c) {
         return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     }
 }
