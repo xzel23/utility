@@ -259,7 +259,7 @@ could not be loaded.
 
 - RichTextBuilder: performance optimization.
 - FxLauncher: command line option to set log level.
-- Some small fixes and improvements.
+- Some small fixes and improvements; reduce code duplication.
 
 ### 21.1.0
 
