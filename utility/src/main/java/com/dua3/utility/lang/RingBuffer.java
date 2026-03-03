@@ -339,7 +339,6 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
         int sz = toIndex - fromIndex;
         Objects.checkFromIndexSize(fromIndex, sz, len);
 
-        //noinspection NullableProblems - false positive; T is @Nullable
         return new AbstractList<>() {
             @Override
             public T get(int index) {
