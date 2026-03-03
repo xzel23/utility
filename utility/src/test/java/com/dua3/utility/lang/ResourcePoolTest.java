@@ -310,7 +310,10 @@ class ResourcePoolTest {
                             Thread.yield();
                         }
                     }
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
+                    errorCount.incrementAndGet();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     errorCount.incrementAndGet();
                 } finally {
                     endLatch.countDown();
