@@ -387,7 +387,7 @@ subprojects {
     afterEvaluate {
         configure<SigningExtension> {
             val shouldSign = !project.version.toString().lowercase().contains("snapshot")
-            setRequired(shouldSign && gradle.taskGraph.hasTask("publish"))
+            isRequired = shouldSign && gradle.taskGraph.hasTask("publish")
 
             val publishing = project.extensions.getByType<PublishingExtension>()
 
@@ -429,12 +429,12 @@ tasks.register("publishToStagingDirectory") {
     dependsOn(subprojects.mapNotNull { it.tasks.findByName("publishToStagingDirectory") })
 }
 
-// add a task to create aggregate javadoc in the root projects build/docs/javadoc folder
+// add a task to create aggregate Javadoc in the root projects build/docs/javadoc folder
 tasks.register<Javadoc>("aggregateJavadoc") {
     group = "documentation"
     description = "Generates aggregated Javadoc for all subprojects"
-    setDestinationDir(layout.buildDirectory.dir("docs/javadoc").get().asFile)
-    setTitle("${rootProject.name} ${project.version} API")
+    destinationDir = layout.buildDirectory.dir("docs/javadoc").get().asFile
+    title = "${rootProject.name} ${project.version} API"
 
     // Set executable in doFirst to keep it lazy
     val extension = if (System.getProperty("os.name").contains("Windows", ignoreCase = true)) ".exe" else ""
