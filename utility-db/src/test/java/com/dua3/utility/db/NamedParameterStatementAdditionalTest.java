@@ -18,8 +18,10 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Array;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.JDBCType;
+
+import org.h2.jdbcx.JdbcDataSource;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -39,7 +41,9 @@ class NamedParameterStatementAdditionalTest {
     @BeforeEach
     void setUp() throws SQLException {
         // Set up an in-memory H2 database for testing
-        connection = DriverManager.getConnection("jdbc:h2:mem:test2;DB_CLOSE_DELAY=-1");
+        JdbcDataSource dataSource = new JdbcDataSource();
+        dataSource.setURL("jdbc:h2:mem:test2;DB_CLOSE_DELAY=-1");
+        connection = dataSource.getConnection();
 
         // Create a test table
         try (Statement stmt = connection.createStatement()) {

@@ -19,7 +19,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.JDBCType;
 import java.sql.Ref;
 import java.sql.ResultSet;
@@ -51,7 +50,9 @@ class NamedParameterStatementTest {
     @BeforeEach
     void setUp() throws SQLException {
         // Set up an in-memory H2 database for testing
-        connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+        org.h2.jdbcx.JdbcDataSource dataSource = new org.h2.jdbcx.JdbcDataSource();
+        dataSource.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+        connection = dataSource.getConnection();
 
         // Create a test table
         try (Statement stmt = connection.createStatement()) {
