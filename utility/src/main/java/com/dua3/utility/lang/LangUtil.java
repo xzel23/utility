@@ -721,13 +721,12 @@ public final class LangUtil {
      *
      * @param <T> the type of the first argument to the operation
      * @param <U> the type of the second argument to the operation
-     * @param <R> an unused generic type parameter for potential return types (kept for compatibility or extension)
      * @param <E> the type of exception thrown by the provided BiConsumerThrows
      * @param f the BiConsumerThrows functional interface that may throw a checked exception
      * @return a BiConsumer that wraps the given BiConsumerThrows and rethrows checked exceptions as unchecked
      */
     @SuppressWarnings("OverlyBroadCatchBlock")
-    public static <T extends @Nullable Object, U extends @Nullable Object, R extends @Nullable Object, E extends Exception>
+    public static <T extends @Nullable Object, U extends @Nullable Object, E extends Exception>
     BiConsumer<T, U> uncheckedConsumer(BiConsumerThrows<T, U, E> f) {
         return (T t, U u) -> {
             try {
