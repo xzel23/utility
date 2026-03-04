@@ -184,55 +184,11 @@ public final class TableViews {
                 ContextMenu rowMenu = new ContextMenu();
 
                 if (allowDeletingRows) {
-                    MenuItem deleteItem = new MenuItem();
-                    deleteItem.setOnAction(evt -> {
-                        List<Integer> selectedIndices = new ArrayList<>(tv.getSelectionModel().getSelectedIndices());
-                        int count = selectedIndices.size();
-                        if (count == 0) return;
-
-                        String title = "Delete row" + (count > 1 ? "s" : "");
-                        String header = "Delete " + (count > 1 ? "selected rows" : "row") + "?";
-                        String text = "Do you really want to delete the selected " + (count > 1 ? "rows" : "row") + "?";
-                        Dialogs.alert(tv.getScene().getWindow(), AlertType.CONFIRMATION)
-                                .title(title)
-                                .header(header)
-                                .text(text)
-                                .showAndWait()
-                                .filter(bt -> bt == ButtonType.OK)
-                                .ifPresent(bt -> {
-                                    selectedIndices.sort(Comparator.reverseOrder());
-                                    for (int index : selectedIndices) {
-                                        tv.getItems().remove(index);
-                                    }
-                                });
-                    });
-                    rowMenu.setOnShowing(evt -> {
-                        int count = tv.getSelectionModel().getSelectedItems().size();
-                        deleteItem.setText(count > 1 ? "Delete rows" : "Delete row");
-                    });
-                    rowMenu.getItems().add(deleteItem);
+                    addDeleteRowMenuEntry(tv, rowMenu);
                 }
 
                 if (allowInsertingRows) {
-                    assert itemFactory != null : "internal error: itemFactory must not be null when inserting rows is enabled";
-
-                    if (allowDeletingRows) {
-                        rowMenu.getItems().add(new SeparatorMenuItem());
-                    }
-
-                    MenuItem insertAbove = new MenuItem("Insert row above");
-                    insertAbove.setOnAction(evt -> {
-                        int index = row.getIndex();
-                        tv.getItems().add(index, itemFactory.get());
-                    });
-
-                    MenuItem insertBelow = new MenuItem("Insert row below");
-                    insertBelow.setOnAction(evt -> {
-                        int index = row.getIndex();
-                        tv.getItems().add(index + 1, itemFactory.get());
-                    });
-
-                    rowMenu.getItems().addAll(insertAbove, insertBelow);
+                    addInsertRowMenuEntry(tv, rowMenu, row);
                 }
 
                 row.contextMenuProperty().bind(
@@ -243,6 +199,77 @@ public final class TableViews {
             }
 
             return row;
+        }
+
+        /**
+         * Adds menu entries to the specified context menu for inserting a new row above or below
+         * the target row in the associated TableView. This functionality assumes a valid item
+         * factory is provided to create new row instances.
+         *
+         * @param tv      the TableView to which the rows belong
+         * @param rowMenu the context menu to which the "insert row" options will be added
+         * @param row     the TableRow representing the target row for insertion operations
+         */
+        private void addInsertRowMenuEntry(TableView<S> tv, ContextMenu rowMenu, TableRow<S> row) {
+            assert itemFactory != null : "internal error: itemFactory must not be null when inserting rows is enabled";
+
+            if (allowDeletingRows) {
+                rowMenu.getItems().add(new SeparatorMenuItem());
+            }
+
+            MenuItem insertAbove = new MenuItem("Insert row above");
+            insertAbove.setOnAction(evt -> {
+                int index = row.getIndex();
+                tv.getItems().add(index, itemFactory.get());
+            });
+
+            MenuItem insertBelow = new MenuItem("Insert row below");
+            insertBelow.setOnAction(evt -> {
+                int index = row.getIndex();
+                tv.getItems().add(index + 1, itemFactory.get());
+            });
+
+            rowMenu.getItems().addAll(insertAbove, insertBelow);
+        }
+
+        /**
+         * Adds a menu entry to the specified context menu for deleting the selected rows
+         * in the provided TableView. The menu entry dynamically adjusts its text to reflect
+         * whether a single row or multiple rows are selected. If triggered, the user is
+         * prompted with a confirmation dialog before proceeding with the deletion.
+         *
+         * @param <S>     the type of the objects contained within the TableView
+         * @param tv      the TableView whose rows can be deleted via the context menu
+         * @param rowMenu the context menu to which the "delete row" option will be added
+         */
+        private static <S> void addDeleteRowMenuEntry(TableView<S> tv, ContextMenu rowMenu) {
+            MenuItem deleteItem = new MenuItem();
+            deleteItem.setOnAction(evt -> {
+                List<Integer> selectedIndices = new ArrayList<>(tv.getSelectionModel().getSelectedIndices());
+                int count = selectedIndices.size();
+                if (count == 0) return;
+
+                String title = "Delete row" + (count > 1 ? "s" : "");
+                String header = "Delete " + (count > 1 ? "selected rows" : "row") + "?";
+                String text = "Do you really want to delete the selected " + (count > 1 ? "rows" : "row") + "?";
+                Dialogs.alert(tv.getScene().getWindow(), AlertType.CONFIRMATION)
+                        .title(title)
+                        .header(header)
+                        .text(text)
+                        .showAndWait()
+                        .filter(bt -> bt == ButtonType.OK)
+                        .ifPresent(bt -> {
+                            selectedIndices.sort(Comparator.reverseOrder());
+                            for (int index : selectedIndices) {
+                                tv.getItems().remove(index);
+                            }
+                        });
+            });
+            rowMenu.setOnShowing(evt -> {
+                int count = tv.getSelectionModel().getSelectedItems().size();
+                deleteItem.setText(count > 1 ? "Delete rows" : "Delete row");
+            });
+            rowMenu.getItems().add(deleteItem);
         }
     }
 
