@@ -258,16 +258,16 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
         SliderWithButtons slider = new SliderWithButtons(mode, fmtr);
         applyTo(slider);
 
-        applyIfNonNull(orientation, slider::setOrientation);
-        applyIfNonNull(min, slider::setMin);
-        applyIfNonNull(max, slider::setMax);
-        applyIfNonNull(value, slider::set);
-        applyIfNonNull(incrementText, slider::setIncrementText);
-        applyIfNonNull(incrementGraphic, slider::setIncrementGraphic);
-        applyIfNonNull(decrementText, slider::setDecrementText);
-        applyIfNonNull(decrementGraphic, slider::setDecrementGraphic);
-        applyIfNonNull(blockIncrement, slider::setBlockIncrement);
-        applyIfNonNull(majorTickUnit, slider::setMajorTickUnit);
+        LangUtil.applyIfNonNull(orientation, slider::setOrientation);
+        LangUtil.applyIfNonNull(min, slider::setMin);
+        LangUtil.applyIfNonNull(max, slider::setMax);
+        LangUtil.applyIfNonNull(value, slider::set);
+        LangUtil.applyIfNonNull(incrementText, slider::setIncrementText);
+        LangUtil.applyIfNonNull(incrementGraphic, slider::setIncrementGraphic);
+        LangUtil.applyIfNonNull(decrementText, slider::setDecrementText);
+        LangUtil.applyIfNonNull(decrementGraphic, slider::setDecrementGraphic);
+        LangUtil.applyIfNonNull(blockIncrement, slider::setBlockIncrement);
+        LangUtil.applyIfNonNull(majorTickUnit, slider::setMajorTickUnit);
 
         slider.setShowTickMarks(showTickMarks);
         slider.setSnapToTicks(snapToTicks);

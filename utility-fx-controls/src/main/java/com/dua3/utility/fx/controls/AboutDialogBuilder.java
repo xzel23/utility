@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.application.LicenseData;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -31,7 +32,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -51,7 +51,7 @@ import java.util.Collection;
 public class AboutDialogBuilder {
     private static final Logger LOG = LogManager.getLogger(AboutDialogBuilder.class);
 
-    private final @Nullable Window parentWindow;
+    private final @Nullable Stage parentStage;
     private final MessageFormatter messageFormatter;
 
     private String title = "";
@@ -73,8 +73,8 @@ public class AboutDialogBuilder {
      *
      * @param parentWindow the window that will be the parent of the dialog, or null if there is no parent window.
      */
-    AboutDialogBuilder(@Nullable Window parentWindow, MessageFormatter messageFormatter) {
-        this.parentWindow = parentWindow;
+    AboutDialogBuilder(@Nullable Stage parentWindow, MessageFormatter messageFormatter) {
+        this.parentStage = parentWindow;
         this.messageFormatter = messageFormatter;
     }
 
@@ -111,7 +111,7 @@ public class AboutDialogBuilder {
         licenseNote(I18NInstance.get().format("dua3.utility.fx.controls.about.dialog.license.note", licenseData.licenseId(), licenseData.licensee(), licenseData.validUntil()));
         licenseData.licenseText().ifPresent(licenseText ->
                 onShowLicenseDetails(() ->
-                        Dialogs.alert(parentWindow, Alert.AlertType.INFORMATION)
+                        Dialogs.alert(parentStage, Alert.AlertType.INFORMATION)
                                 .title(I18NInstance.get().get("dua3.utility.fx.controls.about.dialog.license.details.title"))
                                 .header(I18NInstance.get().format("dua3.utility.fx.controls.about.dialog.license.details.header", licenseData.validUntil()))
                                 .text(licenseText.toString())
@@ -431,20 +431,14 @@ public class AboutDialogBuilder {
         }
         dialogPane.getButtonTypes().addAll(ButtonType.OK);
 
-        if (parentWindow != null) {
+        if (parentStage != null) {
             Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
-            stage.getIcons().addAll(((Stage) parentWindow).getIcons());
-        }
-        if (graphic != null) {
-            dlg.setGraphic(graphic);
-        }
-        if (expandableContent != null) {
-            dialogPane.setExpandableContent(expandableContent);
+            stage.getIcons().addAll(parentStage.getIcons());
         }
 
-        if (modality != null) {
-            dlg.initModality(modality);
-        }
+        LangUtil.applyIfNonNull(graphic, dlg::setGraphic);
+        LangUtil.applyIfNonNull(expandableContent, dialogPane::setExpandableContent);
+        LangUtil.applyIfNonNull(modality, dlg::initModality);
 
         return dlg;
     }

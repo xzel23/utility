@@ -2688,6 +2688,23 @@ public final class LangUtil {
     }
 
     /**
+     * Applies the given {@link BiConsumer} to the specified inputs if both inputs are non-null.
+     * This utility method ensures that the consumer is only executed when both provided arguments
+     * are non-null, avoiding potential {@code NullPointerException}.
+     *
+     * @param <C>      the type of the first input
+     * @param <D>      the type of the second input
+     * @param consumer the {@link BiConsumer} to execute if both inputs are non-null
+     * @param a        the first input, may be null
+     * @param b        the second input, may be null
+     */
+    public static <C, D> void applyIfNotNull(BiConsumer<C, D> consumer, @Nullable C a, @Nullable D b) {
+        if (a != null && b != null) {
+            consumer.accept(a, b);
+        }
+    }
+
+    /**
      * Applies the given consumer to the CharSequence if it is not null and not empty.
      *
      * @param <T>      the type of the CharSequence

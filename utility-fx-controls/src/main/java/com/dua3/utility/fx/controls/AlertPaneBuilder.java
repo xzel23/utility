@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DialogPane;
@@ -65,7 +66,7 @@ public class AlertPaneBuilder
     @Override
     public InputDialogPane<Void> build() {
         InputDialogPane<Void> inputPane = super.build();
-        applyIfNotNull(DialogPane::setContentText, inputPane, text);
+        LangUtil.applyIfNotNull(DialogPane::setContentText, inputPane, text);
         return inputPane;
     }
 }

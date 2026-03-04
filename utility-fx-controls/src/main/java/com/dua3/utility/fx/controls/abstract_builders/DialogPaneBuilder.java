@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls.abstract_builders;
 
 import com.dua3.utility.fx.controls.ButtonDef;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
@@ -88,7 +89,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     public D build() {
         D dlg = dialogSupplier.get();
 
-        applyIfNotNull(headerSetter, dlg, header);
+        LangUtil.applyIfNotNull(headerSetter, dlg, header);
 
         return dlg;
     }
@@ -115,23 +116,6 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      */
     public @Nullable String format(MessageFormatter.MessageFormatterArgs args) {
         return getMessageFormatter().format(args);
-    }
-
-    /**
-     * Applies the given {@link BiConsumer} to the specified inputs if both inputs are non-null.
-     * This utility method ensures that the consumer is only executed when both provided arguments
-     * are non-null, avoiding potential {@code NullPointerException}.
-     *
-     * @param <C>      the type of the first input
-     * @param <D>      the type of the second input
-     * @param consumer the {@link BiConsumer} to execute if both inputs are non-null
-     * @param a        the first input, may be null
-     * @param b        the second input, may be null
-     */
-    protected static <C, D> void applyIfNotNull(BiConsumer<C, D> consumer, @Nullable C a, @Nullable D b) {
-        if (a != null && b != null) {
-            consumer.accept(a, b);
-        }
     }
 
     /**

@@ -71,20 +71,6 @@ public abstract class InputControlBuilder<B extends InputControlBuilder<B, V>, V
     }
 
     /**
-     * Applies the given consumer function to the input object if the object is not null.
-     * This method serves as a utility to conditionally execute operations on non-null objects.
-     *
-     * @param <T> the type of the object being checked and passed to the consumer
-     * @param obj the object to check for nullability and pass to the consumer if non-null
-     * @param consumer the operation to apply to the object if it is not null
-     */
-    protected static <T> void applyIfNonNull(@Nullable T obj, Consumer<T> consumer) {
-        if (obj != null) {
-            consumer.accept(obj);
-        }
-    }
-
-    /**
      * Retrieves the default value supplier associated with this instance.
      *
      * @return a {@code Supplier} that provides the default value, or {@code null} if no default value supplier is set.

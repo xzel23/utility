@@ -16,6 +16,7 @@ package com.dua3.utility.fx.controls.abstract_builders;
 
 import com.dua3.utility.fx.controls.ButtonDef;
 import com.dua3.utility.fx.controls.InputDialogPane;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -128,7 +129,7 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
         }
 
         // set title
-        applyIfNotNull(titleSetter, dlg, title);
+        LangUtil.applyIfNotNull(titleSetter, dlg, title);
 
         // make resizable
         dlg.setResizable(resizable);
