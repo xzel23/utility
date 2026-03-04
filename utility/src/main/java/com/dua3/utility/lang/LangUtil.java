@@ -699,13 +699,12 @@ public final class LangUtil {
      * thrown by the input into unchecked runtime exceptions.
      *
      * @param <T> the type of the input to the consumer
-     * @param <R> a generic type parameter not used in this method
      * @param <E> the type of exception that the input consumer may throw
      * @param f the consumer that may throw a checked exception
      * @return a standard {@link Consumer} that wraps the given {@link ConsumerThrows}, throwing any exceptions as runtime exceptions
      */
     @SuppressWarnings("OverlyBroadCatchBlock")
-    public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception>
+    public static <T extends @Nullable Object, E extends Exception>
     Consumer<T> uncheckedConsumer(ConsumerThrows<T, E> f) {
         return (T t) -> {
             try {
