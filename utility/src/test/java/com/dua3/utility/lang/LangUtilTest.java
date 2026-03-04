@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings({"ALL", "java:S5778"})
 @NullUnmarked
 class LangUtilTest {
 
