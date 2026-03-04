@@ -283,45 +283,7 @@ public final class FxLauncher {
         }
 
         if (HAS_SLB4J) {
-            loggingConfiguration = SLB4J.getConfiguration();
-            agp.addFlag(
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.name"),
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.description"),
-                    v -> showLogWindow = v,
-                    "--log-window", "-lw"
-            );
-            agp.addFlag(
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.name"),
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.description"),
-                    v -> debug = v,
-                    "--debug"
-            );
-            agp.addStringOption(
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_level.name"),
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_level.description"),
-                    Repetitions.ZERO_OR_MORE,
-                    "rule",
-                    rule -> {
-                        String[] parts = rule.split("=");
-                        switch (parts.length) {
-                            case 1 -> loggingConfiguration.setRootLevel(parseLogLevel(parts[0]));
-                            case 2 -> {
-                                LangUtil.check(LOG_PREFIX_VALIDATOR.test(parts[0]), "Not a valid logger name prefix: %s", parts[0]);
-                                loggingConfiguration.getRootFilter().setLevel(parts[0], parseLogLevel(parts[1]));
-                            }
-                            default -> throw new IllegalStateException("Invalid log level rule format: " + rule);
-                        }
-                    },
-                    "--log-level"
-            );
-            agp.addIntegerOption(
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.name"),
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.description"),
-                    Repetitions.ZERO_OR_ONE,
-                    "size",
-                    size -> logBuffer = new LogBuffer("Application Log Buffer", size),
-                    "--log-buffer-size", "-ls"
-            );
+            addLoggingOptions(agp);
         }
 
         for (Consumer<ArgumentsParserBuilder> addOption : addOptions) {
@@ -341,15 +303,7 @@ public final class FxLauncher {
         arguments.handle();
 
         if (HAS_SLB4J) {
-            SLB4J.setConfiguration(loggingConfiguration);
-            LOG.debug("SLF4J configuration updated: {}", loggingConfiguration);
-
-            if (showLogWindow || debug) {
-                if (logBuffer == null) {
-                    logBuffer = new LogBuffer();
-                }
-                SLB4J.getDispatcher().addLogHandler(logBuffer);
-            }
+            configureLogging();
         }
 
         Logger log = LOG;
@@ -376,6 +330,88 @@ public final class FxLauncher {
         return rc;
     }
 
+    /**
+     * Configures the logging system for the application by setting the SLF4J logging configuration
+     * and optionally enabling a log buffer for debugging purposes.
+     *
+     * This method performs the following actions:
+     * - Updates the SLF4J logging configuration using the specified configuration object.
+     * - Logs the updated logging configuration for debugging purposes.
+     * - If either the `showLogWindow` or `debug` flag is enabled:
+     *   - Initializes and assigns a `LogBuffer` instance to the `logBuffer` field if it is not already created.
+     *   - Adds the `logBuffer` instance as a log handler using SLF4J's dispatcher.
+     */
+    private static void configureLogging() {
+        assert loggingConfiguration != null : "internal error: Logging configuration not initialized";
+
+        SLB4J.setConfiguration(loggingConfiguration);
+        LOG.debug("SLF4J configuration updated: {}", loggingConfiguration);
+
+        if (showLogWindow || debug) {
+            if (logBuffer == null) {
+                logBuffer = new LogBuffer();
+            }
+            SLB4J.getDispatcher().addLogHandler(logBuffer);
+        }
+    }
+
+    /**
+     * Adds logging-related options to the given {@link ArgumentsParserBuilder}. This method configures
+     * logging flags, string options for log levels, and options for log buffer sizes. These settings
+     * allow fine-grained control over logging behavior and output for the application.
+     *
+     * @param agp the {@link ArgumentsParserBuilder} to which logging options will be added
+     */
+    private static void addLoggingOptions(ArgumentsParserBuilder agp) {
+        loggingConfiguration = SLB4J.getConfiguration();
+        agp.addFlag(
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.name"),
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.description"),
+                v -> showLogWindow = v,
+                "--log-window", "-lw"
+        );
+        agp.addFlag(
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.name"),
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.description"),
+                v -> debug = v,
+                "--debug"
+        );
+        agp.addStringOption(
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_level.name"),
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_level.description"),
+                Repetitions.ZERO_OR_MORE,
+                "rule",
+                rule -> {
+                    String[] parts = rule.split("=");
+                    switch (parts.length) {
+                        case 1 -> loggingConfiguration.setRootLevel(parseLogLevel(parts[0]));
+                        case 2 -> {
+                            LangUtil.check(LOG_PREFIX_VALIDATOR.test(parts[0]), "Not a valid logger name prefix: %s", parts[0]);
+                            loggingConfiguration.getRootFilter().setLevel(parts[0], parseLogLevel(parts[1]));
+                        }
+                        default -> throw new IllegalStateException("Invalid log level rule format: " + rule);
+                    }
+                },
+                "--log-level"
+        );
+        agp.addIntegerOption(
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.name"),
+                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.description"),
+                Repetitions.ZERO_OR_ONE,
+                "size",
+                size -> logBuffer = new LogBuffer("Application Log Buffer", size),
+                "--log-buffer-size", "-ls"
+        );
+    }
+
+    /**
+     * Parses a string representation of a log level and returns the corresponding {@code LogLevel} enum value.
+     * If the provided string does not match any valid log level, an {@code IllegalStateException} is thrown.
+     *
+     * @param levelStr the string representation of the log level to parse
+     * @return the {@code LogLevel} corresponding to the provided string
+     * @throws IllegalStateException if the provided string does not match any valid log level
+     */
     private static LogLevel parseLogLevel(String levelStr) {
         LogLevel level;
         try {
