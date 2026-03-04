@@ -70,7 +70,7 @@ public final class FxLauncher {
     private static final Logger LOG = LogManager.getLogger(FxLauncher.class);
 
     private static final Predicate<String> LOG_PREFIX_VALIDATOR =
-            Pattern.compile("^[\\p{L}_$][\\p{L}\\p{N}_$]*(\\.[\\p{L}_$][\\p{L}\\p{N}_$]*)*$")
+            Pattern.compile("^[\\p{L}_$][\\p{L}\\p{N}_$]*(?:\\.[\\p{L}_$][\\p{L}\\p{N}_$]*)*$")
                     .asMatchPredicate();
 
     /**
