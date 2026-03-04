@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 
 /**
@@ -171,11 +172,36 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
             }
         }
 
-        // determine dialog dimensions
+        // configure the dialog dimensions
+        configureDialogDimensions();
+    }
+
+    /**
+     * Configures the dimensions of the dialog by calculating and applying
+     * the minimum and preferred widths and heights of the dialog panes based
+     * on the layout properties of all pages in the wizard.
+     * <p>
+     * The method performs the following steps:
+     * <ol>
+     * <li>Iterates through all pages to determine the maximum minimum and
+     *     preferred dimensions (width and height) necessary to accommodate
+     *     the content of all panes.
+     * <li>Applies the computed minimum and preferred dimensions to each
+     *     pane in the wizard, ensuring consistent dialog sizing.
+     * <li>Lays out each pane after updating its dimensions to reflect
+     *     the new configuration.
+     * </ol>
+     * This ensures that the dialog maintains an appropriate size throughout
+     * the wizard workflow, regardless of the content of individual pages.
+     */
+    private void configureDialogDimensions() {
+        assert pages != null : "internal error: pages not set";
+
         double minWidth = -1;
         double minHeight = -1;
         double prefWidth = -1;
         double prefHeight = -1;
+
         for (var page : pages.values()) {
             InputDialogPane<?> pane = page.pane;
 
@@ -195,11 +221,23 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
 
         for (var page : pages.values()) {
             InputDialogPane<?> pane = page.pane;
-            if (minWidth > 0) {pane.setMinWidth(minWidth);}
-            if (minHeight > 0) {pane.setMinHeight(minHeight);}
-            if (prefWidth > 0) {pane.setPrefWidth(Region.USE_COMPUTED_SIZE);}
-            if (prefHeight > 0) {pane.setPrefHeight(Region.USE_COMPUTED_SIZE);}
+            applyIfPositive(minWidth, pane::setMinWidth);
+            applyIfPositive(minHeight, pane::setMinHeight);
+            applyIfPositive(prefWidth, pane::setPrefWidth);
+            applyIfPositive(prefHeight, pane::setPrefHeight);
             pane.layout();
+        }
+    }
+
+    /**
+     * Executes the provided {@link DoubleConsumer} if the given value is positive.
+     *
+     * @param value the double value to evaluate; the consumer is triggered only if this value is greater than 0
+     * @param consumer the action to perform on the provided value if it is positive
+     */
+    private static void applyIfPositive(double value, DoubleConsumer consumer) {
+        if (value > 0) {
+            consumer.accept(value);
         }
     }
 
