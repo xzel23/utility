@@ -1088,7 +1088,6 @@ E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
  rethrowing any checked exceptions as unchecked exceptions during execution.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>
-R extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>
 E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a><wbr>&lt;T&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#uncheckedConsumer(com.dua3.utility.lang.LangUtil.ConsumerThrows)" class="member-name-link">uncheckedConsumer</a><wbr>(<a href="LangUtil.ConsumerThrows.html" title="interface in com.dua3.utility.lang">LangUtil.ConsumerThrows</a>&lt;T,<wbr>E&gt;&nbsp;f)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -1873,8 +1872,7 @@ E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="uncheckedConsumer(com.dua3.utility.lang.LangUtil.ConsumerThrows)">
 <h3>uncheckedConsumer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters-long">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>
-R extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>
 E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</span>
 <span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;</span>&nbsp;<span class="element-name">uncheckedConsumer</span><wbr><span class="parameters">(<a href="LangUtil.ConsumerThrows.html" title="interface in com.dua3.utility.lang">LangUtil.ConsumerThrows</a>&lt;T,<wbr>E&gt;&nbsp;f)</span></div>
 <div class="block">Wraps a <a href="LangUtil.ConsumerThrows.html" title="interface in com.dua3.utility.lang"><code>LangUtil.ConsumerThrows</code></a> into a standard <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link"><code>Consumer</code></a>, converting checked exceptions
@@ -1882,7 +1880,6 @@ E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <dl class="notes">
 <dt>Type Parameters:</dt>
 <dd><code>T</code> - the type of the input to the consumer</dd>
-<dd><code>R</code> - a generic type parameter not used in this method</dd>
 <dd><code>E</code> - the type of exception that the input consumer may throw</dd>
 <dt>Parameters:</dt>
 <dd><code>f</code> - the consumer that may throw a checked exception</dd>
