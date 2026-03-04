@@ -127,12 +127,12 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#about(javafx.stage.Window)" class="member-name-link">about</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#about(javafx.stage.Stage)" class="member-name-link">about</a><wbr>(@Nullable javafx.stage.Stage&nbsp;parentStage)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Start the definition of a new AboutDialog.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#about(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)" class="member-name-link">about</a><wbr>(@Nullable javafx.stage.Window&nbsp;parentWindow,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#about(javafx.stage.Stage,com.dua3.utility.text.MessageFormatter)" class="member-name-link">about</a><wbr>(@Nullable javafx.stage.Stage&nbsp;parentStage,
  <a href="../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;messageFormatter)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates an instance of AboutDialogBuilder with the specified parent window
@@ -381,28 +381,28 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="about(javafx.stage.Window)">
+<section class="detail" id="about(javafx.stage.Stage)">
 <h3>about</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></span>&nbsp;<span class="element-name">about</span><wbr><span class="parameters">(@Nullable javafx.stage.Window&nbsp;parentWindow)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></span>&nbsp;<span class="element-name">about</span><wbr><span class="parameters">(@Nullable javafx.stage.Stage&nbsp;parentStage)</span></div>
 <div class="block">Start the definition of a new AboutDialog.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>parentWindow</code> - the parent window</dd>
+<dd><code>parentStage</code> - the parent window</dd>
 <dt>Returns:</dt>
 <dd>new <a href="AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls"><code>AboutDialogBuilder</code></a> instance</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="about(javafx.stage.Window,com.dua3.utility.text.MessageFormatter)">
+<section class="detail" id="about(javafx.stage.Stage,com.dua3.utility.text.MessageFormatter)">
 <h3>about</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></span>&nbsp;<span class="element-name">about</span><wbr><span class="parameters">(@Nullable javafx.stage.Window&nbsp;parentWindow,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AboutDialogBuilder.html" title="class in com.dua3.utility.fx.controls">AboutDialogBuilder</a></span>&nbsp;<span class="element-name">about</span><wbr><span class="parameters">(@Nullable javafx.stage.Stage&nbsp;parentStage,
  <a href="../../text/MessageFormatter.html" title="interface in com.dua3.utility.text">MessageFormatter</a>&nbsp;messageFormatter)</span></div>
 <div class="block">Creates an instance of AboutDialogBuilder with the specified parent window
  and message formatter. This method is used to initialize the About dialog.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>parentWindow</code> - the parent window for the About dialog, or null if no parent window is specified</dd>
+<dd><code>parentStage</code> - the parent window for the About dialog, or null if no parent window is specified</dd>
 <dd><code>messageFormatter</code> - the formatter to handle the formatting of messages displayed in the About dialog</dd>
 <dt>Returns:</dt>
 <dd>a new instance of AboutDialogBuilder configured with the provided parent window and message formatter</dd>
