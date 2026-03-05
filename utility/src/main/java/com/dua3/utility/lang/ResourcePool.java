@@ -549,6 +549,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
         return null;
     }
 
+    @SuppressWarnings({"resource", "java:S2095"})
     @Override
     public void close() {
         synchronized (lock) {
