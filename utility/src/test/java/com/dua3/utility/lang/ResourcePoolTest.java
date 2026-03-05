@@ -56,8 +56,8 @@ class ResourcePoolTest {
         try (ResourcePool<Object> pool = ResourcePool.newThreadBasedResourcePool(Object::new, r -> {})) {
 
             ResourcePool.Lease<Object> lease = pool.acquire();
-            // cannot acquire again in same thread until closed
-            assertThrows(IllegalStateException.class, pool::acquire, "Second acquire in same thread must fail while leased");
+            // cannot acquire again in the same thread until closed
+            assertThrows(IllegalStateException.class, pool::acquire, "Second acquire in the same thread must fail while leased");
 
             // after closing, acquiring should work again
             lease.close();
@@ -475,5 +475,103 @@ class ResourcePoolTest {
 
         assertThrows(IllegalStateException.class, pool::acquire, "Acquiring from a closed pool must fail");
         assertThrows(IllegalStateException.class, pool::tryAcquire, "tryAcquire from a closed pool must fail");
+    }
+
+    @Test
+    void listBackedPoolDestroysAllResourcesOnClose() {
+        AtomicInteger destroyed = new AtomicInteger();
+        int size = 3;
+
+        ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(
+                Object::new,
+                r -> {},
+                r -> destroyed.incrementAndGet(),
+                size
+        );
+
+        // One active lease
+        var lease = pool.acquire();
+
+        // Close the pool
+        // This should immediately destroy the 2 idle resources and wait for the 1 active
+        new Thread(lease::close).start();
+
+        pool.close();
+
+        assertEquals(size, destroyed.get(), "All resources should be destroyed exactly once");
+    }
+
+    @Test
+    void threadBasedPoolDestroysAllResourcesOnClose() throws InterruptedException {
+        AtomicInteger destroyed = new AtomicInteger();
+        ResourcePool<Object> pool = ResourcePool.newThreadBasedResourcePool(
+                Object::new,
+                r -> {},
+                r -> destroyed.incrementAndGet()
+        );
+
+        CountDownLatch t1Started = new CountDownLatch(1);
+        CountDownLatch t2Started = new CountDownLatch(1);
+
+        // Thread 1 acquires a resource
+        Thread t1 = new Thread(() -> {
+            pool.acquire();
+            t1Started.countDown();
+        });
+
+        // Thread 2 acquires a resource
+        Thread t2 = new Thread(() -> {
+            pool.acquire();
+            t2Started.countDown();
+        });
+
+        t1.start();
+        t2.start();
+        assertTrue(t1Started.await(1, TimeUnit.SECONDS));
+        assertTrue(t2Started.await(1, TimeUnit.SECONDS));
+
+        // Current thread also acquires one
+        pool.acquire();
+
+        // Close the pool. It should use the tracking set to kill resources in t1, t2, and main.
+        pool.close();
+
+        assertEquals(3, destroyed.get(), "Resources in all threads should be destroyed");
+    }
+
+    @Test
+    void destructorExceptionsAreSwallowed() {
+        Consumer<Object> badDestructor = r -> {
+            throw new RuntimeException("Final boom");
+        };
+
+        ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(
+                Object::new,
+                r -> {},
+                badDestructor,
+                2
+        );
+
+        // Should not throw even if destructor fails
+        assertDoesNotThrow(pool::close, "Exceptions in destructor must not prevent pool closure");
+    }
+
+    @Test
+    void resourceIsDisposedAfterDestruction() {
+        ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(Object::new, r -> {}, 1);
+
+        var lease = pool.acquire();
+        Object rawResource = lease.get();
+        assertNotNull(rawResource);
+
+        new Thread(() -> {
+            try {Thread.sleep(500);} catch (InterruptedException ignored) {/* do nothing */}
+            lease.close();
+        }).start();
+
+        pool.close();
+
+        // After pool is closed and lease is returned/destructed
+        assertThrows(NullPointerException.class, lease::get, "Lease.get() should throw after resource is disposed");
     }
 }

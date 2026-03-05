@@ -4,8 +4,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -29,6 +32,13 @@ public interface ResourcePool<T> extends AutoCloseable {
          * @return the managed resource
          */
         T get();
+
+        /**
+         * Checks whether the resource managed by this lease is currently leased.
+         *
+         * @return {@code true} if the resource is leased, {@code false} otherwise
+         */
+        boolean isLeased();
 
         /**
          * Resets the resource for the next use.
@@ -58,7 +68,25 @@ public interface ResourcePool<T> extends AutoCloseable {
      * @return a {@code ResourcePool} instance for managing thread-local resources
      */
     static <T> ResourcePool<T> newThreadBasedResourcePool(Supplier<T> factory, Consumer<T> releaser) {
-        return new ThreadResourcePool<>(factory, releaser);
+        return new ThreadResourcePool<>(factory, releaser, null);
+    }
+
+    /**
+     * Creates a new resource pool where resources are managed on a per-thread basis with an additional
+     * destructor for resource cleanup when the pool is closed.
+     * <p>
+     * Each thread has its own instance of the resource, which is created using the provided factory,
+     * released using the provided releaser when necessary, and cleaned up using the provided destructor
+     * when the pool is closed.
+     *
+     * @param <T>        the type of resource managed by the pool
+     * @param factory    a {@code Supplier} that creates a new resource when one is needed
+     * @param releaser   a {@code Consumer} that handles the cleanup or release of resources before re-use
+     * @param destructor a {@code Consumer} that performs final cleanup of resources when the pool is closed
+     * @return a {@code ResourcePool} instance for managing thread-local resources
+     */
+    static <T> ResourcePool<T> newThreadBasedResourcePool(Supplier<T> factory, Consumer<T> releaser, Consumer<T> destructor) {
+        return new ThreadResourcePool<>(factory, releaser, destructor);
     }
 
     /**
@@ -74,7 +102,24 @@ public interface ResourcePool<T> extends AutoCloseable {
      * @throws IllegalArgumentException if {@code size} is negative
      */
     static <T> ResourcePool<T> newFixedSizeResourcePool(Supplier<T> factory, Consumer<T> releaser, int size) {
-        return new ListBackedResourcePool<>(factory, releaser, size, size);
+        return new ListBackedResourcePool<>(factory, releaser, LeaseImpl::noop, size, size);
+    }
+
+    /**
+     * Creates a fixed-size resource pool that maintains a constant number of resources.
+     * The pool ensures that at any point, the number of managed resources equals the specified size.
+     * Resources are created using the provided factory and released using the specified releaser.
+     *
+     * @param <T>        the type of resource managed by the pool
+     * @param factory    a {@code Supplier} to create new resource instances when needed
+     * @param releaser   a {@code Consumer} to handle the cleanup or release of resources
+     * @param destructor a {@code Consumer} that performs final cleanup of resources when the pool is closed
+     * @param size       the fixed number of resources to maintain in the pool
+     * @return a {@code ResourcePool} instance that manages resources with a fixed size
+     * @throws IllegalArgumentException if {@code size} is negative
+     */
+    static <T> ResourcePool<T> newFixedSizeResourcePool(Supplier<T> factory, Consumer<T> releaser, Consumer<T> destructor, int size) {
+        return new ListBackedResourcePool<>(factory, releaser, destructor, size, size);
     }
 
     /**
@@ -91,7 +136,25 @@ public interface ResourcePool<T> extends AutoCloseable {
      * @throws IllegalArgumentException if {@code minCapacity} is negative or {@code maxCapacity} is less than {@code minCapacity}
      */
     static <T> ResourcePool<T> newResourcePool(Supplier<T> factory, Consumer<T> releaser, int minCapacity, int maxCapacity) {
-        return new ListBackedResourcePool<>(factory, releaser, minCapacity, maxCapacity);
+        return new ListBackedResourcePool<>(factory, releaser, LeaseImpl::noop, minCapacity, maxCapacity);
+    }
+
+    /**
+     * Creates a resource pool with a specified minimum and maximum capacity for managing reusable resources.
+     * The resources are created using the provided factory, and their cleanup or release is managed by
+     * the specified releaser.
+     *
+     * @param <T>          the type of resource managed by the pool
+     * @param factory      a {@code Supplier} to create new resource instances as needed
+     * @param releaser     a {@code Consumer} to handle the cleanup or release of the resources
+     * @param destructor   a {@code Consumer} that performs final cleanup of resources when the pool is closed
+     * @param minCapacity  the minimum number of resources to be pre-created in the pool
+     * @param maxCapacity  the maximum number of resources allowed in the pool
+     * @return             a {@code ResourcePool} instance configured with the specified minimum and maximum capacities
+     * @throws IllegalArgumentException if {@code minCapacity} is negative or {@code maxCapacity} is less than {@code minCapacity}
+     */
+    static <T> ResourcePool<T> newResourcePool(Supplier<T> factory, Consumer<T> releaser, Consumer<T> destructor, int minCapacity, int maxCapacity) {
+        return new ListBackedResourcePool<>(factory, releaser, destructor, minCapacity, maxCapacity);
     }
 
     /**
@@ -139,10 +202,11 @@ public interface ResourcePool<T> extends AutoCloseable {
  */
 class LeaseImpl<T> implements ResourcePool.Lease<T> {
     private static final Logger LOG = LogManager.getLogger(LeaseImpl.class);
+    static final String EXCEPTION_WHEN_DESTRUCTING_RESOURCE_IGNORED = "exception when destructing resource (ignored): {}";
 
-    final T resource;
-    final Consumer<T> releaser;
-    boolean leased = false;
+    private @Nullable T resource;
+    private final Consumer<T> releaser;
+    private boolean leased = false;
 
     /**
      * Constructs a new {@code LeaseImpl} instance for managing the lifecycle of a resource.
@@ -155,15 +219,48 @@ class LeaseImpl<T> implements ResourcePool.Lease<T> {
         this.releaser = releaser;
     }
 
+    /**
+     * A no-operation method that accepts a parameter but performs no action with it.
+     *
+     * @param <T>     the type of the parameter
+     * @param ignored the parameter that is ignored by this method
+     */
+    static <T> void noop(T ignored) {
+        // do nothing
+    }
+
     @Override
     public T get() {
-        return resource;
+        return Objects.requireNonNull(resource, "get() called on disposed lease");
+    }
+
+    @Override
+    public boolean isLeased() {
+        return leased;
+    }
+
+    /**
+     * Sets the leased state of the resource.
+     *
+     * @param leased {@code true} to mark the resource as leased, {@code false} to mark it as not leased
+     */
+    void setLeased(boolean leased) {
+        this.leased = leased;
+    }
+
+    /**
+     * Releases the reference to the leased resource by setting it to {@code null}.
+     * This method is used to clean up and prepare the lease for eventual garbage collection.
+     */
+    void dispose() {
+        this.resource = null;
     }
 
     @Override
     public void close() {
         if (!leased) {throw new IllegalStateException("resource not leased");}
         try {
+            assert resource != null : "internal error: close() - resource is null";
             releaser.accept(resource);
         } catch (RuntimeException e) {
             LOG.warn("Failed to release resource, exception ignored: {}", e.getMessage(), e);
@@ -172,6 +269,13 @@ class LeaseImpl<T> implements ResourcePool.Lease<T> {
         }
     }
 
+    /**
+     * Acquires the lease for the resource managed by this instance.
+     * If the resource is already leased, this method throws an {@link IllegalStateException}.
+     *
+     * @return the current {@code LeaseImpl} instance after the lease has been successfully acquired
+     * @throws IllegalStateException if the resource is already leased
+     */
     LeaseImpl<T> acquire() {
         if (leased) {throw new IllegalStateException("resource already leased");}
         leased = true;
@@ -186,6 +290,8 @@ class LeaseImpl<T> implements ResourcePool.Lease<T> {
  * @param <T> the type of resource managed by the pool
  */
 final class ThreadResourcePool<T> implements ResourcePool<T> {
+    private static final Logger LOG = LogManager.getLogger(ThreadResourcePool.class);
+
     final class ThreadLocalLeaseImpl extends LeaseImpl<T> {
         /**
          * Constructs a new {@code LeaseImpl} instance for managing the lifecycle of a resource.
@@ -198,14 +304,26 @@ final class ThreadResourcePool<T> implements ResourcePool<T> {
         }
     }
 
+    private final @Nullable Set<ThreadLocalLeaseImpl> allLeases;
+    private final Consumer<T> destructor;
     private final ThreadLocal<ThreadLocalLeaseImpl> threadLocalLease;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    ThreadResourcePool(Supplier<T> factory, Consumer<T> releaser) {
+    ThreadResourcePool(Supplier<T> factory, Consumer<T> releaser, @Nullable Consumer<T> destructor) {
         // We store the wrapper itself in the ThreadLocal
-        this.threadLocalLease = ThreadLocal.withInitial(() ->
-                new ThreadLocalLeaseImpl(factory.get(), releaser)
-        );
+        if (destructor == null) {
+            this.destructor = LeaseImpl::noop;
+            this.allLeases = null;
+            this.threadLocalLease = ThreadLocal.withInitial(() -> new ThreadLocalLeaseImpl(factory.get(), releaser));
+        } else {
+            this.destructor = destructor;
+            this.allLeases = ConcurrentHashMap.newKeySet();
+            this.threadLocalLease = ThreadLocal.withInitial(() -> {
+                ThreadLocalLeaseImpl lease = new ThreadLocalLeaseImpl(factory.get(), releaser);
+                allLeases.add(lease);
+                return lease;
+            });
+        }
     }
 
     @Override
@@ -225,10 +343,10 @@ final class ThreadResourcePool<T> implements ResourcePool<T> {
             throw new IllegalStateException("resource pool is closed");
         }
 
-        if (lease.leased) {
+        if (lease.isLeased()) {
             return null;
         } else {
-            lease.leased = true;
+            lease.setLeased(true);
             return lease;
         }
     }
@@ -237,6 +355,17 @@ final class ThreadResourcePool<T> implements ResourcePool<T> {
     public void close() {
         if (closed.getAndSet(true)) {
             throw new IllegalStateException("pool is already closed");
+        }
+        if (allLeases != null) {
+            allLeases.forEach(lease -> {
+                try {
+                    T resource = lease.get();
+                    lease.dispose();
+                    LangUtil.applyIfNonNull(resource, destructor);
+                } catch (RuntimeException e) {
+                    LOG.warn(LeaseImpl.EXCEPTION_WHEN_DESTRUCTING_RESOURCE_IGNORED, e.getMessage(), e);
+                }
+            });
         }
         threadLocalLease.remove();
     }
@@ -250,10 +379,12 @@ final class ThreadResourcePool<T> implements ResourcePool<T> {
  * @param <T> the type of resource managed by the pool
  */
 final class ListBackedResourcePool<T> implements ResourcePool<T> {
+    private static final Logger LOG = LogManager.getLogger(ListBackedResourcePool.class);
 
     private final Object lock = new Object();
     private final Supplier<T> factory;
     private final Consumer<T> releaser;
+    private final Consumer<T> destructor;
     private final BlockingQueue<BlockingLeaseImpl> queue;
     private final int minCapacity;
     private final int maxCapacity;
@@ -285,14 +416,21 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
                 synchronized (lock) {
                     if (waitingCount == 0 && (resourceCount > minCapacity || isClosed())) {
                         resourceCount--;
-                        assert resourceCount >= 0 : "internal error: resourceCount < 0";
+                        assert resourceCount >= 0 : "internal error: close() - resourceCount < 0";
+                        try {
+                            T resource = get();
+                            dispose();
+                            destructor.accept(resource);
+                        } catch (RuntimeException e) {
+                            LOG.warn(LeaseImpl.EXCEPTION_WHEN_DESTRUCTING_RESOURCE_IGNORED, e.getMessage(), e);
+                        }
                         if (resourceCount == 0) {
-                            assert closeLock != null : "internal error: closeLock is null";
+                            assert closeLock != null : "internal error: close() - closeLock is null";
                             closeLock.release();
                         }
                     } else {
                         boolean accepted = queue.offer(this);
-                        assert accepted : "internal error: queue is full";
+                        assert accepted : "internal error: close() - queue is full";
                     }
                 }
             }
@@ -308,12 +446,13 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
      * @param maxCapacity the maximum number of resources allowed in the pool.
      * @throws IllegalArgumentException if minCapacity is negative or maxCapacity is less than minCapacity.
      */
-    ListBackedResourcePool(Supplier<T> factory, Consumer<T> releaser, int minCapacity, int maxCapacity) {
+    ListBackedResourcePool(Supplier<T> factory, Consumer<T> releaser, Consumer<T> destructor, int minCapacity, int maxCapacity) {
         LangUtil.checkArg(minCapacity >= 0, "minCapacity must be >= 0");
         LangUtil.checkArg(maxCapacity >= minCapacity, "maxCapacity must be >= minCapacity %d: %d", minCapacity, maxCapacity);
 
         this.factory = factory;
         this.releaser = releaser;
+        this.destructor = destructor;
         this.minCapacity = minCapacity;
         this.maxCapacity = maxCapacity;
         this.queue = new ArrayBlockingQueue<>(maxCapacity);
@@ -355,7 +494,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
                 if (resourceCount < maxCapacity) {
                     lease = new BlockingLeaseImpl(factory.get(), releaser);
                     resourceCount++;
-                    assert resourceCount <= maxCapacity : "internal error: resourceCount > maxCapacity";
+                    assert resourceCount <= maxCapacity : "internal error: acquire() - resourceCount > maxCapacity";
                     return lease.acquire();
                 }
 
@@ -371,7 +510,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
             } finally {
                 synchronized (lock) {
                     waitingCount--;
-                    assert waitingCount >= 0 : "internal error: waitingCount < 0";
+                    assert waitingCount >= 0 : "internal error: acquire() - waitingCount < 0";
                 }
             }
         } catch (InterruptedException e) {
@@ -402,7 +541,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
             if (resourceCount < maxCapacity) {
                 lease = new BlockingLeaseImpl(factory.get(), releaser);
                 resourceCount++;
-                assert resourceCount <= maxCapacity : "internal error: resourceCount > maxCapacity";
+                assert resourceCount <= maxCapacity : "internal error: tryAcquire() - resourceCount > maxCapacity";
                 return lease.acquire();
             }
         }
@@ -421,8 +560,15 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
 
             while (queue.size() > waitingCount) {
                 BlockingLeaseImpl pulled = queue.poll();
+                assert pulled != null : "internal error: close() - queue is empty";
+                try {
+                    T resource = pulled.get();
+                    pulled.dispose();
+                    destructor.accept(resource);
+                } catch (RuntimeException e) {
+                    LOG.warn(LeaseImpl.EXCEPTION_WHEN_DESTRUCTING_RESOURCE_IGNORED, e.getMessage(), e);
+                }
                 resourceCount--;
-                assert pulled != null : "internal error: queue is empty";
             }
 
             if (waitingCount + resourceCount > 0) {
