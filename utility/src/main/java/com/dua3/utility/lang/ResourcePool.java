@@ -6,6 +6,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -14,7 +16,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of resource managed by the pool
  */
-public interface ResourcePool<T> {
+public interface ResourcePool<T> extends AutoCloseable {
     /**
      * Represents a contract for managing the lifecycle of a resource within a lease-based system.
      *
@@ -125,6 +127,9 @@ public interface ResourcePool<T> {
      *         if no resources are currently available
      */
     @Nullable Lease<T> tryAcquire();
+
+    @Override
+    void close();
 }
 
 /**
@@ -181,23 +186,44 @@ class LeaseImpl<T> implements ResourcePool.Lease<T> {
  * @param <T> the type of resource managed by the pool
  */
 final class ThreadResourcePool<T> implements ResourcePool<T> {
-    private final ThreadLocal<LeaseImpl<T>> threadLocalLease;
+    final class ThreadLocalLeaseImpl extends LeaseImpl<T> {
+        /**
+         * Constructs a new {@code LeaseImpl} instance for managing the lifecycle of a resource.
+         *
+         * @param resource the resource being leased
+         * @param releaser a {@link Consumer} to handle releasing the resource when the lease ends
+         */
+        ThreadLocalLeaseImpl(T resource, Consumer<T> releaser) {
+            super(resource, releaser);
+        }
+    }
+
+    private final ThreadLocal<ThreadLocalLeaseImpl> threadLocalLease;
+    private final AtomicBoolean closed = new AtomicBoolean(false);
 
     ThreadResourcePool(Supplier<T> factory, Consumer<T> releaser) {
         // We store the wrapper itself in the ThreadLocal
         this.threadLocalLease = ThreadLocal.withInitial(() ->
-                new LeaseImpl<>(factory.get(), releaser)
+                new ThreadLocalLeaseImpl(factory.get(), releaser)
         );
     }
 
     @Override
     public Lease<T> acquire() {
-        return threadLocalLease.get().acquire();
+        ThreadLocalLeaseImpl lease = threadLocalLease.get();
+        if (closed.get()) {
+            throw new IllegalStateException("resource pool is closed");
+        }
+        return lease.acquire();
     }
 
     @Override
     public @Nullable Lease<T> tryAcquire() {
-        LeaseImpl<T> lease = threadLocalLease.get();
+        ThreadLocalLeaseImpl lease = threadLocalLease.get();
+
+        if (closed.get()) {
+            throw new IllegalStateException("resource pool is closed");
+        }
 
         if (lease.leased) {
             return null;
@@ -205,6 +231,14 @@ final class ThreadResourcePool<T> implements ResourcePool<T> {
             lease.leased = true;
             return lease;
         }
+    }
+
+    @Override
+    public void close() {
+        if (closed.getAndSet(true)) {
+            throw new IllegalStateException("pool is already closed");
+        }
+        threadLocalLease.remove();
     }
 }
 
@@ -223,6 +257,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
     private final BlockingQueue<BlockingLeaseImpl> queue;
     private final int minCapacity;
     private final int maxCapacity;
+    private @Nullable Semaphore closeLock = null;
     private int resourceCount;
     private int waitingCount;
 
@@ -248,9 +283,13 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
                 super.close();
             } finally {
                 synchronized (lock) {
-                    if (resourceCount > minCapacity && waitingCount == 0) {
+                    if (waitingCount == 0 && (resourceCount > minCapacity || isClosed())) {
                         resourceCount--;
                         assert resourceCount >= 0 : "internal error: resourceCount < 0";
+                        if (resourceCount == 0) {
+                            assert closeLock != null : "internal error: closeLock is null";
+                            closeLock.release();
+                        }
                     } else {
                         boolean accepted = queue.offer(this);
                         assert accepted : "internal error: queue is full";
@@ -287,11 +326,19 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
         this.waitingCount = 0;
     }
 
+    private boolean isClosed() {
+        return closeLock != null;
+    }
+
     // resource is returned to the caller; closing it is the responsibility of the caller
     @SuppressWarnings({"resource", "java:S2095"})
     @Override
     public Lease<T> acquire() {
         try {
+            if (isClosed()) {
+                throw new IllegalStateException("pool is closed");
+            }
+
             // try to get resource non-blocking
             BlockingLeaseImpl lease = queue.poll();
             if (lease != null) {
@@ -337,6 +384,10 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
     @SuppressWarnings({"resource", "java:S2095"})
     @Override
     public @Nullable Lease<T> tryAcquire() {
+        if (isClosed()) {
+            throw new IllegalStateException("pool is closed");
+        }
+
         BlockingLeaseImpl lease = queue.poll();
         if (lease != null) {
             return lease.acquire();
@@ -357,5 +408,30 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
         }
 
         return null;
+    }
+
+    @Override
+    public void close() {
+        synchronized (lock) {
+            if (isClosed()) {
+                throw new IllegalStateException("pool is already closed");
+            }
+
+            closeLock = new Semaphore(1);
+
+            while (queue.size() > waitingCount) {
+                BlockingLeaseImpl pulled = queue.poll();
+                resourceCount--;
+                assert pulled != null : "internal error: queue is empty";
+            }
+
+            if (waitingCount + resourceCount > 0) {
+                closeLock.acquireUninterruptibly();
+            }
+        }
+
+        closeLock.acquireUninterruptibly();
+        queue.clear();
+        closeLock.release();
     }
 }
