@@ -98,7 +98,7 @@ val testJava25 = tasks.register<Test>("testJava25") {
     testClassesDirs = sourceSets.getByName("testJava25").output.classesDirs
     classpath = sourceSets.getByName("testJava25").runtimeClasspath
 
-    jvmArgs("-Djava.awt.headless=true")
+    jvmArgs("-Djava.awt.headless=true", "--enable-native-access=ALL-UNNAMED")
 
     // Configure JUnit Platform for running tests
     useJUnitPlatform()
