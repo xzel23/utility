@@ -103,6 +103,9 @@ public final class XmlUtil {
     private static final String XMLNS = "xmlns";
     private static final String XMLNS_SCHEME = "xmlns:";
 
+    private static final int INDENT = 4;
+    private static final String INDENT_STRING = " ".repeat(INDENT);
+
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
     private final XPathFactory xPathFactory;
@@ -161,12 +164,15 @@ public final class XmlUtil {
 
     private static void writeIndentation(XMLStreamWriter writer, int level) throws XMLStreamException {
         assert level >= 0;
-        writer.writeCharacters(" ".repeat(indentation(level)));
+        writer.writeCharacters(indentationString(level));
+    }
+
+    private static String indentationString(int level) {
+        return INDENT_STRING.repeat(level);
     }
 
     private static int indentation(int level) {
-        int indent = 4;
-        return level * indent;
+        return level * INDENT;
     }
 
     /**
