@@ -8867,6 +8867,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a boolean value indicating whether this node is a leaf node.</div>
 </dd>
+<dt><a href="com/dua3/utility/lang/ResourcePool.Lease.html#isLeased()" class="member-name-link">isLeased()</a> - Method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.Lease.html" title="interface in com.dua3.utility.lang">ResourcePool.Lease</a></dt>
+<dd>
+<div class="block">Checks whether the resource managed by this lease is currently leased.</div>
+</dd>
 <dt><a href="com/dua3/utility/lang/Platform.html#isLinux()" class="member-name-link">isLinux()</a> - Static method in enum class com.dua3.utility.lang.<a href="com/dua3/utility/lang/Platform.html" title="enum class in com.dua3.utility.lang">Platform</a></dt>
 <dd>
 <div class="block">Check if current platform is Linux.</div>
@@ -10790,11 +10794,19 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a fixed-size resource pool that maintains a constant number of resources.</div>
 </dd>
+<dt><a href="com/dua3/utility/lang/ResourcePool.html#newFixedSizeResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer,int)" class="member-name-link">newFixedSizeResourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;, Consumer&lt;T&gt;, int)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
+<dd>
+<div class="block">Creates a fixed-size resource pool that maintains a constant number of resources.</div>
+</dd>
 <dt><a href="com/dua3/utility/text/RichText.html#newline()" class="member-name-link">newline()</a> - Static method in class com.dua3.utility.text.<a href="com/dua3/utility/text/RichText.html" title="class in com.dua3.utility.text">RichText</a></dt>
 <dd>
 <div class="block">Returns RichText containing a single newline character.</div>
 </dd>
 <dt><a href="com/dua3/utility/lang/ResourcePool.html#newResourcePool(java.util.function.Supplier,java.util.function.Consumer,int,int)" class="member-name-link">newResourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;, int, int)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
+<dd>
+<div class="block">Creates a resource pool with a specified minimum and maximum capacity for managing reusable resources.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/ResourcePool.html#newResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer,int,int)" class="member-name-link">newResourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;, Consumer&lt;T&gt;, int, int)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
 <dd>
 <div class="block">Creates a resource pool with a specified minimum and maximum capacity for managing reusable resources.</div>
 </dd>
@@ -10810,6 +10822,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/dua3/utility/lang/ResourcePool.html#newThreadBasedResourcePool(java.util.function.Supplier,java.util.function.Consumer)" class="member-name-link">newThreadBasedResourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
 <dd>
 <div class="block">Creates a new resource pool where resources are managed on a per-thread basis.</div>
+</dd>
+<dt><a href="com/dua3/utility/lang/ResourcePool.html#newThreadBasedResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer)" class="member-name-link">newThreadBasedResourcePool(Supplier&lt;T&gt;, Consumer&lt;T&gt;, Consumer&lt;T&gt;)</a> - Static method in interface com.dua3.utility.lang.<a href="com/dua3/utility/lang/ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a></dt>
+<dd>
+<div class="block">Creates a new resource pool where resources are managed on a per-thread basis with an additional
+ destructor for resource cleanup when the pool is closed.</div>
 </dd>
 <dt><a href="com/dua3/utility/concurrent/TaskProcessorBase.html#newThreadFactory()" class="member-name-link">newThreadFactory()</a> - Method in class com.dua3.utility.concurrent.<a href="com/dua3/utility/concurrent/TaskProcessorBase.html" title="class in com.dua3.utility.concurrent">TaskProcessorBase</a></dt>
 <dd>

@@ -79,8 +79,25 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a fixed-size resource pool that maintains a constant number of resources.</div>
 </div>
 <div class="col-first odd-row-color"><code>static &lt;T&gt;&nbsp;<a href="../ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">ResourcePool.</span><code><a href="../ResourcePool.html#newResourcePool(java.util.function.Supplier,java.util.function.Consumer,int,int)" class="member-name-link">newResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+<div class="col-second odd-row-color"><span class="type-name-label">ResourcePool.</span><code><a href="../ResourcePool.html#newFixedSizeResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer,int)" class="member-name-link">newFixedSizeResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;destructor,
+ int&nbsp;size)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Creates a fixed-size resource pool that maintains a constant number of resources.</div>
+</div>
+<div class="col-first even-row-color"><code>static &lt;T&gt;&nbsp;<a href="../ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">ResourcePool.</span><code><a href="../ResourcePool.html#newResourcePool(java.util.function.Supplier,java.util.function.Consumer,int,int)" class="member-name-link">newResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ int&nbsp;minCapacity,
+ int&nbsp;maxCapacity)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Creates a resource pool with a specified minimum and maximum capacity for managing reusable resources.</div>
+</div>
+<div class="col-first odd-row-color"><code>static &lt;T&gt;&nbsp;<a href="../ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">ResourcePool.</span><code><a href="../ResourcePool.html#newResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer,int,int)" class="member-name-link">newResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;destructor,
  int&nbsp;minCapacity,
  int&nbsp;maxCapacity)</code></div>
 <div class="col-last odd-row-color">
@@ -91,6 +108,14 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates a new resource pool where resources are managed on a per-thread basis.</div>
+</div>
+<div class="col-first odd-row-color"><code>static &lt;T&gt;&nbsp;<a href="../ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">ResourcePool.</span><code><a href="../ResourcePool.html#newThreadBasedResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer)" class="member-name-link">newThreadBasedResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;destructor)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Creates a new resource pool where resources are managed on a per-thread basis with an additional
+ destructor for resource cleanup when the pool is closed.</div>
 </div>
 </div>
 </section>

@@ -147,8 +147,25 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="block">Creates a fixed-size resource pool that maintains a constant number of resources.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newResourcePool(java.util.function.Supplier,java.util.function.Consumer,int,int)" class="member-name-link">newResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newFixedSizeResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer,int)" class="member-name-link">newFixedSizeResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;destructor,
+ int&nbsp;size)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a fixed-size resource pool that maintains a constant number of resources.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newResourcePool(java.util.function.Supplier,java.util.function.Consumer,int,int)" class="member-name-link">newResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ int&nbsp;minCapacity,
+ int&nbsp;maxCapacity)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a resource pool with a specified minimum and maximum capacity for managing reusable resources.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer,int,int)" class="member-name-link">newResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;destructor,
  int&nbsp;minCapacity,
  int&nbsp;maxCapacity)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
@@ -160,9 +177,17 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Creates a new resource pool where resources are managed on a per-thread basis.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@Nullable <a href="ResourcePool.Lease.html" title="interface in com.dua3.utility.lang">ResourcePool.Lease</a><wbr>&lt;<a href="ResourcePool.html" title="type parameter in ResourcePool">T</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryAcquire()" class="member-name-link">tryAcquire</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newThreadBasedResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer)" class="member-name-link">newThreadBasedResourcePool</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;destructor)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a new resource pool where resources are managed on a per-thread basis with an additional
+ destructor for resource cleanup when the pool is closed.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@Nullable <a href="ResourcePool.Lease.html" title="interface in com.dua3.utility.lang">ResourcePool.Lease</a><wbr>&lt;<a href="ResourcePool.html" title="type parameter in ResourcePool">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryAcquire()" class="member-name-link">tryAcquire</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Attempts to acquire a resource from the pool without blocking.</div>
 </div>
 </div>
@@ -209,6 +234,30 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 </section>
 </li>
 <li>
+<section class="detail" id="newThreadBasedResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer)">
+<h3>newThreadBasedResourcePool</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a>&lt;T&gt;</span>&nbsp;<span class="element-name">newThreadBasedResourcePool</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;destructor)</span></div>
+<div class="block">Creates a new resource pool where resources are managed on a per-thread basis with an additional
+ destructor for resource cleanup when the pool is closed.
+ <p>
+ Each thread has its own instance of the resource, which is created using the provided factory,
+ released using the provided releaser when necessary, and cleaned up using the provided destructor
+ when the pool is closed.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of resource managed by the pool</dd>
+<dt>Parameters:</dt>
+<dd><code>factory</code> - a <code>Supplier</code> that creates a new resource when one is needed</dd>
+<dd><code>releaser</code> - a <code>Consumer</code> that handles the cleanup or release of resources before re-use</dd>
+<dd><code>destructor</code> - a <code>Consumer</code> that performs final cleanup of resources when the pool is closed</dd>
+<dt>Returns:</dt>
+<dd>a <code>ResourcePool</code> instance for managing thread-local resources</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="newFixedSizeResourcePool(java.util.function.Supplier,java.util.function.Consumer,int)">
 <h3>newFixedSizeResourcePool</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a>&lt;T&gt;</span>&nbsp;<span class="element-name">newFixedSizeResourcePool</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
@@ -223,6 +272,31 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <dt>Parameters:</dt>
 <dd><code>factory</code> - a <code>Supplier</code> to create new resource instances when needed</dd>
 <dd><code>releaser</code> - a <code>Consumer</code> to handle the cleanup or release of resources</dd>
+<dd><code>size</code> - the fixed number of resources to maintain in the pool</dd>
+<dt>Returns:</dt>
+<dd>a <code>ResourcePool</code> instance that manages resources with a fixed size</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>size</code> is negative</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newFixedSizeResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer,int)">
+<h3>newFixedSizeResourcePool</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a>&lt;T&gt;</span>&nbsp;<span class="element-name">newFixedSizeResourcePool</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;destructor,
+ int&nbsp;size)</span></div>
+<div class="block">Creates a fixed-size resource pool that maintains a constant number of resources.
+ The pool ensures that at any point, the number of managed resources equals the specified size.
+ Resources are created using the provided factory and released using the specified releaser.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of resource managed by the pool</dd>
+<dt>Parameters:</dt>
+<dd><code>factory</code> - a <code>Supplier</code> to create new resource instances when needed</dd>
+<dd><code>releaser</code> - a <code>Consumer</code> to handle the cleanup or release of resources</dd>
+<dd><code>destructor</code> - a <code>Consumer</code> that performs final cleanup of resources when the pool is closed</dd>
 <dd><code>size</code> - the fixed number of resources to maintain in the pool</dd>
 <dt>Returns:</dt>
 <dd>a <code>ResourcePool</code> instance that manages resources with a fixed size</dd>
@@ -247,6 +321,33 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <dt>Parameters:</dt>
 <dd><code>factory</code> - a <code>Supplier</code> to create new resource instances as needed</dd>
 <dd><code>releaser</code> - a <code>Consumer</code> to handle the cleanup or release of the resources</dd>
+<dd><code>minCapacity</code> - the minimum number of resources to be pre-created in the pool</dd>
+<dd><code>maxCapacity</code> - the maximum number of resources allowed in the pool</dd>
+<dt>Returns:</dt>
+<dd>a <code>ResourcePool</code> instance configured with the specified minimum and maximum capacities</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>minCapacity</code> is negative or <code>maxCapacity</code> is less than <code>minCapacity</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newResourcePool(java.util.function.Supplier,java.util.function.Consumer,java.util.function.Consumer,int,int)">
+<h3>newResourcePool</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ResourcePool.html" title="interface in com.dua3.utility.lang">ResourcePool</a>&lt;T&gt;</span>&nbsp;<span class="element-name">newResourcePool</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;&nbsp;factory,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;releaser,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;destructor,
+ int&nbsp;minCapacity,
+ int&nbsp;maxCapacity)</span></div>
+<div class="block">Creates a resource pool with a specified minimum and maximum capacity for managing reusable resources.
+ The resources are created using the provided factory, and their cleanup or release is managed by
+ the specified releaser.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of resource managed by the pool</dd>
+<dt>Parameters:</dt>
+<dd><code>factory</code> - a <code>Supplier</code> to create new resource instances as needed</dd>
+<dd><code>releaser</code> - a <code>Consumer</code> to handle the cleanup or release of the resources</dd>
+<dd><code>destructor</code> - a <code>Consumer</code> that performs final cleanup of resources when the pool is closed</dd>
 <dd><code>minCapacity</code> - the minimum number of resources to be pre-created in the pool</dd>
 <dd><code>maxCapacity</code> - the maximum number of resources allowed in the pool</dd>
 <dt>Returns:</dt>
