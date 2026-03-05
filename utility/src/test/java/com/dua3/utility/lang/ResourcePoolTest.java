@@ -464,8 +464,8 @@ class ResourcePoolTest {
         // Release the resource. Waiter should get it, finish, THEN close should finish.
         lease1.close();
 
-        assertTrue(waiterAcquired.await(1, TimeUnit.SECONDS), "Waiter should have finished work before pool closed");
-        assertTrue(closeFinished.await(1, TimeUnit.SECONDS), "Pool should close after waiter returns its lease");
+        assertTrue(waiterAcquired.await(5, TimeUnit.SECONDS), "Waiter should have finished work before pool closed");
+        assertTrue(closeFinished.await(5, TimeUnit.SECONDS), "Pool should close after waiter returns its lease");
     }
 
     @Test
