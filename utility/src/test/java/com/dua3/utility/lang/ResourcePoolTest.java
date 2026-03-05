@@ -445,26 +445,31 @@ class ResourcePoolTest {
         // Hold the only resource
         var lease1 = pool.acquire();
 
-        // Thread B is waiting
+        // NEW: Ensure the waiter is actually blocked/ready before we close
+        CountDownLatch waiterReady = new CountDownLatch(1);
         CountDownLatch waiterAcquired = new CountDownLatch(1);
+
         Thread waiterThread = new Thread(() -> {
+            waiterReady.countDown(); // Signal that this thread is alive
             try (var lease2 = pool.acquire()) {
                 waiterAcquired.countDown();
             }
         });
         waiterThread.start();
 
-        // Thread A calls close
+        // Wait for the waiter thread to at least start its execution
+        assertTrue(waiterReady.await(5, TimeUnit.SECONDS));
+
         CountDownLatch closeFinished = new CountDownLatch(1);
         new Thread(() -> {
             pool.close();
             closeFinished.countDown();
         }).start();
 
-        // Release the resource. Waiter should get it, finish, THEN close should finish.
+        // Release the resource.
         lease1.close();
 
-        assertTrue(waiterAcquired.await(5, TimeUnit.SECONDS), "Waiter should have finished work before pool closed");
+        assertTrue(waiterAcquired.await(5, TimeUnit.SECONDS), "Waiter should have finished work");
         assertTrue(closeFinished.await(5, TimeUnit.SECONDS), "Pool should close after waiter returns its lease");
     }
 
