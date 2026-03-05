@@ -1590,7 +1590,7 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface ConsumerThrows<T extends @Nullable Object, E extends Exception>
-    extends FunctionThrows<T, Void, E> {
+            extends FunctionThrows<T, @Nullable Void, E> {
         /**
          * Performs this operation on the given argument.
          *
@@ -1600,7 +1600,7 @@ public final class LangUtil {
         void accept(@Nullable T t) throws E;
 
         @Override
-        default Void apply(T t) throws E {
+        default @Nullable Void apply(T t) throws E {
             accept(t);
             return null;
         }
