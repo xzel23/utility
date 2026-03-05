@@ -247,7 +247,15 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
             try {
                 super.close();
             } finally {
-                putBack(this);
+                synchronized (lock) {
+                    if (resourceCount > minCapacity && waitingCount == 0) {
+                        resourceCount--;
+                        assert resourceCount >= 0 : "internal error: resourceCount < 0";
+                    } else {
+                        boolean accepted = queue.offer(this);
+                        assert accepted : "internal error: queue is full";
+                    }
+                }
             }
         }
     }
@@ -349,26 +357,5 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
         }
 
         return null;
-    }
-
-    /**
-     * Returns the given resource lease back to the resource pool. If the current resource count
-     * exceeds the minimum capacity and there are no threads waiting for resources, the resource
-     * count is decremented. Otherwise, the lease is added back to the internal queue.
-     *
-     * @param lease the resource lease to be returned to the pool
-     *              (should not be null and must belong to this pool)
-     * @throws AssertionError if the resource count goes below zero or if the queue is full
-     */
-    private void putBack(BlockingLeaseImpl lease) {
-        synchronized (lock) {
-            if (resourceCount > minCapacity && waitingCount == 0) {
-                resourceCount--;
-                assert resourceCount >= 0 : "internal error: resourceCount < 0";
-            } else {
-                boolean accepted = queue.offer(lease);
-                assert accepted : "internal error: queue is full";
-            }
-        }
     }
 }
