@@ -22,7 +22,7 @@ public final class Run implements AttributedCharSequence {
     private final int start;
     private final int length;
     private final TextAttributes attributes;
-    private int hash;
+    private int hash = 0;
     private @Nullable FontDef fd;
 
     /**
@@ -176,14 +176,14 @@ public final class Run implements AttributedCharSequence {
     }
 
     /**
-     * Get list of styles.
+     * Get the list of styles.
      *
      * @return the list of styles
      */
     @SuppressWarnings("unchecked")
     public List<Style> getStyles() {
-        //noinspection DataFlowIssue - false positive, default value is non-null
-        return (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
+        Object styles = attributes().get(RichText.ATTRIBUTE_NAME_STYLE_LIST);
+        return styles != null ? (List<Style>) styles : Collections.emptyList();
     }
 
     /**
