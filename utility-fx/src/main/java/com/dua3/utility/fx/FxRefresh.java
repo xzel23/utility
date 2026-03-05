@@ -217,7 +217,7 @@ public final class FxRefresh {
                 switch (st) {
                     case STATE_INACTIVE -> newSt = STATE_ACTIVE;
                     case STATE_ACTIVE -> LOG.debug("[{}] already active", name);
-                    case STATE_TERMINATING, STATE_TERMINATED -> LOG.debug("[{}] already stopped", name);
+                    case STATE_TERMINATING, STATE_TERMINATED -> LOG.debug("[{}] already stopped, cannot activate", name);
                     default -> throw new IllegalStateException("invalid state: " + st);
                 }
             } else {
