@@ -29,7 +29,7 @@ class ReaderInputStreamTest {
         // ReaderInputStream uses a 2048-char internal buffer; the last char kept if it's a high surrogate
         int internalBuf = 2048;
         StringBuilder sb = new StringBuilder();
-        sb.append("a".repeat(internalBuf - 1));
+        sb.repeat("a", internalBuf - 1);
         // Append a surrogate pair (non-BMP character)
         String emoji = "\uD83D\uDE00"; // 😀 U+1F600
         sb.append(emoji);
