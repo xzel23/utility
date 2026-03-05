@@ -125,9 +125,9 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         }
 
         double v = Objects.requireNonNullElseGet(get(), this::getMin);
-        double m = getMax();
+        double max = getMax();
 
-        String proto = PATTERN_DIGIT.matcher(formatter.apply(m, m)).replaceAll("0");
+        String proto = PATTERN_DIGIT.matcher(formatter.apply(max, max)).replaceAll("0");
         Text text = new Text(proto);
         text.setFont(label.getFont());
         double w = text.getBoundsInLocal().getWidth();
