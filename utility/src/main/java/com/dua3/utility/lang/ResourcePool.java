@@ -288,7 +288,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
     }
 
     // resource is returned to the caller; closing it is the responsibility of the caller
-    @SuppressWarnings("java:S2095")
+    @SuppressWarnings({"resource", "java:S2095"})
     @Override
     public Lease<T> acquire() {
         try {
@@ -334,7 +334,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
     }
 
     // resource is returned to the caller; closing it is the responsibility of the caller
-    @SuppressWarnings("java:S2095")
+    @SuppressWarnings({"resource", "java:S2095"})
     @Override
     public @Nullable Lease<T> tryAcquire() {
         BlockingLeaseImpl lease = queue.poll();
