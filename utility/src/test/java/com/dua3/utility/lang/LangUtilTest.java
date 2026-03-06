@@ -56,10 +56,25 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings({"ALL", "java:S5778"})
 @NullUnmarked
 class LangUtilTest {
+
+    /**
+     * Test that byte code instrumentation injects automatic null checks for non-nullable parameters.
+     */
+    @Test
+    void testNullChecksAreInsertedForParameters() {
+        Supplier<String> supplier = null;
+        Throwable thrown = assertThrows(Throwable.class, () -> LangUtil.cache(supplier));
+        switch (thrown) {
+            case NullPointerException e -> assertEquals("supplier is null", e.getMessage());
+            case AssertionError e -> assertEquals("supplier is null", e.getMessage());
+            default -> fail("Unexpected exception: " + thrown);
+        }
+    }
 
     @Test
     void testAsUnmodifiableSortedListSet_basicProperties() {
