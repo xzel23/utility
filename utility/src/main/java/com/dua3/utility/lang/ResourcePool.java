@@ -102,7 +102,7 @@ public interface ResourcePool<T> extends AutoCloseable {
      * @throws IllegalArgumentException if {@code size} is negative
      */
     static <T> ResourcePool<T> newFixedSizeResourcePool(Supplier<T> factory, Consumer<T> releaser, int size) {
-        return new ListBackedResourcePool<>(factory, releaser, LeaseImpl::noop, size, size);
+        return new ListBackedResourcePool<>(factory, releaser, LangUtil::ignore, size, size);
     }
 
     /**
@@ -136,7 +136,7 @@ public interface ResourcePool<T> extends AutoCloseable {
      * @throws IllegalArgumentException if {@code minCapacity} is negative or {@code maxCapacity} is less than {@code minCapacity}
      */
     static <T> ResourcePool<T> newResourcePool(Supplier<T> factory, Consumer<T> releaser, int minCapacity, int maxCapacity) {
-        return new ListBackedResourcePool<>(factory, releaser, LeaseImpl::noop, minCapacity, maxCapacity);
+        return new ListBackedResourcePool<>(factory, releaser, LangUtil::ignore, minCapacity, maxCapacity);
     }
 
     /**
@@ -217,16 +217,6 @@ class LeaseImpl<T> implements ResourcePool.Lease<T> {
     LeaseImpl(T resource, Consumer<T> releaser) {
         this.resource = resource;
         this.releaser = releaser;
-    }
-
-    /**
-     * A no-operation method that accepts a parameter but performs no action with it.
-     *
-     * @param <T>     the type of the parameter
-     * @param ignored the parameter that is ignored by this method
-     */
-    static <T> void noop(T ignored) {
-        // do nothing
     }
 
     @Override
@@ -312,7 +302,7 @@ final class ThreadResourcePool<T> implements ResourcePool<T> {
     ThreadResourcePool(Supplier<T> factory, Consumer<T> releaser, @Nullable Consumer<T> destructor) {
         // We store the wrapper itself in the ThreadLocal
         if (destructor == null) {
-            this.destructor = LeaseImpl::noop;
+            this.destructor = LangUtil::ignore;
             this.allLeases = null;
             this.threadLocalLease = ThreadLocal.withInitial(() -> new ThreadLocalLeaseImpl(factory.get(), releaser));
         } else {
