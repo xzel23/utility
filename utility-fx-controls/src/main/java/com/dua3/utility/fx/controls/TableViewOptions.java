@@ -1,5 +1,7 @@
 package com.dua3.utility.fx.controls;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -169,7 +171,7 @@ public final class TableViewOptions {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj instanceof TableViewOptions o && options.equals(o.options);
     }
 
