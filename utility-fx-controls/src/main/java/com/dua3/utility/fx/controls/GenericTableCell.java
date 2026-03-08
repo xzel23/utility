@@ -55,6 +55,7 @@ public class GenericTableCell<S, T> extends TableCell<S, T> {
         assert editNode == null : "internal error: already in edit mode";
 
         // Create the editor node and inject the commit callback
+        //noinspection DataFlowIssue - Qodana insists "this" might be null
         editNode = Objects.requireNonNull(startEdit.apply(node, this::commitEdit), "startEdit.apply() returned null");
 
         if (editNode != node) {

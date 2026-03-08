@@ -388,6 +388,7 @@ public class AboutDialogBuilder {
         addLabelLiteral(children, "copyright", copyright);
 
         if (!mailText.isEmpty()) {
+            assert mailTo != null : "internal error: mailTo must not be null if mailText is not empty";
             Hyperlink hlMail = new Hyperlink(mailText);
             hlMail.setId("mail");
             hlMail.setOnAction(e -> sendMailTo(mailTo));

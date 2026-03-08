@@ -69,7 +69,9 @@ public final class I18N {
      * @return the singleton instance.
      */
     public static I18N getInstance() {
-        return INSTANCE.updateAndGet(inst -> inst == null ? init("", Locale.getDefault()) : inst);
+        I18N i18N = INSTANCE.updateAndGet(inst -> inst == null ? init("", Locale.getDefault()) : inst);
+        assert i18N != null; // guaranteed by updateAndGet(), but Qodana fails to infer that.
+        return i18N;
     }
 
     /**
@@ -93,7 +95,9 @@ public final class I18N {
      * @return The updated global instance of the I18N class.
      */
     public static I18N init(String baseName, Locale locale) {
-        return INSTANCE.updateAndGet(i18n -> create(baseName, locale));
+        I18N i18N = INSTANCE.updateAndGet(i18n -> create(baseName, locale));
+        assert i18N != null; // guaranteed by updateAndGet(), but Qodana fails to infer that.
+        return i18N;
     }
 
     /**

@@ -265,6 +265,11 @@ public class FxDialogSample extends Application {
 
         // Input
         Button btnInput = createButton(i18n().get("dua3.utility.samples.fx.input"), () -> {
+            // these assertions silence Qodana warnings; the values are known to be non-null at this point
+            assert comboUiMode != null;
+            assert comboLabelPlacement != null;
+            assert comboLocale != null;
+
             var dlg = Dialogs.input(primaryStage, MessageFormatter.standard())
                     .title(i18n().get("dua3.utility.samples.fx.input.title"))
                     .header(i18n().get("dua3.utility.samples.fx.input.header"))

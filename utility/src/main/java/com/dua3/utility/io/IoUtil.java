@@ -506,6 +506,7 @@ public final class IoUtil {
      */
     public static void deleteRecursive(Path path) throws IOException {
         try (Stream<Path> files = Files.walk(path, FileVisitOption.FOLLOW_LINKS)) {
+            //noinspection DataFlowIssue - Files.walk() returns a Stream<Path> with non-null elements, but Qodana does not know that
             files.sorted(Comparator.reverseOrder())
                     .forEach(LangUtil.unchecked(
                             (LangUtil.FunctionThrows<? super Path, ? extends Object, ? extends Exception>) Files::deleteIfExists)

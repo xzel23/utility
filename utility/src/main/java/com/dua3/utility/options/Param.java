@@ -713,7 +713,7 @@ public record Param<T>(
      */
     private static <T> Converter<String[], List<T>> listConverter(Converter<String, T> elementConverter) {
         return Converter.create(
-                s -> mapList(s, elementConverter.a2b()),
+                s -> s == null ? Collections.emptyList() : mapList(s, elementConverter.a2b()),
                 v -> formatList(v, elementConverter.b2a())
         );
     }

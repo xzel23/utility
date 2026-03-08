@@ -1,9 +1,14 @@
 package com.dua3.utility.application.imp;
 
+import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.FunctionDescriptor;
+import java.lang.foreign.Linker;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.SymbolLookup;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -165,7 +170,9 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
                                int idObject, int idChild, int dwEventThread, int dwmsEventTime) {
         // idObject == 0 means the event is for a Window object (OBJID_WINDOW)
         if (idObject == 0 && !hwnd.equals(MemorySegment.NULL)) {
-            LOG.debug("Processing window event 0x{} for HWND {}", Integer.toHexString(event), hwnd);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Processing window event 0x{} for HWND {}", Integer.toHexString(event), hwnd);
+            }
             try (Arena local = Arena.ofConfined()) {
                 int attr = getDwmAttributeConstant();
                 MemorySegment pDarkMode = local.allocateFrom(JAVA_INT, currentDarkMode);
@@ -175,7 +182,7 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
                 if (res == 0) {
                     LOG.debug("Auto-applied theme to new HWND {}", hwnd);
                 }
-            } catch (Throwable t) {
+            } catch (Throwable _) {
                 // Keep callback silent
             }
         }
@@ -200,11 +207,14 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
             MemorySegment versionInfo = arena.allocate(284);
             versionInfo.set(JAVA_INT, 0, 284);
 
+            // DO NOT REMOVE! The assignent is required for the method handle to work correctly.
             int result = (int) rtlGetVersion.invokeExact(versionInfo);
+            LangUtil.ignore(result);
+
             int build = versionInfo.get(JAVA_INT, 12);
 
             return (build >= 19041) ? 20 : 19;
-        } catch (Throwable t) {
+        } catch (Throwable _) {
             return 20;
         }
     }

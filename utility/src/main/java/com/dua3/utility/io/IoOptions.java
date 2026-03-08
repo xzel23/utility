@@ -106,6 +106,7 @@ public final class IoOptions {
      * @return an {@code Option<Charset>} representing the character encoding selection
      */
     public static Option<Charset> charset(Supplier<Charset> defaultSupplier) {
+        //noinspection DataFlowIssue - Qodana fails to infer that Charset::forName will never return null
         return Option.createSelectionOption(
                 "Charset",
                 "The character encoding.",
