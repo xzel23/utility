@@ -140,7 +140,7 @@ public final class IoOptions {
                 Locale.class,
                 "locale",
                 LangUtil.asUnmodifiableList(Locale.getAvailableLocales()),
-                Converter.create(Locale::forLanguageTag, locale -> LangUtil.orElseGet(locale, Locale::getDefault).getLanguage()),
+                Converter.create(Locale::forLanguageTag, locale -> Objects.requireNonNullElseGet(locale, Locale::getDefault).getLanguage()),
                 defaultSupplier,
                 "--locale", "-lc"
         );
