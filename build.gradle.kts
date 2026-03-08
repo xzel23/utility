@@ -171,17 +171,6 @@ subprojects {
                 xml.required.set(true)
                 html.required.set(false)
             }
-
-            // use Cabe instrumented classes if they exist
-            val cabeClasses = project.layout.buildDirectory.dir("classes-cabe/main")
-            classDirectories.setFrom(project.provider {
-                if (cabeClasses.get().asFile.exists()) {
-                    val mainClassesDir = project.layout.buildDirectory.dir("classes/java/main").get().asFile
-                    sourceSets.main.get().output.classesDirs.filter { it != mainClassesDir } + cabeClasses.get().asFile
-                } else {
-                    sourceSets.main.get().output.classesDirs
-                }
-            })
         }
 
         tasks.withType<Test> {
