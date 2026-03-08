@@ -64,6 +64,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         this.btnDecrement = new Button(I18NInstance.get().get("dua3.utility.fx.controls.slider.with.buttons.decrement"));
         this.btnIncrement = new Button(I18NInstance.get().get("dua3.utility.fx.controls.slider.with.buttons.increment"));
 
+        //noinspection DataFlowIssue - Qodana false positive
         this.state = new ObjectInputControlState<>(
                 PropertyConverter.convert(slider.valueProperty()),
                 () -> null,
