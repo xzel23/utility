@@ -3,7 +3,6 @@ package com.dua3.utility.fx.controls;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Control;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
@@ -65,7 +64,7 @@ public class SimpleInputControl<C extends Control, R> implements InputControl<R>
     }
 
     @Override
-    public @NonNull C node() {
+    public C node() {
         return control;
     }
 }
