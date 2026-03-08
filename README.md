@@ -236,7 +236,7 @@ could not be loaded.
 
 ## Changes
 
-### 22.0.0 (in development)
+### 22.0.0
 
 #### Additions
 
@@ -246,7 +246,7 @@ could not be loaded.
 - removed deprecated overloads of `LangUtil.check()`, `LangUtil.checkArg()`, and `LangUtil.require...()` 
   methods.
 - removed `LangUtil.wrapException()`, use `LangUtil.throwAsRuntimeException instead.
-- removed the Counter class - use LongAdder instead, it's standard and it's faster.
+- removed the Counter class; use `java.util.concurrent.atomic.LongAdder` instead, it's standard and it's faster.
 - `LangUtil.uncheckedConsumer()`, `LangUtil.uncheckedFunction()`, `LangUtil.uncheckedSupplier()`, and
   `LangUtil.uncheckedRunnable()` have been replaced by `LangUtil.unchecked()`; overloads have been
   implemented that cover the use cases Supplier, (Bi)Consumer, (Bi)Function, and Runnable.
