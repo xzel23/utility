@@ -10,7 +10,7 @@ jobs:
   codeql:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Use highest JDK your project needs
       - name: Set up JDK 25
@@ -21,7 +21,7 @@ jobs:
           java-package: 'jdk+fx'
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: java
 
@@ -29,4 +29,4 @@ jobs:
         run: gradle --no-daemon assemble
 
       - name: Run CodeQL analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
