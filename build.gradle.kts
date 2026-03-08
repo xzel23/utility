@@ -196,7 +196,7 @@ subprojects {
 
         cabe {
             if (isReleaseVersion) {
-                config.set(Configuration.parse("publicApi=THROW_NPE:privateApi=ASSERT").withStrict(true))
+                config.set(Configuration.parse("publicApi=THROW_NPE:privateApi=ASSERT:strict=true"))
             } else {
                 config.set(Configuration.DEVELOPMENT.withStrict(true))
             }

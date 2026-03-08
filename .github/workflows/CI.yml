@@ -2,6 +2,7 @@ name: CI
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
 
@@ -298,6 +299,7 @@ jobs:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
   publish:
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: [ test-linux, test-windows ]
     runs-on: ubuntu-latest
     permissions:
