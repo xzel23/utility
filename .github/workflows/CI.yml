@@ -59,8 +59,7 @@ jobs:
           path: |
             **/build/libs/*.jar
             **/build/classes/
-            **/build/classes/java/test/
-            **/build/classes/kotlin/test/
+            **/build/classes-cabe/
             build/gradle-version/version.txt
           path-root: ${{ github.workspace }}
           if-no-files-found: error
@@ -233,6 +232,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: coverage-reports
+          path: ${{ github.workspace }}
 
       - name: 'Cache SonarCloud packages'
         uses: actions/cache@v4
@@ -249,7 +249,7 @@ jobs:
           -Dsonar.projectKey=xzel23_utility
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/test/jacocoTestReport.xml
+          -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/**/*.xml
 
   qodana:
     needs: build

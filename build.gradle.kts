@@ -122,6 +122,12 @@ sonar {
             "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
         )
         property("sonar.coverage.exclusions", "**/samples/**")
+
+        // use Cabe instrumented classes if they exist
+        val cabeClassesDir = project.layout.buildDirectory.dir("classes-cabe/main").get().asFile
+        if (cabeClassesDir.exists()) {
+            property("sonar.java.binaries", "build/classes-cabe/main")
+        }
     }
 }
 
@@ -226,6 +232,12 @@ subprojects {
         properties {
             property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
             property("sonar.coverage.exclusions", "**/samples/**")
+
+            // use Cabe instrumented classes if they exist
+            val cabeClassesDir = project.layout.buildDirectory.dir("classes-cabe/main").get().asFile
+            if (cabeClassesDir.exists()) {
+                property("sonar.java.binaries", "build/classes-cabe/main")
+            }
         }
     }
 
