@@ -298,7 +298,7 @@ public final class Grid extends GridPane {
                 int rowStart = i - c;
                 for (int j = rowStart; j < Math.min(rowStart + columns, dataList.size()); j++) {
                     var rowEntry = dataList.get(j);
-                    if (rowEntry.visible && rowEntry.control.node() != null && rowEntry.label != null) {
+                    if (rowEntry.visible && rowEntry.label != null) {
                         needsLabelRow = true;
                         break;
                     }
