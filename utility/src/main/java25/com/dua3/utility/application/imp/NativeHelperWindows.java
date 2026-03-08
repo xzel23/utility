@@ -116,7 +116,9 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
             );
 
             // Trigger enumeration for existing windows
+            // DO NOT REMOVE! The assignent is required for the method handle to work correctly.
             int result = (int) enumWindows.invokeExact(enumCallbackStub, 0L);
+            LangUtil.ignore(result);
 
             MemorySegment pDarkMode = arena.allocateFrom(JAVA_INT, currentDarkMode);
             for (MemorySegment hwnd : myWindows) {
@@ -191,7 +193,9 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
     private int processWindow(List<MemorySegment> list, int targetPid, MemorySegment hwnd, long lParam) {
         try (Arena localArena = Arena.ofConfined()) {
             MemorySegment pPid = localArena.allocate(JAVA_INT);
+            // DO NOT REMOVE! The assignent is required for the method handle to work correctly.
             int threadId = (int) getWindowThreadProcessId.invokeExact(hwnd, pPid);
+            LangUtil.ignore(threadId);
 
             if (pPid.get(JAVA_INT, 0) == targetPid) {
                 list.add(hwnd);
