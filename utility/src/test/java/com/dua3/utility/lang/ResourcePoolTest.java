@@ -561,6 +561,7 @@ class ResourcePoolTest {
         assertDoesNotThrow(pool::close, "Exceptions in destructor must not prevent pool closure");
     }
 
+    @SuppressWarnings("java:S2925") // Thread.sleep() is only used for testing purposes
     @Test
     void resourceIsDisposedAfterDestruction() {
         ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(Object::new, r -> {}, 1);
