@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -45,6 +47,56 @@ class RichTextTest {
         String actual = text.toString();
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void testSpaceTabAndNewline() {
+        assertSame(RichText.space(), RichText.space());
+        assertSame(RichText.tab(), RichText.tab());
+        assertSame(RichText.newline(), RichText.newline());
+
+        assertEquals(RichText.valueOf(" "), RichText.space());
+        assertEquals(RichText.valueOf("\t"), RichText.tab());
+        assertEquals(RichText.valueOf("\n"), RichText.newline());
+    }
+
+    @Test
+    void testValueOfObject() {
+        Object obj = new Object() {
+            @Override
+            public String toString() {
+                return "obj";
+            }
+        };
+
+        Function<Object, RichText> valueOfObject = RichText::valueOf;
+        assertEquals(RichText.valueOf("obj"), RichText.valueOf(obj));
+        Assertions.assertThrows(AssertionError.class, () -> valueOfObject.apply(null));
+    }
+
+    @Test
+    void testValueOfCharOverloads() {
+        assertEquals(RichText.valueOf("x"), RichText.valueOf('x'));
+
+        RichTextFunctionValueOfCharVarArgs valueOfCharVarArgs = (c, styles) -> RichText.valueOf(c, styles);
+        RichText expectedVarArgs = RichText.valueOf("x", Style.BOLD, Style.ITALIC);
+        RichText actualVarArgs = valueOfCharVarArgs.apply('x', Style.BOLD, Style.ITALIC);
+        assertEquals(expectedVarArgs, actualVarArgs);
+
+        RichTextFunctionValueOfCharCollection valueOfCharCollection = (c, styles) -> RichText.valueOf(c, styles);
+        RichText expectedCollection = RichText.valueOf("x", List.of(Style.BOLD, Style.ITALIC));
+        RichText actualCollection = valueOfCharCollection.apply('x', List.of(Style.BOLD, Style.ITALIC));
+        assertEquals(expectedCollection, actualCollection);
+    }
+
+    @FunctionalInterface
+    private interface RichTextFunctionValueOfCharVarArgs {
+        RichText apply(char c, Style... styles);
+    }
+
+    @FunctionalInterface
+    private interface RichTextFunctionValueOfCharCollection {
+        RichText apply(char c, Collection<Style> styles);
     }
 
     @Test
@@ -491,6 +543,49 @@ class RichTextTest {
         RichText actual = Stream.of("This", "should", "be", "easy").map(RichText::valueOf).collect(RichText.joiner(" "));
         RichText expected = RichText.valueOf("This should be easy");
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void testJoinCharSequenceOverloads() {
+        RichText[] elements = {RichText.valueOf("a"), RichText.valueOf("b"), RichText.valueOf("c")};
+
+        assertEquals(RichText.valueOf("a|b|c"), RichText.join("|", elements));
+        assertEquals(RichText.valueOf("a|b|c"), RichText.join("|", List.of(elements)));
+        assertEquals(RichText.emptyText(), RichText.join("|"));
+        assertEquals(RichText.emptyText(), RichText.join("|", List.<RichText>of()));
+    }
+
+    @Test
+    void testJoinerRichTextOverloads() {
+        RichText[] elements = {RichText.valueOf("a"), RichText.valueOf("b"), RichText.valueOf("c")};
+
+        RichText withRichTextDelimiter = Arrays.stream(elements)
+                .collect(RichText.joiner(RichText.valueOf("|")));
+        assertEquals(RichText.valueOf("a|b|c"), withRichTextDelimiter);
+
+        RichText withRichTextPrefixSuffix = Arrays.stream(elements)
+                .collect(RichText.joiner(RichText.valueOf("|"), RichText.valueOf("<"), RichText.valueOf(">")));
+        assertEquals(RichText.valueOf("<a|b|c>"), withRichTextPrefixSuffix);
+
+        RichText withStringPrefixSuffix = Arrays.stream(elements)
+                .collect(RichText.joiner("|", "<", ">"));
+        assertEquals(RichText.valueOf("<a|b|c>"), withStringPrefixSuffix);
+    }
+
+    @Test
+    void testGetBaseline() {
+        FontUtil fontUtil = FontUtil.getInstance();
+        Font defaultFont = fontUtil.getDefaultFont();
+
+        RichText noRuns = new RichText();
+        assertEquals(0.0, noRuns.getBaseline(defaultFont));
+
+        RichText small = RichText.valueOf("a", Style.create("small", Map.entry(Style.FONT_SIZE, 6.0f)));
+        RichText large = RichText.valueOf("b", Style.create("large", Map.entry(Style.FONT_SIZE, 40.0f)));
+        RichText combined = RichText.join(RichText.emptyText(), small, large);
+
+        double expected = Math.max(small.getBaseline(defaultFont), large.getBaseline(defaultFont));
+        assertEquals(expected, combined.getBaseline(defaultFont));
     }
 
     record TestCaseSplit(String text, String regex, int limit) {
