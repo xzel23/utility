@@ -7,11 +7,15 @@ package com.dua3.utility.text;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.IntFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HtmlConverterTest {
@@ -262,5 +266,116 @@ class HtmlConverterTest {
         // Bold should be converted to <custom-bold> using our default mapper
         String result = converter.convert(rt);
         assertEquals("<custom-bold>bold text</custom-bold>", result);
+    }
+
+    @Test
+    void testRefineStyleProperties() {
+        HtmlConverter noRefineConverter = HtmlConverter.createBlank(
+                HtmlConverter.map("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag())
+        );
+
+        HtmlConverter converter = HtmlConverter.createBlank(
+                HtmlConverter.map("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag()),
+                HtmlConverter.refineStyleProperties(props -> {
+                    Map<String, Object> map = new LinkedHashMap<>(props);
+                    map.put("x-test", "ok");
+                    return map;
+                })
+        );
+
+        assertEquals("plain", noRefineConverter.convert(RichText.valueOf("plain")));
+        String result = converter.convert(RichText.valueOf("plain"));
+        assertNotEquals("plain", result);
+        assertTrue(result.contains("<x>"));
+        assertTrue(result.contains("</x>"));
+        assertTrue(result.contains("plain"));
+    }
+
+    @Test
+    void testMapAttribute() {
+        HtmlConverter converter = HtmlConverter.createBlank(
+                HtmlConverter.mapAttribute("lang", change -> HtmlTag.tag("<lang>", "</lang>"))
+        );
+
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.push("lang", "en");
+        builder.append("hello");
+        builder.pop("lang");
+
+        assertEquals("<lang>hello</lang>", converter.convert(builder.toRichText()));
+    }
+
+    @Test
+    void testInlineTextDecorations() {
+        Font font = FontUtil.getInstance().getFont("arial-16-bold");
+        Map<String, Object> input = new LinkedHashMap<>();
+        input.put(Style.FONT, font);
+        input.put("custom", "value");
+
+        Map<String, Object> result = HtmlConverter.inlineTextDecorations(input);
+
+        assertFalse(result.containsKey(Style.FONT));
+        assertEquals("value", result.get("custom"));
+        assertEquals(font.getFamilies(), result.get(Style.FONT_FAMILIES));
+        assertEquals(font.getSizeInPoints(), result.get(Style.FONT_SIZE));
+        assertEquals(Style.FONT_WEIGHT_VALUE_BOLD, result.get(Style.FONT_WEIGHT));
+    }
+
+    @Test
+    void testCreateWithCollectionOptions() {
+        HtmlConverter converter = HtmlConverter.create(List.of(HtmlConverter.useCss(true)));
+        assertTrue(converter.isUseCss());
+    }
+
+    @Test
+    void testCreateBlankWithCollectionOptions() {
+        HtmlConverter converter = HtmlConverter.createBlank(List.of(HtmlConverter.addDefaultMappings()));
+
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.push(Style.BOLD);
+        builder.append("bold text");
+        builder.pop(Style.BOLD);
+
+        assertEquals("<b>bold text</b>", converter.convert(builder.toRichText()));
+    }
+
+    @Test
+    void testGet() {
+        HtmlConverter converter = HtmlConverter.createBlank(
+                HtmlConverter.map("mapped", value -> HtmlTag.tag("<mapped>", "</mapped>")),
+                HtmlConverter.defaultMapper((attribute, value) -> HtmlTag.tag("<default>", "</default>"))
+        );
+
+        HtmlTag mapped = converter.get("mapped", "x");
+        HtmlTag fallback = converter.get("unknown", "x");
+
+        assertEquals("<mapped>", mapped.open());
+        assertEquals("</mapped>", mapped.close());
+        assertEquals("<default>", fallback.open());
+        assertEquals("</default>", fallback.close());
+    }
+
+    @Test
+    void testGetTagForAttributeChange() {
+        HtmlConverter converter = HtmlConverter.createBlank(
+                HtmlConverter.mapAttribute("lang", change -> HtmlTag.tag("<lang>", "</lang>"))
+        );
+
+        TagBasedConverter.AttributeChange mappedChange = new TagBasedConverter.AttributeChange("lang", null, "en");
+        TagBasedConverter.AttributeChange unmappedChange = new TagBasedConverter.AttributeChange("x", null, "y");
+
+        HtmlTag mapped = converter.getTagForAttributeChange(mappedChange);
+        HtmlTag unmapped = converter.getTagForAttributeChange(unmappedChange);
+
+        assertEquals("<lang>", mapped.open());
+        assertEquals("</lang>", mapped.close());
+        assertEquals("", unmapped.open());
+        assertEquals("", unmapped.close());
+    }
+
+    @Test
+    void testConvertIgnoresSplitMarker() {
+        RichText text = RichText.valueOf("a" + RichText.SPLIT_MARKER + "b");
+        assertEquals("ab", HtmlConverter.create().convert(text));
     }
 }
