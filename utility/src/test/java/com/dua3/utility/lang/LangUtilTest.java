@@ -13,6 +13,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -1871,5 +1873,194 @@ class LangUtilTest {
 
         assertNull(result);
         assertEquals(0, counter.get());
+    }
+
+    @Test
+    void testCheckArgWithTwoObjectsOverload() {
+        assertDoesNotThrow(() -> LangUtil.checkArg(true, "values: %s/%s", "a", "b"));
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> LangUtil.checkArg(false, "values: %s/%s", "a", "b"));
+        assertEquals("values: a/b", ex.getMessage());
+    }
+
+    @Test
+    void testCheckArgWithThreeObjectsOverload() {
+        assertDoesNotThrow(() -> LangUtil.checkArg(true, "values: %s/%s/%s", "a", "b", "c"));
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> LangUtil.checkArg(false, "values: %s/%s/%s", "a", "b", "c"));
+        assertEquals("values: a/b/c", ex.getMessage());
+    }
+
+    @Test
+    void testCheckArgWithTwoDoublesOverload() {
+        assertDoesNotThrow(() -> LangUtil.checkArg(true, "values: %.1f/%.1f", 1.2, 3.4));
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> LangUtil.checkArg(false, "values: %.1f/%.1f", 1.2, 3.4));
+        assertEquals("values: 1.2/3.4", ex.getMessage());
+    }
+
+    @Test
+    void testCheckWithThreeObjectsOverload() {
+        assertDoesNotThrow(() -> LangUtil.check(true, "values: %s/%s/%s", "a", "b", "c"));
+
+        LangUtil.FailedCheckException ex = assertThrows(LangUtil.FailedCheckException.class,
+                () -> LangUtil.check(false, "values: %s/%s/%s", "a", "b", "c"));
+        assertEquals("values: a/b/c", ex.getMessage());
+    }
+
+    @Test
+    void testCheckWithTwoLongsOverload() {
+        assertDoesNotThrow(() -> LangUtil.check(true, "values: %d/%d", 1L, 2L));
+
+        LangUtil.FailedCheckException ex = assertThrows(LangUtil.FailedCheckException.class,
+                () -> LangUtil.check(false, "values: %d/%d", 1L, 2L));
+        assertEquals("values: 1/2", ex.getMessage());
+    }
+
+    @Test
+    void testCheckWithThreeLongsOverload() {
+        assertDoesNotThrow(() -> LangUtil.check(true, "values: %d/%d/%d", 1L, 2L, 3L));
+
+        LangUtil.FailedCheckException ex = assertThrows(LangUtil.FailedCheckException.class,
+                () -> LangUtil.check(false, "values: %d/%d/%d", 1L, 2L, 3L));
+        assertEquals("values: 1/2/3", ex.getMessage());
+    }
+
+    @Test
+    void testCheckWithTwoDoublesOverload() {
+        assertDoesNotThrow(() -> LangUtil.check(true, "values: %.1f/%.1f", 1.2, 3.4));
+
+        LangUtil.FailedCheckException ex = assertThrows(LangUtil.FailedCheckException.class,
+                () -> LangUtil.check(false, "values: %.1f/%.1f", 1.2, 3.4));
+        assertEquals("values: 1.2/3.4", ex.getMessage());
+    }
+
+    @Test
+    void testCheckWithThreeDoublesOverload() {
+        assertDoesNotThrow(() -> LangUtil.check(true, "values: %.1f/%.1f/%.1f", 1.2, 3.4, 5.6));
+
+        LangUtil.FailedCheckException ex = assertThrows(LangUtil.FailedCheckException.class,
+                () -> LangUtil.check(false, "values: %.1f/%.1f/%.1f", 1.2, 3.4, 5.6));
+        assertEquals("values: 1.2/3.4/5.6", ex.getMessage());
+    }
+
+    @Test
+    void testUncheckedBiFunctionOverload() {
+        LangUtil.BiSink<String, Integer, String> ok = LangUtil.unchecked((s, n) -> s + n);
+        assertEquals("a7", ok.apply("a", 7));
+
+        LangUtil.BiSink<String, Integer, String> withIo = LangUtil.unchecked((s, n) -> {
+            throw new IOException("io");
+        });
+        assertThrows(UncheckedIOException.class, () -> withIo.apply("a", 1));
+
+        LangUtil.BiSink<String, Integer, String> withChecked = LangUtil.unchecked((s, n) -> {
+            throw new Exception("x");
+        });
+        assertThrows(WrappedException.class, () -> withChecked.apply("a", 1));
+    }
+
+    @Test
+    void testUncheckedRunnableOverloadSuccessPath() {
+        AtomicInteger counter = new AtomicInteger();
+        Runnable r = LangUtil.unchecked(() -> counter.incrementAndGet());
+        r.run();
+        assertEquals(1, counter.get());
+    }
+
+    @Test
+    void testLoadPropertiesClassAndFilename() throws IOException {
+        Optional<Properties> properties = LangUtil.loadProperties(this.getClass(), "test.properties");
+        assertTrue(properties.isPresent());
+        assertEquals("value", properties.get().get("key"));
+    }
+
+    @Test
+    void testLoadPropertiesClassAndFilenameMissing() throws IOException {
+        Optional<Properties> properties = LangUtil.loadProperties(this.getClass(), "does-not-exist.properties");
+        assertTrue(properties.isEmpty());
+    }
+
+    @Test
+    void testCachingStringSupplier() {
+        AtomicInteger calls = new AtomicInteger();
+        Supplier<String> original = () -> {
+            calls.incrementAndGet();
+            return "value";
+        };
+
+        Supplier<String> cached = LangUtil.cachingStringSupplier(original);
+        assertEquals("value", cached.get());
+        assertEquals("value", cached.get());
+        assertEquals(1, calls.get(), "supplier should be called only once");
+
+        Supplier<String> cachedAgain = LangUtil.cachingStringSupplier(cached);
+        assertSame(cached, cachedAgain);
+    }
+
+    @Test
+    void testAsUnmodifiableMap() {
+        Properties properties = new Properties();
+        properties.put("a", "1");
+        properties.put(2, 3);
+
+        Map<String, String> map = LangUtil.asUnmodifiableMap(properties);
+        assertEquals("1", map.get("a"));
+        assertEquals("3", map.get("2"));
+        assertThrows(UnsupportedOperationException.class, () -> map.put("x", "y"));
+    }
+
+    @Test
+    void testGetOrThrowWithExceptionBuilderReturnsValue() throws Exception {
+        Map<String, Integer> map = Map.of("a", 1);
+        Integer result = LangUtil.getOrThrow(map, "a", key -> new Exception("missing: " + key));
+        assertEquals(1, result);
+    }
+
+    @Test
+    void testGetOrThrowWithExceptionBuilderThrows() {
+        Map<String, Integer> map = new HashMap<>();
+        Exception ex = assertThrows(Exception.class,
+                () -> LangUtil.getOrThrow(map, "missing", key -> new Exception("missing: " + key)));
+        assertEquals("missing: missing", ex.getMessage());
+    }
+
+    @Test
+    void testApplyIfNotNull() {
+        AtomicInteger sum = new AtomicInteger();
+        LangUtil.applyIfNotNull((Integer a, Integer b) -> sum.set(a + b), 2, 3);
+        assertEquals(5, sum.get());
+
+        LangUtil.applyIfNotNull((Integer a, Integer b) -> sum.set(99), null, 3);
+        assertEquals(5, sum.get());
+
+        LangUtil.applyIfNotNull((Integer a, Integer b) -> sum.set(99), 3, null);
+        assertEquals(5, sum.get());
+    }
+
+    @Test
+    void testIsClassOnClasspath() {
+        assertTrue(LangUtil.isClassOnClasspath("java.lang.String"));
+        assertFalse(LangUtil.isClassOnClasspath("com.example.DoesNotExist"));
+    }
+
+    @Test
+    void testSneakyThrowViaReflection() throws Exception {
+        Method m = LangUtil.class.getDeclaredMethod("sneakyThrow", Throwable.class);
+        m.setAccessible(true);
+
+        IOException cause = new IOException("io");
+        InvocationTargetException ex = assertThrows(InvocationTargetException.class, () -> m.invoke(null, cause));
+        assertSame(cause, ex.getCause());
+    }
+
+    @Test
+    void testThrowAsRuntimeExceptionUsesSneakyThrowForError() {
+        AssertionError error = new AssertionError("boom");
+        AssertionError thrown = assertThrows(AssertionError.class, () -> LangUtil.throwAsRuntimeException(error));
+        assertSame(error, thrown);
     }
 }
