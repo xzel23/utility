@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Axel Howind
  */
-@SuppressWarnings({"UnnecessaryLocalVariable", "StringBufferWithoutInitialCapacity", "SpellCheckingInspection", "EqualsWithItself"})
+@SuppressWarnings({"UnnecessaryLocalVariable", "StringBufferWithoutInitialCapacity", "SpellCheckingInspection", "EqualsWithItself", "java:S1612", "java:S1854"})
 class RichTextTest {
     private static final Logger LOG = LogManager.getLogger(RichTextTest.class);
 
