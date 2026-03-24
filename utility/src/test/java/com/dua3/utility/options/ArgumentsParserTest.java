@@ -1,11 +1,14 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.text.TextUtil;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,6 +18,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("SpellCheckingInspection")
 class ArgumentsParserTest {
+
+    private static Locale defaultLocale;
+
+    @BeforeAll
+    static void setLocale() {
+        defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
+    }
+
+    @AfterAll
+    static void restoreLocale() {
+        Locale.setDefault(defaultLocale);
+    }
 
     @Test
     void testFlag() {

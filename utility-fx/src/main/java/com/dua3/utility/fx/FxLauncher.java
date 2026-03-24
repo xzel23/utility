@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;
 import com.dua3.utility.options.ArgumentsParser;
@@ -18,11 +19,15 @@ import org.slb4j.ext.fx.FxLogPane;
 import org.slb4j.ext.fx.FxLogWindow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -84,8 +89,9 @@ public final class FxLauncher {
     public static final int RC_ERROR = 1;
 
     private static final boolean HAS_SLB4J = LangUtil.isClassOnClasspath("org.slb4j.SLB4J");
+    private static final boolean HAS_SLB4J_EXT = HAS_SLB4J && LangUtil.isClassOnClasspath("org.slb4j.ext.LogBuffer");
 
-    private static final String LOG_MESSAGES = I18NInstance.get().get("dua3.utility.fx.controls.launcher.log.messages");
+    private static final String I18N_KEY_LOG_MESSAGES = "dua3.utility.fx.launcher.log.messages";
 
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
 
@@ -234,6 +240,107 @@ public final class FxLauncher {
     }
 
     /**
+     * Launches an internationalized application with the specified configuration and parameters.
+     *
+     * @param applicationClassName The fully qualified class name of the main application to be launched.
+     * @param args An array of command-line arguments passed to the application.
+     * @param initI18n A function that initializes the internationalization (I18N) logic for the application, based on the provided locale.
+     * @param appName The name of the application.
+     * @param version The version of the application.
+     * @param copyright The copyright information of the application.
+     * @param developerMail The contact email address of the developer or support team.
+     * @param appDescription A brief description of the application.
+     * @param addOptions A varargs of consumers capable of adding additional options to the argument parser builder.
+     * @return An integer exit code indicating the status of the application launch process. Typically, 0 indicates success, while non-zero values indicate failure.
+     */
+    @SafeVarargs
+    public static int launchApplicationI18N(
+            String applicationClassName,
+            String[] args,
+            Function<Locale, I18N> initI18n,
+            String appName,
+            String version,
+            String copyright,
+            String developerMail,
+            String appDescription,
+            Consumer<ArgumentsParserBuilder>... addOptions
+    ) {
+        return launchApplicationI18N(applicationClassName, args, initI18n, appName, version, copyright, developerMail, appDescription, Arrays.asList(addOptions));
+    }
+
+    /**
+     * Launches an internationalized application with specified parameters and options.
+     * <p>
+     * This method sets the locale for the application based on the command line arguments,
+     * initializes the internationalization (I18N) resources, extracts the text for the passed
+     * I18N keys, and integrates optional command line arguments for displaying locale-related information.
+     *
+     * @param applicationClassName the fully qualified class name of the application to be launched
+     * @param args the command line arguments passed to the application
+     * @param initI18n A function that initializes the internationalization (I18N) logic for the application, based on the provided locale.
+     * @param appNameI18nKey the I18N key for the name of the application
+     * @param versionI18nKey the I18N key for the version of the application
+     * @param copyrightI18nKey the I18N key for the copyright information for the application
+     * @param developerMailI18nKey the I18N key for the developer's contact email
+     * @param appDescriptionI18nKey the I18N key for a brief description of the application
+     * @param addOptions a collection of additional options to be added for argument parsing
+     * @return an integer status code from the application launch process; typically 0 for success
+     */
+    public static int launchApplicationI18N(
+            String applicationClassName,
+            String[] args,
+            Function<Locale, I18N> initI18n,
+            String appNameI18nKey,
+            String versionI18nKey,
+            String copyrightI18nKey,
+            String developerMailI18nKey,
+            String appDescriptionI18nKey,
+            Collection<? extends Consumer<ArgumentsParserBuilder>> addOptions
+    ) {
+        // set the locale
+        List<String> argList = Arrays.asList(args);
+        int localeIdx = argList.indexOf("--locale");
+        if (localeIdx >= 0 && localeIdx < args.length - 1) {
+            String tag = args[localeIdx + 1];
+            try {
+                Locale locale = Locale.forLanguageTag(tag);
+                Locale.setDefault(locale);
+                LOG.info("setting locale to: {}", locale);
+            } catch (Exception e) {
+                LOG.warn("Invalid locale specified: {}", tag);
+            }
+        }
+
+        // init I18N
+        I18N i18n = initI18n.apply(Locale.getDefault());
+
+        // add an option so that it shows up in the help output
+        List<Consumer<ArgumentsParserBuilder>> addOptionsI18N = new ArrayList<>(addOptions);
+        addOptionsI18N.add(agp ->
+                agp.addStringOption(
+                        I18NInstance.get().get("dua3.utility.fx.launcher.arg.locale.name"),
+                        I18NInstance.get().get("dua3.utility.fx.launcher.arg.locale.description"),
+                        Repetitions.ZERO_OR_ONE,
+                        "language tag",
+                        // the locale has already been set at method start, just give a diagnostic here
+                        locale -> LOG.info("requested locale is: {}, effective locale is: {}", locale, Locale.getDefault()),
+                        "--locale"
+                )
+        );
+
+        return launchApplication(
+                applicationClassName,
+                args,
+                i18n.get(appNameI18nKey),
+                i18n.get(versionI18nKey),
+                i18n.get(copyrightI18nKey),
+                i18n.get(developerMailI18nKey),
+                i18n.get(appDescriptionI18nKey),
+                addOptionsI18N
+        );
+    }
+
+    /**
      * Runs the specified JavaFX application class with the provided arguments and settings.
      *
      * @param applicationClassName the fully qualified name of the JavaFX application class to be launched
@@ -257,10 +364,36 @@ public final class FxLauncher {
             String appDescription,
             Consumer<ArgumentsParserBuilder>... addOptions
     ) {
+        return launchApplication(applicationClassName, args, appName, version, copyright, developerMail, appDescription, Arrays.asList(addOptions));
+    }
+
+    /**
+     * Launches a JavaFX application with the specified configurations.
+     *
+     * @param applicationClassName The fully qualified class name of the JavaFX application to be launched.
+     * @param args The command-line arguments to be passed to the application.
+     * @param appName The name of the application.
+     * @param version The version of the application.
+     * @param copyright The copyright information for the application.
+     * @param developerMail The developer's email address for support or inquiries.
+     * @param appDescription A brief description of the application.
+     * @param addOptions A collection of consumers for configuring additional command-line arguments.
+     * @return The return code indicating the application's exit status. Typically returns {@code RC_SUCCESS} on successful execution or {@code RC_ERROR} in case of an exception.
+     */
+    public static int launchApplication(
+            String applicationClassName,
+            String[] args,
+            String appName,
+            String version,
+            String copyright,
+            String developerMail,
+            String appDescription,
+            Collection<? extends Consumer<ArgumentsParserBuilder>> addOptions
+    ) {
         var agp = ArgumentsParser.builder()
                 .name(appName)
-                .description(I18NInstance.get().format("dua3.utility.fx.controls.launcher.about.version", version) + "\n"
-                        + I18NInstance.get().format("dua3.utility.fx.controls.launcher.about.copyright", copyright, developerMail) + "\n"
+                .description(I18NInstance.get().format("dua3.utility.fx.launcher.about.version", version) + "\n"
+                        + I18NInstance.get().format("dua3.utility.fx.launcher.about.copyright", copyright, developerMail) + "\n"
                         + "\n"
                         + appDescription
                         + "\n"
@@ -268,15 +401,15 @@ public final class FxLauncher {
                 .positionalArgs(0, 0);
 
         var flagHelp = agp.addFlag(
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.help.name"),
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.help.description"),
+                I18NInstance.get().get("dua3.utility.fx.launcher.arg.help.name"),
+                I18NInstance.get().get("dua3.utility.fx.launcher.arg.help.description"),
                 "--help", "-h"
         );
 
         if (!Platform.isNativeImage()) {
             agp.addFlag(
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.assertions.name"),
-                    I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.assertions.description"),
+                    I18NInstance.get().get("dua3.utility.fx.launcher.arg.assertions.name"),
+                    I18NInstance.get().get("dua3.utility.fx.launcher.arg.assertions.description"),
                     v -> enableAssertions = v,
                     "--enable-assertions", "-ea"
             );
@@ -286,10 +419,10 @@ public final class FxLauncher {
             addLoggingOptions(agp);
         }
 
-        for (Consumer<ArgumentsParserBuilder> addOption : addOptions) {
-            addOption.accept(agp);
-        }
+        // add additional options
+        addOptions.forEach(addOption -> addOption.accept(agp));
 
+        // parse the arguments
         ArgumentsParser ap = agp.build(flagHelp);
 
         var arguments = ap.parse(args);
@@ -318,7 +451,7 @@ public final class FxLauncher {
             @SuppressWarnings("unchecked")
             Class<? extends Application> applicationClass = (Class<? extends Application>) loader.loadClass(applicationClassName);
             log.info("starting application: {}", applicationClass.getName());
-            showLogWindow(null, appName + " - " + LOG_MESSAGES);
+            showLogWindow(null, appName + " - " + I18NInstance.get().get(I18N_KEY_LOG_MESSAGES));
             launch(applicationClass, args);
             rc = RC_SUCCESS;
         } catch (Exception e) {
@@ -333,13 +466,17 @@ public final class FxLauncher {
     /**
      * Configures the logging system for the application by setting the SLF4J logging configuration
      * and optionally enabling a log buffer for debugging purposes.
-     *
+     * <p>
      * This method performs the following actions:
-     * - Updates the SLF4J logging configuration using the specified configuration object.
-     * - Logs the updated logging configuration for debugging purposes.
-     * - If either the `showLogWindow` or `debug` flag is enabled:
-     *   - Initializes and assigns a `LogBuffer` instance to the `logBuffer` field if it is not already created.
-     *   - Adds the `logBuffer` instance as a log handler using SLF4J's dispatcher.
+     * <ul>
+     * <li>Updates the SLF4J logging configuration using the specified configuration object.
+     * <li>Logs the updated logging configuration for debugging purposes.
+     * <li>If either the `showLogWindow` or `debug` flag is enabled:
+     *   <ul>
+     *   <li>Initializes and assigns a `LogBuffer` instance to the `logBuffer` field if it is not already created.
+     *   <li>Adds the `logBuffer` instance as a log handler using SLF4J's dispatcher.
+     *   </ul>
+     * </ul>
      */
     private static void configureLogging() {
         assert loggingConfiguration != null : "internal error: Logging configuration not initialized";
@@ -365,20 +502,14 @@ public final class FxLauncher {
     private static void addLoggingOptions(ArgumentsParserBuilder agp) {
         loggingConfiguration = SLB4J.getConfiguration();
         agp.addFlag(
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.name"),
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_window.description"),
-                v -> showLogWindow = v,
-                "--log-window", "-lw"
-        );
-        agp.addFlag(
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.name"),
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.debug.description"),
+                I18NInstance.get().get("dua3.utility.fx.launcher.arg.debug.name"),
+                I18NInstance.get().get("dua3.utility.fx.launcher.arg.debug.description"),
                 v -> debug = v,
                 "--debug"
         );
         agp.addStringOption(
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_level.name"),
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_level.description"),
+                I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_level.name"),
+                I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_level.description"),
                 Repetitions.ZERO_OR_MORE,
                 "rule",
                 rule -> {
@@ -394,14 +525,23 @@ public final class FxLauncher {
                 },
                 "--log-level"
         );
-        agp.addIntegerOption(
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.name"),
-                I18NInstance.get().get("dua3.utility.fx.controls.launcher.arg.log_buffer_size.description"),
-                Repetitions.ZERO_OR_ONE,
-                "size",
-                size -> logBuffer = new LogBuffer("Application Log Buffer", size),
-                "--log-buffer-size", "-ls"
-        );
+
+        if (HAS_SLB4J_EXT) {
+            agp.addFlag(
+                    I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_window.name"),
+                    I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_window.description"),
+                    v -> showLogWindow = v,
+                    "--log-window", "-lw"
+            );
+            agp.addIntegerOption(
+                    I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_buffer_size.name"),
+                    I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_buffer_size.description"),
+                    Repetitions.ZERO_OR_ONE,
+                    "size",
+                    size -> logBuffer = new LogBuffer("Application Log Buffer", size),
+                    "--log-buffer-size", "-ls"
+            );
+        }
     }
 
     /**
@@ -459,7 +599,7 @@ public final class FxLauncher {
      */
     public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner, String title) {
         return PlatformGuard.run(() -> {
-            if (HAS_SLB4J && logBuffer != null) {
+            if (HAS_SLB4J_EXT && logBuffer != null) {
                 FxLogWindow logWindow = PlatformHelper.runAndWait(() -> {
                     FxLogWindow window = new FxLogWindow(title, getLogBuffer().orElseThrow());
                     window.initOwner(owner);
@@ -481,7 +621,7 @@ public final class FxLauncher {
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
     public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner) {
-        return showLogWindow(owner, LOG_MESSAGES);
+        return showLogWindow(owner, I18NInstance.get().get(I18N_KEY_LOG_MESSAGES));
     }
 
     /**
@@ -492,7 +632,7 @@ public final class FxLauncher {
      */
     public static Optional<FxLogPane> getLogPane() {
         return PlatformGuard.run(() -> {
-            if (HAS_SLB4J && debug) {
+            if (HAS_SLB4J_EXT && debug) {
                 return Optional.of(new FxLogPane(getLogBuffer().orElseThrow()));
             }
             return Optional.empty();

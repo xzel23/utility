@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.I18NInstance;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 
@@ -178,18 +179,12 @@ public class ArgumentsParser {
 
     private static String getArgsCountmismatchText(List<String> currentArgs, Option<?> option) {
         if (option.minArgs() == option.maxArgs()) {
-            return "expected exactly %d arguments for option '%s', got %d".formatted(
-                    option.minArgs(), option.displayName(), currentArgs.size()
-            );
+            return I18NInstance.get().format("dua3.utility.options.ArgumentsParser.error.args_count_mismatch_exactly", option.minArgs(), option.displayName(), currentArgs.size());
         }
         if (option.minArgs() > 0 && option.maxArgs() == Integer.MAX_VALUE) {
-            return "expected at least %d arguments for option '%s', got %d".formatted(
-                    option.minArgs(), option.displayName(), currentArgs.size()
-            );
+            return I18NInstance.get().format("dua3.utility.options.ArgumentsParser.error.args_count_mismatch_at_least", option.minArgs(), option.displayName(), currentArgs.size());
         }
-        return "expected %d to %d arguments for option '%s', got %d".formatted(
-                option.minArgs(), option.maxArgs(), option.displayName(), currentArgs.size()
-        );
+        return I18NInstance.get().format("dua3.utility.options.ArgumentsParser.error.args_count_mismatch_range", option.minArgs(), option.maxArgs(), option.displayName(), currentArgs.size());
     }
 
     /**
@@ -223,9 +218,9 @@ public class ArgumentsParser {
         }
 
         // print command line example
-        String cmdText = name.isEmpty() ? "<program>" : name;
+        String cmdText = name.isEmpty() ? I18NInstance.get().get("dua3.utility.options.ArgumentsParser.help.program") : name;
         if (hasOptions()) {
-            cmdText += " <options>";
+            cmdText += " " + I18NInstance.get().get("dua3.utility.options.ArgumentsParser.help.options");
         }
         cmdText += getArgText(minPositionalArgs, maxPositionalArgs, positionalArgDisplayNames);
         fmt.format("%s%n%n", cmdText);
@@ -237,7 +232,7 @@ public class ArgumentsParser {
 
         // print options
         if (hasOptions()) {
-            fmt.format("  <options>:%n");
+            fmt.format("  %s%n", I18NInstance.get().get("dua3.utility.options.ArgumentsParser.help.options_header"));
             options.values().stream().distinct().forEach(option -> {
                 // get argument text
                 String argText = getArgText(option.minArgs(), option.maxArgs(), option.params().stream().map(Param::argName).toArray(String[]::new));
@@ -334,30 +329,30 @@ public class ArgumentsParser {
             return "";
         }
         if (repetitions.equals(Repetitions.ZERO_OR_ONE)) {
-            return "    (optional)";
+            return "    " + I18NInstance.get().get("dua3.utility.options.ArgumentsParser.occurrence.optional");
         }
         if (repetitions.equals(Repetitions.ZERO_OR_MORE)) {
-            return "    (zero or more)";
+            return "    " + I18NInstance.get().get("dua3.utility.options.ArgumentsParser.occurrence.zero_or_more");
         }
         if (repetitions.equals(Repetitions.ONE_OR_MORE)) {
-            return "    (one or more)";
+            return "    " + I18NInstance.get().get("dua3.utility.options.ArgumentsParser.occurrence.one_or_more");
         }
         if (repetitions.equals(Repetitions.EXACTLY_ONE)) {
-            return "    (required)";
+            return "    " + I18NInstance.get().get("dua3.utility.options.ArgumentsParser.occurrence.required");
         }
         if (repetitions.min() == repetitions.max()) {
-            return "    (required %d times)".formatted(repetitions.min());
+            return "    " + I18NInstance.get().format("dua3.utility.options.ArgumentsParser.occurrence.required_times", repetitions.min());
         }
         if (repetitions.min() == 0) {
-            return "    (repeatable up to %d times)".formatted(repetitions.max());
+            return "    " + I18NInstance.get().format("dua3.utility.options.ArgumentsParser.occurrence.repeatable_up_to", repetitions.max());
         }
         if (repetitions.min() == 1) {
-            return "    (required, up to %d times)".formatted(repetitions.max());
+            return "    " + I18NInstance.get().format("dua3.utility.options.ArgumentsParser.occurrence.required_up_to", repetitions.max());
         }
         if (repetitions.max() == Integer.MAX_VALUE) {
-            return "    (at least %d times)".formatted(repetitions.min());
+            return "    " + I18NInstance.get().format("dua3.utility.options.ArgumentsParser.occurrence.at_least", repetitions.min());
         }
-        return "    (%d-%d times)".formatted(repetitions.min(), repetitions.max());
+        return "    " + I18NInstance.get().format("dua3.utility.options.ArgumentsParser.occurrence.times_range", repetitions.min(), repetitions.max());
     }
 
     private static int appendArg(Formatter fmt, String arg, boolean useBrackets, boolean useNumbering, boolean addEllipsis, int argNr) {
@@ -415,7 +410,7 @@ public class ArgumentsParser {
             fmt.format("%n");
         }
 
-        fmt.format("ERROR: %s", e.getMessage());
+        fmt.format("%s", I18NInstance.get().format("dua3.utility.options.ArgumentsParser.error.prefix", e.getMessage()));
     }
 
     /**

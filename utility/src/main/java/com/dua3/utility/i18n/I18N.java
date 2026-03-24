@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
@@ -14,6 +13,7 @@ import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -46,7 +46,7 @@ public final class I18N {
     private static final AtomicReference<@Nullable I18N> INSTANCE = new AtomicReference<>(null);
 
     private final ResourceBundle mainBundle;
-    private final Map<String, ResourceBundle> bundleMap = new HashMap<>();
+    private final Map<String, ResourceBundle> bundleMap = new ConcurrentHashMap<>();
 
     private static ListResourceBundle emptyBundle(Locale locale) {
         return new ListResourceBundle() {
@@ -248,7 +248,29 @@ public final class I18N {
      * @see ResourceBundle#getString(String)
      */
     public String get(String key) {
-        return lookupBundle(key).getString(key);
+        return isLiteral(key) ? key.substring(1) : lookupBundle(key).getString(key);
+    }
+
+    /**
+     * Constructs a literal string that will be exempt from localization.
+     *
+     * @param s The input string.
+     * @return The resulting literal string.
+     */
+    public static String literal(String s) {
+        return "\0" + s;
+    }
+
+    /**
+     * Checks if the given string represents a literal, determined by whether
+     * it starts with the null character ('\0') and is not empty.
+     *
+     * @param s The string to check.
+     * @return {@code true} if the string is non-empty and starts with the null character ('\0'),
+     *         {@code false} otherwise.
+     */
+    public boolean isLiteral(String s) {
+        return !s.isEmpty() && s.charAt(0) == '\0';
     }
 
     /**
@@ -263,9 +285,11 @@ public final class I18N {
      * @see ResourceBundle#getString(String)
      */
     public String getOrCompute(String key, Function<? super String, String> compute) {
-        return getBundle(key)
-                .map(bundle -> bundle.getString(key))
-                .orElseGet(() -> compute.apply(key));
+        return isLiteral(key)
+                ? key.substring(1)
+                : getBundle(key)
+                  .map(bundle -> bundle.getString(key))
+                  .orElseGet(() -> compute.apply(key));
     }
 
     /**
@@ -280,6 +304,9 @@ public final class I18N {
     public String format(String keyOrPattern, @Nullable Object... args) {
         if (keyOrPattern.isEmpty()) {
             return "";
+        }
+        if (isLiteral(keyOrPattern)) {
+            return keyOrPattern.substring(1);
         }
         String pattern = keyOrPattern.contains("{") ? keyOrPattern : lookupBundle(keyOrPattern).getString(keyOrPattern);
         return MessageFormat.format(pattern, args);
