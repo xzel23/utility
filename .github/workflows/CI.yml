@@ -22,7 +22,9 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -92,7 +94,9 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -151,7 +155,9 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -198,7 +204,9 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -264,7 +272,9 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
           cache: 'gradle'
 
@@ -312,7 +322,9 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
           cache: 'gradle'
 
