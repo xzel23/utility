@@ -236,6 +236,26 @@ could not be loaded.
 
 ## Changes
 
+### 22.0.1
+
+#### Additions
+
+- I18N: Support for literal strings.
+- FxLauncher: Locale is now configurable.
+- `ArgumentsParser` strings are now localized.
+
+#### Bugfixes
+
+- FxLauncher: Update resource bundle keys for `FxLauncher` (remove obsolete `controls` prefix).
+- FxLauncher: Conditionalize `SLB4J_EXT`-specific options and logging functionality.
+
+#### Other Changes
+
+- I18N: use `ConcurrentHashMap` for `bundleMap`.
+- Updated Gradle wrapper to 9.4.1.
+- Improvement coverage for `LangUtil`, `HtmlConverter`, and `RichText`.
+- CI: Updated configuration for release builds and tag-based workflows.
+
 ### 22.0.0
 
 #### Additions
