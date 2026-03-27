@@ -222,6 +222,9 @@ subprojects {
         }
 
         tasks.withType<Test> {
+            systemProperty("user.language", "en")
+            systemProperty("user.country", "US")
+
             useJUnitPlatform()
             finalizedBy(tasks.jacocoTestReport)
         }
