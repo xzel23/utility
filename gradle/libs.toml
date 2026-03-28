@@ -16,10 +16,10 @@ spotbugs = "4.9.8"
 
 # Plugins
 cabe-plugin = "4.2.0"
-jdk-plugin = "0.5.1"
+jdk-plugin = "0.5.2"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.23.0"
-native-plugin = "0.11.3"
+native-plugin = "1.0.0"
 sonar-plugin = "7.2.3.7755"
 spotbugs-plugin = "6.4.8"
 test-logger-plugin = "4.0.0"
