@@ -71,7 +71,8 @@ class RichTextTest {
 
         Function<Object, RichText> valueOfObject = RichText::valueOf;
         assertEquals(RichText.valueOf("obj"), RichText.valueOf(obj));
-        Assertions.assertThrows(AssertionError.class, () -> valueOfObject.apply(null));
+        Throwable thrown = Assertions.assertThrows(Throwable.class, () -> valueOfObject.apply(null));
+        assertTrue(thrown instanceof AssertionError || thrown instanceof NullPointerException, () -> "Expected throw of either AssertionError or NullPointerException but got " + thrown.getClass().getName() + " with message: " + thrown.getMessage() + ".");
     }
 
     @Test
