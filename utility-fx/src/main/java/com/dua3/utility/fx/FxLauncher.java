@@ -452,7 +452,7 @@ public final class FxLauncher {
             Class<? extends Application> applicationClass = (Class<? extends Application>) loader.loadClass(applicationClassName);
             log.info("starting application: {}", applicationClass.getName());
             showLogWindow(null, appName + " - " + I18NInstance.get().get(I18N_KEY_LOG_MESSAGES));
-            launch(applicationClass, args);
+            launch(applicationClass, arguments.positionalArgs().toArray(String[]::new));
             rc = RC_SUCCESS;
         } catch (Exception e) {
             log.error("exception caught", e);
