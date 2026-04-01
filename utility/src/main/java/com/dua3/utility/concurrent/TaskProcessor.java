@@ -61,6 +61,17 @@ public interface TaskProcessor {
     <T> CompletableFuture<T> submit(Callable<? extends T> task);
 
     /**
+     * Submit a task that that returns a CompletableFuture.
+     *
+     * @param <T> the task result type
+     * @param futureTask the task to execute
+     * @return a {@link CompletableFuture} for the task
+     */
+    default <T> CompletableFuture<T> submitFuture(Callable<CompletableFuture<? extends T>> futureTask) {
+        return submit(() -> futureTask.call().join());
+    }
+
+    /**
      * Submit a task that does nor return a value.
      *
      * @param task the task to execute

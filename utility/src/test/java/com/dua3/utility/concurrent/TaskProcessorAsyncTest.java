@@ -43,12 +43,38 @@ class TaskProcessorAsyncTest {
     void testExceptionPropagation() {
         processor = new TaskProcessorAsync("async-ex", 1);
 
-        CompletableFuture<Void> f = processor.submit(() -> { throw new IllegalStateException("boom"); });
+        CompletableFuture<Void> f = processor.submit(() -> {throw new IllegalStateException("boom");});
 
         CompletionException ex = Assertions.assertThrows(CompletionException.class, f::join);
         Assertions.assertNotNull(ex.getCause());
-        Assertions.assertTrue(ex.getCause() instanceof IllegalStateException);
+        Assertions.assertInstanceOf(IllegalStateException.class, ex.getCause());
         Assertions.assertEquals("boom", ex.getCause().getMessage());
+    }
+
+    @Test
+    void testSubmitFutureReturnsResult() throws Exception {
+        processor = new TaskProcessorAsync("async-future", 1);
+
+        CompletableFuture<Integer> f = processor.submitFuture(() -> CompletableFuture.completedFuture(42));
+
+        Assertions.assertEquals(42, f.get(1, TimeUnit.SECONDS));
+    }
+
+    @Test
+    void testSubmitFuturePropagatesFailure() {
+        processor = new TaskProcessorAsync("async-future-ex", 1);
+
+        CompletableFuture<Integer> failedInnerFuture = new CompletableFuture<>();
+        failedInnerFuture.completeExceptionally(new IllegalStateException("inner-boom"));
+
+        CompletableFuture<Integer> f = processor.submitFuture(() -> failedInnerFuture);
+
+        CompletionException ex = Assertions.assertThrows(CompletionException.class, f::join);
+        Assertions.assertNotNull(ex.getCause());
+        Assertions.assertInstanceOf(CompletionException.class, ex.getCause());
+        Assertions.assertNotNull(ex.getCause().getCause());
+        Assertions.assertInstanceOf(IllegalStateException.class, ex.getCause().getCause());
+        Assertions.assertEquals("inner-boom", ex.getCause().getCause().getMessage());
     }
 
     @Test

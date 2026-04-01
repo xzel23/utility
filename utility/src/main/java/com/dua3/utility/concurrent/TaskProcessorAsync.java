@@ -51,13 +51,7 @@ public class TaskProcessorAsync extends TaskProcessorBase {
         return rc;
     }
 
-    /**
-     * Submit a new task that returns a result.
-     *
-     * @param task the task to execute
-     * @return a {@link CompletableFuture} for the task
-     * @param <T> the task's result type
-     */
+    @Override
     public <T> CompletableFuture<T> submit(Callable<? extends T> task) {
         long id = nextId();
         LOG.debug("'{}' - submitting new task {}", getName(), id);

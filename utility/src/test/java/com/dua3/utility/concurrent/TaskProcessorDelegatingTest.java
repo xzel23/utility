@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,6 +81,47 @@ class TaskProcessorDelegatingTest {
 
         // submitting after shutdown must throw
         Assertions.assertThrows(IllegalStateException.class, () -> processor.submit(new KeyedCallable<>("X", () -> 1)));
+    }
+
+    @Test
+    void testSubmitFutureReturnsResult() throws Exception {
+        Function<String, TaskProcessor> factory = key -> new TaskProcessorAsync("d-future-" + key, 1);
+        processor = new TaskProcessorDelegating<>(
+                "delegating-future",
+                factory,
+                task -> "A"
+        );
+
+        KeyedCallable<CompletableFuture<? extends Integer>> futureTask =
+                new KeyedCallable<>("A", () -> CompletableFuture.completedFuture(42));
+
+        CompletableFuture<Integer> f = processor.submitFuture(futureTask);
+        Assertions.assertEquals(42, f.get(1, TimeUnit.SECONDS));
+    }
+
+    @Test
+    void testSubmitFuturePropagatesFailure() {
+        Function<String, TaskProcessor> factory = key -> new TaskProcessorAsync("d-future-ex-" + key, 1);
+        processor = new TaskProcessorDelegating<>(
+                "delegating-future-ex",
+                factory,
+                task -> "A"
+        );
+
+        KeyedCallable<CompletableFuture<? extends Integer>> failedFutureTask = new KeyedCallable<>("A", () -> {
+            CompletableFuture<Integer> failedInnerFuture = new CompletableFuture<>();
+            failedInnerFuture.completeExceptionally(new IllegalStateException("inner-boom"));
+            return failedInnerFuture;
+        });
+
+        CompletableFuture<Integer> f = processor.submitFuture(failedFutureTask);
+
+        CompletionException ex = Assertions.assertThrows(CompletionException.class, f::join);
+        Assertions.assertNotNull(ex.getCause());
+        Assertions.assertTrue(ex.getCause() instanceof CompletionException);
+        Assertions.assertNotNull(ex.getCause().getCause());
+        Assertions.assertTrue(ex.getCause().getCause() instanceof IllegalStateException);
+        Assertions.assertEquals("inner-boom", ex.getCause().getCause().getMessage());
     }
 
     @Test

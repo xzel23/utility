@@ -67,6 +67,23 @@ class TaskProcessorEventDrivenTest {
     }
 
     @Test
+    void testSubmitFutureAndCompleteViaUpdate() throws Exception {
+        processor = new TaskProcessorEventDriven<>(
+                "ev-future",
+                task -> "F"
+        );
+
+        CallableWithId<CompletableFuture<? extends Integer>> task =
+                new CallableWithId<>("F", () -> CompletableFuture.completedFuture(42));
+
+        CompletableFuture<Integer> future = processor.submitFuture(task);
+        Assertions.assertFalse(future.isDone());
+
+        processor.updateTask("F", 42, true);
+        Assertions.assertEquals(42, future.get(1, TimeUnit.SECONDS));
+    }
+
+    @Test
     void testShutdownAndAbortWhenNoTasks() {
         Map<Object, String> registry = new ConcurrentHashMap<>();
         processor = new TaskProcessorEventDriven<>("ev-abort-none", registry::get);
