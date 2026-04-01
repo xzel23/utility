@@ -236,6 +236,12 @@ could not be loaded.
 
 ## Changes
 
+### 22.0.2
+
+- fix: update FxLauncher to only pass unprocessed args to application
+- add package-info files with `@NullMarked` annotations for utility and benchmark packages
+- add `submitFuture` method to `TaskProcessor` and implement tests for asynchronous task submission and failure propagation
+
 ### 22.0.1
 
 #### Additions
