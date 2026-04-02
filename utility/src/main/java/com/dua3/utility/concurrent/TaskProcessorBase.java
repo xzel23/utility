@@ -42,7 +42,7 @@ public abstract class TaskProcessorBase implements TaskProcessor {
      * A custom {@link ThreadFactory} that adds the processor name to the thread name.
      */
     private final class NamedThreadFactory implements ThreadFactory {
-        ThreadFactory parent = Executors.defaultThreadFactory();
+        private final ThreadFactory parent = Executors.defaultThreadFactory();
 
         @Override
         public Thread newThread(Runnable r) {
