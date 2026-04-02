@@ -92,7 +92,7 @@ class TaskProcessorDelegatingTest {
                 task -> "A"
         );
 
-        KeyedCallable<CompletableFuture<? extends Integer>> futureTask =
+        KeyedCallable<CompletableFuture<Integer>> futureTask =
                 new KeyedCallable<>("A", () -> CompletableFuture.completedFuture(42));
 
         CompletableFuture<Integer> f = processor.submitFuture(futureTask);
@@ -108,7 +108,7 @@ class TaskProcessorDelegatingTest {
                 task -> "A"
         );
 
-        KeyedCallable<CompletableFuture<? extends Integer>> failedFutureTask = new KeyedCallable<>("A", () -> {
+        KeyedCallable<CompletableFuture<Integer>> failedFutureTask = new KeyedCallable<>("A", () -> {
             CompletableFuture<Integer> failedInnerFuture = new CompletableFuture<>();
             failedInnerFuture.completeExceptionally(new IllegalStateException("inner-boom"));
             return failedInnerFuture;
@@ -118,9 +118,9 @@ class TaskProcessorDelegatingTest {
 
         CompletionException ex = Assertions.assertThrows(CompletionException.class, f::join);
         Assertions.assertNotNull(ex.getCause());
-        Assertions.assertTrue(ex.getCause() instanceof CompletionException);
+        Assertions.assertInstanceOf(CompletionException.class, ex.getCause());
         Assertions.assertNotNull(ex.getCause().getCause());
-        Assertions.assertTrue(ex.getCause().getCause() instanceof IllegalStateException);
+        Assertions.assertInstanceOf(IllegalStateException.class, ex.getCause().getCause());
         Assertions.assertEquals("inner-boom", ex.getCause().getCause().getMessage());
     }
 

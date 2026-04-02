@@ -73,7 +73,7 @@ class TaskProcessorEventDrivenTest {
                 task -> "F"
         );
 
-        CallableWithId<CompletableFuture<? extends Integer>> task =
+        CallableWithId<CompletableFuture<Integer>> task =
                 new CallableWithId<>("F", () -> CompletableFuture.completedFuture(42));
 
         CompletableFuture<Integer> future = processor.submitFuture(task);
