@@ -236,6 +236,13 @@ could not be loaded.
 
 ## Changes
 
+### 22.0.3
+
+- update `submitFuture`, remove `? extends` that actually makes usaing the method more complicted (non-matching 
+  generic types)
+- make parent `ThreadFactory` field final in `NamedThreadFactory`
+- remove unused `javafx` module dependencies
+
 ### 22.0.2
 
 - fix: update FxLauncher to only pass unprocessed args to application
