@@ -236,7 +236,11 @@ could not be loaded.
 
 ## Changes
 
-### 22.0.3
+### 22.0.4
+
+- update log4j to latest version
+
+### 22.0.3 (not released)
 
 - update `submitFuture`, remove `? extends` that actually makes usaing the method more complicted (non-matching 
   generic types)
