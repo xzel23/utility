@@ -68,7 +68,7 @@ public interface TaskProcessor {
      * @return a {@link CompletableFuture} for the task
      */
     default <T> CompletableFuture<T> submitFuture(Callable<CompletableFuture<T>> futureTask) {
-        return submit(() -> futureTask.call().join());
+        return submit(futureTask).thenApply(CompletableFuture::join);
     }
 
     /**
