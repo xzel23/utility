@@ -236,6 +236,10 @@ could not be loaded.
 
 ## Changes
 
+### 22.0.5
+
+- refactor TaskProcessor.submitFuture()
+
 ### 22.0.4
 
 - update log4j to latest version
