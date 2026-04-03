@@ -236,9 +236,11 @@ could not be loaded.
 
 ## Changes
 
-### 22.0.5
+### 22.0.6
 
 - refactor TaskProcessor.submitFuture()
+
+### 22.0.5 (not released)
 
 ### 22.0.4
 

@@ -24,7 +24,13 @@ public class TaskProcessorEventDriven<K> extends TaskProcessorBase {
     private final Function<Callable<?>, K> submitExternal;
     private final Map<K, TaskEntry> futures = new ConcurrentHashMap<>();
 
-    private record TaskEntry(long id, CompletableFuture<? extends @Nullable Object> completableFuture) {}
+    private record TaskEntry(long id, CompletableFuture<? extends @Nullable Object> completableFuture, boolean future) {
+        @SuppressWarnings("unchecked")
+        void complete(Object result) {
+            Object resultObj = future ? CompletableFuture.completedFuture(result) : result;
+            ((CompletableFuture<Object>) completableFuture).complete(resultObj);
+        }
+    }
 
     /**
      * Constructs a new instance of TaskProcessorEventDriven.
@@ -57,7 +63,7 @@ public class TaskProcessorEventDriven<K> extends TaskProcessorBase {
             futures.compute(key, (k, entry) -> {
                 if (entry != null) {
                     LOG.trace("'{}' - task {} with key {}: completing future", getName(), entry.id(), k);
-                    ((CompletableFuture<Object>) entry.completableFuture()).complete(result);
+                    entry.complete(result);
                 } else {
                     LOG.trace("'{}' - task with key {} not found: ignoring completion event", getName(), k);
                 }
@@ -100,12 +106,30 @@ public class TaskProcessorEventDriven<K> extends TaskProcessorBase {
 
     @Override
     public <T> CompletableFuture<T> submit(Callable<? extends T> task) {
+        return doSubmit(task, false);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> submitFuture(Callable<CompletableFuture<T>> futureTask) {
+        return doSubmit(futureTask, true).thenApply(CompletableFuture::join);
+    }
+
+    /**
+     * Submits a task for execution and returns a {@link CompletableFuture} representing the result of the task.
+     * The task is assigned a unique ID and registered in the internal processing system.
+     *
+     * @param <T> the type of the result returned by the task
+     * @param task the task to be executed
+     * @param future a flag indicating whether the result of the task is expected to be a {@link CompletableFuture}
+     * @return a {@link CompletableFuture} that completes with the result of the task
+     */
+    private <T> CompletableFuture<T> doSubmit(Callable<? extends T> task, boolean future) {
         long id = nextId();
         K key = submitExternal.apply(task);
         LOG.debug("'{}' - submitting new task {} with key {}", getName(), id, key);
         registerId(id);
         CompletableFuture<T> cf = new CompletableFuture<>();
-        futures.put(key, new TaskEntry(id, cf));
+        futures.put(key, new TaskEntry(id, cf, future));
         return cf;
     }
 }

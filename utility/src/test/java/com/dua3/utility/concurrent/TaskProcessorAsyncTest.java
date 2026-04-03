@@ -71,10 +71,8 @@ class TaskProcessorAsyncTest {
 
         CompletionException ex = Assertions.assertThrows(CompletionException.class, f::join);
         Assertions.assertNotNull(ex.getCause());
-        Assertions.assertInstanceOf(CompletionException.class, ex.getCause());
-        Assertions.assertNotNull(ex.getCause().getCause());
-        Assertions.assertInstanceOf(IllegalStateException.class, ex.getCause().getCause());
-        Assertions.assertEquals("inner-boom", ex.getCause().getCause().getMessage());
+        Assertions.assertInstanceOf(IllegalStateException.class, ex.getCause());
+        Assertions.assertEquals("inner-boom", ex.getCause().getMessage());
     }
 
     @Test
