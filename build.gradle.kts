@@ -209,6 +209,12 @@ subprojects {
                 html.required.set(false)
             }
 
+            // Skip report generation when no execution data exists
+            // (e.g. test JVM crashed before JaCoCo could write *.exec).
+            onlyIf {
+                executionData.files.any { it.exists() }
+            }
+
             // use Cabe instrumented classes if they exist
             val cabeClasses = project.layout.buildDirectory.dir("classes-cabe/main")
             classDirectories.setFrom(project.provider {
