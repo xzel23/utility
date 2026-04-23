@@ -236,6 +236,11 @@ could not be loaded.
 
 ## Changes
 
+### 22.0.7
+
+- translated error messages in ArgumentsParser
+- dependency and plugin updates
+
 ### 22.0.6
 
 - refactor TaskProcessor.submitFuture()
