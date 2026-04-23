@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.I18NInstance;
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
@@ -512,7 +513,7 @@ public record Param<T>(
         try {
             return new URI(s);
         } catch (Exception e) {
-            throw new ArgumentsException("invalid URI: %s".formatted(s), e);
+            throw new ArgumentsException(I18NInstance.get().format("dua3.utility.options.ArgumentsException.invalid_uri", s), e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.I18NInstance;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 import org.jspecify.annotations.Nullable;
@@ -134,32 +135,30 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
                         LangUtil.check(1 <= occurrences,
                                 () -> new OptionException(
                                         option,
-                                        "missing required option '%s' (%s)".formatted(option.displayName(), option.switches().getFirst())
+                                        I18NInstance.get().format("dua3.utility.options.OptionException.missing_required_option_with_switch", option.displayName(), option.switches().getFirst())
                                 ));
                     } else {
                         LangUtil.check(minOccurrences <= occurrences,
                                 () -> new OptionException(
                                         option,
-                                        "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
-                                                option.displayName(), minOccurrences, occurrences
-                                        )));
+                                        I18NInstance.get().format("dua3.utility.options.OptionException.min_occurrences_not_met", option.displayName(), minOccurrences, occurrences)
+                                ));
                     }
 
                     // check max occurrences
                     LangUtil.check(maxOccurrences >= occurrences,
                             () -> new OptionException(
                                     option,
-                                    "option '%s' must be specified at most %d time(s), but was %d times".formatted(
-                                            option.displayName(), maxOccurrences, occurrences
-                                    )));
+                                    I18NInstance.get().format("dua3.utility.options.OptionException.max_occurrences_exceeded", option.displayName(), maxOccurrences, occurrences)
+                            ));
                 });
 
         if (args.size() < minArgs) {
-            throw new ArgumentsException("missing argument (at least " + minArgs + " arguments must be given)");
+            throw new ArgumentsException(I18NInstance.get().format("dua3.utility.options.ArgumentsException.missing_argument", minArgs));
         }
 
         if (args.size() > maxArgs) {
-            throw new ArgumentsException("too many arguments (at most " + maxArgs + " arguments can be given)");
+            throw new ArgumentsException(I18NInstance.get().format("dua3.utility.options.ArgumentsException.too_many_arguments", maxArgs));
         }
     }
 
@@ -203,7 +202,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @throws OptionException if neither is set
      */
     public <T> T getOrThrow(Option<T> option) {
-        return get(option).orElseThrow(() -> new OptionException(option, "missing required option: " + option.displayName()));
+        return get(option).orElseThrow(() -> new OptionException(option, I18NInstance.get().format("dua3.utility.options.OptionException.missing_required_option", option.displayName())));
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.I18NInstance;
 import com.dua3.utility.data.ConversionException;
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
@@ -317,7 +318,7 @@ public class Option<T> {
     public Arguments.Entry<T> map(List<String> args) throws ArgumentsException {
         LangUtil.check(
                 LangUtil.isBetween(args.size(), minArgs(), maxArgs()),
-                () -> new OptionException(this, String.format("wrong argument count for option %s: %d", displayName, args.size()))
+                () -> new OptionException(this, I18NInstance.get().format("dua3.utility.options.OptionException.wrong_argument_count", displayName, args.size()))
         );
 
         @Nullable Object[] builderArgs = new Object[params().size()];
@@ -333,8 +334,8 @@ public class Option<T> {
             } catch (ConversionException e) {
                 throw new OptionException(
                         this,
-                        String.format(
-                                "could not convert the supplied arguments %s to %s for parameter '%s' of option '%s': %s",
+                        I18NInstance.get().format(
+                                "dua3.utility.options.OptionException.could_not_convert",
                                 Arrays.toString(paramArgs),
                                 p.targetType(),
                                 p.displayName(),
@@ -351,8 +352,11 @@ public class Option<T> {
             T value = mapper.apply(builderArgs);
             if (hasAllowedValues() && !allowedValues().contains(value)) {
                 throw new ArgumentsException(
-                        "The value '" + format(value) + "' is not allowed for this option."
-                                + " Allowed values are: " + allowedValues().stream().map(this::format)
+                        I18NInstance.get().format(
+                                "dua3.utility.options.ArgumentsException.value_not_allowed",
+                                format(value),
+                                allowedValues().stream().map(this::format).toList()
+                        )
                 );
             }
             return Arguments.Entry.create(this, value);

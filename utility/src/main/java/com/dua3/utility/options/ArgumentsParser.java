@@ -109,7 +109,7 @@ public class ArgumentsParser {
 
             // check for positional marker
             if (arg.equals(POSITIONAL_MARKER)) {
-                LangUtil.check(positionalArgs.isEmpty(), () -> new ArgumentsException("positional args found before positional marker '" + POSITIONAL_MARKER + "'"));
+                LangUtil.check(positionalArgs.isEmpty(), () -> new ArgumentsException(I18NInstance.get().format("dua3.utility.options.ArgumentsException.positional_args_before_marker", POSITIONAL_MARKER)));
                 remainingAllPositional = true;
                 continue;
             }
