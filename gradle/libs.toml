@@ -10,7 +10,7 @@ jmh = "1.37"
 jspecify = "1.0.0"
 junit-bom = "6.0.3"
 log4j-bom = "2.25.4"
-slb4j = "0.7.2"
+slb4j = "0.8.0"
 slf4j = "2.0.17"
 
 # Plugins
