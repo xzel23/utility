@@ -15,7 +15,7 @@ slf4j = "2.0.17"
 
 # Plugins
 cabe-plugin = "4.2.0"
-jdk-plugin = "0.5.2"
+jdk = "0.6.0"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.23.0"
 native-plugin = "1.0.0"
@@ -46,7 +46,7 @@ slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
 
 [plugins]
 cabe = { id = "com.dua3.cabe", version.ref = "cabe-plugin" }
-jdk = { id = "com.dua3.gradle.jdkprovider", version.ref = "jdk-plugin" }
+jdk = { id = "com.dua3.gradle.jdkprovider", version.ref = "jdk" }
 jmh = { id = "me.champeau.jmh", version.ref = "jmh-plugin" }
 jreleaser = { id = "org.jreleaser", version.ref = "jreleaser-plugin" }
 native = { id = "org.graalvm.buildtools.native", version.ref = "native-plugin" }
