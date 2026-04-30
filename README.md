@@ -236,6 +236,18 @@ could not be loaded.
 
 ## Changes
 
+### 22.1.0
+
+- changed LangUtil.formatStacktrace() to accept Throwable as argument.
+- PlatformHelper.runAndWait() will rethrow any exceptions to the caller.
+- PlatformHelper.runAndWait() will rethrow any exceptions to the caller.
+- added an overload of PlatformHelper.runAndWait() that takes an exception handler as argument.
+
+### 22.0.8
+
+- update dependencies and plugins.
+- fix CI builds failing when no coverage report is generated.
+
 ### 22.0.7
 
 - translated error messages in ArgumentsParser

@@ -131,6 +131,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt) {
         assert isFormatValid(fmt) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt));
@@ -146,6 +147,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt, @Nullable Object value) {
         assert isFormatValid(fmt, value) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, value));
@@ -162,6 +164,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2));
@@ -179,6 +182,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2, @Nullable Object v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2, v3));
@@ -194,6 +198,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt, long value) {
         assert isFormatValid(fmt, value) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, value));
@@ -210,6 +215,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt, long v1, long v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2));
@@ -227,6 +233,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt, long v1, long v2, long v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2, v3));
@@ -242,6 +249,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt, double value) {
         assert isFormatValid(fmt, value) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, value));
@@ -258,6 +266,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt, double v1, double v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2));
@@ -275,6 +284,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the condition is false
      * @throws AssertionError if the format string is invalid
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void checkArg(boolean condition, String fmt, double v1, double v2, double v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new IllegalArgumentException(String.format(Locale.ROOT, fmt, v1, v2, v3));
@@ -331,6 +341,7 @@ public final class LangUtil {
      *                  {@link String#format(String, Object...)})
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt) {
         assert isFormatValid(fmt) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt));
@@ -344,6 +355,7 @@ public final class LangUtil {
      * @param v1        the first value to be formatted into the exception message
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt, @Nullable Object v1) {
         assert isFormatValid(fmt, v1) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1));
@@ -358,6 +370,7 @@ public final class LangUtil {
      * @param v2        the second value to be formatted into the exception message
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2));
@@ -373,6 +386,7 @@ public final class LangUtil {
      * @param v3        the third value to be formatted into the exception message
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt, @Nullable Object v1, @Nullable Object v2, @Nullable Object v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2, v3));
@@ -386,6 +400,7 @@ public final class LangUtil {
      * @param v1        the value to be formatted into the exception message
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt, long v1) {
         assert isFormatValid(fmt, v1) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1));
@@ -400,6 +415,7 @@ public final class LangUtil {
      * @param v2        the second value to be formatted into the exception message
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt, long v1, long v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2));
@@ -415,6 +431,7 @@ public final class LangUtil {
      * @param v3        the third value to be formatted into the exception message
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt, long v1, long v2, long v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2, v3));
@@ -428,6 +445,7 @@ public final class LangUtil {
      * @param v1        the value to be formatted into the exception message
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt, double v1) {
         assert isFormatValid(fmt, v1) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1));
@@ -442,6 +460,7 @@ public final class LangUtil {
      * @param v2        the second value to be formatted into the exception message
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt, double v1, double v2) {
         assert isFormatValid(fmt, v1, v2) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2));
@@ -457,6 +476,7 @@ public final class LangUtil {
      * @param v3        the third value to be formatted into the exception message
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
+    @SuppressWarnings("java:S4274") // keep the assertion; the check is very expensive
     public static void check(boolean condition, String fmt, double v1, double v2, double v3) {
         assert isFormatValid(fmt, v1, v2, v3) : INVALID_FORMATTING;
         if (!condition) throw new FailedCheckException(String.format(Locale.ROOT, fmt, v1, v2, v3));
@@ -1386,13 +1406,13 @@ public final class LangUtil {
     /**
      * Get stack trace as text
      *
-     * @param e exception
-     * @return the exception stack trace as text
+     * @param t the Throwable
+     * @return the throwable's stack trace as text
      */
-    public static String formatStackTrace(Exception e) {
+    public static String formatStackTrace(Throwable t) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
              PrintStream s = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
-            e.printStackTrace(s);
+            t.printStackTrace(s);
             s.flush();
             return baos.toString(StandardCharsets.UTF_8);
         } catch (IOException ex) {
@@ -2801,7 +2821,7 @@ public final class LangUtil {
      * @throws E always
      */
     @SuppressWarnings("unchecked")
-    private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
+    public static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
         throw (E) e;
     }
 
