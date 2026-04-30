@@ -1,6 +1,8 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.scene.control.ButtonType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
@@ -15,6 +17,7 @@ import java.util.function.Consumer;
  * @param data   The data input by the user.
  */
 public record InputResult(ButtonType result, Map<String, @Nullable Object> data) {
+    private static final Logger LOG = LogManager.getLogger(InputResult.class);
 
     /**
      * Constructs an {@code InputResult} with the specified result and an empty data map.
@@ -81,8 +84,12 @@ public record InputResult(ButtonType result, Map<String, @Nullable Object> data)
      * @return the value associated with the specified key, cast to the specified type, or {@code null} if the key is not present
      * @throws IllegalStateException if the value associated with the key cannot be converted to the specified type
      */
-    public <T> T get(String key, Class<T> type) {
-        Object raw = Objects.requireNonNull(data.get(key));
+    public <T extends @Nullable Object> T get(String key, Class<T> type) {
+        Object raw = data.get(key);
+        if (raw == null) {
+            LOG.debug("no value for key {}", key);
+            return null;
+        }
 
         if (type.isAssignableFrom(raw.getClass())) {
             return type.cast(raw);
