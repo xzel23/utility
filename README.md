@@ -238,6 +238,8 @@ could not be loaded.
 
 ### 22.1.0
 
+- added the class com.dua3.utility.fx.controls.Fields to configure interdependent field validation for multiple
+  InputControl instances
 - changed LangUtil.formatStacktrace() to accept Throwable as argument.
 - PlatformHelper.runAndWait() will rethrow any exceptions to the caller.
 - PlatformHelper.runAndWait() will rethrow any exceptions to the caller.
