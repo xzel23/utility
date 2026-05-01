@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.application.ApplicationUtil;
 import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;
@@ -26,12 +27,12 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-
 
 /**
  * The FxLauncher class is responsible for managing the launch and runtime behavior of JavaFX applications.
@@ -95,11 +96,14 @@ public final class FxLauncher {
 
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
 
-    static @Nullable LogBuffer logBuffer = null;
     static @Nullable LoggingConfiguration loggingConfiguration = null;
     static boolean showLogWindow = false;
     static boolean debug = false;
     static boolean enableAssertions = false;
+
+    static AtomicReference<@Nullable LogBuffer> logBuffer = new AtomicReference<>();
+    static final AtomicReference<@Nullable FxLogWindow> logWindow = new AtomicReference<>();
+    static final AtomicReference<@Nullable FxLogPane> logPane = new AtomicReference<>();
 
     private static final class PlatformGuard {
         private static final AtomicBoolean launched = new AtomicBoolean(false);
@@ -485,11 +489,16 @@ public final class FxLauncher {
         LOG.debug("SLF4J configuration updated: {}", loggingConfiguration);
 
         if (showLogWindow || debug) {
-            if (logBuffer == null) {
-                logBuffer = new LogBuffer();
-            }
-            SLB4J.getDispatcher().addLogHandler(logBuffer);
+            logBuffer.updateAndGet( buffer -> {
+                if (buffer == null) {
+                    buffer = new LogBuffer();
+                }
+                SLB4J.getDispatcher().addLogHandler(buffer);
+                return buffer;
+            });
         }
+
+        ApplicationUtil.addDarkModeListener(dark -> getLogWindow().ifPresent(window -> window.setDarkMode(dark)));
     }
 
     /**
@@ -538,7 +547,7 @@ public final class FxLauncher {
                     I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_buffer_size.description"),
                     Repetitions.ZERO_OR_ONE,
                     "size",
-                    size -> logBuffer = new LogBuffer("Application Log Buffer", size),
+                    size -> logBuffer.set(new LogBuffer("Application Log Buffer", size)),
                     "--log-buffer-size", "-ls"
             );
         }
@@ -568,7 +577,7 @@ public final class FxLauncher {
      * @return an {@link Optional} containing the LogBuffer instance if it exists, or an empty {@link Optional} if not.
      */
     public static Optional<LogBuffer> getLogBuffer() {
-        return Optional.ofNullable(logBuffer);
+        return Optional.ofNullable(logBuffer.get());
     }
 
     /**
@@ -598,19 +607,20 @@ public final class FxLauncher {
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
     public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner, String title) {
-        return PlatformGuard.run(() -> {
-            if (HAS_SLB4J_EXT && logBuffer != null) {
-                FxLogWindow logWindow = PlatformHelper.runAndWait(() -> {
-                    FxLogWindow window = new FxLogWindow(title, getLogBuffer().orElseThrow());
-                    window.initOwner(owner);
-                    window.show();
-                    return window;
-                });
-                return Optional.ofNullable(logWindow);
-            } else {
-                return Optional.empty();
-            }
-        });
+        return Optional.ofNullable(logWindow.updateAndGet(lw -> {
+                    if (lw != null || !(HAS_SLB4J_EXT && logBuffer != null)) {
+                        return lw;
+                    }
+
+                    return PlatformGuard.run(() -> PlatformHelper.runAndWait(() -> {
+                                FxLogWindow window = new FxLogWindow(title, getLogBuffer().orElseThrow());
+                                window.initOwner(owner);
+                                window.show();
+                                return window;
+                            })
+                    );
+                })
+        );
     }
 
     /**
@@ -625,6 +635,15 @@ public final class FxLauncher {
     }
 
     /**
+     * Retrieves the current instance of the FxLogWindow, if it exists.
+     *
+     * @return an Optional containing the FxLogWindow instance, or an empty Optional if none is present.
+     */
+    public static Optional<FxLogWindow> getLogWindow() {
+        return Optional.ofNullable(logWindow.get());
+    }
+
+    /**
      * Retrieves an instance of the {@link FxLogPane} if the log pane is configured to be displayed.
      *
      * @return an {@link Optional} containing the {@link FxLogPane} instance if the log pane is enabled,
@@ -636,7 +655,6 @@ public final class FxLauncher {
                 return Optional.of(new FxLogPane(getLogBuffer().orElseThrow()));
             }
             return Optional.empty();
-
         });
     }
 }
