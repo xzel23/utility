@@ -244,6 +244,9 @@ could not be loaded.
 - PlatformHelper.runAndWait() will rethrow any exceptions to the caller.
 - PlatformHelper.runAndWait() will rethrow any exceptions to the caller.
 - added an overload of PlatformHelper.runAndWait() that takes an exception handler as argument.
+- added Controls.useSystemMenuBar() that adds a menu bar to the system menu and handles its
+  managed property to avoid it taking up space in the container it is added to when it is displayed
+  in the global menu instead
 
 ### 22.0.8
 

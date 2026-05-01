@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
@@ -45,6 +46,21 @@ public final class Controls {
     private static final Logger LOG = LogManager.getLogger(Controls.class);
 
     private Controls() {
+    }
+
+    /**
+     * Configures a MenuBar to use the system's menu bar if supported.
+     * <p>
+     * This method sets the {@code useSystemMenuBar} property of the provided MenuBar to true and
+     * binds its managed property to the opposite of its visibility property to avoid a gap being
+     * displayed in the application window.
+     *
+     * @param menuBar the MenuBar instance to configure
+     * @param useSystemMenuBar a boolean specifying whether to use the system menu bar
+     */
+    public static void useSystemMenuBar(MenuBar menuBar, boolean useSystemMenuBar) {
+        menuBar.setUseSystemMenuBar(useSystemMenuBar);
+        menuBar.managedProperty().bind(menuBar.visibleProperty().not());
     }
 
     /**
