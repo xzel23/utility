@@ -114,6 +114,34 @@ public final class ApplicationUtil {
     }
 
     /**
+     * Retrieves a double value from the specified {@link Preferences} instance.
+     * If the retrieved value is {@code NaN}, the provided default value is returned instead.
+     *
+     * @param prefs        the {@link Preferences} instance from which to retrieve the value
+     * @param name         the key associated with the double value to retrieve
+     * @param defaultValue the default value to return if the retrieved value is {@code NaN} or not set
+     * @return the retrieved double value, or the provided default value if the stored value is not present or {@code NaN}
+     */
+    public static double getDoubleNoNaN(Preferences prefs, String name, double defaultValue) {
+        double v = prefs.getDouble(name, defaultValue);
+        return Double.isNaN(v) ? defaultValue : v;
+    }
+
+    /**
+     * Retrieves a float value from the specified {@link Preferences} instance.
+     * If the retrieved value is {@code NaN}, the provided default value is returned instead.
+     *
+     * @param prefs        the {@link Preferences} instance from which to retrieve the value
+     * @param name         the key associated with the double value to retrieve
+     * @param defaultValue the default value to return if the retrieved value is {@code NaN} or not set
+     * @return the retrieved float value, or the provided default value if the stored value is not present or {@code NaN}
+     */
+    public static float getFloatNoNaN(Preferences prefs, String name, float defaultValue) {
+        float v = prefs.getFloat(name, defaultValue);
+        return Float.isNaN(v) ? defaultValue : v;
+    }
+
+    /**
      * Returns the singleton instance of {@link RecentlyUsedDocuments}.
      *
      * @return the singleton instance

@@ -247,6 +247,8 @@ could not be loaded.
 - added Controls.useSystemMenuBar() that adds a menu bar to the system menu and handles its
   managed property to avoid it taking up space in the container it is added to when it is displayed
   in the global menu instead
+- Make sure the first call to setDarkMode() always calls listeners
+- ApplicationUtil.getDoubleNoNaN() and ApplicationUtil.getFloatNoNaN()
 
 ### 22.0.8
 
