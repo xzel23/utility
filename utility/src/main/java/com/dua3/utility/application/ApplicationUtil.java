@@ -46,7 +46,9 @@ public final class ApplicationUtil {
     private static final AtomicReference<@Nullable UiMode> uiMode = new AtomicReference<>(null);
 
     /**
-     * An {@link AtomicBoolean} representing whether the application is currently in dark mode.
+     * An {@link AtomicReference<Boolean>} representing whether the application is currently in dark mode.
+     * <p>
+     * We do not use {@link AtomicBoolean} so that we have a third uninitialized state (null value).
      * <p>
      * This static variable is used internally to supervise and manage the application's dark mode state.
      * It is initialized to {@code false}, indicating that dark mode is off by default.
@@ -54,7 +56,7 @@ public final class ApplicationUtil {
      * The value is typically updated in response to changes in the application or system UI mode and
      * cannot be modified directly.
      */
-    private static final AtomicBoolean DARK_MODE = new AtomicBoolean(false);
+    private static final AtomicReference<@Nullable Boolean> DARK_MODE = new AtomicReference<>();
 
     /**
      * A thread-safe list of listeners to be notified about changes in the application's dark mode state.
@@ -190,7 +192,7 @@ public final class ApplicationUtil {
      */
     private static void setDarkMode(boolean darkMode) {
         LOG.debug("application dark mode set to {}", darkMode);
-        if (darkMode != DARK_MODE.compareAndExchange(!darkMode, darkMode)) {
+        if (!Objects.equals(darkMode, DARK_MODE.compareAndExchange(!darkMode, darkMode))) {
             NativeHelperInstance.get().setWindowDecorations(darkMode);
             onUpdateDarkMode(darkMode);
         }
@@ -202,7 +204,7 @@ public final class ApplicationUtil {
      * @return {@code true} if the application is in dark mode, {@code false} otherwise
      */
     public static boolean isDarkMode() {
-        return DARK_MODE.get();
+        return DARK_MODE.get() == Boolean.TRUE;
     }
 
     /**
