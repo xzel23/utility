@@ -325,7 +325,6 @@ subprojects {
     // JMH config for non-BOM projects
     if (!project.name.endsWith("-bom")) {
         jmh {
-            jmhVersion = rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs").findVersion("jmh").get().requiredVersion
             warmupIterations = 2
             iterations = 5
             fork = 1
