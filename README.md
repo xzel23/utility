@@ -236,7 +236,11 @@ could not be loaded.
 
 ## Changes
 
-### 22.1.0
+### 22.1.1
+
+- fix publishing task
+
+### 22.1.0 (unusable, only BOM published)
 
 - added the class com.dua3.utility.fx.controls.Fields to configure interdependent field validation for multiple
   InputControl instances

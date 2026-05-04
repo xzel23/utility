@@ -20,10 +20,6 @@ fun versionCatalogVersion(alias: String): String {
 
 val projectVersion = versionCatalogVersion("projectVersion")
 
-gradle.beforeProject {
-    version = projectVersion
-}
-
 // define subprojects
 include("utility")
 include("utility-bom")
@@ -38,6 +34,12 @@ include("utility-fx-web")
 include("utility-samples")
 include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
+
+gradle.projectsLoaded {
+    rootProject.allprojects {
+        version = projectVersion
+    }
+}
 
 // define dependency versions and repositories
 dependencyResolutionManagement {
