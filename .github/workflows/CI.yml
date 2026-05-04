@@ -56,7 +56,7 @@ jobs:
 
       # Upload build artifacts for other jobs to use
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-artifacts
           path: |
@@ -69,7 +69,7 @@ jobs:
 
       # Upload staging directory
       - name: 'Upload staging directory'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: staging-deploy
           path: build/staging-deploy
@@ -77,7 +77,7 @@ jobs:
 
       # Upload Javadoc
       - name: 'Upload Javadoc'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: javadoc
           path: build/docs/javadoc
@@ -136,7 +136,7 @@ jobs:
 
       # Upload coverage reports
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-reports
           path: |
