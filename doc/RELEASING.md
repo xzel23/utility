@@ -28,16 +28,16 @@ following tasks:
 
 1. **Prepare the Release**
 
-   Update the version in `settings.gradle.kts` to a non-SNAPSHOT version:
+   Update the `projectVersion` version in `gradle/libs.toml` to a non-SNAPSHOT version:
 
-   ```kotlin
-   val projectVersion = "X.Y.Z" // Replace X.Y.Z with the version you want to release
+   ```toml
+   projectVersion = "X.Y.Z" # Replace X.Y.Z with the version you want to release
    ```
 
 2. **Commit and Tag the Release**
 
    ```bash
-   git add settings.gradle.kts
+   git add gradle/libs.toml
    git commit -m "Release version X.Y.Z"
    git tag -a vX.Y.Z -m "Release version X.Y.Z"
    ```
@@ -67,16 +67,16 @@ following tasks:
 
 6. **Prepare for Next Development Iteration**
 
-   Update the version in `settings.gradle.kts` to the next SNAPSHOT version:
+   Update the `projectVersion` version in `gradle/libs.toml` to the next SNAPSHOT version:
 
-   ```kotlin
-   val projectVersion = "X.Y.Z-SNAPSHOT" // Replace X.Y.Z with the next version
+   ```toml
+   projectVersion = "X.Y.Z-SNAPSHOT" # Replace X.Y.Z with the next version
    ```
 
 7. **Commit the Changes**
 
    ```bash
-   git add settings.gradle.kts
+   git add gradle/libs.toml
    git commit -m "Prepare for next development iteration"
    git push
    git push --tags
@@ -104,10 +104,10 @@ The prerequisites for publishing snapshots are the same as for releasing:
 
 1. **Ensure the Version is a SNAPSHOT Version**
 
-   Make sure the version in `settings.gradle.kts` is a SNAPSHOT version:
+   Make sure the `projectVersion` version in `gradle/libs.toml` is a SNAPSHOT version:
 
-   ```kotlin
-   val projectVersion = "X.Y.Z-SNAPSHOT" // Replace X.Y.Z with the version you want to publish
+   ```toml
+   projectVersion = "X.Y.Z-SNAPSHOT" # Replace X.Y.Z with the version you want to publish
    ```
 
 2. **Build the Project**

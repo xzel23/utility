@@ -249,6 +249,8 @@ could not be loaded.
   in the global menu instead
 - Make sure the first call to setDarkMode() always calls listeners
 - ApplicationUtil.getDoubleNoNaN() and ApplicationUtil.getFloatNoNaN()
+- update plugins and dependencies
+- clean up code and build files
 
 ### 22.0.8
 

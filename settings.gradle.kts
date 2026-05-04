@@ -2,9 +2,27 @@
 
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
-// define project name and version
+// define project name
 rootProject.name = "dua3-utility"
-val projectVersion = "22.1.0-SNAPSHOT"
+
+fun versionCatalogVersion(alias: String): String {
+    val catalog = file("gradle/libs.toml")
+    val versions = catalog.readLines()
+        .dropWhile { it.trim() != "[versions]" }
+        .drop(1)
+        .takeWhile { !it.trim().startsWith("[") }
+
+    val versionDeclaration = Regex("""^\s*${Regex.escape(alias)}\s*=\s*"([^"]+)"\s*(?:#.*)?$""")
+    return versions.firstNotNullOfOrNull { line ->
+        versionDeclaration.matchEntire(line)?.groupValues?.get(1)
+    } ?: throw GradleException("version '$alias' not found in ${catalog.path}")
+}
+
+val projectVersion = versionCatalogVersion("projectVersion")
+
+gradle.beforeProject {
+    version = projectVersion
+}
 
 // define subprojects
 include("utility")
@@ -34,9 +52,6 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             from(files("gradle/libs.toml"))
-            version("projectVersion", projectVersion)
-            version("utility-bom", projectVersion)
-            library("utility-bom", "com.dua3.utility", "utility-bom").versionRef("utility-bom")
         }
     }
 

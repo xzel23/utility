@@ -1,4 +1,5 @@
 [versions]
+projectVersion = "22.1.0-SNAPSHOT"
 atlantafx = "2.1.0"
 bouncycastle = "1.84"
 h2database = "2.4.240"
@@ -40,6 +41,7 @@ slb4j = { group = "org.slb4j", name = "slb4j", version.ref = "slb4j" }
 slb4j-ext = { group = "org.slb4j", name = "slb4j-ext", version.ref = "slb4j" }
 slb4j-ext-fx = { group = "org.slb4j", name = "slb4j-ext-fx", version.ref = "slb4j" }
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+utility-bom = { group = "com.dua3.utility", name = "utility-bom", version.ref = "projectVersion" }
 
 [plugins]
 cabe = { id = "com.dua3.cabe", version.ref = "cabe-plugin" }

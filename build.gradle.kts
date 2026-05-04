@@ -53,13 +53,13 @@ object Meta {
 // Root project configuration
 /////////////////////////////////////////////////////////////////////////////
 
-project.version = libs.versions.projectVersion.get()
 project.description = Meta.DESCRIPTION
 
 tasks.register("printVersion") {
     description = "Print the project version to stdout."
     group = HelpTasksPlugin.HELP_GROUP
-    doLast { println(project.version) }
+    val version = project.version.toString()
+    doLast { println(version) }
 }
 
 // Aggregate all subprojects for JaCoCo report aggregation
@@ -166,9 +166,6 @@ allprojects {
 }
 
 subprojects {
-    // Set project version from root libs.versions
-    project.version = rootProject.libs.versions.projectVersion.get()
-
     // Apply common plugins
     apply(plugin = "maven-publish")
     apply(plugin = "version-catalog")
