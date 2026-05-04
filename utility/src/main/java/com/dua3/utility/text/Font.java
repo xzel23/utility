@@ -304,7 +304,7 @@ public class Font {
      * @return a copy of this font with the family set to the requested value, or this font if values match
      */
     public Font withFamily(String family) {
-        return family.equals(this.getFamily()) ? this : FontUtil.getInstance().deriveFont(this, FontDef.family(family));
+        return family.equals(getFamily()) ? this : FontUtil.getInstance().deriveFont(this, FontDef.family(family));
     }
 
     /**
@@ -314,7 +314,7 @@ public class Font {
      * @return a copy of this font with the color set to the requested value, or this font if values match
      */
     public Font withColor(Color color) {
-        return color.equals(this.getColor()) ? this : FontUtil.getInstance().deriveFont(this, FontDef.color(color));
+        return color.equals(getColor()) ? this : FontUtil.getInstance().deriveFont(this, FontDef.color(color));
     }
 
     /**

@@ -161,8 +161,8 @@ public final class CompressedBytes {
     private void logCompressionRatio(long nBytes) {
         LOG.trace("compressed data from {} to {} bytes {}%",
                 () -> nBytes,
-                () -> this.data.length,
-                () -> (100.0 * this.data.length) / Math.max(1, nBytes)
+                () -> data.length,
+                () -> (100.0 * data.length) / Math.max(1, nBytes)
         );
     }
 

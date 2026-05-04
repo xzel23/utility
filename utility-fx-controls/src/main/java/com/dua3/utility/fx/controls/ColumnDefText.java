@@ -63,19 +63,19 @@ public final class ColumnDefText<S, T> extends AbstractColumnDef<S, T> implement
     @Override
     public boolean equals(@Nullable Object obj) {
         if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
+        if (obj == null || obj.getClass() != getClass()) return false;
         var that = (ColumnDefText) obj;
-        return Objects.equals(this.text, that.text) &&
-                this.editable == that.editable &&
-                Double.doubleToLongBits(this.minWidth) == Double.doubleToLongBits(that.minWidth) &&
-                Double.doubleToLongBits(this.maxWidth) == Double.doubleToLongBits(that.maxWidth) &&
-                Double.doubleToLongBits(this.weight) == Double.doubleToLongBits(that.weight) &&
-                this.resizable == that.resizable &&
-                this.reorderable == that.reorderable &&
-                this.sortable == that.sortable &&
-                Objects.equals(this.valueGetter, that.valueGetter) &&
-                Objects.equals(this.valueSetter, that.valueSetter) &&
-                Objects.equals(this.converter, that.converter);
+        return Objects.equals(text, that.text) &&
+                editable == that.editable &&
+                Double.doubleToLongBits(minWidth) == Double.doubleToLongBits(that.minWidth) &&
+                Double.doubleToLongBits(maxWidth) == Double.doubleToLongBits(that.maxWidth) &&
+                Double.doubleToLongBits(weight) == Double.doubleToLongBits(that.weight) &&
+                resizable == that.resizable &&
+                reorderable == that.reorderable &&
+                sortable == that.sortable &&
+                Objects.equals(valueGetter, that.valueGetter) &&
+                Objects.equals(valueSetter, that.valueSetter) &&
+                Objects.equals(converter, that.converter);
     }
 
     @Override

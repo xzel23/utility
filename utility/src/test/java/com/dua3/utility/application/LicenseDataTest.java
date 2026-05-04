@@ -60,16 +60,16 @@ class LicenseDataTest {
                 () -> new LicenseData(licensee, validUntil, licenseId, licenseText));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void constructor_throwsNPE_whenLicenseTextIsNull() {
         // given
         String licensee = "John Doe";
         LocalDate validUntil = LocalDate.now();
         String licenseId = "ID-123";
-        Optional<Supplier<CharSequence>> licenseText = null;
 
         // then
         assertThrowsExcpetionOrAssertionError(NullPointerException.class,
-                () -> new LicenseData(licensee, validUntil, licenseId, licenseText));
+                () -> new LicenseData(licensee, validUntil, licenseId, null));
     }
 }

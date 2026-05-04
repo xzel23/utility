@@ -392,7 +392,7 @@ public final class TableViews {
 
         DraggableRow() {
             // 1. Initiate Drag
-            this.setOnDragDetected(event -> {
+            setOnDragDetected(event -> {
                 if (!isEmpty()) {
                     Integer index = getIndex();
                     Dragboard db = startDragAndDrop(TransferMode.MOVE);
@@ -406,7 +406,7 @@ public final class TableViews {
             });
 
             // 2. Handle Drag Over
-            this.setOnDragOver(event -> {
+            setOnDragOver(event -> {
                 Dragboard db = event.getDragboard();
                 if (db.hasContent(SERIALIZED_MIME_TYPE) && getIndex() != (Integer) db.getContent(SERIALIZED_MIME_TYPE)) {
                     event.acceptTransferModes(TransferMode.MOVE);
@@ -415,7 +415,7 @@ public final class TableViews {
             });
 
             // 3. Handle Drop and List Mutation
-            this.setOnDragDropped(event -> {
+            setOnDragDropped(event -> {
                 Dragboard db = event.getDragboard();
                 if (db.hasContent(SERIALIZED_MIME_TYPE)) {
                     int draggedIndex = (Integer) db.getContent(SERIALIZED_MIME_TYPE);

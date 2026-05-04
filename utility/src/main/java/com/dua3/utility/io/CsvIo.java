@@ -81,10 +81,10 @@ public abstract class CsvIo implements AutoCloseable {
         this.lineDelimiter = "\r\n";
         this.locale = arguments.getOrThrow(IoOptions.OPTION_LOCALE);
         PredefinedDateTimeFormat dateTimeFormat = arguments.getOrThrow(IoOptions.OPTION_DATE_TIME_FORMAT);
-        this.dateTimeFormatter = dateTimeFormat.getDateTimeFormatter(this.locale);
-        this.dateFormatter = dateTimeFormat.getDateFormatter(this.locale);
-        this.timeFormatter = dateTimeFormat.getTimeFormatter(this.locale);
-        this.numberFormat = NumberFormat.getInstance(this.locale);
+        this.dateTimeFormatter = dateTimeFormat.getDateTimeFormatter(locale);
+        this.dateFormatter = dateTimeFormat.getDateFormatter(locale);
+        this.timeFormatter = dateTimeFormat.getTimeFormatter(locale);
+        this.numberFormat = NumberFormat.getInstance(locale);
         numberFormat.setGroupingUsed(false);
         numberFormat.setMinimumFractionDigits(0);
         numberFormat.setMaximumFractionDigits(15);

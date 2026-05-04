@@ -509,7 +509,7 @@ public final class IoUtil {
             //noinspection DataFlowIssue - Files.walk() returns a Stream<Path> with non-null elements, but Qodana does not know that
             files.sorted(Comparator.reverseOrder())
                     .forEach(LangUtil.unchecked(
-                            (LangUtil.FunctionThrows<? super Path, ? extends Object, ? extends Exception>) Files::deleteIfExists)
+                            (LangUtil.FunctionThrows<? super Path, ?, ? extends Exception>) Files::deleteIfExists)
                     );
         } catch (UncheckedIOException e) {
             throw new IOException(e);

@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SpiLoaderTest {
 
     // Define a test service interface
+    @FunctionalInterface
     interface TestService {
         String getName();
     }

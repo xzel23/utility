@@ -296,10 +296,10 @@ public interface MessageFormatter {
     /**
      * A utility class that provides helper methods for formatting messages in various styles.
      * This class contains no public constructors and only exposes static utility methods.
-     *
+     * <p>
      * It performs formatting for text based on specific conditions, such as handling empty strings,
      * literal strings, non-internationalized (non-I18N) text, and internationalized (I18N) text.
-     *
+     * <p>
      * The formatting behavior supports:
      * - Direct handling of empty text by returning an empty string.
      * - Treating "\0" as a literal to concatenate array elements into a single string.

@@ -3,6 +3,7 @@ package com.dua3.utility.application;
 /**
  * Interface for native helper methods.
  */
+@FunctionalInterface
 public interface NativeHelper {
 
     /**
