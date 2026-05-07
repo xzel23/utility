@@ -30,7 +30,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Dialog to configure a editor settings.
+ * A custom control that represents a status bar for displaying task-related information,
+ * such as progress and status messages. The StatusBar extends a generic {@code CustomControl<HBox>}
+ * and implements the {@code FxTaskTracker} interface, enabling it to monitor and update task progress
+ * and related information.
+ * <p>
+ * The StatusBar consists of a {@code Label} for displaying text and a {@code ProgressBar} for visualizing
+ * task progress. It provides methods to update the status, progress, and other task-related properties
+ * through asynchronous updates on the JavaFX application thread.
  */
 public class StatusBar extends CustomControl<HBox> implements FxTaskTracker {
 
