@@ -14,6 +14,8 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Region;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,6 +43,8 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setCache(false);
+        scrollPane.setBackground(Background.EMPTY);
+        scrollPane.viewportBoundsProperty().addListener((v, o, n) -> makeScrollPaneLayersTransparent());
 
         getChildren().setAll(scrollPane);
 
@@ -60,9 +64,24 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         setDisplayScale(pinBoard.getDisplayScale());
         pinBoard.displayScaleProperty().addListener((v, o, n) -> setDisplayScale(n.doubleValue()));
+        pinBoard.backgroundProperty().addListener((v, o, n) -> updateBackground());
+        updateBackground();
 
         // enable/disable refresher
         refresher.setActive(true);
+    }
+
+    private void updateBackground() {
+        pane.setBackground(getSkinnable().getBackground());
+        makeScrollPaneLayersTransparent();
+    }
+
+    private void makeScrollPaneLayersTransparent() {
+        scrollPane.lookupAll(".viewport").forEach(node -> {
+            if (node instanceof Region region) {
+                region.setBackground(Background.EMPTY);
+            }
+        });
     }
 
     private void updateNodes() {
