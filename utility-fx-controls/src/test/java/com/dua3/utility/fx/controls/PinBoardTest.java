@@ -95,6 +95,20 @@ class PinBoardTest extends FxTestBase {
         return new PinBoard.Item(name, area, nodeBuilder);
     }
 
+    private double[] toViewportCoordinates(PinBoard pinBoard, double xBoard, double yBoard) {
+        Rectangle2D viewPortInBoard = pinBoard.getViewPortInBoardCoordinates();
+        Rectangle2D boardArea = pinBoard.getArea();
+        double scale = pinBoard.getDisplayScale();
+
+        double marginX = Math.max(0.0, viewPortInBoard.getWidth() - boardArea.getWidth()) / 2.0;
+        double marginY = Math.max(0.0, viewPortInBoard.getHeight() - boardArea.getHeight()) / 2.0;
+
+        double xViewport = (xBoard - viewPortInBoard.getMinX() + marginX) * scale;
+        double yViewport = (yBoard - viewPortInBoard.getMinY() + marginY) * scale;
+
+        return new double[] {xViewport, yViewport};
+    }
+
     /**
      * Test clearing the board.
      */
@@ -261,11 +275,12 @@ class PinBoardTest extends FxTestBase {
 
         runOnFxThreadAndWait(() -> {
             // Now that the skin is properly initialized, we can test getItemAt
-            Optional<PinBoard.Item> foundItem = pinBoard.getItemAt(50, 50);
+            double[] viewportPos = toViewportCoordinates(pinBoard, 50, 50);
+            Optional<PinBoard.Item> foundItem = pinBoard.getItemAt(viewportPos[0], viewportPos[1]);
 
             // Verify the result
-            assertTrue(foundItem.isPresent(), "Should find an item at position (50, 50)");
-            assertEquals("Item1", foundItem.get().name(), "Should find item1 at position (50, 50)");
+            assertTrue(foundItem.isPresent(), "Should find an item at board position (50, 50)");
+            assertEquals("Item1", foundItem.get().name(), "Should find item1 at board position (50, 50)");
         });
     }
 
@@ -293,13 +308,14 @@ class PinBoardTest extends FxTestBase {
 
         runOnFxThreadAndWait(() -> {
             // Now that the skin is properly initialized, we can test getPositionInItem
-            Optional<PinBoard.PositionInItem> position = pinBoard.getPositionInItem(50, 50);
+            double[] viewportPos = toViewportCoordinates(pinBoard, 50, 50);
+            Optional<PinBoard.PositionInItem> position = pinBoard.getPositionInItem(viewportPos[0], viewportPos[1]);
 
             // Verify the result
-            assertTrue(position.isPresent(), "Should find a position in item at (50, 50)");
+            assertTrue(position.isPresent(), "Should find a position in item at board position (50, 50)");
             assertEquals("Item1", position.get().item().name(), "Should find position in item1");
-            assertEquals(50, position.get().x(), "X coordinate should be 50");
-            assertEquals(50, position.get().y(), "Y coordinate should be 50");
+            assertEquals(50, position.get().x(), 0.01, "X coordinate should be 50");
+            assertEquals(50, position.get().y(), 0.01, "Y coordinate should be 50");
         });
     }
 
