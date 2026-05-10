@@ -95,6 +95,7 @@ public class PinBoardSample extends Application {
         pinBoard.addEventFilter(MouseEvent.MOUSE_MOVED, evt -> {
             try (Formatter text = new Formatter()) {
                 text.format("Scale: %d%%%n", Math.round(pinBoard.getDisplayScale() * 100));
+                text.format("Area: %s%n", pinBoard.getArea());
 
                 int x = (int) evt.getX();
                 int y = (int) evt.getY();
