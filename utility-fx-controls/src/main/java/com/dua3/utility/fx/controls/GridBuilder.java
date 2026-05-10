@@ -179,6 +179,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
 
     @Override
     public <T> GridBuilder addInput(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+        control.set(dflt.get());
         return doAdd(id, format(label), control, row != null, visible);
     }
 

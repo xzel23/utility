@@ -238,7 +238,8 @@ could not be loaded.
 
 ### 22.2.0
 
-- fix default value not being set when value() was not called
+- fix default value not being set in SliderBuilder when value() was not called
+- fix default value not being set in GridBuilder when adding control
 - add consistent overloads of InputBuilder.addInput()
 
 ### 22.1.1
