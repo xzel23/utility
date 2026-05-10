@@ -261,7 +261,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
         LangUtil.applyIfNonNull(orientation, slider::setOrientation);
         LangUtil.applyIfNonNull(min, slider::setMin);
         LangUtil.applyIfNonNull(max, slider::setMax);
-        LangUtil.applyIfNonNull(value, slider::set);
+        LangUtil.applyIfNonNull(value != null ? value : getDefault().get(), slider::set);
         LangUtil.applyIfNonNull(incrementText, slider::setIncrementText);
         LangUtil.applyIfNonNull(incrementGraphic, slider::setIncrementGraphic);
         LangUtil.applyIfNonNull(decrementText, slider::setDecrementText);
