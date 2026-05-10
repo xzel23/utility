@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStroke;
@@ -21,6 +22,7 @@ import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 
@@ -56,6 +58,7 @@ public class PinBoardSample extends Application {
     @Override
     public void start(Stage stage) {
         pinBoard.clear();
+        pinBoard.setBackground(Background.fill(Color.LIGHTBLUE));
 
         for (int i = 0; i < 500; i++) {
             createItem(pinBoard, i);
@@ -84,13 +87,15 @@ public class PinBoardSample extends Application {
                         Controls.button().text("scrollTo(x, y, xRelVP, yRelVP)").action(this::scrollToRelVP).build(),
                         Controls.button().text("scrollIntoView()").action(this::scrollIntoView).build()
                 ))
-                .addInput("Scale", () -> 1.0, Controls.slider().min(0.25).max(2.0).setDefault(pinBoard::getDisplayScale).onChange(pinBoard::setDisplayScale).build())
+                .addInput("Scale", "Scale", pinBoard::getDisplayScale, Controls.slider().min(0.25).max(2.0).onChange(pinBoard::setDisplayScale).build())
                 .build();
         inputValid.bind(input.validProperty());
         root.setLeft(new VBox(textArea, input));
 
         pinBoard.addEventFilter(MouseEvent.MOUSE_MOVED, evt -> {
             try (Formatter text = new Formatter()) {
+                text.format("Scale: %d%%%n", Math.round(pinBoard.getDisplayScale() * 100));
+
                 int x = (int) evt.getX();
                 int y = (int) evt.getY();
                 text.format("Mouse position: (%d,%d)", x, y);
@@ -104,10 +109,11 @@ public class PinBoardSample extends Application {
                         () -> text.format("%n%ngetItemAt(%d, %d):%n-", x, y)
                 );
 
-                pinBoard.getPositionInItem(evt.getX(), evt.getY()).ifPresentOrElse(pii -> {
-                            text.format("%n%ngetPositionInItem(%d, %d):%n%s", x, y, pii.item().name());
-                            text.format("%nposition in item: (%f, %f)", pii.x(), pii.y());
-                        },
+                PinBoard.BoardPosition pib = pinBoard.getPositionInBoard(evt.getX(), evt.getY());
+                text.format("%n%ngetPositionInBoard(%d, %d):%n(%f, %f)", x, y, pib.x(), pib.y());
+
+                pinBoard.getPositionInItem(evt.getX(), evt.getY()).ifPresentOrElse(
+                        pii -> text.format("%n%ngetPositionInItem(%d, %d):%n(%f, %f) %s", x, y, pii.x(), pii.y(), pii.item().name()),
                         () -> text.format("%n%ngetPositionInItem(%d, %d):%n-", x, y)
                 );
 
