@@ -183,8 +183,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
-        return doAdd(id, "", control, row != null, true);
+    public <T> GridBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+        return doAdd(id, "", control, row != null, visible);
     }
 
     @Override

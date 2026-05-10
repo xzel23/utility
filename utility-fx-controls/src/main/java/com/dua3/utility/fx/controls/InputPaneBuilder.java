@@ -127,8 +127,8 @@ public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, M
     }
 
     @Override
-    public <T> InputPaneBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
-        pb.addInput(id, dflt, control);
+    public <T> InputPaneBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+        pb.addInput(id, dflt, control, visible);
         return this;
     }
 

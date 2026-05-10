@@ -131,8 +131,8 @@ public class InputDialogBuilder extends DialogBuilder<InputDialog, InputDialogBu
     }
 
     @Override
-    public <T> InputDialogBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
-        pb.addInput(id, dflt, control);
+    public <T> InputDialogBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+        pb.addInput(id, dflt, control, visible);
         return this;
     }
 

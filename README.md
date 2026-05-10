@@ -236,10 +236,10 @@ could not be loaded.
 
 ## Changes
 
-### 22.1.2
+### 22.2.0
 
 - fix default value not being set when value() was not called
-- add overload of InputBuilder.addInput()
+- add consistent overloads of InputBuilder.addInput()
 
 ### 22.1.1
 

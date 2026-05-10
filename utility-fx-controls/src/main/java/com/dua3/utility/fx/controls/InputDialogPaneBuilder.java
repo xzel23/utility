@@ -128,8 +128,8 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
-    public <T> InputDialogPaneBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
-        pb.addInput(id, dflt, control);
+    public <T> InputDialogPaneBuilder addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+        pb.addInput(id, dflt, control, visible);
         return this;
     }
 

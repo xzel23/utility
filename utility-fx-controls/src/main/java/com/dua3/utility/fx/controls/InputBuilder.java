@@ -169,9 +169,23 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param id      the control's ID
      * @param dflt    supplier of default value
      * @param control the control
+     * @param visible flag, indicating whether the input is visible
      * @return {@code this}
      */
-    <T> B addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control);
+    <T> B addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible);
+
+    /**
+     * Add an unlabeled input control.
+     *
+     * @param <T>     the result type
+     * @param id      the control's ID
+     * @param dflt    supplier of default value
+     * @param control the control
+     * @return {@code this}
+     */
+    default <T> B addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
+        return addInput(id, dflt, control, true);
+    }
 
     /**
      * Add a labeled input control.
@@ -186,6 +200,20 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      */
     default <T> B addInput(String id, String label, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
         return addInput(id, MessageFormatter.args(label), dflt, control, visible);
+    }
+
+    /**
+     * Add a labeled input control.
+     *
+     * @param <T>     the result type
+     * @param id      the control's ID
+     * @param label   the label text
+     * @param dflt    supplier of default value
+     * @param control the control
+     * @return {@code this}
+     */
+    default <T> B addInput(String id, String label, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
+        return addInput(id, label, dflt, control, true);
     }
 
     /**
