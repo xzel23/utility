@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
+import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
 /**
@@ -22,7 +22,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
     private boolean snapToTicks = false;
     private boolean showTickLabels = false;
 
-    private @Nullable BiFunction<? super Double, ? super Double, String> formatter = null;
+    private DoubleFunction<String> formatter = null;
     private @Nullable Orientation orientation;
     private @Nullable Double min = null;
     private @Nullable Double max = null;
@@ -52,18 +52,16 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
         return self();
     }
 
+
     /**
      * Sets the formatter for the slider, which determines how the slider's value is
-     * formatted and displayed. The formatter is a function that takes the current
-     * minimum and maximum values of the slider, as well as its current value, and
-     * returns a formatted string representation.
-     *
-     * @param formatter a {@code BiFunction} that takes the minimum value, the
-     *                  maximum value, and the current value of the slider and
-     *                  returns a formatted string.
+     * formatted and displayed.
+     * *
+     * @param formatter a {@code DoubleFunction} that takes a value and returns its
+     *                  string representation.
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
-    public SliderBuilder formatter(BiFunction<Double, Double, String> formatter) {
+    public SliderBuilder formatter(DoubleFunction<String> formatter) {
         this.formatter = formatter;
         return self();
     }
@@ -253,7 +251,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      */
     @Override
     public SliderWithButtons build() {
-        BiFunction<? super Double, ? super Double, String> fmtr = LangUtil.orElse(formatter, (a, b) -> "");
+        DoubleFunction<String> fmtr = LangUtil.orElse(formatter, v -> "");
 
         SliderWithButtons slider = new SliderWithButtons(mode, fmtr);
         applyTo(slider);
