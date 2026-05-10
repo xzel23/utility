@@ -236,6 +236,11 @@ could not be loaded.
 
 ## Changes
 
+### 22.1.2
+
+- fix default value not being set when value() was not called
+- add overload of InputBuilder.addInput()
+
 ### 22.1.1
 
 - fix publishing task

@@ -80,21 +80,6 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     SectionStyle getSectionStyle(int level);
 
     /**
-     * Add a labeled input control.
-     *
-     * @param <T>     the result type
-     * @param id      the control's ID
-     * @param label   the label text
-     * @param dflt    supplier of default value
-     * @param control the control
-     * @param visible flag indicating whether the input is visible to the user
-     * @return {@code this}
-     */
-    default <T> B addInput(String id, String label, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
-        return addInput(id, MessageFormatter.args(label), dflt, control, visible);
-    }
-
-    /**
      * Sets the preferred width.
      *
      * @param value the preferred width value
@@ -158,10 +143,24 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param label   the label text
      * @param dflt    supplier of default value
      * @param control the control
-     * @param visible flag, indicating whether the input us visible from the user (no control is visible on the UI)
+     * @param visible flag, indicating whether the input is visible
      * @return {@code this}
      */
     <T> B addInput(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible);
+
+    /**
+     * Add a labeled input control.
+     *
+     * @param <T>     the result type
+     * @param id      the control's ID
+     * @param label   the label text
+     * @param dflt    supplier of default value
+     * @param control the control
+     * @return {@code this}
+     */
+    default <T> B addInput(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, InputControl<T> control) {
+        return addInput(id, label, dflt, control, true);
+    }
 
     /**
      * Add an unlabeled input control.
@@ -173,6 +172,21 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     <T> B addInput(String id, Supplier<? extends @Nullable T> dflt, InputControl<T> control);
+
+    /**
+     * Add a labeled input control.
+     *
+     * @param <T>     the result type
+     * @param id      the control's ID
+     * @param label   the label text
+     * @param dflt    supplier of default value
+     * @param control the control
+     * @param visible flag indicating whether the input is visible to the user
+     * @return {@code this}
+     */
+    default <T> B addInput(String id, String label, Supplier<? extends @Nullable T> dflt, InputControl<T> control, boolean visible) {
+        return addInput(id, MessageFormatter.args(label), dflt, control, visible);
+    }
 
     /**
      * Set the number of columns for layout (default is 1).
