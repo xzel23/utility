@@ -181,8 +181,11 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     public PinBoard.BoardPosition getPositionInBoard(double xVP, double yVP) {
         Rectangle2D vp = getViewPortInBoardCoordinates();
         double scale = getDisplayScale();
-        double x = xVP / scale + vp.getMinX();
-        double y = yVP / scale + vp.getMinY();
+        Rectangle2D boardArea = getSkinnable().getArea();
+        double marginX = Math.max(0.0, vp.getWidth() - boardArea.getWidth()) / 2.0;
+        double marginY = Math.max(0.0, vp.getHeight() - boardArea.getHeight()) / 2.0;
+        double x = xVP / scale + vp.getMinX() - marginX;
+        double y = yVP / scale + vp.getMinY() - marginY;
         return new PinBoard.BoardPosition(x, y);
     }
 
