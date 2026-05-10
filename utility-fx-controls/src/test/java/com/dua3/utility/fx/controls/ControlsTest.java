@@ -103,7 +103,7 @@ class ControlsTest extends FxTestBase {
             // Test slider with formatter
             SliderWithButtons formattedSlider = Controls.slider()
                     .mode(SliderWithButtons.Mode.SLIDER_VALUE)
-                    .formatter((min, max) -> String.format("%.1f - %.1f", min, max))
+                    .formatter(v -> String.format("%.1f", v))
                     .build();
             assertNotNull(formattedSlider);
         });

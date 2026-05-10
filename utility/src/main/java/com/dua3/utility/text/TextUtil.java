@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -1445,5 +1446,32 @@ public final class TextUtil {
      */
     public static String toLocalizedString(@Nullable Object obj, Object objIfNull) {
         return toLocalizedString(Objects.requireNonNullElse(obj, objIfNull));
+    }
+
+    /**
+     * Parse text as a localized number, percent, or per mille value.
+     *
+     * @param text the input text
+     * @param locale the locale used for parsing
+     * @return the parsed value
+     * @throws NumberFormatException if parsing fails
+     */
+    public static double parseDouble(String text, Locale locale) throws NumberFormatException {
+        return NumberParsingUtil.parseDouble(text, locale);
+    }
+
+    /**
+     * Try to parse text as a localized number, percent, or per mille value.
+     *
+     * @param text the input text
+     * @param locale the locale used for parsing
+     * @return parsed value, or empty if parsing fails
+     */
+    public static OptionalDouble tryParseDouble(@Nullable String text, Locale locale) {
+        return switch (text) {
+            case null -> OptionalDouble.empty();
+            case "" -> OptionalDouble.empty();
+            default -> NumberParsingUtil.tryParseDouble(text.strip(), locale);
+        };
     }
 }

@@ -241,6 +241,8 @@ could not be loaded.
 - fix default value not being set in SliderBuilder when value() was not called
 - fix default value not being set in GridBuilder when adding control
 - fix PinBoard: getPositionInBoard() returned wrong values when pinboard area did not fill the whole control area
+- add TextUtil.parseDouble(String, Locale), TextUtil.tryParseDouble(String, Locale) to parse localized numbers;
+  supports percent and per mille values
 - add consistent overloads of InputBuilder.addInput()
 
 ### 22.1.1
