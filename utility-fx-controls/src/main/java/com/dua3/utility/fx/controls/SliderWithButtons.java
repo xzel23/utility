@@ -22,8 +22,12 @@ import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.DoubleFunction;
@@ -100,6 +104,15 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
             }
         }
 
+        if (tfValue != null) {
+            tfValue.setOnAction(evt -> commitTextFieldValue());
+            tfValue.focusedProperty().addListener((obs, oldFocused, newFocused) -> {
+                if (!newFocused) {
+                    commitTextFieldValue();
+                }
+            });
+        }
+
         state.valueProperty().addListener((v, o, n) -> valueChanged(n));
         slider.maxProperty().addListener((v, o, n) -> updateTextControlDimensions());
         slider.minProperty().addListener((v, o, n) -> updateTextControlDimensions());
@@ -167,6 +180,65 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         // force redisplay of the value
         double v = Objects.requireNonNullElseGet(get(), this::getMin);
         valueChanged(v);
+    }
+
+    private void commitTextFieldValue() {
+        if (tfValue == null) {
+            return;
+        }
+
+        parseSliderValue(tfValue.getText()).ifPresent(slider::setValue);
+    }
+
+    private Optional<Double> parseSliderValue(@Nullable String text) {
+        if (text == null) {
+            return Optional.empty();
+        }
+
+        String trimmed = text.strip();
+        if (trimmed.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Locale locale = I18NInstance.get().getLocale();
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
+
+        return parseWithFormat(trimmed, NumberFormat.getNumberInstance(locale))
+                .or(() -> parseWithFormat(trimmed, NumberFormat.getPercentInstance(locale)))
+                .or(() -> parseWithMultiplier(trimmed, locale, 100d, String.valueOf(symbols.getPercent()), "%"))
+                .or(() -> parseWithMultiplier(trimmed, locale, 1000d, String.valueOf(symbols.getPerMill()), "‰"));
+    }
+
+    private Optional<Double> parseWithMultiplier(String text, Locale locale, double divisor, String localeSymbol, String fallbackSymbol) {
+        return removeSymbol(text, localeSymbol)
+                .or(() -> removeSymbol(text, fallbackSymbol))
+                .flatMap(numberText -> parseWithFormat(numberText, NumberFormat.getNumberInstance(locale)))
+                .map(value -> value / divisor);
+    }
+
+    private Optional<String> removeSymbol(String text, String symbol) {
+        if (symbol.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (text.startsWith(symbol)) {
+            return Optional.of(text.substring(symbol.length()).strip());
+        }
+
+        if (text.endsWith(symbol)) {
+            return Optional.of(text.substring(0, text.length() - symbol.length()).strip());
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<Double> parseWithFormat(String text, NumberFormat format) {
+        ParsePosition pos = new ParsePosition(0);
+        Number parsed = format.parse(text, pos);
+        if (parsed != null && pos.getErrorIndex() < 0 && pos.getIndex() == text.length()) {
+            return Optional.of(parsed.doubleValue());
+        }
+        return Optional.empty();
     }
 
     private void initPane() {
