@@ -15,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -102,7 +104,12 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         }
 
         if (tfValue != null) {
-            tfValue.setOnAction(evt -> commitTextFieldValue());
+            tfValue.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
+                if (evt.getCode() == KeyCode.ENTER) {
+                    commitTextFieldValue();
+                }
+            });
+
             tfValue.focusedProperty().addListener((obs, oldFocused, newFocused) -> {
                 if (newFocused != Boolean.TRUE) {
                     commitTextFieldValue();
@@ -127,7 +134,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     }
 
     private void valueChanged(@Nullable Double n) {
-        String text = formatter.apply(n);
+        String text = n == null ? "" : formatter.apply(n);
         if (label != null) {
             label.setText(text);
         }
