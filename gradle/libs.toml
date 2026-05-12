@@ -13,7 +13,7 @@ slf4j = "2.0.17"
 
 # Plugins
 cabe-plugin = "4.2.0"
-jdk = "0.6.0"
+jdk = "0.7.0-beta5"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.24.0"
 native-plugin = "1.0.0"
