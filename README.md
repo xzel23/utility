@@ -244,6 +244,7 @@ could not be loaded.
 - add TextUtil.parseDouble(String, Locale), TextUtil.tryParseDouble(String, Locale) to parse localized numbers;
   supports percent and per mille values
 - add consistent overloads of InputBuilder.addInput()
+- add Mode.SLIDER_VALUE_INPUT to SliderWithButton; enables the value to be input by keyboard
 
 ### 22.1.1
 
