@@ -236,6 +236,10 @@ could not be loaded.
 
 ## Changes
 
+### 22.2.1
+
+- fix ClassNotFoundException when FxLauncher is used with SLB4JExt not on classpath.
+
 ### 22.2.0
 
 - fix default value not being set in SliderBuilder when value() was not called

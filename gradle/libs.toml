@@ -1,5 +1,5 @@
 [versions]
-projectVersion = "22.2.0"
+projectVersion = "22.2.1"
 atlantafx = "2.1.0"
 bouncycastle = "1.84"
 h2database = "2.4.240"

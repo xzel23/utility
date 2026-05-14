@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -105,6 +106,11 @@ public final class FxLauncher {
     static final AtomicReference<@Nullable FxLogWindow> logWindow = new AtomicReference<>();
     static final AtomicReference<@Nullable FxLogPane> logPane = new AtomicReference<>();
 
+    /**
+     * A utility class for managing the JavaFX application platform lifecycle.
+     * Ensures that the JavaFX runtime is safely started and prevents multiple
+     * invocations of the JavaFX `Application.launch()` method in the same JVM.
+     */
     private static final class PlatformGuard {
         private static final AtomicBoolean launched = new AtomicBoolean(false);
 
@@ -607,20 +613,21 @@ public final class FxLauncher {
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
     public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner, String title) {
-        return Optional.ofNullable(logWindow.updateAndGet(lw -> {
-                    if (lw != null || !(HAS_SLB4J_EXT && logBuffer != null)) {
-                        return lw;
-                    }
+        if (!HAS_SLB4J_EXT || logBuffer == null) {
+            return Optional.empty();
+        }
 
-                    return PlatformGuard.run(() -> PlatformHelper.runAndWait(() -> {
-                                FxLogWindow window = new FxLogWindow(title, getLogBuffer().orElseThrow());
-                                window.initOwner(owner);
-                                window.show();
-                                return window;
-                            })
-                    );
-                })
-        );
+        return Optional.ofNullable(logWindow.updateAndGet(lw ->
+                Objects.requireNonNullElse(
+                        lw,
+                        PlatformGuard.run(() -> PlatformHelper.runAndWait(() -> {
+                            FxLogWindow window = new FxLogWindow(title, getLogBuffer().orElseThrow());
+                            window.initOwner(owner);
+                            window.show();
+                            return window;
+                        }))
+                )
+        ));
     }
 
     /**
