@@ -613,7 +613,8 @@ public final class FxLauncher {
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
     public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner, String title) {
-        if (!HAS_SLB4J_EXT || logBuffer == null) {
+        LogBuffer buffer = logBuffer.get();
+        if (!HAS_SLB4J_EXT || buffer == null) {
             return Optional.empty();
         }
 
@@ -621,7 +622,7 @@ public final class FxLauncher {
                 Objects.requireNonNullElse(
                         lw,
                         PlatformGuard.run(() -> PlatformHelper.runAndWait(() -> {
-                            FxLogWindow window = new FxLogWindow(title, getLogBuffer().orElseThrow());
+                            FxLogWindow window = new FxLogWindow(title, buffer);
                             window.initOwner(owner);
                             window.show();
                             return window;
