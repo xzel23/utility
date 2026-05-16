@@ -15,6 +15,7 @@ import java.util.function.DoubleUnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -240,6 +241,160 @@ class MathUtilTest {
         assertEquals(6L, MathUtil.gcd(-48L, 18L));
         assertEquals(6L, MathUtil.gcd(48L, -18L));
         assertEquals(6L, MathUtil.gcd(-48L, -18L));
+    }
+
+    @Test
+    void testSumVarargsAndRangeMethods() {
+        double[] values = {3.0, 4.0, 12.0, -5.0};
+
+        assertEquals(0.0, MathUtil.sum());
+        assertEquals(0.0, MathUtil.sumKahan());
+        assertEquals(0.0, MathUtil.sumNeumaier());
+
+        assertEquals(14.0, MathUtil.sum(values));
+        assertEquals(14.0, MathUtil.sumKahan(values));
+        assertEquals(14.0, MathUtil.sumNeumaier(values));
+
+        assertEquals(11.0, MathUtil.sum(values, 1, 3));
+        assertEquals(11.0, MathUtil.sumKahan(values, 1, 3));
+        assertEquals(11.0, MathUtil.sumNeumaier(values, 1, 3));
+
+        assertEquals(0.0, MathUtil.sum(values, values.length, 0));
+        assertEquals(0.0, MathUtil.sumKahan(values, values.length, 0));
+        assertEquals(0.0, MathUtil.sumNeumaier(values, values.length, 0));
+    }
+
+    @Test
+    void testSumSpecialValues() {
+        assertTrue(Double.isNaN(MathUtil.sum(Double.NaN, 1.0)));
+        assertTrue(Double.isNaN(MathUtil.sumKahan(Double.NaN, 1.0)));
+        assertTrue(Double.isNaN(MathUtil.sumNeumaier(Double.NaN, 1.0)));
+
+        assertEquals(Double.POSITIVE_INFINITY, MathUtil.sum(Double.POSITIVE_INFINITY, 1.0));
+        assertTrue(Double.isNaN(MathUtil.sumKahan(Double.POSITIVE_INFINITY, 1.0)));
+        assertTrue(Double.isNaN(MathUtil.sumNeumaier(Double.POSITIVE_INFINITY, 1.0)));
+    }
+
+    @Test
+    void testSumRangeValidation() {
+        double[] values = {1.0, 2.0, 3.0};
+
+        assertThrows(NullPointerException.class, () -> MathUtil.sum((double[]) null, 0, 0));
+        assertThrows(NullPointerException.class, () -> MathUtil.sumKahan((double[]) null, 0, 0));
+        assertThrows(NullPointerException.class, () -> MathUtil.sumNeumaier((double[]) null, 0, 0));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sum(values, -1, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sum(values, 0, -1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sum(values, 2, 2));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumKahan(values, -1, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumKahan(values, 0, -1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumKahan(values, 2, 2));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumNeumaier(values, -1, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumNeumaier(values, 0, -1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumNeumaier(values, 2, 2));
+    }
+
+    @Test
+    void testSumCompensationImprovesAccuracy() {
+        double[] values = {1.0e16, 1.0, 1.0, -1.0e16};
+        double expected = 2.0;
+
+        double plain = MathUtil.sum(values);
+        double kahan = MathUtil.sumKahan(values);
+        double neumaier = MathUtil.sumNeumaier(values);
+
+        assertTrue(Math.abs(expected - kahan) < Math.abs(expected - plain));
+        assertTrue(Math.abs(expected - neumaier) < Math.abs(expected - plain));
+
+        assertEquals(expected, MathUtil.sumKahan(values, 0, values.length));
+        assertEquals(expected, MathUtil.sumNeumaier(values, 0, values.length));
+    }
+
+    @Test
+    void testSumOfSquaresFixedArity() {
+        assertEquals(9.0, MathUtil.sumOfSquares(3.0));
+        assertEquals(25.0, MathUtil.sumOfSquares(3.0, 4.0));
+        assertEquals(14.0, MathUtil.sumOfSquares(1.0, 2.0, 3.0));
+    }
+
+    @Test
+    void testSumOfSquaresVarargsAndRangeMethods() {
+        double[] values = {3.0, 4.0, 12.0, -5.0};
+
+        assertEquals(0.0, MathUtil.sumOfSquares());
+        assertEquals(0.0, MathUtil.sumOfSquaresKahan());
+        assertEquals(0.0, MathUtil.sumOfSquaresNeumaier());
+
+        assertEquals(194.0, MathUtil.sumOfSquares(values));
+        assertEquals(194.0, MathUtil.sumOfSquaresKahan(values));
+        assertEquals(194.0, MathUtil.sumOfSquaresNeumaier(values));
+
+        assertEquals(185.0, MathUtil.sumOfSquares(values, 1, 3));
+        assertEquals(185.0, MathUtil.sumOfSquaresKahan(values, 1, 3));
+        assertEquals(185.0, MathUtil.sumOfSquaresNeumaier(values, 1, 3));
+
+        assertEquals(0.0, MathUtil.sumOfSquares(values, values.length, 0));
+        assertEquals(0.0, MathUtil.sumOfSquaresKahan(values, values.length, 0));
+        assertEquals(0.0, MathUtil.sumOfSquaresNeumaier(values, values.length, 0));
+    }
+
+    @Test
+    void testSumOfSquaresSpecialValues() {
+        assertTrue(Double.isNaN(MathUtil.sumOfSquares(Double.NaN, 1.0)));
+        assertTrue(Double.isNaN(MathUtil.sumOfSquaresKahan(Double.NaN, 1.0)));
+        assertTrue(Double.isNaN(MathUtil.sumOfSquaresNeumaier(Double.NaN, 1.0)));
+
+        assertEquals(Double.POSITIVE_INFINITY, MathUtil.sumOfSquares(Double.POSITIVE_INFINITY, 1.0));
+        assertTrue(Double.isNaN(MathUtil.sumOfSquaresKahan(Double.POSITIVE_INFINITY, 1.0)));
+        assertTrue(Double.isNaN(MathUtil.sumOfSquaresNeumaier(Double.POSITIVE_INFINITY, 1.0)));
+    }
+
+    @Test
+    void testSumOfSquaresRangeValidation() {
+        double[] values = {1.0, 2.0, 3.0};
+
+        assertThrows(NullPointerException.class, () -> MathUtil.sumOfSquares((double[]) null, 0, 0));
+        assertThrows(NullPointerException.class, () -> MathUtil.sumOfSquaresKahan((double[]) null, 0, 0));
+        assertThrows(NullPointerException.class, () -> MathUtil.sumOfSquaresNeumaier((double[]) null, 0, 0));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquares(values, -1, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquares(values, 0, -1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquares(values, 2, 2));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquaresKahan(values, -1, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquaresKahan(values, 0, -1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquaresKahan(values, 2, 2));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquaresNeumaier(values, -1, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquaresNeumaier(values, 0, -1));
+        assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquaresNeumaier(values, 2, 2));
+    }
+
+    @Test
+    void testSumOfSquaresCompensationImprovesAccuracy() {
+        // 2^27 squared is 2^54. Adding 1.0 to 2^54 rounds back to 2^54 in plain summation.
+        // Compensated summation recovers the low-order contributions over many additions.
+        double large = Math.scalb(1.0, 27);
+        int smallCount = 1000;
+        double[] values = new double[smallCount + 1];
+        values[0] = large;
+        for (int i = 1; i < values.length; i++) {
+            values[i] = 1.0;
+        }
+
+        double expected = Math.fma(large, large, smallCount);
+
+        double plain = MathUtil.sumOfSquares(values);
+        double kahan = MathUtil.sumOfSquaresKahan(values);
+        double neumaier = MathUtil.sumOfSquaresNeumaier(values);
+
+        assertTrue(Math.abs(expected - kahan) < Math.abs(expected - plain));
+        assertTrue(Math.abs(expected - neumaier) < Math.abs(expected - plain));
+
+        assertEquals(expected, MathUtil.sumOfSquaresKahan(values, 0, values.length));
+        assertEquals(expected, MathUtil.sumOfSquaresNeumaier(values, 0, values.length));
     }
 
     @Test

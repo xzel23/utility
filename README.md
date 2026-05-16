@@ -236,6 +236,14 @@ could not be loaded.
 
 ## Changes
 
+### 22.2.3
+
+- MathUtil: add utility methods for summing doubles and sum of squares with enhanced accuracy and test coverage
+
+### 22.2.2
+
+- fix exception in FxLauncher
+
 ### 22.2.1
 
 - fix ClassNotFoundException when FxLauncher is used with SLB4JExt not on classpath.
