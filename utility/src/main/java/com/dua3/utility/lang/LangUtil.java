@@ -1006,8 +1006,8 @@ public final class LangUtil {
      * @param supplier the Supplier
      * @return caching Supplier
      */
-    public static <T extends @Nullable Object> Supplier<T> cache(Supplier<T> supplier) {
-        return new CachingSupplier<>(supplier, (T t) -> {});
+    public static <T extends @Nullable Object> CachingSupplier<T> cache(Supplier<T> supplier) {
+        return new CachingSupplier<>(supplier);
     }
 
     /**
@@ -1022,8 +1022,8 @@ public final class LangUtil {
      * @param cleaner  the cleanup operation to be executed on `close()`
      * @return caching Supplier
      */
-    public static <T> AutoCloseableSupplier<T> cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
-        return new CachingSupplier<>(supplier, cleaner);
+    public static <T> AutoClosableCachingSupplier<T> cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
+        return new AutoClosableCachingSupplier<>(supplier, cleaner);
     }
 
     /**
@@ -1150,6 +1150,7 @@ public final class LangUtil {
      * @param <E>    the enum type
      * @return the EnumSet
      */
+    @SuppressWarnings("java:S1319")
     @SafeVarargs
     public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, E... values) {
         return enumSet(clss, List.of(values));
@@ -1163,6 +1164,7 @@ public final class LangUtil {
      * @param <E>    the enum type
      * @return the EnumSet
      */
+    @SuppressWarnings("java:S1319")
     public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, Collection<E> values) {
         return values.isEmpty() ? EnumSet.noneOf(clss) : EnumSet.copyOf(values);
     }
@@ -1698,15 +1700,30 @@ public final class LangUtil {
         }
     }
 
-    private static class CachingSupplier<T extends @Nullable Object> implements AutoCloseableSupplier<T> {
-        private final Supplier<? extends T> supplier;
-        private final Consumer<? super T> cleaner;
-        private @Nullable T obj;
-        private boolean initialized;
+    /**
+     * A supplier implementation that caches the result of a computation upon the first retrieval.
+     * The cached value is retained for subsequent calls to {@link #get()} until explicitly reset.
+     *
+     * @param <T> the type of the object supplied, which may be nullable
+     */
+    public static sealed class CachingSupplier<T extends @Nullable Object> implements Supplier<T> permits AutoClosableCachingSupplier {
+        /**
+         * A supplier that provides instances of type {@code T}.
+         */
+        protected final Supplier<? extends T> supplier;
 
-        CachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
+        /**
+         * The cached value provided by the supplier.
+         */
+        protected @Nullable T obj;
+
+        /**
+         * Indicates whether the cached value has been initialized.
+         */
+        protected boolean initialized = false;
+
+        CachingSupplier(Supplier<? extends T> supplier) {
             this.supplier = supplier;
-            this.cleaner = cleaner;
         }
 
         @Override
@@ -1719,13 +1736,58 @@ public final class LangUtil {
             return obj;
         }
 
-        @Override
-        public void close() {
+        /**
+         * Resets the internal state of this supplier by clearing the cached object and marking it as uninitialized.
+         * After calling this method, the next invocation of {@link #get()} will recompute and cache the value
+         * by invoking the underlying supplier.
+         * <p>
+         * The method has no effect if the supplier is already in the uninitialized state.
+         */
+        public void reset() {
             if (initialized) {
-                cleaner.accept(obj);
                 obj = null;
                 initialized = false;
             }
+        }
+    }
+
+    /**
+     * A supplier implementation that extends {@code CachingSupplier} and implements the {@code AutoCloseableSupplier}
+     * interface. This class provides the capability to cache the result of a computation and automatically clean up
+     * resources when the cache is reset or the instance is closed.
+     * <p>
+     * When the cached value is invalidated, either through {@link #reset()} or {@link #close()}, a provided {@code Consumer}
+     * is invoked to clean up any associated resources.
+     *
+     * @param <T> the type of the object supplied, which may be nullable
+     */
+    public static final class AutoClosableCachingSupplier<T extends @Nullable Object> extends CachingSupplier<T> implements AutoCloseableSupplier<T> {
+        private final Consumer<? super T> cleaner;
+
+        AutoClosableCachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
+            super(supplier);
+            this.cleaner = cleaner;
+        }
+
+        @Override
+        public T get() {
+            if (initialized && obj != null) {
+                cleaner.accept(obj);
+            }
+            return super.get();
+        }
+
+        @Override
+        public void reset() {
+            if (initialized && obj != null) {
+                cleaner.accept(obj);
+            }
+            super.reset();
+        }
+
+        @Override
+        public void close() {
+            reset();
         }
     }
 
