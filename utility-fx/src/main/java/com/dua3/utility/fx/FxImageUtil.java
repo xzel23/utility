@@ -31,15 +31,15 @@ public final class FxImageUtil implements ImageUtil {
     }
 
     @Override
-    public FxImage load(InputStream inputStream) {
-        return new FxStandardImage(new Image(inputStream));
+    public FxImage load(InputStream in) {
+        return new FxStandardImage(new Image(in));
     }
 
     @Override
-    public FxImage create(int w, int h, int[] argb) {
+    public FxImage create(int w, int h, int[] data) {
         WritableImage wr = new WritableImage(w, h);
         PixelWriter pw = wr.getPixelWriter();
-        pw.setPixels(0, 0, w, h, PixelFormat.getIntArgbInstance(), argb, 0, w);
+        pw.setPixels(0, 0, w, h, PixelFormat.getIntArgbInstance(), data, 0, w);
         return new FxStandardImage(wr);
     }
 
