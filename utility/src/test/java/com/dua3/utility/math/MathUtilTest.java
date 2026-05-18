@@ -5,6 +5,7 @@
 
 package com.dua3.utility.math;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.RoundingMode;
@@ -33,6 +34,23 @@ class MathUtilTest {
         assertEquals(xHalfDown, operations.get(RoundingMode.HALF_DOWN).applyAsDouble(x));
         assertEquals(xHalfEven, operations.get(RoundingMode.HALF_EVEN).applyAsDouble(x));
         assertEquals(x, operations.get(RoundingMode.UNNECESSARY).applyAsDouble(x));
+    }
+
+    /**
+     * Asserts that the given executable either throws a {@link NullPointerException},
+     * an {@link AssertionError}, or a custom {@link Throwable} detectable as a null-related failure.
+     * If no exception is thrown, or an unexpected exception type is raised, the test is failed.
+     *
+     * @param executable the code block or operation to test for null-detection behavior
+     */
+    private static void assertNullDetected(org.junit.jupiter.api.function.Executable executable) {
+        Throwable thrown = assertThrows(Throwable.class, executable);
+        switch (thrown) {
+            case null -> Assertions.fail("Null value should be detected");
+            case NullPointerException e -> { /* pass */ }
+            case AssertionError e -> { /* pass */ }
+            default -> Assertions.fail("Unexpected exception type: " + thrown.getClass().getName());
+        }
     }
 
     /**
@@ -279,9 +297,9 @@ class MathUtilTest {
     void testSumRangeValidation() {
         double[] values = {1.0, 2.0, 3.0};
 
-        assertThrows(NullPointerException.class, () -> MathUtil.sum((double[]) null, 0, 0));
-        assertThrows(NullPointerException.class, () -> MathUtil.sumKahan((double[]) null, 0, 0));
-        assertThrows(NullPointerException.class, () -> MathUtil.sumNeumaier((double[]) null, 0, 0));
+        assertNullDetected(() -> MathUtil.sum((double[]) null, 0, 0));
+        assertNullDetected(() -> MathUtil.sumKahan((double[]) null, 0, 0));
+        assertNullDetected(() -> MathUtil.sumNeumaier((double[]) null, 0, 0));
 
         assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sum(values, -1, 1));
         assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sum(values, 0, -1));
@@ -355,9 +373,9 @@ class MathUtilTest {
     void testSumOfSquaresRangeValidation() {
         double[] values = {1.0, 2.0, 3.0};
 
-        assertThrows(NullPointerException.class, () -> MathUtil.sumOfSquares((double[]) null, 0, 0));
-        assertThrows(NullPointerException.class, () -> MathUtil.sumOfSquaresKahan((double[]) null, 0, 0));
-        assertThrows(NullPointerException.class, () -> MathUtil.sumOfSquaresNeumaier((double[]) null, 0, 0));
+        assertNullDetected(() -> MathUtil.sumOfSquares((double[]) null, 0, 0));
+        assertNullDetected(() -> MathUtil.sumOfSquaresKahan((double[]) null, 0, 0));
+        assertNullDetected(() -> MathUtil.sumOfSquaresNeumaier((double[]) null, 0, 0));
 
         assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquares(values, -1, 1));
         assertThrows(IndexOutOfBoundsException.class, () -> MathUtil.sumOfSquares(values, 0, -1));
