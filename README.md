@@ -236,6 +236,12 @@ could not be loaded.
 
 ## Changes
 
+### 22.2.4
+
+- LangUtil.cache() methods return CachedSupplier instances that can be reset to reclaim the memory if not needed 
+  anymore.
+- Also added caching using soft references.
+
 ### 22.2.3
 
 - MathUtil: add utility methods for summing doubles and sum of squares with enhanced accuracy and test coverage

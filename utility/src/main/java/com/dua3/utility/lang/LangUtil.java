@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.Serial;
 import java.io.UncheckedIOException;
 import java.lang.ref.Cleaner;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -1007,7 +1008,7 @@ public final class LangUtil {
      * @return caching Supplier
      */
     public static <T extends @Nullable Object> CachingSupplier<T> cache(Supplier<T> supplier) {
-        return new CachingSupplier<>(supplier);
+        return new StrongCachingSupplier<>(supplier);
     }
 
     /**
@@ -1024,6 +1025,32 @@ public final class LangUtil {
      */
     public static <T> AutoClosableCachingSupplier<T> cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
         return new AutoClosableCachingSupplier<>(supplier, cleaner);
+    }
+
+    /**
+     * Returns a {@link WeakCachingSupplier} that caches the value returned by the given supplier
+     * using a weak reference. The cached value may be garbage collected if memory is needed,
+     * allowing the supplier to recompute the value when needed.
+     *
+     * @param <T> the type of object supplied
+     * @param supplier the supplier whose values should be weakly cached
+     * @return a {@link WeakCachingSupplier} that weakly caches the supplied values
+     */
+    public static <T> WeakCachingSupplier<T> cacheWeakly(Supplier<T> supplier) {
+        return new WeakCachingSupplier<>(supplier);
+    }
+
+    /**
+     * Creates a cached supplier based on the provided supplier and caching strategy.
+     *
+     * @param <T> the type of the value supplied by the supplier
+     * @param supplier the original supplier whose values will be cached
+     * @param strong a boolean indicating whether to use strong or weak caching;
+     *               {@code true} for strong caching, {@code false} for weak caching
+     * @return a {@code CachingSupplier} that provides cached values based on the specified caching strategy
+     */
+    public static <T> CachingSupplier<T> cache(Supplier<T> supplier, boolean strong) {
+        return strong ? cache(supplier) : cacheWeakly(supplier);
     }
 
     /**
@@ -1701,12 +1728,78 @@ public final class LangUtil {
     }
 
     /**
+     * A supplier that caches the result of a computation on its first call and reuses
+     * the cached value for subsequent calls to {@link #get()}. The cache can be explicitly reset
+     * using the {@link #reset()} method, after which the next call to {@code get()} will
+     * recompute and cache the value again.
+     *
+     * @param <T> the type of the object supplied, which may be nullable
+     */
+    public interface CachingSupplier<T extends @Nullable Object> extends Supplier<T> {
+        /**
+         * Resets the internal state of this supplier by clearing the cached object and marking it as uninitialized.
+         * After calling this method, the next invocation of {@link #get()} will recompute and cache the value
+         * by invoking the underlying supplier.
+         * <p>
+         * The method has no effect if the supplier is already in the uninitialized state.
+         */
+        void reset();
+    }
+
+    /**
+     * A supplier implementation that caches the result of a computation upon the first retrieval.
+     * The cached value is retained in using a {@link SoftReference} for subsequent calls to {@link #get()}
+     * until explicitly reset or released during garbage collection.
+     * <p>
+     * <strong>Note:</strong> This supplier does not support null values..
+     *
+     * @param <T> the type of the object supplied, which may be nullable
+     */
+    public static final class WeakCachingSupplier<T> implements CachingSupplier<T> {
+        /**
+         * A supplier that provides instances of type {@code T}.
+         */
+        private final Supplier<? extends T> supplier;
+
+        /**
+         * The cached value provided by the supplier.
+         */
+        private SoftReference<T> ref = new SoftReference<>(null);
+
+        WeakCachingSupplier(Supplier<? extends T> supplier) {
+            this.supplier = supplier;
+        }
+
+        @Override
+        public T get() {
+            T obj = ref.get();
+            if (obj == null) {
+                obj = supplier.get();
+                ref = new SoftReference<>(obj);
+            }
+
+            return obj;
+        }
+
+        /**
+         * Resets the internal state of this supplier by clearing the cached object and marking it as uninitialized.
+         * After calling this method, the next invocation of {@link #get()} will recompute and cache the value
+         * by invoking the underlying supplier.
+         * <p>
+         * The method has no effect if the supplier is already in the uninitialized state.
+         */
+        public void reset() {
+            ref.clear();
+        }
+    }
+
+    /**
      * A supplier implementation that caches the result of a computation upon the first retrieval.
      * The cached value is retained for subsequent calls to {@link #get()} until explicitly reset.
      *
      * @param <T> the type of the object supplied, which may be nullable
      */
-    public static sealed class CachingSupplier<T extends @Nullable Object> implements Supplier<T> permits AutoClosableCachingSupplier {
+    public static sealed class StrongCachingSupplier<T extends @Nullable Object> implements CachingSupplier<T> permits AutoClosableCachingSupplier {
         /**
          * A supplier that provides instances of type {@code T}.
          */
@@ -1722,7 +1815,7 @@ public final class LangUtil {
          */
         protected boolean initialized = false;
 
-        CachingSupplier(Supplier<? extends T> supplier) {
+        StrongCachingSupplier(Supplier<? extends T> supplier) {
             this.supplier = supplier;
         }
 
@@ -1761,7 +1854,7 @@ public final class LangUtil {
      *
      * @param <T> the type of the object supplied, which may be nullable
      */
-    public static final class AutoClosableCachingSupplier<T extends @Nullable Object> extends CachingSupplier<T> implements AutoCloseableSupplier<T> {
+    public static final class AutoClosableCachingSupplier<T extends @Nullable Object> extends StrongCachingSupplier<T> implements AutoCloseableSupplier<T> {
         private final Consumer<? super T> cleaner;
 
         AutoClosableCachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
