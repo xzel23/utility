@@ -236,11 +236,12 @@ could not be loaded.
 
 ## Changes
 
-### 22.2.4
+### 22.3.0
 
 - LangUtil.cache() methods return CachedSupplier instances that can be reset to reclaim the memory if not needed 
-  anymore.
-- Also added caching using soft references.
+  anymore; added caching methods that use weak references.
+- ImageBuffer: Added input checking to low level drawing methods; added rect()
+- some minor improvements
 
 ### 22.2.3
 
