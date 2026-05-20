@@ -237,6 +237,17 @@ public final class MathUtil {
     }
 
     /**
+     * Rounds a double value to the nearest integer and returns the result as an int.
+     *
+     * @param x the double value to be rounded
+     * @return the rounded value as an int
+     * @throws ArithmeticException if the result is out of range of an int
+     */
+    public static int roundToInt(double x) {
+        return Math.toIntExact(Math.round(x));
+    }
+
+    /**
      * Round to decimal places.
      * <p><strong>Note:</strong> If this is a bulk operation, consider using {@link #roundingOperation(int, RoundingMode)}
      * instead as the scale calculation will take place only once per instance.
@@ -570,6 +581,7 @@ public final class MathUtil {
      * @param x the integer value to evaluate
      * @return -1 if the input is negative, 1 if the input is positive, or 0 if the input is zero
      */
+    @SuppressWarnings("squid:S3358")
     public static int sign(long x) {
         return x < 0 ? -1 : x > 0 ? 1 : 0;
     }

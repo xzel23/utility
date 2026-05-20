@@ -236,6 +236,10 @@ could not be loaded.
 
 ## Changes
 
+### 22.3.1 (in development)
+
+- MathUtil.roundToInt() method now throws ArithmeticException if the result is out of range of an int.
+
 ### 22.3.0
 
 - LangUtil.cache() methods return CachedSupplier instances that can be reset to reclaim the memory if not needed 
