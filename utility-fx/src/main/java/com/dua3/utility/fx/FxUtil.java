@@ -2,6 +2,7 @@ package com.dua3.utility.fx;
 
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.HtmlConverter;
@@ -128,10 +129,10 @@ public final class FxUtil {
      */
     public static com.dua3.utility.data.Color convert(Color color) {
         return com.dua3.utility.data.Color.rgba(
-                (int) Math.round(color.getRed() * 255.0),
-                (int) Math.round(color.getGreen() * 255.0),
-                (int) Math.round(color.getBlue() * 255.0),
-                (int) Math.round(color.getOpacity() * 255.0)
+                MathUtil.roundToInt(color.getRed() * 255.0),
+                MathUtil.roundToInt(color.getGreen() * 255.0),
+                MathUtil.roundToInt(color.getBlue() * 255.0),
+                MathUtil.roundToInt(color.getOpacity() * 255.0)
         );
     }
 
@@ -1138,6 +1139,7 @@ public final class FxUtil {
      *
      * @param ignored arguments that are intentionally ignored
      */
+    @SuppressWarnings("java:S1172")
     private static void noOperation(Object... ignored) {
         // do nothing
     }

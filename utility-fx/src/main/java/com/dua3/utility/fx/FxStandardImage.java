@@ -1,6 +1,7 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.data.Image;
+import com.dua3.utility.math.MathUtil;
 import javafx.scene.image.PixelFormat;
 
 /**
@@ -12,12 +13,12 @@ public record FxStandardImage(javafx.scene.image.Image fxImage) implements FxIma
 
     @Override
     public int width() {
-        return (int) Math.round(fxImage.getWidth());
+        return MathUtil.roundToInt(fxImage.getWidth());
     }
 
     @Override
     public int height() {
-        return (int) Math.round(fxImage.getHeight());
+        return MathUtil.roundToInt(fxImage.getHeight());
     }
 
     @Override

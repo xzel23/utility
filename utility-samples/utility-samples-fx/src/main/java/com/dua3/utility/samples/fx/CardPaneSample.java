@@ -1,6 +1,7 @@
 package com.dua3.utility.samples.fx;
 
 import com.dua3.utility.fx.controls.CardPane;
+import com.dua3.utility.math.MathUtil;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -115,9 +116,9 @@ public class CardPaneSample extends Application {
     }
 
     private static String toRgb(Color c) {
-        int r = (int) Math.round(c.getRed() * 255);
-        int g = (int) Math.round(c.getGreen() * 255);
-        int b = (int) Math.round(c.getBlue() * 255);
+        int r = MathUtil.roundToInt(c.getRed() * 255);
+        int g = MathUtil.roundToInt(c.getGreen() * 255);
+        int b = MathUtil.roundToInt(c.getBlue() * 255);
         return String.format("rgb(%d,%d,%d)", r, g, b);
     }
 }

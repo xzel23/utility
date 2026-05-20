@@ -6,6 +6,7 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Pair;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
@@ -41,10 +42,9 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     private Map<String, Object> defaultAttributes = new HashMap<>();
     private double scale = 1.0;
     // -- define a dictionary to map StyleConstants attribute keys to calls to Font getters
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     private final Map<Object, Function<Font, Object>> dictionary = Map.of(
             StyleConstants.Family, Font::getFamily,
-            StyleConstants.Size, f -> (int) Math.round(scale * f.getSizeInPoints()),
+            StyleConstants.Size, font -> MathUtil.roundToInt(scale * font.getSizeInPoints()),
             StyleConstants.Bold, Font::isBold,
             StyleConstants.Italic, Font::isItalic,
             StyleConstants.Underline, Font::isUnderline,
