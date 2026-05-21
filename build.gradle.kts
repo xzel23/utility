@@ -148,6 +148,10 @@ val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snaps
 allprojects {
     apply(plugin = rootProject.libs.plugins.jdk.get().pluginId)
 
+    dependencyLocking {
+        lockAllConfigurations()
+    }
+
     jdk {
         version = 21
         javaFxBundled = true
