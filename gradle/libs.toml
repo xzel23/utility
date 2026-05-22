@@ -1,5 +1,5 @@
 [versions]
-projectVersion = "22.3.1"
+projectVersion = "22.3.2-SNAPSHOT"
 atlantafx = "2.1.0"
 bouncycastle = "1.84"
 h2database = "2.4.240"
@@ -18,7 +18,7 @@ jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.24.0"
 native-plugin = "1.0.0"
 sonar-plugin = "7.3.0.8198"
-spotbugs-plugin = "6.5.4"
+spotbugs-plugin = "6.5.5"
 test-logger-plugin = "4.0.0"
 versions-plugin = "0.54.0"
 
