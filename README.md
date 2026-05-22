@@ -236,7 +236,7 @@ could not be loaded.
 
 ## Changes
 
-### 22.3.1 (in development)
+### 22.3.1
 
 - add Gradle dependency lockfiles across utility modules to enable reproducible builds
 - MathUtil.roundToInt() and MathUtil.roundToLong() methods returning the corresponding primitive type;
