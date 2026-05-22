@@ -529,17 +529,21 @@ public final class FxLauncher {
                 I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_level.description"),
                 Repetitions.ZERO_OR_MORE,
                 "rule",
-                rule -> {
+                arg -> Arrays.stream(arg.split(",")).map(String::trim).forEach(rule -> {
                     String[] parts = rule.split("=");
                     switch (parts.length) {
-                        case 1 -> loggingConfiguration.setRootLevel(parseLogLevel(parts[0]));
+                        case 1 -> {
+                            LogLevel lvl = parseLogLevel(parts[0]);
+                            loggingConfiguration.setRootLevel(lvl);
+                            loggingConfiguration.getRootFilter().setLevel("", lvl);
+                        }
                         case 2 -> {
                             LangUtil.check(LOG_PREFIX_VALIDATOR.test(parts[0]), "Not a valid logger name prefix: %s", parts[0]);
                             loggingConfiguration.getRootFilter().setLevel(parts[0], parseLogLevel(parts[1]));
                         }
                         default -> throw new IllegalStateException("Invalid log level rule format: " + rule);
                     }
-                },
+                }),
                 "--log-level"
         );
 
