@@ -8,6 +8,8 @@ import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.options.Repetitions;
 import javafx.application.Application;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -99,7 +101,7 @@ public final class FxLauncher {
 
     static @Nullable LoggingConfiguration loggingConfiguration = null;
     static boolean showLogWindow = false;
-    static boolean debug = false;
+    static final BooleanProperty debugProperty = new SimpleBooleanProperty(false);
     static boolean enableAssertions = false;
 
     static AtomicReference<@Nullable LogBuffer> logBuffer = new AtomicReference<>();
@@ -494,7 +496,7 @@ public final class FxLauncher {
         SLB4J.setConfiguration(loggingConfiguration);
         LOG.debug("SLF4J configuration updated: {}", loggingConfiguration);
 
-        if (showLogWindow || debug) {
+        if (showLogWindow || isDebug()) {
             logBuffer.updateAndGet( buffer -> {
                 if (buffer == null) {
                     buffer = new LogBuffer();
@@ -519,7 +521,7 @@ public final class FxLauncher {
         agp.addFlag(
                 I18NInstance.get().get("dua3.utility.fx.launcher.arg.debug.name"),
                 I18NInstance.get().get("dua3.utility.fx.launcher.arg.debug.description"),
-                v -> debug = v,
+                debugProperty::set,
                 "--debug"
         );
         agp.addStringOption(
@@ -592,7 +594,11 @@ public final class FxLauncher {
      * @return true if the log pane is set to be displayed, false otherwise.
      */
     public static boolean isDebug() {
-        return debug;
+        return debugProperty.get();
+    }
+
+    public BooleanProperty debugProperty() {
+        return debugProperty;
     }
 
     /**
@@ -659,7 +665,7 @@ public final class FxLauncher {
      */
     public static Optional<FxLogPane> getLogPane() {
         return PlatformGuard.run(() -> {
-            if (HAS_SLB4J_EXT && debug) {
+            if (HAS_SLB4J_EXT && isDebug()) {
                 return Optional.of(new FxLogPane(getLogBuffer().orElseThrow()));
             }
             return Optional.empty();
