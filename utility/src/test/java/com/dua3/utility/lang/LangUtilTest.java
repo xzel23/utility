@@ -697,6 +697,48 @@ class LangUtilTest {
         optResult = LangUtil.mapOptional(opt, d -> Double.toString(d));
         Assertions.assertEquals(Optional.empty(), optResult);
     }
+
+    @Test
+    void testCacheStrong() {
+        AtomicInteger counter = new AtomicInteger(0);
+        Supplier<Integer> supplier = counter::incrementAndGet;
+        LangUtil.CachingSupplier<Integer> cached = LangUtil.cache(supplier);
+
+        assertEquals(0, counter.get());
+        assertEquals(1, cached.get());
+        assertEquals(1, counter.get());
+        assertEquals(1, cached.get());
+        assertEquals(1, counter.get());
+
+        cached.reset();
+        assertEquals(2, cached.get());
+        assertEquals(2, counter.get());
+    }
+
+    @Test
+    void testCacheWeakly() {
+        AtomicInteger counter = new AtomicInteger(0);
+        Supplier<Integer> supplier = counter::incrementAndGet;
+        LangUtil.CachingSupplier<Integer> cached = LangUtil.cacheWeakly(supplier);
+
+        assertEquals(0, counter.get());
+        assertEquals(1, cached.get());
+        assertEquals(1, counter.get());
+        assertEquals(1, cached.get());
+        assertEquals(1, counter.get());
+
+        cached.reset();
+        assertEquals(2, cached.get());
+        assertEquals(2, counter.get());
+    }
+
+    @Test
+    void testCacheWithStrongFlag() {
+        Supplier<Integer> supplier = () -> 1;
+        assertTrue(LangUtil.cache(supplier, true) instanceof LangUtil.StrongCachingSupplier);
+        assertTrue(LangUtil.cache(supplier, false) instanceof LangUtil.WeakCachingSupplier);
+    }
+
     @Test
     void testCache() {
         // Create a supplier that supplies a new string "test" and a Consumer that does nothing

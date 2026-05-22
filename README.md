@@ -239,7 +239,9 @@ could not be loaded.
 ### 22.3.1 (in development)
 
 - add Gradle dependency lockfiles across utility modules to enable reproducible builds
-- MathUtil.roundToInt() method now throws ArithmeticException if the result is out of range of an int.
+- MathUtil.roundToInt() and MathUtil.roundToLong() methods returning the corresponding primitive type;
+  ArithmeticException if the result is out of range.
+- increased test coverage.
 
 ### 22.3.0
 

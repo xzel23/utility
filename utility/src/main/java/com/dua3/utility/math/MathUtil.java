@@ -27,6 +27,11 @@ public final class MathUtil {
 
     private static final Logger LOG = LogManager.getLogger(MathUtil.class);
 
+    private static final double MIN_DOUBLE_ROUNDABLE_TO_INT = Integer.MIN_VALUE - 0.5;
+    private static final double MAX_DOUBLE_ROUNDABLE_TO_INT = Math.nextDown(Integer.MAX_VALUE + 0.5);
+    private static final double MIN_DOUBLE_ROUNDABLE_TO_LONG = -9007199254740991.0; // 53 bit mantissa -> BigDecimal.valueOf(2).pow(53).subtract(BigDecimal.ONE).negate()
+    private static final double MAX_DOUBLE_ROUNDABLE_TO_LONG = 9007199254740991.0;  // since double uses explicit sign instead of two's complement, this is representable
+
     private MathUtil() { /* utility class */ }
 
     /**
@@ -243,8 +248,30 @@ public final class MathUtil {
      * @return the rounded value as an int
      * @throws ArithmeticException if the result is out of range of an int
      */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static int roundToInt(double x) {
-        return Math.toIntExact(Math.round(x));
+        if (x >= MIN_DOUBLE_ROUNDABLE_TO_INT && x <= MAX_DOUBLE_ROUNDABLE_TO_INT) {
+            return (int) Math.round(x);
+        }
+        throw new ArithmeticException("Invalid or out-of-bounds value: " + x);
+    }
+
+    /**
+     * Rounds a double value to the nearest integral number representable as a long value and returns the result.
+     * <p>
+     * <strong>Note:</strong> This method only accepts values in the range of -(2^53 - 1)to 2^53 - 1. While many values
+     * outside this range can be represented exactly as a long, the validation would dramatically increase the
+     * computational cost and is therefore not performed.
+     *
+     * @param x the double value to be rounded
+     * @return the rounded value as a long
+     * @throws ArithmeticException if the result is outside the range -(2^53 - 1) to 2^53 - 1
+     */
+    public static long roundToLong(double x) {
+        if (x >= MIN_DOUBLE_ROUNDABLE_TO_LONG && x <= MAX_DOUBLE_ROUNDABLE_TO_LONG) {
+            return Math.round(x);
+        }
+        throw new ArithmeticException("Invalid or out-of-bounds value: " + x);
     }
 
     /**

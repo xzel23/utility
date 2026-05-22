@@ -206,4 +206,88 @@ class ImageBufferTest {
         assertTrue(toString.contains("height=" + height));
         assertTrue(toString.contains("data=" + java.util.Arrays.toString(data)));
     }
+
+    @Test
+    void testRect() {
+        // Create an image buffer
+        int width = 10;
+        int height = 10;
+        int[] data = new int[width * height];
+        ImageBuffer imageBuffer = new ImageBuffer(data, width, height);
+
+        // Draw a rectangle
+        int x = 2;
+        int y = 2;
+        int w = 6;
+        int h = 6;
+        int color = 0xFFFF00FF; // Magenta
+        imageBuffer.rect(x, y, w, h, color);
+
+        // Check top and bottom edges
+        for (int i = 0; i < w; i++) {
+            assertEquals(color, imageBuffer.get(x + i, y), "Top edge at " + (x + i) + "," + y);
+            assertEquals(color, imageBuffer.get(x + i, y + h - 1), "Bottom edge at " + (x + i) + "," + (y + h - 1));
+        }
+
+        // Check left and right edges (excluding corners already checked)
+        for (int j = 1; j < h - 1; j++) {
+            assertEquals(color, imageBuffer.get(x, y + j), "Left edge at " + x + "," + (y + j));
+            assertEquals(color, imageBuffer.get(x + w - 1, y + j), "Right edge at " + (x + w - 1) + "," + (y + j));
+        }
+
+        // Check a pixel inside the rectangle
+        assertNotEquals(color, imageBuffer.get(x + 1, y + 1), "Inside pixel");
+    }
+
+    @Test
+    void testArgumentChecks() {
+        int width = 10;
+        int height = 10;
+        int[] data = new int[width * height];
+        ImageBuffer imageBuffer = new ImageBuffer(data, width, height);
+        int color = 0xFFFFFFFF;
+
+        // get/set
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.get(-1, 0));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.get(width, 0));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.get(0, -1));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.get(0, height));
+
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.set(-1, 0, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.set(width, 0, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.set(0, -1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.set(0, height, color));
+
+        // hline
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.hline(-1, 0, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.hline(width, 0, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.hline(0, -1, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.hline(0, height, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.hline(5, 0, 6, color)); // x+w >= width
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.hline(0, 0, -1, color));
+
+        // vline
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.vline(-1, 0, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.vline(width, 0, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.vline(0, -1, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.vline(0, height, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.vline(0, 5, 6, color)); // y+h >= height
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.vline(0, 0, -1, color));
+
+        // fill
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.fill(-1, 0, 1, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.fill(0, -1, 1, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.fill(5, 0, 6, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.fill(0, 5, 1, 6, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.fill(0, 0, -1, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.fill(0, 0, 1, -1, color));
+
+        // rect
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.rect(-1, 0, 1, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.rect(0, -1, 1, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.rect(5, 0, 6, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.rect(0, 5, 1, 6, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.rect(0, 0, -1, 1, color));
+        assertThrows(IllegalArgumentException.class, () -> imageBuffer.rect(0, 0, 1, -1, color));
+    }
 }

@@ -8,6 +8,7 @@ package com.dua3.utility.math;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.EnumMap;
 import java.util.List;
@@ -138,12 +139,66 @@ class MathUtilTest {
     }
 
     /**
+     * Test of roundToInt method, of class MathUtil.
+     */
+    @Test
+    void testRoundToInt() {
+        assertEquals(0, MathUtil.roundToInt(0.0));
+        assertEquals(1, MathUtil.roundToInt(1.0));
+        assertEquals(1, MathUtil.roundToInt(1.2));
+        assertEquals(2, MathUtil.roundToInt(1.5));
+        assertEquals(2, MathUtil.roundToInt(1.8));
+        assertEquals(Integer.MAX_VALUE, MathUtil.roundToInt((double) Integer.MAX_VALUE));
+        assertEquals(Integer.MAX_VALUE, MathUtil.roundToInt(Math.nextDown(Integer.MAX_VALUE + 0.5)));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(Integer.MAX_VALUE + 0.5));
+
+        assertEquals(-1, MathUtil.roundToInt(-1.0));
+        assertEquals(-1, MathUtil.roundToInt(-1.2));
+        assertEquals(-1, MathUtil.roundToInt(-1.5));
+        assertEquals(-2, MathUtil.roundToInt(-1.8));
+        assertEquals(Integer.MIN_VALUE, MathUtil.roundToInt((double) Integer.MIN_VALUE));
+        assertEquals(Integer.MIN_VALUE, MathUtil.roundToInt(Integer.MIN_VALUE - 0.5));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(Math.nextDown(Integer.MIN_VALUE - 0.5)));
+
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(Double.NaN));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(Long.MAX_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(Double.MAX_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(Double.POSITIVE_INFINITY));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(Long.MIN_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(-Double.MAX_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(Double.NEGATIVE_INFINITY));
+    }
+
+    /**
+     * Test of roundToLong method, of class MathUtil.
+     */
+    @Test
+    void testRoundToLong() {
+        assertEquals(0L, MathUtil.roundToLong(0.0));
+        assertEquals(1L, MathUtil.roundToLong(1.0));
+        assertEquals(1L, MathUtil.roundToLong(1.2));
+        assertEquals(2L, MathUtil.roundToLong(1.5));
+        assertEquals(2L, MathUtil.roundToLong(1.8));
+        assertEquals(0x1fffffffffffffL, MathUtil.roundToLong(BigDecimal.TWO.pow(53).subtract(BigDecimal.ONE).doubleValue()));
+
+        assertEquals(-1, MathUtil.roundToLong(-1.0));
+        assertEquals(-1, MathUtil.roundToLong(-1.2));
+        assertEquals(-1, MathUtil.roundToLong(-1.5));
+        assertEquals(-2, MathUtil.roundToLong(-1.8));
+        assertEquals(-0x1fffffffffffffL, MathUtil.roundToLong(BigDecimal.TWO.pow(53).subtract(BigDecimal.ONE).negate().doubleValue()));
+
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToLong(Double.NaN));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToLong(Double.MAX_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToLong(Double.POSITIVE_INFINITY));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToLong(-Double.MAX_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToLong(Double.NEGATIVE_INFINITY));
+    }
+
+    /**
      * Test of round method, of class MathUtil.
      */
     @Test
     void testRound() {
-
-
         // positive n
         assertEquals(1.2, MathUtil.round(1.23, 1), 1.0e-10);
         assertEquals(12.3, MathUtil.round(12.3, 1), 1.0e-10);
@@ -184,7 +239,6 @@ class MathUtilTest {
      */
     @Test
     void testRoundToPrecision() {
-
         assertEquals(1.2, MathUtil.roundToPrecision(1.23, 2), 1.0e-10);
         assertEquals(12.0, MathUtil.roundToPrecision(12.3, 2), 1.0e-10);
         assertEquals(120, MathUtil.roundToPrecision(123, 2), 1.0e-10);
