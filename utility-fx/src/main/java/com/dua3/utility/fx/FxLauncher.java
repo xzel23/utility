@@ -535,7 +535,6 @@ public final class FxLauncher {
                         case 1 -> {
                             LogLevel lvl = parseLogLevel(parts[0]);
                             loggingConfiguration.setRootLevel(lvl);
-                            loggingConfiguration.getRootFilter().setLevel("", lvl);
                         }
                         case 2 -> {
                             LangUtil.check(LOG_PREFIX_VALIDATOR.test(parts[0]), "Not a valid logger name prefix: %s", parts[0]);
