@@ -1,19 +1,19 @@
 [versions]
-projectVersion = "22.3.2-SNAPSHOT"
+projectVersion = "22.4.0-SNAPSHOT"
 atlantafx = "2.1.0"
 bouncycastle = "1.84"
 h2database = "2.4.240"
 ikonli = "12.4.0"
 jimfs = "1.3.1"
 jspecify = "1.0.0"
-junit-bom = "6.0.3"
+junit-bom = "6.1.0"
 log4j-bom = "2.26.0"
 slb4j = "0.9.0"
 slf4j = "2.0.18"
 
 # Plugins
-cabe-plugin = "4.2.0"
-jdk = "0.7.0"
+cabe-plugin = "4.3.0-rc"
+jdkprovider-plugin = "0.7.0"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.24.0"
 native-plugin = "1.0.0"
@@ -45,7 +45,7 @@ utility-bom = { group = "com.dua3.utility", name = "utility-bom", version.ref = 
 
 [plugins]
 cabe = { id = "com.dua3.cabe", version.ref = "cabe-plugin" }
-jdk = { id = "com.dua3.gradle.jdkprovider", version.ref = "jdk" }
+jdk = { id = "com.dua3.gradle.jdkprovider", version.ref = "jdkprovider-plugin" }
 jmh = { id = "me.champeau.jmh", version.ref = "jmh-plugin" }
 jreleaser = { id = "org.jreleaser", version.ref = "jreleaser-plugin" }
 native = { id = "org.graalvm.buildtools.native", version.ref = "native-plugin" }
