@@ -600,6 +600,11 @@ public final class FxLauncher {
         return debugProperty.get();
     }
 
+    /**
+     * Returns the BooleanProperty used for debugging purposes.
+     *
+     * @return the debugProperty representing the debug state.
+     */
     public BooleanProperty debugProperty() {
         return debugProperty;
     }
