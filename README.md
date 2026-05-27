@@ -236,6 +236,14 @@ could not be loaded.
 
 ## Changes
 
+### 22.4.0
+
+- add FxLauncher.debugProperty()
+- FxLauncher: support specifying multiple log-level rules separated by comma; fix log level configuration
+- update cabe to 4.3.0; side-effect is record null checks are done the same way as normal classes (assertions on 
+  records instead of NPE)
+- update SLB4J (samples and JavaFX)
+
 ### 22.3.1
 
 - add Gradle dependency lockfiles across utility modules to enable reproducible builds
