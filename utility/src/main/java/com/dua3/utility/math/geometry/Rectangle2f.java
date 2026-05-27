@@ -8,8 +8,8 @@ package com.dua3.utility.math.geometry;
 /**
  * Immutable rectangle with float coordinates.
  *
- * @param x      the x-coordinate of the top-left corner of the rectangle
- * @param y      the y-coordinate of the top-left corner of the rectangle
+ * @param x      the minimal x-coordinate
+ * @param y      the y-coordinate of the rectangle
  * @param width  the width of the rectangle (must be >= 0)
  * @param height the height of the rectangle (must be >= 0)
  */
@@ -240,14 +240,14 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * Adds a margin to the current rectangle, creating a new rectangle with the same center as this rectangle but with borders pushed out
      * by the specified margins. Use negative values to shrink the rectangle.
      *
-     * @param mLeft   the margin to be applied to the left side of the rectangle
-     * @param mTop    the margin to be applied to the top side of the rectangle
-     * @param mRight  the margin to be applied to the right side of the rectangle
-     * @param mBottom the margin to be applied to the bottom side of the rectangle
+     * @param mXMin the margin to be applied to the minimum x-coordinate of the rectangle
+     * @param mYMin the margin to be applied to the y-coordinate side of the rectangle
+     * @param mXMax the margin to be applied to the maximum x-coordinate of the rectangle
+     * @param mYMax the margin to be applied to the maximum y-coordinate of the rectangle
      * @return a new {@code Rectangle2f} instance with the added margin
      */
-    public Rectangle2f addMargin(float mLeft, float mTop, float mRight, float mBottom) {
-        return new Rectangle2f(x - mLeft, y - mTop, width + mLeft + mRight, height + mTop + mBottom);
+    public Rectangle2f addMargin(float mXMin, float mYMin, float mXMax, float mYMax) {
+        return new Rectangle2f(x - mXMin, y - mYMin, width + mXMin + mXMax, height + mYMin + mYMax);
     }
 
     /**
@@ -271,11 +271,11 @@ public record Rectangle2f(float x, float y, float width, float height) {
     }
 
     /**
-     * Creates a new rectangle by moving the top-left corner to the specified
+     * Creates a new rectangle by moving the corner with coorinates (yMin, yMin) to the specified
      * coordinates while preserving the current width and height.
      *
-     * @param x the new x-coordinate for the top-left corner of the rectangle
-     * @param y the new y-coordinate for the top-left corner of the rectangle
+     * @param x the new x-coordinate for corner of the rectangle
+     * @param y the new y-coordinate for corner of the rectangle
      * @return a new {@code Rectangle2f} instance with the updated position
      */
     public Rectangle2f moveTo(float x, float y) {
