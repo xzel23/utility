@@ -236,6 +236,12 @@ could not be loaded.
 
 ## Changes
 
+### 22.4.1
+
+- minor improvement to Cache class
+- corrected Javadoc for Rectangle2f
+- update SLB4J
+
 ### 22.4.0
 
 - add FxLauncher.debugProperty()
