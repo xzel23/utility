@@ -15,15 +15,12 @@
  */
 package com.dua3.utility.data;
 
-import org.jspecify.annotations.Nullable;
-
 import java.lang.ref.Cleaner;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 /**
@@ -62,6 +59,7 @@ public class Cache<K, V> {
      * @param key the key whose associated value is to be retrieved
      * @return the value to which the specified key is mapped
      */
+    @SuppressWarnings("unchecked")
     public V get(K key) {
         // Fast path: optimistic read
         Reference<V> ref = items.get(key);
@@ -71,19 +69,19 @@ public class Cache<K, V> {
         }
 
         // Atomic path: use compute to lock only this key's bucket, not the whole cache
-        AtomicReference<@Nullable V> holder = new AtomicReference<>();
+        Object[] holder = new Object[1];
 
         items.compute(key, (k, currentRef) -> {
             // 1. Check if another thread already computed it while we were waiting
             V val = currentRef == null ? null : currentRef.get();
             if (val != null) {
-                holder.set(val);
+                holder[0] = val;
                 return currentRef; // Keep existing reference
             }
 
             // 2. Compute new value
             val = compute.apply(k);
-            holder.set(val);
+            holder[0] = val;
 
             // 3. Create new reference
             Reference<V> newRef = newReference.apply(val);
@@ -95,9 +93,7 @@ public class Cache<K, V> {
             return newRef;
         });
 
-        V v = holder.get();
-        assert v != null; // safe, because compute().apply(k) returns non null
-        return v;
+        return (V) holder[0];
     }
 
     @Override
