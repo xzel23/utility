@@ -30,10 +30,17 @@ public final class PlatformHelper {
 
     /**
      * Run a task on the JavaFX application thread and wait for completion.
-     * Consider using {@link #runLater(Runnable)} to avoid executing tasks out of order.
+     * <p>
+     * <strong>Note:</strong>
+     * <ul>
+     * <li>This method will block the calling thread until the task completes.
+     * <li>Any runtime exceptions thrown by the task will be rethrown by this method.
+     * <li>Consider using {@link #runLater(Runnable)} to avoid executing tasks out of order.
+     * </ul>
      *
      * @param action the task to run
      * @throws NullPointerException if {@code action} is {@code null}
+     * @throws RuntimeException if the task throws one
      */
     public static void runAndWait(Runnable action) {
         // delegate to overload
@@ -48,15 +55,20 @@ public final class PlatformHelper {
     }
 
     /**
-     * Run a task on the JavaFX application thread and return result.
+     * Run a task on the JavaFX application thread and return the result.
      * <p>
-     * If the task throws an exception or error, it will be rethrown on the calling thread.
+     * <strong>Note:</strong>
+     * <ul>
+     * <li>This method will block the calling thread until the task completes.
+     * <li>Any runtime exceptions thrown by the task will be rethrown by this method.
+     * <li>Consider using {@link #runLater(Runnable)} to avoid executing tasks out of order.
+     * </ul>
      *
      * @param <T>    the result type
      * @param action the task to run
      * @return the result returned by action
      * @throws NullPointerException if {@code action} is {@code null}
-     *
+     * @throws RuntimeException if the task throws one
      */
     public static <T extends @Nullable Object> T runAndWait(Supplier<T> action) {
         // run synchronously when on JavaFX thread
@@ -77,9 +89,6 @@ public final class PlatformHelper {
                 doneLatch.countDown();
             }
         });
-        if (thrown[0] != null) {
-            LangUtil.sneakyThrow(thrown[0]);
-        }
 
         while (doneLatch.getCount() > 0) {
             try {
@@ -88,6 +97,10 @@ public final class PlatformHelper {
                 LOG.trace("interrupted", e);
                 Thread.currentThread().interrupt();
             }
+        }
+
+        if (thrown[0] != null) {
+            LangUtil.sneakyThrow(thrown[0]);
         }
 
         return result.get();
@@ -117,6 +130,7 @@ public final class PlatformHelper {
      * @param errorHandler the error handler to use
      * @throws NullPointerException if {@code action} is {@code null}
      */
+    @SuppressWarnings("java:S1181")
     public static void runLater(Runnable action, Consumer<Throwable> errorHandler) {
         Platform.runLater(() -> {
             try {
