@@ -375,7 +375,7 @@ class HtmlConverterTest {
 
     @Test
     void testConvertIgnoresSplitMarker() {
-        RichText text = RichText.valueOf("a" + RichText.SPLIT_MARKER + "b");
+        RichText text = new RichTextBuilder().append("a").appendSplitMarker().append("b").toRichText();
         assertEquals("ab", HtmlConverter.create().convert(text));
     }
 }

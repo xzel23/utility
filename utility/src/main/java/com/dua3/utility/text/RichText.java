@@ -49,7 +49,7 @@ public final class RichText
      * <p>
      * The {@link HtmlConverter} class for example automatically removes SPLIT_MARKER from the output.
      */
-    public static final char SPLIT_MARKER = '\u0000';
+    public static final int SPLIT_MARKER = '\u0000';
 
     static final String ATTRIBUTE_NAME_STYLE_LIST = "__styles";
 
@@ -530,7 +530,10 @@ public final class RichText
 
     @Override
     public String toString() {
-        return text.subSequence(start, start + length).toString();
+        CharSequence sequence = text.subSequence(start, start + length);
+        StringBuilder sb = new StringBuilder(sequence.length());
+        sequence.codePoints().filter(cp -> cp != SPLIT_MARKER).forEach(sb::appendCodePoint);
+        return sb.toString();
     }
 
     @Override

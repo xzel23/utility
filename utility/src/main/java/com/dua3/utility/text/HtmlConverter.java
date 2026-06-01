@@ -24,6 +24,11 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     private static final String SPAN_CLOSE = "</span>";
 
     /**
+     * Flag indicating whether a new paragraph should be started when more text is appended.
+     */
+    private boolean startNewParagraph = false;
+
+    /**
      * The style mappings of this converter.
      * <p>
      * Key: the style name
@@ -409,6 +414,11 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         @Override
         protected void appendOpeningTagsForStyles(List<Style> styles) {
+            if (startNewParagraph) {
+                buffer.append("<p>\n");
+                startNewParagraph = false;
+            }
+
             List<HtmlTag> tags = getTags(styles);
             //noinspection ForLoopReplaceableByForEach - for symmetry with #appendClosingTags
             for (int i = 0; i < tags.size(); i++) {
@@ -585,12 +595,21 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         @Override
         protected void appendChars(CharSequence s) {
-            buffer.ensureCapacity(buffer.length() + s.length());
+            int len = s.length();
+            startNewParagraph = len >= 2 && s.charAt(len - 2) == '\n' && s.charAt(len - 1) == '\n';
+
+            if (startNewParagraph) {
+                // remove the second new line
+                s = s.subSequence(0, len - 1);
+                len--;
+            }
+
+            buffer.ensureCapacity(buffer.length() + len);
             int idx = 0;
-            while (idx < s.length()) {
+            while (idx < len) {
                 int idxFound = TextUtil.indexOf(s, RichText.SPLIT_MARKER, idx);
                 if (idxFound == -1) {
-                    idxFound = s.length();
+                    idxFound = len;
                 }
                 TextUtil.appendHtmlEscapedCharacters(buffer, s.subSequence(idx, idxFound));
                 idx = idxFound + 1;

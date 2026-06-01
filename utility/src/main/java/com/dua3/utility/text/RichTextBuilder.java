@@ -75,12 +75,23 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
     }
 
     @Override
-    public Appendable append(@Nullable CharSequence csq, int start, int end) {
+    public RichTextBuilder append(@Nullable CharSequence csq, int start, int end) {
         if (csq instanceof ToRichText trt) {
             trt.toRichText().subSequence(start, end).appendTo(this);
         } else {
             buffer.append(csq, start, end);
         }
+        return this;
+    }
+
+    /**
+     * Appends a split marker to the text being constructed. A split marker is a special code
+     * point used to represent a logical split point in the constructed text.
+     *
+     * @return this RichTextBuilder instance after appending the split marker
+     */
+    public RichTextBuilder appendSplitMarker() {
+        buffer.appendCodePoint(RichText.SPLIT_MARKER);
         return this;
     }
 
