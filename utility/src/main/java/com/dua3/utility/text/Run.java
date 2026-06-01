@@ -158,6 +158,9 @@ public final class Run implements AttributedCharSequence {
 
     @Override
     public Run subSequence(int start, int end) {
+        if (start < 0 || end > length || start > end) {
+            throw new IndexOutOfBoundsException("Invalid subsequence range: start=" + start + ", end=" + end + ", length=" + length);
+        }
         return new Run(text, this.start + start, end - start, attributes);
     }
 
