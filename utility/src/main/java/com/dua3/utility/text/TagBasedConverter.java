@@ -31,14 +31,14 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
     /**
      * Create a converter for the given argument.
-     * @param text the text to be converted
+     * @param textLength the expected input text length
      * @return new converter instance
      */
-    protected abstract TagBasedConverterImpl<T> createConverter(RichText text);
+    protected abstract TagBasedConverterImpl<T> createConverter(int textLength);
 
     @Override
     public T convert(RichText text) {
-        return createConverter(text).append(text).get();
+        return createConverter(text.length()).append(text).get();
     }
 
     /**

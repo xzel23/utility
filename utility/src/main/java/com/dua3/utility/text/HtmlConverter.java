@@ -75,7 +75,12 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     /**
      * Whether CSS output should be generated.
      */
-    private boolean useCss;
+    private boolean useCss = false;
+
+    /**
+     * The line end replacement string used for line/paragraph breaks.
+     */
+    private String lineEndReplacement = "\n";
 
     /**
      * Constructor.
@@ -93,6 +98,16 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      */
     public static HtmlConversionOption useCss(boolean flag) {
         return new HtmlConversionOption(c -> c.setUseCss(flag));
+    }
+
+    /**
+     * Configures the HTML conversion to replace line breaks with a specified string.
+     *
+     * @param lineEndReplacement the string to replace line breaks with
+     * @return an {@link HtmlConversionOption} that applies the provided replacement for line breaks
+     */
+    public static HtmlConversionOption convertLineBreaksTo(String lineEndReplacement) {
+        return new HtmlConversionOption(c -> c.setLineEndReplacement(lineEndReplacement));
     }
 
     /**
@@ -285,8 +300,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     @Override
-    protected TagBasedConverterImpl<String> createConverter(RichText text) {
-        return new HtmlConverterImpl(text);
+    protected TagBasedConverterImpl<String> createConverter(int textLength) {
+        return new HtmlConverterImpl(textLength);
     }
 
     private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
@@ -375,6 +390,24 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
+     * Retrieves the string used as a replacement for line breaks during HTML conversion.
+     *
+     * @return the line break replacement string
+     */
+    public String getLineEndReplacement() {
+        return lineEndReplacement;
+    }
+
+    /**
+     * Sets the string to replace line breaks during HTML conversion.
+     *
+     * @param lineEndReplacement the string that will replace line breaks
+     */
+    void setLineEndReplacement(String lineEndReplacement) {
+        this.lineEndReplacement = lineEndReplacement;
+    }
+
+    /**
      * Get tag for style name.
      *
      * @param styleName the style name
@@ -402,9 +435,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         private final StringBuilder buffer;
 
-        HtmlConverterImpl(RichText text) {
-            // create a buffer with 25% overhead for HTML
-            this.buffer = new StringBuilder(text.length() * 125 / 100);
+        HtmlConverterImpl(int textLength) {
+            this.buffer = new StringBuilder(textLength * 5/4);
         }
 
         @Override
@@ -415,7 +447,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         @Override
         protected void appendOpeningTagsForStyles(List<Style> styles) {
             if (startNewParagraph) {
-                buffer.append("<p>\n");
+                buffer.append(lineEndReplacement);
                 startNewParagraph = false;
             }
 
@@ -596,12 +628,10 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         @Override
         protected void appendChars(CharSequence s) {
             int len = s.length();
-            startNewParagraph = len >= 2 && s.charAt(len - 2) == '\n' && s.charAt(len - 1) == '\n';
+            startNewParagraph = !s.isEmpty() && s.charAt(len - 1) == '\n';
 
-            if (startNewParagraph) {
-                // remove the second new line
-                s = s.subSequence(0, len - 1);
-                len--;
+            if(startNewParagraph) {
+                s = s.subSequence(0, --len);
             }
 
             buffer.ensureCapacity(buffer.length() + len);
