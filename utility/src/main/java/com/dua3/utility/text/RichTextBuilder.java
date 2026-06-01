@@ -211,6 +211,15 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         return buffer.charAt(index);
     }
 
+    /**
+     * Returns the last character in the text being built.
+     *
+     * @return the last character of the current text
+     */
+    public char getLastChar() {
+        return buffer.charAt(length() - 1);
+    }
+
     @Override
     public CharSequence subSequence(int start, int end) {
         return buffer.subSequence(start, end);
