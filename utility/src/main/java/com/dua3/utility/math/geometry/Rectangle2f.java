@@ -16,6 +16,31 @@ package com.dua3.utility.math.geometry;
 public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
+     * Computes the smallest bounding rectangle that encompasses the given rectangle
+     * and all additional rectangles provided.
+     *
+     * @param first the first rectangle to consider when computing the bounding rectangle
+     * @param other additional rectangles to include in the bounding calculation
+     * @return a {@code Rectangle2f} representing the smallest bounding rectangle
+     *         that encompasses all specified rectangles
+     */
+    public static Rectangle2f bounding(Rectangle2f first, Rectangle2f... other) {
+        float xMin = first.xMin();
+        float xMax = first.xMax();
+        float yMin = first.yMin();
+        float yMax = first.yMax();
+
+        for (Rectangle2f r : other) {
+            xMin = Math.min(xMin, r.xMin());
+            xMax = Math.max(xMax, r.xMax());
+            yMin = Math.min(yMin, r.yMin());
+            yMax = Math.max(yMax, r.yMax());
+        }
+
+        return new Rectangle2f(xMin, yMin, xMax - xMin, yMax - yMin);
+    }
+
+    /**
      * Constructor.
      *
      * @param x      the x-coordinate

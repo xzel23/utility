@@ -266,4 +266,37 @@ class Rectangle2fTest {
         assertEquals(30.0f, moved.width(), "Width should not change after moving.");
         assertEquals(40.0f, moved.height(), "Height should not change after moving.");
     }
+
+    /**
+     * Test the bounding method.
+     */
+    @Test
+    void testBounding() {
+        Rectangle2f r1 = new Rectangle2f(0, 0, 10, 10);
+        Rectangle2f r2 = new Rectangle2f(5, 5, 10, 10);
+        Rectangle2f r3 = new Rectangle2f(-5, -5, 2, 2);
+
+        // Test single rectangle
+        Rectangle2f b1 = Rectangle2f.bounding(r1);
+        assertEquals(r1, b1, "Bounding of a single rectangle should be the rectangle itself");
+
+        // Test two rectangles
+        Rectangle2f b2 = Rectangle2f.bounding(r1, r2);
+        assertEquals(0, b2.x(), "x should be 0");
+        assertEquals(0, b2.y(), "y should be 0");
+        assertEquals(15, b2.width(), "width should be 15");
+        assertEquals(15, b2.height(), "height should be 15");
+
+        // Test three rectangles
+        Rectangle2f b3 = Rectangle2f.bounding(r1, r2, r3);
+        assertEquals(-5, b3.x(), "x should be -5");
+        assertEquals(-5, b3.y(), "y should be -5");
+        assertEquals(20, b3.width(), "width should be 20");
+        assertEquals(20, b3.height(), "height should be 20");
+
+        // Test rectangles where one is inside another
+        Rectangle2f r4 = new Rectangle2f(2, 2, 2, 2);
+        Rectangle2f b4 = Rectangle2f.bounding(r1, r4);
+        assertEquals(r1, b4, "Bounding of r1 and r4 (inside r1) should be r1");
+    }
 }
