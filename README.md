@@ -236,6 +236,20 @@ could not be loaded.
 
 ## Changes
 
+### 22.5.0
+
+- feat: enhance clipboard utilities to support rich text conversion with customizable HTML conversion options
+- feat: add isWhitespaceOnly() method to TextUtil for enhanced whitespace checks
+- feat: add utility method to compute the smallest bounding rectangle for multiple rectangles
+- feat: enhance HtmlConverter with line break replacement and optimization for large input handling
+- feat: improve HTML conversion by adding paragraph handling logic and enhancing RichTextBuilder APIs
+- fix: validate input range in Run.subSequence to prevent IndexOutOfBoundsException
+- fix: handle linebreaks correctly for tags with specific formatting hints in HtmlConverter
+- add getLastChar() method to RichTextBuilder to retrieve the final character of the current text
+- fix race condition when an exception is thrown from the task executed by runAndWait(); improve Javadoc
+- Update log4j2 configuration for consistent logging levels
+- Update slb4j to version 0.12.1
+
 ### 22.4.1
 
 - minor improvement to Cache class
