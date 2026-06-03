@@ -9,6 +9,14 @@ import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextAssertions;
+import com.dua3.utility.text.Alignment;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.lang.Localized;
 import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +44,106 @@ import java.util.stream.Stream;
 
 @NullUnmarked
 class TextUtilTest {
+
+    @Test
+    void testIsWhitespaceOnly() {
+        Assertions.assertTrue(TextUtil.isWhitespaceOnly(""));
+        Assertions.assertTrue(TextUtil.isWhitespaceOnly(" \t\n\r"));
+        Assertions.assertTrue(TextUtil.isWhitespaceOnly("\u00A0")); // nbsp
+        Assertions.assertTrue(TextUtil.isWhitespaceOnly("\u2002")); // en space
+        Assertions.assertTrue(TextUtil.isWhitespaceOnly("\u2003")); // em space
+        Assertions.assertTrue(TextUtil.isWhitespaceOnly("\u3000")); // ideographic space
+
+        Assertions.assertFalse(TextUtil.isWhitespaceOnly("a"));
+        Assertions.assertFalse(TextUtil.isWhitespaceOnly(" a "));
+    }
+
+    @Test
+    void testBase64EncodingDecoding() {
+        byte[] data = "Hello, World!".getBytes(StandardCharsets.UTF_8);
+        char[] encodedChars = TextUtil.base64EncodeToChars(data);
+        String encodedString = TextUtil.base64Encode(data);
+
+        Assertions.assertEquals(encodedString, new String(encodedChars));
+
+        byte[] decodedFromChars = TextUtil.base64Decode(encodedChars);
+        byte[] decodedFromCharSequence = TextUtil.base64Decode(encodedString);
+
+        Assertions.assertArrayEquals(data, decodedFromChars);
+        Assertions.assertArrayEquals(data, decodedFromCharSequence);
+    }
+
+    @Test
+    void testMmPtConversion() {
+        double mm = 25.4;
+        double pt = 72.0;
+        Assertions.assertEquals(pt, TextUtil.mm2pt(mm), 0.0001);
+        Assertions.assertEquals(mm, TextUtil.pt2mm(pt), 0.0001);
+    }
+
+    @Test
+    void testGetTextHeight() {
+        Font font = FontUtil.getInstance().getFont("TimesRoman-12");
+        CharSequence text = "Hello";
+        double height = TextUtil.getTextHeight(text, font);
+        double width = TextUtil.getTextWidth(text, font);
+        // Height and width should generally not be the same for "Hello" in TimesRoman
+        Assertions.assertNotEquals(width, height);
+        Assertions.assertEquals(FontUtil.getInstance().getTextHeight(text, font), height);
+    }
+
+    @Test
+    void testSplitOnUnescapedDelimiter() {
+        String input = "a,b\\,c,d";
+        String[] result = TextUtil.splitOnUnescapedDelimiter(input, ',');
+        Assertions.assertArrayEquals(new String[]{"a", "b\\,c", "d"}, result);
+
+        input = "a:b:c";
+        result = TextUtil.splitOnUnescapedDelimiter(input, ':');
+        Assertions.assertArrayEquals(new String[]{"a", "b", "c"}, result);
+    }
+
+    @Test
+    void testCreateUnescapedDelimiterPattern() {
+        Pattern pattern = TextUtil.createUnescapedDelimiterPattern(',');
+        Assertions.assertTrue(pattern.matcher(",").find());
+        Assertions.assertFalse(pattern.matcher("\\,").find());
+    }
+
+    @Test
+    void testToLocalizedString() {
+        Object obj = new Object() {
+            @Override
+            public String toString() {
+                return "default";
+            }
+        };
+        Assertions.assertEquals("default", TextUtil.toLocalizedString(obj));
+
+        Localized localized = () -> "localized";
+        Assertions.assertEquals("localized", TextUtil.toLocalizedString(localized));
+
+        Assertions.assertEquals("localized", TextUtil.toLocalizedString(null, localized));
+        Assertions.assertEquals("default", TextUtil.toLocalizedString(obj, localized));
+    }
+
+    @Test
+    void testParseDouble() {
+        Locale locale = Locale.US;
+        Assertions.assertEquals(1234.56, TextUtil.parseDouble("1,234.56", locale), 0.001);
+
+        locale = Locale.GERMANY;
+        Assertions.assertEquals(1234.56, TextUtil.parseDouble("1.234,56", locale), 0.001);
+    }
+
+    @Test
+    void testTryParseDouble() {
+        Locale locale = Locale.US;
+        Assertions.assertEquals(1234.56, TextUtil.tryParseDouble("1,234.56", locale).orElseThrow(), 0.001);
+        Assertions.assertTrue(TextUtil.tryParseDouble("abc", locale).isEmpty());
+        Assertions.assertTrue(TextUtil.tryParseDouble(null, locale).isEmpty());
+        Assertions.assertTrue(TextUtil.tryParseDouble("", locale).isEmpty());
+    }
 
     @Test
     void testLines() {

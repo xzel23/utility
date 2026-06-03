@@ -898,7 +898,7 @@ public final class TextUtil {
      * @return the text height
      */
     public static double getTextHeight(CharSequence text, Font font) {
-        return FontUtil.getInstance().getTextWidth(text, font);
+        return FontUtil.getInstance().getTextHeight(text, font);
     }
 
     /**
