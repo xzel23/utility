@@ -427,7 +427,7 @@ public final class FxUtil {
     }
 
     /**
-     * Copy text to clipboard.
+     * Copy text to the clipboard.
      *
      * @param s the text
      */
@@ -439,15 +439,29 @@ public final class FxUtil {
     }
 
     /**
-     * Copy text to clipboard.
+     * Copy rich text to the clipboard.
      *
      * @param text the text
      */
     public static void copyToClipboard(RichText text) {
+        HtmlConverter converter = HtmlConverter.create(
+                HtmlConverter.useCss(false),
+                HtmlConverter.convertLineBreaksTo("<br>\n")
+        );
+        copyToClipboard(text, converter);
+    }
+
+    /**
+     * Copy rich text to the clipboard.
+     *
+     * @param text the text
+     * @param converter the converter to use
+     */
+    public static void copyToClipboard(RichText text, HtmlConverter converter) {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
         content.putString(text.toString());
-        content.putHtml(HtmlConverter.create(HtmlConverter.useCss(false)).convert(text));
+        content.putHtml(converter.convert(text));
         clipboard.setContent(content);
     }
 
