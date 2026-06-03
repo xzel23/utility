@@ -1224,6 +1224,17 @@ public final class TextUtil {
     }
 
     /**
+     * Checks if a CharSequence consists only of whitespace, including tab stops, newlines, non-breaking spaces, and
+     * other Unicode whitespace characters.
+     *
+     * @param cs the CharSequence to check
+     * @return {@code true} if the CharSequence is blank, {@code false} otherwise
+     */
+    public static boolean isWhitespaceOnly(CharSequence cs) {
+        return cs.codePoints().allMatch(cp -> Character.isWhitespace(cp) || Character.isSpaceChar(cp));
+    }
+
+    /**
      * Checks if the provided {@code CharSequence} is either {@code null} or blank (consists only of whitespace characters).
      *
      * @param s the {@code CharSequence} to be checked, may be {@code null}
