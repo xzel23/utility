@@ -474,7 +474,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         @Override
         protected void appendClosingTagsForAttributes(List<AttributeChange> attributeChanges) {
-            super.appendOpeningTagsForAttributes(attributeChanges);
+            super.appendClosingTagsForAttributes(attributeChanges);
             appendAttributeTags(attributeChanges, HtmlTag.TagType.CLOSE_TAG);
         }
 
