@@ -6,17 +6,22 @@
 package com.dua3.utility.text;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class HtmlConverterTest {
 
@@ -291,18 +296,89 @@ class HtmlConverterTest {
         assertTrue(result.contains("plain"));
     }
 
-    @Test
-    void testMapAttribute() {
-        HtmlConverter converter = HtmlConverter.createBlank(
-                HtmlConverter.mapAttribute("lang", change -> HtmlTag.tag("<lang>", "</lang>"))
+    @ParameterizedTest
+    @MethodSource("mapAttributeArguments")
+    void testMapAttribute(HtmlConverter converter, RichText text, String expected) {
+        assertEquals(expected, converter.convert(text));
+    }
+
+    static Stream<Arguments> mapAttributeArguments() {
+        HtmlConverter langConverter = HtmlConverter.createBlank(
+                HtmlConverter.mapAttribute("lang", change -> HtmlTag.tag("<lang:" + change.newValue() + ">", "</lang>"))
         );
 
-        RichTextBuilder builder = new RichTextBuilder();
-        builder.push("lang", "en");
-        builder.append("hello");
-        builder.pop("lang");
+        HtmlConverter multiConverter = HtmlConverter.createBlank(
+                HtmlConverter.mapAttribute("attr1", change -> HtmlTag.tag("<attr1>", "</attr1>")),
+                HtmlConverter.mapAttribute("attr2", change -> HtmlTag.tag("<attr2>", "</attr2>"))
+        );
 
-        assertEquals("<lang>hello</lang>", converter.convert(builder.toRichText()));
+        HtmlConverter multiValueConverter = HtmlConverter.createBlank(
+                HtmlConverter.mapAttribute("attr1", change -> HtmlTag.tag("<attr1:" + change.newValue() + ">", "</attr1>")),
+                HtmlConverter.mapAttribute("attr2", change -> HtmlTag.tag("<attr2:" + change.newValue() + ">", "</attr2>"))
+        );
+
+        String interleavedText = "abc" + "cde" + "fgh";
+        String interleavedValueText = "abcde";
+        String interleavedCloseText = "abc";
+
+        return Stream.of(
+                // Basic test
+                arguments(
+                        langConverter,
+                        new RichTextBuilder().push("lang", "en").append("hello").pop("lang").toRichText(),
+                        "<lang:en>hello</lang>"
+                ),
+                // Attributes not starting/ending at text start/end
+                arguments(
+                        langConverter,
+                        new RichTextBuilder().append("prefix ").push("lang", "en").append("hello").pop("lang").append(" suffix").toRichText(),
+                        "prefix <lang:en>hello</lang> suffix"
+                ),
+                // Multiple attributes, interleaved: <attr1>abc<attr2>cde</attr1>fgh</attr2>
+                arguments(
+                        multiConverter,
+                        new RichText(
+                                new Run(interleavedText, 0, 3, TextAttributes.of(Map.of("attr1", "v1"))),
+                                new Run(interleavedText, 3, 3, TextAttributes.of(Map.of("attr1", "v1", "attr2", "v2"))),
+                                new Run(interleavedText, 6, 3, TextAttributes.of(Map.of("attr2", "v2")))
+                        ),
+                        "<attr1>abc<attr2>cde</attr2></attr1><attr2>fgh</attr2>"
+                ),
+                // Attribute value changes: lang "en" changing to "de", and back again
+                arguments(
+                        langConverter,
+                        new RichTextBuilder().push("lang", "en").append("english").push("lang", "de").append("deutsch").pop("lang").append("english again").pop("lang").toRichText(),
+                        "<lang:en>english</lang><lang:de>deutsch</lang><lang:en>english again</lang>"
+                ),
+                // Attributes not starting at text start, and value changes
+                arguments(
+                        langConverter,
+                        new RichTextBuilder().append("a").push("lang", "en").append("b").push("lang", "de").append("c").pop("lang").append("d").pop("lang").append("e").toRichText(),
+                        "a<lang:en>b</lang><lang:de>c</lang><lang:en>d</lang>e"
+                ),
+                // Interleaved with value changes
+                arguments(
+                        multiValueConverter,
+                        new RichText(
+                                new Run(interleavedValueText, 0, 1, TextAttributes.of(Map.of("attr1", "v1"))),
+                                new Run(interleavedValueText, 1, 1, TextAttributes.of(Map.of("attr1", "v1", "attr2", "v2"))),
+                                new Run(interleavedValueText, 2, 1, TextAttributes.of(Map.of("attr1", "v3", "attr2", "v2"))),
+                                new Run(interleavedValueText, 3, 1, TextAttributes.of(Map.of("attr2", "v2"))),
+                                new Run(interleavedValueText, 4, 1, TextAttributes.of(Map.of("attr1", "v1")))
+                        ),
+                        "<attr1:v1>a<attr2:v2>b</attr2></attr1><attr2:v2><attr1:v3>c</attr1></attr2><attr2:v2>d</attr2><attr1:v1>e</attr1>"
+                ),
+                // Interleaved where it closes attr1
+                arguments(
+                        multiValueConverter,
+                        new RichText(
+                                new Run(interleavedCloseText, 0, 1, TextAttributes.of(Map.of("attr1", "v1"))),
+                                new Run(interleavedCloseText, 1, 1, TextAttributes.of(Map.of("attr1", "v1", "attr2", "v2"))),
+                                new Run(interleavedCloseText, 2, 1, TextAttributes.of(Map.of("attr2", "v2")))
+                        ),
+                        "<attr1:v1>a<attr2:v2>b</attr2></attr1><attr2:v2>c</attr2>"
+                )
+        );
     }
 
     @Test
