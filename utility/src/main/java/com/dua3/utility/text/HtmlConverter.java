@@ -543,11 +543,14 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         }
 
         private void appendAttributeTags(List<AttributeChange> attributeChanges, HtmlTag.TagType type) {
-            for (AttributeChange av : attributeChanges) {
-                HtmlTag tag = getTagForAttributeChange(av);
-                if (type == HtmlTag.TagType.OPEN_TAG) {
+            if (type == HtmlTag.TagType.OPEN_TAG) {
+                for (AttributeChange av : attributeChanges) {
+                    HtmlTag tag = getTagForAttributeChange(av);
                     appendOpeningTag(tag);
-                } else {
+                }
+            } else {
+                for (int i = attributeChanges.size() - 1; i >= 0; i--) {
+                    HtmlTag tag = getTagForAttributeChange(attributeChanges.get(i));
                     appendClosingTag(tag);
                 }
             }

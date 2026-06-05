@@ -5,8 +5,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Base class for tag based converters.
@@ -166,9 +168,20 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 appendClosingTagsForStyles(closingStyles);
                 currentStyles = new ArrayList<>(currentStyles.subList(0, stylesToKeepOpen));
 
-                // ... close attribute related tags
-                appendClosingTagsForAttributes(attributesToClose);
-                openAttributes.removeAll(attributesToClose);
+                // ... close attributes (and temporarily close younger attributes to avoid interleaving)
+                Set<String> attributesToCloseNames = attributeNames(attributesToClose);
+                int attributesToKeepOpen = attributesToCloseNames.isEmpty()
+                        ? openAttributes.size()
+                        : firstOpenAttributeToClose(openAttributes, attributesToCloseNames);
+                List<AttributeChange> closingAttributes = new ArrayList<>(openAttributes.subList(attributesToKeepOpen, openAttributes.size()));
+                List<AttributeChange> reopeningAttributes = new ArrayList<>(closingAttributes);
+                reopeningAttributes.removeIf(a -> attributesToCloseNames.contains(a.attribute()));
+                appendClosingTagsForAttributes(closingAttributes);
+                openAttributes = new ArrayList<>(openAttributes.subList(0, attributesToKeepOpen));
+
+                // ... then reopen attributes that should remain active
+                appendOpeningTagsForAttributes(reopeningAttributes);
+                openAttributes.addAll(reopeningAttributes);
 
                 // ... open attribute related tags
                 appendOpeningTagsForAttributes(attributesToOpen);
@@ -197,5 +210,23 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
             return this;
         }
+
+        private static Set<String> attributeNames(List<AttributeChange> attributes) {
+            Set<String> names = new HashSet<>(attributes.size());
+            attributes.forEach(a -> names.add(a.attribute()));
+            return names;
+        }
+
+        private static int firstOpenAttributeToClose(List<AttributeChange> openAttributes, Set<String> attributesToClose) {
+            int idx = openAttributes.size();
+            for (int i = 0; i < openAttributes.size(); i++) {
+                if (attributesToClose.contains(openAttributes.get(i).attribute())) {
+                    idx = i;
+                    break;
+                }
+            }
+            return idx;
+        }
+
     }
 }
