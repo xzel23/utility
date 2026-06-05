@@ -370,7 +370,7 @@ class HtmlConverterTest {
                                 new Run(interleavedValueText, 3, 1, TextAttributes.of(Map.of("attr2", "v2"))),
                                 new Run(interleavedValueText, 4, 1, TextAttributes.of(Map.of("attr1", "v1")))
                         ),
-                        "<attr1:v1>a<attr2:v2>b</attr2></attr1><attr2:v2><attr1:v3>c</attr1></attr2><attr2:v2>d</attr2><attr1:v1>e</attr1>"
+                        "<attr1:v1>a<attr2:v2>b</attr2></attr1><attr2:v2><attr1:v3>c</attr1>d</attr2><attr1:v1>e</attr1>"
                 ),
                 // Interleaved where it closes attr1
                 arguments(
