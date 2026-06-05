@@ -10,11 +10,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -453,5 +457,71 @@ class HtmlConverterTest {
     void testConvertIgnoresSplitMarker() {
         RichText text = new RichTextBuilder().append("a").appendSplitMarker().append("b").toRichText();
         assertEquals("ab", HtmlConverter.create().convert(text));
+    }
+
+    private static HtmlTag getBlockTag(String value) {
+        return switch (value) {
+            case "h1" -> HtmlTag.tag("<h1>", "</h1>", HtmlTag.FormattingHint.LINE_BREAK_BEFORE_TAG);
+            case "h2" -> HtmlTag.tag("<h2>", "</h2>", HtmlTag.FormattingHint.LINE_BREAK_BEFORE_TAG);
+            case "h3" -> HtmlTag.tag("<h3>", "</h3>", HtmlTag.FormattingHint.LINE_BREAK_BEFORE_TAG);
+            case "paragraph" -> HtmlTag.tag("<div class=\"paragraph\">", "</div>", HtmlTag.FormattingHint.LINE_BREAK_BEFORE_TAG);
+            default -> HtmlTag.tag("<div>", "</div>", HtmlTag.FormattingHint.LINE_BREAK_BEFORE_AND_AFTER_TAG);
+        };
+    }
+
+    // Regression test case derived from bug where incorrect HTML was generated generated when converting a PDF document.
+    @Test
+    void testPdfDerived() {
+        // Mappings derived from StructuredDocument
+        HtmlConverter converter = HtmlConverter.create(
+                HtmlConverter.mapAttribute("block-stack", change -> {
+                    String[] newStack = (String[]) change.newValue();
+                    if (newStack == null) {
+                        return HtmlTag.emptyTag();
+                    }
+
+                    String open = Arrays.stream(newStack).map(v -> getBlockTag(v).open()).collect(Collectors.joining());
+                    List<String> closeList = Arrays.stream(newStack).map(v -> getBlockTag(v).close()).collect(Collectors.toCollection(ArrayList::new));
+                    Collections.reverse(closeList);
+                    String close = String.join("", closeList);
+
+                    return HtmlTag.tag(open, close);
+                }),
+                HtmlConverter.refineStyleProperties(HtmlConverter::inlineTextDecorations),
+                HtmlConverter.convertLineBreaksTo("")
+        );
+
+        Style regular19 = Style.create("regular19",
+                Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_NORMAL),
+                Map.entry(Style.FONT_SIZE, 19.0f));
+
+        RichTextBuilder rtb = new RichTextBuilder();
+
+        // h1
+        rtb.push("block-stack", new String[]{"h1"});
+        rtb.append("Header 1");
+        rtb.pop("block-stack");
+
+        // p1
+        rtb.push("block-stack", new String[]{"paragraph"});
+        rtb.push(regular19);
+        rtb.append("Paragraph 1");
+        rtb.pop(regular19);
+        rtb.pop("block-stack");
+        rtb.appendSplitMarker();
+
+        // h2
+        rtb.push("block-stack", new String[]{"h2"});
+        rtb.append("Header 2");
+        rtb.pop("block-stack");
+
+        RichText rt = rtb.toRichText();
+        String result = converter.convert(rt);
+
+        String expected = "<h1>Header 1</h1>" +
+                "<div class=\"paragraph\"><span style='font-size: 19.0pt; font-weight: normal;'>Paragraph 1</span></div>" +
+                "<h2>Header 2</h2>";
+
+        assertEquals(expected, result);
     }
 }
