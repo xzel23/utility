@@ -546,14 +546,67 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             if (type == HtmlTag.TagType.OPEN_TAG) {
                 for (AttributeChange av : attributeChanges) {
                     HtmlTag tag = getTagForAttributeChange(av);
+                    validateOpeningAttributeTagContract(av, tag);
                     appendOpeningTag(tag);
                 }
             } else {
                 for (int i = attributeChanges.size() - 1; i >= 0; i--) {
-                    HtmlTag tag = getTagForAttributeChange(attributeChanges.get(i));
+                    AttributeChange av = attributeChanges.get(i);
+                    HtmlTag tag = resolveClosingTag(av);
                     appendClosingTag(tag);
                 }
             }
+        }
+
+        private static void validateOpeningAttributeTagContract(AttributeChange change, HtmlTag tag) {
+            String open = tag.open();
+            String close = tag.close();
+            if (change.newValue() != null
+                    && open.isEmpty()
+                    && !close.isEmpty()) {
+                String message = "Incompatible attribute mapper for OPEN_TAG: close text provided without open text for change " + change;
+                assert false : message;
+                throw new IllegalStateException(message);
+            }
+        }
+
+        private HtmlTag resolveClosingTag(AttributeChange change) {
+            HtmlTag primaryTag = getTagForAttributeChange(change);
+            String transitionClosePayload = primaryTag.close();
+            String transitionOpenPayload = primaryTag.open();
+
+            // Mappers may derive close payload from the currently active value.
+            HtmlTag currentValueTag = HtmlTag.emptyTag();
+            if (change.oldValue() != null) {
+                currentValueTag = getTagForAttributeChange(new AttributeChange(change.attribute(), change.oldValue(), change.oldValue()));
+            }
+            String currentValueClosePayload = currentValueTag.close();
+
+            if (change.newValue() != null) {
+                if (!currentValueClosePayload.isEmpty()) {
+                    return currentValueTag;
+                }
+                if (!transitionClosePayload.isEmpty()) {
+                    return primaryTag;
+                }
+            } else {
+                if (!transitionClosePayload.isEmpty()) {
+                    return primaryTag;
+                }
+                if (!transitionOpenPayload.isEmpty()) {
+                    return HtmlTag.tag("", transitionOpenPayload, HtmlTag.FormattingHint.NO_LINE_BREAK);
+                }
+                if (!currentValueClosePayload.isEmpty()) {
+                    return currentValueTag;
+                }
+            }
+
+            if (!currentValueTag.open().isEmpty()) {
+                String message = "Incompatible attribute mapper for CLOSE_TAG: no close payload for change " + change;
+                assert false : message;
+                throw new IllegalStateException(message);
+            }
+            return primaryTag;
         }
 
         private static boolean isFontRelated(String key) {

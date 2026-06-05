@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -126,6 +128,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
          * @return the current instance of {@code TagBasedConverterImpl<T>} after appending the given rich text
          */
         protected TagBasedConverterImpl<T> append(RichText text) {
+            // open attributes in opening order; each entry stores the current attribute value in newValue
             List<AttributeChange> openAttributes = new ArrayList<>();
             TextAttributes currentAttributes = TextAttributes.none();
 
@@ -138,7 +141,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 for (String attribute : relevantAttributes) {
                     Object oldValue = currentAttributes.get(attribute);
                     Object newValue = run.attributes().get(attribute);
-                    if (!Objects.equals(oldValue, newValue)) {
+                    if (!Objects.deepEquals(oldValue, newValue)) {
                         if (oldValue != null) {
                             attributesToClose.add(new AttributeChange(attribute, oldValue, newValue));
                         }
@@ -170,22 +173,35 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
                 // ... close attributes (and temporarily close younger attributes to avoid interleaving)
                 Set<String> attributesToCloseNames = attributeNames(attributesToClose);
+                Map<String, AttributeChange> closeChangesByName = byAttributeName(attributesToClose);
                 int attributesToKeepOpen = attributesToCloseNames.isEmpty()
                         ? openAttributes.size()
                         : firstOpenAttributeToClose(openAttributes, attributesToCloseNames);
-                List<AttributeChange> closingAttributes = new ArrayList<>(openAttributes.subList(attributesToKeepOpen, openAttributes.size()));
-                List<AttributeChange> reopeningAttributes = new ArrayList<>(closingAttributes);
-                reopeningAttributes.removeIf(a -> attributesToCloseNames.contains(a.attribute()));
+                List<AttributeChange> openAttributesToTemporarilyClose = new ArrayList<>(openAttributes.subList(attributesToKeepOpen, openAttributes.size()));
+                List<AttributeChange> closingAttributes = new ArrayList<>(openAttributesToTemporarilyClose.size());
+                List<AttributeChange> reopeningAttributes = new ArrayList<>(openAttributesToTemporarilyClose.size());
+                for (AttributeChange openAttribute : openAttributesToTemporarilyClose) {
+                    String attributeName = openAttribute.attribute();
+                    AttributeChange closing = closeChangesByName.get(attributeName);
+                    if (closing != null) {
+                        // actual close because the attribute changed
+                        closingAttributes.add(closing);
+                    } else {
+                        // temporary close to keep proper nesting
+                        closingAttributes.add(new AttributeChange(attributeName, openAttribute.newValue(), null));
+                        reopeningAttributes.add(new AttributeChange(attributeName, null, openAttribute.newValue()));
+                    }
+                }
                 appendClosingTagsForAttributes(closingAttributes);
                 openAttributes = new ArrayList<>(openAttributes.subList(0, attributesToKeepOpen));
 
                 // ... then reopen attributes that should remain active
                 appendOpeningTagsForAttributes(reopeningAttributes);
-                openAttributes.addAll(reopeningAttributes);
+                openAttributes.addAll(toOpenStates(reopeningAttributes));
 
                 // ... open attribute related tags
                 appendOpeningTagsForAttributes(attributesToOpen);
-                openAttributes.addAll(attributesToOpen);
+                openAttributes.addAll(toOpenStates(attributesToOpen));
 
                 // ... then reopen the styles to keep
                 appendOpeningTagsForStyles(reopeningStyles);
@@ -206,7 +222,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
             }
             // close all remaining styles
             appendClosingTagsForStyles(openStyles);
-            appendClosingTagsForAttributes(openAttributes);
+            appendClosingTagsForAttributes(toClosingChanges(openAttributes));
 
             return this;
         }
@@ -226,6 +242,28 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 }
             }
             return idx;
+        }
+
+        private static Map<String, AttributeChange> byAttributeName(List<AttributeChange> attributes) {
+            Map<String, AttributeChange> map = new LinkedHashMap<>(attributes.size());
+            attributes.forEach(a -> map.put(a.attribute(), a));
+            return map;
+        }
+
+        private static List<AttributeChange> toOpenStates(List<AttributeChange> attributes) {
+            List<AttributeChange> states = new ArrayList<>(attributes.size());
+            for (AttributeChange a : attributes) {
+                states.add(new AttributeChange(a.attribute(), null, a.newValue()));
+            }
+            return states;
+        }
+
+        private static List<AttributeChange> toClosingChanges(List<AttributeChange> openStates) {
+            List<AttributeChange> closings = new ArrayList<>(openStates.size());
+            for (AttributeChange openState : openStates) {
+                closings.add(new AttributeChange(openState.attribute(), openState.newValue(), null));
+            }
+            return closings;
         }
 
     }
