@@ -27,7 +27,7 @@ public interface Loader<T> {
      *                     or an I/O error occurs during the loading process
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    static <T> T load(Class<?> cls, URI uri, Object[] options) throws IOException {
+    static <T> T load(Class<?> cls, URI uri, Object... options) throws IOException {
 
         Payload payload = Payload.fromUri(uri);
 

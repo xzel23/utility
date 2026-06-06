@@ -1,7 +1,10 @@
 package com.dua3.utility.io;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.IOException;
 
+@SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 public class LoaderTestFirstProvider implements Loader<String> {
     static int isSupportedCalls;
     static int loadCalls;

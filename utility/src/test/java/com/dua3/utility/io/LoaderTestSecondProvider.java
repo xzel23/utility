@@ -1,9 +1,12 @@
 package com.dua3.utility.io;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+@SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 public class LoaderTestSecondProvider implements Loader<String> {
 
     private static final byte[] MAGIC_BYTES = "LOADTEST".getBytes(StandardCharsets.US_ASCII);

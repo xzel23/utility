@@ -2,10 +2,10 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,jmhCompileClasspath,testCompileClasspath
-com.github.spotbugs:spotbugs-annotations:4.9.8=spotbugs
+com.github.spotbugs:spotbugs-annotations:4.9.8=spotbugs,testCompileClasspath,testRuntimeClasspath
 com.github.spotbugs:spotbugs:4.9.8=spotbugs
 com.github.stephenc.jcip:jcip-annotations:1.0-1=spotbugs
-com.google.code.findbugs:jsr305:3.0.2=spotbugs
+com.google.code.findbugs:jsr305:3.0.2=spotbugs,testCompileClasspath,testRuntimeClasspath
 com.google.code.gson:gson:2.13.2=spotbugs
 com.google.errorprone:error_prone_annotations:2.36.0=jmhRuntimeClasspath,testRuntimeClasspath
 com.google.errorprone:error_prone_annotations:2.38.0=compileClasspath,jmhCompileClasspath,testCompileClasspath
