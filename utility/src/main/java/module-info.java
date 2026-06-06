@@ -5,6 +5,7 @@
 
 import com.dua3.utility.data.ImageUtilProvider;
 import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.Loader;
 import com.dua3.utility.text.FontUtilProvider;
 import org.jspecify.annotations.NullMarked;
 
@@ -67,6 +68,7 @@ open module com.dua3.utility {
     requires jdk.xml.dom;
 
     uses FileType;
+    uses Loader;
     uses FontUtilProvider;
     uses ImageUtilProvider;
 }
