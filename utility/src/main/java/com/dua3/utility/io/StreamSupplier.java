@@ -8,6 +8,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -35,7 +38,9 @@ final class StreamSupplier<V> {
             def(Path.class, Files::newInputStream, Files::newOutputStream),
             def(File.class, v -> Files.newInputStream(v.toPath()), v -> Files.newOutputStream(v.toPath())),
             def(Reader.class, StreamSupplier::readerToInputStream, StreamSupplier::outputUnsupported),
-            def(Writer.class, StreamSupplier::inputUnsupported, StreamSupplier::writerToOutputStream)
+            def(Writer.class, StreamSupplier::inputUnsupported, StreamSupplier::writerToOutputStream),
+            def(ReadableByteChannel.class, Channels::newInputStream, StreamSupplier::outputUnsupported),
+            def(WritableByteChannel.class, StreamSupplier::inputUnsupported, Channels::newOutputStream)
     );
     private final Class<V> clazz;
     private final InputStreamSupplier<V> iss;
