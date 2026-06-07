@@ -1,5 +1,6 @@
 package com.dua3.utility.text;
 
+import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -128,10 +129,23 @@ public class RichTextMatcher implements MatchResult {
         int off;
         int i;
         for (off = 0, i = 0; i++ < maxOccurrences && found; off = end(), found = find()) {
+            rtb.append(text.subSequence(off, start()));
+
+            // push styles that are active at the start of the match
+            List<Style> activeStyles = text.stylesAt(start());
+            for (Style s : activeStyles) {
+                rtb.push(s);
+            }
+
             if (replacement instanceof ToRichText trt) {
-                rtb.append(text.subSequence(off, start())).append(trt.toRichText());
+                rtb.append(trt.toRichText());
             } else {
-                rtb.append(text.subSequence(off, start())).append(replacement);
+                rtb.append(replacement);
+            }
+
+            // pop styles again
+            for (Style activeStyle : activeStyles) {
+                rtb.pop(activeStyle);
             }
         }
 
