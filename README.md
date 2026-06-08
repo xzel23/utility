@@ -236,6 +236,15 @@ could not be loaded.
 
 ## Changes
 
+### 22.6.0
+
+- utility.io: Added Loader and Payload classes
+- utility.io: StreamSupplier: support ByteChannel
+- RichTextMatcher restores styles after replacement
+- HtmlConverter fixes
+- isolate texts that are locale dependent
+- small bugfixes and improvements
+
 ### 22.5.0
 
 - feat: enhance clipboard utilities to support rich text conversion with customizable HTML conversion options
