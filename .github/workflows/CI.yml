@@ -189,7 +189,7 @@ jobs:
             toolchains
 
       - name: Run tests
-        run: gradle --no-daemon --build-cache test
+        run: gradle --no-daemon --build-cache test -x jacocoTestReport
 
   sonar:
     needs: test-linux
