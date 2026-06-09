@@ -114,7 +114,7 @@ public class AboutDialogBuilder {
         licenseNote("dua3.utility.fx.controls.about.dialog.license.note.short", licenseData.validUntil());
         licenseData.licenseText().ifPresent(licenseText ->
                 onShowLicenseDetails(() ->
-                        Dialogs.alert(parentStage, Alert.AlertType.INFORMATION, messageFormatter)
+                        Dialogs.alert(null, Alert.AlertType.INFORMATION, messageFormatter)
                                 .title(I18N.literal(i18n().format("dua3.utility.fx.controls.about.dialog.license.details.title")))
                                 .header(I18N.literal(i18n().format("dua3.utility.fx.controls.about.dialog.license.details.header", licenseData.validUntil())))
                                 .text(I18N.literal(licenseText.get().toString()))
