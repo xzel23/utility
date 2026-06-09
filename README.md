@@ -236,6 +236,10 @@ could not be loaded.
 
 ## Changes
 
+### 22.6.1
+
+- fix AboutDialogBuilder calling formatter twice
+
 ### 22.6.0
 
 - utility.io: Added Loader and Payload classes

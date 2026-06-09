@@ -108,12 +108,12 @@ public class AboutDialogBuilder {
      * @return the current instance of AboutDialogBuilder for method chaining
      */
     public AboutDialogBuilder license(LicenseData licenseData) {
-        licenseNote(I18NInstance.get().format("dua3.utility.fx.controls.about.dialog.license.note", licenseData.licenseId(), licenseData.licensee(), licenseData.validUntil()));
+        licenseNote("dua3.utility.fx.controls.about.dialog.license.note", licenseData.licenseId(), licenseData.licensee(), licenseData.validUntil());
         licenseData.licenseText().ifPresent(licenseText ->
                 onShowLicenseDetails(() ->
                         Dialogs.alert(parentStage, Alert.AlertType.INFORMATION)
-                                .title(I18NInstance.get().get("dua3.utility.fx.controls.about.dialog.license.details.title"))
-                                .header(I18NInstance.get().format("dua3.utility.fx.controls.about.dialog.license.details.header", licenseData.validUntil()))
+                                .title("dua3.utility.fx.controls.about.dialog.license.details.title")
+                                .header("dua3.utility.fx.controls.about.dialog.license.details.header", licenseData.validUntil())
                                 .text(licenseText.toString())
                                 .build()
                                 .show()
