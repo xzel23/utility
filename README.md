@@ -236,9 +236,14 @@ could not be loaded.
 
 ## Changes
 
-### 22.6.1
+### 22.7.0
 
+- RichText.valueOf() accepts null values, the returned text will match that of String.valueOf(null)
+- RichText.valueOf() will not strip style information when passed instances of RichText and ToRichText anymore
+- reduce unnecessary object allocations in RichText.valueOf()
 - fix AboutDialogBuilder calling formatter twice
+- Updated `AboutDialogBuilder` to make license details alert resizable and add selectable text.
+- several fixes to AboutDialogBuilder
 
 ### 22.6.0
 

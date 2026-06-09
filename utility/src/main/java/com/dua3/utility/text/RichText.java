@@ -53,10 +53,11 @@ public final class RichText
 
     static final String ATTRIBUTE_NAME_STYLE_LIST = "__styles";
 
-    private static final RichText EMPTY_TEXT = valueOf("");
-    private static final RichText SPACE = valueOf(" ");
-    private static final RichText TAB = valueOf("\t");
-    private static final RichText NEWLINE = valueOf("\n");
+    private static final RichText EMPTY_TEXT = valueOfInternal("");
+    private static final RichText SPACE = valueOfInternal(" ");
+    private static final RichText TAB = valueOfInternal("\t");
+    private static final RichText NEWLINE = valueOfInternal("\n");
+    private static final RichText NULL_TEXT = valueOfInternal(String.valueOf((Object) null));
     /**
      * The underlying CharSequence.
      */
@@ -132,8 +133,13 @@ public final class RichText
      * @param obj the object to convert to RichText
      * @return RichText.valueOf(String.valueOf ( obj))
      */
-    public static RichText valueOf(Object obj) {
-        return valueOf(String.valueOf(obj));
+    public static RichText valueOf(@Nullable Object obj) {
+        return switch (obj) {
+            case ToRichText trt -> trt.toRichText();
+            case CharSequence cs -> cs.isEmpty() ? EMPTY_TEXT : valueOf(cs.toString());
+            case null -> NULL_TEXT;
+            default -> valueOf(String.valueOf(obj));
+        };
     }
 
     /**
@@ -142,7 +148,18 @@ public final class RichText
      * @param s the String to convert
      * @return RichText representation of s
      */
-    public static RichText valueOf(String s) {
+    public static RichText valueOf(@Nullable String s) {
+        return switch (s) {
+            case "" -> EMPTY_TEXT;
+            case " " -> SPACE;
+            case "\t" -> TAB;
+            case "\n" -> NEWLINE;
+            case null -> NULL_TEXT;
+            default -> new RichText(new Run(s, 0, s.length(), TextAttributes.none()));
+        };
+    }
+
+    private static RichText valueOfInternal(@Nullable String s) {
         return new RichText(new Run(s, 0, s.length(), TextAttributes.none()));
     }
 
@@ -163,8 +180,8 @@ public final class RichText
      * @param styles the styles to apply
      * @return RichText.valueOf(String.valueOf ( obj))
      */
-    public static RichText valueOf(Object obj, Style... styles) {
-        return valueOf(String.valueOf(obj), Arrays.asList(styles));
+    public static RichText valueOf(@Nullable Object obj, Style... styles) {
+        return valueOf(obj, Arrays.asList(styles));
     }
 
     /**
@@ -174,11 +191,14 @@ public final class RichText
      * @param styles the styles to apply
      * @return RichText representation of s
      */
-    public static RichText valueOf(Object obj, Collection<Style> styles) {
-        String s = String.valueOf(obj);
-        RichTextBuilder rtb = new RichTextBuilder((s.length()));
+    public static RichText valueOf(@Nullable Object obj, Collection<Style> styles) {
+        RichTextBuilder rtb = new RichTextBuilder();
         styles.forEach(rtb::push);
-        rtb.append(s);
+        switch (obj) {
+            case CharSequence cs -> rtb.append(cs);
+            case null -> rtb.append(NULL_TEXT);
+            default -> rtb.append(String.valueOf(obj));
+        }
         styles.forEach(rtb::pop);
         return rtb.toRichText();
     }
