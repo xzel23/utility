@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.application.LicenseData;
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.collections.ObservableList;
@@ -61,6 +62,7 @@ public class AboutDialogBuilder {
     private String mailText = "";
     private @Nullable URI mailTo = null;
     private String licenseNote = "";
+    private String licenseNoteShort = "";
     private @Nullable Runnable showLicenseDetails;
 
     private @Nullable URL css;
@@ -109,17 +111,22 @@ public class AboutDialogBuilder {
      */
     public AboutDialogBuilder license(LicenseData licenseData) {
         licenseNote("dua3.utility.fx.controls.about.dialog.license.note", licenseData.licenseId(), licenseData.licensee(), licenseData.validUntil());
+        licenseNote("dua3.utility.fx.controls.about.dialog.license.note.short", licenseData.validUntil());
         licenseData.licenseText().ifPresent(licenseText ->
                 onShowLicenseDetails(() ->
-                        Dialogs.alert(parentStage, Alert.AlertType.INFORMATION)
-                                .title("dua3.utility.fx.controls.about.dialog.license.details.title")
-                                .header("dua3.utility.fx.controls.about.dialog.license.details.header", licenseData.validUntil())
-                                .text(licenseText.toString())
+                        Dialogs.alert(parentStage, Alert.AlertType.INFORMATION, messageFormatter)
+                                .title(I18N.literal(i18n().format("dua3.utility.fx.controls.about.dialog.license.details.title")))
+                                .header(I18N.literal(i18n().format("dua3.utility.fx.controls.about.dialog.license.details.header", licenseData.validUntil())))
+                                .text(I18N.literal(licenseText.get().toString()))
                                 .build()
                                 .show()
                 )
         );
         return this;
+    }
+
+    private static I18N i18n() {
+        return I18NInstance.get();
     }
 
     /**
@@ -131,6 +138,18 @@ public class AboutDialogBuilder {
      */
     public AboutDialogBuilder licenseNote(String fmt, Object... args) {
         this.licenseNote = format(fmt, args);
+        return this;
+    }
+
+    /**
+     * Configures the shortened license note for the AboutDialog.
+     *
+     * @param fmt the format string for the shortened license note
+     * @param args the arguments referenced by the format specifiers in the format string
+     * @return the current instance of {@code AboutDialogBuilder} for method chaining
+     */
+    public AboutDialogBuilder licenseNoteShort(String fmt, Object... args) {
+        this.licenseNoteShort = format(fmt, args);
         return this;
     }
 
@@ -395,15 +414,15 @@ public class AboutDialogBuilder {
             children.add(hlMail);
         }
 
-        if (!licenseNote.isEmpty()) {
+        if (!licenseNote.isEmpty() || !licenseNoteShort.isEmpty()) {
+            String shortNote = licenseNoteShort.isEmpty() ? licenseNote : licenseNoteShort;
             if (showLicenseDetails != null) {
-                Hyperlink hlLicense = new Hyperlink(licenseNote);
-                hlLicense.setText(mailText.isBlank() ? I18NInstance.get().get("dua3.utility.fx.controls.about.dialog.email") : mailText);
+                Hyperlink hlLicense = new Hyperlink(shortNote);
                 hlLicense.setId("license");
                 hlLicense.setOnAction(e -> showLicenseDetails.run());
                 children.add(hlLicense);
             } else {
-                addLabel(children, "license", licenseNote);
+                addLabel(children, "license", shortNote);
             }
         }
 
@@ -426,9 +445,9 @@ public class AboutDialogBuilder {
         if (!title.isBlank()) {
             dlg.setTitle(title);
         } else if (!applicationName.isBlank()) {
-            dlg.setTitle(I18NInstance.get().format("dua3.utility.fx.controls.about.dialog.title.with.name", applicationName));
+            dlg.setTitle(i18n().format("dua3.utility.fx.controls.about.dialog.title.with.name", applicationName));
         } else {
-            dlg.setTitle(I18NInstance.get().get("dua3.utility.fx.controls.about.dialog.title"));
+            dlg.setTitle(i18n().get("dua3.utility.fx.controls.about.dialog.title"));
         }
         dialogPane.getButtonTypes().addAll(ButtonType.OK);
 

@@ -339,7 +339,7 @@ public interface MessageFormatter {
             }
             // non-I18N text
             if (fmt.startsWith("\0")) {
-                return MessageFormat.format(fmt.substring(1), args);
+                return fmt.substring(1) + Stream.of(args).map(String::valueOf).collect(Collectors.joining(" ", " ", ""));
             }
             // I18N text (no I18N used by this formatter)
             return baseFormat.apply(fmt, args);
