@@ -16,6 +16,7 @@ import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.RichTextBuilderExtBase;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -53,23 +54,11 @@ import java.util.function.Supplier;
  * so line breaking and wrapping match the Utility text layout implementation.
  *
  * <p>Inline controls can be embedded by assigning styles containing one of
- * {@link #STYLE_ATTRIBUTE_INLINE_NODE}, {@link #STYLE_ATTRIBUTE_INLINE_NODE_FACTORY}, or
- * {@link #STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER} to a run.
+ * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE},
+ * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE_FACTORY}, or
+ * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER} to a run.
  */
 public class TextPane extends Control {
-
-    /**
-     * Style attribute key for a fixed inline node.
-     */
-    public static final String STYLE_ATTRIBUTE_INLINE_NODE = TextPane.class.getName() + ".inlineNode";
-    /**
-     * Style attribute key for a function creating an inline node from run text.
-     */
-    public static final String STYLE_ATTRIBUTE_INLINE_NODE_FACTORY = TextPane.class.getName() + ".inlineNodeFactory";
-    /**
-     * Style attribute key for a supplier creating an inline node.
-     */
-    public static final String STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER = TextPane.class.getName() + ".inlineNodeSupplier";
 
     private static final String DEFAULT_STYLE_CLASS = "text-pane";
     private static final Style STYLE_INVISIBLE_TEXT = Style.create(
@@ -106,7 +95,7 @@ public class TextPane extends Control {
      * @return style carrying the inline node factory
      */
     public static Style inlineNodeStyle(String styleName, Function<String, ? extends Node> nodeFactory) {
-        return Style.create(styleName, Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory));
+        return Style.create(styleName, Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory));
     }
 
     /**
@@ -388,9 +377,9 @@ public class TextPane extends Control {
 
     private static boolean hasInlineNode(Run run) {
         for (Style style : run.getStyles()) {
-            if (style.get(STYLE_ATTRIBUTE_INLINE_NODE) != null
-                    || style.get(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY) != null
-                    || style.get(STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER) != null) {
+            if (style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE) != null
+                    || style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY) != null
+                    || style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER) != null) {
                 return true;
             }
         }
@@ -405,19 +394,19 @@ public class TextPane extends Control {
         for (int i = run.getStyles().size() - 1; i >= 0; i--) {
             Style style = run.getStyles().get(i);
 
-            Object node = style.get(STYLE_ATTRIBUTE_INLINE_NODE);
+            Object node = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
             if (node instanceof Node n) {
                 return n;
             }
 
-            Object factory = style.get(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY);
+            Object factory = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY);
             if (factory instanceof Function<?, ?> f) {
                 @SuppressWarnings("unchecked")
                 Function<String, ? extends Node> fn = (Function<String, ? extends Node>) f;
                 return fn.apply(text);
             }
 
-            Object supplier = style.get(STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER);
+            Object supplier = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER);
             if (supplier instanceof Supplier<?> s) {
                 Object supplied = s.get();
                 if (supplied instanceof Node n) {

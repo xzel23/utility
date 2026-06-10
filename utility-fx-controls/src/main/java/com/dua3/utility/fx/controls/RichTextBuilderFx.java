@@ -28,11 +28,6 @@ public class RichTextBuilderFx extends RichTextBuilderExtBase<Node, RichTextBuil
     }
 
     @Override
-    protected String getInlineNodeSupplierStyleAttributeName() {
-        return TextPane.STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER;
-    }
-
-    @Override
     protected Node createHyperlink(CharSequence text, Runnable action) {
         Hyperlink hyperlink = new Hyperlink(String.valueOf(text));
         hyperlink.setPadding(Insets.EMPTY);

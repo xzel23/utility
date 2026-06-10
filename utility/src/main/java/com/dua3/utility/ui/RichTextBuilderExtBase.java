@@ -18,6 +18,18 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
 
     private static final char INLINE_NODE_MARKER = '\uFFFC';
     private static final AtomicLong STYLE_ID = new AtomicLong();
+    /**
+     * Style attribute key for a fixed inline node.
+     */
+    public static final String STYLE_ATTRIBUTE_INLINE_NODE = RichTextBuilderExtBase.class.getName() + ".inlineNode";
+    /**
+     * Style attribute key for a function creating an inline node from run text.
+     */
+    public static final String STYLE_ATTRIBUTE_INLINE_NODE_FACTORY = RichTextBuilderExtBase.class.getName() + ".inlineNodeFactory";
+    /**
+     * Style attribute key for a supplier creating an inline node.
+     */
+    public static final String STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER = RichTextBuilderExtBase.class.getName() + ".inlineNodeSupplier";
 
     /**
      * Protected constructor for the {@code RichTextBuilderExtBase} class.
@@ -39,8 +51,6 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
     protected final B self() {
         return (B) this;
     }
-
-    protected abstract String getInlineNodeSupplierStyleAttributeName();
 
     protected abstract N createHyperlink(CharSequence text, Runnable action);
 
@@ -87,7 +97,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
     protected B appendInlineNodeWithStyle(Supplier<? extends N> nodeSupplier) {
         Style style = Style.create(
                 nextStyleName("inline-node"),
-                Map.entry(getInlineNodeSupplierStyleAttributeName(), Objects.requireNonNull(nodeSupplier, "nodeSupplier"))
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER, Objects.requireNonNull(nodeSupplier, "nodeSupplier"))
         );
         push(style);
         append(INLINE_NODE_MARKER);
