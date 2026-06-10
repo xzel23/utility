@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -365,6 +366,57 @@ class RichTextBuilderTest {
         RichText rt = target.toRichText();
         assertEquals("Normal Bold", rt.toString());
         assertEquals(2, rt.stream().count()); // Should have two runs with different attributes
+    }
+
+    @Test
+    void testAppendToWithRange() {
+        RichTextBuilder source = new RichTextBuilder();
+        source.append("ab");
+        source.push(Style.BOLD);
+        source.append("CD");
+        source.pop(Style.BOLD);
+        source.push(Style.ITALIC);
+        source.append("ef");
+        source.pop(Style.ITALIC);
+
+        RichTextBuilder target = new RichTextBuilder();
+        target.append(">");
+        source.appendTo(target, 1, 5);
+
+        RichText rt = target.toRichText();
+        assertEquals(">bCDe", rt.toString());
+        assertTrue(rt.stylesAt(1).isEmpty());
+        assertTrue(rt.stylesAt(2).contains(Style.BOLD));
+        assertTrue(rt.stylesAt(3).contains(Style.BOLD));
+        assertTrue(rt.stylesAt(4).contains(Style.ITALIC));
+    }
+
+    @Test
+    void testAppendToWithRangeFullAndEmpty() {
+        RichTextBuilder source = new RichTextBuilder();
+        source.append("text");
+
+        RichTextBuilder fullRangeTarget = new RichTextBuilder();
+        fullRangeTarget.append("#");
+        source.appendTo(fullRangeTarget, 0, source.length());
+        assertEquals("#text", fullRangeTarget.toRichText().toString());
+
+        RichTextBuilder emptyRangeTarget = new RichTextBuilder();
+        emptyRangeTarget.append("#");
+        source.appendTo(emptyRangeTarget, 2, 2);
+        assertEquals("#", emptyRangeTarget.toRichText().toString());
+    }
+
+    @Test
+    void testAppendToWithRangeErrors() {
+        RichTextBuilder source = new RichTextBuilder();
+        source.append("abc");
+
+        assertThrows(IndexOutOfBoundsException.class, () -> source.appendTo(new RichTextBuilder(), -1, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> source.appendTo(new RichTextBuilder(), 2, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> source.appendTo(new RichTextBuilder(), 0, 4));
+        Throwable throwable = assertThrows(Throwable.class, () -> source.appendTo(null, 0, 1));
+        assertTrue(throwable instanceof NullPointerException || throwable instanceof AssertionError);
     }
 
     @Test

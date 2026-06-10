@@ -1027,4 +1027,54 @@ class RichTextTest {
                 .allMatch(run -> run.getStyles().contains(Style.BOLD));
         assertFalse(allBold);
     }
+
+    @Test
+    void testAppendToWithRange() {
+        RichTextBuilder sourceBuilder = new RichTextBuilder();
+        sourceBuilder.append("ab");
+        sourceBuilder.push(Style.BOLD);
+        sourceBuilder.append("CD");
+        sourceBuilder.pop(Style.BOLD);
+        sourceBuilder.push(Style.ITALIC);
+        sourceBuilder.append("ef");
+        sourceBuilder.pop(Style.ITALIC);
+        RichText source = sourceBuilder.toRichText();
+
+        RichTextBuilder target = new RichTextBuilder();
+        target.append(">");
+        source.appendTo(target, 1, 5);
+
+        RichText rt = target.toRichText();
+        assertEquals(">bCDe", rt.toString());
+        assertTrue(rt.stylesAt(1).isEmpty());
+        assertTrue(rt.stylesAt(2).contains(Style.BOLD));
+        assertTrue(rt.stylesAt(3).contains(Style.BOLD));
+        assertTrue(rt.stylesAt(4).contains(Style.ITALIC));
+    }
+
+    @Test
+    void testAppendToWithRangeFullAndEmpty() {
+        RichText source = RichText.valueOf("text");
+
+        RichTextBuilder fullRangeTarget = new RichTextBuilder();
+        fullRangeTarget.append("#");
+        source.appendTo(fullRangeTarget, 0, source.length());
+        assertEquals("#text", fullRangeTarget.toRichText().toString());
+
+        RichTextBuilder emptyRangeTarget = new RichTextBuilder();
+        emptyRangeTarget.append("#");
+        source.appendTo(emptyRangeTarget, 2, 2);
+        assertEquals("#", emptyRangeTarget.toRichText().toString());
+    }
+
+    @Test
+    void testAppendToWithRangeErrors() {
+        RichText source = RichText.valueOf("abc");
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> source.appendTo(new RichTextBuilder(), -1, 1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> source.appendTo(new RichTextBuilder(), 2, 1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> source.appendTo(new RichTextBuilder(), 0, 4));
+        Throwable throwable = Assertions.assertThrows(Throwable.class, () -> source.appendTo(null, 0, 1));
+        assertTrue(throwable instanceof NullPointerException || throwable instanceof AssertionError);
+    }
 }

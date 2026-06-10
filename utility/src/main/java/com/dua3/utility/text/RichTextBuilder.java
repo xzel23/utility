@@ -17,6 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 /**
@@ -30,6 +31,8 @@ import java.util.function.BiFunction;
  * pairs of methods.
  */
 public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
+
+    private static final String NULL_STRING = String.valueOf((Object) null);
 
     private record PositionAttributes(int pos, CompactableSortedMap<String, Object> attributes) {}
 
@@ -85,12 +88,36 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         return self();
     }
 
+    /**
+     * Appends the specified {@code CharSequence} to the current text being constructed
+     * and merges its style with the current style, if applicable.
+     *
+     * @param csq the {@code CharSequence} to append. If {@code csq} is null, it gets replaced
+     *            by a predefined {@code String.valueOf(null)}. If {@code csq} implements {@code ToRichText},
+     *            its rich text representation is wrapped with the current style attributes.
+     * @return this {@code RichTextBuilder} instance for method chaining
+     */
+    public RichTextBuilder appendAndMergeStyle(@Nullable CharSequence csq) {
+        assert !parts.isEmpty();
+        if (csq instanceof ToRichText trt) {
+            CompactableSortedMap<String, Object> attributes = parts.getLast().attributes();
+            trt.toRichText().wrap(Style.create("ephemeral-" + Objects.toIdentityString(csq), attributes));
+        } else {
+            if (csq == null) {
+                csq = NULL_STRING;
+            }
+            buffer.append(csq);
+            parts.set(parts.size() - 1, new PositionAttributes(parts.getLast().pos() + csq.length(), parts.getLast().attributes()));
+        }
+        return self();
+    }
+
     @Override
     public RichTextBuilder append(@Nullable CharSequence csq, int start, int end) {
-        if (csq instanceof ToRichText trt) {
-            trt.toRichText().subSequence(start, end).appendTo(this);
-        } else {
-            buffer.append(csq, start, end);
+        switch (csq) {
+            case RichText rt -> rt.appendTo(this, start, end);
+            case ToRichText trt -> trt.toRichText().subSequence(start, end).appendTo(this);
+            case null, default -> buffer.append(csq, start, end);
         }
         return self();
     }
@@ -207,6 +234,12 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         for (Run run : getRuns()) {
             builder.appendRun(run);
         }
+    }
+
+    @Override
+    public void appendTo(RichTextBuilder builder, int from, int to) {
+        Objects.checkFromToIndex(from, to, length());
+        builder.append(toRichText().subSequence(from, to));
     }
 
     /**

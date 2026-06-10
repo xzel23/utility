@@ -23,4 +23,15 @@ public interface ToRichText {
      * @param builder the builder
      */
     void appendTo(RichTextBuilder builder);
+
+    /**
+     * Appends a portion of this object's rich text representation to the specified
+     * {@code RichTextBuilder}. The range is defined by the {@code from} and
+     * {@code to} indices.
+     *
+     * @param builder the RichTextBuilder to append the rich text to
+     * @param from the starting index (inclusive) of the portion to be appended
+     * @param to the ending index (exclusive) of the portion to be appended
+     */
+    void appendTo(RichTextBuilder builder, int from, int to);
 }

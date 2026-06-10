@@ -290,6 +290,26 @@ public final class RichText
     }
 
     /**
+     * Joins the given sequence of elements into a single {@code RichText} object, merging their styles,
+     * with the specified delimiter placed between each element.
+     *
+     * @param delimiter the sequence of characters to use as a delimiter between the elements
+     * @param elements the sequence of {@code CharSequence} objects to be joined
+     * @return a {@code RichText} object containing the joined elements with merged styles
+     */
+    public static RichText joinMergingStyles(CharSequence delimiter, Iterable<? extends CharSequence> elements) {
+        RichTextBuilder rtb = new RichTextBuilder();
+
+        CharSequence d = "";
+        for (CharSequence element : elements) {
+            rtb.appendAndMergeStyle(d).appendAndMergeStyle(element);
+            d = delimiter;
+        }
+
+        return rtb.toRichText();
+    }
+
+    /**
      * Create a {@link RichTextMatcher}.
      *
      * @param pattern the pattern
@@ -538,6 +558,33 @@ public final class RichText
     public void appendTo(RichTextBuilder builder) {
         builder.ensureCapacity(builder.length() + length());
         forEach(builder::appendRun);
+    }
+
+    /**
+     * Appends a subset of rich text content to the specified {@code RichTextBuilder}.
+     * The content to be appended is determined by the specified start and end indices.
+     *
+     * @param builder the {@code RichTextBuilder} to which the content will be appended
+     * @param from the start index (inclusive) of the content to be appended
+     * @param to the end index (exclusive) of the content to be appended
+     * @throws IndexOutOfBoundsException if the specified start or end indices are out of bounds
+     *                                   or if start is greater than end
+     * @throws NullPointerException if {@code builder} is {@code null}
+     */
+    public void appendTo(RichTextBuilder builder, int from, int to) {
+        Objects.checkFromToIndex(from, to, length());
+        builder.ensureCapacity(builder.length() + to - from);
+        forEach(r -> {
+            if (r.getEnd() <= from || r.getStart() >= to) {
+                return;
+            } else if (r.getStart() >= from && r.getEnd() <= to) {
+                builder.appendRun(r);
+            } else {
+                int start = Math.max(from, r.getStart()) - r.getStart();
+                int end = Math.min(to, r.getEnd()) - r.getStart();
+                builder.appendRun(r.subSequence(start, end));
+            }
+        });
     }
 
     @Override
