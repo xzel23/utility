@@ -1,24 +1,15 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.RichTextBuilderExtBase;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Supplier;
-
 /**
  * JavaFX rich-text builder with support for inline JavaFX nodes.
  */
 public class RichTextBuilderFx extends RichTextBuilderExtBase<Node, RichTextBuilderFx> {
-
-    private static final char INLINE_NODE_MARKER = '\uFFFC';
-    private static final AtomicLong STYLE_ID = new AtomicLong();
 
     /**
      * Constructs a new instance of RichTextBuilderFx with default settings.
@@ -37,46 +28,23 @@ public class RichTextBuilderFx extends RichTextBuilderExtBase<Node, RichTextBuil
     }
 
     @Override
-    public RichTextBuilderFx appendInlineNode(Supplier<? extends Node> node) {
-        return appendInlineNodeWithStyle(Objects.requireNonNull(node, "node"));
+    protected String getInlineNodeSupplierStyleAttributeName() {
+        return TextPane.STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER;
     }
 
     @Override
-    public RichTextBuilderFx appendHyperlink(CharSequence text, Runnable action) {
-        String linkText = String.valueOf(text);
-        Objects.requireNonNull(action, "action");
-        return appendInlineNodeWithStyle(() -> {
-            Hyperlink hyperlink = new Hyperlink(linkText);
-            hyperlink.setPadding(Insets.EMPTY);
-            hyperlink.setOnAction(evt -> action.run());
-            return hyperlink;
-        });
+    protected Node createHyperlink(CharSequence text, Runnable action) {
+        Hyperlink hyperlink = new Hyperlink(String.valueOf(text));
+        hyperlink.setPadding(Insets.EMPTY);
+        hyperlink.setOnAction(evt -> action.run());
+        return hyperlink;
     }
 
     @Override
-    public RichTextBuilderFx appendButton(CharSequence text, Runnable action) {
-        String buttonText = String.valueOf(text);
-        Objects.requireNonNull(action, "action");
-        return appendInlineNodeWithStyle(() -> {
-            Button button = new Button(buttonText);
-            button.setPadding(new Insets(0, 4, 0, 4));
-            button.setOnAction(evt -> action.run());
-            return button;
-        });
-    }
-
-    private RichTextBuilderFx appendInlineNodeWithStyle(Supplier<? extends Node> nodeSupplier) {
-        Style style = Style.create(
-                nextStyleName("inline-node"),
-                Map.entry(TextPane.STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER, nodeSupplier)
-        );
-        push(style);
-        append(INLINE_NODE_MARKER);
-        pop(style);
-        return this;
-    }
-
-    private static String nextStyleName(String prefix) {
-        return "rich-text-builder-fx-" + prefix + "-" + STYLE_ID.incrementAndGet();
+    protected Node createButton(CharSequence text, Runnable action) {
+        Button button = new Button(String.valueOf(text));
+        button.setPadding(new Insets(0, 4, 0, 4));
+        button.setOnAction(evt -> action.run());
+        return button;
     }
 }
