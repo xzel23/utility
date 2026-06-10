@@ -259,11 +259,11 @@ public class TextPane extends Control {
     }
 
     private Font getUtilityFont() {
-        return FxFontUtil.getInstance().convert(getFont() == null ? javafx.scene.text.Font.getDefault() : getFont());
+        return FxFontUtil.getInstance().convert(getFont());
     }
 
     private Layout createLayout(double availableWidth) {
-        RichText richText = Objects.requireNonNullElse(getText(), RichText.emptyText());
+        RichText richText = getText();
         Font font = getUtilityFont();
         com.dua3.utility.text.FontUtil fontUtil = com.dua3.utility.text.FontUtil.getInstance();
         RichText layoutText = createLayoutText(richText, font, fontUtil);
@@ -369,31 +369,18 @@ public class TextPane extends Control {
                         if (extraSpaces > 0) {
                             builder.append(NO_BREAK_SPACE.repeat(extraSpaces));
                         }
-                        List<Style> styles = run.getStyles();
-                        styles.forEach(builder::push);
-                        if (lineHeightStyle != null) {
-                            builder.push(lineHeightStyle);
-                        }
-                        builder.append(text);
-                        if (lineHeightStyle != null) {
-                            builder.pop(lineHeightStyle);
-                        }
-                        for (int i = styles.size() - 1; i >= 0; i--) {
-                            builder.pop(styles.get(i));
-                        }
-                    } else {
-                        List<Style> styles = run.getStyles();
-                        styles.forEach(builder::push);
-                        if (lineHeightStyle != null) {
-                            builder.push(lineHeightStyle);
-                        }
-                        builder.append(text);
-                        if (lineHeightStyle != null) {
-                            builder.pop(lineHeightStyle);
-                        }
-                        for (int i = styles.size() - 1; i >= 0; i--) {
-                            builder.pop(styles.get(i));
-                        }
+                    }
+                    List<Style> styles = run.getStyles();
+                    styles.forEach(builder::push);
+                    if (lineHeightStyle != null) {
+                        builder.push(lineHeightStyle);
+                    }
+                    builder.append(text);
+                    if (lineHeightStyle != null) {
+                        builder.pop(lineHeightStyle);
+                    }
+                    for (int i = styles.size() - 1; i >= 0; i--) {
+                        builder.pop(styles.get(i));
                     }
                 } else {
                     List<Style> styles = run.getStyles();
@@ -823,8 +810,7 @@ public class TextPane extends Control {
                 node.resizeRelocate(x, y, prefW, prefH);
             }
 
-            FxGraphics graphics = new FxGraphics(canvas);
-            try {
+            try (Graphics graphics = new FxGraphics(canvas)) {
                 graphics.reset();
                 graphics.setFont(control.getUtilityFont());
                 for (List<FragmentedText.Fragment> line : layout.renderLines()) {
@@ -833,8 +819,6 @@ public class TextPane extends Control {
                         graphics.drawText(fragment.text().toString(), fragment.x(), fragment.y(), HAnchor.LEFT, VAnchor.TOP);
                     }
                 }
-            } finally {
-                graphics.close();
             }
         }
     }
