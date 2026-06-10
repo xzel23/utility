@@ -736,11 +736,40 @@ public class TextPane extends Control {
             scrollPane.setFitToHeight(false);
 
             if (control instanceof TextEditorPane editor) {
+                Button copyButton = Controls.button()
+                        .tooltip("Copy")
+                        .graphic(Controls.graphic(Feather.COPY.getDescription()))
+                        .action(e -> {
+                            editor.copy();
+                            editor.requestFocus();
+                        })
+                        .build();
+                Button cutButton = Controls.button()
+                        .tooltip("Cut")
+                        .graphic(Controls.graphic(Feather.SCISSORS.getDescription()))
+                        .action(e -> {
+                            editor.cut();
+                            editor.requestFocus();
+                        })
+                        .build();
+                Button pasteButton = Controls.button()
+                        .tooltip("Paste")
+                        .graphic(Controls.graphic(Feather.CLIPBOARD.getDescription()))
+                        .action(e -> {
+                            editor.paste();
+                            editor.requestFocus();
+                        })
+                        .build();
+                copyButton.setFocusTraversable(false);
+                cutButton.setFocusTraversable(false);
+                pasteButton.setFocusTraversable(false);
+
                 ToolBar toolbar = new ToolBar(
-                        Controls.button().tooltip("Copy").graphic(Controls.graphic(Feather.COPY.getDescription())).action(editor::copy).build(),
-                        Controls.button().tooltip("Cut").graphic(Controls.graphic(Feather.SCISSORS.getDescription())).action(editor::cut).build(),
-                        Controls.button().tooltip("Paste").graphic(Controls.graphic(Feather.CLIPBOARD.getDescription())).action(editor::paste).build()
+                        copyButton,
+                        cutButton,
+                        pasteButton
                 );
+                toolbar.setFocusTraversable(false);
                 toolbar.visibleProperty().bind(editor.toolbarVisibleProperty());
                 toolbar.managedProperty().bind(editor.toolbarVisibleProperty());
 
