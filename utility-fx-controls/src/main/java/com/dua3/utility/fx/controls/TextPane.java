@@ -45,7 +45,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * A read-only JavaFX control for displaying {@link RichText}.
@@ -53,10 +52,8 @@ import java.util.function.Supplier;
  * <p>The control renders text using {@link FxGraphics#renderText(Vector2f, RichText, Graphics.HAnchor, Graphics.VAnchor, Alignment, VerticalAlignment, Dimension2f, Graphics.TextWrapping)}
  * so line breaking and wrapping match the Utility text layout implementation.
  *
- * <p>Inline controls can be embedded by assigning styles containing one of
- * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE},
- * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE_FACTORY}, or
- * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER} to a run.
+ * <p>Inline controls can be embedded by assigning styles containing
+ * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE_FACTORY} to a run.
  */
 public class TextPane extends Control {
 
@@ -377,9 +374,7 @@ public class TextPane extends Control {
 
     private static boolean hasInlineNode(Run run) {
         for (Style style : run.getStyles()) {
-            if (style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE) != null
-                    || style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY) != null
-                    || style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER) != null) {
+            if (style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY) != null) {
                 return true;
             }
         }
@@ -394,24 +389,11 @@ public class TextPane extends Control {
         for (int i = run.getStyles().size() - 1; i >= 0; i--) {
             Style style = run.getStyles().get(i);
 
-            Object node = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
-            if (node instanceof Node n) {
-                return n;
-            }
-
             Object factory = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY);
             if (factory instanceof Function<?, ?> f) {
                 @SuppressWarnings("unchecked")
                 Function<String, ? extends Node> fn = (Function<String, ? extends Node>) f;
                 return fn.apply(text);
-            }
-
-            Object supplier = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_SUPPLIER);
-            if (supplier instanceof Supplier<?> s) {
-                Object supplied = s.get();
-                if (supplied instanceof Node n) {
-                    return n;
-                }
             }
         }
         return null;
