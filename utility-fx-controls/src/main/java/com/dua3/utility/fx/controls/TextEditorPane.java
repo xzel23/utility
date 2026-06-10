@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.jspecify.annotations.Nullable;
 
@@ -97,13 +98,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private void initSelectionInteraction() {
         setFocusTraversable(true);
-        addEventFilter(MouseEvent.MOUSE_PRESSED, this::processMousePressed);
-        addEventFilter(MouseEvent.MOUSE_DRAGGED, this::processMouseDragged);
         addEventFilter(KeyEvent.KEY_PRESSED, this::processKeyPressed);
         addEventFilter(KeyEvent.KEY_TYPED, this::processKeyTyped);
     }
 
     void processMousePressed(MouseEvent evt) {
+        if (!isTextInteractionEvent(evt)) {
+            return;
+        }
         requestFocus();
 
         int pos = hitTest(evt);
@@ -121,6 +123,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     void processMouseDragged(MouseEvent evt) {
+        if (!isTextInteractionEvent(evt)) {
+            return;
+        }
         selectPositionCaret(hitTest(evt));
         evt.consume();
     }
@@ -716,11 +721,47 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private Point2D toContentPoint(MouseEvent evt) {
         ScrollPane sp = getScrollPane();
-        if (sp != null && sp.getContent() != null && getScene() != null) {
-            Point2D scenePoint = localToScene(evt.getX(), evt.getY());
+        if (sp != null && sp.getContent() != null) {
+            Point2D scenePoint = new Point2D(evt.getSceneX(), evt.getSceneY());
             return sp.getContent().sceneToLocal(scenePoint);
         }
         return new Point2D(evt.getX() - snappedLeftInset(), evt.getY() - snappedTopInset());
+    }
+
+    private boolean isTextInteractionEvent(MouseEvent evt) {
+        if (evt.getEventType() == MouseEvent.MOUSE_PRESSED && evt.getButton() != MouseButton.PRIMARY) {
+            return false;
+        }
+
+        Object rawTarget = evt.getTarget();
+        if (!(rawTarget instanceof Node target)) {
+            return false;
+        }
+
+        ScrollPane sp = getScrollPane();
+        if (sp == null) {
+            return true;
+        }
+
+        return isDescendantOf(target, sp) && !hasStyleClassInAncestry(target, "scroll-bar");
+    }
+
+    private static boolean isDescendantOf(Node node, Node ancestor) {
+        for (Node current = node; current != null; current = current.getParent()) {
+            if (current == ancestor) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasStyleClassInAncestry(Node node, String styleClass) {
+        for (Node current = node; current != null; current = current.getParent()) {
+            if (current.getStyleClass().contains(styleClass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private @Nullable ScrollPane getScrollPane() {
