@@ -270,7 +270,7 @@ public class TextPane extends Control {
 
         float width = (float) Math.max(1.0, availableWidth);
         float wrapWidth = isWrapText() ? width : FragmentedText.NO_WRAP;
-        FragmentedText fragments = FragmentedText.generateFragments(
+        FragmentedText layoutFragments = FragmentedText.generateFragments(
                 layoutText,
                 fontUtil,
                 font,
@@ -284,11 +284,22 @@ public class TextPane extends Control {
                 );
 
         RichText renderedText = createRenderedText(layoutText);
-        float renderWidth = isWrapText() ? width : Math.max(width, fragments.actualWidth());
-        float renderHeight = (float) Math.max(font.getFontData().height(), fragments.actualHeight());
+        FragmentedText renderFragments = FragmentedText.generateFragments(
+                renderedText,
+                fontUtil,
+                font,
+                width,
+                Float.MAX_VALUE,
+                Alignment.LEFT,
+                VerticalAlignment.TOP,
+                HAnchor.LEFT,
+                VAnchor.TOP,
+                wrapWidth
+        );
+        float renderWidth = isWrapText() ? width : Math.max(width, renderFragments.actualWidth());
 
         List<InlineControlPlacement> placements = new ArrayList<>();
-        for (List<FragmentedText.Fragment> line : fragments.lines()) {
+        for (List<FragmentedText.Fragment> line : layoutFragments.lines()) {
             for (FragmentedText.Fragment fragment : line) {
                 if (fragment.text() instanceof Run run) {
                     Node node = createInlineNode(run);
@@ -304,7 +315,12 @@ public class TextPane extends Control {
             }
         }
 
-        return new Layout(renderedText, placements, renderWidth, renderHeight);
+        Map<Float, Float> lineShiftByY = computeLineShifts(renderFragments, placements);
+        List<InlineControlPlacement> shiftedPlacements = shiftPlacements(placements, lineShiftByY);
+        List<List<FragmentedText.Fragment>> shiftedRenderLines = shiftRenderLines(renderFragments, lineShiftByY);
+        float renderHeight = computeRenderedHeight(shiftedRenderLines, font);
+
+        return new Layout(shiftedRenderLines, shiftedPlacements, renderWidth, renderHeight);
     }
 
     private static RichText createLayoutText(RichText source, Font baseFont, com.dua3.utility.text.FontUtil fontUtil) {
@@ -337,14 +353,8 @@ public class TextPane extends Control {
                                 vAnchor,
                                 inlineDescent
                         );
-                        double referenceAscent = runFont.getAscent() * scale;
-                        double referenceDescent = runFont.getDescent() * scale;
-                        if (vAnchor == VAnchor.BASELINE) {
-                            double descent = Math.max(0.0, inlineDescent);
-                            double ascent = Math.max(0.0, controlHeight - descent);
-                            referenceAscent = ascent;
-                            referenceDescent = descent;
-                        }
+                        double referenceAscent = runFont.getAscent();
+                        double referenceDescent = runFont.getDescent();
                         float scaledFontSize = (float) (runFont.getSizeInPoints() * scale);
                         lineHeightStyle = Style.create(
                                 "text-pane-inline-height",
@@ -539,7 +549,144 @@ public class TextPane extends Control {
         if (refHeight <= 0.0) {
             return 1.0;
         }
-        return Math.max(1.0, nodeHeight / refHeight);
+
+        double safeInlineDescent = Double.isFinite(inlineDescent) ? Math.max(0.0, inlineDescent) : 0.0;
+        double requiredBottom = switch (vAnchor) {
+            case TOP -> nodeHeight;
+            case BOTTOM -> refHeight;
+            case MIDDLE -> 0.5 * (refHeight + nodeHeight);
+            case BASELINE -> referenceAscent + safeInlineDescent;
+        };
+        return Math.max(1.0, requiredBottom / refHeight);
+    }
+
+    private static double computeInlineDescent(InlineControlPlacement placement, double prefH, double baselineOffset) {
+        return Double.isFinite(placement.descent())
+                ? placement.descent()
+                : (baselineOffset != Node.BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)
+                        ? Math.max(0.0, prefH - baselineOffset)
+                        : 0.0);
+    }
+
+    private static double computeInlineNodeY(InlineControlPlacement placement, double prefH, double baselineOffset) {
+        double lineTop = placement.y();
+        double lineBottom = placement.y() + placement.h();
+        double inlineDescent = computeInlineDescent(placement, prefH, baselineOffset);
+        return switch (placement.vAnchor()) {
+            case TOP -> lineTop;
+            case BOTTOM -> lineBottom - prefH;
+            case MIDDLE -> {
+                double textCenterY = placement.baselineY() + (placement.referenceDescent() - placement.referenceAscent()) / 2.0;
+                yield textCenterY - prefH / 2.0;
+            }
+            case BASELINE -> placement.baselineY() - (prefH - inlineDescent);
+        };
+    }
+
+    private static Map<Float, Float> computeLineShifts(
+            FragmentedText renderFragments,
+            List<InlineControlPlacement> placements
+    ) {
+        Map<Float, Float> overflowByLineY = new java.util.HashMap<>();
+        for (InlineControlPlacement placement : placements) {
+            Node node = placement.node();
+            node.applyCss();
+            node.autosize();
+            double prefH = Math.max(node.prefHeight(-1), node.getLayoutBounds().getHeight());
+            double baselineOffset = node.getBaselineOffset();
+            double nodeY = computeInlineNodeY(placement, prefH, baselineOffset);
+            float overflowAbove = (float) Math.max(0.0, placement.y() - nodeY);
+            if (overflowAbove > 0.0f) {
+                overflowByLineY.merge(placement.y(), overflowAbove, Math::max);
+            }
+        }
+
+        Map<Float, Float> lineShiftByY = new java.util.HashMap<>();
+        float cumulativeShift = 0.0f;
+        for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
+            if (line.isEmpty()) {
+                continue;
+            }
+            float lineY = line.getFirst().y();
+            cumulativeShift += overflowByLineY.getOrDefault(lineY, 0.0f);
+            lineShiftByY.put(lineY, cumulativeShift);
+        }
+        return lineShiftByY;
+    }
+
+    private static List<InlineControlPlacement> shiftPlacements(
+            List<InlineControlPlacement> placements,
+            Map<Float, Float> lineShiftByY
+    ) {
+        if (lineShiftByY.isEmpty()) {
+            return placements;
+        }
+
+        List<InlineControlPlacement> shifted = new ArrayList<>(placements.size());
+        for (InlineControlPlacement placement : placements) {
+            float dy = lineShiftByY.getOrDefault(placement.y(), 0.0f);
+            shifted.add(new InlineControlPlacement(
+                    placement.node(),
+                    placement.x(),
+                    placement.y() + dy,
+                    placement.w(),
+                    placement.h(),
+                    placement.baselineY() + dy,
+                    placement.font(),
+                    placement.vAnchor(),
+                    placement.referenceAscent(),
+                    placement.referenceDescent(),
+                    placement.descent()
+            ));
+        }
+        return shifted;
+    }
+
+    private static List<List<FragmentedText.Fragment>> shiftRenderLines(
+            FragmentedText fragments,
+            Map<Float, Float> lineShiftByY
+    ) {
+        if (lineShiftByY.isEmpty()) {
+            return fragments.lines();
+        }
+
+        List<List<FragmentedText.Fragment>> shiftedLines = new ArrayList<>(fragments.lines().size());
+        for (List<FragmentedText.Fragment> line : fragments.lines()) {
+            if (line.isEmpty()) {
+                shiftedLines.add(List.of());
+                continue;
+            }
+            float lineY = line.getFirst().y();
+            float dy = lineShiftByY.getOrDefault(lineY, 0.0f);
+            if (dy == 0.0f) {
+                shiftedLines.add(line);
+                continue;
+            }
+            List<FragmentedText.Fragment> shiftedLine = new ArrayList<>(line.size());
+            for (FragmentedText.Fragment fragment : line) {
+                shiftedLine.add(new FragmentedText.Fragment(
+                        fragment.x(),
+                        fragment.y() + dy,
+                        fragment.w(),
+                        fragment.h(),
+                        fragment.baseLine(),
+                        fragment.font(),
+                        fragment.text()
+                ));
+            }
+            shiftedLines.add(shiftedLine);
+        }
+        return shiftedLines;
+    }
+
+    private static float computeRenderedHeight(List<List<FragmentedText.Fragment>> lines, Font fallbackFont) {
+        float maxBottom = 0.0f;
+        for (List<FragmentedText.Fragment> line : lines) {
+            for (FragmentedText.Fragment fragment : line) {
+                maxBottom = Math.max(maxBottom, fragment.y() + fragment.h());
+            }
+        }
+        return (float) Math.max(fallbackFont.getFontData().height(), maxBottom);
     }
 
     private record InlineControlPlacement(
@@ -556,7 +703,12 @@ public class TextPane extends Control {
             double descent
     ) {}
 
-    private record Layout(RichText renderText, List<InlineControlPlacement> placements, float width, float height) {}
+    private record Layout(
+            List<List<FragmentedText.Fragment>> renderLines,
+            List<InlineControlPlacement> placements,
+            float width,
+            float height
+    ) {}
 
     private static final class TextPaneSkin extends SkinBase<TextPane> {
         private final Pane contentPane = new Pane();
@@ -667,19 +819,7 @@ public class TextPane extends Control {
                 double prefH = node.prefHeight(-1);
                 double baselineOffset = node.getBaselineOffset();
                 double x = placement.x() - Math.max(0.0, prefW - placement.w());
-                double lineTop = placement.baselineY() - placement.referenceAscent();
-                double lineBottom = placement.baselineY() + placement.referenceDescent();
-                double inlineDescent = Double.isFinite(placement.descent())
-                        ? placement.descent()
-                        : (baselineOffset != Node.BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)
-                                ? Math.max(0.0, prefH - baselineOffset)
-                                : 0.0);
-                double y = switch (placement.vAnchor()) {
-                    case TOP -> lineTop;
-                    case BOTTOM -> lineBottom - prefH;
-                    case MIDDLE -> (lineTop + lineBottom - prefH) / 2.0;
-                    case BASELINE -> placement.baselineY() - (prefH - inlineDescent);
-                };
+                double y = computeInlineNodeY(placement, prefH, baselineOffset);
                 node.resizeRelocate(x, y, prefW, prefH);
             }
 
@@ -687,16 +827,12 @@ public class TextPane extends Control {
             try {
                 graphics.reset();
                 graphics.setFont(control.getUtilityFont());
-                graphics.renderText(
-                        Vector2f.of(0.0f, 0.0f),
-                        layout.renderText(),
-                        HAnchor.LEFT,
-                        VAnchor.TOP,
-                        Alignment.LEFT,
-                        VerticalAlignment.TOP,
-                        Dimension2f.of((float) canvas.getWidth(), (float) canvas.getHeight()),
-                        control.isWrapText() ? Graphics.TextWrapping.WRAP : Graphics.TextWrapping.NO_WRAP
-                );
+                for (List<FragmentedText.Fragment> line : layout.renderLines()) {
+                    for (FragmentedText.Fragment fragment : line) {
+                        graphics.setFont(fragment.font());
+                        graphics.drawText(fragment.text().toString(), fragment.x(), fragment.y(), HAnchor.LEFT, VAnchor.TOP);
+                    }
+                }
             } finally {
                 graphics.close();
             }
