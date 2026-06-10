@@ -7,6 +7,7 @@ import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
@@ -32,12 +33,17 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Skin;
 import javafx.scene.control.SkinBase;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -699,8 +705,10 @@ public class TextPane extends Control {
 
     private static final class TextPaneSkin extends SkinBase<TextPane> {
         private final Pane contentPane = new Pane();
+        private final Pane selectionLayer = new Pane();
         private final Canvas canvas = new Canvas();
         private final Pane inlineLayer = new Pane();
+        private final Pane caretLayer = new Pane();
         private final ScrollPane scrollPane = new ScrollPane(contentPane);
         private boolean dirty = true;
         private double lastAvailableWidth = Double.NaN;
@@ -712,7 +720,9 @@ public class TextPane extends Control {
             super(control);
 
             contentPane.getStyleClass().add("content");
-            contentPane.getChildren().setAll(canvas, inlineLayer);
+            selectionLayer.setMouseTransparent(true);
+            caretLayer.setMouseTransparent(true);
+            contentPane.getChildren().setAll(selectionLayer, canvas, inlineLayer, caretLayer);
 
             scrollPane.setFitToWidth(control.isWrapText());
             scrollPane.setHbarPolicy(control.isWrapText() ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -730,7 +740,20 @@ public class TextPane extends Control {
             control.fontProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.widthProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.heightProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            control.focusedProperty().addListener((obs, oldVal, newVal) -> invalidate());
             scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> invalidate());
+
+            if (control instanceof TextEditorPane editor) {
+                editor.selectionProperty().addListener((obs, oldVal, newVal) -> invalidate());
+                editor.caretPositionProperty().addListener((obs, oldVal, newVal) -> invalidate());
+                editor.editableProperty().addListener((obs, oldVal, newVal) -> invalidate());
+
+                // Route interaction through the internal ScrollPane so input works regardless of focus owner.
+                scrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, editor::processMousePressed);
+                scrollPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, editor::processMouseDragged);
+                scrollPane.addEventFilter(KeyEvent.KEY_PRESSED, editor::processKeyPressed);
+                scrollPane.focusedProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            }
         }
 
         private void invalidate() {
@@ -788,6 +811,8 @@ public class TextPane extends Control {
             contentPane.setMinSize(canvas.getWidth(), canvas.getHeight());
             contentPane.setPrefSize(canvas.getWidth(), canvas.getHeight());
 
+            renderEditorOverlay(control, availableWidth, layout);
+
             inlineLayer.getChildren().clear();
             Set<Node> added = Collections.newSetFromMap(new IdentityHashMap<>());
             for (InlineControlPlacement placement : layout.placements()) {
@@ -821,5 +846,104 @@ public class TextPane extends Control {
                 }
             }
         }
+
+        private void renderEditorOverlay(TextPane control, double availableWidth, Layout layout) {
+            selectionLayer.getChildren().clear();
+            caretLayer.getChildren().clear();
+
+            if (!(control instanceof TextEditorPane editor)) {
+                return;
+            }
+
+            IndexRange selection = editor.getSelection();
+            if (selection.getLength() > 0) {
+                int selStart = selection.getStart();
+                int selEnd = selection.getEnd();
+                FontUtil fontUtil = FontUtil.getInstance();
+                for (List<FragmentedText.Fragment> line : layout.renderLines()) {
+                    for (FragmentedText.Fragment fragment : line) {
+                        if (!(fragment.text() instanceof Run run)) {
+                            continue;
+                        }
+                        int fragStart = run.getStart();
+                        int fragEnd = run.getEnd();
+                        int from = Math.max(selStart, fragStart);
+                        int to = Math.min(selEnd, fragEnd);
+                        if (from >= to) {
+                            continue;
+                        }
+
+                        int relStart = from - fragStart;
+                        int relEnd = to - fragStart;
+                        double x1 = fragment.x() + textWidth(fontUtil, run, relStart, fragment.font());
+                        double x2 = fragment.x() + textWidth(fontUtil, run, relEnd, fragment.font());
+                        Rectangle marker = new Rectangle(
+                                Math.min(x1, x2),
+                                fragment.y(),
+                                Math.max(1.0, Math.abs(x2 - x1)),
+                                fragment.h()
+                        );
+                        marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
+                        selectionLayer.getChildren().add(marker);
+                    }
+                }
+            }
+
+            if (editor.isEditable() && (control.isFocused() || scrollPane.isFocused())) {
+                CaretInfo caretInfo = findCaret(layout.renderLines(), editor.getCaretPosition());
+                if (caretInfo == null) {
+                    List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(availableWidth);
+                    if (!lines.isEmpty()) {
+                        int caretPosition = editor.getCaretPosition();
+                        int lineIndex = TextEditorPane.lineIndexForCaret(lines, caretPosition);
+                        if (lineIndex >= 0 && lineIndex < lines.size()) {
+                            TextEditorPane.VisualLine line = lines.get(lineIndex);
+                            double x = TextEditorPane.xForIndex(line, caretPosition);
+                            caretInfo = new CaretInfo(x, line.top(), line.height());
+                        }
+                    }
+                }
+                if (caretInfo != null) {
+                    Line caret = new Line(caretInfo.x(), caretInfo.y(), caretInfo.x(), caretInfo.y() + caretInfo.height());
+                    caret.setStroke(javafx.scene.paint.Color.BLACK);
+                    caret.setStrokeWidth(1.0);
+                    caretLayer.getChildren().add(caret);
+                }
+            }
+        }
+
+        private static double textWidth(FontUtil fontUtil, Run run, int length, Font font) {
+            if (length <= 0) {
+                return 0.0;
+            }
+            if (length >= run.length()) {
+                return fontUtil.getTextWidth(run, font);
+            }
+            return fontUtil.getTextWidth(run.subSequence(0, length), font);
+        }
+
+        private static @Nullable CaretInfo findCaret(List<List<FragmentedText.Fragment>> lines, int caretPosition) {
+            FontUtil fontUtil = FontUtil.getInstance();
+            for (List<FragmentedText.Fragment> line : lines) {
+                for (FragmentedText.Fragment fragment : line) {
+                    if (!(fragment.text() instanceof Run run)) {
+                        continue;
+                    }
+
+                    int start = run.getStart();
+                    int end = run.getEnd();
+                    if (caretPosition < start || caretPosition > end) {
+                        continue;
+                    }
+
+                    int rel = caretPosition - start;
+                    double x = fragment.x() + textWidth(fontUtil, run, rel, fragment.font());
+                    return new CaretInfo(x, fragment.y(), fragment.h());
+                }
+            }
+            return null;
+        }
+
+        private record CaretInfo(double x, double y, double height) {}
     }
 }

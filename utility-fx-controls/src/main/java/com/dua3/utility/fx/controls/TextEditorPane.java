@@ -1,0 +1,849 @@
+package com.dua3.utility.fx.controls;
+
+import com.dua3.utility.fx.FxFontUtil;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.ToRichText;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.control.IndexRange;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import org.jspecify.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Text editor control based on {@link TextPane}.
+ *
+ * <p>This class currently provides a stub editing API surface, modeled after JavaFX {@code TextInputControl},
+ * but operating on {@link RichText}. Real editing behavior will be added incrementally.
+ */
+public class TextEditorPane extends TextPane implements InputControl<RichText> {
+
+    private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
+    private final ReadOnlyIntegerWrapper length = new ReadOnlyIntegerWrapper(this, "length", 0);
+    private final ReadOnlyStringWrapper selectedText = new ReadOnlyStringWrapper(this, "selectedText", "");
+    private final ReadOnlyObjectWrapper<IndexRange> selection = new ReadOnlyObjectWrapper<>(this, "selection", new IndexRange(0, 0));
+    private final ReadOnlyIntegerWrapper anchor = new ReadOnlyIntegerWrapper(this, "anchor", 0);
+    private final ReadOnlyIntegerWrapper caretPosition = new ReadOnlyIntegerWrapper(this, "caretPosition", 0);
+    private final ReadOnlyBooleanWrapper undoable = new ReadOnlyBooleanWrapper(this, "undoable", false);
+    private final ReadOnlyBooleanWrapper redoable = new ReadOnlyBooleanWrapper(this, "redoable", false);
+    private final InputControlState<RichText> state;
+    private final SelectionModel selectionModel = new SelectionModel();
+    private @Nullable ScrollPane scrollPane;
+    private double preferredCaretX = Double.NaN;
+
+    /**
+     * Creates an empty {@code TextEditorPane}.
+     */
+    public TextEditorPane() {
+        this(null);
+    }
+
+    /**
+     * Creates a {@code TextEditorPane} with initial text.
+     *
+     * @param text initial text
+     */
+    public TextEditorPane(@Nullable RichText text) {
+        super(text);
+
+        this.state = new ObjectInputControlState<>(textProperty(), this::getText, value -> Optional.empty());
+        getStyleClass().add("text-editor-pane");
+
+        RichText initial = getText();
+        length.set(initial.length());
+        setSelectionState(0, 0);
+
+        textProperty().addListener((obs, oldValue, newValue) -> {
+            length.set(newValue == null ? 0 : newValue.length());
+            setSelectionState(getAnchor(), getCaretPosition());
+        });
+
+        state.requiredProperty().addListener((v, o, n) -> {
+            if (n) {
+                if (!getStyleClass().contains(CSS_REQUIRED_INPUT)) {
+                    getStyleClass().add(CSS_REQUIRED_INPUT);
+                }
+            } else {
+                getStyleClass().remove(CSS_REQUIRED_INPUT);
+            }
+        });
+
+        // perform a validation when the control receives or loses focus
+        focusedProperty().addListener((v, o, n) -> state.validate());
+
+        initSelectionInteraction();
+    }
+
+    private void initSelectionInteraction() {
+        setFocusTraversable(true);
+        addEventFilter(MouseEvent.MOUSE_PRESSED, this::processMousePressed);
+        addEventFilter(MouseEvent.MOUSE_DRAGGED, this::processMouseDragged);
+        addEventFilter(KeyEvent.KEY_PRESSED, this::processKeyPressed);
+    }
+
+    void processMousePressed(MouseEvent evt) {
+        requestFocus();
+
+        int pos = hitTest(evt);
+        if (evt.isShiftDown()) {
+            selectPositionCaret(pos);
+        } else {
+            positionCaret(pos);
+        }
+
+        if (evt.getClickCount() >= 2) {
+            selectWordAt(pos);
+        }
+
+        evt.consume();
+    }
+
+    void processMouseDragged(MouseEvent evt) {
+        selectPositionCaret(hitTest(evt));
+        evt.consume();
+    }
+
+    void processKeyPressed(KeyEvent evt) {
+        boolean shift = evt.isShiftDown();
+        boolean shortcut = evt.isShortcutDown();
+
+        switch (evt.getCode()) {
+            case LEFT -> {
+                preferredCaretX = Double.NaN;
+                if (shortcut) {
+                    if (shift) {
+                        selectPreviousWord();
+                    } else {
+                        previousWord();
+                    }
+                } else if (shift) {
+                    selectBackward();
+                } else {
+                    backward();
+                }
+                evt.consume();
+            }
+            case RIGHT -> {
+                preferredCaretX = Double.NaN;
+                if (shortcut) {
+                    if (shift) {
+                        selectNextWord();
+                    } else {
+                        nextWord();
+                    }
+                } else if (shift) {
+                    selectForward();
+                } else {
+                    forward();
+                }
+                evt.consume();
+            }
+            case UP -> {
+                moveLine(-1, shift);
+                evt.consume();
+            }
+            case DOWN -> {
+                moveLine(1, shift);
+                evt.consume();
+            }
+            case HOME -> {
+                preferredCaretX = Double.NaN;
+                if (shift) {
+                    selectHome();
+                } else {
+                    home();
+                }
+                evt.consume();
+            }
+            case END -> {
+                preferredCaretX = Double.NaN;
+                if (shift) {
+                    selectEnd();
+                } else {
+                    end();
+                }
+                evt.consume();
+            }
+            case A -> {
+                if (shortcut) {
+                    selectAll();
+                    evt.consume();
+                }
+            }
+            default -> {
+                // no-op
+            }
+        }
+    }
+
+    @Override
+    public InputControlState<RichText> state() {
+        return state;
+    }
+
+    @Override
+    public Node node() {
+        return this;
+    }
+
+    public final BooleanProperty editableProperty() {
+        return editable;
+    }
+
+    public final boolean isEditable() {
+        return editable.get();
+    }
+
+    public final void setEditable(boolean value) {
+        editable.set(value);
+    }
+
+    public final int getLength() {
+        return length.get();
+    }
+
+    public final ReadOnlyIntegerProperty lengthProperty() {
+        return length.getReadOnlyProperty();
+    }
+
+    public final String getSelectedText() {
+        return selectedText.get();
+    }
+
+    public final ReadOnlyStringProperty selectedTextProperty() {
+        return selectedText.getReadOnlyProperty();
+    }
+
+    public final IndexRange getSelection() {
+        return selection.get();
+    }
+
+    public final ReadOnlyObjectProperty<IndexRange> selectionProperty() {
+        return selection.getReadOnlyProperty();
+    }
+
+    public final int getAnchor() {
+        return anchor.get();
+    }
+
+    public final ReadOnlyIntegerProperty anchorProperty() {
+        return anchor.getReadOnlyProperty();
+    }
+
+    public final int getCaretPosition() {
+        return caretPosition.get();
+    }
+
+    public final ReadOnlyIntegerProperty caretPositionProperty() {
+        return caretPosition.getReadOnlyProperty();
+    }
+
+    public final boolean isUndoable() {
+        return undoable.get();
+    }
+
+    public final ReadOnlyBooleanProperty undoableProperty() {
+        return undoable.getReadOnlyProperty();
+    }
+
+    public final boolean isRedoable() {
+        return redoable.get();
+    }
+
+    public final ReadOnlyBooleanProperty redoableProperty() {
+        return redoable.getReadOnlyProperty();
+    }
+
+    public final Font getUtilityFont() {
+        return FxFontUtil.getInstance().convert(getFont());
+    }
+
+    public final javafx.scene.text.Font getJavaFxFont() {
+        return getFont();
+    }
+
+    public final void setFont(Font value) {
+        setFont(FxFontUtil.getInstance().convert(value));
+    }
+
+    public RichText getText(int start, int end) {
+        RichText text = getText();
+        int s = clamp(Math.min(start, end), 0, text.length());
+        int e = clamp(Math.max(start, end), 0, text.length());
+        return text.subSequence(s, e);
+    }
+
+    public void appendText(@Nullable CharSequence text) {
+        replaceText(getLength(), getLength(), text);
+    }
+
+    public void appendText(@Nullable ToRichText text) {
+        replaceText(getLength(), getLength(), text == null ? RichText.emptyText() : text.toRichText());
+    }
+
+    public void appendText(@Nullable CharSequence text, Font font) {
+        replaceText(getLength(), getLength(), toRichText(text, font));
+    }
+
+    public void appendText(@Nullable CharSequence text, javafx.scene.text.Font font) {
+        appendText(text, FxFontUtil.getInstance().convert(font));
+    }
+
+    public void insertText(int index, @Nullable CharSequence text) {
+        replaceText(index, index, text);
+    }
+
+    public void insertText(int index, @Nullable ToRichText text) {
+        replaceText(index, index, text == null ? RichText.emptyText() : text.toRichText());
+    }
+
+    public void insertText(int index, @Nullable CharSequence text, Font font) {
+        replaceText(index, index, toRichText(text, font));
+    }
+
+    public void insertText(int index, @Nullable CharSequence text, javafx.scene.text.Font font) {
+        insertText(index, text, FxFontUtil.getInstance().convert(font));
+    }
+
+    public boolean deletePreviousChar() {
+        IndexRange range = getSelection();
+        if (range.getLength() > 0) {
+            deleteText(range);
+            return true;
+        }
+        int caret = getCaretPosition();
+        if (caret > 0) {
+            deleteText(caret - 1, caret);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteNextChar() {
+        IndexRange range = getSelection();
+        if (range.getLength() > 0) {
+            deleteText(range);
+            return true;
+        }
+        int caret = getCaretPosition();
+        if (caret < getLength()) {
+            deleteText(caret, caret + 1);
+            return true;
+        }
+        return false;
+    }
+
+    public void deleteText(IndexRange range) {
+        replaceText(range.getStart(), range.getEnd(), RichText.emptyText());
+    }
+
+    public void deleteText(int start, int end) {
+        replaceText(start, end, RichText.emptyText());
+    }
+
+    public void replaceText(IndexRange range, @Nullable CharSequence text) {
+        replaceText(range.getStart(), range.getEnd(), text);
+    }
+
+    public void replaceText(IndexRange range, @Nullable ToRichText text) {
+        replaceText(range.getStart(), range.getEnd(), text == null ? RichText.emptyText() : text.toRichText());
+    }
+
+    public void replaceText(IndexRange range, @Nullable CharSequence text, Font font) {
+        replaceText(range.getStart(), range.getEnd(), text, font);
+    }
+
+    public void replaceText(IndexRange range, @Nullable CharSequence text, javafx.scene.text.Font font) {
+        replaceText(range.getStart(), range.getEnd(), text, font);
+    }
+
+    public void replaceText(int start, int end, @Nullable CharSequence text) {
+        replaceText(start, end, toRichText(text));
+    }
+
+    public void replaceText(int start, int end, @Nullable ToRichText text) {
+        replaceText(start, end, text == null ? RichText.emptyText() : text.toRichText());
+    }
+
+    public void replaceText(int start, int end, @Nullable CharSequence text, Font font) {
+        replaceText(start, end, toRichText(text, font));
+    }
+
+    public void replaceText(int start, int end, @Nullable CharSequence text, javafx.scene.text.Font font) {
+        replaceText(start, end, text, FxFontUtil.getInstance().convert(font));
+    }
+
+    public void replaceText(int start, int end, RichText replacement) {
+        int s = clamp(Math.min(start, end), 0, getLength());
+        int e = clamp(Math.max(start, end), 0, getLength());
+
+        RichText current = getText();
+        RichText prefix = current.subSequence(0, s);
+        RichText suffix = current.subSequence(e, current.length());
+        setText(RichText.join(RichText.emptyText(), prefix, replacement, suffix));
+
+        int newCaret = s + replacement.length();
+        setSelectionState(newCaret, newCaret);
+    }
+
+    public void replaceSelection(@Nullable CharSequence replacement) {
+        replaceSelection(toRichText(replacement));
+    }
+
+    public void replaceSelection(@Nullable ToRichText replacement) {
+        replaceSelection(replacement == null ? RichText.emptyText() : replacement.toRichText());
+    }
+
+    public void replaceSelection(RichText replacement) {
+        IndexRange r = getSelection();
+        replaceText(r.getStart(), r.getEnd(), replacement);
+    }
+
+    public void selectRange(int anchor, int caretPosition) {
+        setSelectionState(anchor, caretPosition);
+    }
+
+    public void selectAll() {
+        setSelectionState(0, getLength());
+    }
+
+    public void deselect() {
+        int caret = getCaretPosition();
+        setSelectionState(caret, caret);
+    }
+
+    public void clear() {
+        setText(RichText.emptyText());
+        setSelectionState(0, 0);
+    }
+
+    public void positionCaret(int pos) {
+        int p = clamp(pos, 0, getLength());
+        setSelectionState(p, p);
+        preferredCaretX = Double.NaN;
+    }
+
+    public void selectPositionCaret(int pos) {
+        setSelectionState(getAnchor(), pos);
+    }
+
+    public void home() {
+        positionCaret(0);
+    }
+
+    public void end() {
+        positionCaret(getLength());
+    }
+
+    public void forward() {
+        positionCaret(getCaretPosition() + 1);
+    }
+
+    public void backward() {
+        positionCaret(getCaretPosition() - 1);
+    }
+
+    public void previousWord() {
+        positionCaret(previousWordStart(getCaretPosition()));
+    }
+
+    public void nextWord() {
+        positionCaret(nextWordStart(getCaretPosition()));
+    }
+
+    public void endOfNextWord() {
+        positionCaret(nextWordEnd(getCaretPosition()));
+    }
+
+    public void selectBackward() {
+        selectPositionCaret(getCaretPosition() - 1);
+    }
+
+    public void selectForward() {
+        selectPositionCaret(getCaretPosition() + 1);
+    }
+
+    public void selectPreviousWord() {
+        selectPositionCaret(previousWordStart(getCaretPosition()));
+    }
+
+    public void selectNextWord() {
+        selectPositionCaret(nextWordStart(getCaretPosition()));
+    }
+
+    public void selectEndOfNextWord() {
+        selectPositionCaret(nextWordEnd(getCaretPosition()));
+    }
+
+    public void selectHome() {
+        selectPositionCaret(0);
+    }
+
+    public void selectEnd() {
+        selectPositionCaret(getLength());
+    }
+
+    public void copy() {
+        // TODO implement clipboard support
+    }
+
+    public void cut() {
+        // TODO implement clipboard support
+    }
+
+    public void paste() {
+        // TODO implement clipboard support
+    }
+
+    public void undo() {
+        // TODO implement undo support
+    }
+
+    public void redo() {
+        // TODO implement redo support
+    }
+
+    public void cancelEdit() {
+        // TODO implement edit cancel behavior
+    }
+
+    public void commitValue() {
+        // TODO implement value commit behavior
+    }
+
+    private int hitTest(MouseEvent evt) {
+        Point2D p = toContentPoint(evt);
+        return indexForPoint(buildVisualLines(currentWrapWidth()), p.getX(), p.getY());
+    }
+
+    private void selectWordAt(int pos) {
+        String text = getText().toString();
+        if (text.isEmpty()) {
+            setSelectionState(0, 0);
+            return;
+        }
+
+        int p = clamp(pos, 0, text.length());
+        if (p == text.length() && p > 0) {
+            p--;
+        }
+
+        boolean word = isWordChar(text.charAt(p));
+        int start = p;
+        int end = p;
+        while (start > 0 && isWordChar(text.charAt(start - 1)) == word) {
+            start--;
+        }
+        while (end < text.length() && isWordChar(text.charAt(end)) == word) {
+            end++;
+        }
+        setSelectionState(start, end);
+        preferredCaretX = Double.NaN;
+    }
+
+    private void moveLine(int delta, boolean extendSelection) {
+        List<VisualLine> lines = buildVisualLines(currentWrapWidth());
+        if (lines.isEmpty()) {
+            return;
+        }
+
+        int caret = getCaretPosition();
+        int currentLineIndex = lineIndexForCaret(lines, caret);
+        if (currentLineIndex < 0) {
+            return;
+        }
+
+        VisualLine currentLine = lines.get(currentLineIndex);
+        double x = Double.isNaN(preferredCaretX) ? xForIndex(currentLine, caret) : preferredCaretX;
+
+        int targetLineIndex = clamp(currentLineIndex + delta, 0, lines.size() - 1);
+        int targetCaret = indexForX(lines.get(targetLineIndex), x);
+
+        if (extendSelection) {
+            selectPositionCaret(targetCaret);
+        } else {
+            positionCaret(targetCaret);
+        }
+
+        preferredCaretX = x;
+    }
+
+    private Point2D toContentPoint(MouseEvent evt) {
+        ScrollPane sp = getScrollPane();
+        if (sp != null && sp.getContent() != null && getScene() != null) {
+            Point2D scenePoint = localToScene(evt.getX(), evt.getY());
+            return sp.getContent().sceneToLocal(scenePoint);
+        }
+        return new Point2D(evt.getX() - snappedLeftInset(), evt.getY() - snappedTopInset());
+    }
+
+    private @Nullable ScrollPane getScrollPane() {
+        if (scrollPane != null) {
+            return scrollPane;
+        }
+
+        Node direct = lookup(".scroll-pane");
+        if (direct instanceof ScrollPane sp) {
+            scrollPane = sp;
+            return sp;
+        }
+
+        for (Node n : lookupAll(".scroll-pane")) {
+            if (n instanceof ScrollPane sp) {
+                scrollPane = sp;
+                return sp;
+            }
+        }
+
+        return null;
+    }
+
+    List<VisualLine> buildVisualLines(double wrapWidth) {
+        String text = getText().toString();
+        Font font = getUtilityFont();
+        FontUtil fontUtil = FontUtil.getInstance();
+        double lineHeight = Math.max(1.0, font.getFontData().height());
+        boolean wrap = isWrapText() && Double.isFinite(wrapWidth) && wrapWidth > 1.0;
+
+        List<VisualLine> lines = new ArrayList<>();
+        if (text.isEmpty()) {
+            lines.add(new VisualLine(0, 0, 0.0, lineHeight, new double[]{0.0}));
+            return lines;
+        }
+
+        int logicalStart = 0;
+        double y = 0.0;
+        while (logicalStart <= text.length()) {
+            int newline = text.indexOf('\n', logicalStart);
+            boolean hasNewline = newline >= 0;
+            int logicalEnd = hasNewline ? newline : text.length();
+
+            if (wrap && logicalStart < logicalEnd) {
+                int start = logicalStart;
+                double x = 0.0;
+                List<Double> boundaries = new ArrayList<>();
+                boundaries.add(0.0);
+
+                for (int i = logicalStart; i < logicalEnd; i++) {
+                    double charWidth = fontUtil.getTextWidth(String.valueOf(text.charAt(i)), font);
+                    if (x + charWidth > wrapWidth && i > start) {
+                        lines.add(new VisualLine(start, i, y, lineHeight, toArray(boundaries)));
+                        y += lineHeight;
+
+                        start = i;
+                        x = 0.0;
+                        boundaries.clear();
+                        boundaries.add(0.0);
+                    }
+                    x += charWidth;
+                    boundaries.add(x);
+                }
+
+                lines.add(new VisualLine(start, logicalEnd, y, lineHeight, toArray(boundaries)));
+            } else {
+                lines.add(new VisualLine(logicalStart, logicalEnd, y, lineHeight, buildBoundaries(text, logicalStart, logicalEnd, fontUtil, font)));
+            }
+
+            y += lineHeight;
+
+            if (!hasNewline) {
+                break;
+            }
+            logicalStart = newline + 1;
+        }
+
+        return lines;
+    }
+
+    private double currentWrapWidth() {
+        if (!isWrapText()) {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        ScrollPane sp = getScrollPane();
+        if (sp != null) {
+            double w = sp.getViewportBounds().getWidth();
+            if (Double.isFinite(w) && w > 1.0) {
+                return w;
+            }
+        }
+
+        double fallback = getWidth() - snappedLeftInset() - snappedRightInset();
+        return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
+    }
+
+    private static double[] buildBoundaries(String text, int start, int end, FontUtil fontUtil, Font font) {
+        int len = Math.max(0, end - start);
+        double[] boundaries = new double[len + 1];
+        for (int i = 0; i < len; i++) {
+            boundaries[i + 1] = boundaries[i] + fontUtil.getTextWidth(String.valueOf(text.charAt(start + i)), font);
+        }
+        return boundaries;
+    }
+
+    private static double[] toArray(List<Double> boundaries) {
+        double[] result = new double[boundaries.size()];
+        for (int i = 0; i < boundaries.size(); i++) {
+            result[i] = boundaries.get(i);
+        }
+        return result;
+    }
+
+    static int indexForPoint(List<VisualLine> lines, double x, double y) {
+        if (lines.isEmpty()) {
+            return 0;
+        }
+
+        if (y <= lines.getFirst().top()) {
+            return indexForX(lines.getFirst(), x);
+        }
+
+        for (VisualLine line : lines) {
+            if (y < line.top() + line.height()) {
+                return indexForX(line, x);
+            }
+        }
+
+        return indexForX(lines.getLast(), x);
+    }
+
+    static int lineIndexForCaret(List<VisualLine> lines, int caret) {
+        for (int i = 0; i < lines.size(); i++) {
+            VisualLine line = lines.get(i);
+            if (caret <= line.end()) {
+                return i;
+            }
+            if (i + 1 < lines.size() && caret < lines.get(i + 1).start()) {
+                return i;
+            }
+        }
+        return lines.size() - 1;
+    }
+
+    static double xForIndex(VisualLine line, int index) {
+        int offset = clamp(index - line.start(), 0, line.length());
+        return line.boundaries()[offset];
+    }
+
+    static int indexForX(VisualLine line, double x) {
+        if (x <= 0.0) {
+            return line.start();
+        }
+        double[] boundaries = line.boundaries();
+        double max = boundaries[boundaries.length - 1];
+        if (x >= max) {
+            return line.end();
+        }
+        for (int i = 0; i < line.length(); i++) {
+            double midpoint = (boundaries[i] + boundaries[i + 1]) * 0.5;
+            if (x < midpoint) {
+                return line.start() + i;
+            }
+        }
+        return line.end();
+    }
+
+    private int previousWordStart(int from) {
+        String text = getText().toString();
+        int i = clamp(from, 0, text.length());
+        if (i == 0) {
+            return 0;
+        }
+        i--;
+        while (i > 0 && !isWordChar(text.charAt(i))) {
+            i--;
+        }
+        while (i > 0 && isWordChar(text.charAt(i - 1))) {
+            i--;
+        }
+        return i;
+    }
+
+    private int nextWordStart(int from) {
+        String text = getText().toString();
+        int i = clamp(from, 0, text.length());
+        while (i < text.length() && isWordChar(text.charAt(i))) {
+            i++;
+        }
+        while (i < text.length() && !isWordChar(text.charAt(i))) {
+            i++;
+        }
+        return i;
+    }
+
+    private int nextWordEnd(int from) {
+        String text = getText().toString();
+        int i = clamp(from, 0, text.length());
+        while (i < text.length() && !isWordChar(text.charAt(i))) {
+            i++;
+        }
+        while (i < text.length() && isWordChar(text.charAt(i))) {
+            i++;
+        }
+        return i;
+    }
+
+    private static boolean isWordChar(char c) {
+        return Character.isLetterOrDigit(c) || c == '_';
+    }
+
+    private void setSelectionState(int anchorPos, int caretPos) {
+        selectionModel.selectRange(anchorPos, caretPos);
+    }
+
+    private static RichText toRichText(@Nullable CharSequence text) {
+        if (text == null || text.isEmpty()) {
+            return RichText.emptyText();
+        }
+        if (text instanceof ToRichText trt) {
+            return trt.toRichText();
+        }
+        return RichText.valueOf(text.toString());
+    }
+
+    private static RichText toRichText(@Nullable CharSequence text, @Nullable Font font) {
+        // TODO apply font to plain CharSequence inputs once style-preserving editing is implemented.
+        return toRichText(text);
+    }
+
+    private static int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    record VisualLine(int start, int end, double top, double height, double[] boundaries) {
+        int length() {
+            return Math.max(0, end - start);
+        }
+    }
+
+    private final class SelectionModel {
+        void selectRange(int anchorPos, int caretPos) {
+            int a = clamp(anchorPos, 0, getLength());
+            int c = clamp(caretPos, 0, getLength());
+            anchor.set(a);
+            caretPosition.set(c);
+
+            int start = Math.min(a, c);
+            int end = Math.max(a, c);
+            selection.set(new IndexRange(start, end));
+            selectedText.set(getText(start, end).toString());
+        }
+    }
+}
