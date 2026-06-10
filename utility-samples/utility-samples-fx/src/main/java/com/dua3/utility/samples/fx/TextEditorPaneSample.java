@@ -59,7 +59,7 @@ public class TextEditorPaneSample extends Application {
         Runnable updateSelectionInfo = () -> selectionInfo.setText(
                 "Caret: " + textPane.getCaretPosition()
                         + "  Selection: " + textPane.getSelection()
-                        + "  Selected: \"" + textPane.getSelectedText().replace("\n", "\\n") + "\""
+                        + "  Selected: \"" + textPane.getSelectedText().toString().replace("\n", "\\n") + "\""
         );
         textPane.caretPositionProperty().addListener((obs, o, n) -> updateSelectionInfo.run());
         textPane.selectionProperty().addListener((obs, o, n) -> updateSelectionInfo.run());

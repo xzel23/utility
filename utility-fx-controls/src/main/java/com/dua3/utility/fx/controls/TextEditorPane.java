@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxFontUtil;
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
@@ -12,8 +13,6 @@ import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -37,7 +36,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
     private final ReadOnlyIntegerWrapper length = new ReadOnlyIntegerWrapper(this, "length", 0);
-    private final ReadOnlyStringWrapper selectedText = new ReadOnlyStringWrapper(this, "selectedText", "");
+    private final ReadOnlyObjectWrapper<RichText> selectedText = new ReadOnlyObjectWrapper<>(this, "selectedText", RichText.emptyText());
     private final ReadOnlyObjectWrapper<IndexRange> selection = new ReadOnlyObjectWrapper<>(this, "selection", new IndexRange(0, 0));
     private final ReadOnlyIntegerWrapper anchor = new ReadOnlyIntegerWrapper(this, "anchor", 0);
     private final ReadOnlyIntegerWrapper caretPosition = new ReadOnlyIntegerWrapper(this, "caretPosition", 0);
@@ -223,11 +222,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return length.getReadOnlyProperty();
     }
 
-    public final String getSelectedText() {
+    public final RichText getSelectedText() {
         return selectedText.get();
     }
 
-    public final ReadOnlyStringProperty selectedTextProperty() {
+    public final ReadOnlyObjectProperty<RichText> selectedTextProperty() {
         return selectedText.getReadOnlyProperty();
     }
 
@@ -501,7 +500,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void copy() {
-        // TODO implement clipboard support
+        FxUtil.copyToClipboard(getSelectedText());
     }
 
     public void cut() {
@@ -843,7 +842,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             int start = Math.min(a, c);
             int end = Math.max(a, c);
             selection.set(new IndexRange(start, end));
-            selectedText.set(getText(start, end).toString());
+            selectedText.set(getText(start, end));
         }
     }
 }
