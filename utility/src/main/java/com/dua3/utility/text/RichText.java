@@ -266,7 +266,7 @@ public final class RichText
      * @param elements  the elements to join
      * @return RichText containing the joined elements
      */
-    public static RichText join(RichText delimiter, RichText... elements) {
+    public static RichText join(CharSequence delimiter, CharSequence... elements) {
         return join(delimiter, List.of(elements));
     }
 
@@ -277,38 +277,16 @@ public final class RichText
      * @param elements  the elements to join
      * @return RichText containing the joined elements
      */
-    public static RichText join(RichText delimiter, Iterable<RichText> elements) {
+    public static RichText join(CharSequence delimiter, Iterable<? extends CharSequence> elements) {
         RichTextBuilder rtb = new RichTextBuilder();
 
-        RichText d = emptyText();
-        for (RichText element : elements) {
+        CharSequence d = "";
+        for (CharSequence element : elements) {
             rtb.append(d).append(element);
             d = delimiter;
         }
 
         return rtb.toRichText();
-    }
-
-    /**
-     * Join RichText instances together.
-     *
-     * @param delimiter the delimiter
-     * @param elements  the elements to join
-     * @return RichText containing the joined elements
-     */
-    public static RichText join(CharSequence delimiter, RichText... elements) {
-        return join(valueOf(delimiter), elements);
-    }
-
-    /**
-     * Join RichText instances together.
-     *
-     * @param delimiter the delimiter
-     * @param elements  the elements to join
-     * @return RichText containing the joined elements
-     */
-    public static RichText join(CharSequence delimiter, Iterable<RichText> elements) {
-        return join(valueOf(delimiter), elements);
     }
 
     /**

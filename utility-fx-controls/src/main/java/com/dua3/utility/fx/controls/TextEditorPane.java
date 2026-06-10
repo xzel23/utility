@@ -1,10 +1,11 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.Style;
 import com.dua3.utility.text.ToRichText;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -25,6 +26,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -375,8 +377,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     public RichText getText(int start, int end) {
         RichText text = getText();
-        int s = clamp(Math.min(start, end), 0, text.length());
-        int e = clamp(Math.max(start, end), 0, text.length());
+        int s = Math.clamp(Math.min(start, end), 0, text.length());
+        int e = Math.clamp(Math.max(start, end), 0, text.length());
         return text.subSequence(s, e);
     }
 
@@ -392,24 +394,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         replaceText(getLength(), getLength(), toRichText(text, font));
     }
 
-    public void appendText(@Nullable CharSequence text, javafx.scene.text.Font font) {
-        appendText(text, FxFontUtil.getInstance().convert(font));
-    }
-
     public void insertText(int index, @Nullable CharSequence text) {
         replaceText(index, index, text);
     }
 
-    public void insertText(int index, @Nullable ToRichText text) {
-        replaceText(index, index, text == null ? RichText.emptyText() : text.toRichText());
-    }
-
     public void insertText(int index, @Nullable CharSequence text, Font font) {
         replaceText(index, index, toRichText(text, font));
-    }
-
-    public void insertText(int index, @Nullable CharSequence text, javafx.scene.text.Font font) {
-        insertText(index, text, FxFontUtil.getInstance().convert(font));
     }
 
     public boolean deletePreviousChar() {
@@ -441,55 +431,39 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void deleteText(IndexRange range) {
-        replaceText(range.getStart(), range.getEnd(), RichText.emptyText());
+        replaceText(range.getStart(), range.getEnd(), "");
     }
 
     public void deleteText(int start, int end) {
-        replaceText(start, end, RichText.emptyText());
+        replaceText(start, end, "");
     }
 
     public void replaceText(IndexRange range, @Nullable CharSequence text) {
         replaceText(range.getStart(), range.getEnd(), text);
     }
 
-    public void replaceText(IndexRange range, @Nullable ToRichText text) {
-        replaceText(range.getStart(), range.getEnd(), text == null ? RichText.emptyText() : text.toRichText());
-    }
-
     public void replaceText(IndexRange range, @Nullable CharSequence text, Font font) {
-        replaceText(range.getStart(), range.getEnd(), text, font);
-    }
-
-    public void replaceText(IndexRange range, @Nullable CharSequence text, javafx.scene.text.Font font) {
-        replaceText(range.getStart(), range.getEnd(), text, font);
-    }
-
-    public void replaceText(int start, int end, @Nullable CharSequence text) {
-        replaceText(start, end, toRichText(text));
-    }
-
-    public void replaceText(int start, int end, @Nullable ToRichText text) {
-        replaceText(start, end, text == null ? RichText.emptyText() : text.toRichText());
+        replaceText(range.getStart(), range.getEnd(), toRichText(text, font));
     }
 
     public void replaceText(int start, int end, @Nullable CharSequence text, Font font) {
         replaceText(start, end, toRichText(text, font));
     }
 
-    public void replaceText(int start, int end, @Nullable CharSequence text, javafx.scene.text.Font font) {
-        replaceText(start, end, text, FxFontUtil.getInstance().convert(font));
-    }
+    public void replaceText(int start, int end, @Nullable CharSequence replacement) {
+        CharSequence text = Objects.requireNonNullElse(replacement, "");
 
-    public void replaceText(int start, int end, RichText replacement) {
-        int s = clamp(Math.min(start, end), 0, getLength());
-        int e = clamp(Math.max(start, end), 0, getLength());
+        int max1 = getLength();
+        int s = Math.clamp(Math.min(start, end), 0, max1);
+        int max = getLength();
+        int e = Math.clamp(Math.max(start, end), 0, max);
 
         RichText current = getText();
         RichText prefix = current.subSequence(0, s);
         RichText suffix = current.subSequence(e, current.length());
-        RichText updated = RichText.join(RichText.emptyText(), prefix, replacement, suffix);
+        RichText updated = RichText.join("", prefix, text, suffix);
         if (current.equals(updated)) {
-            int newCaret = s + replacement.length();
+            int newCaret = s + text.length();
             setSelectionState(newCaret, newCaret);
             return;
         }
@@ -497,22 +471,15 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         pushUndoState();
         setText(updated);
 
-        int newCaret = s + replacement.length();
+        int newCaret = s + text.length();
         setSelectionState(newCaret, newCaret);
         updateHistoryState();
     }
 
     public void replaceSelection(@Nullable CharSequence replacement) {
-        replaceSelection(toRichText(replacement));
-    }
 
-    public void replaceSelection(@Nullable ToRichText replacement) {
-        replaceSelection(replacement == null ? RichText.emptyText() : replacement.toRichText());
-    }
-
-    public void replaceSelection(RichText replacement) {
         IndexRange r = getSelection();
-        replaceText(r.getStart(), r.getEnd(), replacement);
+        replaceText(r.getStart(), r.getEnd(), Objects.requireNonNullElse(replacement, ""));
     }
 
     public void selectRange(int anchor, int caretPosition) {
@@ -533,7 +500,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void positionCaret(int pos) {
-        int p = clamp(pos, 0, getLength());
+        int p = Math.clamp(pos, 0, getLength());
         setSelectionState(p, p);
         preferredCaretX = Double.NaN;
     }
@@ -674,7 +641,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return;
         }
 
-        int p = clamp(pos, 0, text.length());
+        int p = Math.clamp(pos, 0, text.length());
         if (p == text.length() && p > 0) {
             p--;
         }
@@ -707,7 +674,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         VisualLine currentLine = lines.get(currentLineIndex);
         double x = Double.isNaN(preferredCaretX) ? xForIndex(currentLine, caret) : preferredCaretX;
 
-        int targetLineIndex = clamp(currentLineIndex + delta, 0, lines.size() - 1);
+        int targetLineIndex = Math.clamp(currentLineIndex + delta, 0, lines.size() - 1);
         int targetCaret = indexForX(lines.get(targetLineIndex), x);
 
         if (extendSelection) {
@@ -907,7 +874,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     static double xForIndex(VisualLine line, int index) {
-        int offset = clamp(index - line.start(), 0, line.length());
+        int offset = Math.clamp(index - line.start(), 0, line.length());
         return line.boundaries()[offset];
     }
 
@@ -931,7 +898,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private int previousWordStart(int from) {
         String text = getText().toString();
-        int i = clamp(from, 0, text.length());
+        int i = Math.clamp(from, 0, text.length());
         if (i == 0) {
             return 0;
         }
@@ -947,7 +914,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private int nextWordStart(int from) {
         String text = getText().toString();
-        int i = clamp(from, 0, text.length());
+        int i = Math.clamp(from, 0, text.length());
         while (i < text.length() && isWordChar(text.charAt(i))) {
             i++;
         }
@@ -959,7 +926,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private int nextWordEnd(int from) {
         String text = getText().toString();
-        int i = clamp(from, 0, text.length());
+        int i = Math.clamp(from, 0, text.length());
         while (i < text.length() && !isWordChar(text.charAt(i))) {
             i++;
         }
@@ -977,23 +944,18 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         selectionModel.selectRange(anchorPos, caretPos);
     }
 
-    private static RichText toRichText(@Nullable CharSequence text) {
+    private static RichText toRichText(@Nullable CharSequence text, Font font) {
         if (text == null || text.isEmpty()) {
             return RichText.emptyText();
         }
-        if (text instanceof ToRichText trt) {
-            return trt.toRichText();
-        }
-        return RichText.valueOf(text.toString());
-    }
 
-    private static RichText toRichText(@Nullable CharSequence text, @Nullable Font font) {
-        // TODO apply font to plain CharSequence inputs once style-preserving editing is implemented.
-        return toRichText(text);
-    }
+        Style style = Style.create(font);
+        RichTextBuilder rtb = new RichTextBuilder(text.length());
+        rtb.push(style);
+        rtb.append(text);
+        rtb.pop(style);
 
-    private static int clamp(int value, int min, int max) {
-        return Math.max(min, Math.min(max, value));
+        return rtb.toRichText();
     }
 
     private void pushUndoState() {
@@ -1033,8 +995,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private final class SelectionModel {
         void selectRange(int anchorPos, int caretPos) {
-            int a = clamp(anchorPos, 0, getLength());
-            int c = clamp(caretPos, 0, getLength());
+            int a = Math.clamp(anchorPos, 0, getLength());
+            int c = Math.clamp(caretPos, 0, getLength());
             anchor.set(a);
             caretPosition.set(c);
 
