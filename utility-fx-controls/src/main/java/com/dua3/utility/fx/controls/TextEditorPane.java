@@ -43,9 +43,13 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private final ReadOnlyBooleanWrapper undoable = new ReadOnlyBooleanWrapper(this, "undoable", false);
     private final ReadOnlyBooleanWrapper redoable = new ReadOnlyBooleanWrapper(this, "redoable", false);
     private final InputControlState<RichText> state;
+    private final List<EditState> undoStack = new ArrayList<>();
+    private final List<EditState> redoStack = new ArrayList<>();
     private final SelectionModel selectionModel = new SelectionModel();
     private @Nullable ScrollPane scrollPane;
+    private boolean inHistoryNavigation;
     private double preferredCaretX = Double.NaN;
+    private static final int MAX_HISTORY_SIZE = 256;
 
     /**
      * Creates an empty {@code TextEditorPane}.
@@ -123,6 +127,48 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         boolean shift = evt.isShiftDown();
         boolean shortcut = evt.isShortcutDown();
 
+        if (shortcut) {
+            switch (evt.getCode()) {
+                case C -> {
+                    copy();
+                    evt.consume();
+                    return;
+                }
+                case X -> {
+                    cut();
+                    evt.consume();
+                    return;
+                }
+                case V -> {
+                    paste();
+                    evt.consume();
+                    return;
+                }
+                case Z -> {
+                    if (shift) {
+                        redo();
+                    } else {
+                        undo();
+                    }
+                    evt.consume();
+                    return;
+                }
+                case Y -> {
+                    redo();
+                    evt.consume();
+                    return;
+                }
+                case A -> {
+                    selectAll();
+                    evt.consume();
+                    return;
+                }
+                default -> {
+                    // continue with non-shortcut handling
+                }
+            }
+        }
+
         switch (evt.getCode()) {
             case LEFT -> {
                 preferredCaretX = Double.NaN;
@@ -179,12 +225,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                     end();
                 }
                 evt.consume();
-            }
-            case A -> {
-                if (shortcut) {
-                    selectAll();
-                    evt.consume();
-                }
             }
             default -> {
                 // no-op
@@ -396,10 +436,19 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         RichText current = getText();
         RichText prefix = current.subSequence(0, s);
         RichText suffix = current.subSequence(e, current.length());
-        setText(RichText.join(RichText.emptyText(), prefix, replacement, suffix));
+        RichText updated = RichText.join(RichText.emptyText(), prefix, replacement, suffix);
+        if (current.equals(updated)) {
+            int newCaret = s + replacement.length();
+            setSelectionState(newCaret, newCaret);
+            return;
+        }
+
+        pushUndoState();
+        setText(updated);
 
         int newCaret = s + replacement.length();
         setSelectionState(newCaret, newCaret);
+        updateHistoryState();
     }
 
     public void replaceSelection(@Nullable CharSequence replacement) {
@@ -429,8 +478,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void clear() {
-        setText(RichText.emptyText());
-        setSelectionState(0, 0);
+        replaceText(0, getLength(), RichText.emptyText());
     }
 
     public void positionCaret(int pos) {
@@ -504,19 +552,55 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void cut() {
-        // TODO implement clipboard support
+        if (!isEditable()) {
+            return;
+        }
+        if (getSelection().getLength() <= 0) {
+            return;
+        }
+        copy();
+        replaceSelection(RichText.emptyText());
     }
 
     public void paste() {
-        // TODO implement clipboard support
+        if (!isEditable()) {
+            return;
+        }
+        FxUtil.getStringFromClipboard().ifPresent(this::replaceSelection);
     }
 
     public void undo() {
-        // TODO implement undo support
+        if (undoStack.isEmpty()) {
+            return;
+        }
+
+        EditState current = snapshot();
+        EditState previous = undoStack.removeLast();
+        inHistoryNavigation = true;
+        try {
+            redoStack.add(current);
+            applyState(previous);
+        } finally {
+            inHistoryNavigation = false;
+        }
+        updateHistoryState();
     }
 
     public void redo() {
-        // TODO implement redo support
+        if (redoStack.isEmpty()) {
+            return;
+        }
+
+        EditState current = snapshot();
+        EditState next = redoStack.removeLast();
+        inHistoryNavigation = true;
+        try {
+            undoStack.add(current);
+            applyState(next);
+        } finally {
+            inHistoryNavigation = false;
+        }
+        updateHistoryState();
     }
 
     public void cancelEdit() {
@@ -826,6 +910,35 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return Math.max(min, Math.min(max, value));
     }
 
+    private void pushUndoState() {
+        if (inHistoryNavigation) {
+            return;
+        }
+        undoStack.add(snapshot());
+        trimHistory(undoStack);
+        redoStack.clear();
+    }
+
+    private void trimHistory(List<EditState> stack) {
+        while (stack.size() > MAX_HISTORY_SIZE) {
+            stack.removeFirst();
+        }
+    }
+
+    private EditState snapshot() {
+        return new EditState(getText(), getAnchor(), getCaretPosition());
+    }
+
+    private void applyState(EditState state) {
+        setText(state.text());
+        setSelectionState(state.anchor(), state.caret());
+    }
+
+    private void updateHistoryState() {
+        undoable.set(!undoStack.isEmpty());
+        redoable.set(!redoStack.isEmpty());
+    }
+
     record VisualLine(int start, int end, double top, double height, double[] boundaries) {
         int length() {
             return Math.max(0, end - start);
@@ -845,4 +958,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             selectedText.set(getText(start, end));
         }
     }
+
+    private record EditState(RichText text, int anchor, int caret) {}
 }
