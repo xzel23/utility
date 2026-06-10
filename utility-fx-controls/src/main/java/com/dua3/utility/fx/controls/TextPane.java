@@ -743,6 +743,7 @@ public class TextPane extends Control {
                 scrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, editor::processMousePressed);
                 scrollPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, editor::processMouseDragged);
                 scrollPane.addEventFilter(KeyEvent.KEY_PRESSED, editor::processKeyPressed);
+                scrollPane.addEventFilter(KeyEvent.KEY_TYPED, editor::processKeyTyped);
                 scrollPane.focusedProperty().addListener((obs, oldVal, newVal) -> invalidate());
             }
         }

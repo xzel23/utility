@@ -99,6 +99,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         addEventFilter(MouseEvent.MOUSE_PRESSED, this::processMousePressed);
         addEventFilter(MouseEvent.MOUSE_DRAGGED, this::processMouseDragged);
         addEventFilter(KeyEvent.KEY_PRESSED, this::processKeyPressed);
+        addEventFilter(KeyEvent.KEY_TYPED, this::processKeyTyped);
     }
 
     void processMousePressed(MouseEvent evt) {
@@ -170,6 +171,18 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         switch (evt.getCode()) {
+            case BACK_SPACE -> {
+                if (isEditable()) {
+                    deletePreviousChar();
+                    evt.consume();
+                }
+            }
+            case DELETE -> {
+                if (isEditable()) {
+                    deleteNextChar();
+                    evt.consume();
+                }
+            }
             case LEFT -> {
                 preferredCaretX = Double.NaN;
                 if (shortcut) {
@@ -230,6 +243,38 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 // no-op
             }
         }
+    }
+
+    void processKeyTyped(KeyEvent evt) {
+        if (!isEditable()) {
+            return;
+        }
+        if (evt.isShortcutDown()) {
+            return;
+        }
+
+        String chars = evt.getCharacter();
+        if (chars == null || chars.isEmpty()) {
+            return;
+        }
+
+        if ("\r".equals(chars)) {
+            replaceSelection("\n");
+            evt.consume();
+            return;
+        }
+
+        if ("\u007F".equals(chars) || "\b".equals(chars)) {
+            return;
+        }
+
+        boolean hasPrintable = chars.chars().anyMatch(c -> c >= 0x20 || c == '\n' || c == '\t');
+        if (!hasPrintable) {
+            return;
+        }
+
+        replaceSelection(chars);
+        evt.consume();
     }
 
     @Override
