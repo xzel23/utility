@@ -461,7 +461,13 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         RichText current = getText();
         RichText prefix = current.subSequence(0, s);
         RichText suffix = current.subSequence(e, current.length());
-        RichText updated = RichText.join("", prefix, text, suffix);
+
+        RichTextBuilder rtb = new RichTextBuilder(current.length() - (e - s) + text.length());
+        rtb.append(prefix);
+        rtb.append(text);
+        rtb.append(suffix);
+        RichText updated = rtb.toRichText();
+
         if (current.equals(updated)) {
             int newCaret = s + text.length();
             setSelectionState(newCaret, newCaret);
@@ -477,7 +483,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void replaceSelection(@Nullable CharSequence replacement) {
-
         IndexRange r = getSelection();
         replaceText(r.getStart(), r.getEnd(), Objects.requireNonNullElse(replacement, ""));
     }

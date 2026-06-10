@@ -88,30 +88,6 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         return self();
     }
 
-    /**
-     * Appends the specified {@code CharSequence} to the current text being constructed
-     * and merges its style with the current style, if applicable.
-     *
-     * @param csq the {@code CharSequence} to append. If {@code csq} is null, it gets replaced
-     *            by a predefined {@code String.valueOf(null)}. If {@code csq} implements {@code ToRichText},
-     *            its rich text representation is wrapped with the current style attributes.
-     * @return this {@code RichTextBuilder} instance for method chaining
-     */
-    public RichTextBuilder appendAndMergeStyle(@Nullable CharSequence csq) {
-        assert !parts.isEmpty();
-        if (csq instanceof ToRichText trt) {
-            CompactableSortedMap<String, Object> attributes = parts.getLast().attributes();
-            append(trt.toRichText().wrap(Style.create("ephemeral-" + Objects.toIdentityString(csq), attributes)));
-        } else {
-            if (csq == null) {
-                csq = NULL_STRING;
-            }
-            buffer.append(csq);
-            parts.set(parts.size() - 1, new PositionAttributes(parts.getLast().pos() + csq.length(), parts.getLast().attributes()));
-        }
-        return self();
-    }
-
     @Override
     public RichTextBuilder append(@Nullable CharSequence csq, int start, int end) {
         switch (csq) {
