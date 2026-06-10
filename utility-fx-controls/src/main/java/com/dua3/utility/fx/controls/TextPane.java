@@ -33,6 +33,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Labeled;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Skin;
 import javafx.scene.control.SkinBase;
@@ -60,6 +61,8 @@ import java.util.function.Function;
 public class TextPane extends Control {
 
     private static final String NO_BREAK_SPACE = "\u00A0";
+    private static final String STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT = TextPane.class.getName() + ".inlineReferenceAscent";
+    private static final String STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT = TextPane.class.getName() + ".inlineReferenceDescent";
     private static final String DEFAULT_STYLE_CLASS = "text-pane";
     private static final Style STYLE_INVISIBLE_TEXT = Style.create(
             "text-pane-invisible",
@@ -290,8 +293,12 @@ public class TextPane extends Control {
                 if (fragment.text() instanceof Run run) {
                     Node node = createInlineNode(run);
                     if (node != null) {
-                        float baselineY = fragment.y() - fontUtil.getTextDimension(run, fragment.font()).yMin();
-                        placements.add(new InlineControlPlacement(node, fragment.x(), fragment.y(), fragment.w(), fragment.h(), baselineY, fragment.font()));
+                        VAnchor vAnchor = getInlineNodeVAnchor(run);
+                        double refAscent = getInlineReferenceAscent(run, fragment.font());
+                        double refDescent = getInlineReferenceDescent(run, fragment.font());
+                        float baselineY = (float) (fragment.y() + refAscent);
+                        double descent = getInlineNodeDescent(run);
+                        placements.add(new InlineControlPlacement(node, fragment.x(), fragment.y(), fragment.w(), fragment.h(), baselineY, fragment.font(), vAnchor, refAscent, refDescent, descent));
                     }
                 }
             }
@@ -311,9 +318,41 @@ public class TextPane extends Control {
                         labeled.setFont(FxFontUtil.getInstance().convert(runFont));
                     }
                     double controlWidth = measureNodeWidth(node);
+                    double controlHeight = measureNodeHeight(node);
                     double textWidth = fontUtil.getTextDimension(run, runFont).width();
+                    double textHeight = runFont.getFontData().height();
                     double extraWidth = controlWidth - textWidth;
                     String text = run.toString();
+                    Style lineHeightStyle = null;
+                    if (node instanceof ImageView && controlHeight > textHeight + 0.5 && textHeight > 0.1) {
+                        VAnchor vAnchor = getInlineNodeVAnchor(run);
+                        double inlineDescent = getInlineNodeDescent(run);
+                        if (!Double.isFinite(inlineDescent)) {
+                            inlineDescent = 0.0;
+                        }
+                        double scale = requiredLineMetricsScale(
+                                controlHeight,
+                                runFont.getAscent(),
+                                runFont.getDescent(),
+                                vAnchor,
+                                inlineDescent
+                        );
+                        double referenceAscent = runFont.getAscent() * scale;
+                        double referenceDescent = runFont.getDescent() * scale;
+                        if (vAnchor == VAnchor.BASELINE) {
+                            double descent = Math.max(0.0, inlineDescent);
+                            double ascent = Math.max(0.0, controlHeight - descent);
+                            referenceAscent = ascent;
+                            referenceDescent = descent;
+                        }
+                        float scaledFontSize = (float) (runFont.getSizeInPoints() * scale);
+                        lineHeightStyle = Style.create(
+                                "text-pane-inline-height",
+                                Map.entry(Style.FONT_SIZE, scaledFontSize),
+                                Map.entry(STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT, referenceAscent),
+                                Map.entry(STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT, referenceDescent)
+                        );
+                    }
                     if (extraWidth > 0.5) {
                         double spaceWidth = Math.max(1.0, runFont.getFontData().spaceWidth());
                         int extraSpaces = (int) Math.ceil(extraWidth / spaceWidth);
@@ -322,14 +361,26 @@ public class TextPane extends Control {
                         }
                         List<Style> styles = run.getStyles();
                         styles.forEach(builder::push);
+                        if (lineHeightStyle != null) {
+                            builder.push(lineHeightStyle);
+                        }
                         builder.append(text);
+                        if (lineHeightStyle != null) {
+                            builder.pop(lineHeightStyle);
+                        }
                         for (int i = styles.size() - 1; i >= 0; i--) {
                             builder.pop(styles.get(i));
                         }
                     } else {
                         List<Style> styles = run.getStyles();
                         styles.forEach(builder::push);
+                        if (lineHeightStyle != null) {
+                            builder.push(lineHeightStyle);
+                        }
                         builder.append(text);
+                        if (lineHeightStyle != null) {
+                            builder.pop(lineHeightStyle);
+                        }
                         for (int i = styles.size() - 1; i >= 0; i--) {
                             builder.pop(styles.get(i));
                         }
@@ -369,6 +420,22 @@ public class TextPane extends Control {
         node.applyCss();
         node.autosize();
         return Math.max(node.prefWidth(-1), node.getLayoutBounds().getWidth());
+    }
+
+    private static double measureNodeHeight(Node node) {
+        if (node.getScene() == null) {
+            Pane tempRoot = new Pane(node);
+            new Scene(tempRoot);
+            tempRoot.applyCss();
+            node.applyCss();
+            node.autosize();
+            double height = Math.max(node.prefHeight(-1), node.getLayoutBounds().getHeight());
+            tempRoot.getChildren().clear();
+            return height;
+        }
+        node.applyCss();
+        node.autosize();
+        return Math.max(node.prefHeight(-1), node.getLayoutBounds().getHeight());
     }
 
     private static RichText createRenderedText(RichText source) {
@@ -417,7 +484,77 @@ public class TextPane extends Control {
         return null;
     }
 
-    private record InlineControlPlacement(Node node, float x, float y, float w, float h, float baselineY, Font font) {}
+    private static VAnchor getInlineNodeVAnchor(Run run) {
+        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+            Style style = run.getStyles().get(i);
+            Object anchor = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR);
+            if (anchor instanceof VAnchor vAnchor) {
+                return vAnchor;
+            }
+        }
+        return VAnchor.BASELINE;
+    }
+
+    private static double getInlineReferenceAscent(Run run, Font fallbackFont) {
+        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+            Style style = run.getStyles().get(i);
+            Object value = style.get(STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT);
+            if (value instanceof Number n) {
+                return n.doubleValue();
+            }
+        }
+        return fallbackFont.getAscent();
+    }
+
+    private static double getInlineReferenceDescent(Run run, Font fallbackFont) {
+        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+            Style style = run.getStyles().get(i);
+            Object value = style.get(STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT);
+            if (value instanceof Number n) {
+                return n.doubleValue();
+            }
+        }
+        return fallbackFont.getDescent();
+    }
+
+    private static double getInlineNodeDescent(Run run) {
+        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+            Style style = run.getStyles().get(i);
+            Object value = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT);
+            if (value instanceof Number n) {
+                return n.doubleValue();
+            }
+        }
+        return Double.NaN;
+    }
+
+    private static double requiredLineMetricsScale(
+            double nodeHeight,
+            double referenceAscent,
+            double referenceDescent,
+            VAnchor vAnchor,
+            double inlineDescent
+    ) {
+        double refHeight = referenceAscent + referenceDescent;
+        if (refHeight <= 0.0) {
+            return 1.0;
+        }
+        return Math.max(1.0, nodeHeight / refHeight);
+    }
+
+    private record InlineControlPlacement(
+            Node node,
+            float x,
+            float y,
+            float w,
+            float h,
+            float baselineY,
+            Font font,
+            VAnchor vAnchor,
+            double referenceAscent,
+            double referenceDescent,
+            double descent
+    ) {}
 
     private record Layout(RichText renderText, List<InlineControlPlacement> placements, float width, float height) {}
 
@@ -530,9 +667,19 @@ public class TextPane extends Control {
                 double prefH = node.prefHeight(-1);
                 double baselineOffset = node.getBaselineOffset();
                 double x = placement.x() - Math.max(0.0, prefW - placement.w());
-                double y = baselineOffset != Node.BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)
-                        ? placement.baselineY() - baselineOffset
-                        : placement.y() + Math.max(0.0, (placement.h() - prefH) / 2.0);
+                double lineTop = placement.baselineY() - placement.referenceAscent();
+                double lineBottom = placement.baselineY() + placement.referenceDescent();
+                double inlineDescent = Double.isFinite(placement.descent())
+                        ? placement.descent()
+                        : (baselineOffset != Node.BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)
+                                ? Math.max(0.0, prefH - baselineOffset)
+                                : 0.0);
+                double y = switch (placement.vAnchor()) {
+                    case TOP -> lineTop;
+                    case BOTTOM -> lineBottom - prefH;
+                    case MIDDLE -> (lineTop + lineBottom - prefH) / 2.0;
+                    case BASELINE -> placement.baselineY() - (prefH - inlineDescent);
+                };
                 node.resizeRelocate(x, y, prefW, prefH);
             }
 

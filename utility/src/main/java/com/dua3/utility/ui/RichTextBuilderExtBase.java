@@ -24,6 +24,14 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * Style attribute key for a function creating an inline node from run text.
      */
     public static final String STYLE_ATTRIBUTE_INLINE_NODE_FACTORY = RichTextBuilderExtBase.class.getName() + ".inlineNodeFactory";
+    /**
+     * Style attribute key for vertical anchor of inline nodes.
+     */
+    public static final String STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR = RichTextBuilderExtBase.class.getName() + ".inlineNodeVAnchor";
+    /**
+     * Style attribute key for inline-node descent (part below baseline).
+     */
+    public static final String STYLE_ATTRIBUTE_INLINE_NODE_DESCENT = RichTextBuilderExtBase.class.getName() + ".inlineNodeDescent";
 
     /**
      * Protected constructor for the {@code RichTextBuilderExtBase} class.
@@ -99,8 +107,20 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @return the builder instance for method chaining
      */
     public B appendImage(Image image) {
+        return appendImage(image, VAnchor.BASELINE);
+    }
+
+    /**
+     * Appends an image as inline node using the image's original size.
+     *
+     * @param image image
+     * @param vAnchor vertical anchor for image alignment in the text line
+     * @return the builder instance for method chaining
+     */
+    public B appendImage(Image image, VAnchor vAnchor) {
         Image img = Objects.requireNonNull(image, "image");
-        return appendInlineNodeWithStyle(() -> createImage(img));
+        VAnchor anchor = Objects.requireNonNull(vAnchor, "vAnchor");
+        return appendInlineNodeWithStyle(() -> createImage(img), anchor, 0.0);
     }
 
     /**
@@ -112,8 +132,22 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @return the builder instance for method chaining
      */
     public B appendImage(Image image, float maxWidth, float maxHeight) {
+        return appendImage(image, maxWidth, maxHeight, VAnchor.BASELINE);
+    }
+
+    /**
+     * Appends an image as inline node scaled to fit inside the given maximum width and height.
+     *
+     * @param image image
+     * @param maxWidth maximum width
+     * @param maxHeight maximum height
+     * @param vAnchor vertical anchor for image alignment in the text line
+     * @return the builder instance for method chaining
+     */
+    public B appendImage(Image image, float maxWidth, float maxHeight, VAnchor vAnchor) {
         Image img = Objects.requireNonNull(image, "image");
-        return appendInlineNodeWithStyle(() -> createImage(img, maxWidth, maxHeight));
+        VAnchor anchor = Objects.requireNonNull(vAnchor, "vAnchor");
+        return appendInlineNodeWithStyle(() -> createImage(img, maxWidth, maxHeight), anchor, 0.0);
     }
 
     protected B appendInlineNodeWithStyle(Supplier<? extends N> nodeSupplier) {
@@ -122,6 +156,37 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
         Style style = Style.create(
                 nextStyleName("inline-node"),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory)
+        );
+        push(style);
+        append(INLINE_NODE_MARKER);
+        pop(style);
+        return self();
+    }
+
+    protected B appendInlineNodeWithStyle(Supplier<? extends N> nodeSupplier, VAnchor vAnchor) {
+        Supplier<? extends N> supplier = Objects.requireNonNull(nodeSupplier, "nodeSupplier");
+        VAnchor anchor = Objects.requireNonNull(vAnchor, "vAnchor");
+        Function<String, N> nodeFactory = ignoredText -> supplier.get();
+        Style style = Style.create(
+                nextStyleName("inline-node"),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR, anchor)
+        );
+        push(style);
+        append(INLINE_NODE_MARKER);
+        pop(style);
+        return self();
+    }
+
+    protected B appendInlineNodeWithStyle(Supplier<? extends N> nodeSupplier, VAnchor vAnchor, double descent) {
+        Supplier<? extends N> supplier = Objects.requireNonNull(nodeSupplier, "nodeSupplier");
+        VAnchor anchor = Objects.requireNonNull(vAnchor, "vAnchor");
+        Function<String, N> nodeFactory = ignoredText -> supplier.get();
+        Style style = Style.create(
+                nextStyleName("inline-node"),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR, anchor),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_DESCENT, descent)
         );
         push(style);
         append(INLINE_NODE_MARKER);
