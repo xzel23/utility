@@ -6,6 +6,7 @@ import com.dua3.utility.fx.controls.TextPane;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.fx.controls.RichTextBuilderFx;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.VAnchor;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -44,8 +45,8 @@ public class TextPaneSample extends Application {
 
         TextPane textPane = new TextPane(text);
         textPane.setWrapText(true);
-        textPane.setMaxHeight(220);
-        textPane.setPrefWidth(500);
+        textPane.setPrefWidth(600);
+        textPane.setMaxHeight(400);
 
         CheckBox wrap = new CheckBox("Wrap text");
         wrap.setSelected(true);
@@ -85,26 +86,23 @@ public class TextPaneSample extends Application {
 
         Image imageOriginal = createDemoImage(96, 48, 0xFF147BDA, 0xFF13BFA7);
         Image imageScaled = createDemoImage(240, 140, 0xFFE38C22, 0xFFE34F6A);
-
-        b.append("Image 1: ");
-        b.appendImage(imageOriginal);
-        b.append(" (size ")
-                .append(Integer.toString(imageOriginal.width()))
-                .append("x")
-                .append(Integer.toString(imageOriginal.height()))
-                .append(")");
-        b.append("\n\n");
-
         float maxWidth = 120.0f;
         float maxHeight = 20.0f;
-        b.append("Image 2: ");
+
+        b.append("Images (default vAnchor): original ");
+        b.appendImage(imageOriginal);
+        b.append(" and scaled ");
         b.appendImage(imageScaled, maxWidth, maxHeight);
-        b.append(" (scaled to max width ")
-                .append(Float.toString(maxWidth))
-                .append(" and max height ")
-                .append(Float.toString(maxHeight))
-                .append(")");
         b.append("\n\n");
+
+        for (VAnchor vAnchor : VAnchor.values()) {
+            b.append("Images (vAnchor=").append(vAnchor.name()).append("): original ");
+            b.appendImage(imageOriginal, vAnchor);
+            b.append(" and scaled ");
+            b.appendImage(imageScaled, maxWidth, maxHeight, vAnchor);
+            b.append('\n');
+        }
+        b.append('\n');
 
         b.append("Wrap test: this sentence is intentionally long so that the inline ");
         b.appendButton("Button 2", () -> status.setText("Inline button 2 clicked"));
