@@ -5,6 +5,7 @@ import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.ToRichText;
 import javafx.beans.property.BooleanProperty;
@@ -453,15 +454,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     public void replaceText(int start, int end, @Nullable CharSequence replacement) {
         CharSequence text = Objects.requireNonNullElse(replacement, "");
 
-        int max1 = getLength();
-        int s = Math.clamp(Math.min(start, end), 0, max1);
         int max = getLength();
+        int s = Math.clamp(Math.min(start, end), 0, max);
         int e = Math.clamp(Math.max(start, end), 0, max);
 
         RichText current = getText();
         RichText prefix = current.subSequence(0, s);
         RichText suffix = current.subSequence(e, current.length());
-        RichText updated = RichText.joinMergingStyles("", prefix, text, suffix);
+        RichText updated = RichText.join("", prefix, text, suffix);
         if (current.equals(updated)) {
             int newCaret = s + text.length();
             setSelectionState(newCaret, newCaret);
@@ -753,8 +753,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     List<VisualLine> buildVisualLines(double wrapWidth) {
-        String text = getText().toString();
+        RichText richText = getText();
+        String text = richText.toString();
         Font font = getFont();
+        FontUtil fontUtil = FontUtil.getInstance();
         double lineHeight = Math.max(1.0, font.getFontData().height());
         boolean wrap = isWrapText() && Double.isFinite(wrapWidth) && wrapWidth > 1.0;
 
@@ -778,7 +780,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 boundaries.add(0.0);
 
                 for (int i = logicalStart; i < logicalEnd; i++) {
-                    double charWidth = FONT_UTIL.getTextWidth(String.valueOf(text.charAt(i)), font);
+                    double charWidth = charWidthAt(richText, i, font, fontUtil);
                     if (x + charWidth > wrapWidth && i > start) {
                         lines.add(new VisualLine(start, i, y, lineHeight, toArray(boundaries)));
                         y += lineHeight;
@@ -794,7 +796,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
                 lines.add(new VisualLine(start, logicalEnd, y, lineHeight, toArray(boundaries)));
             } else {
-                lines.add(new VisualLine(logicalStart, logicalEnd, y, lineHeight, buildBoundaries(text, logicalStart, logicalEnd, FONT_UTIL, font)));
+                lines.add(new VisualLine(logicalStart, logicalEnd, y, lineHeight, buildBoundaries(richText, logicalStart, logicalEnd, fontUtil, font)));
             }
 
             y += lineHeight;
@@ -825,13 +827,19 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
     }
 
-    private static double[] buildBoundaries(String text, int start, int end, FontUtil fontUtil, Font font) {
+    private static double[] buildBoundaries(RichText text, int start, int end, FontUtil fontUtil, Font baseFont) {
         int len = Math.max(0, end - start);
         double[] boundaries = new double[len + 1];
         for (int i = 0; i < len; i++) {
-            boundaries[i + 1] = boundaries[i] + fontUtil.getTextWidth(String.valueOf(text.charAt(start + i)), font);
+            boundaries[i + 1] = boundaries[i] + charWidthAt(text, start + i, baseFont, fontUtil);
         }
         return boundaries;
+    }
+
+    private static double charWidthAt(RichText text, int index, Font baseFont, FontUtil fontUtil) {
+        Run run = text.runAt(index);
+        Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
+        return fontUtil.getTextWidth(String.valueOf(text.charAt(index)), runFont);
     }
 
     private static double[] toArray(List<Double> boundaries) {
