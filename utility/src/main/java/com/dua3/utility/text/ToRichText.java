@@ -5,6 +5,8 @@
 
 package com.dua3.utility.text;
 
+import java.util.Objects;
+
 /**
  * An interface for classes that can be represented as RichText.
  */
@@ -33,5 +35,9 @@ public interface ToRichText {
      * @param from the starting index (inclusive) of the portion to be appended
      * @param to the ending index (exclusive) of the portion to be appended
      */
-    void appendTo(RichTextBuilder builder, int from, int to);
+    default void appendTo(RichTextBuilder builder, int from, int to) {
+        RichText rt = toRichText();
+        Objects.checkFromToIndex(from, to, rt.length());
+        builder.append(rt.subSequence(from, to));
+    }
 }

@@ -236,12 +236,6 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         }
     }
 
-    @Override
-    public void appendTo(RichTextBuilder builder, int from, int to) {
-        Objects.checkFromToIndex(from, to, length());
-        builder.append(toRichText().subSequence(from, to));
-    }
-
     /**
      * Ensures that the capacity is at least equal to the specified minimum.
      *
