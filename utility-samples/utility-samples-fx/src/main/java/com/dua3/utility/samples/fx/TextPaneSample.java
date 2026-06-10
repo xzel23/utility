@@ -46,7 +46,7 @@ public class TextPaneSample extends Application {
         TextPane textPane = new TextPane(text);
         textPane.setWrapText(true);
         textPane.setPrefWidth(600);
-        textPane.setMaxHeight(400);
+        textPane.setMaxHeight(1000);
 
         CheckBox wrap = new CheckBox("Wrap text");
         wrap.setSelected(true);
