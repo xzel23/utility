@@ -58,10 +58,21 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         parts.add(new PositionAttributes(0, new CompactableSortedMap<>()));
     }
 
+    /**
+     * Returns the current instance of the RichTextBuilder.
+     * This method is commonly used to provide a fluent interface for method chaining and must be overridden by
+     * subclasses.
+     *
+     * @return this RichTextBuilder instance
+     */
+    protected RichTextBuilder self() {
+        return this;
+    }
+
     @Override
     public RichTextBuilder append(char c) {
         buffer.append(c);
-        return this;
+        return self();
     }
 
     @Override
@@ -71,7 +82,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         } else {
             buffer.append(csq);
         }
-        return this;
+        return self();
     }
 
     @Override
@@ -81,18 +92,18 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         } else {
             buffer.append(csq, start, end);
         }
-        return this;
+        return self();
     }
 
     /**
      * Appends a split marker to the text being constructed. A split marker is a special code
      * point used to represent a logical split point in the constructed text.
      *
-     * @return this RichTextBuilder instance after appending the split marker
+     * @return self() RichTextBuilder instance after appending the split marker
      */
     public RichTextBuilder appendSplitMarker() {
         buffer.appendCodePoint(RichText.SPLIT_MARKER);
-        return this;
+        return self();
     }
 
     /**
@@ -241,7 +252,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * to maintain the consistency of text positions and attributes.
      *
      * @param index the index of the character to delete, starting from 0; must be within the range of the current text
-     * @return this RichTextBuilder instance after the specified character has been deleted
+     * @return self() RichTextBuilder instance after the specified character has been deleted
      */
     public RichTextBuilder deleteCharAt(int index) {
         // remove character from buffer
@@ -249,7 +260,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
         // fastpath when all parts can be retained 
         if (parts.getLast().pos() < index) {
-            return this;
+            return self();
         }
 
         // update parts starting at index + 1 (in reverse order)
@@ -263,7 +274,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
             parts.remove(i);
         }
 
-        return this;
+        return self();
     }
 
     @SuppressWarnings("unchecked")
@@ -317,12 +328,12 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      *
      * @param name  attribute name
      * @param value attribute value
-     * @return this RichTextBuilder instance
+     * @return self() RichTextBuilder instance
      */
     public RichTextBuilder push(String name, Object value) {
         Object previousValue = split().put(name, value);
         openedAttributes.add(new AttributeChange(name, previousValue, value));
-        return this;
+        return self();
     }
 
     /**
@@ -332,7 +343,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * it is removed.
      *
      * @param name attribute name
-     * @return this instance
+     * @return self() instance
      */
     public RichTextBuilder pop(String name) {
         AttributeChange change = openedAttributes.removeLast();
@@ -343,7 +354,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         } else {
             attributes.put(name, change.previousValue());
         }
-        return this;
+        return self();
     }
 
     /**
@@ -351,7 +362,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      *
      * @param name  attribute name
      * @param composer function that computes the new value from the current value
-     * @return this RichTextBuilder instance
+     * @return self() RichTextBuilder instance
      */
     public RichTextBuilder compose(String name, BiFunction<String, @Nullable Object, @Nullable Object> composer) {
         Map<String, Object> currentAttributes = split();
@@ -363,7 +374,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
             currentAttributes.put(name, value);
         }
         openedCompositions.add(new AttributeChange(name, previousValue, value));
-        return this;
+        return self();
     }
 
     /**
@@ -371,7 +382,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * Restores the attribute to the oldValue it had before the {@code compose()} call.
      *
      * @param name  attribute name
-     * @return this RichTextBuilder instance
+     * @return self() RichTextBuilder instance
      */
     public RichTextBuilder decompose(String name) {
         AttributeChange change = openedCompositions.removeLast();
@@ -382,14 +393,14 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         } else {
             attributes.put(name, change.previousValue());
         }
-        return this;
+        return self();
     }
 
     /**
      * Push style. Remove the style again by calling {@link #pop(Style)}.
      *
      * @param style the {@link Style} to push
-     * @return this instance
+     * @return self() instance
      */
     @SuppressWarnings("unchecked")
     public RichTextBuilder push(Style style) {
@@ -398,14 +409,14 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         newStyles.addAll(styles);
         newStyles.add(style);
         push(RichText.ATTRIBUTE_NAME_STYLE_LIST, newStyles);
-        return this;
+        return self();
     }
 
     /**
      * Pop style that has been set using {@link #push(Style)}.
      *
      * @param style the style
-     * @return this instance
+     * @return self() instance
      */
     public RichTextBuilder pop(Style style) {
         return pop(RichText.ATTRIBUTE_NAME_STYLE_LIST);

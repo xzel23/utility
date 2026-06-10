@@ -2,14 +2,12 @@ package com.dua3.utility.samples.fx;
 
 import com.dua3.utility.fx.controls.TextPane;
 import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.fx.controls.RichTextBuilderFx;
 import com.dua3.utility.text.Style;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
@@ -40,21 +38,7 @@ public class TextPaneSample extends Application {
     @Override
     public void start(Stage stage) {
         Label status = new Label("No action yet.");
-
-        Style linkStyle = TextPane.inlineNodeStyle("sample-link", text -> {
-            Hyperlink hyperlink = new Hyperlink(text);
-            hyperlink.setPadding(Insets.EMPTY);
-            hyperlink.setOnAction(evt -> status.setText("Hyperlink clicked"));
-            return hyperlink;
-        });
-        Style buttonStyle = TextPane.inlineNodeStyle("sample-button", text -> {
-            Button button = new Button(text);
-            button.setPadding(new Insets(0, 4, 0, 4));
-            button.setOnAction(evt -> status.setText("Inline button clicked"));
-            return button;
-        });
-
-        RichText text = createSampleText(linkStyle, buttonStyle);
+        RichText text = createSampleText(status);
 
         TextPane textPane = new TextPane(text);
         textPane.setWrapText(true);
@@ -85,20 +69,20 @@ public class TextPaneSample extends Application {
         stage.show();
     }
 
-    private static RichText createSampleText(Style linkStyle, Style buttonStyle) {
-        RichTextBuilder b = new RichTextBuilder();
+    private static RichText createSampleText(Label status) {
+        RichTextBuilderFx b = new RichTextBuilderFx();
         b.push(Style.BOLD).append("TextPane demo").pop(Style.BOLD).append('\n');
         b.append("This sample renders RichText via FxGraphics with automatic line wrapping. ");
         b.append("Resize the width slider and toggle wrapping to see the layout update.").append("\n\n");
 
         b.append("Inline controls: ");
-        b.push(linkStyle).append("Hyperlink").pop(linkStyle);
+        b.appendHyperlink("Hyperlink with space", () -> status.setText("Hyperlink clicked"));
         b.append(" followed by text, and ");
-        b.push(buttonStyle).append("Button").pop(buttonStyle);
+        b.appendButton("Button 1", () -> status.setText("Inline button 1 clicked"));
         b.append(" followed by text.\n\n");
 
         b.append("Wrap test: this sentence is intentionally long so that the inline ");
-        b.push(buttonStyle).append("Button").pop(buttonStyle);
+        b.appendButton("Button 2", () -> status.setText("Inline button 2 clicked"));
         b.append(" is likely moved to a new line while text before and after keeps normal spacing.\n\n");
 
         b.append("Long paragraph: ");

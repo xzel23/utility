@@ -330,14 +330,9 @@ public class TextPane extends Control {
                     if (extraWidth > 0.5) {
                         double spaceWidth = Math.max(1.0, runFont.getFontData().spaceWidth());
                         int extraSpaces = (int) Math.ceil(extraWidth / spaceWidth);
-                        int spacesBefore = extraSpaces / 2;
-                        int spacesAfter = extraSpaces - spacesBefore;
-                        if (spacesBefore > 0) {
-                            builder.append(" ".repeat(spacesBefore));
-                        }
                         builder.append(text);
-                        if (spacesAfter > 0) {
-                            builder.append(" ".repeat(spacesAfter));
+                        if (extraSpaces > 0) {
+                            builder.append(" ".repeat(extraSpaces));
                         }
                     } else {
                         builder.append(text);
@@ -546,12 +541,6 @@ public class TextPane extends Control {
                 double prefH = node.prefHeight(-1);
                 double baselineOffset = node.getBaselineOffset();
                 double x = placement.x();
-                if (placement.w() > 0.0f && prefW > placement.w()) {
-                    double spaceWidth = Math.max(1.0, placement.font().getFontData().spaceWidth());
-                    int extraSpaces = (int) Math.ceil((prefW - placement.w()) / spaceWidth);
-                    int leadingSpaces = extraSpaces / 2;
-                    x -= 0.5 * leadingSpaces * spaceWidth;
-                }
                 double y = baselineOffset != Node.BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)
                         ? placement.baselineY() - baselineOffset
                         : placement.y() + Math.max(0.0, (placement.h() - prefH) / 2.0);
