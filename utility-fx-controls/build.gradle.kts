@@ -5,6 +5,8 @@ dependencies {
     implementation(project(":utility-fx"))
     implementation(project(":utility-fx-icons"))
 
+    implementation(libs.ikonli.feather)
+
     // Add dependency on javaTestUtil for tests
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
     testImplementation(libs.ikonli.fontawesome6)

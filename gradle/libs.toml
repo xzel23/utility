@@ -29,6 +29,7 @@ bouncycastle-pkix = { group = "org.bouncycastle", name = "bcpkix-jdk18on", versi
 bouncycastle-provider = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncycastle" }
 h2 = { group = "com.h2database", name = "h2", version.ref = "h2database" }
 ikonli-fontawesome6 = { group = "org.kordamp.ikonli", name = "ikonli-fontawesome6-pack", version.ref = "ikonli" }
+ikonli-feather = { group = "org.kordamp.ikonli", name = "ikonli-feather-pack", version.ref = "ikonli" }
 ikonli-javafx = { group = "org.kordamp.ikonli", name = "ikonli-javafx", version.ref = "ikonli" }
 jimfs = { group = "com.google.jimfs", name = "jimfs", version.ref = "jimfs" }
 jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }

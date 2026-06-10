@@ -36,4 +36,5 @@ open module com.dua3.utility.fx.controls {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires org.kordamp.ikonli.feather;
 }

@@ -368,18 +368,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return redoable.getReadOnlyProperty();
     }
 
-    public final Font getUtilityFont() {
-        return FxFontUtil.getInstance().convert(getFont());
-    }
-
-    public final javafx.scene.text.Font getJavaFxFont() {
-        return getFont();
-    }
-
-    public final void setFont(Font value) {
-        setFont(FxFontUtil.getInstance().convert(value));
-    }
-
     public RichText getText(int start, int end) {
         RichText text = getText();
         int s = clamp(Math.min(start, end), 0, text.length());
@@ -758,8 +746,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     List<VisualLine> buildVisualLines(double wrapWidth) {
         String text = getText().toString();
-        Font font = getUtilityFont();
-        FontUtil fontUtil = FontUtil.getInstance();
+        Font font = getFont();
         double lineHeight = Math.max(1.0, font.getFontData().height());
         boolean wrap = isWrapText() && Double.isFinite(wrapWidth) && wrapWidth > 1.0;
 
@@ -783,7 +770,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 boundaries.add(0.0);
 
                 for (int i = logicalStart; i < logicalEnd; i++) {
-                    double charWidth = fontUtil.getTextWidth(String.valueOf(text.charAt(i)), font);
+                    double charWidth = FONT_UTIL.getTextWidth(String.valueOf(text.charAt(i)), font);
                     if (x + charWidth > wrapWidth && i > start) {
                         lines.add(new VisualLine(start, i, y, lineHeight, toArray(boundaries)));
                         y += lineHeight;
@@ -799,7 +786,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
                 lines.add(new VisualLine(start, logicalEnd, y, lineHeight, toArray(boundaries)));
             } else {
-                lines.add(new VisualLine(logicalStart, logicalEnd, y, lineHeight, buildBoundaries(text, logicalStart, logicalEnd, fontUtil, font)));
+                lines.add(new VisualLine(logicalStart, logicalEnd, y, lineHeight, buildBoundaries(text, logicalStart, logicalEnd, FONT_UTIL, font)));
             }
 
             y += lineHeight;

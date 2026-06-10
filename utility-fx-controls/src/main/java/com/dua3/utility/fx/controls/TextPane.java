@@ -48,6 +48,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import org.jspecify.annotations.Nullable;
+import org.kordamp.ikonli.feather.Feather;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,6 +70,8 @@ import java.util.function.Function;
  */
 public class TextPane extends Control {
 
+    protected static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
+
     private static final String NO_BREAK_SPACE = "\u00A0";
     private static final String STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT = TextPane.class.getName() + ".inlineReferenceAscent";
     private static final String STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT = TextPane.class.getName() + ".inlineReferenceDescent";
@@ -80,7 +83,7 @@ public class TextPane extends Control {
 
     private final ObjectProperty<RichText> text = new SimpleObjectProperty<>(this, "text", RichText.emptyText());
     private final BooleanProperty wrapText = new SimpleBooleanProperty(this, "wrapText", false);
-    private final ObjectProperty<javafx.scene.text.Font> font = new SimpleObjectProperty<>(this, "font", javafx.scene.text.Font.getDefault());
+    private final ObjectProperty<Font> font = new SimpleObjectProperty<>(this, "font", FONT_UTIL.getDefaultFont());
 
     /**
      * Create an empty {@code TextPane}.
@@ -199,17 +202,17 @@ public class TextPane extends Control {
      *
      * @return font property
      */
-    public final ObjectProperty<javafx.scene.text.Font> fontProperty() {
+    public final ObjectProperty<Font> fontProperty() {
         return font;
     }
 
     /**
-     * Returns the rendering font.
+     * Returns the rendering font (JavaFX Font).
      *
      * @return font
      */
-    public final javafx.scene.text.Font getFont() {
-        return font.get();
+    public final javafx.scene.text.Font getFxFont() {
+        return FONT_UTIL.convert(getFont());
     }
 
     /**
@@ -217,8 +220,17 @@ public class TextPane extends Control {
      *
      * @param value font
      */
-    public final void setFont(javafx.scene.text.Font value) {
+    public final void setFont(Font value) {
         font.set(value);
+    }
+
+    /**
+     * Set the rendering font.
+     *
+     * @param value font
+     */
+    public final void setFxFont(javafx.scene.text.Font value) {
+        font.set(FONT_UTIL.convert(value));
     }
 
     @Override
@@ -228,8 +240,7 @@ public class TextPane extends Control {
 
     @Override
     protected double computePrefWidth(double height) {
-        Font font = getUtilityFont();
-        double textWidth = font.getFontData().spaceWidth() * 40.0;
+        double textWidth = getFont().getFontData().spaceWidth() * 40.0;
         return snappedLeftInset() + Math.ceil(textWidth) + snappedRightInset();
     }
 
@@ -237,7 +248,7 @@ public class TextPane extends Control {
     protected double computePrefHeight(double width) {
         double contentWidth = width > 0
                 ? Math.max(1.0, width - snappedLeftInset() - snappedRightInset())
-                : Math.ceil(getUtilityFont().getFontData().spaceWidth() * 40.0f);
+                : Math.ceil(getFont().getFontData().spaceWidth() * 40.0f);
         Layout layout = createLayout(contentWidth);
         double pref = snappedTopInset() + Math.ceil(layout.height()) + snappedBottomInset();
         return clampToMaxHeight(pref);
@@ -245,7 +256,7 @@ public class TextPane extends Control {
 
     @Override
     protected double computeMinHeight(double width) {
-        Font font = getUtilityFont();
+        Font font = getFont();
         double min = snappedTopInset() + Math.ceil(font.getFontData().height()) + snappedBottomInset();
         return clampToMaxHeight(min);
     }
@@ -258,13 +269,13 @@ public class TextPane extends Control {
         return value;
     }
 
-    private Font getUtilityFont() {
-        return FxFontUtil.getInstance().convert(getFont());
+    public Font getFont() {
+        return font.get();
     }
 
     private Layout createLayout(double availableWidth) {
         RichText richText = getText();
-        Font font = getUtilityFont();
+        Font font = getFont();
         com.dua3.utility.text.FontUtil fontUtil = com.dua3.utility.text.FontUtil.getInstance();
         RichText layoutText = createLayoutText(richText, font, fontUtil);
 
@@ -708,7 +719,7 @@ public class TextPane extends Control {
         private boolean dirty = true;
         private double lastAvailableWidth = Double.NaN;
         private RichText lastText;
-        private javafx.scene.text.Font lastFont;
+        private Font lastFont;
         private boolean lastWrapText;
 
         private TextPaneSkin(TextPane control) {
@@ -725,15 +736,11 @@ public class TextPane extends Control {
             scrollPane.setFitToHeight(false);
 
             if (control instanceof TextEditorPane editor) {
-                Button btnCopy = new Button("Copy");
-                Button btnCut = new Button("Cut");
-                Button btnPaste = new Button("Paste");
-
-                btnCopy.setOnAction(evt -> editor.copy());
-                btnCut.setOnAction(evt -> editor.cut());
-                btnPaste.setOnAction(evt -> editor.paste());
-
-                ToolBar toolbar = new ToolBar(btnCopy, btnCut, btnPaste);
+                ToolBar toolbar = new ToolBar(
+                        Controls.button().tooltip("Copy").graphic(Controls.graphic(Feather.COPY.getDescription())).action(editor::copy).build(),
+                        Controls.button().tooltip("Cut").graphic(Controls.graphic(Feather.SCISSORS.getDescription())).action(editor::cut).build(),
+                        Controls.button().tooltip("Paste").graphic(Controls.graphic(Feather.CLIPBOARD.getDescription())).action(editor::paste).build()
+                );
                 toolbar.visibleProperty().bind(editor.toolbarVisibleProperty());
                 toolbar.managedProperty().bind(editor.toolbarVisibleProperty());
 
@@ -786,7 +793,7 @@ public class TextPane extends Control {
             TextPane control = getSkinnable();
             double availableWidth = getAvailableWidth();
             RichText text = control.getText();
-            javafx.scene.text.Font font = control.getFont();
+            Font font = control.getFont();
             boolean wrapText = control.isWrapText();
             boolean widthChanged = !Double.isFinite(lastAvailableWidth) || Math.abs(lastAvailableWidth - availableWidth) > 0.5;
             if (!dirty
@@ -852,7 +859,7 @@ public class TextPane extends Control {
 
             try (Graphics graphics = new FxGraphics(canvas)) {
                 graphics.reset();
-                graphics.setFont(control.getUtilityFont());
+                graphics.setFont(control.getFont());
                 for (List<FragmentedText.Fragment> line : layout.renderLines()) {
                     for (FragmentedText.Fragment fragment : line) {
                         graphics.setFont(fragment.font());
