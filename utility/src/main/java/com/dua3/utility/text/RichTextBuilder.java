@@ -101,7 +101,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         assert !parts.isEmpty();
         if (csq instanceof ToRichText trt) {
             CompactableSortedMap<String, Object> attributes = parts.getLast().attributes();
-            trt.toRichText().wrap(Style.create("ephemeral-" + Objects.toIdentityString(csq), attributes));
+            append(trt.toRichText().wrap(Style.create("ephemeral-" + Objects.toIdentityString(csq), attributes)));
         } else {
             if (csq == null) {
                 csq = NULL_STRING;

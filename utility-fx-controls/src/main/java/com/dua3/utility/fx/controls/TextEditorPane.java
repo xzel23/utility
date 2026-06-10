@@ -461,7 +461,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         RichText current = getText();
         RichText prefix = current.subSequence(0, s);
         RichText suffix = current.subSequence(e, current.length());
-        RichText updated = RichText.join("", prefix, text, suffix);
+        RichText updated = RichText.joinMergingStyles("", prefix, text, suffix);
         if (current.equals(updated)) {
             int newCaret = s + text.length();
             setSelectionState(newCaret, newCaret);

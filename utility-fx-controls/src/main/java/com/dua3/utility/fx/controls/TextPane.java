@@ -14,7 +14,6 @@ import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextUtil;
-import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.ui.HAnchor;

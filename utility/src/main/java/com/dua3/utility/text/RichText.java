@@ -290,6 +290,18 @@ public final class RichText
     }
 
     /**
+     * Joins the given elements into a single RichText instance, separating them with the specified delimiter.
+     * The method combines and merges text styles from individual elements into the resulting RichText.
+     *
+     * @param delimiter the sequence of characters to insert between elements
+     * @param elements the array of character sequences to be joined and styled
+     * @return a RichText instance representing the joined and styled result
+     */
+    public static RichText joinMergingStyles(CharSequence delimiter, CharSequence... elements) {
+        return joinMergingStyles(delimiter, List.of(elements));
+    }
+
+    /**
      * Joins the given sequence of elements into a single {@code RichText} object, merging their styles,
      * with the specified delimiter placed between each element.
      *
