@@ -91,7 +91,7 @@ public class TextPane extends Control {
      *
      * @param text the initial text
      */
-    public TextPane(@Nullable RichText text) {
+    public TextPane(@Nullable CharSequence text) {
         this();
         setText(text);
     }
@@ -160,17 +160,8 @@ public class TextPane extends Control {
      *
      * @param value text or {@code null} for empty text
      */
-    public final void setText(@Nullable RichText value) {
-        text.set(value == null ? RichText.emptyText() : value);
-    }
-
-    /**
-     * Set text from {@link ToRichText}.
-     *
-     * @param value value or {@code null} for empty text
-     */
-    public final void setText(@Nullable ToRichText value) {
-        setText(value == null ? null : value.toRichText());
+    public final void setText(@Nullable CharSequence value) {
+        text.set(value == null ? RichText.emptyText() : RichText.valueOf(value));
     }
 
     /**

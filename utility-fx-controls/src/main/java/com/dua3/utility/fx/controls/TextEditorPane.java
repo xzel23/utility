@@ -59,7 +59,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      *
      * @param text initial text
      */
-    public TextEditorPane(@Nullable RichText text) {
+    public TextEditorPane(@Nullable CharSequence text) {
         super(text);
 
         this.state = new ObjectInputControlState<>(textProperty(), this::getText, value -> Optional.empty());
