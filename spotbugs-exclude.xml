@@ -113,9 +113,9 @@
 
     <!-- false positive: the buffer is ignored -->
     <Match>
-        <Class name="com.dua3.utility.text.TextUtil"/>
-        <Method name="getDigest"/>
-        <Bug pattern="NCR_NOT_PROPERLY_CHECKED_READ"/>
+        <Class name="com.dua3.utility.text.TextUtil">
+            <Bug pattern="NCR_NOT_PROPERLY_CHECKED_READ"/>
+        </Class>
     </Match>
 
     <!-- false positive; the field contains an unmodifiable list -->
@@ -123,6 +123,12 @@
         <Class name="com.dua3.fx.icons.IconView"/>
         <Method name="getClassCssMetaData"/>
         <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+
+    <!-- false positive; this is due to the official API provided by the JDK -->
+    <Match>
+        <Class name="com.dua3.utility.application.EphemeralPreferences"/>
+        <Bug pattern="USO_UNSAFE_OBJECT_SYNCHRONIZATION"/>
     </Match>
 
     <Match>

@@ -96,6 +96,8 @@ public final class IoUtil {
         CHARSETS = charsets.toArray(new Charset[0]);
     }
 
+    private static final Object LOCK = new Object();
+
     private IoUtil() { /* utility class */ }
 
     private record FileNameInfo(int idxStart, int idxEnd) {}
@@ -649,18 +651,20 @@ public final class IoUtil {
      * @return AutoCloseable instance (calling close() will reset standard output streams)
      * @throws IOException if an error occurs
      */
-    public static synchronized AutoCloseable redirectStandardStreams(Path path) throws IOException {
+    public static AutoCloseable redirectStandardStreams(Path path) throws IOException {
         // IMPORTANT: create the cleanup object before redirecting system streams!
-        Runnable cleanup = new CleanupSystemStreams();
+        synchronized (LOCK) {
+            Runnable cleanup = new CleanupSystemStreams();
 
-        Combiner combiner = new Combiner(path, "stdout: ".getBytes(StandardCharsets.UTF_8), "stderr: ".getBytes(StandardCharsets.UTF_8));
+            Combiner combiner = new Combiner(path, "stdout: ".getBytes(StandardCharsets.UTF_8), "stderr: ".getBytes(StandardCharsets.UTF_8));
 
-        LangUtil.registerForCleanup(combiner, cleanup);
+            LangUtil.registerForCleanup(combiner, cleanup);
 
-        System.setOut(new PrintStream(combiner.streamA(), true, StandardCharsets.UTF_8));
-        System.setErr(new PrintStream(combiner.streamB(), true, StandardCharsets.UTF_8));
+            System.setOut(new PrintStream(combiner.streamA(), true, StandardCharsets.UTF_8));
+            System.setErr(new PrintStream(combiner.streamB(), true, StandardCharsets.UTF_8));
 
-        return combiner;
+            return combiner;
+        }
     }
 
     /**

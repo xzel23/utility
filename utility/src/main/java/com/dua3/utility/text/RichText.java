@@ -159,7 +159,7 @@ public final class RichText
         };
     }
 
-    private static RichText valueOfInternal(@Nullable String s) {
+    private static RichText valueOfInternal(String s) {
         return new RichText(new Run(s, 0, s.length(), TextAttributes.none()));
     }
 
