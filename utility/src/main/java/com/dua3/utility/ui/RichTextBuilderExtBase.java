@@ -1,5 +1,6 @@
 package com.dua3.utility.ui;
 
+import com.dua3.utility.data.Image;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 
@@ -49,6 +50,10 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
 
     protected abstract N createButton(CharSequence text, Runnable action);
 
+    protected abstract N createImage(Image image);
+
+    protected abstract N createImage(Image image, float maxWidth, float maxHeight);
+
     /**
      * Appends an inline node to the rich-text content using a {@link Supplier}.
      *
@@ -85,6 +90,30 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
         String buttonText = String.valueOf(text);
         Objects.requireNonNull(action, "action");
         return appendInlineNodeWithStyle(() -> createButton(buttonText, action));
+    }
+
+    /**
+     * Appends an image as inline node using the image's original size.
+     *
+     * @param image image
+     * @return the builder instance for method chaining
+     */
+    public B appendImage(Image image) {
+        Image img = Objects.requireNonNull(image, "image");
+        return appendInlineNodeWithStyle(() -> createImage(img));
+    }
+
+    /**
+     * Appends an image as inline node scaled to fit inside the given maximum width and height.
+     *
+     * @param image image
+     * @param maxWidth maximum width
+     * @param maxHeight maximum height
+     * @return the builder instance for method chaining
+     */
+    public B appendImage(Image image, float maxWidth, float maxHeight) {
+        Image img = Objects.requireNonNull(image, "image");
+        return appendInlineNodeWithStyle(() -> createImage(img, maxWidth, maxHeight));
     }
 
     protected B appendInlineNodeWithStyle(Supplier<? extends N> nodeSupplier) {

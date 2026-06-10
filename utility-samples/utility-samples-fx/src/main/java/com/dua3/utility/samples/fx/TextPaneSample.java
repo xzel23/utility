@@ -1,5 +1,7 @@
 package com.dua3.utility.samples.fx;
 
+import com.dua3.utility.data.Image;
+import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.fx.controls.TextPane;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.fx.controls.RichTextBuilderFx;
@@ -81,6 +83,29 @@ public class TextPaneSample extends Application {
         b.appendButton("Button 1", () -> status.setText("Inline button 1 clicked"));
         b.append(" followed by text.\n\n");
 
+        Image imageOriginal = createDemoImage(96, 48, 0xFF147BDA, 0xFF13BFA7);
+        Image imageScaled = createDemoImage(240, 140, 0xFFE38C22, 0xFFE34F6A);
+
+        b.append("Image 1: ");
+        b.appendImage(imageOriginal);
+        b.append(" (size ")
+                .append(Integer.toString(imageOriginal.width()))
+                .append("x")
+                .append(Integer.toString(imageOriginal.height()))
+                .append(")");
+        b.append("\n\n");
+
+        float maxWidth = 120.0f;
+        float maxHeight = 20.0f;
+        b.append("Image 2: ");
+        b.appendImage(imageScaled, maxWidth, maxHeight);
+        b.append(" (scaled to max width ")
+                .append(Float.toString(maxWidth))
+                .append(" and max height ")
+                .append(Float.toString(maxHeight))
+                .append(")");
+        b.append("\n\n");
+
         b.append("Wrap test: this sentence is intentionally long so that the inline ");
         b.appendButton("Button 2", () -> status.setText("Inline button 2 clicked"));
         b.append(" is likely moved to a new line while text before and after keeps normal spacing.\n\n");
@@ -91,5 +116,31 @@ public class TextPaneSample extends Application {
         b.append("laboris nisi ut aliquip ex ea commodo consequat.");
 
         return b.toRichText();
+    }
+
+    private static Image createDemoImage(int width, int height, int argbA, int argbB) {
+        int[] data = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            float fy = height > 1 ? (float) y / (height - 1) : 0.0f;
+            for (int x = 0; x < width; x++) {
+                float fx = width > 1 ? (float) x / (width - 1) : 0.0f;
+                float f = 0.65f * fx + 0.35f * fy;
+                data[y * width + x] = blendArgb(argbA, argbB, f);
+            }
+        }
+        return ImageUtil.getInstance().create(width, height, data);
+    }
+
+    private static int blendArgb(int argbA, int argbB, float factor) {
+        float f = Math.clamp(factor, 0.0f, 1.0f);
+        int a = blendChannel((argbA >>> 24) & 0xFF, (argbB >>> 24) & 0xFF, f);
+        int r = blendChannel((argbA >>> 16) & 0xFF, (argbB >>> 16) & 0xFF, f);
+        int g = blendChannel((argbA >>> 8) & 0xFF, (argbB >>> 8) & 0xFF, f);
+        int b = blendChannel(argbA & 0xFF, argbB & 0xFF, f);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    private static int blendChannel(int a, int b, float factor) {
+        return Math.clamp(Math.round(a + (b - a) * factor), 0, 255);
     }
 }

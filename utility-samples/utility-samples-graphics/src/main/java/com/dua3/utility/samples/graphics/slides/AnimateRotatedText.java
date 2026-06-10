@@ -13,6 +13,8 @@ import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 
 import java.util.stream.DoubleStream;
 
@@ -51,8 +53,8 @@ public class AnimateRotatedText implements IGraphicsSample.Slide {
             .append("line through")
             .pop(Style.LINE_THROUGH)
             .toRichText();
-    private final Graphics.HAnchor hAnchor;
-    private final Graphics.VAnchor vAnchor;
+    private final HAnchor hAnchor;
+    private final VAnchor vAnchor;
 
     /**
      * Constructs an instance of AnimateRotatedText with specified horizontal and vertical anchor alignments.
@@ -60,7 +62,7 @@ public class AnimateRotatedText implements IGraphicsSample.Slide {
      * @param hAnchor the horizontal anchor alignment
      * @param vAnchor the vertical anchor alignment
      */
-    public AnimateRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor) {
+    public AnimateRotatedText(HAnchor hAnchor, VAnchor vAnchor) {
         this.hAnchor = hAnchor;
         this.vAnchor = vAnchor;
     }
@@ -108,8 +110,8 @@ public class AnimateRotatedText implements IGraphicsSample.Slide {
                             + ", oct " + ((int) (1 + MathUtil.normalizeDegrees(alpha) / 45.0)) + ")",
                     x,
                     y,
-                    Graphics.HAnchor.LEFT,
-                    Graphics.VAnchor.TOP
+                    HAnchor.LEFT,
+                    VAnchor.TOP
             );
         }
 
@@ -158,7 +160,7 @@ public class AnimateRotatedText implements IGraphicsSample.Slide {
             String labelText = modes[i].toString();
             g.setFill(Color.WHITE);
             g.fillRect(FontUtil.getInstance().getTextDimension(labelText, g.getFont()).moveTo(x, y).addMargin(2));
-            g.drawText(labelText, x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+            g.drawText(labelText, x, y, HAnchor.LEFT, VAnchor.TOP);
         }
     }
 }

@@ -1,10 +1,13 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.data.Image;
+import com.dua3.utility.fx.FxImageUtil;
 import com.dua3.utility.ui.RichTextBuilderExtBase;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.image.ImageView;
 
 /**
  * JavaFX rich-text builder with support for inline JavaFX nodes.
@@ -41,5 +44,20 @@ public class RichTextBuilderFx extends RichTextBuilderExtBase<Node, RichTextBuil
         button.setPadding(new Insets(0, 4, 0, 4));
         button.setOnAction(evt -> action.run());
         return button;
+    }
+
+    @Override
+    protected Node createImage(Image image) {
+        return new ImageView(FxImageUtil.getInstance().convert(image));
+    }
+
+    @Override
+    protected Node createImage(Image image, float maxWidth, float maxHeight) {
+        ImageView imageView = new ImageView(FxImageUtil.getInstance().convert(image));
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(Math.max(1.0, maxWidth));
+        imageView.setFitHeight(Math.max(1.0, maxHeight));
+        imageView.setSmooth(true);
+        return imageView;
     }
 }

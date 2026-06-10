@@ -2,7 +2,8 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
-import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,8 +128,8 @@ public record FragmentedText(
             float height,
             Alignment hAlign,
             VerticalAlignment vAlign,
-            Graphics.HAnchor hAnchor,
-            Graphics.VAnchor vAnchor,
+            HAnchor hAnchor,
+            VAnchor vAnchor,
             float wrapWidth) {
         boolean wrap = wrapWidth != Float.MAX_VALUE;
 
@@ -235,7 +236,7 @@ public record FragmentedText(
      *                      defining the text fragments to be aligned
      * @return the updated total height of the text after distribution or alignment adjustments
      */
-    private static float applyAnchorAndVerticalAlignment(float width, float height, VerticalAlignment vAlign, Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, float textHeight, float baseLine, List<List<Fragment>> fragmentLines) {
+    private static float applyAnchorAndVerticalAlignment(float width, float height, VerticalAlignment vAlign, HAnchor hAnchor, VAnchor vAnchor, float textHeight, float baseLine, List<List<Fragment>> fragmentLines) {
         float tx = switch (hAnchor) {
             case LEFT -> 0.0f;
             case RIGHT -> -width;

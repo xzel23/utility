@@ -5,6 +5,8 @@ import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.samples.graphics.IGraphicsSample;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 
 /**
  * The DrawText class implements the Slide interface and demonstrates the use of the drawText method
@@ -31,7 +33,7 @@ public class DrawText implements IGraphicsSample.Slide {
         float x = margin;
         float y = margin;
         g.setFont(g.getDefaultFont().withBold(true));
-        g.drawText("drawText(CharSequence, float, float, HAnchor, VAnchor):", x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+        g.drawText("drawText(CharSequence, float, float, HAnchor, VAnchor):", x, y, HAnchor.LEFT, VAnchor.TOP);
         y += 40;
 
         // show VAnchor values
@@ -42,7 +44,7 @@ public class DrawText implements IGraphicsSample.Slide {
     }
 
     /**
-     * Draws text using the different {@link com.dua3.utility.ui.Graphics.VAnchor} values.
+     * Draws text using the different {@link VAnchor} values.
      *
      * @param g the graphics context used for drawing
      * @param x the x-coordinate of the starting point for rendering
@@ -52,7 +54,7 @@ public class DrawText implements IGraphicsSample.Slide {
     private void showVAnchors(Graphics g, float x, float y, float w) {
         AffineTransformation2f t0 = g.getTransformation();
         g.setFont(g.getDefaultFont().withBold(true));
-        g.drawText("VAnchor:", x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+        g.drawText("VAnchor:", x, y, HAnchor.LEFT, VAnchor.TOP);
 
         g.setFont(g.getDefaultFont());
         float r = 0.95f * w / 2;
@@ -71,11 +73,11 @@ public class DrawText implements IGraphicsSample.Slide {
             g.setStroke(Color.RED, 1);
             g.strokeLine(cx, cy, cx + r, cy);
 
-            float s = r / (Graphics.VAnchor.values().length + 1);
+            float s = r / (VAnchor.values().length + 1);
             float tx = cx + s;
             float ty = cy;
-            for (Graphics.VAnchor v : Graphics.VAnchor.values()) {
-                g.drawText(v.name(), tx, ty, Graphics.HAnchor.LEFT, v);
+            for (VAnchor v : VAnchor.values()) {
+                g.drawText(v.name(), tx, ty, HAnchor.LEFT, v);
                 tx += s;
             }
         }
@@ -83,7 +85,7 @@ public class DrawText implements IGraphicsSample.Slide {
     }
 
     /**
-     * Draws text using the different {@link com.dua3.utility.ui.Graphics.HAnchor} values.
+     * Draws text using the different {@link HAnchor} values.
      *
      * @param g the graphics context used for drawing
      * @param x the x-coordinate of the starting point for rendering
@@ -93,7 +95,7 @@ public class DrawText implements IGraphicsSample.Slide {
     private void showHAnchors(Graphics g, float x, float y, float w) {
         AffineTransformation2f t0 = g.getTransformation();
         g.setFont(g.getDefaultFont().withBold(true));
-        g.drawText("HAnchor:", x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+        g.drawText("HAnchor:", x, y, HAnchor.LEFT, VAnchor.TOP);
 
         g.setFont(g.getDefaultFont());
         float r = 0.95f * w / 2;
@@ -112,11 +114,11 @@ public class DrawText implements IGraphicsSample.Slide {
             g.setStroke(Color.RED, 1);
             g.strokeLine(cx, cy, cx, cy + r);
 
-            float s = r / (Graphics.HAnchor.values().length + 1);
+            float s = r / (HAnchor.values().length + 1);
             float tx = cx;
             float ty = cy + s;
-            for (Graphics.HAnchor h : Graphics.HAnchor.values()) {
-                g.drawText(h.name(), tx, ty, h, Graphics.VAnchor.BOTTOM);
+            for (HAnchor h : HAnchor.values()) {
+                g.drawText(h.name(), tx, ty, h, VAnchor.BOTTOM);
                 ty += s;
             }
         }

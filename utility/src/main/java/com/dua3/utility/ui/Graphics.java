@@ -470,46 +470,6 @@ public interface Graphics extends AutoCloseable {
     }
 
     /**
-     * Enum representing horizontal anchor points for aligning text or graphics elements relative to a reference point.
-     */
-    enum HAnchor {
-        /**
-         * Aligns element to the left side.
-         */
-        LEFT,
-        /**
-         * Aligns element to the right side.
-         */
-        RIGHT,
-        /**
-         * Centers element text horizontally.
-         */
-        CENTER
-    }
-
-    /**
-     * Enum representing vertical anchor points for aligning text or graphics elements relative to a reference point.
-     */
-    enum VAnchor {
-        /**
-         * Align the top of the element.
-         */
-        TOP,
-        /**
-         * Align the bottom of the element.
-         */
-        BOTTOM,
-        /**
-         * Aligns the baseline of the element.
-         */
-        BASELINE,
-        /**
-         * Align the middle of the element relative to the reference point.
-         */
-        MIDDLE
-    }
-
-    /**
      * Draw text at the specified coordinates with the given horizontal and vertical anchor.
      *
      * @param text     the text to be drawn

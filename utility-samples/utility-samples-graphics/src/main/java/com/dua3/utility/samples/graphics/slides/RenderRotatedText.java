@@ -13,6 +13,8 @@ import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 
 /**
  * The RenderRotatedText class implements the Slide interface to demonstrate the rendering
@@ -41,8 +43,8 @@ public class RenderRotatedText implements IGraphicsSample.Slide {
             .append("line through")
             .pop(Style.LINE_THROUGH)
             .toRichText();
-    private final Graphics.HAnchor hAnchor;
-    private final Graphics.VAnchor vAnchor;
+    private final HAnchor hAnchor;
+    private final VAnchor vAnchor;
     private final double[] angles;
 
     /**
@@ -53,7 +55,7 @@ public class RenderRotatedText implements IGraphicsSample.Slide {
      * @param vAnchor the vertical anchor specifying the alignment of the text
      * @param angles  the array of angles indicating the rotation applied to the text
      */
-    public RenderRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, double[] angles) {
+    public RenderRotatedText(HAnchor hAnchor, VAnchor vAnchor, double[] angles) {
         this.hAnchor = hAnchor;
         this.vAnchor = vAnchor;
         this.angles = angles;
@@ -95,8 +97,8 @@ public class RenderRotatedText implements IGraphicsSample.Slide {
                     alpha + "° (quad " + MathUtil.quadrantDegrees(alpha) + ", oct " + ((int) (1 + MathUtil.normalizeDegrees(alpha) / 45.0)) + ")",
                     x,
                     y,
-                    Graphics.HAnchor.LEFT,
-                    Graphics.VAnchor.TOP
+                    HAnchor.LEFT,
+                    VAnchor.TOP
             );
         }
 
@@ -144,7 +146,7 @@ public class RenderRotatedText implements IGraphicsSample.Slide {
             String labelText = modes[i].toString();
             g.setFill(Color.WHITE);
             g.fillRect(FontUtil.getInstance().getTextDimension(labelText, g.getFont()).moveTo(x, y).addMargin(2));
-            g.drawText(labelText, x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+            g.drawText(labelText, x, y, HAnchor.LEFT, VAnchor.TOP);
         }
     }
 }

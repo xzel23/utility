@@ -3,7 +3,8 @@ package com.dua3.utility.text;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
-import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -66,8 +67,8 @@ class FragmentedTextTest {
                 height,
                 Alignment.LEFT,
                 VerticalAlignment.TOP,
-                Graphics.HAnchor.LEFT,
-                Graphics.VAnchor.TOP,
+                HAnchor.LEFT,
+                VAnchor.TOP,
                 FragmentedText.NO_WRAP
         );
 
@@ -102,8 +103,8 @@ class FragmentedTextTest {
                 height,
                 Alignment.LEFT,
                 VerticalAlignment.TOP,
-                Graphics.HAnchor.LEFT,
-                Graphics.VAnchor.TOP,
+                HAnchor.LEFT,
+                VAnchor.TOP,
                 wrapWidth
         );
 
@@ -130,7 +131,7 @@ class FragmentedTextTest {
         FragmentedText leftAligned = FragmentedText.generateFragments(
                 text, fontUtil, defaultFont, width, height,
                 Alignment.LEFT, VerticalAlignment.TOP,
-                Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP,
+                HAnchor.LEFT, VAnchor.TOP,
                 FragmentedText.NO_WRAP
         );
 
@@ -138,7 +139,7 @@ class FragmentedTextTest {
         FragmentedText rightAligned = FragmentedText.generateFragments(
                 text, fontUtil, defaultFont, width, height,
                 Alignment.RIGHT, VerticalAlignment.TOP,
-                Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP,
+                HAnchor.LEFT, VAnchor.TOP,
                 FragmentedText.NO_WRAP
         );
 
@@ -146,7 +147,7 @@ class FragmentedTextTest {
         FragmentedText centerAligned = FragmentedText.generateFragments(
                 text, fontUtil, defaultFont, width, height,
                 Alignment.CENTER, VerticalAlignment.TOP,
-                Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP,
+                HAnchor.LEFT, VAnchor.TOP,
                 FragmentedText.NO_WRAP
         );
 
@@ -169,7 +170,7 @@ class FragmentedTextTest {
         FragmentedText topAligned = FragmentedText.generateFragments(
                 text, fontUtil, defaultFont, width, height,
                 Alignment.LEFT, VerticalAlignment.TOP,
-                Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP,
+                HAnchor.LEFT, VAnchor.TOP,
                 FragmentedText.NO_WRAP
         );
 
@@ -177,7 +178,7 @@ class FragmentedTextTest {
         FragmentedText middleAligned = FragmentedText.generateFragments(
                 text, fontUtil, defaultFont, width, height,
                 Alignment.LEFT, VerticalAlignment.MIDDLE,
-                Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP,
+                HAnchor.LEFT, VAnchor.TOP,
                 FragmentedText.NO_WRAP
         );
 
@@ -185,7 +186,7 @@ class FragmentedTextTest {
         FragmentedText bottomAligned = FragmentedText.generateFragments(
                 text, fontUtil, defaultFont, width, height,
                 Alignment.LEFT, VerticalAlignment.BOTTOM,
-                Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP,
+                HAnchor.LEFT, VAnchor.TOP,
                 FragmentedText.NO_WRAP
         );
 
@@ -232,7 +233,7 @@ class FragmentedTextTest {
         FragmentedText fragText = FragmentedText.generateFragments(
                 text, fontUtil, defaultFont, width, height,
                 Alignment.LEFT, VerticalAlignment.TOP,
-                Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP,
+                HAnchor.LEFT, VAnchor.TOP,
                 FragmentedText.NO_WRAP
         );
 
@@ -270,7 +271,7 @@ class FragmentedTextTest {
         FragmentedText fragText = FragmentedText.generateFragments(
                 text, fontUtil, defaultFont, width, height,
                 Alignment.LEFT, VerticalAlignment.TOP,
-                Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP,
+                HAnchor.LEFT, VAnchor.TOP,
                 FragmentedText.NO_WRAP
         );
 
@@ -292,7 +293,7 @@ class FragmentedTextTest {
         float height = 200.0f; // Enough height to distribute lines
 
         // Generate fragments with DISTRIBUTED vertical alignment
-        FragmentedText distributedAligned = FragmentedText.generateFragments(text, fontUtil, defaultFont, width, height, Alignment.LEFT, VerticalAlignment.DISTRIBUTED, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP, FragmentedText.NO_WRAP);
+        FragmentedText distributedAligned = FragmentedText.generateFragments(text, fontUtil, defaultFont, width, height, Alignment.LEFT, VerticalAlignment.DISTRIBUTED, HAnchor.LEFT, VAnchor.TOP, FragmentedText.NO_WRAP);
 
         // Verify that we have multiple lines
         List<List<FragmentedText.Fragment>> lines = distributedAligned.lines();
@@ -316,7 +317,7 @@ class FragmentedTextTest {
         float height = 50.0f;
 
         // Generate fragments with DISTRIBUTE alignment
-        FragmentedText distributeAligned = FragmentedText.generateFragments(text, fontUtil, defaultFont, width, height, Alignment.DISTRIBUTE, VerticalAlignment.TOP, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP, width);
+        FragmentedText distributeAligned = FragmentedText.generateFragments(text, fontUtil, defaultFont, width, height, Alignment.DISTRIBUTE, VerticalAlignment.TOP, HAnchor.LEFT, VAnchor.TOP, width);
 
         // Verify that we have at least one line
         List<List<FragmentedText.Fragment>> lines = distributeAligned.lines();
@@ -360,7 +361,7 @@ class FragmentedTextTest {
         float wrapWidth = 150.0f; // Force wrapping
 
         // Generate fragments with JUSTIFY alignment and wrapping
-        FragmentedText justifyAligned = FragmentedText.generateFragments(text, fontUtil, defaultFont, width, height, Alignment.JUSTIFY, VerticalAlignment.TOP, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP, wrapWidth);
+        FragmentedText justifyAligned = FragmentedText.generateFragments(text, fontUtil, defaultFont, width, height, Alignment.JUSTIFY, VerticalAlignment.TOP, HAnchor.LEFT, VAnchor.TOP, wrapWidth);
 
         // Verify that we have multiple lines
         List<List<FragmentedText.Fragment>> lines = justifyAligned.lines();

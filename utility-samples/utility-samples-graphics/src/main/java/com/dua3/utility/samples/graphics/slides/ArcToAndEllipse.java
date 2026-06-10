@@ -7,6 +7,8 @@ import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.samples.graphics.IGraphicsSample;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 
 /**
  * The ArcToAndEllipse class implements the FxGraphicsSample.Slide interface and demonstrates the
@@ -57,12 +59,12 @@ public class ArcToAndEllipse implements IGraphicsSample.Slide {
                         Blue dot: start of arc
                         Green dot: end of arc
                         """,
-                10, 10, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+                10, 10, HAnchor.LEFT, VAnchor.TOP);
 
         g.drawText("""
                         Use Graphics.fillEllipse() and Graphics.strokeEllipse() to draw ellipses with varying rotation angles
                         """,
-                10, h + 10, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+                10, h + 10, HAnchor.LEFT, VAnchor.TOP);
 
         g.drawText("""
                         Demonstrate the result of using different values for the sweep and largeArc parameters of arcTo().
@@ -73,7 +75,7 @@ public class ArcToAndEllipse implements IGraphicsSample.Slide {
                         Red line: largeArc = false, sweep = false
                         Green line: largeArc = true, sweep = false
                         """,
-                10, 2 * h + 10, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+                10, 2 * h + 10, HAnchor.LEFT, VAnchor.TOP);
 
         for (int j = 0; j <= angles; j++) {
             float rMax = w / 2;

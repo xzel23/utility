@@ -16,7 +16,9 @@ import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
 import com.dua3.utility.ui.RichTextBuilderExtBase;
+import com.dua3.utility.ui.VAnchor;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -49,7 +51,7 @@ import java.util.function.Function;
 /**
  * A read-only JavaFX control for displaying {@link RichText}.
  *
- * <p>The control renders text using {@link FxGraphics#renderText(Vector2f, RichText, Graphics.HAnchor, Graphics.VAnchor, Alignment, VerticalAlignment, Dimension2f, Graphics.TextWrapping)}
+ * <p>The control renders text using {@link FxGraphics#renderText(Vector2f, RichText, HAnchor, VAnchor, Alignment, VerticalAlignment, Dimension2f, Graphics.TextWrapping)}
  * so line breaking and wrapping match the Utility text layout implementation.
  *
  * <p>Inline controls can be embedded by assigning styles containing
@@ -273,8 +275,8 @@ public class TextPane extends Control {
                 Float.MAX_VALUE,
                 Alignment.LEFT,
                 VerticalAlignment.TOP,
-                Graphics.HAnchor.LEFT,
-                Graphics.VAnchor.TOP,
+                HAnchor.LEFT,
+                VAnchor.TOP,
                 wrapWidth
                 );
 
@@ -541,8 +543,8 @@ public class TextPane extends Control {
                 graphics.renderText(
                         Vector2f.of(0.0f, 0.0f),
                         layout.renderText(),
-                        Graphics.HAnchor.LEFT,
-                        Graphics.VAnchor.TOP,
+                        HAnchor.LEFT,
+                        VAnchor.TOP,
                         Alignment.LEFT,
                         VerticalAlignment.TOP,
                         Dimension2f.of((float) canvas.getWidth(), (float) canvas.getHeight()),

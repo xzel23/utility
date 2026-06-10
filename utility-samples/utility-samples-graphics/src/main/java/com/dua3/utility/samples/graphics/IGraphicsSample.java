@@ -6,6 +6,8 @@ import com.dua3.utility.samples.graphics.slides.DrawText;
 import com.dua3.utility.samples.graphics.slides.RenderRotatedText;
 import com.dua3.utility.samples.graphics.slides.RenderText;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,8 +91,8 @@ public interface IGraphicsSample<T> {
                 0, 45, 90, -45, -90
         };
 
-        for (Graphics.HAnchor hAnchor : Graphics.HAnchor.values()) {
-            for (Graphics.VAnchor vAnchor : Graphics.VAnchor.values()) {
+        for (HAnchor hAnchor : HAnchor.values()) {
+            for (VAnchor vAnchor : VAnchor.values()) {
                 tabs.add(createSlide(() -> new RenderRotatedText(hAnchor, vAnchor, angles), w, h));
             }
         }

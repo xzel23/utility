@@ -9,6 +9,8 @@ import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 
 /**
  * The RenderText class implements the FxGraphicsSample.Slide interface and demonstrates
@@ -62,8 +64,8 @@ public class RenderText implements IGraphicsSample.Slide {
         g.renderText(
                 r.min(),
                 text,
-                Graphics.HAnchor.LEFT,
-                Graphics.VAnchor.TOP,
+                HAnchor.LEFT,
+                VAnchor.TOP,
                 Alignment.LEFT,
                 VerticalAlignment.TOP,
                 r.getDimension(),

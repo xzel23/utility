@@ -29,8 +29,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.dua3.utility.ui.Graphics.HAnchor;
-import static com.dua3.utility.ui.Graphics.VAnchor;
+
 import static com.dua3.utility.ui.Graphics.TextWrapping;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 

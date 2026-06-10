@@ -14,6 +14,8 @@ import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -93,9 +95,9 @@ public class FxTextRendering extends Application {
         float tileHeight = h;
 
         List<Tile> tiles = new ArrayList<>();
-        for (var vAnchor : Graphics.VAnchor.values()) {
+        for (var vAnchor : VAnchor.values()) {
             int i = vAnchor.ordinal();
-            for (var hAnchor : Graphics.HAnchor.values()) {
+            for (var hAnchor : HAnchor.values()) {
                 int j = hAnchor.ordinal();
 
                 Consumer<Graphics> renderer = g -> render(g, hAnchor, vAnchor, rotationAngle);
@@ -126,7 +128,7 @@ public class FxTextRendering extends Application {
         primaryStage.show();
     }
 
-    private void render(Graphics g, Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, double rotationAngle) {
+    private void render(Graphics g, HAnchor hAnchor, VAnchor vAnchor, double rotationAngle) {
         g.reset();
 
         float width = g.getWidth();
@@ -194,7 +196,7 @@ public class FxTextRendering extends Application {
         g.close();
     }
 
-    private Tile createTile(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, Consumer<Graphics> renderer) {
+    private Tile createTile(HAnchor hAnchor, VAnchor vAnchor, Consumer<Graphics> renderer) {
         return new Tile("HAnchor: %s, VAnchor: %s".formatted(hAnchor, vAnchor), renderer);
     }
 
