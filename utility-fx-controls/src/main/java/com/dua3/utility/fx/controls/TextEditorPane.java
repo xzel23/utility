@@ -35,6 +35,7 @@ import java.util.Optional;
 public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
+    private final BooleanProperty toolbarVisible = new SimpleBooleanProperty(this, "toolbarVisible", false);
     private final ReadOnlyIntegerWrapper length = new ReadOnlyIntegerWrapper(this, "length", 0);
     private final ReadOnlyObjectWrapper<RichText> selectedText = new ReadOnlyObjectWrapper<>(this, "selectedText", RichText.emptyText());
     private final ReadOnlyObjectWrapper<IndexRange> selection = new ReadOnlyObjectWrapper<>(this, "selection", new IndexRange(0, 0));
@@ -297,6 +298,18 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     public final void setEditable(boolean value) {
         editable.set(value);
+    }
+
+    public final BooleanProperty toolbarVisibleProperty() {
+        return toolbarVisible;
+    }
+
+    public final boolean isToolbarVisible() {
+        return toolbarVisible.get();
+    }
+
+    public final void setToolbarVisible(boolean value) {
+        toolbarVisible.set(value);
     }
 
     public final int getLength() {

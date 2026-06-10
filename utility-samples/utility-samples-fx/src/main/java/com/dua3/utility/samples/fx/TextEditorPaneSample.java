@@ -50,6 +50,10 @@ public class TextEditorPaneSample extends Application {
         editable.setSelected(textPane.isEditable());
         editable.selectedProperty().bindBidirectional(textPane.editableProperty());
 
+        CheckBox toolbar = new CheckBox("Toolbar");
+        toolbar.setSelected(textPane.isToolbarVisible());
+        toolbar.selectedProperty().bindBidirectional(textPane.toolbarVisibleProperty());
+
         Slider width = new Slider(220, 700, 500);
         width.setShowTickLabels(true);
         width.setShowTickMarks(true);
@@ -66,7 +70,7 @@ public class TextEditorPaneSample extends Application {
         textPane.selectedTextProperty().addListener((obs, o, n) -> updateSelectionInfo.run());
         updateSelectionInfo.run();
 
-        HBox controls = new HBox(12, wrap, editable, new Label("Width:"), width);
+        HBox controls = new HBox(12, wrap, editable, toolbar, new Label("Width:"), width);
         controls.setPadding(new Insets(0, 0, 8, 0));
         HBox.setHgrow(width, Priority.ALWAYS);
 

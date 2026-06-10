@@ -35,6 +35,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Skin;
@@ -42,6 +43,8 @@ import javafx.scene.control.SkinBase;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import org.jspecify.annotations.Nullable;
@@ -701,6 +704,7 @@ public class TextPane extends Control {
         private final Pane inlineLayer = new Pane();
         private final Pane caretLayer = new Pane();
         private final ScrollPane scrollPane = new ScrollPane(contentPane);
+        private final VBox editorRoot = new VBox();
         private boolean dirty = true;
         private double lastAvailableWidth = Double.NaN;
         private RichText lastText;
@@ -720,7 +724,25 @@ public class TextPane extends Control {
             scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
             scrollPane.setFitToHeight(false);
 
-            getChildren().setAll(scrollPane);
+            if (control instanceof TextEditorPane editor) {
+                Button btnCopy = new Button("Copy");
+                Button btnCut = new Button("Cut");
+                Button btnPaste = new Button("Paste");
+
+                btnCopy.setOnAction(evt -> editor.copy());
+                btnCut.setOnAction(evt -> editor.cut());
+                btnPaste.setOnAction(evt -> editor.paste());
+
+                ToolBar toolbar = new ToolBar(btnCopy, btnCut, btnPaste);
+                toolbar.visibleProperty().bind(editor.toolbarVisibleProperty());
+                toolbar.managedProperty().bind(editor.toolbarVisibleProperty());
+
+                VBox.setVgrow(scrollPane, Priority.ALWAYS);
+                editorRoot.getChildren().setAll(toolbar, scrollPane);
+                getChildren().setAll(editorRoot);
+            } else {
+                getChildren().setAll(scrollPane);
+            }
 
             control.textProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.wrapTextProperty().addListener((obs, oldVal, newVal) -> {
@@ -738,6 +760,7 @@ public class TextPane extends Control {
                 editor.selectionProperty().addListener((obs, oldVal, newVal) -> invalidate());
                 editor.caretPositionProperty().addListener((obs, oldVal, newVal) -> invalidate());
                 editor.editableProperty().addListener((obs, oldVal, newVal) -> invalidate());
+                editor.toolbarVisibleProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
                 // Route interaction through the internal ScrollPane so input works regardless of focus owner.
                 scrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, editor::processMousePressed);
