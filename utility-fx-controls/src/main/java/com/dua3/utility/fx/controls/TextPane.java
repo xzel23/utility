@@ -57,6 +57,7 @@ import java.util.function.Function;
  */
 public class TextPane extends Control {
 
+    private static final String NO_BREAK_SPACE = "\u00A0";
     private static final String DEFAULT_STYLE_CLASS = "text-pane";
     private static final Style STYLE_INVISIBLE_TEXT = Style.create(
             "text-pane-invisible",
@@ -300,8 +301,6 @@ public class TextPane extends Control {
     private static RichText createLayoutText(RichText source, Font baseFont, com.dua3.utility.text.FontUtil fontUtil) {
         RichTextBuilder builder = new RichTextBuilder(source.length());
         for (Run run : source) {
-            List<Style> styles = run.getStyles();
-            styles.forEach(builder::push);
             if (hasInlineNode(run)) {
                 Node node = createInlineNode(run);
                 if (node != null) {
@@ -316,21 +315,38 @@ public class TextPane extends Control {
                     if (extraWidth > 0.5) {
                         double spaceWidth = Math.max(1.0, runFont.getFontData().spaceWidth());
                         int extraSpaces = (int) Math.ceil(extraWidth / spaceWidth);
-                        builder.append(text);
                         if (extraSpaces > 0) {
-                            builder.append(" ".repeat(extraSpaces));
+                            builder.append(NO_BREAK_SPACE.repeat(extraSpaces));
+                        }
+                        List<Style> styles = run.getStyles();
+                        styles.forEach(builder::push);
+                        builder.append(text);
+                        for (int i = styles.size() - 1; i >= 0; i--) {
+                            builder.pop(styles.get(i));
                         }
                     } else {
+                        List<Style> styles = run.getStyles();
+                        styles.forEach(builder::push);
                         builder.append(text);
+                        for (int i = styles.size() - 1; i >= 0; i--) {
+                            builder.pop(styles.get(i));
+                        }
                     }
                 } else {
+                    List<Style> styles = run.getStyles();
+                    styles.forEach(builder::push);
                     builder.append(run.toString());
+                    for (int i = styles.size() - 1; i >= 0; i--) {
+                        builder.pop(styles.get(i));
+                    }
                 }
             } else {
+                List<Style> styles = run.getStyles();
+                styles.forEach(builder::push);
                 builder.append(run.toString());
-            }
-            for (int i = styles.size() - 1; i >= 0; i--) {
-                builder.pop(styles.get(i));
+                for (int i = styles.size() - 1; i >= 0; i--) {
+                    builder.pop(styles.get(i));
+                }
             }
         }
         return builder.toRichText();
@@ -511,7 +527,7 @@ public class TextPane extends Control {
                 double prefW = node.prefWidth(-1);
                 double prefH = node.prefHeight(-1);
                 double baselineOffset = node.getBaselineOffset();
-                double x = placement.x();
+                double x = placement.x() - Math.max(0.0, prefW - placement.w());
                 double y = baselineOffset != Node.BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)
                         ? placement.baselineY() - baselineOffset
                         : placement.y() + Math.max(0.0, (placement.h() - prefH) / 2.0);
