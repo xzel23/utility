@@ -111,6 +111,13 @@
         <Bug pattern="BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS"/>
     </Match>
 
+    <!-- false positive: the buffer is ignored -->
+    <Match>
+        <Class name="com.dua3.utility.text.TextUtil"/>
+        <Method name="getDigest"/>
+        <Bug pattern="NCR_NOT_PROPERLY_CHECKED_READ"/>
+    </Match>
+
     <!-- false positive; the field contains an unmodifiable list -->
     <Match>
         <Class name="com.dua3.fx.icons.IconView"/>
