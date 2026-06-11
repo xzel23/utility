@@ -817,23 +817,21 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
             if (wrap && logicalStart < logicalEnd) {
                 int start = logicalStart;
-                double x = 0.0;
                 List<Double> boundaries = new ArrayList<>();
                 boundaries.add(0.0);
 
                 for (int i = logicalStart; i < logicalEnd; i++) {
-                    double charWidth = charWidthAt(richText, i, font, fontUtil);
-                    if (x + charWidth > wrapWidth && i > start) {
+                    double nextX = textWidthRange(richText, start, i + 1, font, fontUtil);
+                    if (nextX > wrapWidth && i > start) {
                         lines.add(new VisualLine(start, i, y, lineHeight, toArray(boundaries)));
                         y += lineHeight;
 
                         start = i;
-                        x = 0.0;
                         boundaries.clear();
                         boundaries.add(0.0);
+                        nextX = textWidthRange(richText, start, i + 1, font, fontUtil);
                     }
-                    x += charWidth;
-                    boundaries.add(x);
+                    boundaries.add(nextX);
                 }
 
                 lines.add(new VisualLine(start, logicalEnd, y, lineHeight, toArray(boundaries)));
@@ -873,15 +871,28 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int len = Math.max(0, end - start);
         double[] boundaries = new double[len + 1];
         for (int i = 0; i < len; i++) {
-            boundaries[i + 1] = boundaries[i] + charWidthAt(text, start + i, baseFont, fontUtil);
+            boundaries[i + 1] = textWidthRange(text, start, start + i + 1, baseFont, fontUtil);
         }
         return boundaries;
     }
 
-    private static double charWidthAt(RichText text, int index, Font baseFont, FontUtil fontUtil) {
-        Run run = text.runAt(index);
-        Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
-        return fontUtil.getTextWidth(String.valueOf(text.charAt(index)), runFont);
+    private static double textWidthRange(RichText text, int start, int end, Font baseFont, FontUtil fontUtil) {
+        int s = Math.max(0, start);
+        int e = Math.max(s, Math.min(end, text.length()));
+        if (s >= e) {
+            return 0.0;
+        }
+
+        double width = 0.0;
+        int index = s;
+        while (index < e) {
+            Run run = text.runAt(index);
+            int runEnd = Math.min(e, run.getEnd());
+            Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
+            width += fontUtil.getTextWidth(run.subSequence(index - run.getStart(), runEnd - run.getStart()), runFont);
+            index = runEnd;
+        }
+        return width;
     }
 
     private static double[] toArray(List<Double> boundaries) {

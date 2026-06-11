@@ -928,6 +928,7 @@ public class TextPane extends Control {
             contentPane.setPrefSize(canvas.getWidth(), canvas.getHeight());
 
             renderEditorOverlay(control, availableWidth, layout);
+            ensureEditorContentHeight(control, availableWidth);
 
             inlineLayer.getChildren().clear();
             Set<Node> added = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -960,6 +961,30 @@ public class TextPane extends Control {
                         graphics.drawText(fragment.text().toString(), fragment.x(), fragment.y(), HAnchor.LEFT, VAnchor.TOP);
                     }
                 }
+            }
+        }
+
+        private void ensureEditorContentHeight(TextPane control, double availableWidth) {
+            if (!(control instanceof TextEditorPane editor)) {
+                return;
+            }
+
+            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(availableWidth);
+            if (lines.isEmpty()) {
+                return;
+            }
+
+            int lineIndex = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
+            if (lineIndex < 0 || lineIndex >= lines.size()) {
+                return;
+            }
+
+            TextEditorPane.VisualLine line = lines.get(lineIndex);
+            double requiredHeight = Math.ceil(line.top() + line.height());
+            if (requiredHeight > canvas.getHeight()) {
+                canvas.setHeight(requiredHeight);
+                contentPane.setMinHeight(requiredHeight);
+                contentPane.setPrefHeight(requiredHeight);
             }
         }
 
