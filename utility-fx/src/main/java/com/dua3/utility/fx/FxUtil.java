@@ -7,6 +7,7 @@ import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.ui.RtfConverter;
 import javafx.animation.AnimationTimer;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.Property;
@@ -72,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -462,6 +464,7 @@ public final class FxUtil {
         final ClipboardContent content = new ClipboardContent();
         content.putString(text.toString());
         content.putHtml(converter.convert(text));
+        RtfConverter.get().ifPresent(rtfConverter -> content.putRtf(rtfConverter.toRtf(text)));
         clipboard.setContent(content);
     }
 
@@ -523,6 +526,29 @@ public final class FxUtil {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Retrieves text content from the system clipboard. The method first attempts to fetch RTF-formatted
+     * text from the clipboard. If RTF content is available, it is converted to a RichText instance and returned.
+     * If RTF content is not present, it falls back to retrieving plain text from the clipboard,
+     * ensuring a RichText instance is returned with either the retrieved string or an empty string if no text is available.
+     *
+     * @return an Optional containing a RichText instance with the clipboard's content,
+     *         or an Optional with an empty RichText if no text is available in the clipboard.
+     */
+    public static Optional<RichText> getTextFromClipboard() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+
+        String rtfString = clipboard.getRtf();
+        if (rtfString != null) {
+            Optional<RtfConverter> rtfConverter = RtfConverter.get();
+            if (rtfConverter.isPresent()) {
+                return Optional.of(rtfConverter.get().fromRtf(rtfString));
+            }
+        }
+
+        return Optional.of(RichText.valueOf(Objects.requireNonNullElse(clipboard.getString(), "")));
     }
 
     /**

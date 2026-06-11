@@ -589,7 +589,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         if (!isEditable()) {
             return;
         }
-        FxUtil.getStringFromClipboard().ifPresent(this::replaceSelection);
+        FxUtil.getTextFromClipboard().ifPresent(this::replaceSelection);
     }
 
     public void undo() {

@@ -12,6 +12,8 @@ import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.Style;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -298,6 +300,38 @@ class FxUtilTest extends FxTestBase {
             Optional<String> clipboardText = FxUtil.getStringFromClipboard();
             assertTrue(clipboardText.isPresent(), "Clipboard should contain text");
             assertTrue(clipboardText.get().contains("Test"), "Clipboard text should contain the plain text");
+        });
+    }
+
+    @Test
+    void testClipboardRichTextRtfRoundTrip() throws Throwable {
+        runOnFxThreadAndWait(() -> {
+            RichTextBuilder builder = new RichTextBuilder();
+            builder.push(Style.BOLD);
+            builder.append("Bold");
+            builder.pop(Style.BOLD);
+            builder.append(" ");
+            builder.push(Style.ITALIC);
+            builder.push(Style.RED);
+            builder.append("ItalicRed");
+            builder.pop(Style.RED);
+            builder.pop(Style.ITALIC);
+            builder.append("\nSecond line");
+            RichText expected = builder.toRichText();
+
+            FxUtil.copyToClipboard(expected);
+
+            Optional<RichText> actual = FxUtil.getTextFromClipboard();
+            assertTrue(actual.isPresent(), "Clipboard should return rich text");
+            RichText roundTripped = actual.get();
+            assertEquals(expected.toString(), roundTripped.toString(), "Round-tripped text should match");
+
+            int boldPos = roundTripped.indexOf("Bold");
+            assertEquals(Boolean.TRUE, roundTripped.runAt(boldPos).getFontDef().getBold(), "Bold style should round-trip");
+
+            int italicRedPos = roundTripped.indexOf("ItalicRed");
+            assertEquals(Boolean.TRUE, roundTripped.runAt(italicRedPos).getFontDef().getItalic(), "Italic style should round-trip");
+            assertEquals(Color.RED, roundTripped.runAt(italicRedPos).getFontDef().getColor(), "Text color should round-trip");
         });
     }
 
