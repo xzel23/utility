@@ -769,6 +769,8 @@ public class TextPane extends Control {
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
                 underlineButton.selectedProperty().bindBidirectional(editor.underlineProperty());
                 strikeThroughButton.selectedProperty().bindBidirectional(editor.strikeThroughProperty());
+                undoButton.disableProperty().bind(editor.undoableProperty().not());
+                redoButton.disableProperty().bind(editor.redoableProperty().not());
                 copyButton.setFocusTraversable(false);
                 cutButton.setFocusTraversable(false);
                 pasteButton.setFocusTraversable(false);
