@@ -130,7 +130,7 @@ public class FxDialogSample extends Application {
                     .onChange(this::setLocale)
                     .initialValue(currentLocale)
                     .maxWidth(Double.MAX_VALUE)
-                    .stringRenderer(locale -> locale.getDisplayName(LOCALE_WHEN_STARTED), "")
+                    .format(locale -> locale.getDisplayName(LOCALE_WHEN_STARTED), "")
                     .build();
             HBox.setHgrow(comboLocale, Priority.ALWAYS);
             Label lblLocale = new Label(i18n().get("dua3.utility.samples.fx.locale"));
@@ -302,6 +302,7 @@ public class FxDialogSample extends Application {
                             () -> Dialogs.prompt(primaryStage, MessageFormatter.standard()).title(i18n().get("dua3.utility.samples.fx.input.add_item")).build().showAndWait().orElse(null),
                             (cb, item) -> true,
                             Objects::toString,
+                            item -> null,
                             () -> null,
                             List.of("1", "2", "3"),
                             v -> v != null ? Optional.empty() : Optional.of(i18n().get("dua3.utility.samples.fx.input.error.select_item")))

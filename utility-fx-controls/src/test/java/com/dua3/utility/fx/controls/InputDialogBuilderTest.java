@@ -243,7 +243,7 @@ class InputDialogBuilderTest extends FxTestBase {
 
             // Add extended combo box
             List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
-            builder.inputComboBoxEx("id", "Label", s -> s + " (edited)", () -> "New Item", (cb, s) -> true, s -> s, () -> "Item 1", items, s -> Optional.empty());
+            builder.inputComboBoxEx("id", "Label", s -> s + " (edited)", () -> "New Item", (cb, s) -> true, s -> s,s -> null,  () -> "Item 1", items, s -> Optional.empty());
 
             // Build a dialog
             InputDialog dialog = builder.build();

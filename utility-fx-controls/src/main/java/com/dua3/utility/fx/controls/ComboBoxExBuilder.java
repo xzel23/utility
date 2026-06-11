@@ -7,6 +7,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -28,7 +29,8 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
     private @Nullable Supplier<@Nullable T> add;
     private @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
     private Supplier<? extends @Nullable T> dflt = () -> null;
-    private Function<@Nullable T, String> format = TextUtil::toLocalizedString;
+    private Function<? super @Nullable T, @Nullable String> format = TextUtil::toLocalizedString;
+    private Function<? super @Nullable T, ? extends @Nullable Node> graphic = item -> null;
     private @Nullable Consumer<@Nullable T> onChange;
 
     /**
@@ -98,8 +100,22 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
      *               be {@code null}) and returns its string representation
      * @return the current instance of the builder
      */
-    public ComboBoxExBuilder<T> format(Function<@Nullable T, String> format) {
+    public ComboBoxExBuilder<T> format(Function<@Nullable T, @Nullable String> format) {
         this.format = format;
+        return self();
+    }
+
+    /**
+     * Sets a graphic generation function for the items in the ComboBoxEx. The specified function
+     * determines how to convert items of type {@code T} into a {@link Node} to visually represent
+     * them within the ComboBoxEx.
+     *
+     * @param graphic a function that takes an item of type {@code T} (which may be nullable)
+     *                and returns a {@link Node} (which may also be nullable) to represent the item
+     * @return the current instance of {@code ComboBoxExBuilder} for method chaining
+     */
+    public ComboBoxExBuilder<T> graphic(Function<? super @Nullable T, ? extends @Nullable Node> graphic) {
+        this.graphic = graphic;
         return self();
     }
 
@@ -128,7 +144,7 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
 
     @Override
     public ComboBoxEx<T> build() {
-        ComboBoxEx<T> comboBoxEx = new ComboBoxEx<>(edit, add, remove, dflt, format, items);
+        ComboBoxEx<T> comboBoxEx = new ComboBoxEx<>(edit, add, remove, dflt, format, graphic, items);
 
         // ControlBuilder.build() applies tooltip, etc.
         // But it also calls factory.get().

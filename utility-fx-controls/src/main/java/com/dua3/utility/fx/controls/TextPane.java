@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxGraphics;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.Alignment;
@@ -33,6 +34,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
@@ -62,6 +64,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -717,6 +720,18 @@ public class TextPane extends Control {
     ) {}
 
     private static final class TextPaneSkin extends SkinBase<TextPane> {
+        private static final SequencedCollection<String> AVAILABLE_FONTS = FxFontUtil.getInstance().getFamilies(FontUtil.FontTypes.ALL);
+        private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
+        private static final Color[] DEFAULT_COLORS = {
+                Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
+                Color.DARKRED, Color.RED, Color.RED.brighter(),
+                Color.DARKGREEN, Color.GREEN, Color.GREEN.brighter(),
+                Color.DARKBLUE, Color.BLUE, Color.BLUE.brighter(),
+                Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
+                Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
+                Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
+        };
+
         private final Pane contentPane = new Pane();
         private final Pane selectionLayer = new Pane();
         private final Canvas canvas = new Canvas();
@@ -765,6 +780,14 @@ public class TextPane extends Control {
                 ToggleButton underlineButton = createToggleButton("Underline", Controls.graphic(Feather.UNDERLINE.getDescription()), editor, TextEditorPane::markUnderline);
                 ToggleButton strikeThroughButton = createToggleButton("Strike Through", Controls.graphic(Feather.MINUS.getDescription()), editor, TextEditorPane::markStrikeThrough);
 
+                ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS).build();
+                ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
+                ComboBoxEx<Color> colorList = Controls.comboBoxEx(DEFAULT_COLORS)
+                        .defaultValue(() -> Color.BLACK)
+                        .format(color -> LangUtil.mapNonNullOrElse(color, Color::toArgb, ""))
+                        //.rendgraphic(color -> new Rectangle(16, 16, color))
+                        .build();
+
                 boldButton.selectedProperty().bindBidirectional(editor.boldProperty());
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
                 underlineButton.selectedProperty().bindBidirectional(editor.underlineProperty());
@@ -782,6 +805,10 @@ public class TextPane extends Control {
                         new Separator(),
                         undoButton,
                         redoButton,
+                        new Separator(),
+                        fontList,
+                        sizeList,
+                        colorList,
                         new Separator(),
                         boldButton,
                         italicsButton,

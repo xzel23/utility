@@ -308,6 +308,7 @@ public interface InputControl<T> {
      * @param remove   a {@link BiPredicate} to determine if an item should be removed (nullable)
      * @param format   a {@link Function} to format the items as strings
      * @param validate a {@link Function} to validate the current value
+     * @param graphic
      * @return a new instance of {@code SimpleInputControl} configured with a {@link ComboBoxEx} and its value property
      */
     static <T> SimpleInputControl<ComboBoxEx<T>, T> comboBoxExInput(
@@ -316,9 +317,11 @@ public interface InputControl<T> {
             @Nullable Function<T, @Nullable T> edit,
             @Nullable Supplier<@Nullable T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
-            Function<@Nullable T, String> format,
-            Function<@Nullable T, Optional<String>> validate) {
-        ComboBoxEx<T> control = new ComboBoxEx<>(edit, add, remove, dflt, format, FxUtil.makeObservable(choices));
+            Function<? super @Nullable T, @Nullable String> format,
+            Function<? super @Nullable T, ? extends @Nullable Node> graphic,
+            Function<@Nullable T, Optional<String>> validate
+    ) {
+        ComboBoxEx<T> control = new ComboBoxEx<>(edit, add, remove, dflt, format, graphic, FxUtil.makeObservable(choices));
         Property<T> value = control.valueProperty();
         return new SimpleInputControl<>(control, value, dflt, validate);
     }

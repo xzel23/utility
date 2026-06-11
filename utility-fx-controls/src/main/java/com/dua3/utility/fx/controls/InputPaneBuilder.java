@@ -224,8 +224,8 @@ public class InputPaneBuilder extends PaneBuilder<InputPane, InputPaneBuilder, M
     }
 
     @Override
-    public <T> InputPaneBuilder inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
-        pb.inputComboBoxEx(id, label, edit, add, remove, format, dflt, items, validate);
+    public <T> InputPaneBuilder inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<? super @Nullable T, @Nullable String> format, Function<? super T, ? extends @Nullable  Node> graphic, Supplier<? extends @Nullable T> dflt, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+        pb.inputComboBoxEx(id, label, edit, add, remove, format, graphic, dflt, items, validate);
         return this;
     }
 

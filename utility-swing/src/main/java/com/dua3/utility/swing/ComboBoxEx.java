@@ -93,7 +93,7 @@ public class ComboBoxEx<T> extends JPanel {
      * Immutable and transient, meaning it cannot be modified after construction of ComboBoxEx
      * and will not be serialized if the ComboBoxEx object is serialized.
      */
-    private final transient Function<T, String> format;
+    private final transient Function<? super @Nullable T, @Nullable String> format;
     /**
      * The internal data model holding the items for the ComboBoxEx.
      * This model provides the underlying storage and management of the items
@@ -152,7 +152,7 @@ public class ComboBoxEx<T> extends JPanel {
             @Nullable Function<T, @Nullable T> edit,
             @Nullable Supplier<? extends @Nullable T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, ? super @Nullable T> remove,
-            Function<T, String> format, T... items
+            Function<? super @Nullable T, @Nullable String> format, T... items
     ) {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 

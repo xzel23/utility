@@ -372,9 +372,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public <T> GridBuilder inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Supplier<? extends @Nullable T> dflt, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
-        return addInput(id, label, dflt, InputControl.comboBoxExInput(items, dflt, edit, add, remove, format, validate), true);
-    }
+    public <T> GridBuilder inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<? super @Nullable T, @Nullable String> format, Function<? super @Nullable T, ? extends @Nullable Node> graphic, Supplier<? extends @Nullable T> dflt, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {
+        return addInput(id, label, dflt, InputControl.comboBoxExInput(items, dflt, edit, add, remove, format, graphic, validate), true);    }
 
     @Override
     public <T> GridBuilder inputRadioList(String id, MessageFormatter.MessageFormatterArgs label, Supplier<? extends @Nullable T> dflt, Collection<T> items, Function<@Nullable T, Optional<String>> validate) {

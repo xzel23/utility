@@ -44,7 +44,8 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
     private final @Nullable Supplier<@Nullable T> add;
     private final @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
     private final Supplier<? extends @Nullable T> dflt;
-    private final Function<T, String> format;
+    private final Function<? super @Nullable T, @Nullable String> format;
+    private final Function<? super @Nullable T, ? extends @Nullable Node> graphic;
     private final ObservableList<T> items;
     private final ComboBox<@Nullable T> comboBox;
 
@@ -64,10 +65,11 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
             @Nullable Supplier<@Nullable T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Supplier<? extends @Nullable T> dflt,
-            Function<T, String> format,
+            Function<? super @Nullable T, @Nullable String> format,
+            Function<? super @Nullable T, ? extends Node> graphic,
             T... items
     ) {
-        this(edit, add, remove, dflt, format, Arrays.asList(items));
+        this(edit, add, remove, dflt, format, graphic, Arrays.asList(items));
     }
 
     /**
@@ -84,7 +86,8 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
             @Nullable Function<T, @Nullable T> edit,
             @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Supplier<? extends @Nullable T> dflt,
-            Function<@Nullable T, String> format,
+            Function<? super @Nullable T, @Nullable String> format,
+            Function<? super @Nullable T, ? extends @Nullable Node> graphic,
             Collection<T> items
     ) {
         super(new HBox());
@@ -93,6 +96,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
         getStyleClass().setAll("comboboxex");
 
         this.format = format;
+        this.graphic = graphic;
         this.items = FXCollections.observableArrayList(List.copyOf(items));
         this.dflt = dflt;
         container.setFillHeight(false);
@@ -142,6 +146,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
                         super.updateItem(item, empty);
 
                         String text = "";
+                        Node node = null;
                         if (!empty) {
                             try {
                                 text = format.apply(item);
@@ -149,8 +154,15 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
                                 LOG.warn("error during formatting", e);
                                 text = String.valueOf(item);
                             }
+                            try {
+                                node = graphic.apply(item);
+                            } catch (Exception e) {
+                                LOG.warn("error during formatting", e);
+                                text = String.valueOf(item);
+                            }
                         }
                         setText(text);
+                        setGraphic(node);
                     }
                 };
             }
