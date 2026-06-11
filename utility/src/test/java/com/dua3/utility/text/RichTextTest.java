@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -174,12 +175,12 @@ class RichTextTest {
         // tests all sorts if equals comparisons
         RichText text = RichText.valueOf("text");
 
-        RichText blue = text.wrap(Style.BLUE);
-        RichText red = text.wrap(Style.RED);
+        RichText blue = text.apply(Style.BLUE);
+        RichText red = text.apply(Style.RED);
         RichText upper = RichText.valueOf("TEXT");
 
         RichText texts = RichText.valueOf("texts");
-        RichText blues = texts.wrap(Style.BLUE);
+        RichText blues = texts.apply(Style.BLUE);
         RichText blue2 = blues.subSequence(0, 4);
 
         assertFalse(text.equalsText(upper));
@@ -207,65 +208,65 @@ class RichTextTest {
         // tests all sorts if equals comparisons
         RichText text = RichText.valueOf("text");
         RichText upper = RichText.valueOf("TEXT");
-        RichText bigger = text.wrap(Style.create("bigger", Map.entry(Style.FONT_SIZE, 20.0f)));
-        RichText smaller = text.wrap(Style.create("smaller", Map.entry(Style.FONT_SIZE, 8.0f)));
-        RichText serif = text.wrap(Style.SERIF);
-        RichText sans = text.wrap(Style.SANS_SERIF);
+        RichText bigger = text.apply(Style.create("bigger", Map.entry(Style.FONT_SIZE, 20.0f)));
+        RichText smaller = text.apply(Style.create("smaller", Map.entry(Style.FONT_SIZE, 8.0f)));
+        RichText serif = text.apply(Style.SERIF);
+        RichText sans = text.apply(Style.SANS_SERIF);
         RichText texts = RichText.valueOf("texts");
-        RichText arial = text.wrap(Style.create("arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("Arial-12"))));
-        RichText arialSubset = text.wrap(Style.create("AAAAAA+arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("AAAAAA+Arial-12"))));
-        RichText helvetica = text.wrap(Style.create("arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("Helvetica-12"))));
+        RichText arial = text.apply(Style.create("arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("Arial-12"))));
+        RichText arialSubset = text.apply(Style.create("AAAAAA+arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("AAAAAA+Arial-12"))));
+        RichText helvetica = text.apply(Style.create("arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("Helvetica-12"))));
 
         BiPredicate<RichText, RichText> ignoreColor = RichText.equalizer(ComparisonSettings.builder().setIgnoreTextColor(true).build());
-        assertTrue(ignoreColor.test(text, text.wrap(Style.RED)));
-        assertTrue(ignoreColor.test(text.wrap(Style.BLUE), text.wrap(Style.RED)));
-        assertTrue(ignoreColor.test(text.wrap(Style.BLUE), text));
+        assertTrue(ignoreColor.test(text, text.apply(Style.RED)));
+        assertTrue(ignoreColor.test(text.apply(Style.BLUE), text.apply(Style.RED)));
+        assertTrue(ignoreColor.test(text.apply(Style.BLUE), text));
         assertFalse(ignoreColor.test(texts, text));
-        assertFalse(ignoreColor.test(text.wrap(Style.ITALIC), text));
-        assertFalse(ignoreColor.test(text, text.wrap(Style.BOLD)));
+        assertFalse(ignoreColor.test(text.apply(Style.ITALIC), text));
+        assertFalse(ignoreColor.test(text, text.apply(Style.BOLD)));
 
         BiPredicate<RichText, RichText> ignoreBold = RichText.equalizer(ComparisonSettings.builder().setIgnoreBold(true).build());
-        assertTrue(ignoreBold.test(text, text.wrap(Style.BOLD)));
-        assertTrue(ignoreBold.test(text.wrap(Style.BOLD), text.wrap(Style.BOLD)));
-        assertTrue(ignoreBold.test(text.wrap(Style.BOLD), text));
+        assertTrue(ignoreBold.test(text, text.apply(Style.BOLD)));
+        assertTrue(ignoreBold.test(text.apply(Style.BOLD), text.apply(Style.BOLD)));
+        assertTrue(ignoreBold.test(text.apply(Style.BOLD), text));
         assertFalse(ignoreBold.test(texts, text));
-        assertFalse(ignoreBold.test(text.wrap(Style.ITALIC), text));
-        assertFalse(ignoreBold.test(text, text.wrap(Style.UNDERLINE)));
+        assertFalse(ignoreBold.test(text.apply(Style.ITALIC), text));
+        assertFalse(ignoreBold.test(text, text.apply(Style.UNDERLINE)));
 
         BiPredicate<RichText, RichText> ignoreUnderline = RichText.equalizer(ComparisonSettings.builder().setIgnoreUnderline(true).build());
-        assertTrue(ignoreUnderline.test(text, text.wrap(Style.UNDERLINE)));
-        assertTrue(ignoreUnderline.test(text.wrap(Style.UNDERLINE), text.wrap(Style.UNDERLINE)));
-        assertTrue(ignoreUnderline.test(text.wrap(Style.UNDERLINE), text));
+        assertTrue(ignoreUnderline.test(text, text.apply(Style.UNDERLINE)));
+        assertTrue(ignoreUnderline.test(text.apply(Style.UNDERLINE), text.apply(Style.UNDERLINE)));
+        assertTrue(ignoreUnderline.test(text.apply(Style.UNDERLINE), text));
         assertFalse(ignoreUnderline.test(texts, text));
-        assertFalse(ignoreUnderline.test(text.wrap(Style.ITALIC), text));
-        assertFalse(ignoreUnderline.test(text, text.wrap(Style.BOLD)));
+        assertFalse(ignoreUnderline.test(text.apply(Style.ITALIC), text));
+        assertFalse(ignoreUnderline.test(text, text.apply(Style.BOLD)));
 
         BiPredicate<RichText, RichText> ignoreStrikeThrough = RichText.equalizer(ComparisonSettings.builder().setIgnoreStrikeThrough(true).build());
-        assertTrue(ignoreStrikeThrough.test(text, text.wrap(Style.LINE_THROUGH)));
-        assertTrue(ignoreStrikeThrough.test(text.wrap(Style.LINE_THROUGH), text.wrap(Style.LINE_THROUGH)));
-        assertTrue(ignoreStrikeThrough.test(text.wrap(Style.LINE_THROUGH), text));
+        assertTrue(ignoreStrikeThrough.test(text, text.apply(Style.LINE_THROUGH)));
+        assertTrue(ignoreStrikeThrough.test(text.apply(Style.LINE_THROUGH), text.apply(Style.LINE_THROUGH)));
+        assertTrue(ignoreStrikeThrough.test(text.apply(Style.LINE_THROUGH), text));
         assertFalse(ignoreStrikeThrough.test(texts, text));
-        assertFalse(ignoreStrikeThrough.test(text.wrap(Style.ITALIC), text));
-        assertFalse(ignoreStrikeThrough.test(text, text.wrap(Style.BOLD)));
+        assertFalse(ignoreStrikeThrough.test(text.apply(Style.ITALIC), text));
+        assertFalse(ignoreStrikeThrough.test(text, text.apply(Style.BOLD)));
 
         BiPredicate<RichText, RichText> ignoreItalic = RichText.equalizer(ComparisonSettings.builder().setIgnoreItalic(true).build());
-        assertTrue(ignoreItalic.test(text, text.wrap(Style.ITALIC)));
-        assertTrue(ignoreItalic.test(text.wrap(Style.ITALIC), text.wrap(Style.ITALIC)));
-        assertTrue(ignoreItalic.test(text.wrap(Style.ITALIC), text));
+        assertTrue(ignoreItalic.test(text, text.apply(Style.ITALIC)));
+        assertTrue(ignoreItalic.test(text.apply(Style.ITALIC), text.apply(Style.ITALIC)));
+        assertTrue(ignoreItalic.test(text.apply(Style.ITALIC), text));
         assertFalse(ignoreItalic.test(texts, text));
-        assertFalse(ignoreItalic.test(text.wrap(Style.UNDERLINE), text));
-        assertFalse(ignoreItalic.test(text, text.wrap(Style.BOLD)));
+        assertFalse(ignoreItalic.test(text.apply(Style.UNDERLINE), text));
+        assertFalse(ignoreItalic.test(text, text.apply(Style.BOLD)));
 
         BiPredicate<RichText, RichText> ignoreCase = RichText.equalizer(ComparisonSettings.builder().setIgnoreCase(true).build());
         assertTrue(ignoreCase.test(text, upper));
         assertTrue(ignoreCase.test(upper, text));
         assertFalse(ignoreCase.test(text, texts));
         assertFalse(ignoreCase.test(texts, text));
-        assertFalse(ignoreCase.test(text, text.wrap(Style.ITALIC)));
-        assertFalse(ignoreCase.test(text.wrap(Style.ITALIC), text));
+        assertFalse(ignoreCase.test(text, text.apply(Style.ITALIC)));
+        assertFalse(ignoreCase.test(text.apply(Style.ITALIC), text));
         assertFalse(ignoreCase.test(texts, text));
-        assertFalse(ignoreCase.test(text.wrap(Style.UNDERLINE), text));
-        assertFalse(ignoreCase.test(text, text.wrap(Style.BOLD)));
+        assertFalse(ignoreCase.test(text.apply(Style.UNDERLINE), text));
+        assertFalse(ignoreCase.test(text, text.apply(Style.BOLD)));
 
         BiPredicate<RichText, RichText> ignoreFontSize = RichText.equalizer(ComparisonSettings.builder().setIgnoreFontSize(true).build());
         assertTrue(ignoreFontSize.test(text, text));
@@ -276,10 +277,10 @@ class RichTextTest {
         assertTrue(ignoreFontSize.test(bigger, smaller));
         assertFalse(ignoreFontSize.test(text, texts));
         assertFalse(ignoreFontSize.test(texts, text));
-        assertFalse(ignoreFontSize.test(text, text.wrap(Style.ITALIC)));
-        assertFalse(ignoreFontSize.test(text.wrap(Style.ITALIC), text));
-        assertFalse(ignoreFontSize.test(text.wrap(Style.UNDERLINE), text));
-        assertFalse(ignoreFontSize.test(text, text.wrap(Style.BOLD)));
+        assertFalse(ignoreFontSize.test(text, text.apply(Style.ITALIC)));
+        assertFalse(ignoreFontSize.test(text.apply(Style.ITALIC), text));
+        assertFalse(ignoreFontSize.test(text.apply(Style.UNDERLINE), text));
+        assertFalse(ignoreFontSize.test(text, text.apply(Style.BOLD)));
 
         BiPredicate<RichText, RichText> ignoreFontFamily = RichText.equalizer(ComparisonSettings.builder().setIgnoreFontFamily(true).build());
         assertTrue(ignoreFontFamily.test(text, text));
@@ -291,8 +292,8 @@ class RichTextTest {
         assertTrue(ignoreFontFamily.test(serif, sans));
         assertFalse(ignoreFontFamily.test(text, texts));
         assertFalse(ignoreFontFamily.test(texts, text));
-        assertFalse(ignoreFontFamily.test(text, text.wrap(Style.ITALIC)));
-        assertFalse(ignoreFontFamily.test(sans, sans.wrap(Style.ITALIC)));
+        assertFalse(ignoreFontFamily.test(text, text.apply(Style.ITALIC)));
+        assertFalse(ignoreFontFamily.test(sans, sans.apply(Style.ITALIC)));
 
         Function<String, String> fontMapper = s -> s.replaceFirst("[A-Z]{6}\\+", "");
         BiPredicate<RichText, RichText> mappedFonts = RichText.equalizer(ComparisonSettings.builder().setFontMapper(fontMapper).build());
@@ -824,13 +825,15 @@ class RichTextTest {
         };
 
         // when styles are set in the correct order, equals must return true
-        RichText expected = RichText.valueOf("Hello world!").wrap(Style.UNDERLINE).wrap(Style.ITALIC).wrap(Style.BOLD);
+        RichText expected = RichText.valueOf("Hello world!").apply(Style.UNDERLINE).apply(Style.ITALIC).apply(Style.BOLD);
         RichText actual = RichText.valueOf(obj, styles);
         assertEquals(expected, actual);
         assertTrue(actual.equalsTextAndFont(expected), "error in textAndFontEquals()");
 
         // when styles are set in a different order, equals() must return false, but equalsTextAndFont() must return true
-        RichText a = RichText.valueOf("Hello world!").wrap(Style.BOLD).wrap(Style.ITALIC).wrap(Style.UNDERLINE);
+        RichText runs1 = RichText.valueOf("Hello world!").apply(Style.BOLD);
+        RichText runs = runs1.apply(Style.ITALIC);
+        RichText a = runs.apply(Style.UNDERLINE);
         RichText b = RichText.valueOf(obj, styles);
         assertNotEquals(a, b, "error in equals()");
         assertTrue(a.equalsTextAndFont(b), "error in textAndFontEquals()");
@@ -926,6 +929,68 @@ class RichTextTest {
         styles = doubleStyled.stylesAt(0);
         assertTrue(styles.contains(Style.BOLD));
         assertTrue(styles.contains(Style.ITALIC));
+    }
+
+    @Test
+    void testApplyTextAttributes() {
+        RichText original = RichText.valueOf("Hello").apply(Style.BOLD);
+        TextAttributes attributes = TextAttributes.of(Map.of(
+                Style.COLOR, Color.RED,
+                Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC
+        ));
+
+        RichText styled = original.apply(attributes);
+
+        assertEquals("Hello", styled.toString());
+        assertTrue(styled.stylesAt(0).contains(Style.BOLD));
+        assertEquals(Color.RED, styled.attributesAt(0).get(Style.COLOR));
+        assertEquals(Style.FONT_STYLE_VALUE_ITALIC, styled.attributesAt(0).get(Style.FONT_STYLE));
+    }
+
+    @Test
+    void testApplyTextAttributesWithRange() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("ab");
+        builder.push(Style.BOLD);
+        builder.append("cd");
+        builder.pop(Style.BOLD);
+        builder.append("ef");
+        RichText original = builder.toRichText();
+
+        TextAttributes attributes = TextAttributes.of(Map.of(
+                Style.COLOR, Color.RED,
+                Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC
+        ));
+        RichText styled = original.apply(attributes, 1, 5);
+
+        assertEquals("abcdef", styled.toString());
+
+        Assertions.assertNull(styled.attributesAt(0).get(Style.COLOR));
+        Assertions.assertNull(styled.attributesAt(0).get(Style.FONT_STYLE));
+
+        assertEquals(Color.RED, styled.attributesAt(1).get(Style.COLOR));
+        assertEquals(Style.FONT_STYLE_VALUE_ITALIC, styled.attributesAt(1).get(Style.FONT_STYLE));
+        assertEquals(Color.RED, styled.attributesAt(2).get(Style.COLOR));
+        assertEquals(Style.FONT_STYLE_VALUE_ITALIC, styled.attributesAt(2).get(Style.FONT_STYLE));
+        assertEquals(Color.RED, styled.attributesAt(4).get(Style.COLOR));
+        assertEquals(Style.FONT_STYLE_VALUE_ITALIC, styled.attributesAt(4).get(Style.FONT_STYLE));
+
+        assertTrue(styled.stylesAt(2).contains(Style.BOLD));
+        assertFalse(styled.stylesAt(1).contains(Style.BOLD));
+        assertFalse(styled.stylesAt(5).contains(Style.BOLD));
+
+        Assertions.assertNull(styled.attributesAt(5).get(Style.COLOR));
+        Assertions.assertNull(styled.attributesAt(5).get(Style.FONT_STYLE));
+    }
+
+    @Test
+    void testApplyTextAttributesWithRangeIndexChecks() {
+        RichText text = RichText.valueOf("abc");
+        TextAttributes attributes = TextAttributes.of(Map.of(Style.COLOR, Color.RED));
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> text.apply(attributes, -1, 1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> text.apply(attributes, 2, 1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> text.apply(attributes, 0, 4));
     }
 
     @Test

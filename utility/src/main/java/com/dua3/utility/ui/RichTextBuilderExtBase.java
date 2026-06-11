@@ -5,7 +5,6 @@ import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -182,8 +181,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @return the builder instance for method chaining
      */
     protected B appendInlineNodeWithStyle(Supplier<? extends N> nodeSupplier) {
-        Supplier<? extends N> supplier = Objects.requireNonNull(nodeSupplier, "nodeSupplier");
-        Function<String, N> nodeFactory = ignoredText -> supplier.get();
+        Function<String, N> nodeFactory = ignoredText -> nodeSupplier.get();
         Style style = Style.create(
                 nextStyleName("inline-node"),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory)

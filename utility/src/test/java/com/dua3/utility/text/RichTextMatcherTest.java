@@ -126,7 +126,7 @@ class RichTextMatcherTest {
         assertEquals("Hi world! Hello universe!", replaced.toString());
 
         // Test replaceFirst with RichText
-        RichText boldHi = RichText.valueOf("Hi").wrap(Style.BOLD);
+        RichText boldHi = RichText.valueOf("Hi", Style.BOLD);
         RichTextMatcher matcher2 = RichText.matcher(pattern, text);
         replaced = matcher2.replaceFirst(boldHi);
         assertEquals("Hi world! Hello universe!", replaced.toString());
@@ -146,7 +146,7 @@ class RichTextMatcherTest {
         assertEquals("Hi world! Hi universe!", replaced.toString());
 
         // Test replaceAll with RichText
-        RichText boldHi = RichText.valueOf("Hi").wrap(Style.BOLD);
+        RichText boldHi = RichText.valueOf("Hi", Style.BOLD);
         RichTextMatcher matcher2 = RichText.matcher(pattern, text);
         replaced = matcher2.replaceAll(boldHi);
         assertEquals("Hi world! Hi universe!", replaced.toString());
@@ -193,8 +193,8 @@ class RichTextMatcherTest {
     @Test
     void testMatcherWithStyledText() {
         // Create styled text
-        RichText boldHello = RichText.valueOf("Hello").wrap(Style.BOLD);
-        RichText italicWorld = RichText.valueOf("World").wrap(Style.ITALIC);
+        RichText boldHello = RichText.valueOf("Hello", Style.BOLD);
+        RichText italicWorld = RichText.valueOf("World", Style.ITALIC);
         RichText text = RichText.join(RichText.valueOf(" "), boldHello, italicWorld);
 
         // Test that matcher works with styled text

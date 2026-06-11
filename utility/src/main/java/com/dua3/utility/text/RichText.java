@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.BiPredicate;
@@ -161,16 +163,28 @@ public final class RichText
         };
     }
 
+    /**
+     * Creates a new {@code RichText} instance from the provided string and text attributes.
+     *
+     * @param s the string to be used for the text. Can be {@code null}, in which case
+     *          a {@code NullPointerException} will be thrown.
+     * @param attributes the text attributes to be applied to the string.
+     * @return a {@code RichText} instance containing the provided string and attributes.
+     * @throws NullPointerException if {@code s} is {@code null}.
+     */
     public static RichText valueOf(@Nullable String s, TextAttributes attributes) {
-        String text = Objects.requireNonNull(s, NULL_STRING);
-        return switch (s) {
-            case "" -> EMPTY_TEXT;
-            case " " -> SPACE;
-            case "\t" -> TAB;
-            case "\n" -> NEWLINE;
-            case null -> NULL_TEXT;
-            default -> new RichText(new Run(s, 0, s.length(), TextAttributes.none()));
-        };
+        return new RichText(new Run(Objects.requireNonNullElse(s, NULL_STRING), 0, s.length(), attributes));
+    }
+
+    /**
+     * Creates a new RichText instance with the given string and applies the specified style.
+     *
+     * @param s the source string to be converted to RichText, may be null.
+     * @param style the style to be applied to the RichText instance.
+     * @return a RichText instance containing the specified string with the applied style.
+     */
+    public static RichText valueOf(@Nullable String s, Style style) {
+        return valueOf(s).apply(style);
     }
 
     private static RichText valueOfInternal(String s) {
@@ -776,20 +790,6 @@ public final class RichText
     }
 
     /**
-     * Wrap RichText in style.
-     *
-     * @param style the style
-     * @return copy of this RichText instance with style applied
-     */
-    public RichText wrap(Style style) {
-        RichTextBuilder rtb = new RichTextBuilder(length);
-        rtb.push(style);
-        rtb.append(this);
-        rtb.pop(style);
-        return rtb.toRichText();
-    }
-
-    /**
      * Splits this RichText into an array of RichText objects based on the provided regular expression.
      *
      * @param regex the regular expression to use as a delimiter for splitting this RichText
@@ -1000,6 +1000,46 @@ public final class RichText
         rtb.append(this);
         rtb.apply(style);
         return rtb.toRichText();
+    }
+
+    /**
+     * Returns a copy of this text with the supplied attributes applied to all characters.
+     * Existing attributes are preserved unless overwritten by an entry in {@code attributes}.
+     *
+     * @param attributes attributes to apply
+     * @return copy with the attributes applied
+     */
+    public RichText apply(TextAttributes attributes) {
+        return apply(attributes, 0, length);
+    }
+
+    /**
+     * Returns a copy of this text with the supplied attributes applied to a subrange.
+     * Existing attributes are preserved unless overwritten by an entry in {@code attributes}.
+     *
+     * @param attributes attributes to apply
+     * @param from start index (inclusive)
+     * @param to end index (exclusive)
+     * @return copy with the attributes applied to the selected range
+     */
+    public RichText apply(TextAttributes attributes, int from, int to) {
+        Objects.checkFromToIndex(from, to, length);
+
+        if (attributes.isEmpty() || from == to) {
+            return this;
+        }
+
+        RichTextBuilder rtb = new RichTextBuilder(length);
+        subSequence(0, from).appendTo(rtb);
+        subSequence(from, to).forEach(r -> rtb.appendRun(withAppliedAttributes(r, attributes)));
+        subSequence(to, length).appendTo(rtb);
+        return rtb.toRichText();
+    }
+
+    private static Run withAppliedAttributes(Run run, TextAttributes attributes) {
+        Map<String, Object> merged = new HashMap<>(run.attributes());
+        attributes.forEach(merged::put);
+        return new Run(run.base(), run.getStart(), run.length(), TextAttributes.of(merged));
     }
 
     /**

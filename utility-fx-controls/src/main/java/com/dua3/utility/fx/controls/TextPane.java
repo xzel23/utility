@@ -37,6 +37,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
@@ -772,6 +773,38 @@ public class TextPane extends Control {
                             editor.requestFocus();
                         })
                         .build();
+                Button boldButton = Controls.button()
+                        .tooltip("Bold")
+                        .graphic(Controls.graphic(Feather.BOLD.getDescription()))
+                        .action(e -> {
+                            //editor.markBold();
+                            editor.requestFocus();
+                        })
+                        .build();
+                Button italicsButton = Controls.button()
+                        .tooltip("Italic")
+                        .graphic(Controls.graphic(Feather.ITALIC.getDescription()))
+                        .action(e -> {
+                            //editor.markItalic();
+                            editor.requestFocus();
+                        })
+                        .build();
+                Button underlineButton = Controls.button()
+                        .tooltip("Underline")
+                        .graphic(Controls.graphic(Feather.UNDERLINE.getDescription()))
+                        .action(e -> {
+                            //editor.markUnderline();
+                            editor.requestFocus();
+                        })
+                        .build();
+                Button strikeThroughButton = Controls.button()
+                        .tooltip("Strike Through")
+                        .graphic(Controls.graphic(Feather.UNDERLINE.getDescription()))
+                        .action(e -> {
+                            //editor.markStrikeThrough();
+                            editor.requestFocus();
+                        })
+                        .build();
                 copyButton.setFocusTraversable(false);
                 cutButton.setFocusTraversable(false);
                 pasteButton.setFocusTraversable(false);
@@ -779,7 +812,12 @@ public class TextPane extends Control {
                 ToolBar toolbar = new ToolBar(
                         copyButton,
                         cutButton,
-                        pasteButton
+                        pasteButton,
+                        new Separator(),
+                        boldButton,
+                        italicsButton,
+                        underlineButton,
+                        strikeThroughButton
                 );
                 toolbar.setFocusTraversable(false);
                 toolbar.visibleProperty().bind(editor.toolbarVisibleProperty());
