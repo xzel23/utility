@@ -1008,12 +1008,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         String text = richText.toString();
         Font font = getFont();
         FontUtil fontUtil = FontUtil.getInstance();
-        double lineHeight = Math.max(1.0, font.getFontData().height());
+        double defaultLineHeight = Math.max(1.0, font.getFontData().height());
         boolean wrap = isWrapText() && Double.isFinite(wrapWidth) && wrapWidth > 1.0;
 
         List<VisualLine> lines = new ArrayList<>();
         if (text.isEmpty()) {
-            lines.add(new VisualLine(0, 0, 0.0, lineHeight, new double[]{0.0}));
+            lines.add(new VisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
             return lines;
         }
 
@@ -1032,8 +1032,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 for (int i = logicalStart; i < logicalEnd; i++) {
                     double nextX = textWidthRange(richText, start, i + 1, font, fontUtil);
                     if (nextX > wrapWidth && i > start) {
-                        lines.add(new VisualLine(start, i, y, lineHeight, toArray(boundaries)));
-                        y += lineHeight;
+                        double segmentHeight = lineHeightRange(richText, start, i, font, fontUtil, defaultLineHeight);
+                        lines.add(new VisualLine(start, i, y, segmentHeight, toArray(boundaries)));
+                        y += segmentHeight;
 
                         start = i;
                         boundaries.clear();
@@ -1043,12 +1044,20 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                     boundaries.add(nextX);
                 }
 
-                lines.add(new VisualLine(start, logicalEnd, y, lineHeight, toArray(boundaries)));
+                double segmentHeight = lineHeightRange(richText, start, logicalEnd, font, fontUtil, defaultLineHeight);
+                lines.add(new VisualLine(start, logicalEnd, y, segmentHeight, toArray(boundaries)));
+                y += segmentHeight;
             } else {
-                lines.add(new VisualLine(logicalStart, logicalEnd, y, lineHeight, buildBoundaries(richText, logicalStart, logicalEnd, fontUtil, font)));
+                double segmentHeight = lineHeightRange(richText, logicalStart, logicalEnd, font, fontUtil, defaultLineHeight);
+                lines.add(new VisualLine(
+                        logicalStart,
+                        logicalEnd,
+                        y,
+                        segmentHeight,
+                        buildBoundaries(richText, logicalStart, logicalEnd, fontUtil, font)
+                ));
+                y += segmentHeight;
             }
-
-            y += lineHeight;
 
             if (!hasNewline) {
                 break;
@@ -1102,6 +1111,26 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             index = runEnd;
         }
         return width;
+    }
+
+    private static double lineHeightRange(RichText text, int start, int end, Font baseFont, FontUtil fontUtil, double defaultLineHeight) {
+        int s = Math.max(0, start);
+        int e = Math.max(s, Math.min(end, text.length()));
+        if (s >= e) {
+            return defaultLineHeight;
+        }
+
+        double height = 0.0;
+        int index = s;
+        while (index < e) {
+            Run run = text.runAt(index);
+            int runEnd = Math.min(e, run.getEnd());
+            Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
+            height = Math.max(height, runFont.getFontData().height());
+            index = runEnd;
+        }
+
+        return Math.max(defaultLineHeight, height);
     }
 
     private static double[] toArray(List<Double> boundaries) {

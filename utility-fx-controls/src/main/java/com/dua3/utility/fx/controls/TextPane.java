@@ -1211,6 +1211,11 @@ public class TextPane extends Control {
                 int selEnd = selection.getEnd();
                 FontUtil fontUtil = FontUtil.getInstance();
                 for (List<FragmentedText.Fragment> line : layout.renderLines()) {
+                    if (line.isEmpty()) {
+                        continue;
+                    }
+                    double lineTop = line.getFirst().y();
+                    double lineHeight = line.stream().mapToDouble(FragmentedText.Fragment::h).max().orElse(0.0);
                     for (FragmentedText.Fragment fragment : line) {
                         if (!(fragment.text() instanceof Run run)) {
                             continue;
@@ -1229,9 +1234,9 @@ public class TextPane extends Control {
                         double x2 = fragment.x() + textWidth(fontUtil, run, relEnd, fragment.font());
                         Rectangle marker = new Rectangle(
                                 Math.min(x1, x2),
-                                fragment.y(),
+                                lineTop,
                                 Math.max(1.0, Math.abs(x2 - x1)),
-                                fragment.h()
+                                lineHeight
                         );
                         marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
                         selectionLayer.getChildren().add(marker);
@@ -1275,6 +1280,11 @@ public class TextPane extends Control {
         private static @Nullable CaretInfo findCaret(List<List<FragmentedText.Fragment>> lines, int caretPosition) {
             FontUtil fontUtil = FontUtil.getInstance();
             for (List<FragmentedText.Fragment> line : lines) {
+                if (line.isEmpty()) {
+                    continue;
+                }
+                double lineTop = line.getFirst().y();
+                double lineHeight = line.stream().mapToDouble(FragmentedText.Fragment::h).max().orElse(0.0);
                 for (FragmentedText.Fragment fragment : line) {
                     if (!(fragment.text() instanceof Run run)) {
                         continue;
@@ -1288,7 +1298,7 @@ public class TextPane extends Control {
 
                     int rel = caretPosition - start;
                     double x = fragment.x() + textWidth(fontUtil, run, rel, fragment.font());
-                    return new CaretInfo(x, fragment.y(), fragment.h());
+                    return new CaretInfo(x, lineTop, lineHeight);
                 }
             }
             return null;
