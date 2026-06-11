@@ -3,9 +3,12 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontDef;
+import com.dua3.utility.text.FontType;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.RichTextConverter;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
@@ -34,6 +37,7 @@ import javafx.scene.input.MouseEvent;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,6 +50,7 @@ import java.util.Optional;
  * but operating on {@link RichText}. Real editing behavior will be added incrementally.
  */
 public class TextEditorPane extends TextPane implements InputControl<RichText> {
+    private static final String STYLE_LIST_ATTRIBUTE = "__styles";
 
     private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
     private final BooleanProperty toolbarVisible = new SimpleBooleanProperty(this, "toolbarVisible", false);
@@ -70,6 +75,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private @Nullable ScrollPane scrollPane;
     private boolean inHistoryNavigation;
     private boolean updatingPropertiesFromText;
+    private boolean normalizingIncomingText;
     private double preferredCaretX = Double.NaN;
     private static final int MAX_HISTORY_SIZE = 256;
 
@@ -91,12 +97,35 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         this.state = new ObjectInputControlState<>(textProperty(), this::getText, value -> Optional.empty());
         getStyleClass().add("text-editor-pane");
 
-        RichText initial = getText();
+        RichText initial = normalizeIncomingText(getText());
+        if (!initial.equals(getText())) {
+            normalizingIncomingText = true;
+            try {
+                setText(initial);
+            } finally {
+                normalizingIncomingText = false;
+            }
+        }
+
+        initial = getText();
         length.set(initial.length());
         setSelectionState(0, 0);
         initFormatPropertyListeners();
 
         textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!normalizingIncomingText) {
+                RichText normalized = normalizeIncomingText(newValue);
+                if (!normalized.equals(newValue)) {
+                    normalizingIncomingText = true;
+                    try {
+                        setText(normalized);
+                    } finally {
+                        normalizingIncomingText = false;
+                    }
+                    return;
+                }
+            }
+
             length.set(newValue == null ? 0 : newValue.length());
             setSelectionState(getAnchor(), getCaretPosition());
         });
@@ -804,19 +833,21 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void markBold(boolean enabled) {
-        setStyle(Style.BOLD, enabled);
+        applyAttributeToSelection(Style.FONT_WEIGHT, enabled ? Style.FONT_WEIGHT_VALUE_BOLD : Style.FONT_WEIGHT_VALUE_NORMAL);
     }
 
     public void markItalic(boolean enabled) {
-        setStyle(Style.ITALIC, enabled);
+        applyAttributeToSelection(Style.FONT_STYLE, enabled ? Style.FONT_STYLE_VALUE_ITALIC : Style.FONT_STYLE_VALUE_NORMAL);
     }
 
     public void markUnderline(boolean enabled) {
-        setStyle(Style.UNDERLINE, enabled);
+        applyAttributeToSelection(Style.TEXT_DECORATION_UNDERLINE,
+                enabled ? Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE : Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE);
     }
 
     public void markStrikeThrough(boolean enabled) {
-        setStyle(Style.LINE_THROUGH, enabled);
+        applyAttributeToSelection(Style.TEXT_DECORATION_LINE_THROUGH,
+                enabled ? Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE : Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE);
     }
 
     public void cancelEdit() {
@@ -1310,6 +1341,19 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return rtb.toRichText();
     }
 
+    private void applyAttributeToSelection(String name, @Nullable Object value) {
+        if (value == null) {
+            return;
+        }
+
+        IndexRange range = getSelection();
+        if (range.getLength() == 0) {
+            return;
+        }
+
+        applyFormattingChange(getText().apply(Map.of(name, value), range.getStart(), range.getEnd()));
+    }
+
     private RichText toRichTextWithCurrentProperties(@Nullable CharSequence text) {
         if (text == null || text.isEmpty()) {
             return RichText.emptyText();
@@ -1369,6 +1413,135 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         return rtb.toRichText();
+    }
+
+    private RichText normalizeIncomingText(@Nullable RichText text) {
+        if (text == null || text.isEmpty()) {
+            return text == null ? RichText.emptyText() : text;
+        }
+
+        boolean needsNormalization = text.runStream()
+                .flatMap(run -> run.getStyles().stream())
+                .anyMatch(TextEditorPane::needsFontNormalization);
+        if (!needsNormalization) {
+            return text;
+        }
+
+        RichTextBuilder rtb = new RichTextBuilder(text.length());
+        for (Run run : text) {
+            List<Style> normalizedStyles = new ArrayList<>();
+            for (Style style : run.getStyles()) {
+                normalizedStyles.addAll(normalizeStyle(style));
+            }
+
+            List<String> pushedAttributes = new ArrayList<>();
+            for (Map.Entry<String, @Nullable Object> entry : run.attributes().entrySet()) {
+                if (STYLE_LIST_ATTRIBUTE.equals(entry.getKey()) || entry.getValue() == null) {
+                    continue;
+                }
+                rtb.push(entry.getKey(), entry.getValue());
+                pushedAttributes.add(entry.getKey());
+            }
+
+            for (Style normalizedStyle : normalizedStyles) {
+                rtb.push(normalizedStyle);
+            }
+
+            rtb.append(run.toString());
+
+            for (int i = normalizedStyles.size() - 1; i >= 0; i--) {
+                rtb.pop(normalizedStyles.get(i));
+            }
+            for (int i = pushedAttributes.size() - 1; i >= 0; i--) {
+                rtb.pop(pushedAttributes.get(i));
+            }
+        }
+
+        return rtb.toRichText();
+    }
+
+    private static boolean needsFontNormalization(Style style) {
+        if (!style.containsKey(Style.FONT)) {
+            return false;
+        }
+
+        Object value = style.get(Style.FONT);
+        return value instanceof Font || value instanceof FontDef;
+    }
+
+    private static List<Style> normalizeStyle(Style style) {
+        if (!needsFontNormalization(style)) {
+            return List.of(style);
+        }
+
+        Map<String, @Nullable Object> attributes = new LinkedHashMap<>();
+        for (Map.Entry<String, @Nullable Object> entry : style.entrySet()) {
+            String key = entry.getKey();
+            @Nullable Object value = entry.getValue();
+
+            if (Style.FONT.equals(key)) {
+                if (value instanceof Font font) {
+                    RichTextConverter.putFontProperties(attributes, font);
+                } else if (value instanceof FontDef fontDef) {
+                    putFontDefProperties(attributes, fontDef);
+                }
+                continue;
+            }
+
+            attributes.put(key, value);
+        }
+
+        List<Style> result = new ArrayList<>(attributes.size());
+        for (Map.Entry<String, @Nullable Object> entry : attributes.entrySet()) {
+            if (entry.getValue() != null) {
+                result.add(Style.create(style.name() + "-" + entry.getKey(), Map.entry(entry.getKey(), entry.getValue())));
+            }
+        }
+        return result;
+    }
+
+    private static void putFontDefProperties(Map<? super String, @Nullable Object> attributes, FontDef fd) {
+        @Nullable List<String> families = fd.getFamilies();
+        if (families != null && !families.isEmpty()) {
+            attributes.put(Style.FONT_FAMILIES, families);
+        }
+
+        @Nullable FontType type = fd.getType();
+        if (type == FontType.MONOSPACED) {
+            attributes.put(Style.FONT_CLASS, Style.FONT_CLASS_VALUE_MONOSPACE);
+        }
+
+        @Nullable Float size = fd.getSize();
+        if (size != null) {
+            attributes.put(Style.FONT_SIZE, size);
+        }
+
+        @Nullable Color color = fd.getColor();
+        if (color != null) {
+            attributes.put(Style.COLOR, color);
+        }
+
+        @Nullable Boolean italic = fd.getItalic();
+        if (italic != null) {
+            attributes.put(Style.FONT_STYLE, italic ? Style.FONT_STYLE_VALUE_ITALIC : Style.FONT_STYLE_VALUE_NORMAL);
+        }
+
+        @Nullable Boolean bold = fd.getBold();
+        if (bold != null) {
+            attributes.put(Style.FONT_WEIGHT, bold ? Style.FONT_WEIGHT_VALUE_BOLD : Style.FONT_WEIGHT_VALUE_NORMAL);
+        }
+
+        @Nullable Boolean underline = fd.getUnderline();
+        if (underline != null) {
+            attributes.put(Style.TEXT_DECORATION_UNDERLINE,
+                    underline ? Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE : Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE);
+        }
+
+        @Nullable Boolean strikeThrough = fd.getStrikeThrough();
+        if (strikeThrough != null) {
+            attributes.put(Style.TEXT_DECORATION_LINE_THROUGH,
+                    strikeThrough ? Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE : Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE);
+        }
     }
 
     private void pushUndoState() {

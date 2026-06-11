@@ -200,6 +200,8 @@ public final class Run implements AttributedCharSequence {
             for (Style style : getStyles()) {
                 collected.merge(style.getFontDef());
             }
+            // Direct run attributes should take precedence over style-derived values.
+            collected.merge(TextAttributes.getFontDef(attributes));
             fd = collected;
         }
         return fd;
