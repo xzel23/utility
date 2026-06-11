@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxGraphics;
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Vector2f;
@@ -785,7 +786,7 @@ public class TextPane extends Control {
                 ComboBoxEx<Color> colorList = Controls.comboBoxEx(DEFAULT_COLORS)
                         .defaultValue(() -> Color.BLACK)
                         .format(color -> LangUtil.mapNonNullOrElse(color, Color::toArgb, ""))
-                        //.rendgraphic(color -> new Rectangle(16, 16, color))
+                        .graphic(color -> new Rectangle(16, 16, FxUtil.convert(color)))
                         .build();
 
                 boldButton.selectedProperty().bindBidirectional(editor.boldProperty());
