@@ -331,7 +331,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         IndexRange range = getSelection();
-        set(getText().apply(Map.of(name, value), range.getStart(), range.getEnd()));
+        applyFormattingChange(getText().apply(Map.of(name, value), range.getStart(), range.getEnd()));
     }
 
     private void onFontFamilyChanged(@Nullable String value) {
@@ -776,7 +776,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     public void apply(Style style) {
         IndexRange range = getSelection();
-        set(getText().apply(style, range.getStart(), range.getEnd()));
+        applyFormattingChange(getText().apply(style, range.getStart(), range.getEnd()));
     }
 
     public void setStyle(Style style, boolean enabled) {
@@ -789,7 +789,18 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     public void remove(Style style) {
         IndexRange range = getSelection();
-        set(getText().removeStyle(style, range.getStart(), range.getEnd()));
+        applyFormattingChange(getText().removeStyle(style, range.getStart(), range.getEnd()));
+    }
+
+    private void applyFormattingChange(RichText updated) {
+        RichText current = getText();
+        if (current.equals(updated)) {
+            return;
+        }
+
+        pushUndoState();
+        setText(updated);
+        updateHistoryState();
     }
 
     public void markBold(boolean enabled) {
