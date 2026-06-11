@@ -82,6 +82,10 @@ import java.util.stream.Stream;
  */
 public final class LangUtil {
     private static final Logger LOG = LogManager.getLogger(LangUtil.class);
+
+    /** A constant representing the string value of {@code null}. */
+    public static final String NULL_STRING = String.valueOf((Object) null);
+
     private static final String INVALID_FORMATTING = "format String does not match arguments";
     private static final String VALUE_MUST_BE_NON_NEGATIVE_S = "value must be non-negative: %s";
     private static final String VALUE_MUST_BE_POSITIVE_S = "value must be positive: %s";
@@ -1917,8 +1921,6 @@ public final class LangUtil {
      * Subsequent calls of {@code toString()} will return the same object.
      */
     private static final class LazyFormatter {
-        public static final String NULL_STRING = String.valueOf((Object) null);
-
         private volatile @Nullable String s;
         private volatile @Nullable Object @Nullable [] args;
 

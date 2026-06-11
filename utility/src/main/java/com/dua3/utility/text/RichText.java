@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static com.dua3.utility.lang.LangUtil.NULL_STRING;
+
 /**
  * A class for rich text, i.e., text together with attributes like color, font
  * etc.
@@ -57,7 +59,7 @@ public final class RichText
     private static final RichText SPACE = valueOfInternal(" ");
     private static final RichText TAB = valueOfInternal("\t");
     private static final RichText NEWLINE = valueOfInternal("\n");
-    private static final RichText NULL_TEXT = valueOfInternal(String.valueOf((Object) null));
+    private static final RichText NULL_TEXT = valueOfInternal(NULL_STRING);
     /**
      * The underlying CharSequence.
      */
@@ -149,6 +151,18 @@ public final class RichText
      * @return RichText representation of s
      */
     public static RichText valueOf(@Nullable String s) {
+        return switch (s) {
+            case "" -> EMPTY_TEXT;
+            case " " -> SPACE;
+            case "\t" -> TAB;
+            case "\n" -> NEWLINE;
+            case null -> NULL_TEXT;
+            default -> new RichText(new Run(s, 0, s.length(), TextAttributes.none()));
+        };
+    }
+
+    public static RichText valueOf(@Nullable String s, TextAttributes attributes) {
+        String text = Objects.requireNonNull(s, NULL_STRING);
         return switch (s) {
             case "" -> EMPTY_TEXT;
             case " " -> SPACE;
@@ -677,6 +691,16 @@ public final class RichText
     public AttributedCharacter attributedCharAt(int index) {
         Run r = runAt(index);
         return r.attributedCharAt(r.convertIndex(start + index));
+    }
+
+    /**
+     * Retrieves the text attributes at the specified index.
+     *
+     * @param idx the index for which the text attributes are requested
+     * @return the text attributes associated with the run at the specified index
+     */
+    public TextAttributes attributesAt(int idx) {
+        return runAt(idx).attributes();
     }
 
     /**

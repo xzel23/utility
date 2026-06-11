@@ -32,8 +32,6 @@ import java.util.function.BiFunction;
  */
 public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
-    private static final String NULL_STRING = String.valueOf((Object) null);
-
     private record PositionAttributes(int pos, CompactableSortedMap<String, Object> attributes) {}
 
     private final StringBuilder buffer;
