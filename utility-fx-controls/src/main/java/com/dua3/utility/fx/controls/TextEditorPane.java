@@ -112,6 +112,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         requestFocus();
 
         int pos = hitTest(evt);
+        if (evt.getClickCount() >= 3) {
+            selectLineAt(pos);
+            evt.consume();
+            return;
+        }
+
         if (evt.isShiftDown()) {
             selectPositionCaret(pos);
         } else {
@@ -191,6 +197,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                     deleteNextChar();
                     evt.consume();
                 }
+            }
+            case TAB -> {
+                if (isEditable()) {
+                    replaceSelection("\t");
+                }
+                evt.consume();
             }
             case LEFT -> {
                 preferredCaretX = Double.NaN;
@@ -274,6 +286,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         if ("\u007F".equals(chars) || "\b".equals(chars)) {
+            return;
+        }
+        if ("\t".equals(chars)) {
             return;
         }
 
@@ -660,6 +675,28 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         while (end < text.length() && isWordChar(text.charAt(end)) == word) {
             end++;
         }
+        setSelectionState(start, end);
+        preferredCaretX = Double.NaN;
+    }
+
+    private void selectLineAt(int pos) {
+        String text = getText().toString();
+        if (text.isEmpty()) {
+            setSelectionState(0, 0);
+            return;
+        }
+
+        int p = Math.clamp(pos, 0, text.length());
+        if (p == text.length() && p > 0) {
+            p--;
+        }
+
+        int start = p <= 0 ? 0 : text.lastIndexOf('\n', p - 1) + 1;
+        int end = text.indexOf('\n', p);
+        if (end < 0) {
+            end = text.length();
+        }
+
         setSelectionState(start, end);
         preferredCaretX = Double.NaN;
     }
