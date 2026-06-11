@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
@@ -7,8 +8,11 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.ToRichText;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyIntegerProperty;
@@ -16,6 +20,10 @@ import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
@@ -27,6 +35,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -47,12 +56,20 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private final ReadOnlyIntegerWrapper caretPosition = new ReadOnlyIntegerWrapper(this, "caretPosition", 0);
     private final ReadOnlyBooleanWrapper undoable = new ReadOnlyBooleanWrapper(this, "undoable", false);
     private final ReadOnlyBooleanWrapper redoable = new ReadOnlyBooleanWrapper(this, "redoable", false);
+    private final BooleanProperty bold = new SimpleBooleanProperty(this, "bold", false);
+    private final BooleanProperty italic = new SimpleBooleanProperty(this, "italic", false);
+    private final BooleanProperty underline = new SimpleBooleanProperty(this, "underline", false);
+    private final BooleanProperty strikeThrough = new SimpleBooleanProperty(this, "strikeThrough", false);
+    private final ObjectProperty<@Nullable Color> textColor = new SimpleObjectProperty<>(this, "textColor");
+    private final StringProperty fontFamily = new SimpleStringProperty(this, "fontFamily");
+    private final DoubleProperty fontSize = new SimpleDoubleProperty(this, "fontSize", 0.0);
     private final InputControlState<RichText> state;
     private final List<EditState> undoStack = new ArrayList<>();
     private final List<EditState> redoStack = new ArrayList<>();
     private final SelectionModel selectionModel = new SelectionModel();
     private @Nullable ScrollPane scrollPane;
     private boolean inHistoryNavigation;
+    private boolean updatingPropertiesFromText;
     private double preferredCaretX = Double.NaN;
     private static final int MAX_HISTORY_SIZE = 256;
 
@@ -77,6 +94,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         RichText initial = getText();
         length.set(initial.length());
         setSelectionState(0, 0);
+        initFormatPropertyListeners();
 
         textProperty().addListener((obs, oldValue, newValue) -> {
             length.set(newValue == null ? 0 : newValue.length());
@@ -200,7 +218,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             }
             case TAB -> {
                 if (isEditable()) {
-                    replaceSelection("\t");
+                    replaceSelection(toRichTextWithCurrentProperties("\t"));
                 }
                 evt.consume();
             }
@@ -280,7 +298,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         if ("\r".equals(chars)) {
-            replaceSelection("\n");
+            replaceSelection(toRichTextWithCurrentProperties("\n"));
             evt.consume();
             return;
         }
@@ -297,8 +315,51 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return;
         }
 
-        replaceSelection(chars);
+        replaceSelection(toRichTextWithCurrentProperties(chars));
         evt.consume();
+    }
+
+    private void initFormatPropertyListeners() {
+        bold.addListener((obs, oldValue, newValue) -> onDecorationPropertyChanged(Style.BOLD, newValue));
+        italic.addListener((obs, oldValue, newValue) -> onDecorationPropertyChanged(Style.ITALIC, newValue));
+        underline.addListener((obs, oldValue, newValue) -> onDecorationPropertyChanged(Style.UNDERLINE, newValue));
+        strikeThrough.addListener((obs, oldValue, newValue) -> onDecorationPropertyChanged(Style.LINE_THROUGH, newValue));
+
+        textColor.addListener((obs, oldValue, newValue) -> onAttributePropertyChanged(Style.COLOR, newValue));
+        fontFamily.addListener((obs, oldValue, newValue) -> onFontFamilyChanged(newValue));
+        fontSize.addListener((obs, oldValue, newValue) -> onFontSizeChanged(newValue.doubleValue()));
+    }
+
+    private void onDecorationPropertyChanged(Style style, boolean enabled) {
+        if (updatingPropertiesFromText || getSelection().getLength() == 0) {
+            return;
+        }
+        setStyle(style, enabled);
+    }
+
+    private void onAttributePropertyChanged(String name, @Nullable Object value) {
+        if (updatingPropertiesFromText || getSelection().getLength() == 0 || value == null) {
+            return;
+        }
+
+        IndexRange range = getSelection();
+        set(getText().apply(Map.of(name, value), range.getStart(), range.getEnd()));
+    }
+
+    private void onFontFamilyChanged(@Nullable String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+
+        onAttributePropertyChanged(Style.FONT_FAMILIES, List.of(value));
+    }
+
+    private void onFontSizeChanged(double value) {
+        if (value <= 0.0 || !Double.isFinite(value)) {
+            return;
+        }
+
+        onAttributePropertyChanged(Style.FONT_SIZE, (float) value);
     }
 
     @Override
@@ -373,6 +434,90 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     public final ReadOnlyIntegerProperty caretPositionProperty() {
         return caretPosition.getReadOnlyProperty();
+    }
+
+    public final BooleanProperty boldProperty() {
+        return bold;
+    }
+
+    public final boolean isBold() {
+        return bold.get();
+    }
+
+    public final void setBold(boolean value) {
+        bold.set(value);
+    }
+
+    public final BooleanProperty italicProperty() {
+        return italic;
+    }
+
+    public final boolean isItalic() {
+        return italic.get();
+    }
+
+    public final void setItalic(boolean value) {
+        italic.set(value);
+    }
+
+    public final BooleanProperty underlineProperty() {
+        return underline;
+    }
+
+    public final boolean isUnderline() {
+        return underline.get();
+    }
+
+    public final void setUnderline(boolean value) {
+        underline.set(value);
+    }
+
+    public final BooleanProperty strikeThroughProperty() {
+        return strikeThrough;
+    }
+
+    public final boolean isStrikeThrough() {
+        return strikeThrough.get();
+    }
+
+    public final void setStrikeThrough(boolean value) {
+        strikeThrough.set(value);
+    }
+
+    public final ObjectProperty<@Nullable Color> textColorProperty() {
+        return textColor;
+    }
+
+    public final @Nullable Color getTextColor() {
+        return textColor.get();
+    }
+
+    public final void setTextColor(@Nullable Color value) {
+        textColor.set(value);
+    }
+
+    public final StringProperty fontFamilyProperty() {
+        return fontFamily;
+    }
+
+    public final @Nullable String getFontFamily() {
+        return fontFamily.get();
+    }
+
+    public final void setFontFamily(@Nullable String value) {
+        fontFamily.set(value);
+    }
+
+    public final DoubleProperty fontSizeProperty() {
+        return fontSize;
+    }
+
+    public final double getFontSize() {
+        return fontSize.get();
+    }
+
+    public final void setFontSize(double value) {
+        fontSize.set(value);
     }
 
     public final boolean isUndoable() {
@@ -660,19 +805,19 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void markBold(boolean enabled) {
-        setStyle(Style.BOLD, enabled);
+        setBold(enabled);
     }
 
     public void markItalic(boolean enabled) {
-        setStyle(Style.ITALIC, enabled);
+        setItalic(enabled);
     }
 
     public void markUnderline(boolean enabled) {
-        setStyle(Style.UNDERLINE, enabled);
+        setUnderline(enabled);
     }
 
     public void markStrikeThrough(boolean enabled) {
-        setStyle(Style.LINE_THROUGH, enabled);
+        setStrikeThrough(enabled);
     }
 
     public void cancelEdit() {
@@ -1037,6 +1182,101 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private void setSelectionState(int anchorPos, int caretPos) {
         selectionModel.selectRange(anchorPos, caretPos);
+        updatePropertiesFromCaretPosition();
+    }
+
+    private void updatePropertiesFromCaretPosition() {
+        RichText text = getText();
+        if (text.isEmpty()) {
+            return;
+        }
+
+        int idx = Math.clamp(getCaretPosition(), 0, text.length() - 1);
+        TextAttributes attributes = text.attributesAt(idx);
+        List<Style> styles = text.stylesAt(idx);
+
+        boolean boldAtCaret = styles.contains(Style.BOLD)
+                || Objects.equals(resolveAttribute(attributes, styles, Style.FONT_WEIGHT), Style.FONT_WEIGHT_VALUE_BOLD)
+                || resolveFont(attributes, styles).map(Font::isBold).orElse(false);
+
+        Object fontStyle = resolveAttribute(attributes, styles, Style.FONT_STYLE);
+        boolean italicAtCaret = styles.contains(Style.ITALIC)
+                || Objects.equals(fontStyle, Style.FONT_STYLE_VALUE_ITALIC)
+                || Objects.equals(fontStyle, Style.FONT_STYLE_VALUE_OBLIQUE)
+                || resolveFont(attributes, styles).map(Font::isItalic).orElse(false);
+
+        boolean underlineAtCaret = styles.contains(Style.UNDERLINE)
+                || Objects.equals(resolveAttribute(attributes, styles, Style.TEXT_DECORATION_UNDERLINE), Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE)
+                || resolveFont(attributes, styles).map(Font::isUnderline).orElse(false);
+
+        boolean strikeThroughAtCaret = styles.contains(Style.LINE_THROUGH)
+                || Objects.equals(resolveAttribute(attributes, styles, Style.TEXT_DECORATION_LINE_THROUGH), Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)
+                || resolveFont(attributes, styles).map(Font::isStrikeThrough).orElse(false);
+
+        @Nullable Color colorAtCaret = resolveColor(attributes, styles);
+        @Nullable String familyAtCaret = resolveFontFamily(attributes, styles);
+        double sizeAtCaret = resolveFontSize(attributes, styles);
+
+        updatingPropertiesFromText = true;
+        try {
+            setBold(boldAtCaret);
+            setItalic(italicAtCaret);
+            setUnderline(underlineAtCaret);
+            setStrikeThrough(strikeThroughAtCaret);
+            setTextColor(colorAtCaret);
+            setFontFamily(familyAtCaret);
+            setFontSize(sizeAtCaret);
+        } finally {
+            updatingPropertiesFromText = false;
+        }
+    }
+
+    private static @Nullable Object resolveAttribute(TextAttributes attributes, List<Style> styles, String name) {
+        @Nullable Object value = attributes.get(name);
+        if (value != null) {
+            return value;
+        }
+
+        for (int i = styles.size() - 1; i >= 0; i--) {
+            value = styles.get(i).get(name);
+            if (value != null) {
+                return value;
+            }
+        }
+
+        return null;
+    }
+
+    private static Optional<Font> resolveFont(TextAttributes attributes, List<Style> styles) {
+        Object value = resolveAttribute(attributes, styles, Style.FONT);
+        return value instanceof Font font ? Optional.of(font) : Optional.empty();
+    }
+
+    private static @Nullable Color resolveColor(TextAttributes attributes, List<Style> styles) {
+        Object value = resolveAttribute(attributes, styles, Style.COLOR);
+        if (value instanceof Color color) {
+            return color;
+        }
+        return resolveFont(attributes, styles).map(Font::getColor).orElse(null);
+    }
+
+    private static @Nullable String resolveFontFamily(TextAttributes attributes, List<Style> styles) {
+        Object value = resolveAttribute(attributes, styles, Style.FONT_FAMILIES);
+        if (value instanceof List<?> families && !families.isEmpty()) {
+            Object family = families.getFirst();
+            if (family != null) {
+                return family.toString();
+            }
+        }
+        return resolveFont(attributes, styles).map(Font::getFamily).orElse(null);
+    }
+
+    private static double resolveFontSize(TextAttributes attributes, List<Style> styles) {
+        Object value = resolveAttribute(attributes, styles, Style.FONT_SIZE);
+        if (value instanceof Number n) {
+            return n.doubleValue();
+        }
+        return resolveFont(attributes, styles).map(Font::getSizeInPoints).orElse(0.0f);
     }
 
     private static RichText toRichText(@Nullable CharSequence text, Font font) {
@@ -1049,6 +1289,67 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         rtb.push(style);
         rtb.append(text);
         rtb.pop(style);
+
+        return rtb.toRichText();
+    }
+
+    private RichText toRichTextWithCurrentProperties(@Nullable CharSequence text) {
+        if (text == null || text.isEmpty()) {
+            return RichText.emptyText();
+        }
+
+        RichTextBuilder rtb = new RichTextBuilder(text.length());
+        if (isBold()) {
+            rtb.push(Style.BOLD);
+        }
+        if (isItalic()) {
+            rtb.push(Style.ITALIC);
+        }
+        if (isUnderline()) {
+            rtb.push(Style.UNDERLINE);
+        }
+        if (isStrikeThrough()) {
+            rtb.push(Style.LINE_THROUGH);
+        }
+
+        @Nullable Color color = getTextColor();
+        if (color != null) {
+            rtb.push(Style.COLOR, color);
+        }
+
+        @Nullable String family = getFontFamily();
+        if (family != null && !family.isBlank()) {
+            rtb.push(Style.FONT_FAMILIES, List.of(family));
+        }
+
+        double size = getFontSize();
+        if (size > 0.0 && Double.isFinite(size)) {
+            rtb.push(Style.FONT_SIZE, (float) size);
+        }
+
+        rtb.append(text);
+
+        if (size > 0.0 && Double.isFinite(size)) {
+            rtb.pop(Style.FONT_SIZE);
+        }
+        if (family != null && !family.isBlank()) {
+            rtb.pop(Style.FONT_FAMILIES);
+        }
+        if (color != null) {
+            rtb.pop(Style.COLOR);
+        }
+        if (isStrikeThrough()) {
+            rtb.pop(Style.LINE_THROUGH);
+        }
+        if (isUnderline()) {
+            rtb.pop(Style.UNDERLINE);
+        }
+        if (isItalic()) {
+            rtb.pop(Style.ITALIC);
+        }
+        if (isBold()) {
+            rtb.pop(Style.BOLD);
+        }
 
         return rtb.toRichText();
     }
