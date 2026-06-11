@@ -994,6 +994,42 @@ class RichTextTest {
     }
 
     @Test
+    void testRemoveStyleWithRange() {
+        RichText text = RichText.valueOf("abcdef").apply(Style.BOLD, 1, 5);
+
+        RichText result = text.removeStyle(Style.BOLD, 2, 4);
+
+        assertEquals("abcdef", result.toString());
+        assertTrue(result.stylesAt(1).contains(Style.BOLD));
+        assertFalse(result.stylesAt(2).contains(Style.BOLD));
+        assertFalse(result.stylesAt(3).contains(Style.BOLD));
+        assertTrue(result.stylesAt(4).contains(Style.BOLD));
+        assertFalse(result.stylesAt(0).contains(Style.BOLD));
+        assertFalse(result.stylesAt(5).contains(Style.BOLD));
+    }
+
+    @Test
+    void testRemoveStyleKeepsOtherAttributes() {
+        RichText text = RichText.valueOf("abc")
+                .apply(Style.BOLD)
+                .apply(Map.of(Style.COLOR, Color.RED));
+
+        RichText result = text.removeStyle(Style.BOLD, 0, text.length());
+
+        assertFalse(result.stylesAt(0).contains(Style.BOLD));
+        assertEquals(Color.RED, result.attributesAt(0).get(Style.COLOR));
+    }
+
+    @Test
+    void testRemoveStyleWithRangeIndexChecks() {
+        RichText text = RichText.valueOf("abc").apply(Style.BOLD);
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> text.removeStyle(Style.BOLD, -1, 1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> text.removeStyle(Style.BOLD, 2, 1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> text.removeStyle(Style.BOLD, 0, 4));
+    }
+
+    @Test
     void testStylesAt() {
         // Create text with different styles
         RichTextBuilder builder = new RichTextBuilder();

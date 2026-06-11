@@ -1027,6 +1027,55 @@ public final class RichText
         };
     }
 
+    /**
+     * Returns a copy of this text with the specified style removed from a subrange.
+     * Other attributes are preserved.
+     *
+     * @param style the style to remove
+     * @param start start index (inclusive)
+     * @param end end index (exclusive)
+     * @return copy with the style removed from the selected range
+     */
+    public RichText removeStyle(Style style, int start, int end) {
+        Objects.requireNonNull(style, "style");
+        Objects.checkFromToIndex(start, end, length);
+
+        if (start == end) {
+            return this;
+        }
+
+        boolean changed = false;
+        RichTextBuilder rtb = new RichTextBuilder(length);
+        subSequence(0, start).appendTo(rtb);
+        for (Run run : subSequence(start, end)) {
+            List<Style> styles = run.getStyles();
+            if (styles.isEmpty()) {
+                rtb.appendRun(run);
+                continue;
+            }
+
+            List<Style> filteredStyles = styles.stream()
+                    .filter(s -> !s.equals(style))
+                    .toList();
+
+            if (filteredStyles.size() == styles.size()) {
+                rtb.appendRun(run);
+                continue;
+            }
+
+            changed = true;
+            Map<String, @Nullable Object> attributes = new HashMap<>(run.attributes());
+            if (filteredStyles.isEmpty()) {
+                attributes.remove(ATTRIBUTE_NAME_STYLE_LIST);
+            } else {
+                attributes.put(ATTRIBUTE_NAME_STYLE_LIST, filteredStyles);
+            }
+            rtb.appendRun(new Run(run.base(), run.getStart(), run.length(), TextAttributes.of(attributes)));
+        }
+        subSequence(end, length).appendTo(rtb);
+        return changed ? rtb.toRichText() : this;
+    }
+
     private static Run withAppliedAttributes(Run run, Map<String, @Nullable Object> attributes) {
         Map<String, @Nullable Object> merged = new HashMap<>(run.attributes());
         attributes.forEach(merged::put);

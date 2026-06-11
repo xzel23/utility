@@ -646,25 +646,33 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         set(getText().apply(style, range.getStart(), range.getEnd()));
     }
 
+    public void setStyle(Style style, boolean enabled) {
+        if (enabled) {
+            apply(style);
+        } else {
+            remove(style);
+        }
+    }
+
     public void remove(Style style) {
         IndexRange range = getSelection();
         set(getText().removeStyle(style, range.getStart(), range.getEnd()));
     }
 
-    public void markBold() {
-        apply(Style.BOLD);
+    public void markBold(boolean enabled) {
+        setStyle(Style.BOLD, enabled);
     }
 
-    public void markItalic() {
-        apply(Style.ITALIC);
+    public void markItalic(boolean enabled) {
+        setStyle(Style.ITALIC, enabled);
     }
 
-    public void markUnderline() {
-        apply(Style.UNDERLINE);
+    public void markUnderline(boolean enabled) {
+        setStyle(Style.UNDERLINE, enabled);
     }
 
-    public void markStrikeThrough() {
-        apply(Style.LINE_THROUGH);
+    public void markStrikeThrough(boolean enabled) {
+        setStyle(Style.LINE_THROUGH, enabled);
     }
 
     public void cancelEdit() {

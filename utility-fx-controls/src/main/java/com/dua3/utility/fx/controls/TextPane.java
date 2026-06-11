@@ -38,6 +38,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Separator;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
@@ -773,35 +774,47 @@ public class TextPane extends Control {
                             editor.requestFocus();
                         })
                         .build();
-                Button boldButton = Controls.button()
+                ToggleButton boldButton = Controls.toggleButton()
                         .tooltip("Bold")
                         .graphic(Controls.graphic(Feather.BOLD.getDescription()))
                         .action(e -> {
-                            editor.markBold();
+                            if (!(e.getSource() instanceof ToggleButton tb)) {
+                                throw new IllegalStateException("Unexpected source");
+                            }
+                            editor.markBold(tb.isSelected());
                             editor.requestFocus();
                         })
                         .build();
-                Button italicsButton = Controls.button()
+                ToggleButton italicsButton = Controls.toggleButton()
                         .tooltip("Italic")
                         .graphic(Controls.graphic(Feather.ITALIC.getDescription()))
                         .action(e -> {
-                            editor.markItalic();
+                            if (!(e.getSource() instanceof ToggleButton tb)) {
+                                throw new IllegalStateException("Unexpected source");
+                            }
+                            editor.markItalic(tb.isSelected());
                             editor.requestFocus();
                         })
                         .build();
-                Button underlineButton = Controls.button()
+                ToggleButton underlineButton = Controls.toggleButton()
                         .tooltip("Underline")
                         .graphic(Controls.graphic(Feather.UNDERLINE.getDescription()))
                         .action(e -> {
-                            editor.markUnderline();
+                            if (!(e.getSource() instanceof ToggleButton tb)) {
+                                throw new IllegalStateException("Unexpected source");
+                            }
+                            editor.markUnderline(tb.isSelected());
                             editor.requestFocus();
                         })
                         .build();
-                Button strikeThroughButton = Controls.button()
+                ToggleButton strikeThroughButton = Controls.toggleButton()
                         .tooltip("Strike Through")
-                        .graphic(Controls.graphic(Feather.UNDERLINE.getDescription()))
+                        .graphic(Controls.graphic(Feather.MINUS.getDescription()))
                         .action(e -> {
-                            editor.markStrikeThrough();
+                            if (!(e.getSource() instanceof ToggleButton tb)) {
+                                throw new IllegalStateException("Unexpected source");
+                            }
+                            editor.markStrikeThrough(tb.isSelected());
                             editor.requestFocus();
                         })
                         .build();
