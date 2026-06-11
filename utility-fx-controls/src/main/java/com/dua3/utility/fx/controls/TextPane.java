@@ -19,6 +19,9 @@ import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.ui.HAnchor;
 import com.dua3.utility.ui.RichTextBuilderExtBase;
 import com.dua3.utility.ui.VAnchor;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -46,6 +49,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.feather.Feather;
 
@@ -720,9 +724,18 @@ public class TextPane extends Control {
         private RichText lastText;
         private Font lastFont;
         private boolean lastWrapText;
+        private boolean blink = true;
+        private final Timeline caretTimeline;
 
         private TextPaneSkin(TextPane control) {
             super(control);
+
+            caretTimeline = new Timeline(
+                    new KeyFrame(Duration.ZERO, e -> setBlink(false)),
+                    new KeyFrame(Duration.seconds(0.5), e -> setBlink(true)),
+                    new KeyFrame(Duration.seconds(1.0))
+            );
+            caretTimeline.setCycleCount(Timeline.INDEFINITE);
 
             contentPane.getStyleClass().add("content");
             selectionLayer.setMouseTransparent(true);
@@ -788,13 +801,19 @@ public class TextPane extends Control {
             control.fontProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.widthProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.heightProperty().addListener((obs, oldVal, newVal) -> invalidate());
-            control.focusedProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            control.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
             scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
             if (control instanceof TextEditorPane editor) {
-                editor.selectionProperty().addListener((obs, oldVal, newVal) -> invalidate());
-                editor.caretPositionProperty().addListener((obs, oldVal, newVal) -> invalidate());
-                editor.editableProperty().addListener((obs, oldVal, newVal) -> invalidate());
+                editor.selectionProperty().addListener((obs, oldVal, newVal) -> {
+                    restartCaretAnimation();
+                    invalidate();
+                });
+                editor.caretPositionProperty().addListener((obs, oldVal, newVal) -> {
+                    restartCaretAnimation();
+                    invalidate();
+                });
+                editor.editableProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
                 editor.toolbarVisibleProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
                 // Route interaction through the internal ScrollPane so input works regardless of focus owner.
@@ -802,13 +821,60 @@ public class TextPane extends Control {
                 scrollPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, editor::processMouseDragged);
                 scrollPane.addEventFilter(KeyEvent.KEY_PRESSED, editor::processKeyPressed);
                 scrollPane.addEventFilter(KeyEvent.KEY_TYPED, editor::processKeyTyped);
-                scrollPane.focusedProperty().addListener((obs, oldVal, newVal) -> invalidate());
+                scrollPane.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
             }
+
+            updateCaretAnimationState();
         }
 
         private void invalidate() {
             dirty = true;
             getSkinnable().requestLayout();
+        }
+
+        @Override
+        public void dispose() {
+            caretTimeline.stop();
+            super.dispose();
+        }
+
+        private void setBlink(boolean value) {
+            if (blink != value) {
+                blink = value;
+                invalidate();
+            }
+        }
+
+        private boolean hasEditorFocus(TextPane control) {
+            return control.isFocused() || scrollPane.isFocused();
+        }
+
+        private boolean shouldAnimateCaret() {
+            TextPane control = getSkinnable();
+            if (!(control instanceof TextEditorPane editor)) {
+                return false;
+            }
+            return editor.isEditable() && hasEditorFocus(control);
+        }
+
+        private void restartCaretAnimation() {
+            if (!shouldAnimateCaret()) {
+                return;
+            }
+            setBlink(false);
+            caretTimeline.playFromStart();
+        }
+
+        private void updateCaretAnimationState() {
+            if (shouldAnimateCaret()) {
+                restartCaretAnimation();
+            } else {
+                if (caretTimeline.getStatus() == Animation.Status.RUNNING) {
+                    caretTimeline.stop();
+                }
+                setBlink(true);
+            }
+            invalidate();
         }
 
         @Override
@@ -939,7 +1005,7 @@ public class TextPane extends Control {
                 }
             }
 
-            if (editor.isEditable() && (control.isFocused() || scrollPane.isFocused())) {
+            if (editor.isEditable() && hasEditorFocus(control) && !blink) {
                 CaretInfo caretInfo = findCaret(layout.renderLines(), editor.getCaretPosition());
                 if (caretInfo == null) {
                     List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(availableWidth);
