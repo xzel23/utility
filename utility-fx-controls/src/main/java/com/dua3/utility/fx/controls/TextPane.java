@@ -52,6 +52,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.feather.Feather;
 
@@ -62,6 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -750,74 +753,18 @@ public class TextPane extends Control {
             scrollPane.setFitToHeight(false);
 
             if (control instanceof TextEditorPane editor) {
-                Button copyButton = Controls.button()
-                        .tooltip("Copy")
-                        .graphic(Controls.graphic(Feather.COPY.getDescription()))
-                        .action(e -> {
-                            editor.copy();
-                            editor.requestFocus();
-                        })
-                        .build();
-                Button cutButton = Controls.button()
-                        .tooltip("Cut")
-                        .graphic(Controls.graphic(Feather.SCISSORS.getDescription()))
-                        .action(e -> {
-                            editor.cut();
-                            editor.requestFocus();
-                        })
-                        .build();
-                Button pasteButton = Controls.button()
-                        .tooltip("Paste")
-                        .graphic(Controls.graphic(Feather.CLIPBOARD.getDescription()))
-                        .action(e -> {
-                            editor.paste();
-                            editor.requestFocus();
-                        })
-                        .build();
-                ToggleButton boldButton = Controls.toggleButton()
-                        .tooltip("Bold")
-                        .graphic(Controls.graphic(Feather.BOLD.getDescription()))
-                        .action(e -> {
-                            if (!(e.getSource() instanceof ToggleButton tb)) {
-                                throw new IllegalStateException("Unexpected source");
-                            }
-                            editor.markBold(tb.isSelected());
-                            editor.requestFocus();
-                        })
-                        .build();
-                ToggleButton italicsButton = Controls.toggleButton()
-                        .tooltip("Italic")
-                        .graphic(Controls.graphic(Feather.ITALIC.getDescription()))
-                        .action(e -> {
-                            if (!(e.getSource() instanceof ToggleButton tb)) {
-                                throw new IllegalStateException("Unexpected source");
-                            }
-                            editor.markItalic(tb.isSelected());
-                            editor.requestFocus();
-                        })
-                        .build();
-                ToggleButton underlineButton = Controls.toggleButton()
-                        .tooltip("Underline")
-                        .graphic(Controls.graphic(Feather.UNDERLINE.getDescription()))
-                        .action(e -> {
-                            if (!(e.getSource() instanceof ToggleButton tb)) {
-                                throw new IllegalStateException("Unexpected source");
-                            }
-                            editor.markUnderline(tb.isSelected());
-                            editor.requestFocus();
-                        })
-                        .build();
-                ToggleButton strikeThroughButton = Controls.toggleButton()
-                        .tooltip("Strike Through")
-                        .graphic(Controls.graphic(Feather.MINUS.getDescription()))
-                        .action(e -> {
-                            if (!(e.getSource() instanceof ToggleButton tb)) {
-                                throw new IllegalStateException("Unexpected source");
-                            }
-                            editor.markStrikeThrough(tb.isSelected());
-                            editor.requestFocus();
-                        })
-                        .build();
+                Button copyButton = createButton("Copy", Controls.graphic(Feather.COPY.getDescription()), editor, TextEditorPane::copy);
+                Button cutButton = createButton("Cut", Controls.graphic(Feather.SCISSORS.getDescription()), editor, TextEditorPane::cut);
+                Button pasteButton = createButton("Paste", Controls.graphic(Feather.CLIPBOARD.getDescription()), editor, TextEditorPane::paste);
+
+                Button undoButton = createButton("Undo", Controls.graphic(Feather.ROTATE_CCW.getDescription()), editor, TextEditorPane::undo);
+                Button redoButton = createButton("Redo", Controls.graphic(Feather.ROTATE_CW.getDescription()), editor, TextEditorPane::redo);
+
+                ToggleButton boldButton = createToggleButton("Bold", Controls.graphic(Feather.BOLD.getDescription()), editor, TextEditorPane::markBold);
+                ToggleButton italicsButton = createToggleButton("Italic", Controls.graphic(Feather.ITALIC.getDescription()), editor, TextEditorPane::markItalic);
+                ToggleButton underlineButton = createToggleButton("Underline", Controls.graphic(Feather.UNDERLINE.getDescription()), editor, TextEditorPane::markUnderline);
+                ToggleButton strikeThroughButton = createToggleButton("Strike Through", Controls.graphic(Feather.MINUS.getDescription()), editor, TextEditorPane::markStrikeThrough);
+
                 boldButton.selectedProperty().bindBidirectional(editor.boldProperty());
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
                 underlineButton.selectedProperty().bindBidirectional(editor.underlineProperty());
@@ -831,11 +778,15 @@ public class TextPane extends Control {
                         cutButton,
                         pasteButton,
                         new Separator(),
+                        undoButton,
+                        redoButton,
+                        new Separator(),
                         boldButton,
                         italicsButton,
                         underlineButton,
                         strikeThroughButton
                 );
+
                 toolbar.setFocusTraversable(false);
                 toolbar.visibleProperty().bind(editor.toolbarVisibleProperty());
                 toolbar.managedProperty().bind(editor.toolbarVisibleProperty());
@@ -882,7 +833,32 @@ public class TextPane extends Control {
             updateCaretAnimationState();
         }
 
-        private void invalidate() {
+        private static Button createButton(String text, Node graphic, TextEditorPane editor, Consumer<TextEditorPane> action) {
+            return Controls.button()
+                    .tooltip(text)
+                    .graphic(graphic)
+                    .action(e -> {
+                        action.accept(editor);
+                        editor.requestFocus();
+                    })
+                    .build();
+        }
+
+    private static ToggleButton createToggleButton(String text, Node graphic, TextEditorPane editor, BiConsumer<TextEditorPane, Boolean> action) {
+        return Controls.toggleButton()
+                .tooltip(text)
+                .graphic(graphic)
+                .action(e -> {
+                    if (!(e.getSource() instanceof ToggleButton tb)) {
+                        throw new IllegalStateException("Unexpected source");
+                    }
+                    action.accept(editor, tb.isSelected());
+                    editor.requestFocus();
+                })
+                .build();
+    }
+
+    private void invalidate() {
             dirty = true;
             getSkinnable().requestLayout();
         }
