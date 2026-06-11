@@ -164,27 +164,14 @@ public final class RichText
     }
 
     /**
-     * Creates a new {@code RichText} instance from the provided string and text attributes.
-     *
-     * @param s the string to be used for the text. Can be {@code null}, in which case
-     *          a {@code NullPointerException} will be thrown.
-     * @param attributes the text attributes to be applied to the string.
-     * @return a {@code RichText} instance containing the provided string and attributes.
-     * @throws NullPointerException if {@code s} is {@code null}.
-     */
-    public static RichText valueOf(@Nullable String s, TextAttributes attributes) {
-        return new RichText(new Run(Objects.requireNonNullElse(s, NULL_STRING), 0, s.length(), attributes));
-    }
-
-    /**
      * Creates a new RichText instance with the given string and applies the specified style.
      *
      * @param s the source string to be converted to RichText, may be null.
-     * @param style the style to be applied to the RichText instance.
+     * @param attributes the attributes to be applied to the RichText instance.
      * @return a RichText instance containing the specified string with the applied style.
      */
-    public static RichText valueOf(@Nullable String s, Style style) {
-        return valueOf(s).apply(style);
+    public static RichText valueOf(@Nullable String s, Map<String, @Nullable Object> attributes) {
+        return valueOf(s).apply(attributes);
     }
 
     private static RichText valueOfInternal(String s) {
@@ -990,26 +977,13 @@ public final class RichText
     }
 
     /**
-     * Gat styled copy of this instance.
-     *
-     * @param style the style
-     * @return styled copy
-     */
-    public RichText apply(Style style) {
-        RichTextBuilder rtb = new RichTextBuilder(length);
-        rtb.append(this);
-        rtb.apply(style);
-        return rtb.toRichText();
-    }
-
-    /**
      * Returns a copy of this text with the supplied attributes applied to all characters.
      * Existing attributes are preserved unless overwritten by an entry in {@code attributes}.
      *
      * @param attributes attributes to apply
      * @return copy with the attributes applied
      */
-    public RichText apply(TextAttributes attributes) {
+    public RichText apply(Map<String, @Nullable Object> attributes) {
         return apply(attributes, 0, length);
     }
 
@@ -1022,22 +996,39 @@ public final class RichText
      * @param to end index (exclusive)
      * @return copy with the attributes applied to the selected range
      */
-    public RichText apply(TextAttributes attributes, int from, int to) {
+    public RichText apply(Map<String, @Nullable Object> attributes, int from, int to) {
         Objects.checkFromToIndex(from, to, length);
 
-        if (attributes.isEmpty() || from == to) {
+        if (from == to) {
             return this;
         }
 
-        RichTextBuilder rtb = new RichTextBuilder(length);
-        subSequence(0, from).appendTo(rtb);
-        subSequence(from, to).forEach(r -> rtb.appendRun(withAppliedAttributes(r, attributes)));
-        subSequence(to, length).appendTo(rtb);
-        return rtb.toRichText();
+        return switch (attributes) {
+            case Style style -> {
+                RichTextBuilder rtb = new RichTextBuilder(length);
+                subSequence(0, from).appendTo(rtb);
+                rtb.push(style);
+                subSequence(from, to).appendTo(rtb);
+                rtb.pop(style);
+                subSequence(to, length).appendTo(rtb);
+                yield rtb.toRichText();
+            }
+            default -> {
+                if (attributes.isEmpty()) {
+                    yield this;
+                }
+
+                RichTextBuilder rtb = new RichTextBuilder(length);
+                subSequence(0, from).appendTo(rtb);
+                subSequence(from, to).forEach(r -> rtb.appendRun(withAppliedAttributes(r, attributes)));
+                subSequence(to, length).appendTo(rtb);
+                yield rtb.toRichText();
+            }
+        };
     }
 
-    private static Run withAppliedAttributes(Run run, TextAttributes attributes) {
-        Map<String, Object> merged = new HashMap<>(run.attributes());
+    private static Run withAppliedAttributes(Run run, Map<String, @Nullable Object> attributes) {
+        Map<String, @Nullable Object> merged = new HashMap<>(run.attributes());
         attributes.forEach(merged::put);
         return new Run(run.base(), run.getStart(), run.length(), TextAttributes.of(merged));
     }

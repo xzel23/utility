@@ -777,7 +777,7 @@ public class TextPane extends Control {
                         .tooltip("Bold")
                         .graphic(Controls.graphic(Feather.BOLD.getDescription()))
                         .action(e -> {
-                            //editor.markBold();
+                            editor.markBold();
                             editor.requestFocus();
                         })
                         .build();
@@ -785,7 +785,7 @@ public class TextPane extends Control {
                         .tooltip("Italic")
                         .graphic(Controls.graphic(Feather.ITALIC.getDescription()))
                         .action(e -> {
-                            //editor.markItalic();
+                            editor.markItalic();
                             editor.requestFocus();
                         })
                         .build();
@@ -793,7 +793,7 @@ public class TextPane extends Control {
                         .tooltip("Underline")
                         .graphic(Controls.graphic(Feather.UNDERLINE.getDescription()))
                         .action(e -> {
-                            //editor.markUnderline();
+                            editor.markUnderline();
                             editor.requestFocus();
                         })
                         .build();
@@ -801,7 +801,7 @@ public class TextPane extends Control {
                         .tooltip("Strike Through")
                         .graphic(Controls.graphic(Feather.UNDERLINE.getDescription()))
                         .action(e -> {
-                            //editor.markStrikeThrough();
+                            editor.markStrikeThrough();
                             editor.requestFocus();
                         })
                         .build();

@@ -14,9 +14,12 @@ import com.dua3.utility.data.Pair;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.SortedSet;
 
 /**
@@ -94,13 +97,22 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
     /**
      * Construct style with attributes.
      *
-     * @param map mapping from attributes to values
+     * @param attributes mapping from attributes to values
      * @return TextAttributes instance
      */
-    public static TextAttributes of(Map<String, @Nullable Object> map) {
-        List<Entry> entries = new ArrayList<>(map.size());
-        map.forEach((k, v) -> entries.addLast(new Entry(k, v)));
-        return new TextAttributes(entries.toArray(Entry[]::new));
+    public static TextAttributes of(Map<String, @Nullable Object> attributes) {
+        return switch (attributes) {
+            case TextAttributes ta -> ta;
+            default -> {
+                Entry[] entries = new Entry[attributes.size()];
+                Iterator<Map.Entry<String, @Nullable Object>> iter = attributes.entrySet().iterator();
+                for (int i = 0; i < entries.length; i++) {
+                    Map.Entry<String, @Nullable Object> entry = iter.next();
+                    entries[i] = new Entry(entry.getKey(), entry.getValue());
+                }
+                yield new TextAttributes(entries);
+            }
+        };
     }
 
     /**

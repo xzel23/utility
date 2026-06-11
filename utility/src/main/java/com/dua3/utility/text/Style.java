@@ -11,6 +11,7 @@ import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -26,7 +28,7 @@ import java.util.stream.Stream;
 /**
  * A Style is a set of property names and corresponding values that control the appearance of {@link RichText}.
  */
-public final class Style implements Iterable<Map.Entry<String, Object>> {
+public final class Style implements Map<String, @Nullable Object>, Iterable<Map.Entry<String, Object>> {
     private static final Logger LOG = LogManager.getLogger(Style.class);
 
     // -- static fields and methods
@@ -481,6 +483,66 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     @Override
+    public int size() {
+        return properties.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return properties.isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return properties.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        return properties.containsValue(value);
+    }
+
+    @Override
+    public @Nullable Object get(Object key) {
+        return properties.get(key);
+    }
+
+    @Override
+    public @Nullable Object put(String key, @Nullable Object value) {
+        throw new UnsupportedOperationException("Style is immutable");
+    }
+
+    @Override
+    public @Nullable Object remove(Object key) {
+        throw new UnsupportedOperationException("Style is immutable");
+    }
+
+    @Override
+    public void putAll(Map<? extends String, ?> m) {
+        throw new UnsupportedOperationException("Style is immutable");
+    }
+
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException("Style is immutable");
+    }
+
+    @Override
+    public Set<String> keySet() {
+        return properties.keySet();
+    }
+
+    @Override
+    public Collection<@Nullable Object> values() {
+        return properties.values();
+    }
+
+    @Override
+    public Set<Entry<String, @Nullable Object>> entrySet() {
+        return Collections.unmodifiableSet(properties.entrySet());
+    }
+
+    @Override
     public boolean equals(@Nullable Object obj) {
         if (!(obj instanceof Style other)) {
             return false;
@@ -505,15 +567,6 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      */
     public Stream<Map.Entry<String, @Nullable Object>> stream() {
         return properties.entrySet().stream();
-    }
-
-    /**
-     * Perform action for each entry of this style.
-     *
-     * @param action the action to perform
-     */
-    public void forEach(BiConsumer<String, @Nullable Object> action) {
-        forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
     }
 
     /**

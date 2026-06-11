@@ -641,6 +641,32 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         updateHistoryState();
     }
 
+    public void apply(Style style) {
+        IndexRange range = getSelection();
+        set(getText().apply(style, range.getStart(), range.getEnd()));
+    }
+
+    public void remove(Style style) {
+        IndexRange range = getSelection();
+        set(getText().removeStyle(style, range.getStart(), range.getEnd()));
+    }
+
+    public void markBold() {
+        apply(Style.BOLD);
+    }
+
+    public void markItalic() {
+        apply(Style.ITALIC);
+    }
+
+    public void markUnderline() {
+        apply(Style.UNDERLINE);
+    }
+
+    public void markStrikeThrough() {
+        apply(Style.LINE_THROUGH);
+    }
+
     public void cancelEdit() {
         // TODO implement edit cancel behavior
     }
