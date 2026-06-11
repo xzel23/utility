@@ -35,7 +35,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
@@ -67,6 +66,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SequencedCollection;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -793,6 +793,7 @@ public class TextPane extends Control {
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
                 underlineButton.selectedProperty().bindBidirectional(editor.underlineProperty());
                 strikeThroughButton.selectedProperty().bindBidirectional(editor.strikeThroughProperty());
+                bindFontLists(editor, fontList, sizeList, colorList);
                 undoButton.disableProperty().bind(editor.undoableProperty().not());
                 redoButton.disableProperty().bind(editor.redoableProperty().not());
                 copyButton.setFocusTraversable(false);
@@ -887,6 +888,123 @@ public class TextPane extends Control {
                 })
                 .build();
     }
+
+        private static void bindFontLists(
+                TextEditorPane editor,
+                ComboBoxEx<String> fontList,
+                ComboBoxEx<Float> sizeList,
+                ComboBoxEx<Color> colorList
+        ) {
+            AtomicBoolean synchronizing = new AtomicBoolean(false);
+
+            editor.fontFamilyProperty().addListener((obs, oldValue, newValue) ->
+                    synchronizeFromEditor(synchronizing, () -> {
+                        if (newValue == null || newValue.isBlank()) {
+                            return;
+                        }
+
+                        ensureValuePresent(fontList, newValue);
+                        if (!Objects.equals(fontList.valueProperty().getValue(), newValue)) {
+                            fontList.valueProperty().setValue(newValue);
+                        }
+                    }));
+
+            fontList.valueProperty().addListener((obs, oldValue, newValue) -> {
+                if (synchronizing.get() || newValue == null || newValue.isBlank()) {
+                    return;
+                }
+                if (!Objects.equals(editor.getFontFamily(), newValue)) {
+                    editor.setFontFamily(newValue);
+                }
+            });
+
+            editor.fontSizeProperty().addListener((obs, oldValue, newValue) ->
+                    synchronizeFromEditor(synchronizing, () -> {
+                        double size = newValue.doubleValue();
+                        if (!Double.isFinite(size) || size <= 0.0) {
+                            return;
+                        }
+
+                        float comboValue = (float) size;
+                        ensureValuePresent(sizeList, comboValue);
+                        if (!Objects.equals(sizeList.valueProperty().getValue(), comboValue)) {
+                            sizeList.valueProperty().setValue(comboValue);
+                        }
+                    }));
+
+            sizeList.valueProperty().addListener((obs, oldValue, newValue) -> {
+                if (synchronizing.get() || newValue == null) {
+                    return;
+                }
+                double size = newValue.doubleValue();
+                if (Double.compare(editor.getFontSize(), size) != 0) {
+                    editor.setFontSize(size);
+                }
+            });
+
+            editor.textColorProperty().addListener((obs, oldValue, newValue) ->
+                    synchronizeFromEditor(synchronizing, () -> {
+                        if (newValue == null) {
+                            return;
+                        }
+
+                        ensureValuePresent(colorList, newValue);
+                        if (!Objects.equals(colorList.valueProperty().getValue(), newValue)) {
+                            colorList.valueProperty().setValue(newValue);
+                        }
+                    }));
+
+            colorList.valueProperty().addListener((obs, oldValue, newValue) -> {
+                if (synchronizing.get() || newValue == null) {
+                    return;
+                }
+                if (!Objects.equals(editor.getTextColor(), newValue)) {
+                    editor.setTextColor(newValue);
+                }
+            });
+
+            synchronizeFromEditor(synchronizing, () -> {
+                String currentFamily = editor.getFontFamily();
+                if (currentFamily != null && !currentFamily.isBlank()) {
+                    ensureValuePresent(fontList, currentFamily);
+                    if (!Objects.equals(fontList.valueProperty().getValue(), currentFamily)) {
+                        fontList.valueProperty().setValue(currentFamily);
+                    }
+                }
+
+                double currentSize = editor.getFontSize();
+                if (Double.isFinite(currentSize) && currentSize > 0.0) {
+                    float comboSize = (float) currentSize;
+                    ensureValuePresent(sizeList, comboSize);
+                    if (!Objects.equals(sizeList.valueProperty().getValue(), comboSize)) {
+                        sizeList.valueProperty().setValue(comboSize);
+                    }
+                }
+
+                Color currentColor = editor.getTextColor();
+                if (currentColor != null) {
+                    ensureValuePresent(colorList, currentColor);
+                    if (!Objects.equals(colorList.valueProperty().getValue(), currentColor)) {
+                        colorList.valueProperty().setValue(currentColor);
+                    }
+                }
+            });
+        }
+
+        private static void synchronizeFromEditor(AtomicBoolean synchronizing, Runnable action) {
+            synchronizing.set(true);
+            try {
+                action.run();
+            } finally {
+                synchronizing.set(false);
+            }
+        }
+
+        private static <T> void ensureValuePresent(ComboBoxEx<T> comboBoxEx, T value) {
+            if (!comboBoxEx.getItems().contains(value)) {
+                comboBoxEx.addValue(value);
+            }
+        }
 
     private void invalidate() {
             dirty = true;

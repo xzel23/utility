@@ -297,6 +297,19 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
     }
 
     /**
+     * Adds an item to the ComboBoxEx values if it is not already present.
+     *
+     * @param item item to add
+     * @return {@code true} if the item was added, {@code false} if it was already present
+     */
+    public boolean addValue(T item) {
+        if (items.contains(item)) {
+            return false;
+        }
+        return items.add(item);
+    }
+
+    /**
      * Returns the property containing the selected item in the ComboBoxEx.
      *
      * @return the ReadOnlyObjectProperty representing the selected item property

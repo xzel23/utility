@@ -1212,9 +1212,15 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 || Objects.equals(resolveAttribute(attributes, styles, Style.TEXT_DECORATION_LINE_THROUGH), Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)
                 || resolveFont(attributes, styles).map(Font::isStrikeThrough).orElse(false);
 
-        @Nullable Color colorAtCaret = resolveColor(attributes, styles);
-        @Nullable String familyAtCaret = resolveFontFamily(attributes, styles);
+        Font fallbackFont = getFont();
+        @Nullable Color colorAtCaret = Optional.ofNullable(resolveColor(attributes, styles))
+                .orElseGet(fallbackFont::getColor);
+        @Nullable String familyAtCaret = Optional.ofNullable(resolveFontFamily(attributes, styles))
+                .orElseGet(fallbackFont::getFamily);
         double sizeAtCaret = resolveFontSize(attributes, styles);
+        if (!Double.isFinite(sizeAtCaret) || sizeAtCaret <= 0.0) {
+            sizeAtCaret = fallbackFont.getSizeInPoints();
+        }
 
         updatingPropertiesFromText = true;
         try {
