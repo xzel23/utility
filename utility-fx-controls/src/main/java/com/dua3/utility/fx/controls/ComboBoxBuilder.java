@@ -26,7 +26,7 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
     private final ObservableList<T> items;
     private final Property<@Nullable T> property;
     private @Nullable Consumer<@Nullable T> onChange;
-    private @Nullable Function<@Nullable T, String> stringRenderer;
+    private @Nullable Function<@Nullable T, String> format;
     private boolean localized = true;
 
     /**
@@ -100,8 +100,8 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
      *                       and returns its corresponding string representation
      * @return this instance of {@code ComboBoxBuilder} for method chaining
      */
-    public ComboBoxBuilder<T> stringRenderer(Function<@Nullable T, String> stringRenderer) {
-        this.stringRenderer = stringRenderer;
+    public ComboBoxBuilder<T> format(Function<@Nullable T, String> stringRenderer) {
+        this.format = stringRenderer;
         return self();
     }
 
@@ -115,8 +115,8 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
      * @param valueIfNull the string representation to use for {@code null} items
      * @return this instance of {@code ComboBoxBuilder} for method chaining
      */
-    public ComboBoxBuilder<T> stringRenderer(Function<T, String> stringRenderer, String valueIfNull) {
-        this.stringRenderer = item -> item == null ? valueIfNull : stringRenderer.apply(item);
+    public ComboBoxBuilder<T> format(Function<T, String> stringRenderer, String valueIfNull) {
+        this.format = item -> item == null ? valueIfNull : stringRenderer.apply(item);
         return self();
     }
 
@@ -125,21 +125,21 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
         ComboBox<T> comboBox = super.build();
         comboBox.setItems(items);
 
-        if (stringRenderer == null && localized) {
-            stringRenderer = TextUtil::toLocalizedString;
+        if (format == null && localized) {
+            format = TextUtil::toLocalizedString;
         }
-        if (stringRenderer != null) {
+        if (format != null) {
             comboBox.setCellFactory(lv -> new ListCell<>() {
                 @Override
                 protected void updateItem(@Nullable T item, boolean empty) {
                     super.updateItem(item, empty);
-                    setText(stringRenderer.apply(item));
+                    setText(format.apply(item));
                 }
             });
             comboBox.setConverter(new StringConverter<>() {
                 @Override
                 public String toString(@Nullable T item) {
-                    return item == null ? "" : stringRenderer.apply(item);
+                    return item == null ? "" : format.apply(item);
                 }
 
                 @Override
