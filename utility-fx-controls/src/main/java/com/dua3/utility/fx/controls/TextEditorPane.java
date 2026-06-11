@@ -320,21 +320,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private void initFormatPropertyListeners() {
-        bold.addListener((obs, oldValue, newValue) -> onDecorationPropertyChanged(Style.BOLD, newValue));
-        italic.addListener((obs, oldValue, newValue) -> onDecorationPropertyChanged(Style.ITALIC, newValue));
-        underline.addListener((obs, oldValue, newValue) -> onDecorationPropertyChanged(Style.UNDERLINE, newValue));
-        strikeThrough.addListener((obs, oldValue, newValue) -> onDecorationPropertyChanged(Style.LINE_THROUGH, newValue));
-
         textColor.addListener((obs, oldValue, newValue) -> onAttributePropertyChanged(Style.COLOR, newValue));
         fontFamily.addListener((obs, oldValue, newValue) -> onFontFamilyChanged(newValue));
         fontSize.addListener((obs, oldValue, newValue) -> onFontSizeChanged(newValue.doubleValue()));
-    }
-
-    private void onDecorationPropertyChanged(Style style, boolean enabled) {
-        if (updatingPropertiesFromText || getSelection().getLength() == 0) {
-            return;
-        }
-        setStyle(style, enabled);
     }
 
     private void onAttributePropertyChanged(String name, @Nullable Object value) {
@@ -805,19 +793,19 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void markBold(boolean enabled) {
-        setBold(enabled);
+        setStyle(Style.BOLD, enabled);
     }
 
     public void markItalic(boolean enabled) {
-        setItalic(enabled);
+        setStyle(Style.ITALIC, enabled);
     }
 
     public void markUnderline(boolean enabled) {
-        setUnderline(enabled);
+        setStyle(Style.UNDERLINE, enabled);
     }
 
     public void markStrikeThrough(boolean enabled) {
-        setStrikeThrough(enabled);
+        setStyle(Style.LINE_THROUGH, enabled);
     }
 
     public void cancelEdit() {
@@ -1191,7 +1179,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return;
         }
 
-        int idx = Math.clamp(getCaretPosition(), 0, text.length() - 1);
+        int idx = getPropertyProbeIndex(text.length());
         TextAttributes attributes = text.attributesAt(idx);
         List<Style> styles = text.stylesAt(idx);
 
@@ -1229,6 +1217,18 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         } finally {
             updatingPropertiesFromText = false;
         }
+    }
+
+    private int getPropertyProbeIndex(int textLength) {
+        IndexRange selectionRange = getSelection();
+        if (selectionRange.getLength() > 0) {
+            int start = selectionRange.getStart();
+            int end = selectionRange.getEnd();
+            int caret = getCaretPosition();
+            int idx = caret <= start ? start : caret - 1;
+            return Math.clamp(idx, start, end - 1);
+        }
+        return Math.clamp(getCaretPosition(), 0, textLength - 1);
     }
 
     private static @Nullable Object resolveAttribute(TextAttributes attributes, List<Style> styles, String name) {

@@ -777,22 +777,46 @@ public class TextPane extends Control {
                 ToggleButton boldButton = Controls.toggleButton()
                         .tooltip("Bold")
                         .graphic(Controls.graphic(Feather.BOLD.getDescription()))
-                        .action(e -> editor.requestFocus())
+                        .action(e -> {
+                            if (!(e.getSource() instanceof ToggleButton tb)) {
+                                throw new IllegalStateException("Unexpected source");
+                            }
+                            editor.markBold(tb.isSelected());
+                            editor.requestFocus();
+                        })
                         .build();
                 ToggleButton italicsButton = Controls.toggleButton()
                         .tooltip("Italic")
                         .graphic(Controls.graphic(Feather.ITALIC.getDescription()))
-                        .action(e -> editor.requestFocus())
+                        .action(e -> {
+                            if (!(e.getSource() instanceof ToggleButton tb)) {
+                                throw new IllegalStateException("Unexpected source");
+                            }
+                            editor.markItalic(tb.isSelected());
+                            editor.requestFocus();
+                        })
                         .build();
                 ToggleButton underlineButton = Controls.toggleButton()
                         .tooltip("Underline")
                         .graphic(Controls.graphic(Feather.UNDERLINE.getDescription()))
-                        .action(e -> editor.requestFocus())
+                        .action(e -> {
+                            if (!(e.getSource() instanceof ToggleButton tb)) {
+                                throw new IllegalStateException("Unexpected source");
+                            }
+                            editor.markUnderline(tb.isSelected());
+                            editor.requestFocus();
+                        })
                         .build();
                 ToggleButton strikeThroughButton = Controls.toggleButton()
                         .tooltip("Strike Through")
                         .graphic(Controls.graphic(Feather.MINUS.getDescription()))
-                        .action(e -> editor.requestFocus())
+                        .action(e -> {
+                            if (!(e.getSource() instanceof ToggleButton tb)) {
+                                throw new IllegalStateException("Unexpected source");
+                            }
+                            editor.markStrikeThrough(tb.isSelected());
+                            editor.requestFocus();
+                        })
                         .build();
                 boldButton.selectedProperty().bindBidirectional(editor.boldProperty());
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
