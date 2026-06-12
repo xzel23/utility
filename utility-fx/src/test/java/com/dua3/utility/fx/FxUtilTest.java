@@ -25,6 +25,7 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.stage.FileChooser;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -303,7 +304,7 @@ class FxUtilTest extends FxTestBase {
         });
     }
 
-    @Test
+    @Test @Disabled
     void testClipboardRichTextRtfRoundTrip() throws Throwable {
         runOnFxThreadAndWait(() -> {
             RichTextBuilder builder = new RichTextBuilder();

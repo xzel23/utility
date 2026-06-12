@@ -4,6 +4,7 @@ import com.dua3.utility.data.Image;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -17,12 +18,19 @@ import java.util.function.Supplier;
  */
 public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase<N, B>> extends RichTextBuilder {
 
-    private static final char INLINE_NODE_MARKER = '\uFFFC';
+    /**
+     * Marker character used for inline nodes.
+     */
+    public static final char INLINE_NODE_MARKER = '\uFFFC';
     private static final AtomicLong STYLE_ID = new AtomicLong();
     /**
      * Style attribute key for a function creating an inline node from run text.
      */
     public static final String STYLE_ATTRIBUTE_INLINE_NODE_FACTORY = RichTextBuilderExtBase.class.getName() + ".inlineNodeFactory";
+    /**
+     * Style attribute key for inline-node metadata.
+     */
+    public static final String STYLE_ATTRIBUTE_INLINE_NODE = RichTextBuilderExtBase.class.getName() + ".inlineNode";
     /**
      * Style attribute key for vertical anchor of inline nodes.
      */
@@ -98,7 +106,8 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @return the builder instance for method chaining
      */
     public B appendInlineNode(Supplier<? extends N> node) {
-        return appendInlineNodeWithStyle(node);
+        return appendInlineNodeWithStyle(() ->
+                new InlineNode<>(node.get(), "application/octet-stream", new byte[0]));
     }
 
     /**
@@ -111,7 +120,9 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      */
     public B appendHyperlink(CharSequence text, Runnable action) {
         String linkText = String.valueOf(text);
-        return appendInlineNodeWithStyle(() -> createHyperlink(linkText, action));
+        byte[] data = linkText.getBytes(StandardCharsets.UTF_8);
+        return appendInlineNodeWithStyle(() ->
+                new InlineNode<>(createHyperlink(linkText, action), "text/plain", data));
     }
 
     /**
@@ -124,7 +135,9 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      */
     public B appendButton(CharSequence text, Runnable action) {
         String buttonText = String.valueOf(text);
-        return appendInlineNodeWithStyle(() -> createButton(buttonText, action));
+        byte[] data = buttonText.getBytes(StandardCharsets.UTF_8);
+        return appendInlineNodeWithStyle(() ->
+                new InlineNode<>(createButton(buttonText, action), "text/plain", data));
     }
 
     /**
@@ -145,7 +158,9 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @return the builder instance for method chaining
      */
     public B appendImage(Image image, VAnchor vAnchor) {
-        return appendInlineNodeWithStyle(() -> createImage(image), vAnchor, 0.0);
+        byte[] data = InlineNode.encodeArgbImageData(image);
+        return appendInlineNodeWithStyle(() ->
+                new InlineNode<>(createImage(image), InlineNode.MIME_TYPE_ARGB_IMAGE, data), vAnchor, 0.0);
     }
 
     /**
@@ -170,18 +185,20 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @return the builder instance for method chaining
      */
     public B appendImage(Image image, float maxWidth, float maxHeight, VAnchor vAnchor) {
-        return appendInlineNodeWithStyle(() -> createImage(image, maxWidth, maxHeight), vAnchor, 0.0);
+        byte[] data = InlineNode.encodeArgbImageData(image);
+        return appendInlineNodeWithStyle(() ->
+                new InlineNode<>(createImage(image, maxWidth, maxHeight), InlineNode.MIME_TYPE_ARGB_IMAGE, data), vAnchor, 0.0);
     }
 
     /**
      * Appends an inline node to the rich-text content with a specific style.
      * This method creates a temporary style to apply while appending the inline node.
      *
-     * @param nodeSupplier a {@link Supplier} that provides the node to append
+     * @param inlineNodeSupplier a {@link Supplier} that provides the inline node to append
      * @return the builder instance for method chaining
      */
-    protected B appendInlineNodeWithStyle(Supplier<? extends N> nodeSupplier) {
-        Function<String, N> nodeFactory = ignoredText -> nodeSupplier.get();
+    protected B appendInlineNodeWithStyle(Supplier<? extends InlineNode<? extends N>> inlineNodeSupplier) {
+        Function<String, InlineNode<? extends N>> nodeFactory = ignoredText -> inlineNodeSupplier.get();
         Style style = Style.create(
                 nextStyleName("inline-node"),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory)
@@ -197,13 +214,13 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * that includes vertical alignment and descent properties.
      * This method creates a temporary style to apply while appending the inline node.
      *
-     * @param nodeSupplier a {@link Supplier} that provides the node to append
+     * @param inlineNodeSupplier a {@link Supplier} that provides the inline node to append
      * @param vAnchor the vertical anchor point for aligning the node in the text line
      * @param descent the descent value to adjust the vertical alignment for the node
      * @return the builder instance for method chaining
      */
-    protected B appendInlineNodeWithStyle(Supplier<? extends N> nodeSupplier, VAnchor vAnchor, double descent) {
-        Function<String, N> nodeFactory = ignoredText -> nodeSupplier.get();
+    protected B appendInlineNodeWithStyle(Supplier<? extends InlineNode<? extends N>> inlineNodeSupplier, VAnchor vAnchor, double descent) {
+        Function<String, InlineNode<? extends N>> nodeFactory = ignoredText -> inlineNodeSupplier.get();
         Style style = Style.create(
                 nextStyleName("inline-node"),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory),

@@ -1,8 +1,10 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
 import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxGraphics;
+import com.dua3.utility.fx.FxImageUtil;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
@@ -19,6 +21,7 @@ import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.RichTextBuilderExtBase;
 import com.dua3.utility.ui.VAnchor;
 import javafx.animation.Animation;
@@ -544,7 +547,8 @@ public class TextPane extends Control {
 
     private static boolean hasInlineNode(Run run) {
         for (Style style : run.getStyles()) {
-            if (style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY) != null) {
+            if (style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY) != null
+                    || style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE) != null) {
                 return true;
             }
         }
@@ -562,9 +566,32 @@ public class TextPane extends Control {
             Object factory = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY);
             if (factory instanceof Function<?, ?> f) {
                 @SuppressWarnings("unchecked")
-                Function<String, ? extends Node> fn = (Function<String, ? extends Node>) f;
-                return fn.apply(text);
+                Function<String, ?> fn = (Function<String, ?>) f;
+                Node node = toFxInlineNode(fn.apply(text));
+                if (node != null) {
+                    return node;
+                }
             }
+
+            Node node = toFxInlineNode(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE));
+            if (node != null) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    private static @Nullable Node toFxInlineNode(@Nullable Object value) {
+        @Nullable Object wrapped = value;
+        if (wrapped instanceof InlineNode<?> inlineNode) {
+            wrapped = inlineNode.getWrapped();
+        }
+
+        if (wrapped instanceof Node node) {
+            return node;
+        }
+        if (wrapped instanceof Image image) {
+            return new ImageView(FxImageUtil.getInstance().convert(image));
         }
         return null;
     }

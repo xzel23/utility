@@ -464,7 +464,7 @@ public final class FxUtil {
         final ClipboardContent content = new ClipboardContent();
         content.putString(text.toString());
         content.putHtml(converter.convert(text));
-        RtfConverter.get().ifPresent(rtfConverter -> content.putRtf(rtfConverter.toRtf(text)));
+        RtfConverter.get().ifPresent(rtfConverter -> content.putRtf(rtfConverter.convert(text)));
         clipboard.setContent(content);
     }
 
@@ -544,7 +544,7 @@ public final class FxUtil {
         if (rtfString != null) {
             Optional<RtfConverter> rtfConverter = RtfConverter.get();
             if (rtfConverter.isPresent()) {
-                return Optional.of(rtfConverter.get().fromRtf(rtfString));
+                return Optional.of(rtfConverter.get().toRichText(rtfString));
             }
         }
 
