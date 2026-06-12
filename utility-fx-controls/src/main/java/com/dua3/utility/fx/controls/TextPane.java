@@ -31,6 +31,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -803,6 +804,9 @@ public class TextPane extends Control {
     private record LineShiftData(Map<Float, Float> lineShiftByY, float tailOverflowBelow) {}
 
     private static final class TextPaneSkin extends SkinBase<TextPane> {
+        private static final double CARET_AUTOSCROLL_MARGIN = 6.0;
+        private static final double DRAG_AUTOSCROLL_EDGE = 18.0;
+        private static final double DRAG_AUTOSCROLL_TICK_MS = 40.0;
         private static final SequencedCollection<String> AVAILABLE_FONTS = FxFontUtil.getInstance().getFamilies(FontUtil.FontTypes.ALL);
         private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
         private static final Color[] DEFAULT_COLORS = {
@@ -828,10 +832,17 @@ public class TextPane extends Control {
         private Font lastFont;
         private boolean lastWrapText;
         private boolean blink = true;
+        private final @Nullable TextEditorPane editor;
         private final Timeline caretTimeline;
+        private final Timeline dragAutoscrollTimeline;
+        private boolean caretVisibilityRequested;
+        private boolean draggingSelection;
+        private double dragSceneX;
+        private double dragSceneY;
 
         private TextPaneSkin(TextPane control) {
             super(control);
+            this.editor = control instanceof TextEditorPane e ? e : null;
 
             caretTimeline = new Timeline(
                     new KeyFrame(Duration.ZERO, e -> setBlink(false)),
@@ -839,6 +850,11 @@ public class TextPane extends Control {
                     new KeyFrame(Duration.seconds(1.0))
             );
             caretTimeline.setCycleCount(Timeline.INDEFINITE);
+
+            dragAutoscrollTimeline = new Timeline(
+                    new KeyFrame(Duration.millis(DRAG_AUTOSCROLL_TICK_MS), e -> autoScrollDuringSelectionDrag())
+            );
+            dragAutoscrollTimeline.setCycleCount(Timeline.INDEFINITE);
 
             contentPane.getStyleClass().add("content");
             selectionLayer.setMouseTransparent(true);
@@ -915,29 +931,51 @@ public class TextPane extends Control {
             control.wrapTextProperty().addListener((obs, oldVal, newVal) -> {
                 scrollPane.setFitToWidth(newVal);
                 scrollPane.setHbarPolicy(newVal ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                requestCaretVisibility();
                 invalidate();
             });
-            control.fontProperty().addListener((obs, oldVal, newVal) -> invalidate());
-            control.widthProperty().addListener((obs, oldVal, newVal) -> invalidate());
-            control.heightProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            control.fontProperty().addListener((obs, oldVal, newVal) -> {
+                requestCaretVisibility();
+                invalidate();
+            });
+            control.widthProperty().addListener((obs, oldVal, newVal) -> {
+                requestCaretVisibility();
+                invalidate();
+            });
+            control.heightProperty().addListener((obs, oldVal, newVal) -> {
+                requestCaretVisibility();
+                invalidate();
+            });
             control.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
-            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
+                requestCaretVisibility();
+                invalidate();
+            });
 
             if (control instanceof TextEditorPane editor) {
                 editor.selectionProperty().addListener((obs, oldVal, newVal) -> {
                     restartCaretAnimation();
+                    requestCaretVisibility();
                     invalidate();
                 });
                 editor.caretPositionProperty().addListener((obs, oldVal, newVal) -> {
                     restartCaretAnimation();
+                    requestCaretVisibility();
                     invalidate();
                 });
                 editor.editableProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
                 editor.toolbarVisibleProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
                 // Route interaction through the internal ScrollPane so input works regardless of focus owner.
-                scrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, editor::processMousePressed);
-                scrollPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, editor::processMouseDragged);
+                scrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, evt -> {
+                    editor.processMousePressed(evt);
+                    stopSelectionDragAutoscroll();
+                });
+                scrollPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, evt -> {
+                    editor.processMouseDragged(evt);
+                    updateSelectionDragAutoscroll(evt);
+                });
+                scrollPane.addEventFilter(MouseEvent.MOUSE_RELEASED, evt -> stopSelectionDragAutoscroll());
                 scrollPane.addEventFilter(KeyEvent.KEY_PRESSED, editor::processKeyPressed);
                 scrollPane.addEventFilter(KeyEvent.KEY_TYPED, editor::processKeyTyped);
                 scrollPane.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
@@ -1088,6 +1126,212 @@ public class TextPane extends Control {
             }
         }
 
+        private void requestCaretVisibility() {
+            if (editor != null) {
+                caretVisibilityRequested = true;
+            }
+        }
+
+        private void updateSelectionDragAutoscroll(MouseEvent evt) {
+            if (editor == null || !editor.isEditable() || !evt.isPrimaryButtonDown()) {
+                stopSelectionDragAutoscroll();
+                return;
+            }
+
+            draggingSelection = true;
+            dragSceneX = evt.getSceneX();
+            dragSceneY = evt.getSceneY();
+
+            Bounds viewport = getViewportSceneBounds();
+            if (viewport == null) {
+                stopSelectionDragAutoscroll();
+                return;
+            }
+
+            boolean nearTop = dragSceneY < viewport.getMinY() + DRAG_AUTOSCROLL_EDGE;
+            boolean nearBottom = dragSceneY > viewport.getMaxY() - DRAG_AUTOSCROLL_EDGE;
+            if (nearTop || nearBottom) {
+                if (dragAutoscrollTimeline.getStatus() != Animation.Status.RUNNING) {
+                    dragAutoscrollTimeline.play();
+                }
+            } else if (dragAutoscrollTimeline.getStatus() == Animation.Status.RUNNING) {
+                dragAutoscrollTimeline.stop();
+            }
+        }
+
+        private void autoScrollDuringSelectionDrag() {
+            if (!draggingSelection || editor == null || !editor.isEditable()) {
+                stopSelectionDragAutoscroll();
+                return;
+            }
+
+            Bounds viewport = getViewportSceneBounds();
+            if (viewport == null) {
+                stopSelectionDragAutoscroll();
+                return;
+            }
+
+            double deltaY = 0.0;
+            if (dragSceneY < viewport.getMinY() + DRAG_AUTOSCROLL_EDGE) {
+                double over = viewport.getMinY() + DRAG_AUTOSCROLL_EDGE - dragSceneY;
+                deltaY = -dragAutoscrollPixels(over);
+            } else if (dragSceneY > viewport.getMaxY() - DRAG_AUTOSCROLL_EDGE) {
+                double over = dragSceneY - (viewport.getMaxY() - DRAG_AUTOSCROLL_EDGE);
+                deltaY = dragAutoscrollPixels(over);
+            }
+
+            if (deltaY == 0.0) {
+                dragAutoscrollTimeline.stop();
+                return;
+            }
+
+            scrollByPixelsVertical(deltaY);
+            extendSelectionToDragPoint();
+        }
+
+        private static double dragAutoscrollPixels(double over) {
+            double factor = Math.clamp(over / DRAG_AUTOSCROLL_EDGE, 0.0, 1.0);
+            return 4.0 + factor * 16.0;
+        }
+
+        private void extendSelectionToDragPoint() {
+            if (editor == null) {
+                return;
+            }
+
+            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(getAvailableWidth());
+            if (lines.isEmpty()) {
+                return;
+            }
+
+            Bounds viewport = getViewportSceneBounds();
+            double sceneX = dragSceneX;
+            if (viewport != null) {
+                sceneX = Math.clamp(sceneX, viewport.getMinX(), viewport.getMaxX());
+            }
+
+            Point2D point = contentPane.sceneToLocal(sceneX, dragSceneY);
+            int caret = TextEditorPane.indexForPoint(lines, point.getX(), point.getY());
+            editor.selectPositionCaret(caret);
+            requestCaretVisibility();
+        }
+
+        private void stopSelectionDragAutoscroll() {
+            draggingSelection = false;
+            if (dragAutoscrollTimeline.getStatus() == Animation.Status.RUNNING) {
+                dragAutoscrollTimeline.stop();
+            }
+        }
+
+        private @Nullable Bounds getViewportSceneBounds() {
+            Node viewport = scrollPane.lookup(".viewport");
+            if (viewport != null) {
+                return viewport.localToScene(viewport.getBoundsInLocal());
+            }
+            return scrollPane.localToScene(scrollPane.getBoundsInLocal());
+        }
+
+        private void ensureCaretVisible(TextEditorPane editor, double availableWidth) {
+            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(availableWidth);
+            if (lines.isEmpty()) {
+                return;
+            }
+
+            int caret = editor.getCaretPosition();
+            int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
+            if (lineIndex < 0 || lineIndex >= lines.size()) {
+                return;
+            }
+
+            TextEditorPane.VisualLine line = lines.get(lineIndex);
+            double caretX = TextEditorPane.xForIndex(line, caret);
+            double caretWidth = Math.max(1.0, editor.getFont().getFontData().spaceWidth());
+
+            scrollHorizontallyToInclude(caretX, caretWidth);
+            scrollVerticallyToInclude(line.top(), line.top() + line.height());
+        }
+
+        private boolean scrollHorizontallyToInclude(double x, double width) {
+            Bounds viewport = scrollPane.getViewportBounds();
+            double viewportWidth = viewport.getWidth();
+            double contentWidth = Math.max(contentPane.getLayoutBounds().getWidth(), canvas.getWidth());
+            double maxOffset = Math.max(0.0, contentWidth - viewportWidth);
+            if (!(viewportWidth > 0.0) || maxOffset <= 0.0) {
+                return false;
+            }
+
+            double currentOffset = scrollPane.getHvalue() * maxOffset;
+            double targetOffset = currentOffset;
+            double left = currentOffset + CARET_AUTOSCROLL_MARGIN;
+            double right = currentOffset + viewportWidth - CARET_AUTOSCROLL_MARGIN;
+
+            if (x < left) {
+                targetOffset = x - CARET_AUTOSCROLL_MARGIN;
+            } else if (x + width > right) {
+                targetOffset = x + width - viewportWidth + CARET_AUTOSCROLL_MARGIN;
+            }
+
+            targetOffset = Math.clamp(targetOffset, 0.0, maxOffset);
+            if (Math.abs(targetOffset - currentOffset) < 0.5) {
+                return false;
+            }
+
+            scrollPane.setHvalue(maxOffset <= 0.0 ? 0.0 : targetOffset / maxOffset);
+            return true;
+        }
+
+        private boolean scrollVerticallyToInclude(double top, double bottom) {
+            Bounds viewport = scrollPane.getViewportBounds();
+            double viewportHeight = viewport.getHeight();
+            double contentHeight = Math.max(contentPane.getLayoutBounds().getHeight(), canvas.getHeight());
+            double maxOffset = Math.max(0.0, contentHeight - viewportHeight);
+            if (!(viewportHeight > 0.0) || maxOffset <= 0.0) {
+                return false;
+            }
+
+            double currentOffset = scrollPane.getVvalue() * maxOffset;
+            double targetOffset = currentOffset;
+            double visibleTop = currentOffset + CARET_AUTOSCROLL_MARGIN;
+            double visibleBottom = currentOffset + viewportHeight - CARET_AUTOSCROLL_MARGIN;
+
+            if (top < visibleTop) {
+                targetOffset = top - CARET_AUTOSCROLL_MARGIN;
+            } else if (bottom > visibleBottom) {
+                targetOffset = bottom - viewportHeight + CARET_AUTOSCROLL_MARGIN;
+            }
+
+            targetOffset = Math.clamp(targetOffset, 0.0, maxOffset);
+            if (Math.abs(targetOffset - currentOffset) < 0.5) {
+                return false;
+            }
+
+            scrollPane.setVvalue(maxOffset <= 0.0 ? 0.0 : targetOffset / maxOffset);
+            return true;
+        }
+
+        private boolean scrollByPixelsVertical(double delta) {
+            if (delta == 0.0) {
+                return false;
+            }
+
+            Bounds viewport = scrollPane.getViewportBounds();
+            double viewportHeight = viewport.getHeight();
+            double contentHeight = Math.max(contentPane.getLayoutBounds().getHeight(), canvas.getHeight());
+            double maxOffset = Math.max(0.0, contentHeight - viewportHeight);
+            if (!(viewportHeight > 0.0) || maxOffset <= 0.0) {
+                return false;
+            }
+
+            double currentOffset = scrollPane.getVvalue() * maxOffset;
+            double targetOffset = Math.clamp(currentOffset + delta, 0.0, maxOffset);
+            if (Math.abs(targetOffset - currentOffset) < 0.5) {
+                return false;
+            }
+
+            scrollPane.setVvalue(maxOffset <= 0.0 ? 0.0 : targetOffset / maxOffset);
+            return true;
+        }
+
     private void invalidate() {
             dirty = true;
             getSkinnable().requestLayout();
@@ -1096,6 +1340,7 @@ public class TextPane extends Control {
         @Override
         public void dispose() {
             caretTimeline.stop();
+            dragAutoscrollTimeline.stop();
             super.dispose();
         }
 
@@ -1130,6 +1375,7 @@ public class TextPane extends Control {
             if (shouldAnimateCaret()) {
                 restartCaretAnimation();
             } else {
+                stopSelectionDragAutoscroll();
                 if (caretTimeline.getStatus() == Animation.Status.RUNNING) {
                     caretTimeline.stop();
                 }
@@ -1190,6 +1436,10 @@ public class TextPane extends Control {
 
             renderEditorOverlay(control, availableWidth, layout);
             ensureEditorContentHeight(control, availableWidth);
+            if (editor != null && caretVisibilityRequested) {
+                ensureCaretVisible(editor, availableWidth);
+                caretVisibilityRequested = false;
+            }
 
             inlineLayer.getChildren().clear();
             Set<Node> added = Collections.newSetFromMap(new IdentityHashMap<>());
