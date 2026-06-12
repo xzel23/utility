@@ -59,6 +59,7 @@ import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.feather.Feather;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -287,11 +288,12 @@ public class TextPane extends Control {
         return font.get();
     }
 
-    private Layout createLayout(double availableWidth) {
+    Layout createLayout(double availableWidth) {
         RichText richText = getText();
         Font font = getFont();
         com.dua3.utility.text.FontUtil fontUtil = com.dua3.utility.text.FontUtil.getInstance();
-        RichText layoutText = createLayoutText(richText, font, fontUtil);
+        LayoutTextData layoutTextData = createLayoutTextData(richText, font, fontUtil);
+        RichText layoutText = layoutTextData.text();
 
         float width = (float) Math.max(1.0, availableWidth);
         float wrapWidth = isWrapText() ? width : FragmentedText.NO_WRAP;
@@ -359,11 +361,15 @@ public class TextPane extends Control {
         List<List<FragmentedText.Fragment>> shiftedRenderLines = shiftRenderLines(renderFragments, lineShiftByY);
         float renderHeight = computeRenderedHeight(shiftedRenderLines, lineShiftData.tailOverflowBelow(), font);
 
-        return new Layout(shiftedRenderLines, shiftedPlacements, renderWidth, renderHeight);
+        return new Layout(shiftedRenderLines, shiftedPlacements, renderWidth, renderHeight, layoutTextData);
     }
 
-    private static RichText createLayoutText(RichText source, Font baseFont, com.dua3.utility.text.FontUtil fontUtil) {
+    private static LayoutTextData createLayoutTextData(RichText source, Font baseFont, com.dua3.utility.text.FontUtil fontUtil) {
         RichTextBuilder builder = new RichTextBuilder(source.length());
+        List<Integer> layoutToSourceBoundaries = new ArrayList<>(source.length() + 1);
+        layoutToSourceBoundaries.add(0);
+        int sourcePosition = 0;
+
         for (Run run : source) {
             List<String> pushedAttributes = pushNonStyleAttributes(builder, run);
             List<Style> styles = run.getStyles();
@@ -386,6 +392,9 @@ public class TextPane extends Control {
                         if (extraSpaces > 0) {
                             String leadingPadding = NO_BREAK_SPACE.repeat(extraSpaces);
                             builder.append(leadingPadding);
+                            for (int i = 0; i < leadingPadding.length(); i++) {
+                                layoutToSourceBoundaries.add(sourcePosition);
+                            }
                             double leadingWidth = fontUtil.getTextWidth(leadingPadding, runFont);
                             leadingWidthStyle = Style.create(
                                     "text-pane-inline-leading-width",
@@ -397,14 +406,25 @@ public class TextPane extends Control {
                         builder.push(leadingWidthStyle);
                     }
                     builder.append(text);
+                    for (int i = 0; i < text.length(); i++) {
+                        layoutToSourceBoundaries.add(++sourcePosition);
+                    }
                     if (leadingWidthStyle != null) {
                         builder.pop(leadingWidthStyle);
                     }
                 } else {
-                    builder.append(run.toString());
+                    String text = run.toString();
+                    builder.append(text);
+                    for (int i = 0; i < text.length(); i++) {
+                        layoutToSourceBoundaries.add(++sourcePosition);
+                    }
                 }
             } else {
-                builder.append(run.toString());
+                String text = run.toString();
+                builder.append(text);
+                for (int i = 0; i < text.length(); i++) {
+                    layoutToSourceBoundaries.add(++sourcePosition);
+                }
             }
 
             for (int i = styles.size() - 1; i >= 0; i--) {
@@ -414,7 +434,43 @@ public class TextPane extends Control {
                 builder.pop(pushedAttributes.get(i));
             }
         }
-        return builder.toRichText();
+
+        RichText layoutText = builder.toRichText();
+        int layoutLength = layoutText.length();
+        int[] layoutToSourceMap = new int[layoutLength + 1];
+        int count = Math.min(layoutToSourceBoundaries.size(), layoutLength + 1);
+        for (int i = 0; i < count; i++) {
+            layoutToSourceMap[i] = Math.clamp(layoutToSourceBoundaries.get(i), 0, source.length());
+        }
+        for (int i = count; i < layoutToSourceMap.length; i++) {
+            layoutToSourceMap[i] = source.length();
+        }
+
+        int[] sourceToLayoutMap = buildSourceToLayoutMap(layoutToSourceMap, source.length());
+        return new LayoutTextData(layoutText, layoutToSourceMap, sourceToLayoutMap);
+    }
+
+    private static int[] buildSourceToLayoutMap(int[] layoutToSourceMap, int sourceLength) {
+        int[] sourceToLayout = new int[sourceLength + 1];
+        Arrays.fill(sourceToLayout, -1);
+
+        for (int layoutPos = 0; layoutPos < layoutToSourceMap.length; layoutPos++) {
+            int sourcePos = Math.clamp(layoutToSourceMap[layoutPos], 0, sourceLength);
+            if (sourceToLayout[sourcePos] < 0) {
+                sourceToLayout[sourcePos] = layoutPos;
+            }
+        }
+
+        int lastLayoutPos = 0;
+        for (int sourcePos = 0; sourcePos < sourceToLayout.length; sourcePos++) {
+            if (sourceToLayout[sourcePos] < 0) {
+                sourceToLayout[sourcePos] = lastLayoutPos;
+            } else {
+                lastLayoutPos = sourceToLayout[sourcePos];
+            }
+        }
+
+        return sourceToLayout;
     }
 
     private static double measureNodeWidth(Node node) {
@@ -495,7 +551,7 @@ public class TextPane extends Control {
     }
 
     private static @Nullable Node createInlineNode(Run run) {
-        if (TextUtil.isBlank(run)) {
+        if (TextUtil.isWhitespaceOnly(run)) {
             return null;
         }
         String text = run.toString();
@@ -720,11 +776,28 @@ public class TextPane extends Control {
             double descent
     ) {}
 
-    private record Layout(
+    record LayoutTextData(
+            RichText text,
+            int[] layoutToSourceMap,
+            int[] sourceToLayoutMap
+    ) {
+        int layoutToSourcePosition(int layoutPosition) {
+            int pos = Math.clamp(layoutPosition, 0, layoutToSourceMap.length - 1);
+            return layoutToSourceMap[pos];
+        }
+
+        int sourceToLayoutPosition(int sourcePosition) {
+            int pos = Math.clamp(sourcePosition, 0, sourceToLayoutMap.length - 1);
+            return sourceToLayoutMap[pos];
+        }
+    }
+
+    record Layout(
             List<List<FragmentedText.Fragment>> renderLines,
             List<InlineControlPlacement> placements,
             float width,
-            float height
+            float height,
+            LayoutTextData layoutTextData
     ) {}
 
     private record LineShiftData(Map<Float, Float> lineShiftByY, float tailOverflowBelow) {}
@@ -1207,8 +1280,8 @@ public class TextPane extends Control {
 
             IndexRange selection = editor.getSelection();
             if (selection.getLength() > 0) {
-                int selStart = selection.getStart();
-                int selEnd = selection.getEnd();
+                int selStart = layout.layoutTextData().sourceToLayoutPosition(selection.getStart());
+                int selEnd = layout.layoutTextData().sourceToLayoutPosition(selection.getEnd());
                 FontUtil fontUtil = FontUtil.getInstance();
                 for (List<FragmentedText.Fragment> line : layout.renderLines()) {
                     if (line.isEmpty()) {
@@ -1245,7 +1318,8 @@ public class TextPane extends Control {
             }
 
             if (editor.isEditable() && hasEditorFocus(control) && !blink) {
-                CaretInfo caretInfo = findCaret(layout.renderLines(), editor.getCaretPosition());
+                int layoutCaretPosition = layout.layoutTextData().sourceToLayoutPosition(editor.getCaretPosition());
+                CaretInfo caretInfo = findCaret(layout.renderLines(), layoutCaretPosition);
                 if (caretInfo == null) {
                     List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(availableWidth);
                     if (!lines.isEmpty()) {
@@ -1277,7 +1351,7 @@ public class TextPane extends Control {
             return fontUtil.getTextWidth(run.subSequence(0, length), font);
         }
 
-        private static @Nullable CaretInfo findCaret(List<List<FragmentedText.Fragment>> lines, int caretPosition) {
+        private static @Nullable CaretInfo findCaret(List<List<FragmentedText.Fragment>> lines, int layoutCaretPosition) {
             FontUtil fontUtil = FontUtil.getInstance();
             for (List<FragmentedText.Fragment> line : lines) {
                 if (line.isEmpty()) {
@@ -1292,11 +1366,11 @@ public class TextPane extends Control {
 
                     int start = run.getStart();
                     int end = run.getEnd();
-                    if (caretPosition < start || caretPosition > end) {
+                    if (layoutCaretPosition < start || layoutCaretPosition > end) {
                         continue;
                     }
 
-                    int rel = caretPosition - start;
+                    int rel = layoutCaretPosition - start;
                     double x = fragment.x() + textWidth(fontUtil, run, rel, fragment.font());
                     return new CaretInfo(x, lineTop, lineHeight);
                 }

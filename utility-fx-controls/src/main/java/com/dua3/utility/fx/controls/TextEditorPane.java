@@ -6,6 +6,7 @@ import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontType;
 import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.RichTextConverter;
@@ -1022,68 +1023,49 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     List<VisualLine> buildVisualLines(double wrapWidth) {
-        RichText richText = getText();
-        String text = richText.toString();
-        Font font = getFont();
-        FontUtil fontUtil = FontUtil.getInstance();
-        double defaultLineHeight = Math.max(1.0, font.getFontData().height());
-        boolean wrap = isWrapText() && Double.isFinite(wrapWidth) && wrapWidth > 1.0;
-
-        List<VisualLine> lines = new ArrayList<>();
-        if (text.isEmpty()) {
-            lines.add(new VisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
-            return lines;
+        double availableWidth = wrapWidth;
+        if (!Double.isFinite(availableWidth) || availableWidth <= 1.0) {
+            double fallback = getWidth() - snappedLeftInset() - snappedRightInset();
+            availableWidth = Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
         }
 
-        int logicalStart = 0;
-        double y = 0.0;
-        while (logicalStart <= text.length()) {
-            int newline = text.indexOf('\n', logicalStart);
-            boolean hasNewline = newline >= 0;
-            int logicalEnd = hasNewline ? newline : text.length();
+        TextPane.Layout layout = createLayout(availableWidth);
+        Font baseFont = getFont();
+        double defaultLineHeight = Math.max(1.0, baseFont.getFontData().height());
+        FontUtil fontUtil = FontUtil.getInstance();
 
-            if (wrap && logicalStart < logicalEnd) {
-                int start = logicalStart;
-                List<Double> boundaries = new ArrayList<>();
-                boundaries.add(0.0);
-
-                for (int i = logicalStart; i < logicalEnd; i++) {
-                    double nextX = textWidthRange(richText, start, i + 1, font, fontUtil);
-                    if (nextX > wrapWidth && i > start) {
-                        double segmentHeight = lineHeightRange(richText, start, i, font, fontUtil, defaultLineHeight);
-                        lines.add(new VisualLine(start, i, y, segmentHeight, toArray(boundaries)));
-                        y += segmentHeight;
-
-                        start = i;
-                        boundaries.clear();
-                        boundaries.add(0.0);
-                        nextX = textWidthRange(richText, start, i + 1, font, fontUtil);
-                    }
-                    boundaries.add(nextX);
+        List<VisualLine> lines = new ArrayList<>();
+        for (List<FragmentedText.Fragment> fragmentLine : layout.renderLines()) {
+            VisualLine line = toVisualLine(fragmentLine, layout.layoutTextData(), fontUtil, defaultLineHeight);
+            if (line == null) {
+                continue;
+            }
+            if (line.length() == 0 && !isLogicalEmptyLine(line.start())) {
+                continue;
+            }
+            if (!lines.isEmpty()) {
+                VisualLine previous = lines.getLast();
+                if (line.length() == 0 && previous.length() == 0
+                        && line.start() == previous.start() && line.end() == previous.end()) {
+                    continue;
                 }
-
-                double segmentHeight = lineHeightRange(richText, start, logicalEnd, font, fontUtil, defaultLineHeight);
-                lines.add(new VisualLine(start, logicalEnd, y, segmentHeight, toArray(boundaries)));
-                y += segmentHeight;
-            } else {
-                double segmentHeight = lineHeightRange(richText, logicalStart, logicalEnd, font, fontUtil, defaultLineHeight);
-                lines.add(new VisualLine(
-                        logicalStart,
-                        logicalEnd,
-                        y,
-                        segmentHeight,
-                        buildBoundaries(richText, logicalStart, logicalEnd, fontUtil, font)
-                ));
-                y += segmentHeight;
             }
+            lines.add(line);
+        }
 
-            if (!hasNewline) {
-                break;
-            }
-            logicalStart = newline + 1;
+        if (lines.isEmpty()) {
+            lines.add(new VisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
         }
 
         return lines;
+    }
+
+    private boolean isLogicalEmptyLine(int position) {
+        String text = getText().toString();
+        int p = Math.clamp(position, 0, text.length());
+        boolean atLineStart = p == 0 || text.charAt(p - 1) == '\n';
+        boolean atLineEnd = p == text.length() || text.charAt(p) == '\n';
+        return atLineStart && atLineEnd;
     }
 
     private double currentWrapWidth() {
@@ -1103,60 +1085,65 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
     }
 
-    private static double[] buildBoundaries(RichText text, int start, int end, FontUtil fontUtil, Font baseFont) {
-        int len = Math.max(0, end - start);
-        double[] boundaries = new double[len + 1];
-        for (int i = 0; i < len; i++) {
-            boundaries[i + 1] = textWidthRange(text, start, start + i + 1, baseFont, fontUtil);
+    private static @Nullable VisualLine toVisualLine(
+            List<FragmentedText.Fragment> fragmentLine,
+            TextPane.LayoutTextData mapping,
+            FontUtil fontUtil,
+            double defaultLineHeight
+    ) {
+        if (fragmentLine.isEmpty()) {
+            return null;
         }
-        return boundaries;
+
+        double lineTop = fragmentLine.getFirst().y();
+        double lineHeight = fragmentLine.stream().mapToDouble(FragmentedText.Fragment::h).max().orElse(defaultLineHeight);
+        Map<Integer, Double> sourceBoundaries = new LinkedHashMap<>();
+
+        int lineStart = Integer.MAX_VALUE;
+        int lineEnd = Integer.MIN_VALUE;
+
+        for (FragmentedText.Fragment fragment : fragmentLine) {
+            if (!(fragment.text() instanceof Run run)) {
+                continue;
+            }
+
+            int fragmentStart = run.getStart();
+            int fragmentEnd = run.getEnd();
+            for (int layoutPos = fragmentStart; layoutPos <= fragmentEnd; layoutPos++) {
+                int rel = layoutPos - fragmentStart;
+                double x = fragment.x() + textWidth(fontUtil, run, rel, fragment.font());
+                int sourcePos = mapping.layoutToSourcePosition(layoutPos);
+                lineStart = Math.min(lineStart, sourcePos);
+                lineEnd = Math.max(lineEnd, sourcePos);
+                sourceBoundaries.merge(sourcePos, x, Math::min);
+            }
+        }
+
+        if (lineStart == Integer.MAX_VALUE || lineEnd < lineStart) {
+            return new VisualLine(0, 0, lineTop, Math.max(1.0, lineHeight), new double[]{0.0});
+        }
+
+        double[] boundaries = new double[lineEnd - lineStart + 1];
+        double x = sourceBoundaries.getOrDefault(lineStart, 0.0);
+        for (int sourcePos = lineStart; sourcePos <= lineEnd; sourcePos++) {
+            Double mappedX = sourceBoundaries.get(sourcePos);
+            if (mappedX != null) {
+                x = mappedX;
+            }
+            boundaries[sourcePos - lineStart] = x;
+        }
+
+        return new VisualLine(lineStart, lineEnd, lineTop, Math.max(1.0, lineHeight), boundaries);
     }
 
-    private static double textWidthRange(RichText text, int start, int end, Font baseFont, FontUtil fontUtil) {
-        int s = Math.max(0, start);
-        int e = Math.max(s, Math.min(end, text.length()));
-        if (s >= e) {
+    private static double textWidth(FontUtil fontUtil, Run run, int length, Font font) {
+        if (length <= 0) {
             return 0.0;
         }
-
-        double width = 0.0;
-        int index = s;
-        while (index < e) {
-            Run run = text.runAt(index);
-            int runEnd = Math.min(e, run.getEnd());
-            Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
-            width += fontUtil.getTextWidth(run.subSequence(index - run.getStart(), runEnd - run.getStart()), runFont);
-            index = runEnd;
+        if (length >= run.length()) {
+            return fontUtil.getTextWidth(run, font);
         }
-        return width;
-    }
-
-    private static double lineHeightRange(RichText text, int start, int end, Font baseFont, FontUtil fontUtil, double defaultLineHeight) {
-        int s = Math.max(0, start);
-        int e = Math.max(s, Math.min(end, text.length()));
-        if (s >= e) {
-            return defaultLineHeight;
-        }
-
-        double height = 0.0;
-        int index = s;
-        while (index < e) {
-            Run run = text.runAt(index);
-            int runEnd = Math.min(e, run.getEnd());
-            Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
-            height = Math.max(height, runFont.getFontData().height());
-            index = runEnd;
-        }
-
-        return Math.max(defaultLineHeight, height);
-    }
-
-    private static double[] toArray(List<Double> boundaries) {
-        double[] result = new double[boundaries.size()];
-        for (int i = 0; i < boundaries.size(); i++) {
-            result[i] = boundaries.get(i);
-        }
-        return result;
+        return fontUtil.getTextWidth(run.subSequence(0, length), font);
     }
 
     static int indexForPoint(List<VisualLine> lines, double x, double y) {
@@ -1196,10 +1183,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     static int indexForX(VisualLine line, double x) {
-        if (x <= 0.0) {
+        double[] boundaries = line.boundaries();
+        double min = boundaries[0];
+        if (x <= min) {
             return line.start();
         }
-        double[] boundaries = line.boundaries();
         double max = boundaries[boundaries.length - 1];
         if (x >= max) {
             return line.end();
