@@ -931,31 +931,17 @@ public class TextPane extends Control {
             control.wrapTextProperty().addListener((obs, oldVal, newVal) -> {
                 scrollPane.setFitToWidth(newVal);
                 scrollPane.setHbarPolicy(newVal ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                requestCaretVisibility();
                 invalidate();
             });
-            control.fontProperty().addListener((obs, oldVal, newVal) -> {
-                requestCaretVisibility();
-                invalidate();
-            });
-            control.widthProperty().addListener((obs, oldVal, newVal) -> {
-                requestCaretVisibility();
-                invalidate();
-            });
-            control.heightProperty().addListener((obs, oldVal, newVal) -> {
-                requestCaretVisibility();
-                invalidate();
-            });
+            control.fontProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            control.widthProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            control.heightProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
-            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
-                requestCaretVisibility();
-                invalidate();
-            });
+            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
             if (control instanceof TextEditorPane editor) {
                 editor.selectionProperty().addListener((obs, oldVal, newVal) -> {
                     restartCaretAnimation();
-                    requestCaretVisibility();
                     invalidate();
                 });
                 editor.caretPositionProperty().addListener((obs, oldVal, newVal) -> {
@@ -1213,7 +1199,6 @@ public class TextPane extends Control {
             Point2D point = contentPane.sceneToLocal(sceneX, dragSceneY);
             int caret = TextEditorPane.indexForPoint(lines, point.getX(), point.getY());
             editor.selectPositionCaret(caret);
-            requestCaretVisibility();
         }
 
         private void stopSelectionDragAutoscroll() {
