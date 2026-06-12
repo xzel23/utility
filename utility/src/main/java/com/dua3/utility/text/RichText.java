@@ -1037,7 +1037,6 @@ public final class RichText
      * @return copy with the style removed from the selected range
      */
     public RichText removeStyle(Style style, int start, int end) {
-        Objects.requireNonNull(style, "style");
         Objects.checkFromToIndex(start, end, length);
 
         if (start == end) {

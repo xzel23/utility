@@ -32,9 +32,9 @@ public final class InlineNode<N> {
      * @param data payload data
      */
     public InlineNode(N wrapped, String mimeType, byte[] data) {
-        this.wrapped = Objects.requireNonNull(wrapped, "wrapped");
-        this.mimeType = Objects.requireNonNull(mimeType, "mimeType");
-        this.data = Objects.requireNonNull(data, "data").clone();
+        this.wrapped = wrapped;
+        this.mimeType = mimeType;
+        this.data = data.clone();
     }
 
     /**
@@ -72,8 +72,6 @@ public final class InlineNode<N> {
      * @return encoded bytes
      */
     public static byte[] encodeArgbImageData(Image image) {
-        Objects.requireNonNull(image, "image");
-
         int width = image.width();
         int height = image.height();
         int[] argb = image.getArgb();

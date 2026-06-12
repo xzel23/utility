@@ -1,7 +1,10 @@
 package com.dua3.utility.ui;
 
+import com.dua3.utility.text.RichText;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RtfConverterTest {
 
@@ -117,5 +120,13 @@ class RtfConverterTest {
 
         assertThrows(UnsupportedOperationException.class, () -> rtfConverter.fromRtf("{\\rtf1\\ansi}"));
          */
+    }
+
+    @Test
+    void testToRichTextParsesRtfText() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        RichText actual = converter.toRichText("{\\rtf1\\ansi\\deff0\\pard\\b Bold\\b0\\par Plain\\par}");
+
+        assertEquals("Bold\nPlain\n", actual.toString());
     }
 }
