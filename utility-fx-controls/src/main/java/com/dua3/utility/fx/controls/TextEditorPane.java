@@ -68,6 +68,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private final ObjectProperty<@Nullable Color> textColor = new SimpleObjectProperty<>(this, "textColor");
     private final StringProperty fontFamily = new SimpleStringProperty(this, "fontFamily");
     private final DoubleProperty fontSize = new SimpleDoubleProperty(this, "fontSize", 0.0);
+    private final ObjectProperty<RichText> committedValue;
+    private final RichText defaultValue;
     private final InputControlState<RichText> state;
     private final List<EditState> undoStack = new ArrayList<>();
     private final List<EditState> redoStack = new ArrayList<>();
@@ -94,7 +96,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     public TextEditorPane(@Nullable CharSequence text) {
         super(text);
 
-        this.state = new ObjectInputControlState<>(textProperty(), this::getText, value -> Optional.empty());
         getStyleClass().add("text-editor-pane");
 
         RichText initial = normalizeIncomingText(getText());
@@ -108,6 +109,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         initial = getText();
+        this.defaultValue = initial;
+        this.committedValue = new SimpleObjectProperty<>(this, "value", initial);
+        this.state = new ObjectInputControlState<>(committedValue, () -> defaultValue, value -> Optional.empty());
+
+        committedValue.addListener((obs, oldValue, newValue) -> applyCommittedValue(newValue));
+
         length.set(initial.length());
         setSelectionState(0, 0);
         initFormatPropertyListeners();
@@ -382,6 +389,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     @Override
     public InputControlState<RichText> state() {
         return state;
+    }
+
+    @Override
+    public void set(@Nullable RichText arg) {
+        state.setValue(normalizeIncomingText(arg));
     }
 
     @Override
@@ -851,11 +863,17 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void cancelEdit() {
-        // TODO implement edit cancel behavior
+        applyCommittedValue(get());
+        state.validate();
     }
 
     public void commitValue() {
-        // TODO implement value commit behavior
+        RichText committed = normalizeIncomingText(getText());
+        if (!Objects.equals(get(), committed)) {
+            set(committed);
+        } else {
+            state.validate();
+        }
     }
 
     private int hitTest(MouseEvent evt) {
@@ -1582,6 +1600,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         redoStack.clear();
     }
 
+    private void clearHistory() {
+        undoStack.clear();
+        redoStack.clear();
+        updateHistoryState();
+    }
+
     private void trimHistory(List<EditState> stack) {
         while (stack.size() > MAX_HISTORY_SIZE) {
             stack.removeFirst();
@@ -1595,6 +1619,24 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private void applyState(EditState state) {
         setText(state.text());
         setSelectionState(state.anchor(), state.caret());
+    }
+
+    private void applyCommittedValue(@Nullable RichText value) {
+        RichText committed = normalizeIncomingText(value);
+        if (Objects.equals(getText(), committed)) {
+            return;
+        }
+
+        normalizingIncomingText = true;
+        try {
+            setText(committed);
+        } finally {
+            normalizingIncomingText = false;
+        }
+
+        int caret = Math.clamp(getCaretPosition(), 0, committed.length());
+        setSelectionState(caret, caret);
+        clearHistory();
     }
 
     private void updateHistoryState() {
