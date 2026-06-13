@@ -1,8 +1,8 @@
-package com.dua3.utility.ui;
+package com.dua3.utility.text;
 
 import com.dua3.utility.data.Image;
-import com.dua3.utility.text.RichTextBuilder;
-import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.InlineNode;
+import com.dua3.utility.ui.VAnchor;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

@@ -2,7 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Image;
 import com.dua3.utility.fx.FxImageUtil;
-import com.dua3.utility.ui.RichTextBuilderExtBase;
+import com.dua3.utility.text.RichTextBuilderExtBase;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;

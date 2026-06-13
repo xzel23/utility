@@ -7,7 +7,7 @@ import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
-import com.dua3.utility.ui.RtfConverter;
+import com.dua3.utility.text.RtfConverter;
 import javafx.animation.AnimationTimer;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.Property;
