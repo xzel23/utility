@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -17,11 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RtfConverterTest {
 
     @Test
-    @Disabled("Pending implementation of hand-written RTF writer and rtfparserkit parser")
     void testRoundTripRichText() {
-        /*
-        RtfConverter rtfConverter = RtfConverter.get().orElse(null);
-        Assumptions.assumeTrue(rtfConverter != null, "RtfConverter not available");
+        RtfConverter converter = RtfConverter.get().orElseThrow();
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(Style.BOLD);
@@ -33,13 +32,32 @@ class RtfConverterTest {
         builder.append("ItalicRed");
         builder.pop(Style.RED);
         builder.pop(Style.ITALIC);
-        builder.append("\nSecond line");
+
+        builder.append("\n");
+        Style mono = Style.create(
+                "mono-11",
+                Map.entry(Style.FONT_FAMILIES, List.of("Courier New")),
+                Map.entry(Style.FONT_SIZE, 11f)
+        );
+        builder.push(mono);
+        builder.append("Mono {\\}\tX");
+        builder.pop(mono);
+
+        builder.append("\n");
+        builder.push(Style.UNDERLINE);
+        builder.push(Style.LINE_THROUGH);
+        builder.append("UnderStrike");
+        builder.pop(Style.LINE_THROUGH);
+        builder.pop(Style.UNDERLINE);
 
         RichText expected = builder.toRichText();
-        String rtf = rtfConverter.fromRichText(expected);
-        RichText actual = rtfConverter.toRichText(rtf);
+        String rtf = converter.fromRichText(expected);
+        RichText actual = converter.toRichText(rtf);
 
         assertEquals(expected.toString(), actual.toString());
+        assertTrue(rtf.startsWith("{\\rtf1"));
+        assertTrue(rtf.contains("{\\fonttbl"));
+        assertTrue(rtf.contains("{\\colortbl"));
 
         int boldPos = actual.indexOf("Bold");
         assertEquals(Boolean.TRUE, actual.runAt(boldPos).getFontDef().getBold());
@@ -47,7 +65,14 @@ class RtfConverterTest {
         int italicRedPos = actual.indexOf("ItalicRed");
         assertEquals(Boolean.TRUE, actual.runAt(italicRedPos).getFontDef().getItalic());
         assertEquals(Color.RED, actual.runAt(italicRedPos).getFontDef().getColor());
- */
+
+        int monoPos = actual.indexOf("Mono");
+        assertEquals("Courier New", actual.runAt(monoPos).getFontDef().getFamily());
+        assertEquals(11f, actual.runAt(monoPos).getFontDef().getSize());
+
+        int underStrikePos = actual.indexOf("UnderStrike");
+        assertEquals(Boolean.TRUE, actual.runAt(underStrikePos).getFontDef().getUnderline());
+        assertEquals(Boolean.TRUE, actual.runAt(underStrikePos).getFontDef().getStrikeThrough());
     }
 
     @Test
@@ -110,24 +135,13 @@ class RtfConverterTest {
     }
 
     @Test
-    void testToRtfNotImplementedYet() {
-        /*
-        RtfConverter rtfConverter = RtfConverter.get().orElse(null);
-        Assumptions.assumeTrue(rtfConverter != null, "RtfConverter not available");
+    void testFromRichTextHandlesEmptyText() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        String rtf = converter.fromRichText(RichText.emptyText());
+        RichText parsed = converter.toRichText(rtf);
 
-        RichText text = new RichTextBuilder().append("x").toRichText();
-        assertThrows(UnsupportedOperationException.class, () -> rtfConverter.toRtf(text));
-         */
-    }
-
-    @Test
-    void testFromRtfNotImplementedYet() {
-        /*
-        RtfConverter rtfConverter = RtfConverter.get().orElse(null);
-        Assumptions.assumeTrue(rtfConverter != null, "RtfConverter not available");
-
-        assertThrows(UnsupportedOperationException.class, () -> rtfConverter.fromRtf("{\\rtf1\\ansi}"));
-         */
+        assertTrue(rtf.startsWith("{\\rtf1"));
+        assertEquals("", parsed.toString());
     }
 
     @Test
