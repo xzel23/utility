@@ -69,34 +69,6 @@ public final class AwtImage extends BufferedImage implements MutableImage {
         return create(w, h, new int[w * h]);
     }
 
-    /**
-     * Loads an image from the specified input stream and creates a SwingImage object.
-     *
-     * @param in the input stream containing the image data
-     * @return a new SwingImage object created from the loaded image
-     * @throws IOException if an I/O error occurs while reading the image
-     */
-    public static AwtImage load(InputStream in) throws IOException {
-        try (ImageInputStream iis = ImageIO.createImageInputStream(in)) {
-            Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
-
-            if (!iter.hasNext()) {
-                throw new IOException("no matching ImageReader found");
-            }
-
-            ImageReader reader = iter.next();
-            try {
-                reader.setInput(iis);
-                BufferedImage image = reader.read(0);
-                AwtImage awtImage = create(image.getWidth(), image.getHeight());
-                awtImage.getGraphics().drawImage(image, 0, 0, null);
-                return awtImage;
-            } finally {
-                reader.dispose();  // Clean up the reader
-            }
-        }
-    }
-
     private AwtImage(int[] data, DirectColorModel colorModel, WritableRaster raster) {
         super(colorModel, raster, true, null);
         this.data = data;

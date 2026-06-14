@@ -17,8 +17,8 @@ import javafx.scene.image.PixelFormat;
  * @param defaultExtension  The default file extension associated with the image format (e.g., "jpg").
  * @param source            The original binary data of the lossy-compressed image, stored as Object.
  */
-public record FxDataRetainingStorableImage(javafx.scene.image.Image fxImage, String mimeType, String defaultExtension,
-                                           Object source) implements FxImage, DataRetainingImage {
+public record FxDataRetainingImage(javafx.scene.image.Image fxImage, String mimeType, String defaultExtension,
+                                   Object source) implements FxImage, DataRetainingImage {
 
     /**
      * Validates the input parameters for the compact constructor of the {@code FxDataRetainingStorableImage} record.
@@ -31,7 +31,7 @@ public record FxDataRetainingStorableImage(javafx.scene.image.Image fxImage, Str
      * @param source           The original binary data of the image. Must be an instance of {@code byte[]}.
      * @throws IllegalArgumentException If {@code source} is not of type {@code byte[]}.
      */
-    public FxDataRetainingStorableImage {
+    public FxDataRetainingImage {
         if (!(source instanceof byte[])) {
             throw new IllegalArgumentException("source must be byte[]");
         }
@@ -47,8 +47,8 @@ public record FxDataRetainingStorableImage(javafx.scene.image.Image fxImage, Str
      * @param defaultExtension The default file extension associated with the image format (e.g., "png", "jpg").
      * @param source           The original binary data of the image represented as a byte array.
      */
-    public FxDataRetainingStorableImage(javafx.scene.image.Image fxImage, String mimeType, String defaultExtension,
-                                        byte[] source) {
+    public FxDataRetainingImage(javafx.scene.image.Image fxImage, String mimeType, String defaultExtension,
+                                byte[] source) {
         this(fxImage, mimeType, defaultExtension, (Object) source);
     }
 

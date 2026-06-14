@@ -6,6 +6,7 @@ import javafx.scene.image.PixelBuffer;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 
+import java.awt.Image;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -25,6 +26,15 @@ import java.nio.IntBuffer;
  * between these two image representations.
  */
 public final class FxBufferedImage extends BufferedImage implements FxImage, MutableImage {
+    public static final DirectColorModel DIRECT_COLOR_MODEL = new DirectColorModel(
+            ColorSpace.getInstance(ColorSpace.CS_sRGB),
+            32,    // Bits (ARGB: 8+8+8+8)
+            0x00FF0000, // Red mask
+            0x0000FF00, // Green mask
+            0x000000FF, // Blue mask
+            0xFF000000, // Alpha mask
+            true,       // Non-premultiplied alpha
+            DataBuffer.TYPE_INT);
     private final int width;
     private final int height;
     private final IntBuffer buffer;
@@ -50,21 +60,11 @@ public final class FxBufferedImage extends BufferedImage implements FxImage, Mut
         // create a BufferedImage backed by the same data array
         DataBuffer dataBuffer = new DataBufferInt(buffer.array(), buffer.capacity());
 
-        DirectColorModel colorModel = new DirectColorModel(
-                ColorSpace.getInstance(ColorSpace.CS_sRGB),
-                32,         // Bits (ARGB: 8+8+8+8)
-                0x00FF0000, // Red mask
-                0x0000FF00, // Green mask
-                0x000000FF, // Blue mask
-                0xFF000000, // Alpha mask
-                true,       // Non-premultiplied alpha
-                DataBuffer.TYPE_INT);
-
-        SampleModel sampleModel = colorModel.createCompatibleSampleModel(width, height);
+        SampleModel sampleModel = DIRECT_COLOR_MODEL.createCompatibleSampleModel(width, height);
 
         WritableRaster raster = Raster.createWritableRaster(sampleModel, dataBuffer, null);
 
-        return new Data(width, height, buffer, fxImage, colorModel, raster);
+        return new Data(width, height, buffer, fxImage, DIRECT_COLOR_MODEL, raster);
     }
 
     /**

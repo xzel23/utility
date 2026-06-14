@@ -1,6 +1,7 @@
 package com.dua3.utility.data;
 
 import com.dua3.utility.awt.AwtImageUtil;
+import com.dua3.utility.io.Payload;
 import com.dua3.utility.spi.SpiLoader;
 
 import javax.imageio.ImageIO;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
@@ -25,7 +25,13 @@ import java.util.function.Supplier;
 /**
  * Interface for Image handling utility classes. The concrete implementation is automatically chosen at runtime.
  */
-public interface ImageUtil {
+public interface ImageUtil<I extends Image> {
+
+    enum LoadOption {
+        AUTOMATIC,
+        RETAIN_DATA,
+        DONT_RETAIN_DATA;
+    }
 
     /**
      * A constant {@link Magic} instance that defines the magic numbers for the know image formats.
@@ -83,12 +89,24 @@ public interface ImageUtil {
     /**
      * Load image.
      *
+     * @param payload the {@link Payload} to load the image from
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default I load(Payload payload) throws IOException {
+        return load(payload, LoadOption.AUTOMATIC);
+    }
+
+    /**
+     * Load image.
+     *
      * @param in the stream to load the image from
      * @return the image
      * @throws IOException if loading fails
      */
-    Image load(InputStream in) throws IOException;
-
+    default I load(InputStream in) throws IOException {
+        return load(Payload.fromInputStream(in), LoadOption.AUTOMATIC);
+    }
 
     /**
      * Load image.
@@ -97,7 +115,9 @@ public interface ImageUtil {
      * @return the image
      * @throws IOException if loading fails
      */
-    Image load(URI uri) throws IOException;
+    default I load(URI uri) throws IOException {
+        return load(Payload.fromUri(uri), LoadOption.AUTOMATIC);
+    }
 
     /**
      * Load image.
@@ -106,8 +126,8 @@ public interface ImageUtil {
      * @return the image
      * @throws IOException if loading fails
      */
-    default Image load(Path path) throws IOException {
-        return load(path.toUri());
+    default I load(Path path) throws IOException {
+        return load(Payload.fromPath(path), LoadOption.AUTOMATIC);
     }
 
 
@@ -118,12 +138,69 @@ public interface ImageUtil {
      * @return the image
      * @throws IOException if loading fails
      */
-    default Image load(URL url) throws IOException {
-        try {
-            return load(url.toURI());
-        } catch (URISyntaxException e) {
-            throw new IOException("URL could not be converted to URI", e);
-        }
+    default I load(URL url) throws IOException {
+        return load(Payload.fromUrl(url));
+    }
+
+    /**
+     * Load image.
+     *
+     * @param payload the {@link Payload} to load the image from
+     * @param loadOption the load option to apply
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    I load(Payload payload, LoadOption loadOption) throws IOException;
+
+
+    /**
+     * Load image.
+     *
+     * @param in the stream to load the image from
+     * @param loadOption the load option to apply
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default I load(InputStream in, LoadOption loadOption) throws IOException {
+        return load(Payload.fromInputStream(in), loadOption);
+    }
+
+
+    /**
+     * Load image.
+     *
+     * @param uri the image URI
+     * @param loadOption the load option to apply
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default I load(URI uri, LoadOption loadOption) throws IOException {
+        return load(Payload.fromUri(uri), loadOption);
+    }
+
+    /**
+     * Load image.
+     *
+     * @param path the image path
+     * @param loadOption the load option to apply
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default I load(Path path, LoadOption loadOption) throws IOException {
+        return load(path.toUri(), loadOption);
+    }
+
+
+    /**
+     * Load image.
+     *
+     * @param url the image URL
+     * @param loadOption the load option to apply
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default I load(URL url, LoadOption loadOption) throws IOException {
+        return load(Payload.fromUrl(url), loadOption);
     }
 
     /**
@@ -134,17 +211,17 @@ public interface ImageUtil {
      * @param data the pixel data as int values containing ARGB values
      * @return the image
      */
-    Image create(int w, int h, int[] data);
+    I create(int w, int h, int[] data);
 
     /**
      * Create an empty {@link BufferedImage}.
      *
-     * @param <I> the image type
+     * @param <J> the image type
      * @param w   the image width
      * @param h   the image height
      * @return new {@link BufferedImage}
      */
-    <I extends BufferedImage & Image> I createBufferedImage(int w, int h);
+    <J extends BufferedImage & Image> J createBufferedImage(int w, int h);
 
     /**
      * Convert {@link Image} to {@link ImageBuffer}.
@@ -162,7 +239,7 @@ public interface ImageUtil {
      * @param img the ARGBImage
      * @return the image
      */
-    default Image fromImageBuffer(ImageBuffer img) {
+    default I fromImageBuffer(ImageBuffer img) {
         return create(img.width(), img.height(), img.getArgb());
     }
 

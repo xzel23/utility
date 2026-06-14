@@ -3,16 +3,21 @@ package com.dua3.utility.awt;
 import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.io.Payload;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Iterator;
 
 /**
  * An implementation of the ImageUtil interface for working with awt images.
  */
-public final class AwtImageUtil implements ImageUtil {
+public final class AwtImageUtil implements ImageUtil<AwtImage> {
 
     private static final class SingletonHolder {
         private static final AwtImageUtil INSTANCE = new AwtImageUtil();
@@ -35,24 +40,33 @@ public final class AwtImageUtil implements ImageUtil {
     }
 
     @Override
-    public AwtImage load(InputStream in) throws IOException {
-        return AwtImage.load(in);
-    }
+    public AwtImage load(Payload payload, LoadOption loadOption) throws IOException {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(payload.stream())) {
+            Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
 
-    @Override
-    public Image load(URI uri) throws IOException {
-        try (InputStream in = IoUtil.getInputStream(uri)) {
-            return load(in);
+            if (!iter.hasNext()) {
+                throw new IOException("no matching ImageReader found");
+            }
+
+            ImageReader reader = iter.next();
+            try {
+                reader.setInput(iis);
+                BufferedImage image = reader.read(0);
+                AwtImage awtImage = AwtImage.create(image.getWidth(), image.getHeight());
+                awtImage.getGraphics().drawImage(image, 0, 0, null);
+                return awtImage;
+            } finally {
+                reader.dispose();  // Clean up the reader
+            }
         }
     }
 
     @Override
-    public Image create(int w, int h, int[] data) {
+    public AwtImage create(int w, int h, int[] data) {
         return AwtImage.create(w, h, data);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public AwtImage createBufferedImage(int w, int h) {
         return AwtImage.create(w, h);
     }

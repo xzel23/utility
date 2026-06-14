@@ -3,10 +3,13 @@ package com.dua3.utility.io;
 import org.jspecify.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -61,6 +64,54 @@ public final class Payload implements AutoCloseable {
             case null -> fromPath(uri, Path.of(uri));
             default -> fromStream(uri, IoUtil.openInputStream(uri));
         };
+    }
+
+    /**
+     * Creates a {@code Payload} instance from the provided {@code Path}.
+     * This method is a factory for creating payloads from local file paths.
+     * It determines the resource's magic bytes and utilizes zero-copy
+     * techniques for efficient resource access.
+     *
+     * @param path the {@code Path} representing the local file to create the {@code Payload} from.
+     *             The file must exist and be readable.
+     * @return a {@code Payload} instance representing the resource located at the specified path.
+     * @throws IOException if an I/O error occurs while accessing or reading the file.
+     */
+    public static Payload fromPath(Path path) throws IOException {
+        return fromPath(path.toUri(), path);
+    }
+
+    /**
+     * Creates a {@code Payload} instance from the provided {@code Path}.
+     * This method is a factory for creating payloads from local file paths.
+     * It determines the resource's magic bytes and utilizes zero-copy
+     * techniques for efficient resource access.
+     *
+     * @param file the {@code File} representing the local file to create the {@code Payload} from.
+     *             The file must exist and be readable.
+     * @return a {@code Payload} instance representing the resource located at the specified path.
+     * @throws IOException if an I/O error occurs while accessing or reading the file.
+     */
+    public static Payload fromFile(File file) throws IOException {
+        return fromPath(file.toPath());
+    }
+
+    /**
+     * Creates a {@code Payload} instance from the provided {@code Path}.
+     * This method is a factory for creating payloads from local file paths.
+     * It determines the resource's magic bytes and utilizes zero-copy
+     * techniques for efficient resource access.
+     *
+     * @param url the {@code URL} to create the {@code Payload} from.
+     * @return a {@code Payload} instance representing the resource located at the specified path.
+     * @throws IOException if an I/O error occurs while accessing or reading the file.
+     */
+    public static Payload fromUrl(URL url) throws IOException {
+        try {
+            return fromUri(url.toURI());
+        } catch (URISyntaxException e) {
+            throw new IOException("URI could not be converted to URI", e);
+        }
     }
 
     /**
