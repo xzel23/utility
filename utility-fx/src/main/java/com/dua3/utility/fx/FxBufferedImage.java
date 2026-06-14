@@ -25,7 +25,8 @@ import java.nio.IntBuffer;
  * between these two image representations.
  */
 public final class FxBufferedImage extends BufferedImage implements FxImage, MutableImage {
-    public static final DirectColorModel DIRECT_COLOR_MODEL = new DirectColorModel(
+
+    private static final DirectColorModel DIRECT_COLOR_MODEL = new DirectColorModel(
             ColorSpace.getInstance(ColorSpace.CS_sRGB),
             32,    // Bits (ARGB: 8+8+8+8)
             0x00FF0000, // Red mask
@@ -33,7 +34,9 @@ public final class FxBufferedImage extends BufferedImage implements FxImage, Mut
             0x000000FF, // Blue mask
             0xFF000000, // Alpha mask
             true,       // Non-premultiplied alpha
-            DataBuffer.TYPE_INT);
+            DataBuffer.TYPE_INT
+    );
+
     private final int width;
     private final int height;
     private final IntBuffer buffer;
