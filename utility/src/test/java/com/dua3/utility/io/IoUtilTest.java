@@ -864,7 +864,7 @@ class IoUtilTest {
     void testGetInputStream() throws Exception {
         // Test with InputStream
         try (InputStream originalStream = new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8));
-            InputStream resultStream = IoUtil.getInputStream(originalStream)) {
+             InputStream resultStream = IoUtil.getInputStream(originalStream)) {
             assertEquals(originalStream, resultStream);
         }
 
@@ -908,7 +908,7 @@ class IoUtilTest {
     void testGetOutputStream() throws Exception {
         // Test with OutputStream
         try (ByteArrayOutputStream originalStream = new ByteArrayOutputStream();
-            OutputStream resultStream = IoUtil.getOutputStream(originalStream)) {
+             OutputStream resultStream = IoUtil.getOutputStream(originalStream)) {
             assertEquals(originalStream, resultStream);
         }
 

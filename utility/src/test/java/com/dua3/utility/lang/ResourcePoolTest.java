@@ -297,6 +297,7 @@ class ResourcePoolTest {
         int iterations = 100;
         try (ResourcePool<Integer> pool = ResourcePool.newFixedSizeResourcePool(new Supplier<>() {
             int next = 0;
+
             @Override
             public synchronized Integer get() {
                 return next++;

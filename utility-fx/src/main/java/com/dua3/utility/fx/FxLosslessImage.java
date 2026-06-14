@@ -4,9 +4,6 @@ import com.dua3.utility.data.Image;
 import com.dua3.utility.math.MathUtil;
 import javafx.scene.image.PixelFormat;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 /**
  * A record representing an image in JavaFX.
  * This class implements the {@link Image} interface.

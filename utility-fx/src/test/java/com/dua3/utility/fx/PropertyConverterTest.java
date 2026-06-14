@@ -95,13 +95,13 @@ class PropertyConverterTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             // Create a converter from String to Integer that throws a ConversionException
             Converter<String, Integer> converter = Converter.create(
-                s -> {
-                    if ("exception".equals(s)) {
-                        throw new ConversionException("Forced exception");
-                    }
-                    return Integer.valueOf(s);
-                },
-                integer -> Objects.toString(integer, null)
+                    s -> {
+                        if ("exception".equals(s)) {
+                            throw new ConversionException("Forced exception");
+                        }
+                        return Integer.valueOf(s);
+                    },
+                    integer -> Objects.toString(integer, null)
             );
 
             // Create a property to convert

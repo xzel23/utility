@@ -15,7 +15,7 @@ class GridBuilderInlineValidationTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             MessageFormatter formatter = MessageFormatter.standard();
             GridBuilder builder = new GridBuilder(null, formatter);
-            
+
             builder.startRow(MessageFormatter.literal("Address"));
             builder.inputText("street", MessageFormatter.literal("Street"), () -> "", s -> s != null && s.isEmpty() ? Optional.of("Enter a valid street.") : Optional.empty());
             builder.inputText("city", MessageFormatter.literal("City"), () -> "", s -> s != null && s.isEmpty() ? Optional.of("Enter a valid city.") : Optional.empty());
@@ -40,7 +40,7 @@ class GridBuilderInlineValidationTest extends FxTestBase {
 
             // Manually trigger error display or simulate focus loss
             // Actually, if we change the value, the validation listener should trigger updateMarker(entry, true)
-            
+
             InputControl<String> streetControl = (InputControl<String>) grid.data().stream().filter(m -> "street".equals(m.id)).findFirst().get().control;
             InputControl<String> cityControl = (InputControl<String>) grid.data().stream().filter(m -> "city".equals(m.id)).findFirst().get().control;
 

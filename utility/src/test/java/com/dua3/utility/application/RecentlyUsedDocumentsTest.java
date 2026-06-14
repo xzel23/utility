@@ -26,7 +26,7 @@ class RecentlyUsedDocumentsTest {
         assertEquals(name, entries.getFirst().second());
     }
 
-     void testPut_AddMultipleDocuments() {
+    void testPut_AddMultipleDocuments() {
         Preferences prefs = Preferences.userRoot().node("testPut_AddMultipleDocuments");
         RecentlyUsedDocuments recentlyUsedDocuments = new RecentlyUsedDocuments(prefs, 5);
 

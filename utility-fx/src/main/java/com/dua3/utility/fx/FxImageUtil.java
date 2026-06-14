@@ -1,12 +1,10 @@
 package com.dua3.utility.fx;
 
-import com.dua3.utility.data.ImageBuffer;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.Payload;
 import javafx.scene.image.Image;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
@@ -36,8 +34,8 @@ public final class FxImageUtil implements ImageUtil<FxImage> {
         try (payload) {
             String mime = MAGIC.getMimeType(payload.magic8Bytes());
             LoadOption activeLoadOption = loadOption != LoadOption.AUTOMATIC
-            ? loadOption
-            : (mime.equals("image/jpeg") ? LoadOption.RETAIN_DATA : LoadOption.DONT_RETAIN_DATA);
+                    ? loadOption
+                    : (mime.equals("image/jpeg") ? LoadOption.RETAIN_DATA : LoadOption.DONT_RETAIN_DATA);
 
             return switch (activeLoadOption) {
                 case RETAIN_DATA -> {

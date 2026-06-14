@@ -24,12 +24,31 @@ import java.util.function.Supplier;
 
 /**
  * Interface for Image handling utility classes. The concrete implementation is automatically chosen at runtime.
+ * @param <I> the image type returen by methods that create new images, i.e., {@link #load(Payload)},
+ * {@link #create(int, int, int[])}, etc.
  */
 public interface ImageUtil<I extends Image> {
 
+    /**
+     * Defines the options available for loading images. These options determine
+     * how the image loading process handles memory and data retention.
+     */
     enum LoadOption {
+        /**
+         * An option in the {@link LoadOption} enum that indicates automatic handling
+         * of memory and data retention when loading images. Images loaded using a lossless format will be written out
+         * as PNG, JPEG images will wite out the original data the imaae was created from.
+         */
         AUTOMATIC,
+        /**
+         * Retain the original image data to be written out again later in {@link #write(Image, OutputStream, String)}.
+         */
         RETAIN_DATA,
+        /**
+         * Do not retain the original image data. In this mode, the image is loaded and the internal representation
+         * created without any reference to the original data. Images loaded in this mode cannot will be written out
+         * in a standard format.
+         */
         DONT_RETAIN_DATA;
     }
 

@@ -4,6 +4,8 @@ import com.dua3.utility.data.ImageBuffer;
 import javafx.scene.image.Image;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -116,9 +118,7 @@ class FxBufferedImageTest extends FxTestBase {
 
             // Set all pixels to red (ARGB: 0xFFFF0000)
             int[] argb = image.getArgb();
-            for (int i = 0; i < argb.length; i++) {
-                argb[i] = 0xFFFF0000;
-            }
+            Arrays.fill(argb, 0xFFFF0000);
 
             // Check that all pixels are red
             for (int i = 0; i < argb.length; i++) {

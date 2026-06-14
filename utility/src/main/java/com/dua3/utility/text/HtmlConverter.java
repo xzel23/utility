@@ -436,7 +436,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         private final StringBuilder buffer;
 
         HtmlConverterImpl(int textLength) {
-            this.buffer = new StringBuilder(textLength * 5/4);
+            this.buffer = new StringBuilder(textLength * 5 / 4);
         }
 
         @Override
@@ -686,7 +686,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             int len = s.length();
             startNewParagraph = !s.isEmpty() && s.charAt(len - 1) == '\n';
 
-            if(startNewParagraph) {
+            if (startNewParagraph) {
                 s = s.subSequence(0, --len);
             }
 

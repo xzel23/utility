@@ -106,7 +106,7 @@ class PinBoardTest extends FxTestBase {
         double xViewport = (xBoard - viewPortInBoard.getMinX() + marginX) * scale;
         double yViewport = (yBoard - viewPortInBoard.getMinY() + marginY) * scale;
 
-        return new double[] {xViewport, yViewport};
+        return new double[]{xViewport, yViewport};
     }
 
     /**

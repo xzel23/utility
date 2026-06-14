@@ -2,7 +2,6 @@ package com.dua3.utility.awt;
 
 import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
-import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.Payload;
 
 import javax.imageio.ImageIO;
@@ -10,8 +9,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.Iterator;
 
 /**

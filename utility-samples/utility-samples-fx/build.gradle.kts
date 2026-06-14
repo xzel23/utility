@@ -31,10 +31,10 @@ fun createJavaFxRunTask(taskName: String, mainClassName: String, taskDescription
     tasks.register<JavaExec>(taskName) {
         description = taskDescription
         group = ApplicationPlugin.APPLICATION_GROUP
-        
+
         val java25Output = project(":utility").sourceSets.getByName("java25").output
         classpath = files(java25Output) + sourceSets["main"].runtimeClasspath
-        
+
         mainClass.set(mainClassName)
         enableAssertions = true
         jvmArgs(

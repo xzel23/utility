@@ -677,7 +677,7 @@ public final class FontDef {
         }
         appendIfNonNull(css, size, FONT_SIZE, size, "pt; ");
         appendIfNonNull(css, bold, FONT_WEIGHT, bold == Boolean.TRUE ? BOLD : NORMAL, "; ");
-        appendIfNonNull(css, italic, FONT_STYLE, italic == Boolean.TRUE? ITALIC : NORMAL, "; ");
+        appendIfNonNull(css, italic, FONT_STYLE, italic == Boolean.TRUE ? ITALIC : NORMAL, "; ");
 
         // Appends underline/strike‑through styles when specified
         if (isStrikeThrough || isUnderline) {
