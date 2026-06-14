@@ -308,7 +308,7 @@ public interface InputControl<T> {
      * @param remove   a {@link BiPredicate} to determine if an item should be removed (nullable)
      * @param format   a {@link Function} to format the items as strings
      * @param validate a {@link Function} to validate the current value
-     * @param graphic
+     * @param graphic  a {@link Function} to provide a graphic for the combo box item, or null if no graphic is required
      * @return a new instance of {@code SimpleInputControl} configured with a {@link ComboBoxEx} and its value property
      */
     static <T> SimpleInputControl<ComboBoxEx<T>, T> comboBoxExInput(

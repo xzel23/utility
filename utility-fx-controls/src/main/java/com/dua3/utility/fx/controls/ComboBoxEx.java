@@ -57,6 +57,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
      * @param remove the bi-predicate to determine if an item should be removed (nullable)
      * @param dflt   the supplier for the default value
      * @param format the function to format the items as strings
+     * @param graphic  a function to provide a graphic for the combo box item, or null if no graphic is required
      * @param items  the initial items to populate the ComboBox (variadic parameter)
      */
     @SafeVarargs
@@ -80,6 +81,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
      * @param remove the bi-predicate to determine if an item should be removed (nullable)
      * @param dflt   the supplier for the default value
      * @param format the function to format the items as strings
+     * @param graphic  a function to provide a graphic for the combo box item, or null if no graphic is required
      * @param items  the initial items to populate the ComboBox (variadic parameter)
      */
     public ComboBoxEx(

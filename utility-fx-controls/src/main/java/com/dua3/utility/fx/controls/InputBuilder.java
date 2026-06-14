@@ -979,6 +979,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param add    the action to be performed when a new item is added (optional)
      * @param remove the action to be performed when an item is removed (optional)
      * @param format the function to format the items in the combo box
+     * @param graphic  a function to provide a graphic for the combo box item, or null if no graphic is required
      * @param dflt   the supplier of the default value
      * @param items  the collection of items to choose from
      * @return {@code this}
@@ -997,6 +998,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param add      a supplier to add a new item to the combo box, or null if adding is not allowed
      * @param remove   a predicate to remove an item from the combo box, or null if removing is not allowed
      * @param format   a function to format the items of the combo box as strings
+     * @param graphic  a function to provide a graphic for the combo box item, or null if no graphic is required
      * @param dflt     a supplier to provide a default item for the combo box
      * @param items    the collection of items to populate the combo box
      * @param validate a function to validate the items in the combo box and return an optional error message
@@ -1016,6 +1018,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param add      a supplier to add a new item to the combo box, or null if adding is not allowed
      * @param remove   a predicate to remove an item from the combo box, or null if removing is not allowed
      * @param format   a function to format the items of the combo box as strings
+     * @param graphic  a function to provide a graphic for the combo box item, or null if no graphic is required
      * @param dflt     a supplier to provide a default item for the combo box
      * @param items    the collection of items to populate the combo box
      * @param validate a function to validate the items in the combo box and return an optional error message
@@ -1033,6 +1036,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param add    the action to be performed when a new item is added (optional)
      * @param remove the action to be performed when an item is removed (optional)
      * @param format the function to format the items in the combo box
+     * @param graphic  a function to provide a graphic for the combo box item, or null if no graphic is required
      * @param dflt   the supplier of the default value
      * @param items  the collection of items to choose from
      * @return {@code this}
