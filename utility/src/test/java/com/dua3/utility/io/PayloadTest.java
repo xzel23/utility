@@ -152,7 +152,7 @@ class PayloadTest {
 
         try (OpenedPayload opened = openPayload(resourceKind, content)) {
             assertEquals(expectedMagic8Bytes(content), opened.payload().magic8Bytes());
-            assertEquals(opened.resource().uri(), opened.payload().uri());
+            assertEquals(opened.resource().uri(), opened.payload().uri().orElse(null));
         }
     }
 

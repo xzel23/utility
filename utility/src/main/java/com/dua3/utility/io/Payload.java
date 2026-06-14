@@ -14,6 +14,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Optional;
 
 /**
  * Represents a payload abstraction for handling resources identified by a URI.
@@ -30,7 +31,7 @@ import java.nio.file.StandardOpenOption;
 public final class Payload implements AutoCloseable {
 
     /** the URI of the resource. */
-    private final URI uri;
+    private final @Nullable URI uri;
 
     /** The magic bytes stored for inspection. */
     private final long magicBytes;
@@ -38,7 +39,7 @@ public final class Payload implements AutoCloseable {
     /** A flag tracking state to enforce single-use consumption. */
     private boolean consumed = false;
 
-    // We maintain either the underlying path OR the protected stream pipeline
+    // We maintain either the underlying path or the protected stream pipeline
     private @Nullable InputStream protectedStream;
     private @Nullable ReadableByteChannel channel;
 
@@ -63,14 +64,28 @@ public final class Payload implements AutoCloseable {
     }
 
     /**
+     * Creates a {@code Payload} instance from the provided {@code InputStream}.
+     * This method serves as a factory to build a {@code Payload} object containing
+     * the data from the input stream.
+     *
+     * @param in the {@code InputStream} to create the {@code Payload} object from.
+     *           The input stream is consumed and wrapped inside the {@code Payload}.
+     * @return a {@code Payload} instance representing the resource encapsulated in the stream.
+     * @throws IOException if an I/O error occurs while reading or processing the input stream.
+     */
+    public static Payload fromInputStream(InputStream in) throws IOException {
+        return fromStream(null, in);
+    }
+
+    /**
      * Factory method for local files. Zero-copy friendly.
      */
-    private static Payload fromPath(URI uri, Path path) throws IOException {
+    private static Payload fromPath(@Nullable URI uri, Path path) throws IOException {
         // Read 8 bytes efficiently using NIO channel
         long magic;
         SeekableByteChannel chnl = null;
         try {
-            chnl =  Files.newByteChannel(path, StandardOpenOption.READ);
+            chnl = Files.newByteChannel(path, StandardOpenOption.READ);
             ByteBuffer buffer = ByteBuffer.allocate(8);
             chnl.read(buffer);
             buffer.flip();
@@ -89,7 +104,7 @@ public final class Payload implements AutoCloseable {
     /**
      * Factory method for streaming data (Network, Sockets).
      */
-    private static Payload fromStream(URI uri, InputStream originalStream) throws IOException {
+    private static Payload fromStream(@Nullable URI uri, InputStream originalStream) throws IOException {
         byte[] header = new byte[8];
         int bytesRead = originalStream.readNBytes(header, 0, 8);
         long magic = bytesToLong(header, bytesRead);
@@ -111,7 +126,7 @@ public final class Payload implements AutoCloseable {
      *                   typically used for type/format identification.
      */
     // Private constructor called by factories
-    private Payload(URI uri, @Nullable ReadableByteChannel channel, @Nullable InputStream protectedStream, long magicBytes) {
+    private Payload(@Nullable URI uri, @Nullable ReadableByteChannel channel, @Nullable InputStream protectedStream, long magicBytes) {
         assert (channel == null) ^ (protectedStream == null) : "Exactly one of channel or protectedStream must be non-null";
 
         this.uri = uri;
@@ -125,7 +140,7 @@ public final class Payload implements AutoCloseable {
      *
      * @return the {@code URI} representing the resource associated with the payload.
      */
-    public URI uri() { return uri; }
+    public Optional<URI> uri() { return Optional.ofNullable(uri); }
 
     /**
      * Retrieves the magic bytes associated with this payload instance.
@@ -176,6 +191,18 @@ public final class Payload implements AutoCloseable {
         return channel;
     }
 
+    /**
+     * Converts an array of bytes into a long value. The number of bytes to consider
+     * for the conversion is specified by the {@code bytesRead} parameter. If fewer than
+     * 8 bytes are read, the result is left-padded with zeros.
+     * <p>
+     * Bytes are read from the array in big-endian order.
+     *
+     * @param b the array of bytes to be converted.
+     * @param bytesRead the number of bytes to read from the array. This value should
+     *                  be between 0 and 8, inclusive.
+     * @return the long value obtained by combining the specified bytes.
+     */
     private static long bytesToLong(byte[] b, int bytesRead) {
         long value = 0;
         for (int i = 0; i < Math.min(bytesRead, 8); i++) {
@@ -185,6 +212,16 @@ public final class Payload implements AutoCloseable {
         return value;
     }
 
+    /**
+     * Converts the remaining bytes in the given {@code ByteBuffer} into a {@code long} value.
+     * If the number of remaining bytes is less than 8, the result is right-padded with zeros.
+     * <p>
+     * Bytes are read in big-endian order.
+     *
+     * @param buffer the {@code ByteBuffer} containing the bytes to convert. The buffer's
+     *               position will be updated as bytes are read.
+     * @return the {@code long} value represented by the bytes in the buffer.
+     */
     private static long bytesToLong(ByteBuffer buffer) {
         long value = 0;
         int bytesRead = buffer.remaining();
@@ -195,6 +232,14 @@ public final class Payload implements AutoCloseable {
         return value;
     }
 
+    /**
+     * Closes the resources associated with this payload instance.
+     * <p>
+     * This method ensures that both the {@code channel} and the {@code protectedStream}
+     * are properly closed, releasing any resources associated with them.
+     *
+     * @throws IOException if an I/O error occurs while closing the resources.
+     */
     @Override
     public void close() throws IOException {
         IoUtil.closeAll(channel, protectedStream);

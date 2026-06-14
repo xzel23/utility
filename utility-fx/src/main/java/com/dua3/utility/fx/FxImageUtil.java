@@ -1,12 +1,16 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.io.Payload;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 /**
  * Utility class for manipulating JavaFX images.
@@ -31,8 +35,30 @@ public final class FxImageUtil implements ImageUtil {
     }
 
     @Override
-    public FxImage load(InputStream in) {
-        return new FxStandardImage(new Image(in));
+    public FxStorableImage load(InputStream in) throws IOException {
+        return loadO(Payload.fromInputStream(in));
+    }
+
+    private static FxStorableImage loadO(Payload payload) throws IOException {
+        try (payload) {
+            String mime = MAGIC.getMimeType(payload.magic8Bytes());
+            return switch (mime) {
+                case "image/jpeg" -> {
+                    // for jpeg, we want to keep the original data in order not to introduce new artifacts
+                    try (var imageIn = IoUtil.getInputStream(payload.stream().readAllBytes())) {
+                        yield new FxDataRetainingStorableImage(new Image(imageIn), "image/jpeg", "jpg", payload.stream().readAllBytes());
+                    }
+                }
+                default -> new FxLosslessImage(new Image(payload.stream()));
+            };
+        }
+    }
+
+    @Override
+    public FxStorableImage load(URI uri) throws IOException {
+        try (Payload payload = Payload.fromUri(uri)) {
+            return new FxLosslessImage(new Image(payload.stream()));
+        }
     }
 
     @Override
@@ -40,7 +66,7 @@ public final class FxImageUtil implements ImageUtil {
         WritableImage wr = new WritableImage(w, h);
         PixelWriter pw = wr.getPixelWriter();
         pw.setPixels(0, 0, w, h, PixelFormat.getIntArgbInstance(), data, 0, w);
-        return new FxStandardImage(wr);
+        return new FxLosslessImage(wr);
     }
 
     @Override
@@ -69,7 +95,7 @@ public final class FxImageUtil implements ImageUtil {
     /**
      * Converts the given {@link Image} instance to an {@link FxImage}.
      * If the input image is already an instance of {@link FxImage}, it is returned as is.
-     * Otherwise, a new {@link FxStandardImage} is created to wrap the given image.
+     * Otherwise, a new {@link FxLosslessImage} is created to wrap the given image.
      *
      * @param img the {@link Image} to be converted
      * @return the converted {@link FxImage} instance
@@ -78,6 +104,6 @@ public final class FxImageUtil implements ImageUtil {
         if (img instanceof FxImage fxImage) {
             return fxImage;
         }
-        return new FxStandardImage(img);
+        return new FxLosslessImage(img);
     }
 }

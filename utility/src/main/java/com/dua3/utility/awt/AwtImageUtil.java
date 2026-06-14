@@ -2,10 +2,12 @@ package com.dua3.utility.awt;
 
 import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.io.IoUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 /**
  * An implementation of the ImageUtil interface for working with awt images.
@@ -35,6 +37,13 @@ public final class AwtImageUtil implements ImageUtil {
     @Override
     public AwtImage load(InputStream in) throws IOException {
         return AwtImage.load(in);
+    }
+
+    @Override
+    public Image load(URI uri) throws IOException {
+        try (InputStream in = IoUtil.getInputStream(uri)) {
+            return load(in);
+        }
     }
 
     @Override

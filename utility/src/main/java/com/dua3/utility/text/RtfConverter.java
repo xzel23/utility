@@ -18,6 +18,11 @@ public final class RtfConverter implements RichTextConverterExt<String> {
         // nothing to do
     }
 
+    /**
+     * Retrieve an instance of {@code RtfConverter}.
+     *
+     * @return an {@code Optional} containing an instance of {@code RtfConverter}, if available.
+     */
     public static Optional<RtfConverter> get() {
         return Optional.of(SingletonHolder.INSTANCE);
     }

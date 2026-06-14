@@ -4,6 +4,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextUtil;
 import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullUnmarked;
 
@@ -31,6 +32,13 @@ public final class RtfReader {
         // utility class
     }
 
+    /**
+     * Reads and parses the provided RTF (Rich Text Format) string, converting it into a RichText object.
+     *
+     * @param rtf the RTF string to be parsed; must not be null or empty
+     * @return a RichText object representing the parsed content of the RTF string
+     * @throws NullPointerException if the provided RTF string is null
+     */
     public static RichText read(String rtf) {
         Objects.requireNonNull(rtf, "rtf");
         if (rtf.isEmpty()) {
@@ -40,10 +48,6 @@ public final class RtfReader {
         StyledRtfParser parser = new StyledRtfParser();
         parser.parse(rtf);
         return parser.toRichText();
-    }
-
-    private static String normalizeLineEndings(String s) {
-        return s.indexOf('\r') < 0 ? s : s.replace("\r\n", "\n").replace('\r', '\n');
     }
 
     @NullUnmarked
@@ -178,7 +182,7 @@ public final class RtfReader {
                 return;
             }
 
-            appendStyledText(normalizeLineEndings(text));
+            appendStyledText(TextUtil.normalize(text));
         }
 
         private void onCommand(String command, int parameter, boolean hasParameter, boolean optional) {
