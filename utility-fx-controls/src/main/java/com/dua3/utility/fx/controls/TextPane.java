@@ -86,6 +86,16 @@ import java.util.function.Function;
  */
 public class TextPane extends Control {
 
+    /**
+     * A shared instance of {@link FxFontUtil} used for font-related utilities
+     * within the {@code TextPane} class. This utility provides various
+     * font-related operations and methods to support text layout, rendering,
+     * and styling in JavaFX.
+     * <p>
+     * This variable is declared as {@code protected static final} to ensure
+     * it is accessible within this class and its subclasses, but cannot
+     * be modified after initialization.
+     */
     protected static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
 
     private static final String NO_BREAK_SPACE = "\u00A0";
@@ -590,7 +600,7 @@ public class TextPane extends Control {
             return node;
         }
         if (wrapped instanceof Image image) {
-            return new ImageView(FxImageUtil.getInstance().convert(image));
+            return new ImageView(FxImageUtil.getInstance().toImage(image).fxImage());
         }
         return null;
     }

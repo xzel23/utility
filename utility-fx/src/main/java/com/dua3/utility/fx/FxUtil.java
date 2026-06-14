@@ -474,7 +474,7 @@ public final class FxUtil {
      * @param img the image
      */
     public static void copyToClipboard(Image img) {
-        copyToClipboard(FxImageUtil.getInstance().convert(img));
+        copyToClipboard(FxImageUtil.getInstance().toImage(img).fxImage());
     }
 
     /**
@@ -560,7 +560,7 @@ public final class FxUtil {
     public static Optional<Image> getImageFromClipboard() {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         if (clipboard.hasImage()) {
-            return Optional.of(FxImageUtil.getInstance().convert(clipboard.getImage()));
+            return Optional.of(new FxWrappedImage(clipboard.getImage()));
         } else {
             return Optional.empty();
         }

@@ -1,10 +1,12 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.data.ImageBuffer;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.Payload;
 import javafx.scene.image.Image;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
@@ -44,7 +46,7 @@ public final class FxImageUtil implements ImageUtil<FxImage> {
                         yield new FxDataRetainingImage(new Image(imageIn), "image/jpeg", "jpg", payload.stream().readAllBytes());
                     }
                 }
-                default -> new FxBufferedImage(new Image(payload.stream()));
+                default -> new FxWrappedImage(new Image(payload.stream()));
             };
         }
     }
@@ -59,4 +61,19 @@ public final class FxImageUtil implements ImageUtil<FxImage> {
         return new FxBufferedImage(w, h);
     }
 
+    /**
+     * Converts a given {@link com.dua3.utility.data.Image} to an {@link FxImage}.
+     * If the provided image is already an instance of {@link FxImage}, it is returned as-is.
+     * Otherwise, it is converted using an intermediate {@link ImageBuffer}.
+     *
+     * @param image the input image to convert. Must not be null.
+     * @return an {@link FxImage} instance representing the converted image.
+     */
+    public FxImage toImage(com.dua3.utility.data.Image image) {
+        if (image instanceof FxImage fxi) {
+            return fxi;
+        }
+
+        return fromImageBuffer(new ImageBuffer(image.getArgb(), image.width(), image.height()));
+    }
 }

@@ -5,6 +5,10 @@ package com.dua3.utility.samples.fx;
  */
 public class TextPaneSample extends TextEditorPaneSample {
 
+    private TextPaneSample() {
+        // nothing to do
+    }
+
     /**
      * Entry point.
      *

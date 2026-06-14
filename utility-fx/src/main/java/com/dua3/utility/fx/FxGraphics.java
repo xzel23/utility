@@ -211,7 +211,7 @@ public class FxGraphics implements Graphics {
     public void drawImage(Image image, float x, float y) {
         assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
-        gc.drawImage(IMAGE_UTIL.convert(image), x, y);
+        gc.drawImage(IMAGE_UTIL.toImage(image).fxImage(), x, y);
     }
 
     @Override

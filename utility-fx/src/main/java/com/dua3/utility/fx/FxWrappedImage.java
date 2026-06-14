@@ -9,7 +9,7 @@ import javafx.scene.image.PixelFormat;
  * This class implements the {@link Image} interface.
  * @param fxImage the {@link javafx.scene.image.Image} instance to wrap
  */
-public record FxLosslessImage(javafx.scene.image.Image fxImage) implements FxStorableImage {
+public record FxWrappedImage(javafx.scene.image.Image fxImage) implements FxImage {
     @Override
     public int width() {
         return MathUtil.roundToInt(fxImage.getWidth());

@@ -46,7 +46,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     /**
      * Formats the given message using the specified arguments.
      *
-     * @param message the message template which can include placeholders for arguments
+     * @param message the message template; can include placeholders for arguments
      * @param args    the arguments to be formatted and substituted into the message template
      * @return the formatted message as a String
      */

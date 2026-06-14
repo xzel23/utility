@@ -146,7 +146,7 @@ class FxGraphicsTest extends AbstractGraphicsTest {
             assertTrue(latch.await(30, TimeUnit.SECONDS), "Rendering timed out");
 
             // Convert WritableImage to BufferedImage for comparison
-            return AwtImageUtil.getInstance().convert(FxImageUtil.getInstance().convert(writableImage));
+            return AwtImageUtil.getInstance().convert(new FxWrappedImage(writableImage));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Interrupted while waiting for rendering to complete", e);

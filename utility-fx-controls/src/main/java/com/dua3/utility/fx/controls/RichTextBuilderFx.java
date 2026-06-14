@@ -48,12 +48,12 @@ public class RichTextBuilderFx extends RichTextBuilderExtBase<Node, RichTextBuil
 
     @Override
     protected Node createImage(Image image) {
-        return new ImageView(FxImageUtil.getInstance().convert(image));
+        return new ImageView(FxImageUtil.getInstance().toImage(image).fxImage());
     }
 
     @Override
     protected Node createImage(Image image, float maxWidth, float maxHeight) {
-        ImageView imageView = new ImageView(FxImageUtil.getInstance().convert(image));
+        ImageView imageView = new ImageView(FxImageUtil.getInstance().toImage(image).fxImage());
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(Math.max(1.0, maxWidth));
         imageView.setFitHeight(Math.max(1.0, maxHeight));
