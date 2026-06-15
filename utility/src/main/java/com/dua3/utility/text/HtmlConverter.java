@@ -513,10 +513,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
             // if we break the line before the opening tag, we will also break after the closing tag (see below),
             // but this means we should remove the linebreak before the closing tag
-            if (tag.formattingHint().linebreakBeforeTag()) {
-                if (!buffer.isEmpty() && buffer.charAt(buffer.length() - 1) == '\n') {
-                    buffer.deleteCharAt(buffer.length() - 1);
-                }
+            if (tag.formattingHint().linebreakBeforeTag() && !buffer.isEmpty() && buffer.charAt(buffer.length() - 1) == '\n') {
+                buffer.deleteCharAt(buffer.length() - 1);
             }
 
             buffer.append(tagString);

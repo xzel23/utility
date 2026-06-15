@@ -228,7 +228,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
         }
 
         private static Set<String> attributeNames(List<AttributeChange> attributes) {
-            Set<String> names = new HashSet<>(attributes.size());
+            Set<String> names = HashSet.newHashSet(attributes.size());
             attributes.forEach(a -> names.add(a.attribute()));
             return names;
         }
@@ -245,7 +245,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
         }
 
         private static Map<String, AttributeChange> byAttributeName(List<AttributeChange> attributes) {
-            Map<String, AttributeChange> map = new LinkedHashMap<>(attributes.size());
+            Map<String, AttributeChange> map = LinkedHashMap.newLinkedHashMap(attributes.size());
             attributes.forEach(a -> map.put(a.attribute(), a));
             return map;
         }
