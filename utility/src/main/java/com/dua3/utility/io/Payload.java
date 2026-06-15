@@ -131,6 +131,7 @@ public final class Payload implements AutoCloseable {
     /**
      * Factory method for local files. Zero-copy friendly.
      */
+    @SuppressWarnings("java:S2093") // suppress warning about resource leak, the channel should only be closed in case of an exception
     private static Payload fromPath(@Nullable URI uri, Path path) throws IOException {
         // Read 8 bytes efficiently using NIO channel
         long magic;

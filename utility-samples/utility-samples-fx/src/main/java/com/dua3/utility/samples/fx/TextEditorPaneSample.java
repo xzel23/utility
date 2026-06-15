@@ -148,7 +148,9 @@ public class TextEditorPaneSample extends Application {
         float maxWidth = 120.0f;
         float maxHeight = 20.0f;
 
-        b.append("---------------------------------------------\n");
+        String separator = "---------------------------------------------\n";
+
+        b.append(separator);
         b.append("Images (default vAnchor): original ");
         b.appendImage(imageOriginal);
         b.append(" and scaled ");
@@ -156,14 +158,14 @@ public class TextEditorPaneSample extends Application {
         b.append("\n");
 
         for (VAnchor vAnchor : VAnchor.values()) {
-            b.append("---------------------------------------------\n");
+            b.append(separator);
             b.append("Images (vAnchor=").append(vAnchor.name()).append("): original ");
             b.appendImage(imageOriginal, vAnchor);
             b.append(" and scaled ");
             b.appendImage(imageScaled, maxWidth, maxHeight, vAnchor);
             b.append('\n');
         }
-        b.append("---------------------------------------------\n");
+        b.append(separator);
 
         b.append("Wrap test: this sentence is intentionally long so that the inline ");
         b.appendButton("Button 2", () -> status.setText("Inline button 2 clicked"));
