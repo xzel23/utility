@@ -15,11 +15,6 @@ import java.util.Objects;
  */
 public final class InlineNode<N> {
 
-    /**
-     * MIME type for ARGB image payloads encoded by {@link #encodeArgbImageData(Image)}.
-     */
-    public static final String MIME_TYPE_ARGB_IMAGE = "application/x-dua3-argb-image";
-
     private final N wrapped;
     private final String mimeType;
     private final byte[] data;

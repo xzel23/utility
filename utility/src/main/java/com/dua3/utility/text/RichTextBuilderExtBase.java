@@ -160,7 +160,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
     public B appendImage(Image image, VAnchor vAnchor) {
         byte[] data = InlineNode.encodeArgbImageData(image);
         return appendInlineNodeWithStyle(() ->
-                new InlineNode<>(createImage(image), InlineNode.MIME_TYPE_ARGB_IMAGE, data), vAnchor, 0.0);
+                new InlineNode<>(createImage(image), image.mimeType(), data), vAnchor, 0.0);
     }
 
     /**
@@ -187,7 +187,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
     public B appendImage(Image image, float maxWidth, float maxHeight, VAnchor vAnchor) {
         byte[] data = InlineNode.encodeArgbImageData(image);
         return appendInlineNodeWithStyle(() ->
-                new InlineNode<>(createImage(image, maxWidth, maxHeight), InlineNode.MIME_TYPE_ARGB_IMAGE, data), vAnchor, 0.0);
+                new InlineNode<>(createImage(image, maxWidth, maxHeight), image.mimeType(), data), vAnchor, 0.0);
     }
 
     /**
