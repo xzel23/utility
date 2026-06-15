@@ -772,7 +772,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return;
         }
         copy();
-        replaceSelection(RichText.emptyText());
+        replaceSelection("");
     }
 
     public void paste() {
@@ -783,6 +783,23 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     public void undo() {
+        undoOrRedo(undoStack, redoStack);
+    }
+
+    public void redo() {
+        undoOrRedo(redoStack, undoStack);
+    }
+
+    /**
+     * Performs an undo or redo operation by managing the provided undo and redo stacks.
+     * The method restores the previous state from the undo stack and saves the current
+     * state into the redo stack. It ensures application of the restored state and updates
+     * the history navigation state.
+     *
+     * @param undoStack the stack containing the states for undo operations.
+     * @param redoStack the stack containing the states for redo operations.
+     */
+    private void undoOrRedo(List<EditState> undoStack, List<EditState> redoStack) {
         if (undoStack.isEmpty()) {
             return;
         }
@@ -793,23 +810,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         try {
             redoStack.add(current);
             applyState(previous);
-        } finally {
-            inHistoryNavigation = false;
-        }
-        updateHistoryState();
-    }
-
-    public void redo() {
-        if (redoStack.isEmpty()) {
-            return;
-        }
-
-        EditState current = snapshot();
-        EditState next = redoStack.removeLast();
-        inHistoryNavigation = true;
-        try {
-            undoStack.add(current);
-            applyState(next);
         } finally {
             inHistoryNavigation = false;
         }
