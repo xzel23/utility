@@ -1,6 +1,5 @@
 package com.dua3.utility.fx;
 
-import com.dua3.utility.awt.AwtMutableImage;
 import com.dua3.utility.data.ImageBuffer;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.io.IoUtil;
@@ -58,12 +57,12 @@ public final class FxImageUtil implements ImageUtil<FxImage, FxMutableImage> {
 
     @Override
     public FxMutableImage createImage(int w, int h, int[] data) {
-        return new FxMutableImage(w, h);
+        return new FxMutableImage(w, h, data);
     }
 
     @Override
     public FxMutableImage createImage(int w, int h) {
-        return new FxMutableImage(w, h);
+        return new FxMutableImage(w, h, null);
     }
 
     /**

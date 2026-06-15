@@ -3,9 +3,7 @@ package com.dua3.utility.data;
 import com.dua3.utility.io.Payload;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -17,8 +15,12 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
+/**
+ * Represents a mutable image that extends the functionality of a {@link BufferedImage}
+ * and implements the {@link Image} interface. This abstract class provides a base
+ * for image representations that allow direct manipulation of pixel data.
+ */
 public abstract class MutableImage extends BufferedImage implements Image {
 
     private static final DirectColorModel DIRECT_COLOR_MODEL = new DirectColorModel(
@@ -32,8 +34,16 @@ public abstract class MutableImage extends BufferedImage implements Image {
             DataBuffer.TYPE_INT
     );
 
+    /**
+     * Creates a {@link WritableRaster} from the provided dimensions and pixel data.
+     *
+     * @param w    the width of the raster
+     * @param h    the height of the raster
+     * @param data the pixel data for the raster, expected to have a length of {@code w * h}
+     * @return a writable raster created using the specified dimensions and pixel data
+     * @throws IllegalArgumentException if the length of {@code data} is not equal to {@code w * h}
+     */
     private static WritableRaster createRaster(int w, int h, int[] data) {
-        // create the buffer
         int size = w * h;
 
         if (data.length != size) {
@@ -41,21 +51,37 @@ public abstract class MutableImage extends BufferedImage implements Image {
         }
 
         DataBuffer dataBuffer = new DataBufferInt(data, size);
-
-        // Create the sample model
         SampleModel sampleModel = DIRECT_COLOR_MODEL.createCompatibleSampleModel(w, h);
 
-        // Create the WritableRaster
         return Raster.createWritableRaster(sampleModel, dataBuffer, null);
     }
 
     private final ImageBuffer buffer;
 
+    /**
+     * Constructs a {@code MutableImage} instance with the specified dimensions and pixel data.
+     *
+     * @param width  the width of the image, in pixels
+     * @param height the height of the image, in pixels
+     * @param data   the pixel data for the image in ARGB format. The array should have a length
+     *               of {@code width * height}.
+     * @throws IllegalArgumentException if the length of {@code data} does not match {@code width * height}
+     */
     protected MutableImage(int width, int height, int[] data) {
         super(DIRECT_COLOR_MODEL, createRaster(width, height, data), false, null);
         this.buffer = new ImageBuffer(data, width, height);
     }
 
+    /**
+     * Loads an image from the provided payload and creates a new instance of the specified MutableImage type.
+     * The dimensions of the loaded image are used to initialize the new instance, and the pixel data is copied.
+     *
+     * @param <I>      the specific type of {@code MutableImage} to be returned
+     * @param payload  the payload containing the image data to be loaded
+     * @param factory  a factory function to create a new instance of {@code MutableImage}, using the image's width and height
+     * @return an instance of the specified {@code MutableImage} type, initialized with the loaded image data
+     * @throws IOException if an I/O error occurs during loading of the image
+     */
     protected static <I extends MutableImage> I loadImage(Payload payload, BiFunction<Integer, Integer, I> factory) throws IOException {
         try (ImageInputStream iis = ImageIO.createImageInputStream(payload.stream())) {
             ImageReader reader = ImageUtil.getInstance().getImageReader(payload);

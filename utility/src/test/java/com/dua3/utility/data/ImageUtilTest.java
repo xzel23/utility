@@ -46,7 +46,7 @@ class ImageUtilTest {
 
     @Test
     void testToImageBuffer_and_FromImageBuffer_roundTrip() {
-        ImageUtil util = ImageUtil.getInstance();
+        ImageUtil<?, ?> util = ImageUtil.getInstance();
 
         int w = 3, h = 2;
         int[] argb = {
@@ -70,14 +70,14 @@ class ImageUtilTest {
 
     @Test
     void testLoad_from_Path() throws IOException {
-        ImageUtil util = ImageUtil.getInstance();
+        ImageUtil<?, ?> util = ImageUtil.getInstance();
         Image img = util.load(tmpPng);
         assertLoadedTinyImage(img);
     }
 
     @Test
     void testLoad_from_URI() throws IOException {
-        ImageUtil util = ImageUtil.getInstance();
+        ImageUtil<?, ?> util = ImageUtil.getInstance();
         URI uri = tmpPng.toUri();
         Image img = util.load(uri);
         assertLoadedTinyImage(img);
@@ -85,7 +85,7 @@ class ImageUtilTest {
 
     @Test
     void testLoad_from_URL() throws IOException {
-        ImageUtil util = ImageUtil.getInstance();
+        ImageUtil<?, ?> util = ImageUtil.getInstance();
         URL url = tmpPng.toUri().toURL();
         Image img = util.load(url);
         assertLoadedTinyImage(img);
