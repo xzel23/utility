@@ -293,6 +293,56 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
     MI createImage(int w, int h);
 
     /**
+     * Premultiplies the RGB components of all pixels in-place.
+     * Input pixels are interpreted as straight-alpha ARGB values.
+     *
+     * @param argb the pixel array to modify in-place
+     */
+    default void premultiplyArgbInPlace(int[] argb) {
+        for (int i = 0; i < argb.length; i++) {
+            argb[i] = toPremultipliedArgb(argb[i]);
+        }
+    }
+
+    /**
+     * Un-premultiplies the RGB components of all pixels in-place.
+     * Input pixels are interpreted as premultiplied-alpha ARGB values.
+     *
+     * @param argb the pixel array to modify in-place
+     */
+    default void unpremultiplyArgbInPlace(int[] argb) {
+        for (int i = 0; i < argb.length; i++) {
+            argb[i] = toStraightArgb(argb[i]);
+        }
+    }
+
+    /**
+     * Premultiplies the RGB components of all pixels and returns a new array.
+     * Input pixels are interpreted as straight-alpha ARGB values.
+     *
+     * @param argb the source pixel array
+     * @return a new array containing premultiplied-alpha ARGB values
+     */
+    default int[] premultiplyArgb(int[] argb) {
+        int[] result = argb.clone();
+        premultiplyArgbInPlace(result);
+        return result;
+    }
+
+    /**
+     * Un-premultiplies the RGB components of all pixels and returns a new array.
+     * Input pixels are interpreted as premultiplied-alpha ARGB values.
+     *
+     * @param argb the source pixel array
+     * @return a new array containing straight-alpha ARGB values
+     */
+    default int[] unpremultiplyArgb(int[] argb) {
+        int[] result = argb.clone();
+        unpremultiplyArgbInPlace(result);
+        return result;
+    }
+
+    /**
      * Convert {@link Image} to {@link ImageBuffer}.
      *
      * @param img the image
@@ -394,6 +444,46 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      */
     default ImageReader getImageReader(Payload payload) {
         return getImageReader(MAGIC.getMimeType(payload.magic8Bytes()));
+    }
+
+    private static int toPremultipliedArgb(int argb) {
+        int a = (argb >>> 24) & 0xFF;
+        if (a == 0) {
+            return 0;
+        }
+        if (a == 0xFF) {
+            return argb;
+        }
+
+        int r = (argb >>> 16) & 0xFF;
+        int g = (argb >>> 8) & 0xFF;
+        int b = argb & 0xFF;
+
+        r = (r * a + 127) / 255;
+        g = (g * a + 127) / 255;
+        b = (b * a + 127) / 255;
+
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    private static int toStraightArgb(int argb) {
+        int a = (argb >>> 24) & 0xFF;
+        if (a == 0) {
+            return 0;
+        }
+        if (a == 0xFF) {
+            return argb;
+        }
+
+        int r = (argb >>> 16) & 0xFF;
+        int g = (argb >>> 8) & 0xFF;
+        int b = argb & 0xFF;
+
+        r = Math.min((r * 255 + a / 2) / a, 0xFF);
+        g = Math.min((g * 255 + a / 2) / a, 0xFF);
+        b = Math.min((b * 255 + a / 2) / a, 0xFF);
+
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 }
 

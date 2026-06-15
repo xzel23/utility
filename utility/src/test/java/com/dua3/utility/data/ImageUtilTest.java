@@ -70,6 +70,48 @@ class ImageUtilTest {
     }
 
     @Test
+    void testPremultiplyArgb_variants() {
+        ImageUtil<?, ?> util = ImageUtil.getInstance();
+
+        int[] straight = {
+                0x11223344, 0x80FFFFFF, 0x00ABCDEF, 0xFFFF0000
+        };
+        int[] expectedPremultiplied = {
+                0x11020305, 0x80808080, 0x00000000, 0xFFFF0000
+        };
+
+        int[] inPlace = straight.clone();
+        util.premultiplyArgbInPlace(inPlace);
+        assertArrayEquals(expectedPremultiplied, inPlace);
+
+        int[] allocated = util.premultiplyArgb(straight);
+        assertArrayEquals(expectedPremultiplied, allocated);
+        assertArrayEquals(new int[]{0x11223344, 0x80FFFFFF, 0x00ABCDEF, 0xFFFF0000}, straight);
+        assertNotSame(straight, allocated);
+    }
+
+    @Test
+    void testUnpremultiplyArgb_variants() {
+        ImageUtil<?, ?> util = ImageUtil.getInstance();
+
+        int[] premultiplied = {
+                0x11020305, 0x80808080, 0x00000000, 0xFFFF0000
+        };
+        int[] expectedStraight = {
+                0x111E2D4B, 0x80FFFFFF, 0x00000000, 0xFFFF0000
+        };
+
+        int[] inPlace = premultiplied.clone();
+        util.unpremultiplyArgbInPlace(inPlace);
+        assertArrayEquals(expectedStraight, inPlace);
+
+        int[] allocated = util.unpremultiplyArgb(premultiplied);
+        assertArrayEquals(expectedStraight, allocated);
+        assertArrayEquals(new int[]{0x11020305, 0x80808080, 0x00000000, 0xFFFF0000}, premultiplied);
+        assertNotSame(premultiplied, allocated);
+    }
+
+    @Test
     void testLoad_from_Path() throws IOException {
         ImageUtil<?, ?> util = ImageUtil.getInstance();
         Image img = util.load(tmpPng);
