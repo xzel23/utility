@@ -40,7 +40,6 @@ public final class RtfReader {
      * @throws NullPointerException if the provided RTF string is null
      */
     public static RichText read(String rtf) {
-        Objects.requireNonNull(rtf, "rtf");
         if (rtf.isEmpty()) {
             return RichText.emptyText();
         }

@@ -29,13 +29,11 @@ public final class RtfConverter implements RichTextConverterExt<String> {
 
     @Override
     public RichText toRichText(String s) {
-        Objects.requireNonNull(s, "s");
         return RtfReader.read(s);
     }
 
     @Override
     public String fromRichText(RichText text) {
-        Objects.requireNonNull(text, "text");
         return RtfWriter.write(text);
     }
 }

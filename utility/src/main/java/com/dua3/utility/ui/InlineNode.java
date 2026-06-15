@@ -90,8 +90,6 @@ public final class InlineNode<N> {
      * @return decoded image
      */
     public static Image decodeArgbImageData(byte[] data) {
-        Objects.requireNonNull(data, "data");
-
         if (data.length < Integer.BYTES * 2) {
             throw new IllegalArgumentException("invalid image payload");
         }
