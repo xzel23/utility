@@ -13,16 +13,16 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * Test class for {@link FxMutableImage}.
  */
-class FxBufferedImageTest extends FxTestBase {
+class FxMutableImageTest extends FxTestBase {
 
     /**
-     * Test creating a new FxBufferedImage instance.
+     * Test creating a new {@link FxMutableImage} instance.
      */
     @Test
-    void testCreateFxBufferedImage() throws Throwable {
+    void testCreateFxMutableImage() throws Throwable {
         runOnFxThreadAndWait(() -> {
             FxMutableImage image = new FxMutableImage(100, 150);
-            assertNotNull(image, "FxBufferedImage should not be null");
+            assertNotNull(image, "FxMutableImage should not be null");
             assertEquals(100, image.width(), "Width should be 100");
             assertEquals(150, image.height(), "Height should be 150");
         });

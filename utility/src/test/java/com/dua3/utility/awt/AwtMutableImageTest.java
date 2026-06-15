@@ -9,9 +9,9 @@ import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for the AwtImage class.
+ * Unit tests for the {@link AwtMutableImage} class.
  */
-class AwtImageTest {
+class AwtMutableImageTest {
 
     @Test
     void testCreateWithDimensions() {
@@ -102,7 +102,7 @@ class AwtImageTest {
 
     @Test
     void testLoad() throws IOException {
-        try (InputStream in = AwtImageTest.class.getResourceAsStream("image.jpg")) {
+        try (InputStream in = AwtMutableImageTest.class.getResourceAsStream("image.jpg")) {
             AwtImage image = AwtImageUtil.getInstance().load(in);
             assertNotNull(image);
             assertEquals(1024, image.getWidth());
@@ -112,7 +112,7 @@ class AwtImageTest {
 
     @Test
     void testLoadMutable() throws IOException {
-        try (InputStream in = AwtImageTest.class.getResourceAsStream("image.jpg")) {
+        try (InputStream in = AwtMutableImageTest.class.getResourceAsStream("image.jpg")) {
             AwtMutableImage image = AwtImageUtil.getInstance().loadMutable(in);
             assertNotNull(image);
             assertEquals(1024, image.getWidth());
