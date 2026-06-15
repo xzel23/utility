@@ -14,7 +14,7 @@ import java.util.Iterator;
 /**
  * An implementation of the ImageUtil interface for working with awt images.
  */
-public final class AwtImageUtil implements ImageUtil<AwtImage> {
+public final class AwtImageUtil implements ImageUtil<AwtImage, AwtMutableImage> {
 
     private static final class SingletonHolder {
         private static final AwtImageUtil INSTANCE = new AwtImageUtil();
@@ -49,7 +49,7 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
             try {
                 reader.setInput(iis);
                 BufferedImage image = reader.read(0);
-                AwtImage awtImage = AwtImage.create(image.getWidth(), image.getHeight());
+                AwtMutableImage awtImage = new AwtMutableImage(image.getWidth(), image.getHeight(), null);
                 awtImage.getGraphics().drawImage(image, 0, 0, null);
                 return awtImage;
             } finally {
@@ -59,13 +59,18 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
     }
 
     @Override
-    public AwtImage create(int w, int h, int[] data) {
-        return AwtImage.create(w, h, data);
+    public AwtMutableImage loadMutable(Payload payload) throws IOException {
+        return AwtMutableImage.loadImage(payload);
     }
 
     @Override
-    public AwtImage createBufferedImage(int w, int h) {
-        return AwtImage.create(w, h);
+    public AwtMutableImage createImage(int w, int h, int[] data) {
+        return new AwtMutableImage(w, h, data);
+    }
+
+    @Override
+    public AwtMutableImage createImage(int w, int h) {
+        return new AwtMutableImage(w, h, null);
     }
 
     /**
@@ -76,11 +81,11 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
      * @param img the {@code Image} to be converted
      * @return the converted {@code AwtImage} instance
      */
-    public AwtImage convert(com.dua3.utility.data.Image img) {
-        if (img instanceof AwtImage awtImage) {
+    public AwtMutableImage convert(com.dua3.utility.data.Image img) {
+        if (img instanceof AwtMutableImage awtImage) {
             return awtImage;
         } else {
-            return AwtImage.create(img.width(), img.height(), img.getArgb());
+            return createImage(img.width(), img.height(), img.getArgb());
         }
     }
 
@@ -91,21 +96,21 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
      * @param img the AwtImage to be converted
      * @return the provided AwtImage cast as a generic Image
      */
-    public Image convert(AwtImage img) {
+    public Image convert(AwtMutableImage img) {
         return img;
     }
 
     /**
-     * Converts a {@link BufferedImage} to an {@link AwtImage}.
+     * Converts a {@link BufferedImage} to an {@link AwtMutableImage}.
      *
      * @param img the BufferedImage to be converted
      * @return the converted AwtImage
      */
-    public AwtImage convert(BufferedImage img) {
-        if (img instanceof AwtImage awtImage) {
+    public AwtMutableImage convert(BufferedImage img) {
+        if (img instanceof AwtMutableImage awtImage) {
             return awtImage;
         } else {
-            AwtImage awtImage = AwtImage.create(img.getWidth(), img.getHeight());
+            AwtMutableImage awtImage = createImage(img.getWidth(), img.getHeight());
             awtImage.getGraphics().drawImage(img, 0, 0, null);
             return awtImage;
         }

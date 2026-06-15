@@ -118,7 +118,7 @@ public final class InlineNode<N> {
         for (int i = 0; i < pixelCount; i++) {
             argb[i] = buffer.getInt();
         }
-        return ImageUtil.getInstance().create(width, height, argb);
+        return ImageUtil.getInstance().createImage(width, height, argb);
     }
 
     @Override

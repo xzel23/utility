@@ -32,11 +32,11 @@ class AwtImageUtilTest {
     }
 
     @Test
-    void testCreateBufferedImage() {
+    void testCreateImage() {
         int width = 100;
         int height = 80;
 
-        AwtImage image = imageUtil.createBufferedImage(width, height);
+        AwtMutableImage image = imageUtil.createImage(width, height);
 
         assertNotNull(image);
         assertEquals(width, image.width());
@@ -54,7 +54,7 @@ class AwtImageUtilTest {
             data[i] = 0xFF000000 | (i & 0xFFFFFF); // Set alpha to 255 and use index as color
         }
 
-        Image image = imageUtil.create(width, height, data);
+        Image image = imageUtil.createImage(width, height, data);
 
         assertNotNull(image);
         assertEquals(width, image.width());
@@ -96,7 +96,7 @@ class AwtImageUtilTest {
         };
 
         // Convert the test image to AwtImage
-        AwtImage convertedImage = imageUtil.convert(testImage);
+        AwtMutableImage convertedImage = imageUtil.convert(testImage);
 
         assertNotNull(convertedImage);
         assertEquals(width, convertedImage.width());
@@ -109,7 +109,7 @@ class AwtImageUtilTest {
         // Create an AwtImage
         int width = 30;
         int height = 25;
-        AwtImage originalImage = AwtImage.create(width, height);
+        AwtMutableImage originalImage = AwtImageUtil.getInstance().createImage(width, height);
 
         // Convert the AwtImage to Image (should return the same instance)
         Image convertedImage = imageUtil.convert(originalImage);
@@ -133,7 +133,7 @@ class AwtImageUtilTest {
         }
 
         // Convert the BufferedImage to AwtImage
-        AwtImage convertedImage = imageUtil.convert(bufferedImage);
+        AwtMutableImage convertedImage = imageUtil.convert(bufferedImage);
 
         assertNotNull(convertedImage);
         assertEquals(width, convertedImage.width());
@@ -151,6 +151,16 @@ class AwtImageUtilTest {
     void testLoad() throws Exception {
         try (InputStream in = AwtImageTest.class.getResourceAsStream("image.jpg")) {
             AwtImage image = imageUtil.load(in);
+            assertNotNull(image);
+            assertEquals(1024, image.getWidth());
+            assertEquals(1024, image.getHeight());
+        }
+    }
+
+    @Test
+    void testLoadMutable() throws Exception {
+        try (InputStream in = AwtImageTest.class.getResourceAsStream("image.jpg")) {
+            AwtMutableImage image = imageUtil.loadMutable(in);
             assertNotNull(image);
             assertEquals(1024, image.getWidth());
             assertEquals(1024, image.getHeight());

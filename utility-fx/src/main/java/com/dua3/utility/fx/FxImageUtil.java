@@ -1,18 +1,18 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.awt.AwtMutableImage;
 import com.dua3.utility.data.ImageBuffer;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.Payload;
 import javafx.scene.image.Image;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
  * Utility class for manipulating JavaFX images.
  */
-public final class FxImageUtil implements ImageUtil<FxImage> {
+public final class FxImageUtil implements ImageUtil<FxImage, FxMutableImage> {
 
     private static final class SingletonHolder {
         private static final FxImageUtil INSTANCE = new FxImageUtil();
@@ -52,13 +52,18 @@ public final class FxImageUtil implements ImageUtil<FxImage> {
     }
 
     @Override
-    public FxImage create(int w, int h, int[] data) {
-        return new FxBufferedImage(w, h);
+    public FxMutableImage loadMutable(Payload payload) throws IOException {
+        return FxMutableImage.loadImage(payload);
     }
 
     @Override
-    public FxBufferedImage createBufferedImage(int w, int h) {
-        return new FxBufferedImage(w, h);
+    public FxMutableImage createImage(int w, int h, int[] data) {
+        return new FxMutableImage(w, h);
+    }
+
+    @Override
+    public FxMutableImage createImage(int w, int h) {
+        return new FxMutableImage(w, h);
     }
 
     /**

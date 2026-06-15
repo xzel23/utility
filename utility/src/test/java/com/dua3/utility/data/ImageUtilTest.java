@@ -54,7 +54,7 @@ class ImageUtilTest {
                 0xFFFFFFFF, 0x00000000, 0x7F010203
         };
 
-        Image img = util.create(w, h, argb.clone());
+        Image img = util.createImage(w, h, argb.clone());
         // default method toImageBuffer()
         ImageBuffer buf = util.toImageBuffer(img);
         assertEquals(w, buf.width());

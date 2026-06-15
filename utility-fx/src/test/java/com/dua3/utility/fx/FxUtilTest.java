@@ -439,7 +439,7 @@ class FxUtilTest extends FxTestBase {
 
         runOnFxThreadAndWait(() -> {
             // Create a simple 1x1 image
-            Image img = ImageUtil.getInstance().create(1, 1, new int[1]);
+            Image img = ImageUtil.getInstance().createImage(1, 1, new int[1]);
 
             // Test copying image to clipboard
             FxUtil.copyToClipboard(img);

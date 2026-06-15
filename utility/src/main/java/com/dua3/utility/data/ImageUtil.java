@@ -24,10 +24,11 @@ import java.util.function.Supplier;
 
 /**
  * Interface for Image handling utility classes. The concrete implementation is automatically chosen at runtime.
- * @param <I> the image type returen by methods that create new images, i.e., {@link #load(Payload)},
- * {@link #create(int, int, int[])}, etc.
+ * @param <I> the image type returned by methods that create new images, i.e., {@link #load(Payload)},
+ * @param <MI> the image type returned by methods that create new buffered images, i.e.,
+ * {@link #createImage(int, int)} (int, int)}, {@link #createImage(int, int)} (int, int, int[])}, etc.
  */
-public interface ImageUtil<I extends Image> {
+public interface ImageUtil<I extends Image, MI extends MutableImage> {
 
     /**
      * Defines the options available for loading images. These options determine
@@ -91,9 +92,9 @@ public interface ImageUtil<I extends Image> {
      *
      * @return the default FontUtil instance
      */
-    static ImageUtil getInstance() {
+    static ImageUtil<? extends Image, ? extends MutableImage> getInstance() {
         final class SingletonHolder {
-            static final ImageUtil INSTANCE = SpiLoader.builder(ImageUtilProvider.class)
+            static final ImageUtil<?, ?> INSTANCE = SpiLoader.builder(ImageUtilProvider.class)
                     .defaultSupplier(() -> AwtImageUtil::getInstance)
                     .build()
                     .load()
@@ -171,7 +172,6 @@ public interface ImageUtil<I extends Image> {
      */
     I load(Payload payload, LoadOption loadOption) throws IOException;
 
-
     /**
      * Load image.
      *
@@ -183,7 +183,6 @@ public interface ImageUtil<I extends Image> {
     default I load(InputStream in, LoadOption loadOption) throws IOException {
         return load(Payload.fromInputStream(in), loadOption);
     }
-
 
     /**
      * Load image.
@@ -209,7 +208,6 @@ public interface ImageUtil<I extends Image> {
         return load(path.toUri(), loadOption);
     }
 
-
     /**
      * Load image.
      *
@@ -223,24 +221,76 @@ public interface ImageUtil<I extends Image> {
     }
 
     /**
-     * Create image from pixel data.
+     * Load image.
+     *
+     * @param in the stream to load the image from
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default MI loadMutable(InputStream in) throws IOException {
+        return loadMutable(Payload.fromInputStream(in));
+    }
+
+    /**
+     * Load image.
+     *
+     * @param uri the image URI
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default MI loadMutable(URI uri) throws IOException {
+        return loadMutable(Payload.fromUri(uri));
+    }
+
+    /**
+     * Load image.
+     *
+     * @param path the image path
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default MI loadMutable(Path path) throws IOException {
+        return loadMutable(Payload.fromPath(path));
+    }
+
+    /**
+     * Load image.
+     *
+     * @param url the image URL
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    default MI loadMutable(URL url) throws IOException {
+        return loadMutable(Payload.fromUrl(url));
+    }
+
+    /**
+     * Load image.
+     *
+     * @param payload the {@link Payload} to load the image from
+     * @return the image
+     * @throws IOException if loading fails
+     */
+    MI loadMutable(Payload payload) throws IOException;
+
+    /**
+     * Create an image from pixel data.
      *
      * @param w    the image width
      * @param h    the image height
      * @param data the pixel data as int values containing ARGB values
      * @return the image
      */
-    I create(int w, int h, int[] data);
+    MI createImage(int w, int h, int[] data);
 
     /**
-     * Create an empty {@link BufferedImage}.
+     * Create an empty {@link MutableImage}.
      *
-     * @param <J> the image type
      * @param w   the image width
      * @param h   the image height
-     * @return new {@link BufferedImage}
+     * @return new {@link MutableImage}
      */
-    <J extends BufferedImage & Image> J createBufferedImage(int w, int h);
+    MI createImage(int w, int h);
 
     /**
      * Convert {@link Image} to {@link ImageBuffer}.
@@ -258,8 +308,8 @@ public interface ImageUtil<I extends Image> {
      * @param img the ARGBImage
      * @return the image
      */
-    default I fromImageBuffer(ImageBuffer img) {
-        return create(img.width(), img.height(), img.getArgb());
+    default MI fromImageBuffer(ImageBuffer img) {
+        return createImage(img.width(), img.height(), img.getArgb());
     }
 
     /**
@@ -292,7 +342,7 @@ public interface ImageUtil<I extends Image> {
      * @throws IOException if writing the image fails, including issues with the output stream or unsupported MIME type
      */
     default void write(Image image, OutputStream out, String mimeType) throws IOException {
-        ImageWriter writer = ImageTypeData.getByMimeType(mimeType).writer().get();
+        ImageWriter writer = getImageWriter(mimeType);
 
         try (ImageOutputStream imageOut = ImageIO.createImageOutputStream(out)) {
             writer.setOutput(imageOut);
@@ -301,6 +351,53 @@ public interface ImageUtil<I extends Image> {
         } finally {
             writer.dispose(); // Always clear native resources held by ImageIO
         }
+    }
+
+    /**
+     * Retrieves an {@link ImageWriter} instance for the specified MIME type.
+     *
+     * @param mimeType the MIME type of the image format (e.g., "image/png", "image/jpeg");
+     *                 must not be null
+     * @return an {@link ImageWriter} instance associated with the specified MIME type
+     * @throws IllegalStateException if no {@link ImageWriter} is available for the specified MIME type
+     */
+    default ImageWriter getImageWriter(String mimeType) {
+        return ImageTypeData.getByMimeType(mimeType).writer().get();
+    }
+
+    /**
+     * Retrieves an {@link ImageReader} for the specified MIME type.
+     *
+     * @param mimeType the MIME type of the image format, e.g., "image/png" or "image/jpeg";
+     *                 must not be null
+     * @return the corresponding {@link ImageReader} for the specified MIME type
+     * @throws IllegalStateException if no {@link ImageReader} is found for the given MIME type
+     */
+    default ImageReader getImageReader(String mimeType) {
+        return ImageTypeData.getByMimeType(mimeType).reader().get();
+    }
+
+    /**
+     * Retrieves an {@link ImageWriter} instance that can write images based on the MIME type
+     * derived from the provided {@link Payload}.
+     *
+     * @param payload the {@link Payload} containing the image data and magic bytes
+     * @return an {@link ImageWriter} capable of handling the image format from the payload
+     */
+    default ImageWriter getImageWriter(Payload payload) {
+        return getImageWriter(MAGIC.getMimeType(payload.magic8Bytes()));
+    }
+
+    /**
+     * Retrieves an {@link ImageReader} appropriate for the given {@link Payload}.
+     * The method determines the MIME type of the payload using its initial byte data
+     * and returns the corresponding {@link ImageReader}.
+     *
+     * @param payload the {@link Payload} containing the image data; must not be null
+     * @return an {@link ImageReader} for the MIME type associated with the provided payload
+     */
+    default ImageReader getImageReader(Payload payload) {
+        return getImageReader(MAGIC.getMimeType(payload.magic8Bytes()));
     }
 }
 

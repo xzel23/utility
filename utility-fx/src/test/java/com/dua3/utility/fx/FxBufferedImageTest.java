@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
- * Test class for {@link FxBufferedImage}.
+ * Test class for {@link FxMutableImage}.
  */
 class FxBufferedImageTest extends FxTestBase {
 
@@ -21,7 +21,7 @@ class FxBufferedImageTest extends FxTestBase {
     @Test
     void testCreateFxBufferedImage() throws Throwable {
         runOnFxThreadAndWait(() -> {
-            FxBufferedImage image = new FxBufferedImage(100, 150);
+            FxMutableImage image = new FxMutableImage(100, 150);
             assertNotNull(image, "FxBufferedImage should not be null");
             assertEquals(100, image.width(), "Width should be 100");
             assertEquals(150, image.height(), "Height should be 150");
@@ -34,7 +34,7 @@ class FxBufferedImageTest extends FxTestBase {
     @Test
     void testWidthAndHeight() throws Throwable {
         runOnFxThreadAndWait(() -> {
-            FxBufferedImage image = new FxBufferedImage(200, 300);
+            FxMutableImage image = new FxMutableImage(200, 300);
             assertEquals(200, image.width(), "Width should be 200");
             assertEquals(300, image.height(), "Height should be 300");
             assertEquals(200, image.getWidth(), "getWidth() should return 200");
@@ -50,7 +50,7 @@ class FxBufferedImageTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             int width = 50;
             int height = 60;
-            FxBufferedImage image = new FxBufferedImage(width, height);
+            FxMutableImage image = new FxMutableImage(width, height);
 
             int[] argb = image.getArgb();
             assertNotNull(argb, "ARGB array should not be null");
@@ -64,7 +64,7 @@ class FxBufferedImageTest extends FxTestBase {
     @Test
     void testFxImage() throws Throwable {
         runOnFxThreadAndWait(() -> {
-            FxBufferedImage image = new FxBufferedImage(100, 100);
+            FxMutableImage image = new FxMutableImage(100, 100);
 
             Image fxImage = image.fxImage();
             assertNotNull(fxImage, "JavaFX Image should not be null");
@@ -81,7 +81,7 @@ class FxBufferedImageTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             int width = 75;
             int height = 85;
-            FxBufferedImage image = new FxBufferedImage(width, height);
+            FxMutableImage image = new FxMutableImage(width, height);
 
             ImageBuffer buffer = image.getBuffer();
             assertNotNull(buffer, "ImageBuffer should not be null");
@@ -97,7 +97,7 @@ class FxBufferedImageTest extends FxTestBase {
     @Test
     void testArgbArraysAreSame() throws Throwable {
         runOnFxThreadAndWait(() -> {
-            FxBufferedImage image = new FxBufferedImage(50, 50);
+            FxMutableImage image = new FxMutableImage(50, 50);
 
             int[] argbDirect = image.getArgb();
             int[] argbFromBuffer = image.getBuffer().getArgb();
@@ -114,7 +114,7 @@ class FxBufferedImageTest extends FxTestBase {
         runOnFxThreadAndWait(() -> {
             int width = 10;
             int height = 10;
-            FxBufferedImage image = new FxBufferedImage(width, height);
+            FxMutableImage image = new FxMutableImage(width, height);
 
             // Set all pixels to red (ARGB: 0xFFFF0000)
             int[] argb = image.getArgb();

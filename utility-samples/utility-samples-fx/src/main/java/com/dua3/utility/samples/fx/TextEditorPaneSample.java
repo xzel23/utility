@@ -186,7 +186,7 @@ public class TextEditorPaneSample extends Application {
                 data[y * width + x] = blendArgb(argbA, argbB, f);
             }
         }
-        return ImageUtil.getInstance().create(width, height, data);
+        return ImageUtil.getInstance().createImage(width, height, data);
     }
 
     private static int blendArgb(int argbA, int argbB, float factor) {
