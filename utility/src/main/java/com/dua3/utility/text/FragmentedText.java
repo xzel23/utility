@@ -39,7 +39,6 @@ public record FragmentedText(
      */
     public static final float NO_WRAP = Float.MAX_VALUE;
 
-    private static final Pattern PATTERN = Pattern.compile("(?<=\\s)|(?=\\s)");
     private static final Pattern PATTERN_SPLIT_PRESERVE_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
     private static final FragmentedText EMPTY_FRAGMENTED_TEXT = new FragmentedText(Collections.emptyList(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
