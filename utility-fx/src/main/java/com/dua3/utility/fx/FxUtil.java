@@ -463,7 +463,7 @@ public final class FxUtil {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
         content.putString(text.toString());
-        content.putHtml(converter.convert(text));
+//        content.putHtml(converter.convert(text));
         RtfConverter.get().ifPresent(rtfConverter -> content.putRtf(rtfConverter.convert(text)));
         clipboard.setContent(content);
     }

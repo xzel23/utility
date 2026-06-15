@@ -1,13 +1,20 @@
 package com.dua3.utility.text.imp.rtf;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
+import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.io.Payload;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextUtil;
+import com.dua3.utility.ui.InlineNode;
 import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullUnmarked;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -74,6 +81,11 @@ public final class RtfReader {
         private int currentBlue = 0;
         private boolean hasColorComponent = false;
         private int ignoredDestinationDepth = -1;
+        private boolean inPicture = false;
+        private int pictureDepth = -1;
+        private final StringBuilder pictureHexData = new StringBuilder();
+        private String pictureMimeType = "image/jpeg";
+        private int inlineStyleId = 0;
 
         private void parse(String rtf) {
             try {
@@ -157,6 +169,13 @@ public final class RtfReader {
             if (ignoredDestinationDepth >= 0 && groupDepth == ignoredDestinationDepth) {
                 ignoredDestinationDepth = -1;
             }
+            if (inPicture && groupDepth == pictureDepth) {
+                finalizePicture();
+                inPicture = false;
+                pictureDepth = -1;
+                pictureHexData.setLength(0);
+                pictureMimeType = "image/jpeg";
+            }
 
             style = styleStack.isEmpty() ? new CharacterStyle(defaultFontIndex) : styleStack.pop();
             if (groupDepth > 0) {
@@ -166,6 +185,10 @@ public final class RtfReader {
 
         private void onString(String text) {
             if (text.isEmpty()) {
+                return;
+            }
+            if (inPicture) {
+                consumePictureText(text);
                 return;
             }
             if (isIgnoringDestination()) {
@@ -185,10 +208,24 @@ public final class RtfReader {
         }
 
         private void onCommand(String command, int parameter, boolean hasParameter, boolean optional) {
+            if (inPicture) {
+                consumePictureCommand(command);
+                return;
+            }
             if (isIgnorableDestination(command, optional)) {
                 if (ignoredDestinationDepth < 0 || groupDepth < ignoredDestinationDepth) {
                     ignoredDestinationDepth = groupDepth;
                 }
+                return;
+            }
+            if (isIgnoringDestination()) {
+                return;
+            }
+            if ("pict".equals(command)) {
+                inPicture = true;
+                pictureDepth = groupDepth;
+                pictureHexData.setLength(0);
+                pictureMimeType = "image/jpeg";
                 return;
             }
 
@@ -242,9 +279,6 @@ public final class RtfReader {
                 }
                 return;
             }
-            if (isIgnoringDestination()) {
-                return;
-            }
 
             switch (command) {
                 case "deff" -> {
@@ -284,6 +318,57 @@ public final class RtfReader {
             }
         }
 
+        private void consumePictureCommand(String command) {
+            switch (command) {
+                case "jpegblip" -> pictureMimeType = "image/jpeg";
+                case "pngblip" -> pictureMimeType = "image/png";
+                default -> {
+                    // ignore other picture properties (e.g., dimensions, scaling)
+                }
+            }
+        }
+
+        private void consumePictureText(String text) {
+            for (int i = 0; i < text.length(); i++) {
+                char ch = text.charAt(i);
+                if (Character.digit(ch, 16) >= 0) {
+                    pictureHexData.append(ch);
+                }
+            }
+        }
+
+        private void finalizePicture() {
+            byte[] imageBytes = decodeHex(pictureHexData);
+            if (imageBytes.length == 0) {
+                appendStyledText("Image: ");
+                return;
+            }
+
+            try (Payload payload = Payload.fromInputStream(new ByteArrayInputStream(imageBytes))) {
+                Image image = ImageUtil.getInstance().load(payload);
+                byte[] inlineData = InlineNode.encodeArgbImageData(image);
+                InlineNode<Image> inlineNode = new InlineNode<>(image, inlineNodeMimeType(pictureMimeType), inlineData);
+                appendInlineNodeMarker(inlineNode);
+            } catch (IOException | RuntimeException ex) {
+                appendStyledText("Image: ");
+            }
+        }
+
+        private static String inlineNodeMimeType(String pictureMimeType) {
+            if ("image/jpeg".equals(pictureMimeType)) {
+                return pictureMimeType;
+            }
+            return "image/jpeg";
+        }
+
+        private void appendInlineNodeMarker(InlineNode<?> inlineNode) {
+            Style inlineStyle = Style.create(
+                    "rtf-inline-node-" + inlineStyleId++,
+                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, inlineNode)
+            );
+            appendStyledText(String.valueOf(RichTextBuilderExtBase.INLINE_NODE_MARKER), inlineStyle);
+        }
+
         private void consumeFontTableText(String text) {
             for (int i = 0; i < text.length(); i++) {
                 char ch = text.charAt(i);
@@ -321,17 +406,31 @@ public final class RtfReader {
         }
 
         private void appendStyledText(String text) {
+            appendStyledText(text, null);
+        }
+
+        private void appendStyledText(String text, @Nullable Style extraStyle) {
             if (text.isEmpty()) {
                 return;
             }
 
             Style styleForText = resolveStyle();
-            if (styleForText == null) {
+            if (styleForText == null && extraStyle == null) {
                 builder.append(text);
             } else {
-                builder.push(styleForText);
+                if (styleForText != null) {
+                    builder.push(styleForText);
+                }
+                if (extraStyle != null) {
+                    builder.push(extraStyle);
+                }
                 builder.append(text);
-                builder.pop(styleForText);
+                if (extraStyle != null) {
+                    builder.pop(extraStyle);
+                }
+                if (styleForText != null) {
+                    builder.pop(styleForText);
+                }
             }
         }
 
@@ -373,6 +472,25 @@ public final class RtfReader {
 
         private static int clampColor(int c) {
             return Math.min(255, Math.max(0, c));
+        }
+
+        private static byte[] decodeHex(CharSequence hex) {
+            int length = hex.length();
+            if (length < 2) {
+                return new byte[0];
+            }
+
+            int evenLength = length & ~1;
+            byte[] result = new byte[evenLength / 2];
+            for (int i = 0; i < evenLength; i += 2) {
+                int high = Character.digit(hex.charAt(i), 16);
+                int low = Character.digit(hex.charAt(i + 1), 16);
+                if (high < 0 || low < 0) {
+                    return new byte[0];
+                }
+                result[i / 2] = (byte) ((high << 4) | low);
+            }
+            return result;
         }
 
         private boolean isIgnoringDestination() {

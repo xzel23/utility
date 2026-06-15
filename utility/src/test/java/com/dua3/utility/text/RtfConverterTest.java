@@ -1,17 +1,23 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
+import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.ui.InlineNode;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,13 +82,11 @@ class RtfConverterTest {
     }
 
     @Test
-    @Disabled("Pending implementation of hand-written RTF writer and rtfparserkit parser")
     void testRoundTripInlineImage() {
-        /*
         RtfConverter rtfConverter = RtfConverter.get().orElse(null);
         Assumptions.assumeTrue(rtfConverter != null, "RtfConverter not available");
 
-        Image image = ImageUtil.getInstance().create(
+        Image image = ImageUtil.getInstance().createImage(
                 2,
                 2,
                 new int[]{
@@ -93,7 +97,7 @@ class RtfConverterTest {
 
         InlineNode<Image> inlineNode = new InlineNode<>(
                 image,
-                InlineNode.MIME_TYPE_ARGB_IMAGE,
+                image.mimeType(),
                 InlineNode.encodeArgbImageData(image)
         );
         Style imageStyle = Style.create(
@@ -125,13 +129,12 @@ class RtfConverterTest {
                 .orElseThrow();
         InlineNode<?> imported = assertInstanceOf(InlineNode.class, inlineAttribute);
 
-        assertEquals(InlineNode.MIME_TYPE_ARGB_IMAGE, imported.getMimeType());
+        assertEquals("image/jpeg", imported.getMimeType());
 
         Image importedImage = InlineNode.decodeArgbImageData(imported.getData());
         assertEquals(image.width(), importedImage.width());
         assertEquals(image.height(), importedImage.height());
         assertTrue(Arrays.equals(image.getArgb(), importedImage.getArgb()));
-         */
     }
 
     @Test

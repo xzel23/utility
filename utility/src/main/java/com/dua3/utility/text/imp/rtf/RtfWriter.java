@@ -1,14 +1,21 @@
 package com.dua3.utility.text.imp.rtf;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
+import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Run;
+import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.InlineNode;
 import org.jspecify.annotations.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,6 +25,7 @@ import java.util.Map;
  * Writes {@link RichText} as RTF.
  */
 public final class RtfWriter extends AttributeBasedConverter<String> {
+    private static final char[] HEX = "0123456789abcdef".toCharArray();
     private final Map<String, Integer> fontIndexByName;
     private final Map<Color, Integer> colorIndexByColor;
 
@@ -155,8 +163,89 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                 appendControlWord("strike");
             }
 
-            appendChars(run);
+            appendRunContent(run);
             buffer.append('}');
+        }
+
+        private void appendRunContent(Run run) {
+            InlineNode<?> inlineNode = findInlineNode(run);
+            if (inlineNode == null) {
+                appendChars(run);
+                return;
+            }
+
+            int length = run.length();
+            int segmentStart = 0;
+            for (int i = 0; i < length; i++) {
+                char ch = run.charAt(i);
+                if (ch == RichTextBuilderExtBase.INLINE_NODE_MARKER) {
+                    if (segmentStart < i) {
+                        appendEscapedText(buffer, run.subSequence(segmentStart, i));
+                    }
+                    if (!appendPicture(inlineNode)) {
+                        appendEscapedCodePoint(buffer, ch);
+                    }
+                    segmentStart = i + 1;
+                }
+            }
+
+            if (segmentStart < length) {
+                appendEscapedText(buffer, run.subSequence(segmentStart, length));
+            }
+        }
+
+        private static @Nullable InlineNode<?> findInlineNode(Run run) {
+            for (Style style : run.getStyles()) {
+                Object value = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
+                if (value instanceof InlineNode<?> inlineNode) {
+                    return inlineNode;
+                }
+            }
+            return null;
+        }
+
+        private boolean appendPicture(InlineNode<?> inlineNode) {
+            Image image = toImage(inlineNode);
+            if (image == null) {
+                return false;
+            }
+
+            byte[] png = encodeImageAsPng(image);
+            if (png.length == 0) {
+                return false;
+            }
+
+            int width = Math.max(1, image.width());
+            int height = Math.max(1, image.height());
+            int picwGoal = Math.max(1, width * 15);
+            int pichGoal = Math.max(1, height * 15);
+
+            buffer.append("{\\pict\\pngblip");
+            appendControlWord("picw", width);
+            appendControlWord("pich", height);
+            appendControlWord("picwgoal", picwGoal);
+            appendControlWord("pichgoal", pichGoal);
+            appendHexBytes(buffer, png);
+            buffer.append('}');
+            return true;
+        }
+
+        private static @Nullable Image toImage(InlineNode<?> inlineNode) {
+            try {
+                return InlineNode.decodeArgbImageData(inlineNode.getData());
+            } catch (IllegalArgumentException ignored) {
+                Object wrapped = inlineNode.getWrapped();
+                return wrapped instanceof Image image ? image : null;
+            }
+        }
+
+        private static byte[] encodeImageAsPng(Image image) {
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream(1024)) {
+                ImageUtil.getInstance().write(image, out, "image/png");
+                return out.toByteArray();
+            } catch (IOException | RuntimeException ex) {
+                return new byte[0];
+            }
         }
 
         private void appendControlWord(String command) {
@@ -224,5 +313,12 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
     private static void appendUnicodeEscape(StringBuilder buffer, int utf16Unit) {
         int signedValue = utf16Unit > 0x7FFF ? utf16Unit - 0x10000 : utf16Unit;
         buffer.append("\\u").append(signedValue).append('?');
+    }
+
+    private static void appendHexBytes(StringBuilder buffer, byte[] data) {
+        for (byte value : data) {
+            int b = value & 0xFF;
+            buffer.append(HEX[b >>> 4]).append(HEX[b & 0x0F]);
+        }
     }
 }
