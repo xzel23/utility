@@ -387,185 +387,412 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         onAttributePropertyChanged(Style.FONT_SIZE, (float) value);
     }
 
+    /**
+     * Returns the input-control state facade.
+     *
+     * @return state facade used for validation and commit handling
+     */
     @Override
     public InputControlState<RichText> state() {
         return state;
     }
 
+    /**
+     * Sets the committed value.
+     *
+     * @param arg new committed value
+     */
     @Override
     public void set(@Nullable RichText arg) {
         state.setValue(normalizeIncomingText(arg));
     }
 
+    /**
+     * Returns this control as a JavaFX node.
+     *
+     * @return this instance
+     */
     @Override
     public Node node() {
         return this;
     }
 
+    /**
+     * Editable property.
+     *
+     * @return editable property
+     */
     public final BooleanProperty editableProperty() {
         return editable;
     }
 
+    /**
+     * Indicates whether editing is enabled.
+     *
+     * @return {@code true} if editable
+     */
     public final boolean isEditable() {
         return editable.get();
     }
 
+    /**
+     * Enables or disables editing.
+     *
+     * @param value {@code true} to enable editing
+     */
     public final void setEditable(boolean value) {
         editable.set(value);
     }
 
+    /**
+     * Toolbar visibility property.
+     *
+     * @return toolbar visibility property
+     */
     public final BooleanProperty toolbarVisibleProperty() {
         return toolbarVisible;
     }
 
+    /**
+     * Indicates whether the toolbar should be visible.
+     *
+     * @return {@code true} if toolbar is visible
+     */
     public final boolean isToolbarVisible() {
         return toolbarVisible.get();
     }
 
+    /**
+     * Shows or hides the toolbar.
+     *
+     * @param value {@code true} to show the toolbar
+     */
     public final void setToolbarVisible(boolean value) {
         toolbarVisible.set(value);
     }
 
+    /**
+     * Returns current document length.
+     *
+     * @return number of characters
+     */
     public final int getLength() {
         return length.get();
     }
 
+    /**
+     * Read-only document length property.
+     *
+     * @return read-only length property
+     */
     public final ReadOnlyIntegerProperty lengthProperty() {
         return length.getReadOnlyProperty();
     }
 
+    /**
+     * Returns the currently selected text.
+     *
+     * @return current selection text
+     */
     public final RichText getSelectedText() {
         return selectedText.get();
     }
 
+    /**
+     * Read-only selected-text property.
+     *
+     * @return selected-text property
+     */
     public final ReadOnlyObjectProperty<RichText> selectedTextProperty() {
         return selectedText.getReadOnlyProperty();
     }
 
+    /**
+     * Returns the current selection range.
+     *
+     * @return current selection range
+     */
     public final IndexRange getSelection() {
         return selection.get();
     }
 
+    /**
+     * Read-only selection range property.
+     *
+     * @return selection property
+     */
     public final ReadOnlyObjectProperty<IndexRange> selectionProperty() {
         return selection.getReadOnlyProperty();
     }
 
+    /**
+     * Returns the selection anchor position.
+     *
+     * @return anchor position
+     */
     public final int getAnchor() {
         return anchor.get();
     }
 
+    /**
+     * Read-only anchor property.
+     *
+     * @return anchor property
+     */
     public final ReadOnlyIntegerProperty anchorProperty() {
         return anchor.getReadOnlyProperty();
     }
 
+    /**
+     * Returns caret position.
+     *
+     * @return caret position
+     */
     public final int getCaretPosition() {
         return caretPosition.get();
     }
 
+    /**
+     * Read-only caret-position property.
+     *
+     * @return caret-position property
+     */
     public final ReadOnlyIntegerProperty caretPositionProperty() {
         return caretPosition.getReadOnlyProperty();
     }
 
+    /**
+     * Bold toggle property for current formatting state.
+     *
+     * @return bold property
+     */
     public final BooleanProperty boldProperty() {
         return bold;
     }
 
+    /**
+     * Indicates whether bold formatting is active.
+     *
+     * @return {@code true} if bold is active
+     */
     public final boolean isBold() {
         return bold.get();
     }
 
+    /**
+     * Sets bold formatting state.
+     *
+     * @param value {@code true} to enable bold
+     */
     public final void setBold(boolean value) {
         bold.set(value);
     }
 
+    /**
+     * Italic toggle property for current formatting state.
+     *
+     * @return italic property
+     */
     public final BooleanProperty italicProperty() {
         return italic;
     }
 
+    /**
+     * Indicates whether italic formatting is active.
+     *
+     * @return {@code true} if italic is active
+     */
     public final boolean isItalic() {
         return italic.get();
     }
 
+    /**
+     * Sets italic formatting state.
+     *
+     * @param value {@code true} to enable italic
+     */
     public final void setItalic(boolean value) {
         italic.set(value);
     }
 
+    /**
+     * Underline toggle property for current formatting state.
+     *
+     * @return underline property
+     */
     public final BooleanProperty underlineProperty() {
         return underline;
     }
 
+    /**
+     * Indicates whether underline formatting is active.
+     *
+     * @return {@code true} if underline is active
+     */
     public final boolean isUnderline() {
         return underline.get();
     }
 
+    /**
+     * Sets underline formatting state.
+     *
+     * @param value {@code true} to enable underline
+     */
     public final void setUnderline(boolean value) {
         underline.set(value);
     }
 
+    /**
+     * Strike-through toggle property for current formatting state.
+     *
+     * @return strike-through property
+     */
     public final BooleanProperty strikeThroughProperty() {
         return strikeThrough;
     }
 
+    /**
+     * Indicates whether strike-through formatting is active.
+     *
+     * @return {@code true} if strike-through is active
+     */
     public final boolean isStrikeThrough() {
         return strikeThrough.get();
     }
 
+    /**
+     * Sets strike-through formatting state.
+     *
+     * @param value {@code true} to enable strike-through
+     */
     public final void setStrikeThrough(boolean value) {
         strikeThrough.set(value);
     }
 
+    /**
+     * Text-color property for current formatting state.
+     *
+     * @return text-color property
+     */
     public final ObjectProperty<@Nullable Color> textColorProperty() {
         return textColor;
     }
 
+    /**
+     * Returns current text color setting.
+     *
+     * @return current text color or {@code null}
+     */
     public final @Nullable Color getTextColor() {
         return textColor.get();
     }
 
+    /**
+     * Sets text color for subsequent input or current selection formatting.
+     *
+     * @param value text color, or {@code null}
+     */
     public final void setTextColor(@Nullable Color value) {
         textColor.set(value);
     }
 
+    /**
+     * Font-family property for current formatting state.
+     *
+     * @return font-family property
+     */
     public final StringProperty fontFamilyProperty() {
         return fontFamily;
     }
 
+    /**
+     * Returns current font-family setting.
+     *
+     * @return font family or {@code null}
+     */
     public final @Nullable String getFontFamily() {
         return fontFamily.get();
     }
 
+    /**
+     * Sets font family for subsequent input or current selection formatting.
+     *
+     * @param value font family or {@code null}
+     */
     public final void setFontFamily(@Nullable String value) {
         fontFamily.set(value);
     }
 
+    /**
+     * Font-size property for current formatting state.
+     *
+     * @return font-size property
+     */
     public final DoubleProperty fontSizeProperty() {
         return fontSize;
     }
 
+    /**
+     * Returns current font-size setting.
+     *
+     * @return font size in points
+     */
     public final double getFontSize() {
         return fontSize.get();
     }
 
+    /**
+     * Sets font size for subsequent input or current selection formatting.
+     *
+     * @param value font size in points
+     */
     public final void setFontSize(double value) {
         fontSize.set(value);
     }
 
+    /**
+     * Indicates whether an undo step is available.
+     *
+     * @return {@code true} if undo is possible
+     */
     public final boolean isUndoable() {
         return undoable.get();
     }
 
+    /**
+     * Read-only undo-availability property.
+     *
+     * @return undoable property
+     */
     public final ReadOnlyBooleanProperty undoableProperty() {
         return undoable.getReadOnlyProperty();
     }
 
+    /**
+     * Indicates whether a redo step is available.
+     *
+     * @return {@code true} if redo is possible
+     */
     public final boolean isRedoable() {
         return redoable.get();
     }
 
+    /**
+     * Read-only redo-availability property.
+     *
+     * @return redoable property
+     */
     public final ReadOnlyBooleanProperty redoableProperty() {
         return redoable.getReadOnlyProperty();
     }
 
+    /**
+     * Returns a text slice between two offsets.
+     *
+     * @param start start offset (inclusive)
+     * @param end end offset (exclusive)
+     * @return selected text slice
+     */
     public RichText getText(int start, int end) {
         RichText text = getText();
         int s = Math.clamp(Math.min(start, end), 0, text.length());
@@ -573,26 +800,60 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return text.subSequence(s, e);
     }
 
+    /**
+     * Appends plain text.
+     *
+     * @param text text to append
+     */
     public void appendText(@Nullable CharSequence text) {
         replaceText(getLength(), getLength(), text);
     }
 
+    /**
+     * Appends rich text.
+     *
+     * @param text rich text to append
+     */
     public void appendText(@Nullable ToRichText text) {
         replaceText(getLength(), getLength(), text == null ? RichText.emptyText() : text.toRichText());
     }
 
+    /**
+     * Appends text using the provided font.
+     *
+     * @param text text to append
+     * @param font font to apply
+     */
     public void appendText(@Nullable CharSequence text, Font font) {
         replaceText(getLength(), getLength(), toRichText(text, font));
     }
 
+    /**
+     * Inserts plain text at the given index.
+     *
+     * @param index insertion position
+     * @param text text to insert
+     */
     public void insertText(int index, @Nullable CharSequence text) {
         replaceText(index, index, text);
     }
 
+    /**
+     * Inserts text with a specific font at the given index.
+     *
+     * @param index insertion position
+     * @param text text to insert
+     * @param font font to apply
+     */
     public void insertText(int index, @Nullable CharSequence text, Font font) {
         replaceText(index, index, toRichText(text, font));
     }
 
+    /**
+     * Deletes selection or previous character.
+     *
+     * @return {@code true} if text was deleted
+     */
     public boolean deletePreviousChar() {
         IndexRange range = getSelection();
         if (range.getLength() > 0) {
@@ -607,6 +868,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return false;
     }
 
+    /**
+     * Deletes selection or next character.
+     *
+     * @return {@code true} if text was deleted
+     */
     public boolean deleteNextChar() {
         IndexRange range = getSelection();
         if (range.getLength() > 0) {
@@ -621,26 +887,65 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return false;
     }
 
+    /**
+     * Deletes text inside the given range.
+     *
+     * @param range range to delete
+     */
     public void deleteText(IndexRange range) {
         replaceText(range.getStart(), range.getEnd(), "");
     }
 
+    /**
+     * Deletes text between offsets.
+     *
+     * @param start start offset (inclusive)
+     * @param end end offset (exclusive)
+     */
     public void deleteText(int start, int end) {
         replaceText(start, end, "");
     }
 
+    /**
+     * Replaces the given range with plain text.
+     *
+     * @param range range to replace
+     * @param text replacement text
+     */
     public void replaceText(IndexRange range, @Nullable CharSequence text) {
         replaceText(range.getStart(), range.getEnd(), text);
     }
 
+    /**
+     * Replaces the given range with text rendered using a font.
+     *
+     * @param range range to replace
+     * @param text replacement text
+     * @param font font to apply
+     */
     public void replaceText(IndexRange range, @Nullable CharSequence text, Font font) {
         replaceText(range.getStart(), range.getEnd(), toRichText(text, font));
     }
 
+    /**
+     * Replaces text between offsets with text rendered using a font.
+     *
+     * @param start start offset (inclusive)
+     * @param end end offset (exclusive)
+     * @param text replacement text
+     * @param font font to apply
+     */
     public void replaceText(int start, int end, @Nullable CharSequence text, Font font) {
         replaceText(start, end, toRichText(text, font));
     }
 
+    /**
+     * Replaces text between offsets with plain text.
+     *
+     * @param start start offset (inclusive)
+     * @param end end offset (exclusive)
+     * @param replacement replacement text
+     */
     public void replaceText(int start, int end, @Nullable CharSequence replacement) {
         CharSequence text = Objects.requireNonNullElse(replacement, "");
 
@@ -672,98 +977,176 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         updateHistoryState();
     }
 
+    /**
+     * Replaces the current selection.
+     *
+     * @param replacement replacement text
+     */
     public void replaceSelection(@Nullable CharSequence replacement) {
         IndexRange r = getSelection();
         replaceText(r.getStart(), r.getEnd(), Objects.requireNonNullElse(replacement, ""));
     }
 
+    /**
+     * Sets selection anchor and caret.
+     *
+     * @param anchor anchor position
+     * @param caretPosition caret position
+     */
     public void selectRange(int anchor, int caretPosition) {
         setSelectionState(anchor, caretPosition);
     }
 
+    /**
+     * Selects the full document.
+     */
     public void selectAll() {
         setSelectionState(0, getLength());
     }
 
+    /**
+     * Clears the current selection.
+     */
     public void deselect() {
         int caret = getCaretPosition();
         setSelectionState(caret, caret);
     }
 
+    /**
+     * Removes all text.
+     */
     public void clear() {
         replaceText(0, getLength(), RichText.emptyText());
     }
 
+    /**
+     * Moves caret to a position and clears selection.
+     *
+     * @param pos target caret position
+     */
     public void positionCaret(int pos) {
         int p = Math.clamp(pos, 0, getLength());
         setSelectionState(p, p);
         preferredCaretX = Double.NaN;
     }
 
+    /**
+     * Moves caret while keeping current anchor.
+     *
+     * @param pos new caret position
+     */
     public void selectPositionCaret(int pos) {
         setSelectionState(getAnchor(), pos);
     }
 
+    /**
+     * Moves caret to document start.
+     */
     public void home() {
         positionCaret(0);
     }
 
+    /**
+     * Moves caret to document end.
+     */
     public void end() {
         positionCaret(getLength());
     }
 
+    /**
+     * Moves caret one character forward.
+     */
     public void forward() {
         positionCaret(getCaretPosition() + 1);
     }
 
+    /**
+     * Moves caret one character backward.
+     */
     public void backward() {
         positionCaret(getCaretPosition() - 1);
     }
 
+    /**
+     * Moves caret to start of previous word.
+     */
     public void previousWord() {
         positionCaret(previousWordStart(getCaretPosition()));
     }
 
+    /**
+     * Moves caret to start of next word.
+     */
     public void nextWord() {
         positionCaret(nextWordStart(getCaretPosition()));
     }
 
+    /**
+     * Moves caret to end of next word.
+     */
     public void endOfNextWord() {
         positionCaret(nextWordEnd(getCaretPosition()));
     }
 
+    /**
+     * Extends selection one character backward.
+     */
     public void selectBackward() {
         selectPositionCaret(getCaretPosition() - 1);
     }
 
+    /**
+     * Extends selection one character forward.
+     */
     public void selectForward() {
         selectPositionCaret(getCaretPosition() + 1);
     }
 
+    /**
+     * Extends selection to start of previous word.
+     */
     public void selectPreviousWord() {
         selectPositionCaret(previousWordStart(getCaretPosition()));
     }
 
+    /**
+     * Extends selection to start of next word.
+     */
     public void selectNextWord() {
         selectPositionCaret(nextWordStart(getCaretPosition()));
     }
 
+    /**
+     * Extends selection to end of next word.
+     */
     public void selectEndOfNextWord() {
         selectPositionCaret(nextWordEnd(getCaretPosition()));
     }
 
+    /**
+     * Extends selection to document start.
+     */
     public void selectHome() {
         selectPositionCaret(0);
     }
 
+    /**
+     * Extends selection to document end.
+     */
     public void selectEnd() {
         selectPositionCaret(getLength());
     }
 
+    /**
+     * Copies selection to clipboard.
+     */
     public void copy() {
         FxUtil.copyToClipboard(getSelectedText());
     }
 
+    /**
+     * Cuts selection to clipboard.
+     */
     public void cut() {
         if (!isEditable()) {
             return;
@@ -775,6 +1158,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         replaceSelection("");
     }
 
+    /**
+     * Pastes clipboard text at selection.
+     */
     public void paste() {
         if (!isEditable()) {
             return;
@@ -782,10 +1168,16 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         FxUtil.getTextFromClipboard().ifPresent(this::replaceSelection);
     }
 
+    /**
+     * Performs one undo step.
+     */
     public void undo() {
         undoOrRedo(undoStack, redoStack);
     }
 
+    /**
+     * Performs one redo step.
+     */
     public void redo() {
         undoOrRedo(redoStack, undoStack);
     }
@@ -816,11 +1208,22 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         updateHistoryState();
     }
 
+    /**
+     * Applies a style to the current selection.
+     *
+     * @param style style to apply
+     */
     public void apply(Style style) {
         IndexRange range = getSelection();
         applyFormattingChange(getText().apply(style, range.getStart(), range.getEnd()));
     }
 
+    /**
+     * Enables or disables a style on the current selection.
+     *
+     * @param style style to toggle
+     * @param enabled {@code true} to apply, {@code false} to remove
+     */
     public void setStyle(Style style, boolean enabled) {
         if (enabled) {
             apply(style);
@@ -829,6 +1232,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
     }
 
+    /**
+     * Removes a style from the current selection.
+     *
+     * @param style style to remove
+     */
     public void remove(Style style) {
         IndexRange range = getSelection();
         applyFormattingChange(getText().removeStyle(style, range.getStart(), range.getEnd()));
@@ -845,29 +1253,55 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         updateHistoryState();
     }
 
+    /**
+     * Sets bold formatting on current selection.
+     *
+     * @param enabled {@code true} for bold, {@code false} for normal weight
+     */
     public void markBold(boolean enabled) {
         applyAttributeToSelection(Style.FONT_WEIGHT, enabled ? Style.FONT_WEIGHT_VALUE_BOLD : Style.FONT_WEIGHT_VALUE_NORMAL);
     }
 
+    /**
+     * Sets italic formatting on current selection.
+     *
+     * @param enabled {@code true} for italic, {@code false} for normal style
+     */
     public void markItalic(boolean enabled) {
         applyAttributeToSelection(Style.FONT_STYLE, enabled ? Style.FONT_STYLE_VALUE_ITALIC : Style.FONT_STYLE_VALUE_NORMAL);
     }
 
+    /**
+     * Sets underline formatting on current selection.
+     *
+     * @param enabled {@code true} to underline, {@code false} to remove underline
+     */
     public void markUnderline(boolean enabled) {
         applyAttributeToSelection(Style.TEXT_DECORATION_UNDERLINE,
                 enabled ? Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE : Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE);
     }
 
+    /**
+     * Sets strike-through formatting on current selection.
+     *
+     * @param enabled {@code true} to strike through, {@code false} to remove
+     */
     public void markStrikeThrough(boolean enabled) {
         applyAttributeToSelection(Style.TEXT_DECORATION_LINE_THROUGH,
                 enabled ? Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE : Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE);
     }
 
+    /**
+     * Restores the last committed value and validates the control state.
+     */
     public void cancelEdit() {
         applyCommittedValue(get());
         state.validate();
     }
 
+    /**
+     * Commits the current text value and validates the control state.
+     */
     public void commitValue() {
         RichText committed = normalizeIncomingText(getText());
         if (!Objects.equals(get(), committed)) {
