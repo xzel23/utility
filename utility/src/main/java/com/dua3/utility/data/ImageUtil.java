@@ -370,9 +370,9 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * @param image the image to convert; must not be null
      * @return the converted BufferedImage
      */
-    default BufferedImage toBufferedImage(Image image) {
-        if (image instanceof BufferedImage bi) {
-            return bi;
+    default MutableImage toImage(Image image) {
+        if (image instanceof MutableImage mi) {
+            return mi;
         }
 
         return createImage(image.width(), image.height(), image.getArgb().clone());
@@ -392,7 +392,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
 
         try (ImageOutputStream imageOut = ImageIO.createImageOutputStream(out)) {
             writer.setOutput(imageOut);
-            RenderedImage renderedImage = toBufferedImage(image);
+            RenderedImage renderedImage = toImage(image);
             writer.write(renderedImage);
         } finally {
             writer.dispose(); // Always clear native resources held by ImageIO

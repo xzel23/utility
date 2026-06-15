@@ -316,7 +316,7 @@ public class SwingGraphics implements Graphics {
         assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         g2d.drawImage(
-                IMAGE_UTIL.convert(image),
+                IMAGE_UTIL.toImage(image),
                 Math.round(x), Math.round(y),
                 null
         );

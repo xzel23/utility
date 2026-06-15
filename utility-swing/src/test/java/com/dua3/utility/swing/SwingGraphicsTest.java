@@ -95,7 +95,7 @@ class SwingGraphicsTest extends AbstractGraphicsTest {
 
     @Override
     protected Image convertImage(BufferedImage bi) {
-        return AwtImageUtil.getInstance().convert(bi);
+        return AwtImageUtil.getInstance().toMutableImage(bi);
     }
 
 }

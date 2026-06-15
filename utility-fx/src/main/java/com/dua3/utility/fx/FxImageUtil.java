@@ -73,9 +73,9 @@ public final class FxImageUtil implements ImageUtil<FxImage, FxMutableImage> {
      * @param image the input image to convert. Must not be null.
      * @return an {@link FxImage} instance representing the converted image.
      */
-    public FxImage toImage(com.dua3.utility.data.Image image) {
-        if (image instanceof FxImage fxi) {
-            return fxi;
+    public FxMutableImage toImage(com.dua3.utility.data.Image image) {
+        if (image instanceof FxMutableImage fxmi) {
+            return fxmi;
         }
 
         return fromImageBuffer(new ImageBuffer(image.getArgb(), image.width(), image.height()));

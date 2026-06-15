@@ -81,23 +81,12 @@ public final class AwtImageUtil implements ImageUtil<AwtImage, AwtMutableImage> 
      * @param img the {@code Image} to be converted
      * @return the converted {@code AwtImage} instance
      */
-    public AwtMutableImage convert(com.dua3.utility.data.Image img) {
+    public AwtMutableImage toImage(com.dua3.utility.data.Image img) {
         if (img instanceof AwtMutableImage awtImage) {
             return awtImage;
-        } else {
-            return createImage(img.width(), img.height(), img.getArgb());
         }
-    }
 
-    /**
-     * Converts an AwtImage to a generic Image.
-     * This method accepts an instance of AwtImage and directly returns it as a generic Image.
-     *
-     * @param img the AwtImage to be converted
-     * @return the provided AwtImage cast as a generic Image
-     */
-    public Image convert(AwtMutableImage img) {
-        return img;
+        return createImage(img.width(), img.height(), img.getArgb());
     }
 
     /**
@@ -106,13 +95,13 @@ public final class AwtImageUtil implements ImageUtil<AwtImage, AwtMutableImage> 
      * @param img the BufferedImage to be converted
      * @return the converted AwtImage
      */
-    public AwtMutableImage convert(BufferedImage img) {
+    public AwtMutableImage toMutableImage(BufferedImage img) {
         if (img instanceof AwtMutableImage awtImage) {
             return awtImage;
-        } else {
-            AwtMutableImage awtImage = createImage(img.getWidth(), img.getHeight());
-            awtImage.getGraphics().drawImage(img, 0, 0, null);
-            return awtImage;
         }
+
+        AwtMutableImage awtImage = createImage(img.getWidth(), img.getHeight());
+        awtImage.getGraphics().drawImage(img, 0, 0, null);
+        return awtImage;
     }
 }

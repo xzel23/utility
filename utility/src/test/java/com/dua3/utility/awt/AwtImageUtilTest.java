@@ -96,7 +96,7 @@ class AwtImageUtilTest {
         };
 
         // Convert the test image to AwtImage
-        AwtMutableImage convertedImage = imageUtil.convert(testImage);
+        AwtMutableImage convertedImage = imageUtil.toImage(testImage);
 
         assertNotNull(convertedImage);
         assertEquals(width, convertedImage.width());
@@ -112,7 +112,7 @@ class AwtImageUtilTest {
         AwtMutableImage originalImage = AwtImageUtil.getInstance().createImage(width, height);
 
         // Convert the AwtImage to Image (should return the same instance)
-        Image convertedImage = imageUtil.convert(originalImage);
+        Image convertedImage = imageUtil.toImage(originalImage);
 
         assertNotNull(convertedImage);
         assertSame(originalImage, convertedImage);
@@ -133,7 +133,7 @@ class AwtImageUtilTest {
         }
 
         // Convert the BufferedImage to AwtImage
-        AwtMutableImage convertedImage = imageUtil.convert(bufferedImage);
+        AwtMutableImage convertedImage = imageUtil.toMutableImage(bufferedImage);
 
         assertNotNull(convertedImage);
         assertEquals(width, convertedImage.width());
