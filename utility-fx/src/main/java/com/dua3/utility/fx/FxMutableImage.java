@@ -40,7 +40,7 @@ public final class FxMutableImage extends MutableImage implements FxImage {
      *
      * @param width the width of the image, in pixels
      * @param height the height of the image, in pixels
-     * @param data an optional array of pixel data in ARGB format. If {@code null}, a new array of appropriate length is created.
+     * @param data an optional array of premultiplied ARGB pixel data. If {@code null}, a new array of appropriate length is created.
      *             The expected length is {@code width * height}.
      * @throws IllegalArgumentException if the provided {@code data} array length does not match {@code width * height}.
      */

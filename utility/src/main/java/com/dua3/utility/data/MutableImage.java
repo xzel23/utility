@@ -39,7 +39,7 @@ public abstract class MutableImage extends BufferedImage implements Image {
      *
      * @param w    the width of the raster
      * @param h    the height of the raster
-     * @param data the pixel data for the raster, expected to have a length of {@code w * h}
+     * @param data the pixel data for the raster as premultiplied ARGB values, expected to have a length of {@code w * h}
      * @return a writable raster created using the specified dimensions and pixel data
      * @throws IllegalArgumentException if the length of {@code data} is not equal to {@code w * h}
      */
@@ -63,7 +63,7 @@ public abstract class MutableImage extends BufferedImage implements Image {
      *
      * @param width  the width of the image, in pixels
      * @param height the height of the image, in pixels
-     * @param data   the pixel data for the image in ARGB format. The array should have a length
+     * @param data   the pixel data for the image as premultiplied ARGB values. The array should have a length
      *               of {@code width * height}.
      * @throws IllegalArgumentException if the length of {@code data} does not match {@code width * height}
      */

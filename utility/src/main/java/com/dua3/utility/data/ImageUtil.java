@@ -274,12 +274,12 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
     MI loadMutable(Payload payload) throws IOException;
 
     /**
-     * Create an image from pixel data.
+     * Creates an image from premultiplied ARGB pixel data.
      *
-     * @param w    the image width
-     * @param h    the image height
-     * @param data the pixel data as int values containing premultiplied ARGB values
-     * @return the image
+     * @param w    image width in pixels
+     * @param h    image height in pixels
+     * @param data pixel data as premultiplied ARGB values
+     * @return a new mutable AWT image backed by the provided pixel data
      */
     MI createImage(int w, int h, int[] data);
 
