@@ -278,7 +278,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      *
      * @param w    the image width
      * @param h    the image height
-     * @param data the pixel data as int values containing ARGB values
+     * @param data the pixel data as int values containing premultiplied ARGB values
      * @return the image
      */
     MI createImage(int w, int h, int[] data);
@@ -325,11 +325,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
             return bi;
         }
 
-        BufferedImage bufferedImage = new BufferedImage(image.width(), image.height(), BufferedImage.TYPE_INT_ARGB);
-        int[] buffer = image.getArgb();
-
-        bufferedImage.setRGB(0, 0, image.width(), image.height(), buffer, 0, image.width());
-        return bufferedImage;
+        return createImage(image.width(), image.height(), image.getArgb().clone());
     }
 
     /**
@@ -427,4 +423,3 @@ record ImageTypeData(Supplier<ImageWriter> writer, Supplier<ImageReader> reader)
         });
     }
 }
-

@@ -67,7 +67,7 @@ public record FxDataRetainingImage(javafx.scene.image.Image fxImage, String mime
         int w = width();
         int h = height();
         int[] data = new int[w * h];
-        fxImage.getPixelReader().getPixels(0, 0, w, h, PixelFormat.getIntArgbInstance(), data, 0, w);
+        fxImage.getPixelReader().getPixels(0, 0, w, h, PixelFormat.getIntArgbPreInstance(), data, 0, w);
         return data;
     }
 

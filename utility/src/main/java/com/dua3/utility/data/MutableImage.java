@@ -68,7 +68,7 @@ public abstract class MutableImage extends BufferedImage implements Image {
      * @throws IllegalArgumentException if the length of {@code data} does not match {@code width * height}
      */
     protected MutableImage(int width, int height, int[] data) {
-        super(DIRECT_COLOR_MODEL, createRaster(width, height, data), false, null);
+        super(DIRECT_COLOR_MODEL, createRaster(width, height, data), true, null);
         this.buffer = new ImageBuffer(data, width, height);
     }
 

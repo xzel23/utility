@@ -49,9 +49,10 @@ class ImageUtilTest {
         ImageUtil<?, ?> util = ImageUtil.getInstance();
 
         int w = 3, h = 2;
+        // premultiplied ARGB values (library-internal format)
         int[] argb = {
-                0x11223344, 0x55667788, 0x99AABBCC,
-                0xFFFFFFFF, 0x00000000, 0x7F010203
+                0x11020304, 0x55223344, 0x99112233,
+                0xFFFFFFFF, 0x00000000, 0x7F010102
         };
 
         Image img = util.createImage(w, h, argb.clone());

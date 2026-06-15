@@ -25,7 +25,7 @@ public interface Image {
     /**
      * Get image data.
      * The returned array consists of width*height integers each storing a single pixels color encoded in ARGB byte
-     * order.
+     * order using premultiplied alpha.
      *
      * @return the image width in pixels
      */
