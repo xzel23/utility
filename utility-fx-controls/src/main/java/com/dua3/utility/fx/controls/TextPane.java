@@ -625,13 +625,11 @@ public class TextPane extends Control {
             wrapped = inlineNode.getWrapped();
         }
 
-        if (wrapped instanceof Node node) {
-            return node;
-        }
-        if (wrapped instanceof Image image) {
-            return new ImageView(FxImageUtil.getInstance().toImage(image).fxImage());
-        }
-        return null;
+        return switch (wrapped) {
+            case Node node -> node;
+            case Image image -> new ImageView(FxImageUtil.getInstance().toImage(image).fxImage());
+            case null, default -> null;
+        };
     }
 
     private static VAnchor getInlineNodeVAnchor(Run run) {
