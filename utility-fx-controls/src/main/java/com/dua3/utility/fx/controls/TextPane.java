@@ -73,6 +73,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 
 /**
@@ -261,17 +262,34 @@ public class TextPane extends Control {
         font.set(FONT_UTIL.convert(value));
     }
 
+    /**
+     * Creates the default skin implementation.
+     *
+     * @return default skin for this control
+     */
     @Override
     protected Skin<?> createDefaultSkin() {
         return new TextPaneSkin(this);
     }
 
+    /**
+     * Computes preferred width.
+     *
+     * @param height available height hint
+     * @return preferred width
+     */
     @Override
     protected double computePrefWidth(double height) {
         double textWidth = getFont().getFontData().spaceWidth() * 40.0;
         return snappedLeftInset() + Math.ceil(textWidth) + snappedRightInset();
     }
 
+    /**
+     * Computes preferred height.
+     *
+     * @param width available width hint
+     * @return preferred height
+     */
     @Override
     protected double computePrefHeight(double width) {
         double contentWidth = width > 0
@@ -282,6 +300,12 @@ public class TextPane extends Control {
         return clampToMaxHeight(pref);
     }
 
+    /**
+     * Computes minimum height.
+     *
+     * @param width available width hint
+     * @return minimum height
+     */
     @Override
     protected double computeMinHeight(double width) {
         Font font = getFont();
@@ -297,6 +321,11 @@ public class TextPane extends Control {
         return value;
     }
 
+    /**
+     * Returns the rendering font.
+     *
+     * @return current utility-font value
+     */
     public Font getFont() {
         return font.get();
     }
@@ -591,7 +620,7 @@ public class TextPane extends Control {
     }
 
     private static @Nullable Node toFxInlineNode(@Nullable Object value) {
-        @Nullable Object wrapped = value;
+        Object wrapped = value;
         if (wrapped instanceof InlineNode<?> inlineNode) {
             wrapped = inlineNode.getWrapped();
         }
@@ -616,54 +645,37 @@ public class TextPane extends Control {
         return VAnchor.BASELINE;
     }
 
-    private static double getInlineReferenceAscent(Run run, Font fallbackFont) {
+    private static double getInlineReferenceValue(Run run, String styleName, DoubleSupplier fallbackValueSupplier) {
         for (int i = run.getStyles().size() - 1; i >= 0; i--) {
             Style style = run.getStyles().get(i);
-            Object value = style.get(STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT);
+            Object value = style.get(styleName);
             if (value instanceof Number n) {
                 return n.doubleValue();
             }
         }
-        return fallbackFont.getAscent();
+        return fallbackValueSupplier.getAsDouble();
+    }
+
+    private static double getInlineReferenceAscent(Run run, Font fallbackFont) {
+        return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT, fallbackFont::getAscent);
     }
 
     private static double getInlineReferenceDescent(Run run, Font fallbackFont) {
-        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
-            Style style = run.getStyles().get(i);
-            Object value = style.get(STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT);
-            if (value instanceof Number n) {
-                return n.doubleValue();
-            }
-        }
-        return fallbackFont.getDescent();
+        return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT, fallbackFont::getDescent);
     }
 
     private static double getInlineNodeDescent(Run run) {
-        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
-            Style style = run.getStyles().get(i);
-            Object value = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT);
-            if (value instanceof Number n) {
-                return n.doubleValue();
-            }
-        }
-        return Double.NaN;
+        return getInlineReferenceValue(run, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT, () -> Double.NaN);
     }
 
     private static double getInlineLeadingWidth(Run run) {
-        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
-            Style style = run.getStyles().get(i);
-            Object value = style.get(STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH);
-            if (value instanceof Number n) {
-                return Math.max(0.0, n.doubleValue());
-            }
-        }
-        return 0.0;
+        return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH, () -> 0.0);
     }
 
     private static double computeInlineDescent(InlineControlPlacement placement, double prefH, double baselineOffset) {
         return Double.isFinite(placement.descent())
                 ? placement.descent()
-                : (baselineOffset != Node.BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)
+                : (baselineOffset != BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)
                         ? Math.max(0.0, prefH - baselineOffset)
                         : 0.0);
     }
@@ -1358,6 +1370,9 @@ public class TextPane extends Control {
             getSkinnable().requestLayout();
         }
 
+        /**
+         * Releases animation resources owned by this skin.
+         */
         @Override
         public void dispose() {
             caretTimeline.stop();
