@@ -1389,7 +1389,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int targetLineIndex = currentLineIndex + delta;
         int targetCaret;
         if (targetLineIndex < 0) {
-            x = 0;
             targetCaret = 0;
         } else if (targetLineIndex >= lines.size()) {
             VisualLine line = lines.getLast();
@@ -1452,12 +1451,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             selectPositionCaret(targetCaret);
         } else {
             positionCaret(targetCaret);
-        }
-
-        if (targetCaret == 0) {
-            x = 0;
-        } else if (targetCaret == lines.getLast().end()) {
-            x = lines.getLast().maxX();
         }
 
         preferredCaretX = x;
