@@ -4,7 +4,10 @@ import com.dua3.utility.data.Image;
 import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.VAnchor;
 
+import java.nio.ByteBuffer;
+import java.nio.BufferUnderflowException;
 import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -22,7 +25,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * Marker character used for inline nodes.
      */
     public static final char INLINE_NODE_MARKER = '\uFFFC';
-    private static final AtomicLong STYLE_ID = new AtomicLong();
+
     /**
      * Style attribute key for a function creating an inline node from run text.
      */
@@ -47,6 +50,13 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * Style attribute key for inline-node maximum height.
      */
     public static final String STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT = RichTextBuilderExtBase.class.getName() + ".inlineNodeMaxHeight";
+    /**
+     * MIME type used to represent inline hyperlinks.
+     */
+    public static final String INLINE_NODE_MIME_TYPE_HYPERLINK = "application/vnd.dua3.inline-hyperlink";
+
+    private static final AtomicLong STYLE_ID = new AtomicLong();
+    private static final String INLINE_NODE = "inline-node";
 
     /**
      * Protected constructor for the {@code RichTextBuilderExtBase} class.
@@ -71,14 +81,13 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
     }
 
     /**
-     * Creates a hyperlink node with the specified text and action. The hyperlink
-     * triggers the provided action when interacted with.
+     * Creates a hyperlink node with the specified text and target URI.
      *
      * @param text the text to be displayed for the hyperlink
-     * @param action the action to be executed when the hyperlink is activated
+     * @param uri hyperlink target URI
      * @return the created hyperlink node
      */
-    protected abstract N createHyperlink(CharSequence text, Runnable action);
+    protected abstract N createHyperlink(CharSequence text, URI uri);
 
     /**
      * Creates a button node with the specified text and action.
@@ -120,18 +129,81 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
 
     /**
      * Appends a hyperlink to the rich-text content. The hyperlink is displayed with the specified text
-     * and executes the provided action when activated.
+     * and targets the provided URI when activated.
      *
      * @param text the text to display for the hyperlink
-     * @param action the action to execute when the hyperlink is activated
+     * @param uri hyperlink target URI
      * @return the builder instance for method chaining
      */
-    public B appendHyperlink(CharSequence text, Runnable action) {
+    public B appendHyperlink(CharSequence text, URI uri) {
         String linkText = String.valueOf(text);
-        byte[] data = linkText.getBytes(StandardCharsets.UTF_8);
+        String target = uri.toString();
+        byte[] data = encodeInlineHyperlinkData(target, linkText);
         return appendInlineNodeWithStyle(() ->
-                new InlineNode<>(createHyperlink(linkText, action), "text/plain", data));
+                new InlineNode<>(createHyperlink(linkText, uri), INLINE_NODE_MIME_TYPE_HYPERLINK, data));
     }
+
+    /**
+     * Encodes inline hyperlink payload data.
+     *
+     * @param target hyperlink target URI/string
+     * @param text hyperlink label text
+     * @return encoded payload bytes
+     */
+    public static byte[] encodeInlineHyperlinkData(CharSequence target, CharSequence text) {
+        byte[] targetBytes = String.valueOf(target).getBytes(StandardCharsets.UTF_8);
+        byte[] textBytes = String.valueOf(text).getBytes(StandardCharsets.UTF_8);
+        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES * 2 + targetBytes.length + textBytes.length);
+        buffer.putInt(targetBytes.length);
+        buffer.putInt(textBytes.length);
+        buffer.put(targetBytes);
+        buffer.put(textBytes);
+        return buffer.array();
+    }
+
+    /**
+     * Decodes inline hyperlink payload data.
+     *
+     * <p>Falls back to legacy payloads that only stored link text in UTF-8 bytes.
+     *
+     * @param data payload bytes
+     * @return decoded hyperlink data
+     */
+    public static HyperlinkData decodeInlineHyperlinkData(byte[] data) {
+        if (data.length == 0) {
+            return new HyperlinkData("", "");
+        }
+
+        try {
+            ByteBuffer buffer = ByteBuffer.wrap(data);
+            int targetLength = buffer.getInt();
+            int textLength = buffer.getInt();
+            if (targetLength < 0 || textLength < 0 || Integer.BYTES * 2 + targetLength + textLength != data.length) {
+                throw new IllegalArgumentException("invalid inline hyperlink payload");
+            }
+
+            byte[] targetBytes = new byte[targetLength];
+            byte[] textBytes = new byte[textLength];
+            buffer.get(targetBytes);
+            buffer.get(textBytes);
+
+            String target = new String(targetBytes, StandardCharsets.UTF_8);
+            String text = new String(textBytes, StandardCharsets.UTF_8);
+            return new HyperlinkData(target, text);
+        } catch (BufferUnderflowException | IllegalArgumentException ex) {
+            // legacy format: plain UTF-8 text used as both label and target
+            String value = new String(data, StandardCharsets.UTF_8);
+            return new HyperlinkData(value, value);
+        }
+    }
+
+    /**
+     * Decoded hyperlink payload values.
+     *
+     * @param target hyperlink target URI/string
+     * @param text hyperlink label text
+     */
+    public record HyperlinkData(String target, String text) {}
 
     /**
      * Appends a button to the rich-text content. The button is displayed with the specified text
@@ -197,7 +269,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
         Function<String, InlineNode<? extends N>> nodeFactory = ignoredText ->
                 new InlineNode<>(createImage(image, maxWidth, maxHeight), image.mimeType(), data);
         Style style = Style.create(
-                nextStyleName("inline-node"),
+                nextStyleName(INLINE_NODE),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR, vAnchor),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_DESCENT, 0.0),
@@ -217,10 +289,10 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @param inlineNodeSupplier a {@link Supplier} that provides the inline node to append
      * @return the builder instance for method chaining
      */
-    protected B appendInlineNodeWithStyle(Supplier<? extends InlineNode<? extends N>> inlineNodeSupplier) {
+    protected B appendInlineNodeWithStyle(Supplier<InlineNode<? extends N>> inlineNodeSupplier) {
         Function<String, InlineNode<? extends N>> nodeFactory = ignoredText -> inlineNodeSupplier.get();
         Style style = Style.create(
-                nextStyleName("inline-node"),
+                nextStyleName(INLINE_NODE),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory)
         );
         push(style);
@@ -239,10 +311,10 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @param descent the descent value to adjust the vertical alignment for the node
      * @return the builder instance for method chaining
      */
-    protected B appendInlineNodeWithStyle(Supplier<? extends InlineNode<? extends N>> inlineNodeSupplier, VAnchor vAnchor, double descent) {
+    protected B appendInlineNodeWithStyle(Supplier<InlineNode<? extends N>> inlineNodeSupplier, VAnchor vAnchor, double descent) {
         Function<String, InlineNode<? extends N>> nodeFactory = ignoredText -> inlineNodeSupplier.get();
         Style style = Style.create(
-                nextStyleName("inline-node"),
+                nextStyleName(INLINE_NODE),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR, vAnchor),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_DESCENT, descent)

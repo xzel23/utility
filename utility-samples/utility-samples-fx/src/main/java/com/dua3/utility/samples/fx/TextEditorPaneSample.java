@@ -21,6 +21,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+
 /**
  * Combined sample application for {@link TextEditorPane} and {@link TextPane}.
  */
@@ -43,7 +49,7 @@ public class TextEditorPaneSample extends Application {
     @Override
     public void start(Stage stage) {
         Label status = new Label("No action yet.");
-        RichText text = createSampleText(status);
+        RichText text = createSampleText();
 
         TextEditorPane editor = new TextEditorPane(text);
         editor.setWrapText(true);
@@ -57,6 +63,8 @@ public class TextEditorPaneSample extends Application {
         committedValuePane.setMaxHeight(1000);
         committedValuePane.textProperty().bind(editor.valueProperty());
         committedValuePane.wrapTextProperty().bind(editor.wrapTextProperty());
+        editor.setHyperlinkHandler(uri -> handleSampleUri(status, uri));
+        committedValuePane.setHyperlinkHandler(uri -> handleSampleUri(status, uri));
 
         CheckBox wrap = new CheckBox("Wrap text");
         wrap.setSelected(true);
@@ -131,16 +139,16 @@ public class TextEditorPaneSample extends Application {
         stage.show();
     }
 
-    private static RichText createSampleText(Label status) {
+    private static RichText createSampleText() {
         RichTextBuilderFx b = new RichTextBuilderFx();
         b.push(Style.BOLD).append("Combined TextEditorPane/TextPane demo").pop(Style.BOLD).append('\n');
         b.append("Edit in the upper pane, then press Apply to commit to InputControl state.\n");
         b.append("Reset restores the default InputControl value.\n\n");
 
         b.append("Inline controls: ");
-        b.appendHyperlink("Hyperlink with space", () -> status.setText("Hyperlink clicked"));
+        b.appendHyperlink("Hyperlink with space", statusUri("Hyperlink clicked"));
         b.append(" followed by text, and ");
-        b.appendButton("Button 1", () -> status.setText("Inline button 1 clicked"));
+        b.appendHyperlink("Button 1", statusUri("Button 1 clicked"));
         b.append(" followed by text.\n\n");
 
         Image imageOriginal = createDemoImage(96, 48, 0xFF147BDA, 0xFF13BFA7);
@@ -168,7 +176,7 @@ public class TextEditorPaneSample extends Application {
         b.append(separator);
 
         b.append("Wrap test: this sentence is intentionally long so that the inline ");
-        b.appendButton("Button 2", () -> status.setText("Inline button 2 clicked"));
+        b.appendHyperlink("Button 2", statusUri("Button 2 clicked"));
         b.append(" is likely moved to a new line while text before and after keeps normal spacing.\n\n");
 
         b.append("Long paragraph: ");
@@ -176,6 +184,39 @@ public class TextEditorPaneSample extends Application {
         b.append("ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ");
         b.append("laboris nisi ut aliquip ex ea commodo consequat.");
         return b.toRichText();
+    }
+
+    private static URI statusUri(String text) {
+        String encoded = URLEncoder.encode(text, StandardCharsets.UTF_8).replace("+", "%20");
+        return URI.create("testapp://setStatus?text=" + encoded);
+    }
+
+    private static void handleSampleUri(Label status, URI uri) {
+        if (!"testapp".equalsIgnoreCase(uri.getScheme())) {
+            return;
+        }
+        if (!"setStatus".equalsIgnoreCase(uri.getHost())) {
+            return;
+        }
+
+        Optional<String> text = queryParameter(uri, "text");
+        status.setText(text.orElse("No status text provided."));
+    }
+
+    private static Optional<String> queryParameter(URI uri, String key) {
+        String query = uri.getQuery();
+        if (query == null || query.isBlank()) {
+            return Optional.empty();
+        }
+
+        String prefix = key + "=";
+        for (String part : query.split("&")) {
+            if (part.startsWith(prefix)) {
+                String value = part.substring(prefix.length());
+                return Optional.of(URLDecoder.decode(value, StandardCharsets.UTF_8));
+            }
+        }
+        return Optional.empty();
     }
 
     private static Image createDemoImage(int width, int height, int argbA, int argbB) {

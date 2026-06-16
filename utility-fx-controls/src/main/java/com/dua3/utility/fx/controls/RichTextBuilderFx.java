@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.ImageView;
 
+import java.net.URI;
+
 /**
  * JavaFX rich-text builder with support for inline JavaFX nodes.
  */
@@ -31,10 +33,11 @@ public class RichTextBuilderFx extends RichTextBuilderExtBase<Node, RichTextBuil
     }
 
     @Override
-    protected Node createHyperlink(CharSequence text, Runnable action) {
+    protected Node createHyperlink(CharSequence text, URI uri) {
         Hyperlink hyperlink = new Hyperlink(String.valueOf(text));
         hyperlink.setPadding(Insets.EMPTY);
-        hyperlink.setOnAction(evt -> action.run());
+        hyperlink.setFocusTraversable(false);
+        hyperlink.setUserData(uri);
         return hyperlink;
     }
 

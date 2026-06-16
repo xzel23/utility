@@ -61,6 +61,10 @@ import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.feather.Feather;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,6 +72,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -113,6 +118,7 @@ public class TextPane extends Control {
     private final ObjectProperty<RichText> text = new SimpleObjectProperty<>(this, "text", RichText.emptyText());
     private final BooleanProperty wrapText = new SimpleBooleanProperty(this, "wrapText", false);
     private final ObjectProperty<Font> font = new SimpleObjectProperty<>(this, "font", FONT_UTIL.getDefaultFont());
+    private final ObjectProperty<Consumer<URI>> hyperlinkHandler = new SimpleObjectProperty<>(this, "hyperlinkHandler", TextPane::openUriUsingDesktop);
 
     /**
      * Create an empty {@code TextPane}.
@@ -197,6 +203,33 @@ public class TextPane extends Control {
      */
     public final void setText(@Nullable CharSequence value) {
         text.set(value == null ? RichText.emptyText() : RichText.valueOf(value));
+    }
+
+    /**
+     * Returns the hyperlink handler property used for inline hyperlinks.
+     *
+     * @return hyperlink handler property
+     */
+    public final ObjectProperty<Consumer<URI>> hyperlinkHandlerProperty() {
+        return hyperlinkHandler;
+    }
+
+    /**
+     * Returns the hyperlink handler used for inline hyperlinks.
+     *
+     * @return hyperlink handler
+     */
+    public final Consumer<URI> getHyperlinkHandler() {
+        return hyperlinkHandler.get();
+    }
+
+    /**
+     * Sets the hyperlink handler used for inline hyperlinks.
+     *
+     * @param handler hyperlink handler
+     */
+    public final void setHyperlinkHandler(Consumer<URI> handler) {
+        hyperlinkHandler.set(handler);
     }
 
     /**
@@ -625,6 +658,16 @@ public class TextPane extends Control {
 
         Object wrapped = value;
         if (wrapped instanceof InlineNode<?> inlineNode) {
+            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK.equals(inlineNode.getMimeType())) {
+                RichTextBuilderExtBase.HyperlinkData hyperlinkData = RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData());
+                String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
+                        ? cs.toString()
+                        : (hyperlinkData.text().isBlank() ? hyperlinkData.target() : hyperlinkData.text());
+                Hyperlink hyperlink = new Hyperlink(text);
+                hyperlink.setFocusTraversable(false);
+                toUri(hyperlinkData.target()).ifPresent(hyperlink::setUserData);
+                return hyperlink;
+            }
             wrapped = inlineNode.getWrapped();
         }
 
@@ -672,6 +715,60 @@ public class TextPane extends Control {
             imageView.setFitHeight(Math.max(1.0, maxHeight));
         }
         imageView.setSmooth(true);
+    }
+
+    private static Optional<URI> toUri(@Nullable Object value) {
+        if (value instanceof URI uri) {
+            return Optional.of(uri);
+        }
+        if (value instanceof CharSequence cs) {
+            String text = cs.toString().trim();
+            if (text.isEmpty()) {
+                return Optional.empty();
+            }
+            try {
+                return Optional.of(new URI(text));
+            } catch (URISyntaxException ex) {
+                return Optional.empty();
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static void wireHyperlinkAction(TextPane control, Hyperlink hyperlink) {
+        if (hyperlink.getOnAction() != null) {
+            return;
+        }
+
+        Optional<URI> target = toUri(hyperlink.getUserData());
+        if (target.isEmpty()) {
+            return;
+        }
+
+        hyperlink.setOnAction(evt -> {
+            Consumer<URI> handler = control.getHyperlinkHandler();
+            if (handler != null) {
+                handler.accept(target.get());
+            }
+        });
+    }
+
+    private static void openUriUsingDesktop(URI uri) {
+        if (uri == null || !Desktop.isDesktopSupported()) {
+            return;
+        }
+
+        Desktop desktop = Desktop.getDesktop();
+        try {
+            String scheme = uri.getScheme();
+            if ("mailto".equalsIgnoreCase(scheme) && desktop.isSupported(Desktop.Action.MAIL)) {
+                desktop.mail(uri);
+            } else if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                desktop.browse(uri);
+            }
+        } catch (IOException | UnsupportedOperationException ignored) {
+            // ignore failures from user-supplied or unsupported URI schemes
+        }
     }
 
     private static VAnchor getInlineNodeVAnchor(Run run) {
@@ -937,12 +1034,12 @@ public class TextPane extends Control {
                     new KeyFrame(Duration.seconds(0.5), e -> setBlink(true)),
                     new KeyFrame(Duration.seconds(1.0))
             );
-            caretTimeline.setCycleCount(Timeline.INDEFINITE);
+            caretTimeline.setCycleCount(Animation.INDEFINITE);
 
             dragAutoscrollTimeline = new Timeline(
                     new KeyFrame(Duration.millis(DRAG_AUTOSCROLL_TICK_MS), e -> autoScrollDuringSelectionDrag())
             );
-            dragAutoscrollTimeline.setCycleCount(Timeline.INDEFINITE);
+            dragAutoscrollTimeline.setCycleCount(Animation.INDEFINITE);
 
             contentPane.getStyleClass().add("content");
             selectionLayer.setMouseTransparent(true);
@@ -1018,7 +1115,7 @@ public class TextPane extends Control {
             control.textProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.wrapTextProperty().addListener((obs, oldVal, newVal) -> {
                 scrollPane.setFitToWidth(newVal);
-                scrollPane.setHbarPolicy(newVal ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                scrollPane.setHbarPolicy(newVal == Boolean.TRUE ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
                 invalidate();
             });
             control.fontProperty().addListener((obs, oldVal, newVal) -> invalidate());
@@ -1329,7 +1426,7 @@ public class TextPane extends Control {
             double viewportWidth = viewport.getWidth();
             double contentWidth = Math.max(contentPane.getLayoutBounds().getWidth(), canvas.getWidth());
             double maxOffset = Math.max(0.0, contentWidth - viewportWidth);
-            if (!(viewportWidth > 0.0) || maxOffset <= 0.0) {
+            if (viewportWidth <= 0.0 || maxOffset <= 0.0) {
                 return false;
             }
 
@@ -1358,7 +1455,7 @@ public class TextPane extends Control {
             double viewportHeight = viewport.getHeight();
             double contentHeight = Math.max(contentPane.getLayoutBounds().getHeight(), canvas.getHeight());
             double maxOffset = Math.max(0.0, contentHeight - viewportHeight);
-            if (!(viewportHeight > 0.0) || maxOffset <= 0.0) {
+            if (viewportHeight <= 0.0 || maxOffset <= 0.0) {
                 return false;
             }
 
@@ -1391,7 +1488,7 @@ public class TextPane extends Control {
             double viewportHeight = viewport.getHeight();
             double contentHeight = Math.max(contentPane.getLayoutBounds().getHeight(), canvas.getHeight());
             double maxOffset = Math.max(0.0, contentHeight - viewportHeight);
-            if (!(viewportHeight > 0.0) || maxOffset <= 0.0) {
+            if (viewportHeight <= 0.0 || maxOffset <= 0.0) {
                 return false;
             }
 
@@ -1401,7 +1498,7 @@ public class TextPane extends Control {
                 return false;
             }
 
-            scrollPane.setVvalue(maxOffset <= 0.0 ? 0.0 : targetOffset / maxOffset);
+            scrollPane.setVvalue(targetOffset / maxOffset);
             return true;
         }
 
@@ -1527,6 +1624,9 @@ public class TextPane extends Control {
                 inlineLayer.getChildren().add(node);
                 if (node instanceof Labeled labeled) {
                     labeled.setFont(FxFontUtil.getInstance().convert(placement.font()));
+                }
+                if (node instanceof Hyperlink hyperlink) {
+                    wireHyperlinkAction(control, hyperlink);
                 }
                 node.setManaged(false);
                 node.applyCss();

@@ -12,6 +12,8 @@ import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.VAnchor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import org.junit.jupiter.api.Assumptions;
@@ -19,11 +21,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -186,6 +190,36 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
             assertTrue(imageView.isPreserveRatio());
             assertEquals(expectedWidth, imageView.getFitWidth(), 0.25);
             assertEquals(expectedHeight, imageView.getFitHeight(), 0.25);
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testTextPaneHyperlinkDispatchesToCustomHandler() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            URI uri = URI.create("testapp://setStatus?text=Button%201%20clicked");
+
+            RichTextBuilderFx builder = new RichTextBuilderFx();
+            builder.append("Before ");
+            builder.appendHyperlink("Button 1", uri);
+            builder.append(" After");
+
+            AtomicReference<URI> clickedUri = new AtomicReference<>();
+            TextPane pane = new TextPane(builder.toRichText());
+            pane.setWrapText(true);
+            pane.setHyperlinkHandler(clickedUri::set);
+
+            Scene scene = addToScene(pane);
+            scene.getRoot().applyCss();
+            scene.getRoot().layout();
+            pane.applyCss();
+            pane.layout();
+
+            Node node = pane.lookup(".hyperlink");
+            Hyperlink hyperlink = assertInstanceOf(Hyperlink.class, node);
+            hyperlink.fire();
+
+            assertEquals(uri, clickedUri.get());
         });
     }
 
@@ -394,7 +428,7 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
         b.append("Reset restores the default InputControl value.\n\n");
 
         b.append("Inline controls: ");
-        b.appendHyperlink("Hyperlink with space", () -> status.setText("Hyperlink clicked"));
+        b.appendHyperlink("Hyperlink with space", URI.create("testapp://setStatus?text=Hyperlink%20clicked"));
         b.append(" followed by text, and ");
         b.appendButton("Button 1", () -> status.setText("Inline button 1 clicked"));
         b.append(" followed by text.\n\n");

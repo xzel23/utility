@@ -9,6 +9,7 @@ import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilderExtBase;
+import com.dua3.utility.text.RichTextBuilderExtBase.HyperlinkData;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.InlineNode;
@@ -17,6 +18,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -176,6 +178,12 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
         }
 
         private void appendRunContent(Run run, FontDef fontDef) {
+            InlineHyperlinkExportData hyperlinkData = findInlineHyperlinkExportData(run);
+            if (hyperlinkData != null) {
+                appendHyperlinkRunContent(run, hyperlinkData);
+                return;
+            }
+
             InlineImageExportData imageData = findInlineImageExportData(run);
             if (imageData == null) {
                 appendChars(run);
@@ -199,6 +207,109 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
 
             if (segmentStart < length) {
                 appendEscapedText(buffer, run.subSequence(segmentStart, length));
+            }
+        }
+
+        private void appendHyperlinkRunContent(Run run, InlineHyperlinkExportData hyperlinkData) {
+            int length = run.length();
+            int segmentStart = 0;
+            boolean hasMarker = false;
+            for (int i = 0; i < length; i++) {
+                if (run.charAt(i) != RichTextBuilderExtBase.INLINE_NODE_MARKER) {
+                    continue;
+                }
+
+                hasMarker = true;
+                if (segmentStart < i) {
+                    appendEscapedText(buffer, run.subSequence(segmentStart, i));
+                }
+                appendHyperlinkField(hyperlinkData.target(), hyperlinkData.text());
+                segmentStart = i + 1;
+            }
+
+            if (!hasMarker) {
+                appendHyperlinkField(hyperlinkData.target(), run.toString());
+                return;
+            }
+
+            if (segmentStart < length) {
+                appendEscapedText(buffer, run.subSequence(segmentStart, length));
+            }
+        }
+
+        private void appendHyperlinkField(String target, CharSequence displayText) {
+            String resolvedTarget = target.isBlank() ? displayText.toString() : target;
+            String resolvedDisplayText = displayText.isEmpty() ? resolvedTarget : displayText.toString();
+
+            buffer.append("{\\field{\\*\\fldinst HYPERLINK \"");
+            appendEscapedFieldInstructionLiteral(buffer, resolvedTarget);
+            buffer.append("\"}{\\fldrslt ");
+            appendEscapedText(buffer, resolvedDisplayText);
+            buffer.append("}}");
+        }
+
+        private static @Nullable InlineHyperlinkExportData findInlineHyperlinkExportData(Run run) {
+            String text = run.toString();
+            List<Style> styles = run.getStyles();
+            for (int i = styles.size() - 1; i >= 0; i--) {
+                Style style = styles.get(i);
+                InlineNode<?> fromFactory = evaluateInlineNodeFactory(style, text);
+                InlineHyperlinkExportData data = toInlineHyperlinkExportData(fromFactory);
+                if (data != null) {
+                    return data;
+                }
+                Object value = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
+                data = value instanceof InlineNode<?> inlineNode ? toInlineHyperlinkExportData(inlineNode) : null;
+                if (data != null) {
+                    return data;
+                }
+            }
+            return null;
+        }
+
+        private static @Nullable InlineHyperlinkExportData toInlineHyperlinkExportData(@Nullable InlineNode<?> inlineNode) {
+            if (inlineNode == null) {
+                return null;
+            }
+
+            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK.equals(inlineNode.getMimeType())) {
+                HyperlinkData data = RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData());
+                String displayText = hyperlinkDisplayText(inlineNode, data);
+                String target = data.target().isBlank() ? displayText : data.target();
+                if (!target.isBlank()) {
+                    return new InlineHyperlinkExportData(target, displayText);
+                }
+                return null;
+            }
+
+            Object wrapped = inlineNode.getWrapped();
+            String wrappedType = wrapped.getClass().getName();
+            if (!"javafx.scene.control.Hyperlink".equals(wrappedType)) {
+                return null;
+            }
+
+            String textFromData = new String(inlineNode.getData(), StandardCharsets.UTF_8);
+            String displayText = textFromData.isBlank() ? extractHyperlinkTextReflectively(wrapped) : textFromData;
+            if (displayText.isBlank()) {
+                return null;
+            }
+            return new InlineHyperlinkExportData(displayText, displayText);
+        }
+
+        private static String hyperlinkDisplayText(InlineNode<?> inlineNode, HyperlinkData data) {
+            Object wrapped = inlineNode.getWrapped();
+            if (wrapped instanceof CharSequence cs && !cs.isEmpty()) {
+                return cs.toString();
+            }
+            return data.text().isBlank() ? data.target() : data.text();
+        }
+
+        private static String extractHyperlinkTextReflectively(Object wrapped) {
+            try {
+                Object value = wrapped.getClass().getMethod("getText").invoke(wrapped);
+                return value == null ? "" : value.toString();
+            } catch (ReflectiveOperationException ex) {
+                return "";
             }
         }
 
@@ -309,7 +420,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
 
         private static byte[] encodeImageAsPng(Image image) {
             try (ByteArrayOutputStream out = new ByteArrayOutputStream(1024)) {
-                ImageUtil.getInstance().write(image, out, "image/png");
+                ImageUtil.getInstance().write(image, out, ImageUtil.MIME_TYPE_PNG);
                 return out.toByteArray();
             } catch (IOException | RuntimeException ex) {
                 return new byte[0];
@@ -446,6 +557,21 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
         buffer.append("\\u").append(signedValue).append('?');
     }
 
+    private static void appendEscapedFieldInstructionLiteral(StringBuilder buffer, CharSequence text) {
+        int i = 0;
+        while (i < text.length()) {
+            int codePoint = Character.codePointAt(text, i);
+            i += Character.charCount(codePoint);
+            switch (codePoint) {
+                case '\\' -> buffer.append("\\\\");
+                case '{' -> buffer.append("\\{");
+                case '}' -> buffer.append("\\}");
+                case '"' -> buffer.append("\\\"");
+                default -> appendEscapedCodePoint(buffer, codePoint);
+            }
+        }
+    }
+
     private static void appendHexBytes(StringBuilder buffer, byte[] data) {
         for (byte value : data) {
             int b = value & 0xFF;
@@ -459,6 +585,11 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             @Nullable Double descent,
             @Nullable Double maxWidth,
             @Nullable Double maxHeight
+    ) {}
+
+    private record InlineHyperlinkExportData(
+            String target,
+            String text
     ) {}
 
     private record PictureTarget(

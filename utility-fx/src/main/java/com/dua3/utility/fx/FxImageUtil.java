@@ -36,13 +36,13 @@ public final class FxImageUtil implements ImageUtil<FxImage, FxMutableImage> {
             String mime = MAGIC.getMimeType(payload.magic8Bytes());
             LoadOption activeLoadOption = loadOption != LoadOption.AUTOMATIC
                     ? loadOption
-                    : (mime.equals("image/jpeg") ? LoadOption.RETAIN_DATA : LoadOption.DONT_RETAIN_DATA);
+                    : (mime.equals(ImageUtil.MIME_TYPE_JPEG) ? LoadOption.RETAIN_DATA : LoadOption.DONT_RETAIN_DATA);
 
             return switch (activeLoadOption) {
                 case RETAIN_DATA -> {
                     // for jpeg, we want to keep the original data in order not to introduce new artifacts
                     try (var imageIn = IoUtil.getInputStream(payload.stream().readAllBytes())) {
-                        yield new FxDataRetainingImage(new Image(imageIn), "image/jpeg", "jpg", payload.stream().readAllBytes());
+                        yield new FxDataRetainingImage(new Image(imageIn), ImageUtil.MIME_TYPE_JPEG, "jpg", payload.stream().readAllBytes());
                     }
                 }
                 default -> new FxWrappedImage(new Image(payload.stream()));
@@ -73,6 +73,7 @@ public final class FxImageUtil implements ImageUtil<FxImage, FxMutableImage> {
      * @param image the input image to convert. Must not be null.
      * @return an {@link FxImage} instance representing the converted image.
      */
+    @Override
     public FxMutableImage toImage(com.dua3.utility.data.Image image) {
         if (image instanceof FxMutableImage fxmi) {
             return fxmi;

@@ -29,6 +29,34 @@ import java.util.function.Supplier;
  * {@link #createImage(int, int)} (int, int)}, {@link #createImage(int, int)} (int, int, int[])}, etc.
  */
 public interface ImageUtil<I extends Image, MI extends MutableImage> {
+    /**
+     * Represents the MIME type for PNG (Portable Network Graphics) image files.
+     */
+    String MIME_TYPE_PNG = "image/png";
+    /**
+     * Represents the MIME type for JPEG image files.
+     */
+    String MIME_TYPE_JPEG = "image/jpeg";
+    /**
+     * Represents the MIME type for GIF (Graphics Interchange Format) images.
+     */
+    String MIME_TYPE_GIF = "image/gif";
+    /**
+     * Represents the MIME type for BMP image files.
+     */
+    String MIME_TYPE_BMP = "image/bmp";
+    /**
+     * Represents the MIME type for the WebP image format.
+     */
+    String MIME_TYPE_WEBP = "image/webp";
+    /**
+     * A constant representing the MIME type for TIFF (Tagged Image File Format) images.
+     */
+    String MIME_TYPE_TIFF = "image/tiff";
+    /**
+     * A constant that represents the MIME type for icon images (image/x-icon).
+     */
+    String MIME_TYPE_X_ICON = "image/x-icon";
 
     /**
      * Defines the options available for loading images. These options determine
@@ -58,33 +86,33 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      */
     Magic MAGIC = new Magic(List.of(
             // PNG: 89 50 4E 47 0D 0A 1A 0A
-            Magic.MagicNumber.of("image/png", 0x89504E470D0A1A0AL, 0xFFFFFFFFFFFFFFFFL),
+            Magic.MagicNumber.of(MIME_TYPE_PNG, 0x89504E470D0A1A0AL, 0xFFFFFFFFFFFFFFFFL),
 
             // JPEG: FF D8 FF (Masks only the first 3 bytes, ignores the remaining 5)
-            Magic.MagicNumber.of("image/jpeg", 0xFFD8FF0000000000L, 0xFFFFFF0000000000L),
+            Magic.MagicNumber.of(MIME_TYPE_JPEG, 0xFFD8FF0000000000L, 0xFFFFFF0000000000L),
 
             // GIF89a: 47 49 46 38 39 61 (GIF89a -> G I F 8 9 a)
-            Magic.MagicNumber.of("image/gif", 0x4749463839610000L, 0xFFFFFFFFFFFF0000L),
+            Magic.MagicNumber.of(MIME_TYPE_GIF, 0x4749463839610000L, 0xFFFFFFFFFFFF0000L),
 
             // GIF87a: 47 49 46 38 37 61 (GIF87a -> G I F 8 7 a)
-            Magic.MagicNumber.of("image/gif", 0x4749463837610000L, 0xFFFFFFFFFFFF0000L),
+            Magic.MagicNumber.of(MIME_TYPE_GIF, 0x4749463837610000L, 0xFFFFFFFFFFFF0000L),
 
             // BMP: 42 4D (BM - Masks first 2 bytes)
-            Magic.MagicNumber.of("image/bmp", 0x424D000000000000L, 0xFFFF000000000000L),
+            Magic.MagicNumber.of(MIME_TYPE_BMP, 0x424D000000000000L, 0xFFFF000000000000L),
 
             // WebP: 52 49 46 46 xx xx xx xx (RIFF header - Masks first 4 bytes)
             // Note: Full WebP validation checks bytes 8-11 for "WEBP", which falls outside
             // of a single 8-byte long. This detects the RIFF container commonly used for WebP.
-            Magic.MagicNumber.of("image/webp", 0x5249464600000000L, 0xFFFFFFFF00000000L),
+            Magic.MagicNumber.of(MIME_TYPE_WEBP, 0x5249464600000000L, 0xFFFFFFFF00000000L),
 
             // TIFF (Little Endian): 49 49 2A 00
-            Magic.MagicNumber.of("image/tiff", 0x49492A0000000000L, 0xFFFFFFFF00000000L),
+            Magic.MagicNumber.of(MIME_TYPE_TIFF, 0x49492A0000000000L, 0xFFFFFFFF00000000L),
 
             // TIFF (Big Endian): 4D 4D 00 2A
-            Magic.MagicNumber.of("image/tiff", 0x4D4D002A00000000L, 0xFFFFFFFF00000000L),
+            Magic.MagicNumber.of(MIME_TYPE_TIFF, 0x4D4D002A00000000L, 0xFFFFFFFF00000000L),
 
             // ICO (Windows Icon): 00 00 01 00
-            Magic.MagicNumber.of("image/x-icon", 0x0000010000000000L, 0xFFFFFFFF00000000L)
+            Magic.MagicNumber.of(MIME_TYPE_X_ICON, 0x0000010000000000L, 0xFFFFFFFF00000000L)
     ));
 
     /**
@@ -383,7 +411,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * in the specified image format.
      *
      * @param image    the image to write; must not be null
-     * @param mimeType the MIME type of the image format (e.g., "image/png", "image/jpeg"); must not be null
+     * @param mimeType the MIME type of the image format (e.g., {@link #MIME_TYPE_PNG}, {@link #MIME_TYPE_JPEG}); must not be null
      * @param out      the output stream to write the image data to; must not be null
      * @throws IOException if writing the image fails, including issues with the output stream or unsupported MIME type
      */
@@ -402,7 +430,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
     /**
      * Retrieves an {@link ImageWriter} instance for the specified MIME type.
      *
-     * @param mimeType the MIME type of the image format (e.g., "image/png", "image/jpeg");
+     * @param mimeType the MIME type of the image format (e.g., {@link #MIME_TYPE_PNG}, {@link #MIME_TYPE_JPEG});
      *                 must not be null
      * @return an {@link ImageWriter} instance associated with the specified MIME type
      * @throws IllegalStateException if no {@link ImageWriter} is available for the specified MIME type
@@ -414,7 +442,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
     /**
      * Retrieves an {@link ImageReader} for the specified MIME type.
      *
-     * @param mimeType the MIME type of the image format, e.g., "image/png" or "image/jpeg";
+     * @param mimeType the MIME type of the image format, e.g., {@link #MIME_TYPE_PNG} or {@link #MIME_TYPE_JPEG};
      *                 must not be null
      * @return the corresponding {@link ImageReader} for the specified MIME type
      * @throws IllegalStateException if no {@link ImageReader} is found for the given MIME type

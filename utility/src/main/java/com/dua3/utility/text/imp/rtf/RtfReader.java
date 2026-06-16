@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Reads RTF input and converts it to {@link RichText}.
@@ -37,10 +38,10 @@ public final class RtfReader {
     private static final String RTF_LISTENER_INTERFACE = "com.rtfparserkit.parser.IRtfListener";
     private static final double TWIPS_PER_PIXEL = 15.0;
     private static final double POINTS_PER_TWIP = 1.0 / 20.0;
-    private static final double POINTS_PER_PIXEL = 0.75;
     private static final double DEFAULT_FONT_SIZE_PT = 12.0;
     private static final double DEFAULT_ASCENT_RATIO = 0.8;
     private static final double DEFAULT_DESCENT_RATIO = 0.2;
+    private static final Pattern HYPERLINK_INSTRUCTION_PATTERN = Pattern.compile("(?i)\\bHYPERLINK\\b\\s+(?:\"((?:[^\"\\\\]|\\\\.)*)\"|(\\S+))");
 
     private RtfReader() {
         // utility class
@@ -70,6 +71,7 @@ public final class RtfReader {
         private final Map<StyleKey, Style> styleCache = new HashMap<>();
         private final Map<Integer, String> fontTable = new HashMap<>();
         private final Map<Integer, Color> colorTable = new HashMap<>();
+        private final ArrayDeque<FieldState> fieldStack = new ArrayDeque<>();
 
         private CharacterStyle style = new CharacterStyle();
         private int defaultFontIndex = -1;
@@ -91,7 +93,7 @@ public final class RtfReader {
         private boolean inPicture = false;
         private int pictureDepth = -1;
         private final StringBuilder pictureHexData = new StringBuilder();
-        private String pictureMimeType = "image/jpeg";
+        private String pictureMimeType = ImageUtil.MIME_TYPE_JPEG;
         private int pictureNativeWidth = 0;
         private int pictureNativeHeight = 0;
         private int pictureWidthGoalTwips = 0;
@@ -128,7 +130,7 @@ public final class RtfReader {
         }
 
         private RichText toRichText() {
-            return builder.length() == 0 ? RichText.emptyText() : builder.toRichText();
+            return builder.isEmpty() ? RichText.emptyText() : builder.toRichText();
         }
 
         private @Nullable Object handleParserEvent(Object proxy, Method method, Object @Nullable [] args) {
@@ -187,13 +189,31 @@ public final class RtfReader {
                 inPicture = false;
                 pictureDepth = -1;
                 pictureHexData.setLength(0);
-                pictureMimeType = "image/jpeg";
+                pictureMimeType = ImageUtil.MIME_TYPE_JPEG;
                 pictureNativeWidth = 0;
                 pictureNativeHeight = 0;
                 pictureWidthGoalTwips = 0;
                 pictureHeightGoalTwips = 0;
                 pictureScaleXPercent = 100;
                 pictureScaleYPercent = 100;
+            }
+
+            FieldState fieldState = fieldStack.peek();
+            if (fieldState != null) {
+                if (fieldState.instructionDepth() >= 0 && groupDepth == fieldState.instructionDepth()) {
+                    fieldState.finishInstruction();
+                    String target = parseHyperlinkTarget(fieldState.instructionText());
+                    if (target != null && !target.isBlank()) {
+                        fieldState.setHyperlinkTarget(target);
+                    }
+                }
+                if (fieldState.resultDepth() >= 0 && groupDepth == fieldState.resultDepth()) {
+                    fieldState.finishResult();
+                    appendFieldResult(fieldState);
+                }
+                while (!fieldStack.isEmpty() && groupDepth == fieldStack.peek().fieldDepth()) {
+                    fieldStack.pop();
+                }
             }
 
             style = styleStack.isEmpty() ? new CharacterStyle(defaultFontIndex) : styleStack.pop();
@@ -214,6 +234,18 @@ public final class RtfReader {
                 return;
             }
 
+            FieldState fieldState = fieldStack.peek();
+            if (fieldState != null) {
+                if (fieldState.isCollectingInstruction()) {
+                    fieldState.appendInstruction(text);
+                    return;
+                }
+                if (fieldState.isCollectingResult()) {
+                    fieldState.appendResult(TextUtil.normalize(text));
+                    return;
+                }
+            }
+
             if (inFontTable) {
                 consumeFontTableText(text);
                 return;
@@ -231,6 +263,48 @@ public final class RtfReader {
                 consumePictureCommand(command, parameter, hasParameter);
                 return;
             }
+
+            switch (command) {
+                case "field" -> {
+                    fieldStack.push(new FieldState(groupDepth));
+                    return;
+                }
+                case "fldinst" -> {
+                    FieldState fieldState = fieldStack.peek();
+                    if (fieldState != null) {
+                        fieldState.startInstruction(groupDepth);
+                    }
+                    return;
+                }
+                case "fldrslt" -> {
+                    FieldState fieldState = fieldStack.peek();
+                    if (fieldState != null && fieldState.hyperlinkTarget() != null) {
+                        fieldState.startResult(groupDepth);
+                    }
+                    return;
+                }
+                default -> {
+                    // continue
+                }
+            }
+
+            FieldState fieldState = fieldStack.peek();
+            if (fieldState != null) {
+                if (fieldState.isCollectingInstruction()) {
+                    return;
+                }
+                if (fieldState.isCollectingResult()) {
+                    switch (command) {
+                        case "par", "line" -> fieldState.appendResult("\n");
+                        case "tab" -> fieldState.appendResult("\t");
+                        default -> {
+                            // ignore formatting commands inside hyperlink field result
+                        }
+                    }
+                    return;
+                }
+            }
+
             if (isIgnorableDestination(command, optional)) {
                 if (ignoredDestinationDepth < 0 || groupDepth < ignoredDestinationDepth) {
                     ignoredDestinationDepth = groupDepth;
@@ -244,7 +318,7 @@ public final class RtfReader {
                 inPicture = true;
                 pictureDepth = groupDepth;
                 pictureHexData.setLength(0);
-                pictureMimeType = "image/jpeg";
+                pictureMimeType = ImageUtil.MIME_TYPE_JPEG;
                 pictureNativeWidth = 0;
                 pictureNativeHeight = 0;
                 pictureWidthGoalTwips = 0;
@@ -282,19 +356,19 @@ public final class RtfReader {
                 switch (command) {
                     case "red" -> {
                         if (hasParameter) {
-                            currentRed = clampColor(parameter);
+                            currentRed = Math.clamp(parameter, 0, 255);
                             hasColorComponent = true;
                         }
                     }
                     case "green" -> {
                         if (hasParameter) {
-                            currentGreen = clampColor(parameter);
+                            currentGreen = Math.clamp(parameter, 0, 255);
                             hasColorComponent = true;
                         }
                     }
                     case "blue" -> {
                         if (hasParameter) {
-                            currentBlue = clampColor(parameter);
+                            currentBlue = Math.clamp(parameter, 0, 255);
                             hasColorComponent = true;
                         }
                     }
@@ -347,8 +421,8 @@ public final class RtfReader {
 
         private void consumePictureCommand(String command, int parameter, boolean hasParameter) {
             switch (command) {
-                case "jpegblip" -> pictureMimeType = "image/jpeg";
-                case "pngblip" -> pictureMimeType = "image/png";
+                case "jpegblip" -> pictureMimeType = ImageUtil.MIME_TYPE_JPEG;
+                case "pngblip" -> pictureMimeType = ImageUtil.MIME_TYPE_PNG;
                 case "picw" -> {
                     if (hasParameter) {
                         pictureNativeWidth = Math.max(0, parameter);
@@ -427,10 +501,10 @@ public final class RtfReader {
         }
 
         private static String inlineNodeMimeType(String pictureMimeType) {
-            if ("image/jpeg".equals(pictureMimeType)) {
+            if (ImageUtil.MIME_TYPE_JPEG.equals(pictureMimeType)) {
                 return pictureMimeType;
             }
-            return "image/jpeg";
+            return ImageUtil.MIME_TYPE_JPEG;
         }
 
         private void appendInlineNodeMarker(
@@ -453,6 +527,68 @@ public final class RtfReader {
             Map.Entry<String, Object>[] styleEntries = entries.toArray(Map.Entry[]::new);
             Style inlineStyle = Style.create("rtf-inline-node-" + inlineStyleId++, styleEntries);
             appendStyledText(String.valueOf(RichTextBuilderExtBase.INLINE_NODE_MARKER), inlineStyle);
+        }
+
+        private void appendFieldResult(FieldState fieldState) {
+            String resultText = fieldState.resultText();
+            if (resultText.isEmpty()) {
+                return;
+            }
+
+            String hyperlinkTarget = fieldState.hyperlinkTarget();
+            if (hyperlinkTarget != null && !hyperlinkTarget.isBlank()) {
+                appendInlineHyperlinkMarker(resultText, hyperlinkTarget);
+                return;
+            }
+
+            appendStyledText(resultText);
+        }
+
+        private void appendInlineHyperlinkMarker(String text, String target) {
+            InlineNode<String> inlineNode = new InlineNode<>(
+                    text,
+                    RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK,
+                    RichTextBuilderExtBase.encodeInlineHyperlinkData(target, text)
+            );
+            Style inlineStyle = Style.create(
+                    "rtf-inline-hyperlink-" + inlineStyleId++,
+                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, inlineNode)
+            );
+            appendStyledText(String.valueOf(RichTextBuilderExtBase.INLINE_NODE_MARKER), inlineStyle);
+        }
+
+        private static @Nullable String parseHyperlinkTarget(String instruction) {
+            Matcher matcher = HYPERLINK_INSTRUCTION_PATTERN.matcher(instruction);
+            if (!matcher.find()) {
+                return null;
+            }
+
+            String quoted = matcher.group(1);
+            if (quoted != null) {
+                return unescapeRtfInstruction(quoted);
+            }
+            String token = matcher.group(2);
+            return token == null ? null : unescapeRtfInstruction(token);
+        }
+
+        private static String unescapeRtfInstruction(String value) {
+            StringBuilder result = new StringBuilder(value.length());
+            boolean escaping = false;
+            for (int i = 0; i < value.length(); i++) {
+                char ch = value.charAt(i);
+                if (escaping) {
+                    result.append(ch);
+                    escaping = false;
+                } else if (ch == '\\') {
+                    escaping = true;
+                } else {
+                    result.append(ch);
+                }
+            }
+            if (escaping) {
+                result.append('\\');
+            }
+            return result.toString();
         }
 
         private static int resolveDisplayDimensionTwips(int goalTwips, int nativeUnits, int scalePercent, int fallbackPixels) {
@@ -614,10 +750,6 @@ public final class RtfReader {
             });
         }
 
-        private static int clampColor(int c) {
-            return Math.min(255, Math.max(0, c));
-        }
-
         private static byte[] decodeHex(CharSequence hex) {
             int length = hex.length();
             if (length < 2) {
@@ -649,6 +781,82 @@ public final class RtfReader {
                     || "listoverridetable".equals(command)
                     || "info".equals(command)
                     || "userprops".equals(command);
+        }
+
+        private static final class FieldState {
+            private final int fieldDepth;
+            private final StringBuilder instruction = new StringBuilder();
+            private final StringBuilder result = new StringBuilder();
+            private int instructionDepth = -1;
+            private int resultDepth = -1;
+            private @Nullable String hyperlinkTarget;
+
+            private FieldState(int fieldDepth) {
+                this.fieldDepth = fieldDepth;
+            }
+
+            private int fieldDepth() {
+                return fieldDepth;
+            }
+
+            private int instructionDepth() {
+                return instructionDepth;
+            }
+
+            private int resultDepth() {
+                return resultDepth;
+            }
+
+            private void startInstruction(int currentDepth) {
+                instruction.setLength(0);
+                instructionDepth = currentDepth;
+                hyperlinkTarget = null;
+            }
+
+            private void appendInstruction(String text) {
+                instruction.append(text);
+            }
+
+            private void finishInstruction() {
+                instructionDepth = -1;
+            }
+
+            private void startResult(int currentDepth) {
+                result.setLength(0);
+                resultDepth = currentDepth;
+            }
+
+            private void appendResult(String text) {
+                result.append(text);
+            }
+
+            private void finishResult() {
+                resultDepth = -1;
+            }
+
+            private boolean isCollectingInstruction() {
+                return instructionDepth >= 0;
+            }
+
+            private boolean isCollectingResult() {
+                return resultDepth >= 0;
+            }
+
+            private String instructionText() {
+                return instruction.toString();
+            }
+
+            private @Nullable String hyperlinkTarget() {
+                return hyperlinkTarget;
+            }
+
+            private void setHyperlinkTarget(String target) {
+                this.hyperlinkTarget = target;
+            }
+
+            private String resultText() {
+                return result.toString();
+            }
         }
     }
 

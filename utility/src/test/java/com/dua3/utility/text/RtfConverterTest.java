@@ -129,12 +129,70 @@ class RtfConverterTest {
                 .orElseThrow();
         InlineNode<?> imported = assertInstanceOf(InlineNode.class, inlineAttribute);
 
-        assertEquals("image/jpeg", imported.getMimeType());
+        assertEquals(ImageUtil.MIME_TYPE_JPEG, imported.getMimeType());
 
         Image importedImage = InlineNode.decodeArgbImageData(imported.getData());
         assertEquals(image.width(), importedImage.width());
         assertEquals(image.height(), importedImage.height());
         assertTrue(Arrays.equals(image.getArgb(), importedImage.getArgb()));
+    }
+
+    @Test
+    void testFromRichTextWritesStandardHyperlinkField() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        String target = "testapp://setStatus?text=Button%201%20clicked";
+        String label = "Button 1";
+
+        InlineNode<String> hyperlinkNode = new InlineNode<>(
+                label,
+                RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK,
+                RichTextBuilderExtBase.encodeInlineHyperlinkData(target, label)
+        );
+        Style hyperlinkStyle = Style.create(
+                "hyperlink-inline",
+                Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, hyperlinkNode)
+        );
+
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Before ");
+        builder.push(hyperlinkStyle);
+        builder.append(RichTextBuilderExtBase.INLINE_NODE_MARKER);
+        builder.pop(hyperlinkStyle);
+        builder.append(" After");
+
+        String rtf = converter.fromRichText(builder.toRichText());
+
+        assertTrue(rtf.contains("\\field"));
+        assertTrue(rtf.contains("\\fldinst HYPERLINK \"" + target + "\""));
+        assertTrue(rtf.contains("\\fldrslt " + label));
+    }
+
+    @Test
+    void testToRichTextParsesStandardHyperlinkField() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        String target = "testapp://setStatus?text=Button%201%20clicked";
+        String label = "Button 1";
+        String rtf = "{\\rtf1\\ansi\\deff0\\pard Before {\\field{\\*\\fldinst HYPERLINK \"" + target + "\"}{\\fldrslt " + label + "}} After\\par}";
+
+        RichText actual = converter.toRichText(rtf);
+        String expectedText = "Before " + RichTextBuilderExtBase.INLINE_NODE_MARKER + " After\n";
+        assertEquals(expectedText, actual.toString());
+
+        int inlinePos = actual.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER);
+        Run run = actual.runAt(inlinePos);
+
+        Object inlineAttribute = run.getStyles().stream()
+                .map(style -> style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow();
+
+        InlineNode<?> hyperlinkNode = assertInstanceOf(InlineNode.class, inlineAttribute);
+        assertEquals(RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK, hyperlinkNode.getMimeType());
+
+        RichTextBuilderExtBase.HyperlinkData hyperlinkData = RichTextBuilderExtBase.decodeInlineHyperlinkData(hyperlinkNode.getData());
+        assertEquals(target, hyperlinkData.target());
+        assertEquals(label, hyperlinkData.text());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.data.DataRetainingImage;
+import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.math.MathUtil;
 import javafx.scene.image.PixelFormat;
 
@@ -13,7 +14,7 @@ import javafx.scene.image.PixelFormat;
  * and original binary data that represents the compressed image format.
  *
  * @param fxImage           The JavaFX image object representing the visual data.
- * @param mimeType          The MIME type of the image format (e.g., "image/jpeg").
+ * @param mimeType          The MIME type of the image format (e.g., {@link ImageUtil#MIME_TYPE_JPEG}).
  * @param defaultExtension  The default file extension associated with the image format (e.g., "jpg").
  * @param source            The original binary data of the lossy-compressed image, stored as Object.
  */
@@ -26,7 +27,7 @@ public record FxDataRetainingImage(javafx.scene.image.Image fxImage, String mime
      * lossy-compressed image.
      *
      * @param fxImage          The JavaFX image object representing the image's visual data.
-     * @param mimeType         The MIME type of the image format (e.g., "image/png", "image/jpeg").
+     * @param mimeType         The MIME type of the image format (e.g., {@link ImageUtil#MIME_TYPE_PNG}, {@link ImageUtil#MIME_TYPE_JPEG}).
      * @param defaultExtension The default file extension associated with the image format (e.g., "png", "jpg").
      * @param source           The original binary data of the image. Must be an instance of {@code byte[]}.
      * @throws IllegalArgumentException If {@code source} is not of type {@code byte[]}.
@@ -43,7 +44,7 @@ public record FxDataRetainingImage(javafx.scene.image.Image fxImage, String mime
      * the lossy-compressed image data.
      *
      * @param fxImage          The JavaFX image object representing the image's visual data.
-     * @param mimeType         The MIME type of the image format (e.g., "image/png", "image/jpeg").
+     * @param mimeType         The MIME type of the image format (e.g., {@link ImageUtil#MIME_TYPE_PNG}, {@link ImageUtil#MIME_TYPE_JPEG}).
      * @param defaultExtension The default file extension associated with the image format (e.g., "png", "jpg").
      * @param source           The original binary data of the image represented as a byte array.
      */

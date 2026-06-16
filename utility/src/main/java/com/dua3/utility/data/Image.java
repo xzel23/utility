@@ -43,10 +43,10 @@ public interface Image {
     /**
      * Returns the MIME type of the image.
      *
-     * @return the MIME type as a String, defaulting to "image/png"
+     * @return the MIME type as a String, defaulting to {@link ImageUtil#MIME_TYPE_PNG}
      */
     default String mimeType() {
-        return "image/png";
+        return ImageUtil.MIME_TYPE_PNG;
     }
 
     /**
