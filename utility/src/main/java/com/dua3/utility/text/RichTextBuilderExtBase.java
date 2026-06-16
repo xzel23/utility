@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Base class for rich-text builders with support for inline nodes.
+ * Base class for rich-text builders with support for additional features, including inline nodes.
  *
  * @param <N> node type
  * @param <B> concrete builder type

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Writes {@link RichText} as RTF.
@@ -195,13 +196,36 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
         }
 
         private static @Nullable InlineNode<?> findInlineNode(Run run) {
-            for (Style style : run.getStyles()) {
+            String text = run.toString();
+            List<Style> styles = run.getStyles();
+            for (int i = styles.size() - 1; i >= 0; i--) {
+                Style style = styles.get(i);
+                InlineNode<?> fromFactory = evaluateInlineNodeFactory(style, text);
+                if (fromFactory != null) {
+                    return fromFactory;
+                }
                 Object value = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
                 if (value instanceof InlineNode<?> inlineNode) {
                     return inlineNode;
                 }
             }
             return null;
+        }
+
+        private static @Nullable InlineNode<?> evaluateInlineNodeFactory(Style style, String text) {
+            Object factory = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY);
+            if (!(factory instanceof Function<?, ?> f)) {
+                return null;
+            }
+
+            try {
+                @SuppressWarnings("unchecked")
+                Function<String, ?> fn = (Function<String, ?>) f;
+                Object value = fn.apply(text);
+                return value instanceof InlineNode<?> inlineNode ? inlineNode : null;
+            } catch (RuntimeException ex) {
+                return null;
+            }
         }
 
         private boolean appendPicture(InlineNode<?> inlineNode) {
