@@ -196,6 +196,66 @@ class RtfConverterTest {
     }
 
     @Test
+    void testFromRichTextWritesButtonAsHyperlinkFallbackField() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        String label = "Button 1";
+
+        InlineNode<String> buttonNode = new InlineNode<>(
+                label,
+                RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON,
+                RichTextBuilderExtBase.encodeInlineButtonData(
+                        RichTextBuilderExtBase.createInlineButtonFallbackUri(label).toString(),
+                        label
+                )
+        );
+        Style buttonStyle = Style.create(
+                "button-inline",
+                Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, buttonNode)
+        );
+
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Before ");
+        builder.push(buttonStyle);
+        builder.append(RichTextBuilderExtBase.INLINE_NODE_MARKER);
+        builder.pop(buttonStyle);
+        builder.append(" After");
+
+        String rtf = converter.fromRichText(builder.toRichText());
+
+        assertTrue(rtf.contains("\\field"));
+        assertTrue(rtf.contains("\\fldinst HYPERLINK \"dua3button://action?text=Button%201\""));
+        assertTrue(rtf.contains("\\fldrslt " + label));
+    }
+
+    @Test
+    void testToRichTextParsesButtonHyperlinkFallbackField() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        String target = "dua3button://action?text=Button%201";
+        String label = "Button 1";
+        String rtf = "{\\rtf1\\ansi\\deff0\\pard Before {\\field{\\*\\fldinst HYPERLINK \"" + target + "\"}{\\fldrslt " + label + "}} After\\par}";
+
+        RichText actual = converter.toRichText(rtf);
+        String expectedText = "Before " + RichTextBuilderExtBase.INLINE_NODE_MARKER + " After\n";
+        assertEquals(expectedText, actual.toString());
+
+        int inlinePos = actual.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER);
+        Run run = actual.runAt(inlinePos);
+
+        Object inlineAttribute = run.getStyles().stream()
+                .map(style -> style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow();
+
+        InlineNode<?> buttonNode = assertInstanceOf(InlineNode.class, inlineAttribute);
+        assertEquals(RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON, buttonNode.getMimeType());
+
+        RichTextBuilderExtBase.ButtonData buttonData = RichTextBuilderExtBase.decodeInlineButtonData(buttonNode.getData());
+        assertEquals(target, buttonData.target());
+        assertEquals(label, buttonData.text());
+    }
+
+    @Test
     void testFromRichTextHandlesEmptyText() {
         RtfConverter converter = RtfConverter.get().orElseThrow();
         String rtf = converter.fromRichText(RichText.emptyText());

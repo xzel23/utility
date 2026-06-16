@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.BufferUnderflowException;
 import java.nio.charset.StandardCharsets;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -54,6 +55,14 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * MIME type used to represent inline hyperlinks.
      */
     public static final String INLINE_NODE_MIME_TYPE_HYPERLINK = "application/vnd.dua3.inline-hyperlink";
+    /**
+     * MIME type used to represent inline buttons.
+     */
+    public static final String INLINE_NODE_MIME_TYPE_BUTTON = "application/vnd.dua3.inline-button";
+    /**
+     * URI scheme used for inline button hyperlink fallback in RTF.
+     */
+    public static final String INLINE_BUTTON_FALLBACK_URI_SCHEME = "dua3button";
 
     private static final AtomicLong STYLE_ID = new AtomicLong();
     private static final String INLINE_NODE = "inline-node";
@@ -206,6 +215,51 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
     public record HyperlinkData(String target, String text) {}
 
     /**
+     * Encodes inline button payload data.
+     *
+     * @param target fallback hyperlink target URI/string
+     * @param text button label text
+     * @return encoded payload bytes
+     */
+    public static byte[] encodeInlineButtonData(CharSequence target, CharSequence text) {
+        return encodeInlineHyperlinkData(target, text);
+    }
+
+    /**
+     * Decodes inline button payload data.
+     *
+     * <p>Falls back to legacy payloads that only stored button text in UTF-8 bytes.
+     *
+     * @param data payload bytes
+     * @return decoded button data
+     */
+    public static ButtonData decodeInlineButtonData(byte[] data) {
+        HyperlinkData decoded = decodeInlineHyperlinkData(data);
+        String text = decoded.text();
+        String target = decoded.target().isBlank() ? createInlineButtonFallbackUri(text).toString() : decoded.target();
+        return new ButtonData(target, text);
+    }
+
+    /**
+     * Creates a fallback URI used when serializing inline buttons to RTF hyperlinks.
+     *
+     * @param text button label text
+     * @return fallback URI
+     */
+    public static URI createInlineButtonFallbackUri(CharSequence text) {
+        String encoded = URLEncoder.encode(String.valueOf(text), StandardCharsets.UTF_8).replace("+", "%20");
+        return URI.create(INLINE_BUTTON_FALLBACK_URI_SCHEME + "://action?text=" + encoded);
+    }
+
+    /**
+     * Decoded button payload values.
+     *
+     * @param target fallback hyperlink target URI/string
+     * @param text button label text
+     */
+    public record ButtonData(String target, String text) {}
+
+    /**
      * Appends a button to the rich-text content. The button is displayed with the specified text
      * and executes the provided action when activated.
      *
@@ -215,9 +269,10 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      */
     public B appendButton(CharSequence text, Runnable action) {
         String buttonText = String.valueOf(text);
-        byte[] data = buttonText.getBytes(StandardCharsets.UTF_8);
+        String target = createInlineButtonFallbackUri(buttonText).toString();
+        byte[] data = encodeInlineButtonData(target, buttonText);
         return appendInlineNodeWithStyle(() ->
-                new InlineNode<>(createButton(buttonText, action), "text/plain", data));
+                new InlineNode<>(createButton(buttonText, action), INLINE_NODE_MIME_TYPE_BUTTON, data));
     }
 
     /**

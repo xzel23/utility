@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.lang.reflect.Proxy;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ public final class RtfReader {
     private static final double DEFAULT_FONT_SIZE_PT = 12.0;
     private static final double DEFAULT_ASCENT_RATIO = 0.8;
     private static final double DEFAULT_DESCENT_RATIO = 0.2;
-    private static final Pattern HYPERLINK_INSTRUCTION_PATTERN = Pattern.compile("(?i)\\bHYPERLINK\\b\\s+(?:\"((?:[^\"\\\\]|\\\\.)*)\"|(\\S+))");
+    private static final Pattern HYPERLINK_INSTRUCTION_PATTERN = Pattern.compile("(?i)\\bHYPERLINK\\b\\s+(?:\"((?>[^\"\\\\]|\\\\.)*)\"|(\\S+))");
 
     private RtfReader() {
         // utility class
@@ -537,11 +539,28 @@ public final class RtfReader {
 
             String hyperlinkTarget = fieldState.hyperlinkTarget();
             if (hyperlinkTarget != null && !hyperlinkTarget.isBlank()) {
+                if (isInlineButtonFallbackTarget(hyperlinkTarget)) {
+                    appendInlineButtonMarker(resultText, hyperlinkTarget);
+                    return;
+                }
                 appendInlineHyperlinkMarker(resultText, hyperlinkTarget);
                 return;
             }
 
             appendStyledText(resultText);
+        }
+
+        private void appendInlineButtonMarker(String text, String target) {
+            InlineNode<String> inlineNode = new InlineNode<>(
+                    text,
+                    RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON,
+                    RichTextBuilderExtBase.encodeInlineButtonData(target, text)
+            );
+            Style inlineStyle = Style.create(
+                    "rtf-inline-button-" + inlineStyleId++,
+                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, inlineNode)
+            );
+            appendStyledText(String.valueOf(RichTextBuilderExtBase.INLINE_NODE_MARKER), inlineStyle);
         }
 
         private void appendInlineHyperlinkMarker(String text, String target) {
@@ -555,6 +574,16 @@ public final class RtfReader {
                     Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, inlineNode)
             );
             appendStyledText(String.valueOf(RichTextBuilderExtBase.INLINE_NODE_MARKER), inlineStyle);
+        }
+
+        private static boolean isInlineButtonFallbackTarget(String target) {
+            try {
+                URI uri = new URI(target);
+                String scheme = uri.getScheme();
+                return scheme != null && RichTextBuilderExtBase.INLINE_BUTTON_FALLBACK_URI_SCHEME.equalsIgnoreCase(scheme);
+            } catch (URISyntaxException ex) {
+                return false;
+            }
         }
 
         private static @Nullable String parseHyperlinkTarget(String instruction) {

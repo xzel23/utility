@@ -9,6 +9,7 @@ import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilderExtBase;
+import com.dua3.utility.text.RichTextBuilderExtBase.ButtonData;
 import com.dua3.utility.text.RichTextBuilderExtBase.HyperlinkData;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
@@ -178,9 +179,15 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
         }
 
         private void appendRunContent(Run run, FontDef fontDef) {
+            InlineButtonExportData buttonData = findInlineButtonExportData(run);
+            if (buttonData != null) {
+                appendHyperlinkRunContent(run, buttonData.target(), buttonData.text());
+                return;
+            }
+
             InlineHyperlinkExportData hyperlinkData = findInlineHyperlinkExportData(run);
             if (hyperlinkData != null) {
-                appendHyperlinkRunContent(run, hyperlinkData);
+                appendHyperlinkRunContent(run, hyperlinkData.target(), hyperlinkData.text());
                 return;
             }
 
@@ -210,7 +217,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             }
         }
 
-        private void appendHyperlinkRunContent(Run run, InlineHyperlinkExportData hyperlinkData) {
+        private void appendHyperlinkRunContent(Run run, String target, String displayText) {
             int length = run.length();
             int segmentStart = 0;
             boolean hasMarker = false;
@@ -223,18 +230,70 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                 if (segmentStart < i) {
                     appendEscapedText(buffer, run.subSequence(segmentStart, i));
                 }
-                appendHyperlinkField(hyperlinkData.target(), hyperlinkData.text());
+                appendHyperlinkField(target, displayText);
                 segmentStart = i + 1;
             }
 
             if (!hasMarker) {
-                appendHyperlinkField(hyperlinkData.target(), run.toString());
+                appendHyperlinkField(target, run.toString());
                 return;
             }
 
             if (segmentStart < length) {
                 appendEscapedText(buffer, run.subSequence(segmentStart, length));
             }
+        }
+
+        private static @Nullable InlineButtonExportData findInlineButtonExportData(Run run) {
+            String text = run.toString();
+            List<Style> styles = run.getStyles();
+            for (int i = styles.size() - 1; i >= 0; i--) {
+                Style style = styles.get(i);
+                InlineNode<?> fromFactory = evaluateInlineNodeFactory(style, text);
+                InlineButtonExportData data = toInlineButtonExportData(fromFactory);
+                if (data != null) {
+                    return data;
+                }
+                Object value = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
+                data = value instanceof InlineNode<?> inlineNode ? toInlineButtonExportData(inlineNode) : null;
+                if (data != null) {
+                    return data;
+                }
+            }
+            return null;
+        }
+
+        private static @Nullable InlineButtonExportData toInlineButtonExportData(@Nullable InlineNode<?> inlineNode) {
+            if (inlineNode == null) {
+                return null;
+            }
+
+            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(inlineNode.getMimeType())) {
+                ButtonData data = RichTextBuilderExtBase.decodeInlineButtonData(inlineNode.getData());
+                String displayText = buttonDisplayText(inlineNode, data);
+                if (displayText.isBlank()) {
+                    return null;
+                }
+                String target = data.target().isBlank()
+                        ? RichTextBuilderExtBase.createInlineButtonFallbackUri(displayText).toString()
+                        : data.target();
+                return new InlineButtonExportData(target, displayText);
+            }
+
+            String wrappedType = inlineNode.getWrapped().getClass().getName();
+            if (!"javafx.scene.control.Button".equals(wrappedType)) {
+                return null;
+            }
+
+            String textFromData = new String(inlineNode.getData(), StandardCharsets.UTF_8);
+            String displayText = textFromData.isBlank() ? extractHyperlinkTextReflectively(inlineNode.getWrapped()) : textFromData;
+            if (displayText.isBlank()) {
+                return null;
+            }
+            return new InlineButtonExportData(
+                    RichTextBuilderExtBase.createInlineButtonFallbackUri(displayText).toString(),
+                    displayText
+            );
         }
 
         private void appendHyperlinkField(String target, CharSequence displayText) {
@@ -282,14 +341,13 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                 return null;
             }
 
-            Object wrapped = inlineNode.getWrapped();
-            String wrappedType = wrapped.getClass().getName();
+            String wrappedType = inlineNode.getWrapped().getClass().getName();
             if (!"javafx.scene.control.Hyperlink".equals(wrappedType)) {
                 return null;
             }
 
             String textFromData = new String(inlineNode.getData(), StandardCharsets.UTF_8);
-            String displayText = textFromData.isBlank() ? extractHyperlinkTextReflectively(wrapped) : textFromData;
+            String displayText = textFromData.isBlank() ? extractHyperlinkTextReflectively(inlineNode.getWrapped()) : textFromData;
             if (displayText.isBlank()) {
                 return null;
             }
@@ -297,6 +355,14 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
         }
 
         private static String hyperlinkDisplayText(InlineNode<?> inlineNode, HyperlinkData data) {
+            Object wrapped = inlineNode.getWrapped();
+            if (wrapped instanceof CharSequence cs && !cs.isEmpty()) {
+                return cs.toString();
+            }
+            return data.text().isBlank() ? data.target() : data.text();
+        }
+
+        private static String buttonDisplayText(InlineNode<?> inlineNode, ButtonData data) {
             Object wrapped = inlineNode.getWrapped();
             if (wrapped instanceof CharSequence cs && !cs.isEmpty()) {
                 return cs.toString();
@@ -588,6 +654,11 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
     ) {}
 
     private record InlineHyperlinkExportData(
+            String target,
+            String text
+    ) {}
+
+    private record InlineButtonExportData(
             String target,
             String text
     ) {}

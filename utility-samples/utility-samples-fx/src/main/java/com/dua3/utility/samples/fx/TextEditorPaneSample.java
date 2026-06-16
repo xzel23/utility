@@ -7,6 +7,7 @@ import com.dua3.utility.fx.controls.TextEditorPane;
 import com.dua3.utility.fx.controls.TextPane;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.ui.VAnchor;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -49,7 +50,7 @@ public class TextEditorPaneSample extends Application {
     @Override
     public void start(Stage stage) {
         Label status = new Label("No action yet.");
-        RichText text = createSampleText();
+        RichText text = createSampleText(status);
 
         TextEditorPane editor = new TextEditorPane(text);
         editor.setWrapText(true);
@@ -139,7 +140,7 @@ public class TextEditorPaneSample extends Application {
         stage.show();
     }
 
-    private static RichText createSampleText() {
+    private static RichText createSampleText(Label status) {
         RichTextBuilderFx b = new RichTextBuilderFx();
         b.push(Style.BOLD).append("Combined TextEditorPane/TextPane demo").pop(Style.BOLD).append('\n');
         b.append("Edit in the upper pane, then press Apply to commit to InputControl state.\n");
@@ -148,7 +149,7 @@ public class TextEditorPaneSample extends Application {
         b.append("Inline controls: ");
         b.appendHyperlink("Hyperlink with space", statusUri("Hyperlink clicked"));
         b.append(" followed by text, and ");
-        b.appendHyperlink("Button 1", statusUri("Button 1 clicked"));
+        b.appendButton("Button 1", () -> status.setText("Button 1 clicked"));
         b.append(" followed by text.\n\n");
 
         Image imageOriginal = createDemoImage(96, 48, 0xFF147BDA, 0xFF13BFA7);
@@ -176,7 +177,7 @@ public class TextEditorPaneSample extends Application {
         b.append(separator);
 
         b.append("Wrap test: this sentence is intentionally long so that the inline ");
-        b.appendHyperlink("Button 2", statusUri("Button 2 clicked"));
+        b.appendButton("Button 2", () -> status.setText("Button 2 clicked"));
         b.append(" is likely moved to a new line while text before and after keeps normal spacing.\n\n");
 
         b.append("Long paragraph: ");
@@ -192,15 +193,17 @@ public class TextEditorPaneSample extends Application {
     }
 
     private static void handleSampleUri(Label status, URI uri) {
-        if (!"testapp".equalsIgnoreCase(uri.getScheme())) {
-            return;
-        }
-        if (!"setStatus".equalsIgnoreCase(uri.getHost())) {
+        if ("testapp".equalsIgnoreCase(uri.getScheme()) && "setStatus".equalsIgnoreCase(uri.getHost())) {
+            Optional<String> text = queryParameter(uri, "text");
+            status.setText(text.orElse("No status text provided."));
             return;
         }
 
-        Optional<String> text = queryParameter(uri, "text");
-        status.setText(text.orElse("No status text provided."));
+        if (RichTextBuilderExtBase.INLINE_BUTTON_FALLBACK_URI_SCHEME.equalsIgnoreCase(uri.getScheme())
+                && "action".equalsIgnoreCase(uri.getHost())) {
+            Optional<String> text = queryParameter(uri, "text");
+            status.setText(text.orElse("Button clicked"));
+        }
     }
 
     private static Optional<String> queryParameter(URI uri, String key) {

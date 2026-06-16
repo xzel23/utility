@@ -565,22 +565,6 @@ public class TextPane extends Control {
         return Math.max(node.prefWidth(-1), node.getLayoutBounds().getWidth());
     }
 
-    private static double measureNodeHeight(Node node) {
-        if (node.getScene() == null) {
-            Pane tempRoot = new Pane(node);
-            new Scene(tempRoot);
-            tempRoot.applyCss();
-            node.applyCss();
-            node.autosize();
-            double height = Math.max(node.prefHeight(-1), node.getLayoutBounds().getHeight());
-            tempRoot.getChildren().clear();
-            return height;
-        }
-        node.applyCss();
-        node.autosize();
-        return Math.max(node.prefHeight(-1), node.getLayoutBounds().getHeight());
-    }
-
     private static RichText createRenderedText(RichText source) {
         RichTextBuilder builder = new RichTextBuilder(source.length());
         for (Run run : source) {
@@ -607,11 +591,13 @@ public class TextPane extends Control {
     private static List<String> pushNonStyleAttributes(RichTextBuilder builder, Run run) {
         List<String> pushedAttributes = new ArrayList<>();
         for (Map.Entry<String, @Nullable Object> entry : run.attributes().entrySet()) {
-            if (STYLE_LIST_ATTRIBUTE.equals(entry.getKey()) || entry.getValue() == null) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (STYLE_LIST_ATTRIBUTE.equals(key) || value == null) {
                 continue;
             }
-            builder.push(entry.getKey(), entry.getValue());
-            pushedAttributes.add(entry.getKey());
+            builder.push(key, value);
+            pushedAttributes.add(key);
         }
         return pushedAttributes;
     }
@@ -658,6 +644,16 @@ public class TextPane extends Control {
 
         Object wrapped = value;
         if (wrapped instanceof InlineNode<?> inlineNode) {
+            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(inlineNode.getMimeType())) {
+                RichTextBuilderExtBase.ButtonData buttonData = RichTextBuilderExtBase.decodeInlineButtonData(inlineNode.getData());
+                String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
+                        ? cs.toString()
+                        : (buttonData.text().isBlank() ? buttonData.target() : buttonData.text());
+                Button button = new Button(text);
+                button.setFocusTraversable(false);
+                toUri(buttonData.target()).ifPresent(button::setUserData);
+                return button;
+            }
             if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK.equals(inlineNode.getMimeType())) {
                 RichTextBuilderExtBase.HyperlinkData hyperlinkData = RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData());
                 String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
@@ -746,6 +742,24 @@ public class TextPane extends Control {
         }
 
         hyperlink.setOnAction(evt -> {
+            Consumer<URI> handler = control.getHyperlinkHandler();
+            if (handler != null) {
+                handler.accept(target.get());
+            }
+        });
+    }
+
+    private static void wireButtonAction(TextPane control, Button button) {
+        if (button.getOnAction() != null) {
+            return;
+        }
+
+        Optional<URI> target = toUri(button.getUserData());
+        if (target.isEmpty()) {
+            return;
+        }
+
+        button.setOnAction(evt -> {
             Consumer<URI> handler = control.getHyperlinkHandler();
             if (handler != null) {
                 handler.accept(target.get());
@@ -1627,6 +1641,9 @@ public class TextPane extends Control {
                 }
                 if (node instanceof Hyperlink hyperlink) {
                     wireHyperlinkAction(control, hyperlink);
+                }
+                if (node instanceof Button button) {
+                    wireButtonAction(control, button);
                 }
                 node.setManaged(false);
                 node.applyCss();

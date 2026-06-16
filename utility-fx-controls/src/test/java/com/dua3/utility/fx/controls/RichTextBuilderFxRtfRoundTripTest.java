@@ -13,6 +13,7 @@ import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.VAnchor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -25,6 +26,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -218,6 +220,45 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
             Node node = pane.lookup(".hyperlink");
             Hyperlink hyperlink = assertInstanceOf(Hyperlink.class, node);
             hyperlink.fire();
+
+            assertEquals(uri, clickedUri.get());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testTextPaneInlineButtonDispatchesToCustomHandler() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            URI uri = URI.create("dua3button://action?text=Button%201%20clicked");
+
+            InlineNode<String> buttonNode = new InlineNode<>(
+                    "Button 1",
+                    RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON,
+                    RichTextBuilderExtBase.encodeInlineButtonData(uri.toString(), "Button 1")
+            );
+            Style buttonStyle = Style.create(
+                    "button-inline",
+                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, buttonNode)
+            );
+            RichTextBuilderFx builder = new RichTextBuilderFx();
+            builder.append("Before ");
+            builder.push(buttonStyle).append(RichTextBuilderExtBase.INLINE_NODE_MARKER).pop(buttonStyle);
+            builder.append(" After");
+
+            AtomicReference<URI> clickedUri = new AtomicReference<>();
+            TextPane pane = new TextPane(builder.toRichText());
+            pane.setWrapText(true);
+            pane.setHyperlinkHandler(clickedUri::set);
+
+            Scene scene = addToScene(pane);
+            scene.getRoot().applyCss();
+            scene.getRoot().layout();
+            pane.applyCss();
+            pane.layout();
+
+            Node node = pane.lookup(".button");
+            Button button = assertInstanceOf(Button.class, node);
+            button.fire();
 
             assertEquals(uri, clickedUri.get());
         });
