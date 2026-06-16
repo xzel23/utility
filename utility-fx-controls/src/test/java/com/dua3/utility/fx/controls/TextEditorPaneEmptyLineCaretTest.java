@@ -6,6 +6,7 @@ import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.junit.jupiter.api.Test;
@@ -157,6 +158,90 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
         });
     }
 
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testPageDownMovesCaretByViewportHeight() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane(numberedLines(80));
+            editor.setWrapText(false);
+            addToScene(editor);
+
+            int start = lineStart(editor.getText().toString(), 10);
+            editor.positionCaret(start);
+
+            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(600.0);
+            int currentLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
+            assertTrue(currentLine >= 0);
+
+            TextEditorPane.VisualLine line = lines.get(currentLine);
+            double x = TextEditorPane.xForIndex(line, editor.getCaretPosition());
+            double viewportHeight = viewportHeight(editor);
+            assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected a visible editor viewport");
+
+            int expectedCaret = TextEditorPane.indexForPoint(lines, x, line.top() + viewportHeight);
+            editor.processKeyPressed(keyPressed(KeyCode.PAGE_DOWN, false));
+
+            assertEquals(expectedCaret, editor.getCaretPosition());
+            assertEquals(expectedCaret, editor.getAnchor());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testPageUpMovesCaretByViewportHeight() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane(numberedLines(80));
+            editor.setWrapText(false);
+            addToScene(editor);
+
+            int start = lineStart(editor.getText().toString(), 30);
+            editor.positionCaret(start);
+
+            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(600.0);
+            int currentLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
+            assertTrue(currentLine >= 0);
+
+            TextEditorPane.VisualLine line = lines.get(currentLine);
+            double x = TextEditorPane.xForIndex(line, editor.getCaretPosition());
+            double viewportHeight = viewportHeight(editor);
+            assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected a visible editor viewport");
+
+            int expectedCaret = TextEditorPane.indexForPoint(lines, x, line.top() - viewportHeight);
+            editor.processKeyPressed(keyPressed(KeyCode.PAGE_UP, false));
+
+            assertEquals(expectedCaret, editor.getCaretPosition());
+            assertEquals(expectedCaret, editor.getAnchor());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testShiftPageDownExtendsSelectionFromAnchor() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane(numberedLines(80));
+            editor.setWrapText(false);
+            addToScene(editor);
+
+            int anchor = lineStart(editor.getText().toString(), 12);
+            editor.positionCaret(anchor);
+
+            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(600.0);
+            int currentLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
+            assertTrue(currentLine >= 0);
+
+            TextEditorPane.VisualLine line = lines.get(currentLine);
+            double x = TextEditorPane.xForIndex(line, editor.getCaretPosition());
+            double viewportHeight = viewportHeight(editor);
+            assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected a visible editor viewport");
+
+            int expectedCaret = TextEditorPane.indexForPoint(lines, x, line.top() + viewportHeight);
+            editor.processKeyPressed(keyPressed(KeyCode.PAGE_DOWN, true));
+
+            assertEquals(anchor, editor.getAnchor());
+            assertEquals(expectedCaret, editor.getCaretPosition());
+        });
+    }
+
     private static RichText createInlineSampleText() {
         RichTextBuilderFx builder = new RichTextBuilderFx();
         builder.append("first line\n");
@@ -205,6 +290,43 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
     private static KeyEvent keyTyped(String character) {
         return new KeyEvent(KeyEvent.KEY_TYPED, character, character, KeyCode.UNDEFINED, false, false, false, false);
+    }
+
+    private static KeyEvent keyPressed(KeyCode code, boolean shift) {
+        return new KeyEvent(KeyEvent.KEY_PRESSED, "", "", code, shift, false, false, false);
+    }
+
+    private static double viewportHeight(TextEditorPane editor) {
+        return editor.lookupAll(".scroll-pane").stream()
+                .filter(ScrollPane.class::isInstance)
+                .map(ScrollPane.class::cast)
+                .mapToDouble(sp -> sp.getViewportBounds().getHeight())
+                .filter(h -> Double.isFinite(h) && h > 1.0)
+                .findFirst()
+                .orElse(Double.NaN);
+    }
+
+    private static String numberedLines(int count) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            if (i > 0) {
+                sb.append('\n');
+            }
+            sb.append("line-").append(i);
+        }
+        return sb.toString();
+    }
+
+    private static int lineStart(String text, int lineNumber) {
+        int start = 0;
+        for (int i = 0; i < lineNumber && start < text.length(); i++) {
+            int newline = text.indexOf('\n', start);
+            if (newline < 0) {
+                return text.length();
+            }
+            start = newline + 1;
+        }
+        return start;
     }
 
     private static Image createPatternImage(int width, int height) {

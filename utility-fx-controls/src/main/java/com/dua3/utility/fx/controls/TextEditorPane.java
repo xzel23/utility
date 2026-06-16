@@ -139,7 +139,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         });
 
         state.requiredProperty().addListener((v, o, n) -> {
-            if (n) {
+            if (n == Boolean.TRUE) {
                 if (!getStyleClass().contains(CSS_REQUIRED_INPUT)) {
                     getStyleClass().add(CSS_REQUIRED_INPUT);
                 }
@@ -295,6 +295,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             }
             case DOWN -> {
                 moveLine(1, shift);
+                evt.consume();
+            }
+            case PAGE_UP -> {
+                movePage(-1, shift);
+                evt.consume();
+            }
+            case PAGE_DOWN -> {
+                movePage(1, shift);
                 evt.consume();
             }
             case HOME -> {
@@ -1400,6 +1408,61 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         preferredCaretX = x;
     }
 
+    private void movePage(int delta, boolean extendSelection) {
+        if (delta == 0) {
+            return;
+        }
+
+        List<VisualLine> lines = buildVisualLines(currentWrapWidth());
+        if (lines.isEmpty()) {
+            return;
+        }
+
+        int caret = getCaretPosition();
+        int currentLineIndex = lineIndexForCaret(lines, caret);
+        if (currentLineIndex < 0 || currentLineIndex >= lines.size()) {
+            return;
+        }
+
+        VisualLine currentLine = lines.get(currentLineIndex);
+        double x = Double.isNaN(preferredCaretX) ? xForIndex(currentLine, caret) : preferredCaretX;
+
+        double pageHeight = 0.0;
+        ScrollPane sp = getScrollPane();
+        if (sp != null) {
+            double viewportHeight = sp.getViewportBounds().getHeight();
+            if (Double.isFinite(viewportHeight) && viewportHeight > 1.0) {
+                pageHeight = viewportHeight;
+            }
+        }
+
+        if (pageHeight <= 1.0) {
+            double fallback = getHeight() - snappedTopInset() - snappedBottomInset();
+            if (Double.isFinite(fallback) && fallback > 1.0) {
+                pageHeight = fallback;
+            } else {
+                pageHeight = Math.max(1.0, currentLine.height());
+            }
+        }
+
+        double targetY = currentLine.top() + delta * pageHeight;
+        int targetCaret = indexForPoint(lines, x, targetY);
+
+        if (extendSelection) {
+            selectPositionCaret(targetCaret);
+        } else {
+            positionCaret(targetCaret);
+        }
+
+        if (targetCaret == 0) {
+            x = 0;
+        } else if (targetCaret == lines.getLast().end()) {
+            x = lines.getLast().maxX();
+        }
+
+        preferredCaretX = x;
+    }
+
     private Point2D toContentPoint(MouseEvent evt) {
         ScrollPane sp = getScrollPane();
         if (sp != null && sp.getContent() != null) {
@@ -1549,7 +1612,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
         double height = Math.max(1.0, defaultLineHeight);
         if (previous != null && next != null) {
-            height = Math.max(1.0, Math.min(previous.height(), next.height()));
+            height = Math.clamp(previous.height(), 1.0, next.height());
         } else if (previous != null) {
             height = Math.max(1.0, previous.height());
         } else if (next != null) {
@@ -1562,7 +1625,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             top = previous.top() + previous.height();
             double gap = next.top() - top;
             if (gap > 0.5) {
-                height = Math.max(1.0, Math.min(height, gap));
+                height = Math.clamp(height, 1.0, gap);
             } else {
                 shiftFollowing = true;
             }
@@ -1676,7 +1739,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         if (y <= lines.getFirst().top()) {
-            return indexForX(lines.getFirst(), x);
+            return indexForX(lines.getFirst(), 0);
         }
 
         for (VisualLine line : lines) {
@@ -1685,7 +1748,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             }
         }
 
-        return indexForX(lines.getLast(), x);
+        return indexForX(lines.getLast(), Double.MAX_VALUE);
     }
 
     static int lineIndexForCaret(List<VisualLine> lines, int caret) {
@@ -1722,15 +1785,13 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     static int indexForX(VisualLine line, double x) {
-        double[] boundaries = line.boundaries();
-        double min = boundaries[0];
-        if (x <= min) {
+        if (x <= line.minX()) {
             return line.start();
         }
-        double max = boundaries[boundaries.length - 1];
-        if (x >= max) {
+        if (x >= line.maxX()) {
             return line.end();
         }
+        double[] boundaries = line.boundaries();
         for (int i = 0; i < line.length(); i++) {
             double midpoint = (boundaries[i] + boundaries[i + 1]) * 0.5;
             if (x < midpoint) {
@@ -2174,6 +2235,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     record VisualLine(int start, int end, double top, double height, double[] boundaries) {
         int length() {
             return Math.max(0, end - start);
+        }
+
+        double minX() {
+            return boundaries.length == 0 ? 0 : boundaries[0];
+        }
+
+        double maxX() {
+            return boundaries.length == 0 ? 0 : boundaries[boundaries.length - 1];
         }
     }
 
