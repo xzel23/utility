@@ -107,6 +107,7 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
             assertTrue(rtf.contains("\\picscalex"));
             assertTrue(rtf.contains("\\picscaley"));
             assertTrue(rtf.contains("\\up") || rtf.contains("\\dn"));
+            assertTrue(containsShiftedPictGroup(rtf));
             assertEquals(4, controlWordValue(rtf, "picw"));
             assertEquals(2, controlWordValue(rtf, "pich"));
             assertEquals(60, controlWordValue(rtf, "picwgoal"));
@@ -188,6 +189,11 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
         Matcher matcher = pattern.matcher(rtf);
         assertTrue(matcher.find(), "missing control word: \\" + controlWord);
         return Integer.parseInt(matcher.group(1));
+    }
+
+    private static boolean containsShiftedPictGroup(String rtf) {
+        Pattern pattern = Pattern.compile("\\{\\\\(?:up|dn)-?\\d+\\s+\\{\\\\pict");
+        return pattern.matcher(rtf).find();
     }
 
     private static Node createInlineNode(Run run) {

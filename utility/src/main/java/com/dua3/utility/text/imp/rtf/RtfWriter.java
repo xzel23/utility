@@ -271,10 +271,14 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             PictureTarget target = computePictureTarget(nativeWidth, nativeHeight, imageData.maxWidth(), imageData.maxHeight());
             int baselineShiftHalfPoints = computeBaselineShiftHalfPoints(imageData.vAnchor(), imageData.descent(), fontDef, target.displayHeightTwips());
 
-            if (baselineShiftHalfPoints > 0) {
-                appendControlWord("up", baselineShiftHalfPoints);
-            } else if (baselineShiftHalfPoints < 0) {
-                appendControlWord("dn", -baselineShiftHalfPoints);
+            boolean hasBaselineShift = baselineShiftHalfPoints != 0;
+            if (hasBaselineShift) {
+                buffer.append('{');
+                if (baselineShiftHalfPoints > 0) {
+                    appendControlWord("up", baselineShiftHalfPoints);
+                } else {
+                    appendControlWord("dn", -baselineShiftHalfPoints);
+                }
             }
 
             buffer.append("{\\pict\\pngblip");
@@ -288,8 +292,8 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             }
             appendHexBytes(buffer, png);
             buffer.append('}');
-            if (baselineShiftHalfPoints != 0) {
-                appendControlWord("up", 0);
+            if (hasBaselineShift) {
+                buffer.append('}');
             }
             return true;
         }
@@ -353,15 +357,11 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
         ) {
             VAnchor anchor = vAnchor == null ? VAnchor.BASELINE : vAnchor;
 
-            double fontSizePt = fontDef.getSize() != null && fontDef.getSize() > 0
-                    ? fontDef.getSize()
-                    : DEFAULT_FONT_SIZE_PT;
+            double fontSizePt = ifPositiveOrElse(fontDef.getSize(), DEFAULT_FONT_SIZE_PT);
             double ascentPt = fontSizePt * DEFAULT_ASCENT_RATIO;
             double descentPt = fontSizePt * DEFAULT_DESCENT_RATIO;
             double pictureHeightPt = pictureHeightTwips * POINTS_PER_TWIP;
-            double explicitDescentPt = inlineDescent != null && inlineDescent >= 0.0
-                    ? inlineDescent * POINTS_PER_PIXEL
-                    : 0.0;
+            double explicitDescentPt = ifPositiveOrElse(inlineDescent, 0.0) * POINTS_PER_PIXEL;
 
             double deltaDownPt = switch (anchor) {
                 case BASELINE -> explicitDescentPt;
@@ -372,6 +372,11 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
 
             double upShiftPt = -deltaDownPt;
             return (int) Math.round(upShiftPt * 2.0);
+        }
+
+        private static double ifPositiveOrElse(@Nullable Number number, double defaultValue) {
+            double value = number != null ? number.doubleValue() : 0.0;
+            return value > 0.0 ? value : defaultValue;
         }
 
         private void appendControlWord(String command) {
