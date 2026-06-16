@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -299,7 +300,7 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
 
             assertEquals(expected, actual);
             assertTrue(countInlineNodeFactoryRuns(actual) >= 3, "inline controls were not preserved on clipboard round trip");
-            assertEquals(extractRawScaledInlineImageInfo(expected), extractRawScaledInlineImageInfo(actual));
+            assertEquals(getScaledInlineImageInfos(expected), getScaledInlineImageInfos(actual));
         });
     }
 
@@ -318,7 +319,7 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
             assertTrue(rtf.contains("\\pict"));
 
             List<ScaledInlineImageInfo> expectedScaledImages = extractExpectedScaledInlineImageInfo(expected);
-            List<ScaledInlineImageInfo> actualScaledImages = extractActualScaledInlineImageInfo(actual);
+            List<ScaledInlineImageInfo> actualScaledImages = getScaledInlineImageInfos(actual);
             assertEquals(expectedScaledImages.size(), actualScaledImages.size(), "scaled image count mismatch");
             assertEquals(5, actualScaledImages.size(), "unexpected number of scaled images in sample text");
 
@@ -364,29 +365,7 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
         return info;
     }
 
-    private static List<ScaledInlineImageInfo> extractActualScaledInlineImageInfo(RichText text) {
-        List<ScaledInlineImageInfo> info = new ArrayList<>();
-        for (Run run : text) {
-            if (run.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER) < 0) {
-                continue;
-            }
-
-            for (Style style : run.getStyles()) {
-                Object width = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH);
-                Object height = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT);
-                if (width instanceof Number w && height instanceof Number h) {
-                    VAnchor vAnchor = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR) instanceof VAnchor v
-                            ? v
-                            : VAnchor.BASELINE;
-                    info.add(new ScaledInlineImageInfo(w.doubleValue(), h.doubleValue(), vAnchor));
-                    break;
-                }
-            }
-        }
-        return info;
-    }
-
-    private static List<ScaledInlineImageInfo> extractRawScaledInlineImageInfo(RichText text) {
+    private static @NonNull List<ScaledInlineImageInfo> getScaledInlineImageInfos(RichText text) {
         List<ScaledInlineImageInfo> info = new ArrayList<>();
         for (Run run : text) {
             if (run.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER) < 0) {
