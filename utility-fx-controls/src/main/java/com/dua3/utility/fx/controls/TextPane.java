@@ -1034,7 +1034,8 @@ public class TextPane extends Control {
         private final @Nullable TextEditorPane editor;
         private final Timeline caretTimeline;
         private final Timeline dragAutoscrollTimeline;
-        private boolean caretVisibilityRequested;
+
+        private volatile boolean caretVisibilityRequested;
         private boolean draggingSelection;
         private double dragSceneX;
         private double dragSceneY;
@@ -1139,6 +1140,7 @@ public class TextPane extends Control {
             scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
             if (control instanceof TextEditorPane editor) {
+                caretVisibilityRequested = true;
                 editor.selectionProperty().addListener((obs, oldVal, newVal) -> {
                     restartCaretAnimation();
                     invalidate();
@@ -1584,6 +1586,13 @@ public class TextPane extends Control {
             Font font = control.getFont();
             boolean wrapText = control.isWrapText();
             boolean widthChanged = !Double.isFinite(lastAvailableWidth) || Math.abs(lastAvailableWidth - availableWidth) > 0.5;
+            boolean textChanged = !Objects.equals(lastText, text);
+            boolean fontChanged = !Objects.equals(lastFont, font);
+            boolean wrapChanged = lastWrapText != wrapText;
+            boolean geometryChanged = widthChanged || textChanged || fontChanged || wrapChanged;
+            if (editor != null && textChanged && editor.getCaretPosition() == editor.getLength()) {
+                caretVisibilityRequested = true;
+            }
             if (!dirty
                     && !widthChanged
                     && Objects.equals(lastText, text)
@@ -1592,7 +1601,7 @@ public class TextPane extends Control {
                 return;
             }
 
-            refresh(availableWidth);
+            refresh(availableWidth, !geometryChanged);
             dirty = false;
             lastAvailableWidth = availableWidth;
             lastText = text;
@@ -1612,19 +1621,30 @@ public class TextPane extends Control {
             return availableWidth;
         }
 
-        private void refresh(double availableWidth) {
+        private void refresh(double availableWidth, boolean preserveContentHeight) {
             TextPane control = getSkinnable();
             Layout layout = control.createLayout(availableWidth);
+            double previousCanvasHeight = canvas.getHeight();
 
             canvas.setWidth(Math.max(1.0, Math.ceil(layout.width())));
-            canvas.setHeight(Math.max(1.0, Math.ceil(layout.height())));
+            double layoutHeight = Math.max(1.0, Math.ceil(layout.height()));
+            if (preserveContentHeight) {
+                layoutHeight = Math.max(layoutHeight, previousCanvasHeight);
+            }
+            canvas.setHeight(layoutHeight);
             contentPane.setMinSize(canvas.getWidth(), canvas.getHeight());
             contentPane.setPrefSize(canvas.getWidth(), canvas.getHeight());
+            contentPane.resize(canvas.getWidth(), canvas.getHeight());
 
             renderEditorOverlay(control, availableWidth, layout);
-            ensureEditorContentHeight(control, availableWidth);
+            ensureEditorContentHeight(control, availableWidth, previousCanvasHeight);
             if (editor != null && caretVisibilityRequested) {
-                ensureCaretVisible(editor, availableWidth);
+                Bounds viewport = scrollPane.getViewportBounds();
+                if (viewport.getWidth() > 1.0 && viewport.getHeight() > 1.0) {
+                    ensureCaretVisible(editor, availableWidth);
+                } else if (editor.getCaretPosition() == editor.getLength()) {
+                    scrollPane.setVvalue(1.0);
+                }
                 caretVisibilityRequested = false;
             }
 
@@ -1689,7 +1709,7 @@ public class TextPane extends Control {
             return run.getStyles().contains(STYLE_INVISIBLE_TEXT);
         }
 
-        private void ensureEditorContentHeight(TextPane control, double availableWidth) {
+        private void ensureEditorContentHeight(TextPane control, double availableWidth, double previousCanvasHeight) {
             if (!(control instanceof TextEditorPane editor)) {
                 return;
             }
@@ -1710,6 +1730,13 @@ public class TextPane extends Control {
                 canvas.setHeight(requiredHeight);
                 contentPane.setMinHeight(requiredHeight);
                 contentPane.setPrefHeight(requiredHeight);
+                contentPane.resize(canvas.getWidth(), requiredHeight);
+                if (requiredHeight > previousCanvasHeight + 0.5) {
+                    caretVisibilityRequested = true;
+                    if (lineIndex == lines.size() - 1 && editor.getCaretPosition() == editor.getLength()) {
+                        scrollPane.setVvalue(1.0);
+                    }
+                }
             }
         }
 
