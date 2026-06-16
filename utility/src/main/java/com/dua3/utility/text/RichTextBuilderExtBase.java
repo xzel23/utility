@@ -147,7 +147,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @return the builder instance for method chaining
      */
     public B appendImage(Image image) {
-        return appendImage(image, VAnchor.BASELINE);
+        return appendImage(image, VAnchor.BOTTOM);
     }
 
     /**
