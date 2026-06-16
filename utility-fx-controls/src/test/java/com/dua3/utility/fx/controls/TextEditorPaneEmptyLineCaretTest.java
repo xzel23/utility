@@ -14,8 +14,10 @@ import org.junit.jupiter.api.Timeout;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
@@ -124,7 +126,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             assertTrue(targetPos >= 0);
 
             LayoutLine targetLayoutLine = findLayoutLineForSourcePosition(layout, targetPos);
-            assertTrue(targetLayoutLine != null, "target layout line not found");
+            assertNotNull(targetLayoutLine, "target layout line not found");
 
             double y = targetLayoutLine.top() + targetLayoutLine.height() * 0.5;
             int hitCaret = TextEditorPane.indexForPoint(visualLines, 0.0, y);
@@ -150,7 +152,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             assertTrue(targetPos >= 0);
 
             LayoutLine targetLayoutLine = findLayoutLineForSourcePosition(layout, targetPos);
-            assertTrue(targetLayoutLine != null, "target layout line not found");
+            assertNotNull(targetLayoutLine, "target layout line not found");
 
             double y = targetLayoutLine.top() + targetLayoutLine.height() * 0.5;
             int hitCaret = TextEditorPane.indexForPoint(visualLines, 0.0, y);
@@ -242,6 +244,119 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
         });
     }
 
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testAppendingAtDocumentEndKeepsCaretLineVisible() throws Exception {
+        AtomicReference<TextEditorPane> editorRef = new AtomicReference<>();
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane(numberedLines(8));
+            editor.setWrapText(false);
+            editor.setPrefHeight(140);
+            editor.setMinHeight(140);
+            editor.setMaxHeight(140);
+            addToScene(editor);
+            editorRef.set(editor);
+
+            editor.positionCaret(editor.getLength());
+            for (int i = 0; i < 40; i++) {
+                editor.insertText(editor.getLength(), "\nappend-" + i);
+            }
+        });
+
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = editorRef.get();
+            assertNotNull(editor, "editor must be initialized");
+            editor.applyCss();
+            editor.layout();
+
+            ScrollPane scrollPane = findEditorScrollPane(editor);
+
+            double viewportHeight = scrollPane.getViewportBounds().getHeight();
+            assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected visible viewport");
+
+            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
+            int caret = editor.getCaretPosition();
+            int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
+            assertTrue(lineIndex >= 0);
+            TextEditorPane.VisualLine caretLine = lines.get(lineIndex);
+            double caretBottom = caretLine.top() + caretLine.height();
+
+            double contentHeight = Math.max(scrollPane.getContent().getLayoutBounds().getHeight(), 1.0);
+            double maxOffset = Math.max(0.0, contentHeight - viewportHeight);
+            double visibleTop = scrollPane.getVvalue() * maxOffset;
+            double visibleBottom = visibleTop + viewportHeight;
+
+            assertTrue(caretBottom <= visibleBottom + 0.5,
+                    "caret line is not fully visible after appending at document end");
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testManualScrollCanMoveCaretOutOfViewUntilCaretMoves() throws Exception {
+        AtomicReference<TextEditorPane> editorRef = new AtomicReference<>();
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane(numberedLines(80));
+            editor.setWrapText(false);
+            editor.setPrefHeight(180);
+            editor.setMinHeight(180);
+            editor.setMaxHeight(180);
+            addToScene(editor);
+            editorRef.set(editor);
+
+            int caretAtEnd = editor.getLength();
+            editor.positionCaret(caretAtEnd);
+            editor.applyCss();
+            editor.layout();
+
+            ScrollPane scrollPane = findEditorScrollPane(editor);
+            // Simulate user scroll away from caret line.
+            scrollPane.setVvalue(0.0);
+        });
+
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = editorRef.get();
+            assertNotNull(editor, "editor must be initialized");
+            editor.applyCss();
+            editor.layout();
+
+            ScrollPane scrollPane = findEditorScrollPane(editor);
+            double viewportHeight = scrollPane.getViewportBounds().getHeight();
+            assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected visible viewport");
+
+            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
+            int caret = editor.getCaretPosition();
+            int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
+            assertTrue(lineIndex >= 0);
+            TextEditorPane.VisualLine caretLine = lines.get(lineIndex);
+            double caretBottom = caretLine.top() + caretLine.height();
+
+            double contentHeight = Math.max(scrollPane.getContent().getLayoutBounds().getHeight(), 1.0);
+            double maxOffset = Math.max(0.0, contentHeight - viewportHeight);
+            double visibleTop = scrollPane.getVvalue() * maxOffset;
+            double visibleBottom = visibleTop + viewportHeight;
+
+            assertTrue(caretBottom > visibleBottom + 0.5,
+                    "caret line should be out of view after manual scroll");
+
+            editor.positionCaret(Math.max(0, editor.getCaretPosition() - 1));
+            editor.applyCss();
+            editor.layout();
+
+            List<TextEditorPane.VisualLine> linesAfterMove = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
+            int movedCaret = editor.getCaretPosition();
+            int movedLineIndex = TextEditorPane.lineIndexForCaret(linesAfterMove, movedCaret);
+            assertTrue(movedLineIndex >= 0);
+            TextEditorPane.VisualLine movedCaretLine = linesAfterMove.get(movedLineIndex);
+            double movedCaretBottom = movedCaretLine.top() + movedCaretLine.height();
+
+            double movedVisibleTop = scrollPane.getVvalue() * maxOffset;
+            double movedVisibleBottom = movedVisibleTop + viewportHeight;
+            assertTrue(movedCaretBottom <= movedVisibleBottom + 0.5 && movedCaretBottom >= movedVisibleTop - 0.5,
+                    "caret line should be visible again after caret movement");
+        });
+    }
+
     private static RichText createInlineSampleText() {
         RichTextBuilderFx builder = new RichTextBuilderFx();
         builder.append("first line\n");
@@ -297,13 +412,21 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
     }
 
     private static double viewportHeight(TextEditorPane editor) {
+        return findEditorScrollPane(editor).getViewportBounds().getHeight();
+    }
+
+    private static ScrollPane findEditorScrollPane(TextEditorPane editor) {
         return editor.lookupAll(".scroll-pane").stream()
                 .filter(ScrollPane.class::isInstance)
                 .map(ScrollPane.class::cast)
-                .mapToDouble(sp -> sp.getViewportBounds().getHeight())
-                .filter(h -> Double.isFinite(h) && h > 1.0)
+                .filter(sp -> {
+                    if (!(sp.getContent() instanceof javafx.scene.layout.Pane pane)) {
+                        return false;
+                    }
+                    return pane.getStyleClass().contains("content");
+                })
                 .findFirst()
-                .orElse(Double.NaN);
+                .orElseThrow();
     }
 
     private static String numberedLines(int count) {
