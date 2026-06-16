@@ -1378,8 +1378,18 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         VisualLine currentLine = lines.get(currentLineIndex);
         double x = Double.isNaN(preferredCaretX) ? xForIndex(currentLine, caret) : preferredCaretX;
 
-        int targetLineIndex = Math.clamp(currentLineIndex + delta, 0, lines.size() - 1);
-        int targetCaret = indexForX(lines.get(targetLineIndex), x);
+        int targetLineIndex = currentLineIndex + delta;
+        int targetCaret;
+        if (targetLineIndex < 0) {
+            x = 0;
+            targetCaret = 0;
+        } else if (targetLineIndex >= lines.size()) {
+            VisualLine line = lines.getLast();
+            targetCaret = line.end();
+            x = xForIndex(line, targetCaret);
+        } else {
+            targetCaret = indexForX(lines.get(targetLineIndex), x);
+        }
 
         if (extendSelection) {
             selectPositionCaret(targetCaret);
