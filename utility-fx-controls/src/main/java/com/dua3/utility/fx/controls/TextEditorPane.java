@@ -1491,15 +1491,95 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             lines.add(new VisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
         }
 
+        String text = getText().toString();
+        lines = addMissingLogicalEmptyLines(lines, text, defaultLineHeight);
+
         return lines;
     }
 
     private boolean isLogicalEmptyLine(int position) {
-        String text = getText().toString();
+        return isLogicalEmptyLine(getText().toString(), position);
+    }
+
+    private static boolean isLogicalEmptyLine(String text, int position) {
         int p = Math.clamp(position, 0, text.length());
         boolean atLineStart = p == 0 || text.charAt(p - 1) == '\n';
         boolean atLineEnd = p == text.length() || text.charAt(p) == '\n';
         return atLineStart && atLineEnd;
+    }
+
+    private static List<VisualLine> addMissingLogicalEmptyLines(List<VisualLine> sourceLines, String text, double defaultLineHeight) {
+        if (text.isEmpty()) {
+            return sourceLines;
+        }
+
+        List<VisualLine> lines = sourceLines;
+        for (int p = 0; p <= text.length(); p++) {
+            if (!isLogicalEmptyLine(text, p) || containsExactLine(lines, p)) {
+                continue;
+            }
+            lines = insertEmptyLine(lines, p, defaultLineHeight);
+        }
+        return lines;
+    }
+
+    private static boolean containsExactLine(List<VisualLine> lines, int position) {
+        return lines.stream().anyMatch(line -> line.start() == position && line.end() == position);
+    }
+
+    private static List<VisualLine> insertEmptyLine(List<VisualLine> sourceLines, int position, double defaultLineHeight) {
+        List<VisualLine> result = new ArrayList<>(sourceLines.size() + 1);
+        int insertIndex = 0;
+        while (insertIndex < sourceLines.size() && sourceLines.get(insertIndex).end() <= position) {
+            insertIndex++;
+        }
+
+        VisualLine previous = insertIndex > 0 ? sourceLines.get(insertIndex - 1) : null;
+        VisualLine next = insertIndex < sourceLines.size() ? sourceLines.get(insertIndex) : null;
+
+        double height = Math.max(1.0, defaultLineHeight);
+        if (previous != null && next != null) {
+            height = Math.max(1.0, Math.min(previous.height(), next.height()));
+        } else if (previous != null) {
+            height = Math.max(1.0, previous.height());
+        } else if (next != null) {
+            height = Math.max(1.0, next.height());
+        }
+
+        boolean shiftFollowing = false;
+        double top;
+        if (previous != null && next != null) {
+            top = previous.top() + previous.height();
+            double gap = next.top() - top;
+            if (gap > 0.5) {
+                height = Math.max(1.0, Math.min(height, gap));
+            } else {
+                shiftFollowing = true;
+            }
+        } else if (previous != null) {
+            top = previous.top() + previous.height();
+        } else if (next != null) {
+            top = Math.max(0.0, next.top() - height);
+            if (top + height > next.top() + 0.5) {
+                shiftFollowing = true;
+            }
+        } else {
+            top = 0.0;
+        }
+
+        for (int i = 0; i < insertIndex; i++) {
+            result.add(sourceLines.get(i));
+        }
+
+        result.add(new VisualLine(position, position, top, height, new double[]{0.0}));
+
+        for (int i = insertIndex; i < sourceLines.size(); i++) {
+            VisualLine line = sourceLines.get(i);
+            double adjustedTop = shiftFollowing ? line.top() + height : line.top();
+            result.add(new VisualLine(line.start(), line.end(), adjustedTop, line.height(), line.boundaries()));
+        }
+
+        return result;
     }
 
     private double currentWrapWidth() {
@@ -1599,16 +1679,31 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     static int lineIndexForCaret(List<VisualLine> lines, int caret) {
+        int fallback = lines.size() - 1;
         for (int i = 0; i < lines.size(); i++) {
             VisualLine line = lines.get(i);
-            if (caret <= line.end()) {
-                return i;
+            if (caret < line.start()) {
+                return Math.max(0, i - 1);
             }
-            if (i + 1 < lines.size() && caret < lines.get(i + 1).start()) {
-                return i;
+
+            if (caret > line.end()) {
+                fallback = i;
+                continue;
             }
+
+            // At shared boundaries (especially empty lines), prefer the latest matching line
+            // so caret positions can resolve to visually empty lines.
+            int candidate = i;
+            while (candidate + 1 < lines.size()) {
+                VisualLine next = lines.get(candidate + 1);
+                if (caret < next.start() || caret > next.end()) {
+                    break;
+                }
+                candidate++;
+            }
+            return candidate;
         }
-        return lines.size() - 1;
+        return fallback;
     }
 
     static double xForIndex(VisualLine line, int index) {
