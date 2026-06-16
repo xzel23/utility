@@ -605,13 +605,13 @@ public class TextPane extends Control {
             if (factory instanceof Function<?, ?> f) {
                 @SuppressWarnings("unchecked")
                 Function<String, ?> fn = (Function<String, ?>) f;
-                Node node = toFxInlineNode(fn.apply(text));
+                Node node = toFxInlineNode(fn.apply(text), style);
                 if (node != null) {
                     return node;
                 }
             }
 
-            Node node = toFxInlineNode(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE));
+            Node node = toFxInlineNode(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE), style);
             if (node != null) {
                 return node;
             }
@@ -619,17 +619,59 @@ public class TextPane extends Control {
         return null;
     }
 
-    private static @Nullable Node toFxInlineNode(@Nullable Object value) {
+    private static @Nullable Node toFxInlineNode(@Nullable Object value, Style style) {
+        double maxWidth = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH);
+        double maxHeight = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT);
+
         Object wrapped = value;
         if (wrapped instanceof InlineNode<?> inlineNode) {
             wrapped = inlineNode.getWrapped();
         }
 
         return switch (wrapped) {
-            case Node node -> node;
-            case Image image -> new ImageView(FxImageUtil.getInstance().toImage(image).fxImage());
+            case Node node -> {
+                applyImageViewScaling(node, maxWidth, maxHeight);
+                yield node;
+            }
+            case Image image -> {
+                ImageView imageView = new ImageView(FxImageUtil.getInstance().toImage(image).fxImage());
+                applyImageViewScaling(imageView, maxWidth, maxHeight);
+                yield imageView;
+            }
             case null, default -> null;
         };
+    }
+
+    private static double getPositiveStyleValue(Style style, String key) {
+        Object value = style.get(key);
+        if (value instanceof Number n) {
+            double d = n.doubleValue();
+            if (Double.isFinite(d) && d > 0.0) {
+                return d;
+            }
+        }
+        return Double.NaN;
+    }
+
+    private static void applyImageViewScaling(Node node, double maxWidth, double maxHeight) {
+        if (!(node instanceof ImageView imageView)) {
+            return;
+        }
+
+        boolean hasWidth = Double.isFinite(maxWidth) && maxWidth > 0.0;
+        boolean hasHeight = Double.isFinite(maxHeight) && maxHeight > 0.0;
+        if (!hasWidth && !hasHeight) {
+            return;
+        }
+
+        imageView.setPreserveRatio(true);
+        if (hasWidth) {
+            imageView.setFitWidth(Math.max(1.0, maxWidth));
+        }
+        if (hasHeight) {
+            imageView.setFitHeight(Math.max(1.0, maxHeight));
+        }
+        imageView.setSmooth(true);
     }
 
     private static VAnchor getInlineNodeVAnchor(Run run) {

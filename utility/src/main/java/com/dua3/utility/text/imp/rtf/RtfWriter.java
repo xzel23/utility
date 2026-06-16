@@ -12,6 +12,7 @@ import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.InlineNode;
+import com.dua3.utility.ui.VAnchor;
 import org.jspecify.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
@@ -27,6 +28,12 @@ import java.util.function.Function;
  */
 public final class RtfWriter extends AttributeBasedConverter<String> {
     private static final char[] HEX = "0123456789abcdef".toCharArray();
+    private static final double TWIPS_PER_PIXEL = 15.0;
+    private static final double POINTS_PER_TWIP = 1.0 / 20.0;
+    private static final double POINTS_PER_PIXEL = 0.75;
+    private static final double DEFAULT_FONT_SIZE_PT = 12.0;
+    private static final double DEFAULT_ASCENT_RATIO = 0.8;
+    private static final double DEFAULT_DESCENT_RATIO = 0.2;
     private final Map<String, Integer> fontIndexByName;
     private final Map<Color, Integer> colorIndexByColor;
 
@@ -164,13 +171,13 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                 appendControlWord("strike");
             }
 
-            appendRunContent(run);
+            appendRunContent(run, fontDef);
             buffer.append('}');
         }
 
-        private void appendRunContent(Run run) {
-            InlineNode<?> inlineNode = findInlineNode(run);
-            if (inlineNode == null) {
+        private void appendRunContent(Run run, FontDef fontDef) {
+            InlineImageExportData imageData = findInlineImageExportData(run);
+            if (imageData == null) {
                 appendChars(run);
                 return;
             }
@@ -183,7 +190,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                     if (segmentStart < i) {
                         appendEscapedText(buffer, run.subSequence(segmentStart, i));
                     }
-                    if (!appendPicture(inlineNode)) {
+                    if (!appendPicture(imageData, fontDef)) {
                         appendEscapedCodePoint(buffer, ch);
                     }
                     segmentStart = i + 1;
@@ -195,19 +202,39 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             }
         }
 
-        private static @Nullable InlineNode<?> findInlineNode(Run run) {
+        private static @Nullable InlineImageExportData findInlineImageExportData(Run run) {
             String text = run.toString();
             List<Style> styles = run.getStyles();
             for (int i = styles.size() - 1; i >= 0; i--) {
                 Style style = styles.get(i);
                 InlineNode<?> fromFactory = evaluateInlineNodeFactory(style, text);
                 if (fromFactory != null) {
-                    return fromFactory;
+                    return new InlineImageExportData(
+                            fromFactory,
+                            style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR) instanceof VAnchor vAnchor ? vAnchor : null,
+                            toDouble(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT)),
+                            toDouble(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH)),
+                            toDouble(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT))
+                    );
                 }
                 Object value = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
                 if (value instanceof InlineNode<?> inlineNode) {
-                    return inlineNode;
+                    return new InlineImageExportData(
+                            inlineNode,
+                            style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR) instanceof VAnchor vAnchor ? vAnchor : null,
+                            toDouble(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT)),
+                            toDouble(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH)),
+                            toDouble(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT))
+                    );
                 }
+            }
+            return null;
+        }
+
+        private static @Nullable Double toDouble(@Nullable Object value) {
+            if (value instanceof Number n) {
+                double v = n.doubleValue();
+                return Double.isFinite(v) ? v : null;
             }
             return null;
         }
@@ -228,8 +255,8 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             }
         }
 
-        private boolean appendPicture(InlineNode<?> inlineNode) {
-            Image image = toImage(inlineNode);
+        private boolean appendPicture(InlineImageExportData imageData, FontDef fontDef) {
+            Image image = toImage(imageData.inlineNode());
             if (image == null) {
                 return false;
             }
@@ -239,18 +266,31 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                 return false;
             }
 
-            int width = Math.max(1, image.width());
-            int height = Math.max(1, image.height());
-            int picwGoal = Math.max(1, width * 15);
-            int pichGoal = Math.max(1, height * 15);
+            int nativeWidth = Math.max(1, image.width());
+            int nativeHeight = Math.max(1, image.height());
+            PictureTarget target = computePictureTarget(nativeWidth, nativeHeight, imageData.maxWidth(), imageData.maxHeight());
+            int baselineShiftHalfPoints = computeBaselineShiftHalfPoints(imageData.vAnchor(), imageData.descent(), fontDef, target.displayHeightTwips());
+
+            if (baselineShiftHalfPoints > 0) {
+                appendControlWord("up", baselineShiftHalfPoints);
+            } else if (baselineShiftHalfPoints < 0) {
+                appendControlWord("dn", -baselineShiftHalfPoints);
+            }
 
             buffer.append("{\\pict\\pngblip");
-            appendControlWord("picw", width);
-            appendControlWord("pich", height);
-            appendControlWord("picwgoal", picwGoal);
-            appendControlWord("pichgoal", pichGoal);
+            appendControlWord("picw", nativeWidth);
+            appendControlWord("pich", nativeHeight);
+            appendControlWord("picwgoal", target.widthGoalTwips());
+            appendControlWord("pichgoal", target.heightGoalTwips());
+            if (target.scaled()) {
+                appendControlWord("picscalex", target.scaleXPercent());
+                appendControlWord("picscaley", target.scaleYPercent());
+            }
             appendHexBytes(buffer, png);
             buffer.append('}');
+            if (baselineShiftHalfPoints != 0) {
+                appendControlWord("up", 0);
+            }
             return true;
         }
 
@@ -270,6 +310,68 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             } catch (IOException | RuntimeException ex) {
                 return new byte[0];
             }
+        }
+
+        private static PictureTarget computePictureTarget(
+                int nativeWidth,
+                int nativeHeight,
+                @Nullable Double maxWidth,
+                @Nullable Double maxHeight
+        ) {
+            double width = nativeWidth;
+            double height = nativeHeight;
+
+            boolean hasMaxWidth = maxWidth != null && maxWidth > 0;
+            boolean hasMaxHeight = maxHeight != null && maxHeight > 0;
+            if (hasMaxWidth || hasMaxHeight) {
+                double sx = hasMaxWidth ? maxWidth / nativeWidth : Double.POSITIVE_INFINITY;
+                double sy = hasMaxHeight ? maxHeight / nativeHeight : Double.POSITIVE_INFINITY;
+                double scale = Math.min(sx, sy);
+                if (!Double.isFinite(scale) || scale <= 0.0) {
+                    scale = 1.0;
+                }
+                width = nativeWidth * scale;
+                height = nativeHeight * scale;
+            }
+
+            int widthGoalTwips = Math.max(1, (int) Math.round(nativeWidth * TWIPS_PER_PIXEL));
+            int heightGoalTwips = Math.max(1, (int) Math.round(nativeHeight * TWIPS_PER_PIXEL));
+            int displayWidthTwips = Math.max(1, (int) Math.round(width * TWIPS_PER_PIXEL));
+            int displayHeightTwips = Math.max(1, (int) Math.round(height * TWIPS_PER_PIXEL));
+
+            int scaleXPercent = Math.max(1, (int) Math.round(width * 100.0 / nativeWidth));
+            int scaleYPercent = Math.max(1, (int) Math.round(height * 100.0 / nativeHeight));
+            boolean scaled = Math.abs(width - nativeWidth) > 1e-6 || Math.abs(height - nativeHeight) > 1e-6;
+            return new PictureTarget(widthGoalTwips, heightGoalTwips, displayWidthTwips, displayHeightTwips, scaleXPercent, scaleYPercent, scaled);
+        }
+
+        private static int computeBaselineShiftHalfPoints(
+                @Nullable VAnchor vAnchor,
+                @Nullable Double inlineDescent,
+                FontDef fontDef,
+                int pictureHeightTwips
+        ) {
+            VAnchor anchor = vAnchor == null ? VAnchor.BASELINE : vAnchor;
+
+            double fontSizePt = fontDef.getSize() != null && fontDef.getSize() > 0
+                    ? fontDef.getSize()
+                    : DEFAULT_FONT_SIZE_PT;
+            double ascentPt = fontSizePt * DEFAULT_ASCENT_RATIO;
+            double descentPt = fontSizePt * DEFAULT_DESCENT_RATIO;
+            double pictureHeightPt = pictureHeightTwips * POINTS_PER_TWIP;
+            double explicitDescentPt = inlineDescent != null && inlineDescent >= 0.0
+                    ? inlineDescent * POINTS_PER_PIXEL
+                    : 0.0;
+
+            double deltaDownPt = switch (anchor) {
+                case BASELINE -> explicitDescentPt;
+                case BOTTOM -> descentPt;
+                case TOP -> pictureHeightPt - ascentPt;
+                case MIDDLE -> (pictureHeightPt + descentPt - ascentPt) / 2.0;
+            };
+
+            double upShiftPt = -deltaDownPt;
+            return (int) Math.round(upShiftPt * 2.0);
         }
 
         private void appendControlWord(String command) {
@@ -345,4 +447,22 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             buffer.append(HEX[b >>> 4]).append(HEX[b & 0x0F]);
         }
     }
+
+    private record InlineImageExportData(
+            InlineNode<?> inlineNode,
+            @Nullable VAnchor vAnchor,
+            @Nullable Double descent,
+            @Nullable Double maxWidth,
+            @Nullable Double maxHeight
+    ) {}
+
+    private record PictureTarget(
+            int widthGoalTwips,
+            int heightGoalTwips,
+            int displayWidthTwips,
+            int displayHeightTwips,
+            int scaleXPercent,
+            int scaleYPercent,
+            boolean scaled
+    ) {}
 }

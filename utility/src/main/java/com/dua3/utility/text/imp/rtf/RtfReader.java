@@ -10,6 +10,7 @@ import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.ui.InlineNode;
+import com.dua3.utility.ui.VAnchor;
 import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullUnmarked;
 
@@ -34,6 +35,12 @@ public final class RtfReader {
     private static final String RTF_SOURCE_CLASS = "com.rtfparserkit.parser.RtfStringSource";
     private static final String RTF_SOURCE_INTERFACE = "com.rtfparserkit.parser.IRtfSource";
     private static final String RTF_LISTENER_INTERFACE = "com.rtfparserkit.parser.IRtfListener";
+    private static final double TWIPS_PER_PIXEL = 15.0;
+    private static final double POINTS_PER_TWIP = 1.0 / 20.0;
+    private static final double POINTS_PER_PIXEL = 0.75;
+    private static final double DEFAULT_FONT_SIZE_PT = 12.0;
+    private static final double DEFAULT_ASCENT_RATIO = 0.8;
+    private static final double DEFAULT_DESCENT_RATIO = 0.2;
 
     private RtfReader() {
         // utility class
@@ -85,6 +92,12 @@ public final class RtfReader {
         private int pictureDepth = -1;
         private final StringBuilder pictureHexData = new StringBuilder();
         private String pictureMimeType = "image/jpeg";
+        private int pictureNativeWidth = 0;
+        private int pictureNativeHeight = 0;
+        private int pictureWidthGoalTwips = 0;
+        private int pictureHeightGoalTwips = 0;
+        private int pictureScaleXPercent = 100;
+        private int pictureScaleYPercent = 100;
         private int inlineStyleId = 0;
 
         private void parse(String rtf) {
@@ -175,6 +188,12 @@ public final class RtfReader {
                 pictureDepth = -1;
                 pictureHexData.setLength(0);
                 pictureMimeType = "image/jpeg";
+                pictureNativeWidth = 0;
+                pictureNativeHeight = 0;
+                pictureWidthGoalTwips = 0;
+                pictureHeightGoalTwips = 0;
+                pictureScaleXPercent = 100;
+                pictureScaleYPercent = 100;
             }
 
             style = styleStack.isEmpty() ? new CharacterStyle(defaultFontIndex) : styleStack.pop();
@@ -209,7 +228,7 @@ public final class RtfReader {
 
         private void onCommand(String command, int parameter, boolean hasParameter, boolean optional) {
             if (inPicture) {
-                consumePictureCommand(command);
+                consumePictureCommand(command, parameter, hasParameter);
                 return;
             }
             if (isIgnorableDestination(command, optional)) {
@@ -226,6 +245,12 @@ public final class RtfReader {
                 pictureDepth = groupDepth;
                 pictureHexData.setLength(0);
                 pictureMimeType = "image/jpeg";
+                pictureNativeWidth = 0;
+                pictureNativeHeight = 0;
+                pictureWidthGoalTwips = 0;
+                pictureHeightGoalTwips = 0;
+                pictureScaleXPercent = 100;
+                pictureScaleYPercent = 100;
                 return;
             }
 
@@ -310,6 +335,8 @@ public final class RtfReader {
                         style.fontSize = parameter / 2f;
                     }
                 }
+                case "up" -> style.baselineShiftHalfPoints = hasParameter ? Math.max(0, parameter) : 0;
+                case "dn" -> style.baselineShiftHalfPoints = hasParameter ? -Math.max(0, parameter) : 0;
                 case "par", "line" -> appendStyledText("\n");
                 case "tab" -> appendStyledText("\t");
                 default -> {
@@ -318,10 +345,40 @@ public final class RtfReader {
             }
         }
 
-        private void consumePictureCommand(String command) {
+        private void consumePictureCommand(String command, int parameter, boolean hasParameter) {
             switch (command) {
                 case "jpegblip" -> pictureMimeType = "image/jpeg";
                 case "pngblip" -> pictureMimeType = "image/png";
+                case "picw" -> {
+                    if (hasParameter) {
+                        pictureNativeWidth = Math.max(0, parameter);
+                    }
+                }
+                case "pich" -> {
+                    if (hasParameter) {
+                        pictureNativeHeight = Math.max(0, parameter);
+                    }
+                }
+                case "picwgoal" -> {
+                    if (hasParameter) {
+                        pictureWidthGoalTwips = Math.max(0, parameter);
+                    }
+                }
+                case "pichgoal" -> {
+                    if (hasParameter) {
+                        pictureHeightGoalTwips = Math.max(0, parameter);
+                    }
+                }
+                case "picscalex" -> {
+                    if (hasParameter) {
+                        pictureScaleXPercent = Math.max(1, parameter);
+                    }
+                }
+                case "picscaley" -> {
+                    if (hasParameter) {
+                        pictureScaleYPercent = Math.max(1, parameter);
+                    }
+                }
                 default -> {
                     // ignore other picture properties (e.g., dimensions, scaling)
                 }
@@ -348,7 +405,22 @@ public final class RtfReader {
                 Image image = ImageUtil.getInstance().load(payload);
                 byte[] inlineData = InlineNode.encodeArgbImageData(image);
                 InlineNode<Image> inlineNode = new InlineNode<>(image, inlineNodeMimeType(pictureMimeType), inlineData);
-                appendInlineNodeMarker(inlineNode);
+
+                if (pictureNativeWidth <= 0) {
+                    pictureNativeWidth = image.width();
+                }
+                if (pictureNativeHeight <= 0) {
+                    pictureNativeHeight = image.height();
+                }
+
+                int widthTwips = resolveDisplayDimensionTwips(pictureWidthGoalTwips, pictureNativeWidth, pictureScaleXPercent, image.width());
+                int heightTwips = resolveDisplayDimensionTwips(pictureHeightGoalTwips, pictureNativeHeight, pictureScaleYPercent, image.height());
+                double widthPx = Math.max(1.0, widthTwips / TWIPS_PER_PIXEL);
+                double heightPx = Math.max(1.0, heightTwips / TWIPS_PER_PIXEL);
+                boolean scaled = Math.abs(widthPx - image.width()) > 1e-6 || Math.abs(heightPx - image.height()) > 1e-6;
+
+                VAnchor vAnchor = deriveVAnchor(style.baselineShiftHalfPoints, heightTwips, style.fontSize);
+                appendInlineNodeMarker(inlineNode, vAnchor, scaled ? widthPx : null, scaled ? heightPx : null);
             } catch (IOException | RuntimeException ex) {
                 appendStyledText("Image: ");
             }
@@ -361,12 +433,84 @@ public final class RtfReader {
             return "image/jpeg";
         }
 
-        private void appendInlineNodeMarker(InlineNode<?> inlineNode) {
-            Style inlineStyle = Style.create(
-                    "rtf-inline-node-" + inlineStyleId++,
-                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, inlineNode)
-            );
+        private void appendInlineNodeMarker(
+                InlineNode<?> inlineNode,
+                VAnchor vAnchor,
+                @Nullable Double widthPx,
+                @Nullable Double heightPx
+        ) {
+            List<Map.Entry<String, Object>> entries = new ArrayList<>(5);
+            entries.add(Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, inlineNode));
+            entries.add(Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR, vAnchor));
+            entries.add(Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT, 0.0));
+            if (widthPx != null && widthPx > 0) {
+                entries.add(Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH, widthPx));
+            }
+            if (heightPx != null && heightPx > 0) {
+                entries.add(Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT, heightPx));
+            }
+            @SuppressWarnings("unchecked")
+            Map.Entry<String, Object>[] styleEntries = entries.toArray(Map.Entry[]::new);
+            Style inlineStyle = Style.create("rtf-inline-node-" + inlineStyleId++, styleEntries);
             appendStyledText(String.valueOf(RichTextBuilderExtBase.INLINE_NODE_MARKER), inlineStyle);
+        }
+
+        private static int resolveDisplayDimensionTwips(int goalTwips, int nativeUnits, int scalePercent, int fallbackPixels) {
+            int safeScalePercent = Math.max(1, scalePercent);
+            if (goalTwips > 0) {
+                if (safeScalePercent == 100) {
+                    return goalTwips;
+                }
+
+                int goalScaledTwips = Math.max(1, (int) Math.round(goalTwips * (safeScalePercent / 100.0)));
+                if (nativeUnits > 0) {
+                    int nativeGoalTwips = Math.max(1, (int) Math.round(nativeUnits * TWIPS_PER_PIXEL));
+                    int nativeScaledGoalTwips = Math.max(1, (int) Math.round(nativeGoalTwips * (safeScalePercent / 100.0)));
+
+                    // Compatibility with RTF that already stores the scaled size in \pic*goal and also sets \picscale*.
+                    if (Math.abs(goalTwips - nativeScaledGoalTwips) <= 1) {
+                        return goalTwips;
+                    }
+                    if (Math.abs(goalTwips - nativeGoalTwips) <= 1) {
+                        return goalScaledTwips;
+                    }
+                }
+                return goalScaledTwips;
+            }
+
+            int nativeValue = nativeUnits > 0 ? nativeUnits : Math.max(1, fallbackPixels);
+            return Math.max(1, (int) Math.round(nativeValue * (safeScalePercent / 100.0) * TWIPS_PER_PIXEL));
+        }
+
+        private static VAnchor deriveVAnchor(int baselineShiftHalfPoints, int pictureHeightTwips, float fontSize) {
+            double fontSizePt = fontSize > 0 ? fontSize : DEFAULT_FONT_SIZE_PT;
+            double ascentPt = fontSizePt * DEFAULT_ASCENT_RATIO;
+            double descentPt = fontSizePt * DEFAULT_DESCENT_RATIO;
+            double pictureHeightPt = Math.max(1.0, pictureHeightTwips) * POINTS_PER_TWIP;
+            double shiftPt = baselineShiftHalfPoints / 2.0;
+
+            double baselineShift = 0.0;
+            double bottomShift = -descentPt;
+            double topShift = ascentPt - pictureHeightPt;
+            double middleShift = (ascentPt - descentPt - pictureHeightPt) / 2.0;
+
+            VAnchor best = VAnchor.BASELINE;
+            double bestDistance = Math.abs(shiftPt - baselineShift);
+            double distanceToBottom = Math.abs(shiftPt - bottomShift);
+            if (distanceToBottom < bestDistance) {
+                bestDistance = distanceToBottom;
+                best = VAnchor.BOTTOM;
+            }
+            double distanceToTop = Math.abs(shiftPt - topShift);
+            if (distanceToTop < bestDistance) {
+                bestDistance = distanceToTop;
+                best = VAnchor.TOP;
+            }
+            double distanceToMiddle = Math.abs(shiftPt - middleShift);
+            if (distanceToMiddle < bestDistance) {
+                best = VAnchor.MIDDLE;
+            }
+            return best;
         }
 
         private void consumeFontTableText(String text) {
@@ -551,6 +695,7 @@ public final class RtfReader {
         private int colorIndex;
         private int fontIndex;
         private float fontSize;
+        private int baselineShiftHalfPoints;
 
         private CharacterStyle() {
             this(-1);
@@ -564,6 +709,7 @@ public final class RtfReader {
             this.colorIndex = 0;
             this.fontIndex = defaultFontIndex;
             this.fontSize = -1f;
+            this.baselineShiftHalfPoints = 0;
         }
 
         private CharacterStyle copy() {
@@ -575,6 +721,7 @@ public final class RtfReader {
             copy.colorIndex = this.colorIndex;
             copy.fontIndex = this.fontIndex;
             copy.fontSize = this.fontSize;
+            copy.baselineShiftHalfPoints = this.baselineShiftHalfPoints;
             return copy;
         }
     }

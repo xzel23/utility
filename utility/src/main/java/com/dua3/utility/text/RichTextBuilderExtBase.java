@@ -39,6 +39,14 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * Style attribute key for inline-node descent (part below baseline).
      */
     public static final String STYLE_ATTRIBUTE_INLINE_NODE_DESCENT = RichTextBuilderExtBase.class.getName() + ".inlineNodeDescent";
+    /**
+     * Style attribute key for inline-node maximum width.
+     */
+    public static final String STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH = RichTextBuilderExtBase.class.getName() + ".inlineNodeMaxWidth";
+    /**
+     * Style attribute key for inline-node maximum height.
+     */
+    public static final String STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT = RichTextBuilderExtBase.class.getName() + ".inlineNodeMaxHeight";
 
     /**
      * Protected constructor for the {@code RichTextBuilderExtBase} class.
@@ -186,8 +194,20 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      */
     public B appendImage(Image image, float maxWidth, float maxHeight, VAnchor vAnchor) {
         byte[] data = InlineNode.encodeArgbImageData(image);
-        return appendInlineNodeWithStyle(() ->
-                new InlineNode<>(createImage(image, maxWidth, maxHeight), image.mimeType(), data), vAnchor, 0.0);
+        Function<String, InlineNode<? extends N>> nodeFactory = ignoredText ->
+                new InlineNode<>(createImage(image, maxWidth, maxHeight), image.mimeType(), data);
+        Style style = Style.create(
+                nextStyleName("inline-node"),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR, vAnchor),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_DESCENT, 0.0),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH, Math.max(1f, maxWidth)),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT, Math.max(1f, maxHeight))
+        );
+        push(style);
+        append(INLINE_NODE_MARKER);
+        pop(style);
+        return self();
     }
 
     /**
