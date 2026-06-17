@@ -134,7 +134,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
             List<Style> openStyles = new ArrayList<>();
             for (Run run : text) {
-                // determine attribute related changes
+                // determine attribute-related changes
                 List<AttributeChange> attributesToClose = new ArrayList<>();
                 List<AttributeChange> attributesToOpen = new ArrayList<>();
                 Collection<String> relevantAttributes = relevantAttributes();

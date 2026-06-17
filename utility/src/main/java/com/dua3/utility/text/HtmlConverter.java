@@ -1,15 +1,16 @@
 package com.dua3.utility.text;
 
-import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SequencedMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -66,7 +67,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * Key: the attribute name
      * Value: the function that maps the attribute name to tags
      */
-    private final Map<String, Function<AttributeChange, HtmlTag>> attributeMappings = new HashMap<>();
+    private final SequencedMap<String, Function<AttributeChange, HtmlTag>> attributeMappings = new LinkedHashMap<>();
 
     /**
      * The default mapper used to generate tags for attributes without mapping.
@@ -129,7 +130,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      */
     public static HtmlConversionOption map(String attribute,
                                            Function<Object, HtmlTag> mapper) {
-        return new HtmlConversionOption(c -> c.addMapping(attribute, mapper));
+        return new HtmlConversionOption(c -> c.addStyleMapping(attribute, mapper));
     }
 
     /**
@@ -287,7 +288,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
-        addMapping(attr, v -> Objects.equals(v, value) ? tag : HtmlTag.emptyTag());
+        addStyleMapping(attr, v -> Objects.equals(v, value) ? tag : HtmlTag.emptyTag());
     }
 
     void doAddDefaultMappings() {
@@ -296,7 +297,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         addSimpleMapping(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
         addSimpleMapping(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, HtmlTag.tag("<strike>", "</strike>"));
 
-        addMapping(Style.FONT_CLASS, value -> {
+        addStyleMapping(Style.FONT_CLASS, value -> {
             if (isUseCss()) {
                 return switch (value.toString()) {
                     case Style.FONT_CLASS_VALUE_MONOSPACE -> HtmlTag.tag("<span class='monospace'>", SPAN_CLOSE);
@@ -314,16 +315,6 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                 };
             }
         });
-/* FIXME
-        addMapping(Style.FONT, value -> {
-            Font font = (Font) value;
-            if (isUseCss()) {
-                return HtmlTag.tag("<span class='" + font.fontspec() + "'>", SPAN_CLOSE);
-            } else {
-                return HtmlTag.tag("<span style='" + font.getCssStyle() + "'>", SPAN_CLOSE);
-            }
-        });
- */
     }
 
     void setDefaultStyleMapper(BiFunction<? super String, Object, ? extends HtmlTag> defaultStyleMapper) {
@@ -340,7 +331,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param styleName the style name
      * @param mapper    the mapper
      */
-    void addMapping(String styleName, Function<Object, HtmlTag> mapper) {
+    void addStyleMapping(String styleName, Function<Object, HtmlTag> mapper) {
         styleMappings.merge(styleName, mapper, HtmlConverter::combineMappers);
     }
 
@@ -592,7 +583,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         private static boolean isFontRelated(String key) {
             return switch (key) {
-                case Style.FONT_FAMILIES,
+                case Style.FONT_CLASS,
+                     Style.FONT_FAMILIES,
                      Style.FONT_SIZE,
                      Style.FONT_WEIGHT,
                      Style.FONT_STYLE,
@@ -604,57 +596,56 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             };
         }
 
-        private static boolean isOnlyTextStyleChanged(FontDef fd) {
-            return fd.getFamilies() == null && fd.getSize() == null && fd.getColor() == null;
-        }
-
-        @SuppressWarnings("unchecked")
         private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
             Map<String, @Nullable Object> properties = new LinkedHashMap<>();
-            Predicate<Map.Entry<String, @Nullable Object>> attributeFilter;
-            for (Style style : styles) {
-                String fontClass = (String) style.get(Style.FONT_CLASS);
-                List<String> fontFamilies = (List<String>) style.get(Style.FONT_FAMILIES);
-                FontDef fd = style.getFontDef();
 
-                boolean ignoreFontFamily = fontClass != null
-                        && LangUtil.isOneOf(fontFamilies,
-                        Style.FONT_FAMILIES_VALUE_MONOSPACED,
-                        Style.FONT_FAMILIES_VALUE_SANS_SERIF,
-                        Style.FONT_FAMILIES_VALUE_SERIF
-                );
-
-                if (ignoreFontFamily) {
-                    fd.setFamilies(null);
+            if (isUseCss()) {
+                FontDef fd = currentDefaultFontDef.copy();
+                for (Style style : styles) {
+                    fd.merge(style.getFontDef());
+                    style.stream()
+                            .filter(entry -> !isFontRelated(entry.getKey()))
+                            .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
                 }
-                if (!fd.isEmpty() && !isOnlyTextStyleChanged(fd)) {
-                    FontDef merged = currentDefaultFontDef.copy();
-                    merged.merge(fd);
-                    if (!Objects.equals(currentDefaultFontDef, merged)) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("<span style='");
-                        sb.append(fd.getCssStyle());
-                        sb.append("'>");
-                        tags.add(HtmlTag.tag(sb.toString(), SPAN_CLOSE));
+                if (!Objects.equals(currentDefaultFontDef, fd)) {
+                    tags.add(HtmlTag.tag("<span class='" + fd.fontspec() + "'>", SPAN_CLOSE));
+                }
+            } else {
+                for (Style style : styles) {
+                    Predicate<Map.Entry<String, @Nullable Object>> filterAttributes = entry -> true;
+
+                    FontDef fd = style.getFontDef();
+
+                    if (fd.getFamily() == null) {
+                        fd = fd.copy();
+                        List<String> families = switch ((String) style.get(Style.FONT_CLASS)) {
+                            case Style.FONT_CLASS_VALUE_MONOSPACE -> Collections.singletonList("monospace");
+                            case Style.FONT_CLASS_VALUE_SERIF -> Collections.singletonList("serif");
+                            case Style.FONT_CLASS_VALUE_SANS_SERIF -> Collections.singletonList("sans-serif");
+                            case null, default -> Collections.emptyList();
+                        };
+                        fd.setFamilies(families);
                     }
 
-                    // filter out all font-related attributes, they are handled by the generated span tag above
-                    attributeFilter = entry -> !isFontRelated(entry.getKey());
-                } else {
-                    attributeFilter = entry -> true;
-                }
+                    if (isFontChange(fd)) {
+                        tags.add(HtmlTag.tag("<span style='" + fd.getCssStyle() + "'>", SPAN_CLOSE));
+                        filterAttributes = entry -> !isFontRelated(entry.getKey());
+                    }
 
-                // filter out font unnecessary font changes
-                boolean keepFont = Objects.equals(style.getFontDef(), currentDefaultFontDef);
-                style.stream()
-                        .filter(attributeFilter)
-                        .filter(entry -> !ignoreFontFamily || !entry.getKey().equals(Style.FONT_FAMILIES))
-                        .filter(entry -> !keepFont)
-                        .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
+                    // filter out font changes that are already handled
+                    style.stream()
+                            .filter(filterAttributes)
+                            .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
+                }
             }
+
             refineStyleProperties.apply(properties).entrySet().stream().map(e -> HtmlConverter.this.get(e.getKey(), e.getValue())).forEach(tags::add);
             return tags;
+        }
+
+        private boolean isFontChange(FontDef fd) {
+            return fd.getFamilies() != null || fd.getSize() != null || fd.getColor() != null || fd.getType() != null;
         }
 
         @Override

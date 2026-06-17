@@ -84,7 +84,7 @@ class HtmlConverterTest {
         builder.append(".");
         builder.pop(sans);
         RichText rt = builder.toRichText();
-        String expected = "<span style='font-family: sans-serif'>Keyboard input is shown in a <code>monospaced</code> typeface, direct speech is shown in a font with <span style='font-family: serif'>serifs</span>.</span>";
+        String expected = "<span style='font-family: sans-serif;'>Keyboard input is shown in a <span style='font-family: monospace;'>monospaced</span> typeface, direct speech is shown in a font with <span style='font-family: serif;'>serifs</span>.</span>";
         String actual = HtmlConverter.create().convert(rt);
 
         assertEquals(expected, actual);
