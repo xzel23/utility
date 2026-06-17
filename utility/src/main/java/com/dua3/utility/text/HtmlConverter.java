@@ -4,7 +4,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -616,18 +615,6 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                     Predicate<Map.Entry<String, @Nullable Object>> filterAttributes = entry -> true;
 
                     FontDef fd = style.getFontDef();
-
-                    if (fd.getFamily() == null) {
-                        fd = fd.copy();
-                        List<String> families = switch ((String) style.get(Style.FONT_CLASS)) {
-                            case Style.FONT_CLASS_VALUE_MONOSPACE -> Collections.singletonList("monospace");
-                            case Style.FONT_CLASS_VALUE_SERIF -> Collections.singletonList("serif");
-                            case Style.FONT_CLASS_VALUE_SANS_SERIF -> Collections.singletonList("sans-serif");
-                            case null, default -> Collections.emptyList();
-                        };
-                        fd.setFamilies(families);
-                    }
-
                     if (isFontChange(fd)) {
                         tags.add(HtmlTag.tag("<span style='" + fd.getCssStyle() + "'>", SPAN_CLOSE));
                         filterAttributes = entry -> !isFontRelated(entry.getKey());
