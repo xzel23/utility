@@ -402,27 +402,45 @@ public class TextPane extends Control {
 
         List<InlineControlPlacement> placements = new ArrayList<>();
         for (List<FragmentedText.Fragment> line : layoutFragments.lines()) {
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            float lineTop = line.getFirst().y();
+            float lineBottom = lineTop;
+            double lineAscent = 0.0;
+            for (FragmentedText.Fragment fragment : line) {
+                lineBottom = Math.max(lineBottom, fragment.y() + fragment.h());
+                double fragmentAscent = fragment.font().getAscent();
+                if (fragment.text() instanceof Run run) {
+                    fragmentAscent = getInlineReferenceAscent(run, fragment.font());
+                }
+                lineAscent = Math.max(lineAscent, fragmentAscent);
+            }
+
+            float lineHeight = Math.max(0.0f, lineBottom - lineTop);
+            lineAscent = Math.clamp(lineAscent, 0.0, lineHeight);
+            double lineDescent = Math.max(0.0, lineHeight - lineAscent);
+            float baselineY = (float) (lineTop + lineAscent);
+
             for (FragmentedText.Fragment fragment : line) {
                 if (fragment.text() instanceof Run run) {
                     Node node = createInlineNode(run);
                     if (node != null) {
                         VAnchor vAnchor = getInlineNodeVAnchor(run);
-                        double refAscent = getInlineReferenceAscent(run, fragment.font());
-                        double refDescent = getInlineReferenceDescent(run, fragment.font());
-                        float baselineY = (float) (fragment.y() + refAscent);
                         double descent = getInlineNodeDescent(run);
                         double leadingWidth = getInlineLeadingWidth(run);
                         placements.add(new InlineControlPlacement(
                                 node,
                                 (float) (fragment.x() - leadingWidth),
-                                fragment.y(),
+                                lineTop,
                                 fragment.w(),
-                                fragment.h(),
+                                lineHeight,
                                 baselineY,
                                 fragment.font(),
                                 vAnchor,
-                                refAscent,
-                                refDescent,
+                                lineAscent,
+                                lineDescent,
                                 descent
                         ));
                     }
