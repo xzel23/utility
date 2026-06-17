@@ -123,13 +123,12 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     /**
      * Set the mapper for a specific style. If the style is already mapped, the mappers are combined.
      *
-     * @param attribute the attribute
+     * @param styleName the style name
      * @param mapper    the mapper
      * @return the option tp use
      */
-    public static HtmlConversionOption map(String attribute,
-                                           Function<Object, HtmlTag> mapper) {
-        return new HtmlConversionOption(c -> c.addStyleMapping(attribute, mapper));
+    public static HtmlConversionOption mapStyle(String styleName, Function<Object, HtmlTag> mapper) {
+        return new HtmlConversionOption(c -> c.addStyleMapping(styleName, mapper));
     }
 
     /**
@@ -286,19 +285,19 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         return new HtmlConverterImpl(textLength);
     }
 
-    private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
+    private void addSimpleStyleMapping(String attr, Object value, HtmlTag tag) {
         addStyleMapping(attr, v -> Objects.equals(v, value) ? tag : HtmlTag.emptyTag());
     }
 
     void doAddDefaultMappings() {
-        addSimpleMapping(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD, HtmlTag.tag("<b>", "</b>"));
-        addSimpleMapping(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC, HtmlTag.tag("<i>", "</i>"));
-        addSimpleMapping(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
-        addSimpleMapping(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, HtmlTag.tag("<strike>", "</strike>"));
-
+        addSimpleStyleMapping(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD, HtmlTag.tag("<b>", "</b>"));
+        addSimpleStyleMapping(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC, HtmlTag.tag("<i>", "</i>"));
+        addSimpleStyleMapping(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
+        addSimpleStyleMapping(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, HtmlTag.tag("<strike>", "</strike>"));
         addStyleMapping(Style.FONT_CLASS, value -> {
             if (isUseCss()) {
                 return switch (value.toString()) {
+                    case Style.FONT_CLASS_VALUE_CODE -> HtmlTag.tag("<code>", "</code>");
                     case Style.FONT_CLASS_VALUE_MONOSPACE -> HtmlTag.tag("<span class='monospace'>", SPAN_CLOSE);
                     case Style.FONT_CLASS_VALUE_SANS_SERIF -> HtmlTag.tag("<span class='sans-serif'>", SPAN_CLOSE);
                     case Style.FONT_CLASS_VALUE_SERIF -> HtmlTag.tag("<span class='serif'>", SPAN_CLOSE);
@@ -306,7 +305,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                 };
             } else {
                 return switch (value.toString()) {
-                    case Style.FONT_CLASS_VALUE_MONOSPACE -> HtmlTag.tag("<code>", "</code>");
+                    case Style.FONT_CLASS_VALUE_CODE -> HtmlTag.tag("<code>", "</code>");
+                    case Style.FONT_CLASS_VALUE_MONOSPACE -> HtmlTag.tag("<span style='font-family: monospace'>", SPAN_CLOSE);
                     case Style.FONT_CLASS_VALUE_SANS_SERIF ->
                             HtmlTag.tag("<span style='font-family: sans-serif'>", SPAN_CLOSE);
                     case Style.FONT_CLASS_VALUE_SERIF -> HtmlTag.tag("<span style='font-family: serif'>", SPAN_CLOSE);

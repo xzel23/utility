@@ -84,7 +84,7 @@ class HtmlConverterTest {
         builder.append(".");
         builder.pop(sans);
         RichText rt = builder.toRichText();
-        String expected = "<span style='font-family: sans-serif'>Keyboard input is shown in a <code>monospaced</code> typeface, direct speech is shown in a font with <span style='font-family: serif'>serifs</span>.</span>";
+        String expected = "<span style='font-family: sans-serif'>Keyboard input is shown in a <span style='font-family: monospace'>monospaced</span> typeface, direct speech is shown in a font with <span style='font-family: serif'>serifs</span>.</span>";
         String actual = HtmlConverter.create().convert(rt);
 
         assertEquals(expected, actual);
@@ -201,7 +201,7 @@ class HtmlConverterTest {
     @Test
     void testCustomMapping() {
         // Test custom mapping
-        HtmlConverter converter = HtmlConverter.createBlank(HtmlConverter.map(Style.FONT_WEIGHT, value -> {
+        HtmlConverter converter = HtmlConverter.createBlank(HtmlConverter.mapStyle(Style.FONT_WEIGHT, value -> {
             if (Style.FONT_WEIGHT_VALUE_BOLD.equals(value)) {
                 return HtmlTag.tag("<strong>", "</strong>");
             }
@@ -280,11 +280,11 @@ class HtmlConverterTest {
     @Test
     void testRefineStyleProperties() {
         HtmlConverter noRefineConverter = HtmlConverter.createBlank(
-                HtmlConverter.map("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag())
+                HtmlConverter.mapStyle("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag())
         );
 
         HtmlConverter converter = HtmlConverter.createBlank(
-                HtmlConverter.map("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag()),
+                HtmlConverter.mapStyle("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag()),
                 HtmlConverter.refineStyleProperties(props -> {
                     Map<String, Object> map = new LinkedHashMap<>(props);
                     map.put("x-test", "ok");
@@ -406,7 +406,7 @@ class HtmlConverterTest {
     @Test
     void testGet() {
         HtmlConverter converter = HtmlConverter.createBlank(
-                HtmlConverter.map("mapped", value -> HtmlTag.tag("<mapped>", "</mapped>")),
+                HtmlConverter.mapStyle("mapped", value -> HtmlTag.tag("<mapped>", "</mapped>")),
                 HtmlConverter.defaultMapper((attribute, value) -> HtmlTag.tag("<default>", "</default>"))
         );
 

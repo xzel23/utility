@@ -42,6 +42,10 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      */
     public static final String FONT_CLASS_VALUE_MONOSPACE = "monospace";
     /**
+     * Constant representing the value for monospace font class.
+     */
+    public static final String FONT_CLASS_VALUE_CODE = "code";
+    /**
      * Constant representing the value for serif font class.
      */
     public static final String FONT_CLASS_VALUE_SERIF = "serif";
@@ -200,6 +204,13 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
     public static final Style MONOSPACE = create(FONT_CLASS_VALUE_MONOSPACE,
             Map.entry(FONT_FAMILIES, FONT_FAMILIES_VALUE_MONOSPACED),
             Map.entry(FONT_CLASS, FONT_CLASS_VALUE_MONOSPACE)
+    );
+
+    /**
+     * Default Monospace font.
+     */
+    public static final Style CODE = create(FONT_CLASS_VALUE_CODE,
+            Map.entry(FONT_CLASS, FONT_CLASS_VALUE_CODE)
     );
 
     /**
