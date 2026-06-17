@@ -578,7 +578,32 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
         return create(name, addFontProperties(new HashMap<>(), fontDef));
     }
 
-    private static Map<String, @Nullable Object> addFontProperties(Map<String, @Nullable Object> properties, FontDef fontDef) {
+    /**
+     * Creates a new Style instance based on the provided font definition, text color, and background color.
+     *
+     * @param fontDef          the font definition to be applied in the style
+     * @param textColor        the color to be used for the text
+     * @param backgroundColor  the color to be used for the background
+     * @return a new Style instance with the specified properties
+     */
+    public static Style create(FontDef fontDef, Color textColor, Color backgroundColor) {
+        HashMap<String, @Nullable Object> properties = new HashMap<>();
+        addFontProperties(properties, fontDef);
+        properties.put(BACKGROUND_COLOR, backgroundColor);
+        return create(fontDef.fontspec() + "-" + textColor.toCss() + "-" + backgroundColor.toCss(), properties);
+    }
+
+    /**
+     * Adds font-related properties from the given FontDef object into the provided properties map.
+     * <p>
+     * The method populates the map with font families, size, color, and style-related properties
+     * (italic, bold, underline, and strike-through) based on the attributes of the FontDef object.
+     *
+     * @param properties the map into which the font properties will be added; must not be null
+     * @param fontDef the FontDef object containing font properties to be added; must not be null
+     * @return the updated map with added font-related properties
+     */
+    public static Map<String, @Nullable Object> addFontProperties(Map<String, @Nullable Object> properties, FontDef fontDef) {
         properties.put(FONT_FAMILIES, Collections.singletonList(fontDef.getFamily()));
         properties.put(FONT_SIZE, fontDef.getSize());
         properties.put(COLOR, fontDef.getColor());
