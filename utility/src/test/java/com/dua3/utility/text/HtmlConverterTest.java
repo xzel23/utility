@@ -95,8 +95,8 @@ class HtmlConverterTest {
         Font arial = FontUtil.getInstance().getFont("arial-16-bold");
         Font courier = FontUtil.getInstance().getFont("courier-12");
 
-        Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
-        Style style2 = Style.create("style2", Map.entry(Style.FONT, courier));
+        Style style1 = Style.create("style1", arial.toFontDef());
+        Style style2 = Style.create("style2", courier.toFontDef());
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
@@ -118,8 +118,8 @@ class HtmlConverterTest {
         Font arial = FontUtil.getInstance().getFont("arial-16-bold");
         Font times = FontUtil.getInstance().getFont("courier-12");
 
-        Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
-        Style style2 = Style.create("style2", Map.entry(Style.FONT, times));
+        Style style1 = Style.create("style1", arial.toFontDef());
+        Style style2 = Style.create("style2", times.toFontDef());
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
@@ -179,7 +179,7 @@ class HtmlConverterTest {
 
         // Create a simple RichText with a font
         Font arial = FontUtil.getInstance().getFont("arial-12-bold");
-        Style style = Style.create("style", Map.entry(Style.FONT, arial));
+        Style style = Style.create("style", arial.toFontDef());
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style);
@@ -386,22 +386,6 @@ class HtmlConverterTest {
     }
 
     @Test
-    void testInlineTextDecorations() {
-        Font font = FontUtil.getInstance().getFont("arial-16-bold");
-        Map<String, Object> input = new LinkedHashMap<>();
-        input.put(Style.FONT, font);
-        input.put("custom", "value");
-
-        Map<String, Object> result = HtmlConverter.inlineTextDecorations(input);
-
-        assertFalse(result.containsKey(Style.FONT));
-        assertEquals("value", result.get("custom"));
-        assertEquals(font.getFamilies(), result.get(Style.FONT_FAMILIES));
-        assertEquals(font.getSizeInPoints(), result.get(Style.FONT_SIZE));
-        assertEquals(Style.FONT_WEIGHT_VALUE_BOLD, result.get(Style.FONT_WEIGHT));
-    }
-
-    @Test
     void testCreateWithCollectionOptions() {
         HtmlConverter converter = HtmlConverter.create(List.of(HtmlConverter.useCss(true)));
         assertTrue(converter.isUseCss());
@@ -487,7 +471,6 @@ class HtmlConverterTest {
 
                     return HtmlTag.tag(open, close);
                 }),
-                HtmlConverter.refineStyleProperties(HtmlConverter::inlineTextDecorations),
                 HtmlConverter.convertLineBreaksTo("")
         );
 

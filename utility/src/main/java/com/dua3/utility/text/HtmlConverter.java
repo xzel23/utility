@@ -49,15 +49,16 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * based on this base font.
      */
     private final Font baseFont;
+
     /**
-     * The default font currently being used for converting text to HTML.
+     * The default font definition currently being used for converting text to HTML.
      * <p>
      * This field is updated whenever a headline starts with a "&lt;hx&gt;"
      * or ends with a "&lt;/hx&gt;" tag where x is the header level. The field
      * is used to avoid inserting unwanted spans that only define the font style
      * that is already defined by the document's CSS rules.
      */
-    private Font currentDefaultFont;
+    private FontDef currentDefaultFontDef;
 
     /**
      * The attribute mappings of this converter.
@@ -87,7 +88,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      */
     private HtmlConverter() {
         baseFont = FontUtil.getInstance().getFont("Helvetica-12");
-        currentDefaultFont = baseFont;
+        currentDefaultFontDef = baseFont.toFontDef();
     }
 
     /**
@@ -195,25 +196,6 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * Replace font declarations with declarations for single properties. Use this as argument to
-     * {@link #setRefineStyleProperties(UnaryOperator)} to generate style tags like <pre><b>...</b></pre>
-     * instead of <pre><span>...</span></pre>.
-     *
-     * @param styleProperties map with style properties
-     * @return style properties with font declarations replaced
-     */
-    public static Map<String, Object> inlineTextDecorations(Map<String, Object> styleProperties) {
-        Map<String, Object> props = new LinkedHashMap<>();
-        styleProperties.forEach((key, value) -> {
-            switch (key) {
-                case Style.FONT -> RichTextConverter.putFontProperties(props, (Font) value);
-                default -> props.put(key, value);
-            }
-        });
-        return props;
-    }
-
-    /**
      * Combine to mappers by creating a new mapper that simply concatenates tags.
      *
      * @param m1 the first mapper
@@ -276,7 +258,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
     @Override
     public String convert(RichText text) {
-        currentDefaultFont = getHeaderStyle.apply(0).text().getFont(baseFont);
+        currentDefaultFontDef = getHeaderStyle.apply(0).text().getFontDef();
         return super.convert(text);
     }
 
@@ -332,7 +314,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                 };
             }
         });
-
+/* FIXME
         addMapping(Style.FONT, value -> {
             Font font = (Font) value;
             if (isUseCss()) {
@@ -341,6 +323,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                 return HtmlTag.tag("<span style='" + font.getCssStyle() + "'>", SPAN_CLOSE);
             }
         });
+ */
     }
 
     void setDefaultStyleMapper(BiFunction<? super String, Object, ? extends HtmlTag> defaultStyleMapper) {
@@ -490,7 +473,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
             int headerLevel = tag.headerChange();
             if (headerLevel >= 0) {
-                currentDefaultFont = getHeaderStyle.apply(headerLevel).header().getFont(baseFont);
+                currentDefaultFontDef = getHeaderStyle.apply(headerLevel).header().getFontDef();
             }
 
             buffer.append(tagString);
@@ -521,7 +504,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
             int headerLevel = tag.headerChange();
             if (headerLevel >= 0) {
-                currentDefaultFont = getHeaderStyle.apply(headerLevel).text().getFont(baseFont);
+                currentDefaultFontDef = getHeaderStyle.apply(headerLevel).text().getFontDef();
             }
 
             if (tag.formattingHint().linebreakBeforeTag()) {
@@ -629,11 +612,11 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
             Map<String, @Nullable Object> properties = new LinkedHashMap<>();
-            Predicate<Map.Entry<String, Object>> attributeFilter;
+            Predicate<Map.Entry<String, @Nullable Object>> attributeFilter;
             for (Style style : styles) {
                 String fontClass = (String) style.get(Style.FONT_CLASS);
                 List<String> fontFamilies = (List<String>) style.get(Style.FONT_FAMILIES);
-                Font font = (Font) style.get(Style.FONT);
+                FontDef fd = style.getFontDef();
 
                 boolean ignoreFontFamily = fontClass != null
                         && LangUtil.isOneOf(fontFamilies,
@@ -642,37 +625,33 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                         Style.FONT_FAMILIES_VALUE_SERIF
                 );
 
-                if (font == null) {
-                    FontDef fd = style.getFontDef();
-                    if (ignoreFontFamily) {
-                        fd.setFamilies(null);
+                if (ignoreFontFamily) {
+                    fd.setFamilies(null);
+                }
+                if (!fd.isEmpty() && !isOnlyTextStyleChanged(fd)) {
+                    FontDef merged = currentDefaultFontDef.copy();
+                    merged.merge(fd);
+                    if (!Objects.equals(currentDefaultFontDef, merged)) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("<span style='");
+                        sb.append(fd.getCssStyle());
+                        sb.append("'>");
+                        tags.add(HtmlTag.tag(sb.toString(), SPAN_CLOSE));
                     }
-                    if (!fd.isEmpty() && !isOnlyTextStyleChanged(fd)) {
-                        if (!Objects.equals(currentDefaultFont, FontUtil.getInstance().deriveFont(currentDefaultFont, fd))) {
-                            StringBuilder sb = new StringBuilder();
-                            sb.append("<span style='");
-                            sb.append(fd.getCssStyle());
-                            sb.append("'>");
-                            tags.add(HtmlTag.tag(sb.toString(), SPAN_CLOSE));
-                        }
 
-                        // filter out all font-related attributes, they are handled by the generated span tag above
-                        attributeFilter = entry -> !isFontRelated(entry.getKey());
-                    } else {
-                        // let font attributes through
-                        attributeFilter = entry -> true;
-                    }
+                    // filter out all font-related attributes, they are handled by the generated span tag above
+                    attributeFilter = entry -> !isFontRelated(entry.getKey());
                 } else {
                     // filter out all font-related attributes except FONT itself
                     attributeFilter = entry -> !isFontRelated(entry.getKey());
                 }
 
                 // filter out font unnecessary font changes
-                boolean keepFont = style.getFont().map(f -> !f.equals(currentDefaultFont)).orElse(true);
+                boolean keepFont = Objects.equals(style.getFontDef(), currentDefaultFontDef);
                 style.stream()
                         .filter(attributeFilter)
                         .filter(entry -> !ignoreFontFamily || !entry.getKey().equals(Style.FONT_FAMILIES))
-                        .filter(entry -> keepFont || !entry.getKey().equals(Style.FONT))
+                        .filter(entry -> keepFont)
                         .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
             }
             refineStyleProperties.apply(properties).entrySet().stream().map(e -> HtmlConverter.this.get(e.getKey(), e.getValue())).forEach(tags::add);

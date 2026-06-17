@@ -93,18 +93,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          */
         private static void copyAttributes(Iterable<? extends Map.Entry<String, @Nullable Object>> sourceAttributes,
                                            Map<? super String, @Nullable Object> destinationAttributes) {
-            sourceAttributes.forEach(entry -> {
-                String attribute = entry.getKey();
-                Object value = entry.getValue();
-                if (Objects.equals(Style.FONT, attribute)) {
-                    // special handling if FONT is set: as FONT overrides all other font-related attributes,
-                    // once FONT is set, it will override all later font-related changes until a new FONT
-                    // is encountered. so filter out FONT and instead set the individual attributes.
-                    RichTextConverter.putFontProperties(destinationAttributes, (Font) value);
-                } else {
-                    destinationAttributes.put(attribute, value);
-                }
-            });
+            sourceAttributes.forEach(entry -> destinationAttributes.put(entry.getKey(), entry.getValue()));
         }
 
         /**

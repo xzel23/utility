@@ -5,8 +5,10 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 
@@ -18,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -31,11 +32,6 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
     private static final Logger LOG = LogManager.getLogger(Style.class);
 
     // -- static fields and methods
-
-    /**
-     * property for the font.
-     */
-    public static final String FONT = "font";
 
     /**
      * property name for the font class.
@@ -302,15 +298,13 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      * @return new instance
      */
     @SafeVarargs
-    public static Style create(String styleName,
-                               Map.Entry<String, @Nullable Object>... args) {
+    public static Style create(String styleName, Map.Entry<String, @Nullable Object>... args) {
         assert (Arrays.stream(args).allMatch(Style::checkTypes)) : "invalid style arguments for style: " + styleName + " - " + Arrays.toString(args);
         return create(styleName, Map.ofEntries(args));
     }
 
     static boolean checkTypes(Map.Entry<String, ?> e) {
         boolean result = switch (e.getKey()) {
-            case FONT -> e.getValue() instanceof Font;
             case FONT_FAMILIES -> e.getValue() instanceof List;
             case FONT_CLASS -> e.getValue() instanceof String;
             case FONT_SIZE -> e.getValue() instanceof Number;
@@ -337,8 +331,7 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      * @param args      list of key-value pairs to set as properties of this style
      * @return new instance
      */
-    public static Style create(String styleName,
-                               Map<String, @Nullable Object> args) {
+    public static Style create(String styleName, Map<String, @Nullable Object> args) {
         return new Style(styleName, new HashMap<>(args));
     }
 
@@ -446,11 +439,6 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      * @return the FontDef
      */
     public FontDef getFontDef() {
-        Font font = (Font) get(FONT);
-        if (font != null) {
-            return font.toFontDef();
-        }
-
         FontDef fd = new FontDef();
         ifPresent(FONT_FAMILIES, fd::setFamilies);
         ifPresent(FONT_SIZE, fd::setSize);
@@ -465,20 +453,11 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
     /**
      * Get Font for this style.
      *
-     * @return Optional holding the Font if this Style's Font has been set (not if just part of the FontDef is set)
-     */
-    public Optional<Font> getFont() {
-        return Optional.ofNullable((Font) get(FONT));
-    }
-
-    /**
-     * Get Font for this style.
-     *
      * @param baseFont the font used to derive the requested font by applying this style
      * @return if set, the font of this style, otherwise the resulting font of applying this style's {@link FontDef} to the supplied baseFont
      */
     public Font getFont(Font baseFont) {
-        return getFont().orElseGet(() -> FontUtil.getInstance().deriveFont(baseFont, getFontDef()));
+        return FontUtil.getInstance().deriveFont(baseFont, getFontDef());
     }
 
     @Override
@@ -575,18 +554,52 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      * @return the created style
      */
     public static Style create(Font font) {
-        return create(font.fontspec(), Map.entry(FONT, font));
+        return create(font.toFontDef());
     }
 
     /**
-     * Creates a new style with the specified font, foreground color, and background color.
+     * Create a style for the given font.
      *
-     * @param font the font to be used in the style
-     * @param foreground the foreground color of the style
-     * @param background the background color of the style
-     * @return a new Style instance configured with the specified font, foreground color, and background color
+     * @param fontDef the {@link FontDef} instance to be used in the style
+     * @return the created style
      */
-    public static Style create(Font font, Color foreground, Color background) {
-        return create(font.fontspec() + foreground.toCss() + background.toCss(), Map.of(FONT, font, COLOR, foreground, BACKGROUND_COLOR, background));
+    public static Style create(FontDef fontDef) {
+        return create(fontDef.fontspec(), fontDef);
+    }
+
+    /**
+     * Create a style for the given font.
+     *
+     * @param name    the name of the style
+     * @param fontDef the {@link FontDef} instance to be used in the style
+     * @return the created style
+     */
+    public static Style create(String name, FontDef fontDef) {
+        return create(name, addFontProperties(new HashMap<>(), fontDef));
+    }
+
+    private static Map<String, @Nullable Object> addFontProperties(Map<String, @Nullable Object> properties, FontDef fontDef) {
+        properties.put(FONT_FAMILIES, Collections.singletonList(fontDef.getFamily()));
+        properties.put(FONT_SIZE, fontDef.getSize());
+        properties.put(COLOR, fontDef.getColor());
+        properties.put(FONT_STYLE, triStateSelect(fontDef.getItalic(), null, FONT_STYLE_VALUE_ITALIC, FONT_STYLE_VALUE_NORMAL));
+        properties.put(FONT_WEIGHT, triStateSelect(fontDef.getBold(), null, FONT_WEIGHT_VALUE_BOLD, FONT_WEIGHT_VALUE_NORMAL));
+        properties.put(TEXT_DECORATION_UNDERLINE, triStateSelect(fontDef.getUnderline(), null, TEXT_DECORATION_UNDERLINE_VALUE_LINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));
+        properties.put(TEXT_DECORATION_LINE_THROUGH, triStateSelect(fontDef.getStrikeThrough(), null, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE));
+        return properties;
+    }
+
+    private static <T> @Nullable T triStateSelect(@Nullable Boolean arg, @Nullable T whenNull, @Nullable T whenTrue, @Nullable T whenFalse) {
+        return arg == null ? whenNull : (arg ? whenTrue : whenFalse);
+    }
+
+    /**
+     * Creates a style with a specified background color.
+     *
+     * @param color the color to set as the background
+     * @return a new Style instance with the specified background color
+     */
+    public static Style background(Color color) {
+        return create("background-" + color.toCss(), Map.entry(BACKGROUND_COLOR, color));
     }
 }
