@@ -187,15 +187,15 @@ class HtmlConverterTest {
         builder.pop(style);
         RichText rt = builder.toRichText();
 
-        // With CSS, should use class attribute
-        String withCssResult = withCss.convert(rt);
-        assertTrue(withCssResult.contains("class='"));
-        assertFalse(withCssResult.contains("style='"));
-
         // Without CSS, should use style attribute
         String withoutCssResult = withoutCss.convert(rt);
         assertFalse(withoutCssResult.contains("class='"));
         assertTrue(withoutCssResult.contains("style='"));
+
+        // With CSS, should use class attribute
+        String withCssResult = withCss.convert(rt);
+        assertTrue(withCssResult.contains("class='"));
+        assertFalse(withCssResult.contains("style='"));
     }
 
     @Test

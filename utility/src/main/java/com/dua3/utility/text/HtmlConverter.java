@@ -642,8 +642,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                     // filter out all font-related attributes, they are handled by the generated span tag above
                     attributeFilter = entry -> !isFontRelated(entry.getKey());
                 } else {
-                    // filter out all font-related attributes except FONT itself
-                    attributeFilter = entry -> !isFontRelated(entry.getKey());
+                    attributeFilter = entry -> true;
                 }
 
                 // filter out font unnecessary font changes
@@ -651,7 +650,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                 style.stream()
                         .filter(attributeFilter)
                         .filter(entry -> !ignoreFontFamily || !entry.getKey().equals(Style.FONT_FAMILIES))
-                        .filter(entry -> keepFont)
+                        .filter(entry -> !keepFont)
                         .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
             }
             refineStyleProperties.apply(properties).entrySet().stream().map(e -> HtmlConverter.this.get(e.getKey(), e.getValue())).forEach(tags::add);
