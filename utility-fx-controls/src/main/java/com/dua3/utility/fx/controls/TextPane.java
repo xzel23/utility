@@ -1087,7 +1087,9 @@ public class TextPane extends Control {
             contentPane.getStyleClass().add("content");
             selectionLayer.setMouseTransparent(true);
             caretLayer.setMouseTransparent(true);
-            contentPane.getChildren().setAll(selectionLayer, canvas, inlineLayer, caretLayer);
+            // Keep selection overlay above the text canvas so per-run background colors
+            // cannot obscure selection markers.
+            contentPane.getChildren().setAll(canvas, selectionLayer, inlineLayer, caretLayer);
 
             scrollPane.setFitToWidth(control.isWrapText());
             scrollPane.setHbarPolicy(control.isWrapText() ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
