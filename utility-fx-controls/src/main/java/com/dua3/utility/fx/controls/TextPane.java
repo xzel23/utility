@@ -1926,7 +1926,7 @@ public class TextPane extends Control {
 
             // Text-like inline controls (buttons/hyperlinks/etc.) should follow line selection height.
             // Images (ImageView) keep their full visual height.
-            if (node instanceof Control && !(node instanceof ImageView)) {
+            if (node instanceof Control) {
                 double lineTop = placement.y();
                 double lineBottom = placement.y() + placement.h();
                 top = Math.max(top, lineTop);

@@ -331,7 +331,6 @@ class MathUtilTest {
     @Test
     void testSumSpecialValues() {
         assertTrue(Double.isNaN(MathUtil.sum(Double.NaN, 1.0)));
-
         assertEquals(Double.POSITIVE_INFINITY, MathUtil.sum(Double.POSITIVE_INFINITY, 1.0));
     }
 

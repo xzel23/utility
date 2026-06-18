@@ -98,14 +98,11 @@ class HSVColorTest {
     @Test
     void testDarker() {
         HSVColor color = new HSVColor(180, 0.5f, 0.8f, 0.75f);
-        Color darkerColor = color.darker();
+        HSVColor darkerColor = color.darker();
 
-        Assertions.assertTrue(darkerColor instanceof HSVColor, "Darker color should be an HSVColor");
-        HSVColor darkerHSV = (HSVColor) darkerColor;
-
-        Assertions.assertEquals(color.h(), darkerHSV.h(), "Hue should remain the same");
-        Assertions.assertTrue(darkerHSV.v() < color.v(), "Value should decrease");
-        Assertions.assertEquals(color.alpha(), darkerHSV.alpha(), "Alpha should remain the same");
+        Assertions.assertEquals(color.h(), darkerColor.h(), "Hue should remain the same");
+        Assertions.assertTrue(darkerColor.v() < color.v(), "Value should decrease");
+        Assertions.assertEquals(color.alpha(), darkerColor.alpha(), "Alpha should remain the same");
     }
 
     @Test

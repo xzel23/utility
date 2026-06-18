@@ -325,4 +325,10 @@
         <Class name="com.dua3.utility.io.IoUtilTest" method="glob_absoluteBase_absolutePattern"/>
         <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
     </Match>
+
+    <Match>
+        <!-- equality is safe here -->
+        <Class name="com.dua3.utility.data.HSLColor" method="com.dua3.utility.data.HSLColor.valueOf"/>
+        <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+    </Match>
 </FindBugsFilter>

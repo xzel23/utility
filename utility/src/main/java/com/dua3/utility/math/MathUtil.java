@@ -644,11 +644,29 @@ public final class MathUtil {
             // Kahan
             double sum = 0.0;
             double c = 0.0;
+            int infSign = 0; // 0 = none, +1 = +inf, -1 = -inf
             for (int i = off, end = off + len; i < end; i++) {
-                double y = a[i] - c;
+                double x = a[i];
+
+                if (Double.isNaN(x)) return Double.NaN;
+
+                if (Double.isInfinite(x)) {
+                    int s = x > 0 ? 1 : -1;
+                    if (infSign != 0 && infSign != s) {
+                        return Double.NaN;
+                    }
+                    infSign = s;
+                    continue;
+                }
+
+                double y = x - c;
                 double t = sum + y;
                 c = (t - sum) - y;
                 sum = t;
+            }
+
+            if (infSign != 0) {
+                return infSign > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
             }
             return sum;
         } else {
