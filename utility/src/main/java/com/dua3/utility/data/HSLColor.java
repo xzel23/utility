@@ -1,5 +1,7 @@
 package com.dua3.utility.data;
 
+import com.dua3.utility.math.MathUtil;
+
 /**
  * {@link Color} implementation that uses the HSL (hue, saturation, lightness) color model.
  *
@@ -45,14 +47,6 @@ public record HSLColor(float h, float s, float l, float alpha) implements Color 
         }
 
         return new HSLColor(h, s, l, a);
-    }
-
-    private static int argbf(float a, float r, float g, float b) {
-        int ri = Math.round(r * 255);
-        int gi = Math.round(g * 255);
-        int bi = Math.round(b * 255);
-        int ai = Math.round(a * 255);
-        return (ai << 24) + (ri << 16) + (gi << 8) + bi;
     }
 
     private static float hueToRgb(float p, float q, float t) {
@@ -119,7 +113,7 @@ public record HSLColor(float h, float s, float l, float alpha) implements Color 
             b = hueToRgb(p, q, hk - 1f / 3f);
         }
 
-        return argbf(alpha, r, g, b);
+        return RGBColor.argbf(alpha, r, g, b);
     }
 
     @Override

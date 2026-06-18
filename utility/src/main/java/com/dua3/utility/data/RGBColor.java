@@ -45,6 +45,14 @@ public record RGBColor(int argb) implements Color {
                 + shiftComponentValue(b, SHIFT_B));
     }
 
+    static int argbf(float a, float r, float g, float b) {
+        int ri = Math.round(r * 255);
+        int gi = Math.round(g * 255);
+        int bi = Math.round(b * 255);
+        int ai = Math.round(a * 255);
+        return (ai << 24) + (ri << 16) + (gi << 8) + bi;
+    }
+
     private static int shiftComponentValue(int value, int bits) {
         LangUtil.checkArg(value >= 0 && value <= 255, "value out of range: %d", value);
         return value << bits;

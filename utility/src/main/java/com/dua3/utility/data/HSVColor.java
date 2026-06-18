@@ -45,14 +45,6 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
         return new HSVColor(h, s, max, a);
     }
 
-    private static int argbf(float a, float r, float g, float b) {
-        int ri = Math.round(r * 255);
-        int gi = Math.round(g * 255);
-        int bi = Math.round(b * 255);
-        int ai = Math.round(a * 255);
-        return (ai << 24) + (ri << 16) + (gi << 8) + bi;
-    }
-
     @Override
     public int a() {
         return Math.round(255 * alpha);
@@ -84,12 +76,12 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
         float t = v * (1 - s * (1 - f));
 
         return switch (hi) {
-            case 0, 6 -> argbf(alpha, v, t, p);
-            case 1 -> argbf(alpha, q, v, p);
-            case 2 -> argbf(alpha, p, v, t);
-            case 3 -> argbf(alpha, p, q, v);
-            case 4 -> argbf(alpha, t, p, v);
-            case 5 -> argbf(alpha, v, p, q);
+            case 0, 6 -> RGBColor.argbf(alpha, v, t, p);
+            case 1 -> RGBColor.argbf(alpha, q, v, p);
+            case 2 -> RGBColor.argbf(alpha, p, v, t);
+            case 3 -> RGBColor.argbf(alpha, p, q, v);
+            case 4 -> RGBColor.argbf(alpha, t, p, v);
+            case 5 -> RGBColor.argbf(alpha, v, p, q);
             default -> throw new IllegalStateException("could not convert to RGB");
         };
     }
