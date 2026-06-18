@@ -441,7 +441,9 @@ public class TextPane extends Control {
                                 vAnchor,
                                 lineAscent,
                                 lineDescent,
-                                descent
+                                descent,
+                                run.getStart(),
+                                run.getEnd()
                         ));
                     }
                 }
@@ -927,7 +929,9 @@ public class TextPane extends Control {
                     placement.vAnchor(),
                     placement.referenceAscent(),
                     placement.referenceDescent(),
-                    placement.descent()
+                    placement.descent(),
+                    placement.runStart(),
+                    placement.runEnd()
             ));
         }
         return shifted;
@@ -991,7 +995,9 @@ public class TextPane extends Control {
             VAnchor vAnchor,
             double referenceAscent,
             double referenceDescent,
-            double descent
+            double descent,
+            int runStart,
+            int runEnd
     ) {}
 
     record LayoutTextData(
@@ -1087,9 +1093,9 @@ public class TextPane extends Control {
             contentPane.getStyleClass().add("content");
             selectionLayer.setMouseTransparent(true);
             caretLayer.setMouseTransparent(true);
-            // Keep selection overlay above the text canvas so per-run background colors
-            // cannot obscure selection markers.
-            contentPane.getChildren().setAll(canvas, selectionLayer, inlineLayer, caretLayer);
+            // Keep selection overlay above text and inline nodes so selection stays visible
+            // even when text background colors or inline controls are present.
+            contentPane.getChildren().setAll(canvas, inlineLayer, selectionLayer, caretLayer);
 
             scrollPane.setFitToWidth(control.isWrapText());
             scrollPane.setHbarPolicy(control.isWrapText() ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -1837,6 +1843,27 @@ public class TextPane extends Control {
                             continue;
                         }
 
+                        if (hasInlineNode(run)) {
+                            InlineControlPlacement placement = findInlinePlacement(layout.placements(), run);
+                            if (placement != null) {
+                                Node node = placement.node();
+                                node.applyCss();
+                                node.autosize();
+                                double prefW = Math.max(node.prefWidth(-1), node.getLayoutBounds().getWidth());
+                                double prefH = Math.max(node.prefHeight(-1), node.getLayoutBounds().getHeight());
+                                double nodeY = computeInlineNodeY(placement, prefH, node.getBaselineOffset());
+                                Rectangle marker = new Rectangle(
+                                        placement.x(),
+                                        nodeY,
+                                        Math.max(1.0, prefW),
+                                        Math.max(1.0, prefH)
+                                );
+                                marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
+                                selectionLayer.getChildren().add(marker);
+                                continue;
+                            }
+                        }
+
                         int relStart = from - fragStart;
                         int relEnd = to - fragStart;
                         double x1 = fragment.x() + textWidth(fontUtil, run, relStart, fragment.font());
@@ -1875,6 +1902,17 @@ public class TextPane extends Control {
                     caretLayer.getChildren().add(caret);
                 }
             }
+        }
+
+        private static @Nullable InlineControlPlacement findInlinePlacement(List<InlineControlPlacement> placements, Run run) {
+            int start = run.getStart();
+            int end = run.getEnd();
+            for (InlineControlPlacement placement : placements) {
+                if (placement.runStart() == start && placement.runEnd() == end) {
+                    return placement;
+                }
+            }
+            return null;
         }
 
         private static double textWidth(FontUtil fontUtil, Run run, int length, Font font) {
