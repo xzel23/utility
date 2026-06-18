@@ -1708,17 +1708,7 @@ public class TextPane extends Control {
             contentPane.setPrefSize(canvas.getWidth(), canvas.getHeight());
             contentPane.resize(canvas.getWidth(), canvas.getHeight());
 
-            renderEditorOverlay(control, availableWidth, layout);
             ensureEditorContentHeight(control, availableWidth, previousCanvasHeight);
-            if (editor != null && caretVisibilityRequested) {
-                Bounds viewport = scrollPane.getViewportBounds();
-                if (viewport.getWidth() > 1.0 && viewport.getHeight() > 1.0) {
-                    ensureCaretVisible(editor, availableWidth);
-                } else if (editor.getCaretPosition() == editor.getLength()) {
-                    scrollPane.setVvalue(1.0);
-                }
-                caretVisibilityRequested = false;
-            }
 
             inlineLayer.getChildren().clear();
             Set<Node> added = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -1746,6 +1736,17 @@ public class TextPane extends Control {
                 double x = placement.x();
                 double y = computeInlineNodeY(placement, prefH, baselineOffset);
                 node.resizeRelocate(x, y, prefW, prefH);
+            }
+
+            renderEditorOverlay(control, availableWidth, layout);
+            if (editor != null && caretVisibilityRequested) {
+                Bounds viewport = scrollPane.getViewportBounds();
+                if (viewport.getWidth() > 1.0 && viewport.getHeight() > 1.0) {
+                    ensureCaretVisible(editor, availableWidth);
+                } else if (editor.getCaretPosition() == editor.getLength()) {
+                    scrollPane.setVvalue(1.0);
+                }
+                caretVisibilityRequested = false;
             }
 
             try (Graphics graphics = new FxGraphics(canvas)) {
@@ -1822,9 +1823,29 @@ public class TextPane extends Control {
 
             IndexRange selection = editor.getSelection();
             if (selection.getLength() > 0) {
+                int sourceSelStart = selection.getStart();
+                int sourceSelEnd = selection.getEnd();
                 int selStart = layout.layoutTextData().sourceToLayoutPosition(selection.getStart());
                 int selEnd = layout.layoutTextData().sourceToLayoutPosition(selection.getEnd());
                 FontUtil fontUtil = FontUtil.getInstance();
+
+                // Draw full-node selection markers for inline nodes based on source-range overlap.
+                for (InlineControlPlacement placement : layout.placements()) {
+                    if (!isInlinePlacementSelected(layout.layoutTextData(), placement, sourceSelStart, sourceSelEnd)) {
+                        continue;
+                    }
+                    Node node = placement.node();
+                    Bounds nodeBounds = node.getBoundsInParent();
+                    Rectangle marker = new Rectangle(
+                            nodeBounds.getMinX(),
+                            nodeBounds.getMinY(),
+                            Math.max(1.0, nodeBounds.getWidth()),
+                            Math.max(1.0, nodeBounds.getHeight())
+                    );
+                    marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
+                    selectionLayer.getChildren().add(marker);
+                }
+
                 for (List<FragmentedText.Fragment> line : layout.renderLines()) {
                     if (line.isEmpty()) {
                         continue;
@@ -1844,24 +1865,8 @@ public class TextPane extends Control {
                         }
 
                         if (hasInlineNode(run)) {
-                            InlineControlPlacement placement = findInlinePlacement(layout.placements(), run);
-                            if (placement != null) {
-                                Node node = placement.node();
-                                node.applyCss();
-                                node.autosize();
-                                double prefW = Math.max(node.prefWidth(-1), node.getLayoutBounds().getWidth());
-                                double prefH = Math.max(node.prefHeight(-1), node.getLayoutBounds().getHeight());
-                                double nodeY = computeInlineNodeY(placement, prefH, node.getBaselineOffset());
-                                Rectangle marker = new Rectangle(
-                                        placement.x(),
-                                        nodeY,
-                                        Math.max(1.0, prefW),
-                                        Math.max(1.0, prefH)
-                                );
-                                marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
-                                selectionLayer.getChildren().add(marker);
-                                continue;
-                            }
+                            // Inline-node selections are handled above using placement bounds.
+                            continue;
                         }
 
                         int relStart = from - fragStart;
@@ -1904,15 +1909,17 @@ public class TextPane extends Control {
             }
         }
 
-        private static @Nullable InlineControlPlacement findInlinePlacement(List<InlineControlPlacement> placements, Run run) {
-            int start = run.getStart();
-            int end = run.getEnd();
-            for (InlineControlPlacement placement : placements) {
-                if (placement.runStart() == start && placement.runEnd() == end) {
-                    return placement;
-                }
-            }
-            return null;
+        private static boolean isInlinePlacementSelected(
+                LayoutTextData layoutTextData,
+                InlineControlPlacement placement,
+                int sourceSelStart,
+                int sourceSelEnd
+        ) {
+            int from = layoutTextData.layoutToSourcePosition(placement.runStart());
+            int to = layoutTextData.layoutToSourcePosition(placement.runEnd());
+            int sourceFrom = Math.min(from, to);
+            int sourceTo = Math.max(from, to);
+            return sourceSelStart < sourceTo && sourceFrom < sourceSelEnd;
         }
 
         private static double textWidth(FontUtil fontUtil, Run run, int length, Font font) {
