@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * A common interface for different color implementations.
  */
-public interface Color {
+public sealed interface Color permits HSLColor, HSVColor, RGBColor {
     /**
      * Factor to apply when generating a brighter or darker version of a color.
      */

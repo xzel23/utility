@@ -87,18 +87,29 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
     }
 
     @Override
-    public Color brighter() {
-        return new HSLColor(h(), s(), Math.min(v() / F_BRIGHTEN, 1), alpha);
+    public HSVColor brighter() {
+        return toHSLColor().brighter().toHSVColor();
     }
 
     @Override
-    public Color darker() {
-        return new HSLColor(h(), s(), v() * F_BRIGHTEN, alpha);
+    public HSVColor darker() {
+        return toHSLColor().darker().toHSVColor();
     }
 
     @Override
     public String toString() {
         return toCss();
+    }
+
+    @Override
+    public HSLColor toHSLColor() {
+        float c = v * s;
+        float l = v - c / 2.0f;
+
+        float denominator = 1.0f - Math.abs(2.0f * l - 1.0f);
+        float sl = denominator == 0.0f ? 0.0f : c / denominator;
+
+        return new HSLColor(h, sl, l, alpha);
     }
 }
     
