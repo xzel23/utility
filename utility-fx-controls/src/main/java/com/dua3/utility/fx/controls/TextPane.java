@@ -1834,14 +1834,7 @@ public class TextPane extends Control {
                     if (!isInlinePlacementSelected(layout.layoutTextData(), placement, sourceSelStart, sourceSelEnd)) {
                         continue;
                     }
-                    Node node = placement.node();
-                    Bounds nodeBounds = node.getBoundsInParent();
-                    Rectangle marker = new Rectangle(
-                            nodeBounds.getMinX(),
-                            nodeBounds.getMinY(),
-                            Math.max(1.0, nodeBounds.getWidth()),
-                            Math.max(1.0, nodeBounds.getHeight())
-                    );
+                    Rectangle marker = createInlineSelectionMarker(placement);
                     marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
                     selectionLayer.getChildren().add(marker);
                 }
@@ -1920,6 +1913,31 @@ public class TextPane extends Control {
             int sourceFrom = Math.min(from, to);
             int sourceTo = Math.max(from, to);
             return sourceSelStart < sourceTo && sourceFrom < sourceSelEnd;
+        }
+
+        private static Rectangle createInlineSelectionMarker(InlineControlPlacement placement) {
+            Node node = placement.node();
+            Bounds nodeBounds = node.getBoundsInParent();
+
+            double x = nodeBounds.getMinX();
+            double width = Math.max(1.0, nodeBounds.getWidth());
+            double top = nodeBounds.getMinY();
+            double bottom = nodeBounds.getMaxY();
+
+            // Text-like inline controls (buttons/hyperlinks/etc.) should follow line selection height.
+            // Images (ImageView) keep their full visual height.
+            if (node instanceof Control && !(node instanceof ImageView)) {
+                double lineTop = placement.y();
+                double lineBottom = placement.y() + placement.h();
+                top = Math.max(top, lineTop);
+                bottom = Math.min(bottom, lineBottom);
+                if (bottom <= top) {
+                    top = lineTop;
+                    bottom = lineBottom;
+                }
+            }
+
+            return new Rectangle(x, top, width, Math.max(1.0, bottom - top));
         }
 
         private static double textWidth(FontUtil fontUtil, Run run, int length, Font font) {
