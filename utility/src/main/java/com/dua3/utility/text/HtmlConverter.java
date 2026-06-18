@@ -653,14 +653,21 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             }
 
             buffer.ensureCapacity(buffer.length() + len);
-            int idx = 0;
-            while (idx < len) {
-                int idxFound = TextUtil.indexOf(s, RichText.SPLIT_MARKER, idx);
-                if (idxFound == -1) {
-                    idxFound = len;
+            int segmentStart = 0;
+            for (int i = 0; i < len; i++) {
+                char c = s.charAt(i);
+                if (c == RichText.SPLIT_MARKER || c == '\n') {
+                    if (segmentStart < i) {
+                        TextUtil.appendHtmlEscapedCharacters(buffer, s.subSequence(segmentStart, i));
+                    }
+                    if (c == '\n') {
+                        buffer.append(lineEndReplacement);
+                    }
+                    segmentStart = i + 1;
                 }
-                TextUtil.appendHtmlEscapedCharacters(buffer, s.subSequence(idx, idxFound));
-                idx = idxFound + 1;
+            }
+            if (segmentStart < len) {
+                TextUtil.appendHtmlEscapedCharacters(buffer, s.subSequence(segmentStart, len));
             }
         }
 

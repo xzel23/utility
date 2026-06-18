@@ -481,6 +481,28 @@ class HtmlConverterTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Regression test for line break conversion when a split marker directly follows a newline in the same run.
+     * <p>
+     * This occurs in some transformed RichText pipelines and used to produce raw '\n' instead of mapped '<br>'.
+     */
+    @Test
+    void testConvertLineBreaksToWhenSplitMarkerFollowsNewline() {
+        RichText text = new RichTextBuilder()
+                .push(Style.BOLD)
+                .append("a\n")
+                .appendSplitMarker()
+                .append("b")
+                .pop(Style.BOLD)
+                .toRichText();
+
+        String actual = HtmlConverter.create(
+                HtmlConverter.convertLineBreaksTo("<br>\n")
+        ).convert(text);
+
+        assertEquals("<b>a<br>\nb</b>", actual);
+    }
+
     private static HtmlTag getBlockTag(String value) {
         return switch (value) {
             case "h1" -> HtmlTag.tag("<h1>", "</h1>", HtmlTag.FormattingHint.LINE_BREAK_BEFORE_TAG);
