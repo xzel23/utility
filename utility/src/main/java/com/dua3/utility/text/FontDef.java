@@ -711,9 +711,26 @@ public final class FontDef {
                 && nullOrEquals(bold, font.isBold())
                 && nullOrEquals(italic, font.isItalic())
                 && nullOrEquals(underline, font.isUnderline())
-                && nullOrEquals(strikeThrough, font.isStrikeThrough()
-                && nullOrEquals(type, font.getType())
-        );
+                && nullOrEquals(strikeThrough, font.isStrikeThrough())
+                && nullOrEquals(type, font.getType());
+    }
+
+    /**
+     * Compares the properties of this object with those of the given {@code FontDef}
+     * to determine if they match.
+     *
+     * @param fd the {@code FontDef} object to compare with this instance.
+     * @return {@code true} if all corresponding properties match, or {@code false} otherwise.
+     */
+    public boolean matches(FontDef fd) {
+        return nullOrEquals(color, fd.getColor())
+                && nullOrEquals(size, fd.getSize())
+                && nullOrEquals(getFamily(), fd.getFamily())
+                && nullOrEquals(bold, fd.getBold())
+                && nullOrEquals(italic, fd.getItalic())
+                && nullOrEquals(underline, fd.getUnderline())
+                && nullOrEquals(strikeThrough, fd.getStrikeThrough())
+                && nullOrEquals(type, fd.getType());
     }
 
     /**
