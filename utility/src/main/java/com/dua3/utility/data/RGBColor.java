@@ -119,35 +119,12 @@ public record RGBColor(int argb) implements Color {
 
     @Override
     public RGBColor brighter() {
-        int r = r();
-        int g = g();
-        int b = b();
-        int alpha = a();
-
-        int i = (int) (1.0 / (1.0 - F_BRIGHTEN));
-        if (r == 0 && g == 0 && b == 0) {
-            return new RGBColor(i, i, i, alpha);
-        }
-
-        if (r > 0 && r < i) {
-            r = i;
-        }
-        if (g > 0 && g < i) {
-            g = i;
-        }
-        if (b > 0 && b < i) {
-            b = i;
-        }
-
-        //noinspection NumericCastThatLosesPrecision
-        return new RGBColor(Math.min((int) (r / F_BRIGHTEN), 255), Math.min((int) (g / F_BRIGHTEN), 255),
-                Math.min((int) (b / F_BRIGHTEN), 255), alpha);
+        return toHSLColor().brighter().toRGBColor();
     }
 
     @Override
     public RGBColor darker() {
-        //noinspection NumericCastThatLosesPrecision
-        return new RGBColor((int) (r() * F_BRIGHTEN), (int) (g() * F_BRIGHTEN), (int) (b() * F_BRIGHTEN), a());
+        return toHSLColor().darker().toRGBColor();
     }
 
     /**

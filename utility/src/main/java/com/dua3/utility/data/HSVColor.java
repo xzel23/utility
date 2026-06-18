@@ -96,12 +96,12 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
 
     @Override
     public Color brighter() {
-        return new HSVColor(h(), s(), Math.min(v() / F_BRIGHTEN, 1), alpha);
+        return new HSLColor(h(), s(), Math.min(v() / F_BRIGHTEN, 1), alpha);
     }
 
     @Override
     public Color darker() {
-        return new HSVColor(h(), s(), v() * F_BRIGHTEN, alpha);
+        return new HSLColor(h(), s(), v() * F_BRIGHTEN, alpha);
     }
 
     @Override

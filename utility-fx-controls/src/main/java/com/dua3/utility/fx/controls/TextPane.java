@@ -1034,9 +1034,9 @@ public class TextPane extends Control {
         private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
         private static final Color[] DEFAULT_TEXT_COLORS = {
                 Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
-                Color.DARKRED, Color.RED, Color.RED.brighter(),
-                Color.DARKGREEN, Color.GREEN, Color.GREEN.brighter(),
-                Color.DARKBLUE, Color.BLUE, Color.BLUE.brighter(),
+                Color.RED.darker(), Color.RED, Color.RED.brighter(),
+                Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
+                Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
                 Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
                 Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
                 Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
@@ -1044,9 +1044,9 @@ public class TextPane extends Control {
         private static final Color[] DEFAULT_BACKGROUND_COLORS = {
                 Color.TRANSPARENT_WHITE,
                 Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
-                Color.DARKRED, Color.RED, Color.RED.brighter(),
-                Color.DARKGREEN, Color.GREEN, Color.GREEN.brighter(),
-                Color.DARKBLUE, Color.BLUE, Color.BLUE.brighter(),
+                Color.RED.darker(), Color.RED, Color.RED.brighter(),
+                Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
+                Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
                 Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
                 Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
                 Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
@@ -1224,19 +1224,19 @@ public class TextPane extends Control {
                     .build();
         }
 
-    private static ToggleButton createToggleButton(String text, Node graphic, TextEditorPane editor, BiConsumer<TextEditorPane, Boolean> action) {
-        return Controls.toggleButton()
-                .tooltip(text)
-                .graphic(graphic)
-                .action(e -> {
-                    if (!(e.getSource() instanceof ToggleButton tb)) {
-                        throw new IllegalStateException("Unexpected source");
-                    }
-                    action.accept(editor, tb.isSelected());
-                    editor.requestFocus();
-                })
-                .build();
-    }
+        private static ToggleButton createToggleButton(String text, Node graphic, TextEditorPane editor, BiConsumer<TextEditorPane, Boolean> action) {
+            return Controls.toggleButton()
+                    .tooltip(text)
+                    .graphic(graphic)
+                    .action(e -> {
+                        if (!(e.getSource() instanceof ToggleButton tb)) {
+                            throw new IllegalStateException("Unexpected source");
+                        }
+                        action.accept(editor, tb.isSelected());
+                        editor.requestFocus();
+                    })
+                    .build();
+        }
 
         private static void bindFontLists(
                 TextEditorPane editor,

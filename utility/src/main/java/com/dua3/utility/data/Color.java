@@ -862,6 +862,15 @@ public interface Color {
     }
 
     /**
+     * Convert this color to {@link HSVColor}.
+     *
+     * @return this color as RGBColor instance
+     */
+    default HSLColor toHSLColor() {
+        return HSLColor.valueOf(argb());
+    }
+
+    /**
      * Get CSS compatible string representation of this color.
      * <p>
      * Opaque colors are represented as three component hex strings, i. e. "#ff0000" for red.
