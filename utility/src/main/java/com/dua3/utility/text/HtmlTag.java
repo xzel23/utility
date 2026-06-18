@@ -262,7 +262,7 @@ final class EmptyHtmlTag implements HtmlTag {
 record SimpleHtmlTag(String open, String close, FormattingHint formattingHint,
                      int headerChange) implements HtmlTag {
     SimpleHtmlTag(String open, String close, FormattingHint formattingHint) {
-        this(open, close, formattingHint, 0);
+        this(open, close, formattingHint, -1);
     }
 
     @Override

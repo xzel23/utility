@@ -257,7 +257,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
     @Override
     public String convert(RichText text) {
-        currentDefaultFontDef = getHeaderStyle.apply(0).text().getFontDef();
+        FontDef defaultHeaderFontDef = getHeaderStyle.apply(0).text().getFontDef();
+        currentDefaultFontDef = defaultHeaderFontDef.isEmpty() ? baseFont.toFontDef() : defaultHeaderFontDef;
         return super.convert(text);
     }
 
@@ -632,7 +633,14 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         }
 
         private boolean isFontChange(FontDef fd) {
-            return fd.getFamilies() != null || fd.getSize() != null || fd.getColor() != null || fd.getType() != null;
+            return isDefinedAndDifferent(fd.getFamilies(), currentDefaultFontDef.getFamilies())
+                    || isDefinedAndDifferent(fd.getSize(), currentDefaultFontDef.getSize())
+                    || isDefinedAndDifferent(fd.getColor(), currentDefaultFontDef.getColor())
+                    || isDefinedAndDifferent(fd.getType(), currentDefaultFontDef.getType());
+        }
+
+        private static <T> boolean isDefinedAndDifferent(@Nullable T value, @Nullable T reference) {
+            return value != null && !Objects.equals(value, reference);
         }
 
         @Override
