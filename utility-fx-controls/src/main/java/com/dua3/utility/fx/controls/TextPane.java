@@ -1026,7 +1026,17 @@ public class TextPane extends Control {
         private static final double DRAG_AUTOSCROLL_TICK_MS = 40.0;
         private static final SequencedCollection<String> AVAILABLE_FONTS = FxFontUtil.getInstance().getFamilies(FontUtil.FontTypes.ALL);
         private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
-        private static final Color[] DEFAULT_COLORS = {
+        private static final Color[] DEFAULT_TEXT_COLORS = {
+                Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
+                Color.DARKRED, Color.RED, Color.RED.brighter(),
+                Color.DARKGREEN, Color.GREEN, Color.GREEN.brighter(),
+                Color.DARKBLUE, Color.BLUE, Color.BLUE.brighter(),
+                Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
+                Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
+                Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
+        };
+        private static final Color[] DEFAULT_BACKGROUND_COLORS = {
+                Color.TRANSPARENT_WHITE,
                 Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
                 Color.DARKRED, Color.RED, Color.RED.brighter(),
                 Color.DARKGREEN, Color.GREEN, Color.GREEN.brighter(),
@@ -1099,8 +1109,13 @@ public class TextPane extends Control {
 
                 ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS).build();
                 ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
-                ComboBoxEx<Color> colorList = Controls.comboBoxEx(DEFAULT_COLORS)
+                ComboBoxEx<Color> textColorList = Controls.comboBoxEx(DEFAULT_TEXT_COLORS)
                         .defaultValue(() -> Color.BLACK)
+                        .format(color -> LangUtil.mapNonNullOrElse(color, Color::toArgb, ""))
+                        .graphic(color -> new Rectangle(16, 16, FxUtil.convert(color)))
+                        .build();
+                ComboBoxEx<Color> backgroundColorList = Controls.comboBoxEx(DEFAULT_BACKGROUND_COLORS)
+                        .defaultValue(() -> Color.TRANSPARENT_WHITE)
                         .format(color -> LangUtil.mapNonNullOrElse(color, Color::toArgb, ""))
                         .graphic(color -> new Rectangle(16, 16, FxUtil.convert(color)))
                         .build();
@@ -1109,7 +1124,7 @@ public class TextPane extends Control {
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
                 underlineButton.selectedProperty().bindBidirectional(editor.underlineProperty());
                 strikeThroughButton.selectedProperty().bindBidirectional(editor.strikeThroughProperty());
-                bindFontLists(editor, fontList, sizeList, colorList);
+                bindFontLists(editor, fontList, sizeList, textColorList, backgroundColorList);
                 undoButton.disableProperty().bind(editor.undoableProperty().not());
                 redoButton.disableProperty().bind(editor.redoableProperty().not());
                 copyButton.setFocusTraversable(false);
@@ -1126,7 +1141,8 @@ public class TextPane extends Control {
                         new Separator(),
                         fontList,
                         sizeList,
-                        colorList,
+                        textColorList,
+                        backgroundColorList,
                         new Separator(),
                         boldButton,
                         italicsButton,
@@ -1218,7 +1234,8 @@ public class TextPane extends Control {
                 TextEditorPane editor,
                 ComboBoxEx<String> fontList,
                 ComboBoxEx<Float> sizeList,
-                ComboBoxEx<Color> colorList
+                ComboBoxEx<Color> textColorList,
+                ComboBoxEx<Color> backgroundColorList
         ) {
             AtomicBoolean synchronizing = new AtomicBoolean(false);
 
@@ -1273,18 +1290,39 @@ public class TextPane extends Control {
                             return;
                         }
 
-                        ensureValuePresent(colorList, newValue);
-                        if (!Objects.equals(colorList.valueProperty().getValue(), newValue)) {
-                            colorList.valueProperty().setValue(newValue);
+                        ensureValuePresent(textColorList, newValue);
+                        if (!Objects.equals(textColorList.valueProperty().getValue(), newValue)) {
+                            textColorList.valueProperty().setValue(newValue);
                         }
                     }));
 
-            colorList.valueProperty().addListener((obs, oldValue, newValue) -> {
+            textColorList.valueProperty().addListener((obs, oldValue, newValue) -> {
                 if (synchronizing.get() || newValue == null) {
                     return;
                 }
                 if (!Objects.equals(editor.getTextColor(), newValue)) {
                     editor.setTextColor(newValue);
+                }
+            });
+
+            editor.backgroundColorProperty().addListener((obs, oldValue, newValue) ->
+                    synchronizeFromEditor(synchronizing, () -> {
+                        if (newValue == null) {
+                            return;
+                        }
+
+                        ensureValuePresent(backgroundColorList, newValue);
+                        if (!Objects.equals(backgroundColorList.valueProperty().getValue(), newValue)) {
+                            backgroundColorList.valueProperty().setValue(newValue);
+                        }
+                    }));
+
+            backgroundColorList.valueProperty().addListener((obs, oldValue, newValue) -> {
+                if (synchronizing.get() || newValue == null) {
+                    return;
+                }
+                if (!Objects.equals(editor.getBackgroundColor(), newValue)) {
+                    editor.setBackgroundColor(newValue);
                 }
             });
 
@@ -1308,9 +1346,17 @@ public class TextPane extends Control {
 
                 Color currentColor = editor.getTextColor();
                 if (currentColor != null) {
-                    ensureValuePresent(colorList, currentColor);
-                    if (!Objects.equals(colorList.valueProperty().getValue(), currentColor)) {
-                        colorList.valueProperty().setValue(currentColor);
+                    ensureValuePresent(textColorList, currentColor);
+                    if (!Objects.equals(textColorList.valueProperty().getValue(), currentColor)) {
+                        textColorList.valueProperty().setValue(currentColor);
+                    }
+                }
+
+                Color currentBackgroundColor = editor.getBackgroundColor();
+                if (currentBackgroundColor != null) {
+                    ensureValuePresent(backgroundColorList, currentBackgroundColor);
+                    if (!Objects.equals(backgroundColorList.valueProperty().getValue(), currentBackgroundColor)) {
+                        backgroundColorList.valueProperty().setValue(currentBackgroundColor);
                     }
                 }
             });

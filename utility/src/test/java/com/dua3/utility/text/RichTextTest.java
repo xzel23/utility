@@ -221,6 +221,7 @@ class RichTextTest {
         assertTrue(ignoreColor.test(text, text.apply(Style.RED)));
         assertTrue(ignoreColor.test(text.apply(Style.BLUE), text.apply(Style.RED)));
         assertTrue(ignoreColor.test(text.apply(Style.BLUE), text));
+        assertFalse(ignoreColor.test(text, text.apply(Style.background(Color.YELLOW))));
         assertFalse(ignoreColor.test(texts, text));
         assertFalse(ignoreColor.test(text.apply(Style.ITALIC), text));
         assertFalse(ignoreColor.test(text, text.apply(Style.BOLD)));

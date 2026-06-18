@@ -84,13 +84,18 @@ public record FontData(
         assert fontDef.getUnderline() != null : "fontDef.getUnderline() is null";
         assert fontDef.getStrikeThrough() != null : "fontDef.getStrikeThrough() is null";
         assert fontDef.getColor() == null : "fontDef.getColor() must be null";
+        assert fontDef.getBackgroundColor() == null : "fontDef.getBackgroundColor() must be null";
 
         // copy families to an immutable list
         families = List.copyOf(families);
 
-        // remove color from fontspec
-        assert fontspec.endsWith("-*") : "unexpected fontspec: " + fontspec;
-        fontspec = fontspec.substring(0, fontspec.length() - 2);
+        // remove foreground/background color placeholders from fontspec
+        int stripped = 0;
+        while (stripped < 2 && fontspec.endsWith("-*")) {
+            fontspec = fontspec.substring(0, fontspec.length() - 2);
+            stripped++;
+        }
+        assert stripped > 0 : "unexpected fontspec: " + fontspec;
     }
 
     /**

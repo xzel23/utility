@@ -107,6 +107,7 @@ class TextAttributesTest {
         assertEquals(ta.get(Style.FONT_FAMILIES), fd.getFamilies());
         assertEquals(ta.get(Style.FONT_SIZE), fd.getSize());
         assertEquals(ta.get(Style.COLOR), fd.getColor());
+        assertEquals(ta.get(Style.BACKGROUND_COLOR), fd.getBackgroundColor());
         assertEquals(Optional.ofNullable(ta.get(Style.FONT_WEIGHT)).map(s -> s.equals(Style.FONT_WEIGHT_VALUE_BOLD)).orElse(null), fd.getBold());
         assertEquals(Optional.ofNullable(ta.get(Style.TEXT_DECORATION_UNDERLINE)).map(s -> s.equals(Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE)).orElse(null), fd.getUnderline());
         assertEquals(Optional.ofNullable(ta.get(Style.TEXT_DECORATION_LINE_THROUGH)).map(s -> s.equals(Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)).orElse(null), fd.getStrikeThrough());
@@ -119,6 +120,7 @@ class TextAttributesTest {
                 TextAttributes.of(Pair.of(Style.FONT_FAMILIES, List.of("Arial"))),
                 TextAttributes.of(Pair.of(Style.FONT_SIZE, 17.0f)),
                 TextAttributes.of(Pair.of(Style.COLOR, Color.BLUE)),
+                TextAttributes.of(Pair.of(Style.BACKGROUND_COLOR, Color.YELLOW)),
                 TextAttributes.of(Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD)),
                 TextAttributes.of(Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_NORMAL)),
                 TextAttributes.of(Pair.of(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE)),
@@ -130,6 +132,7 @@ class TextAttributesTest {
                 TextAttributes.of(Pair.of(Style.FONT_FAMILIES, List.of("Arial")),
                         Pair.of(Style.FONT_SIZE, 17.0f),
                         Pair.of(Style.COLOR, Color.BLUE),
+                        Pair.of(Style.BACKGROUND_COLOR, Color.YELLOW),
                         Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD),
                         Pair.of(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE),
                         Pair.of(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE),

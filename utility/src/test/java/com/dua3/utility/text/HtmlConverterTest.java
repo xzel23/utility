@@ -130,7 +130,7 @@ class HtmlConverterTest {
         builder.append(" too many fonts!");
         builder.pop(style1);
         RichText rt = builder.toRichText();
-        String expected = "<span class='arial-bold-normal-none-no_line-16.0-#000000'>Don&apos;t <span class='courier-regular-normal-none-no_line-12.0-#000000'>mix</span> too many fonts!</span>";
+        String expected = "<span class='arial-bold-normal-none-no_line-16.0-#000000-*'>Don&apos;t <span class='courier-regular-normal-none-no_line-12.0-#000000-*'>mix</span> too many fonts!</span>";
         String actual = HtmlConverter.create(HtmlConverter.useCss(true)).convert(rt);
 
         assertEquals(expected, actual);

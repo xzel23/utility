@@ -454,6 +454,7 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
         ifPresent(FONT_FAMILIES, fd::setFamilies);
         ifPresent(FONT_SIZE, fd::setSize);
         ifPresent(COLOR, fd::setColor);
+        ifPresent(BACKGROUND_COLOR, fd::setBackgroundColor);
         ifPresent(FONT_STYLE, v -> fd.setItalic(Objects.equals(v, FONT_STYLE_VALUE_ITALIC) || Objects.equals(v, FONT_STYLE_VALUE_OBLIQUE)));
         ifPresent(FONT_WEIGHT, v -> fd.setBold(Objects.equals(v, FONT_WEIGHT_VALUE_BOLD)));
         ifPresent(TEXT_DECORATION_UNDERLINE, v -> fd.setUnderline(Objects.equals(v, TEXT_DECORATION_UNDERLINE_VALUE_LINE)));
@@ -600,6 +601,7 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
     public static Style create(FontDef fontDef, Color textColor, Color backgroundColor) {
         HashMap<String, @Nullable Object> properties = new HashMap<>();
         addFontProperties(properties, fontDef);
+        properties.put(COLOR, textColor);
         properties.put(BACKGROUND_COLOR, backgroundColor);
         return create(fontDef.fontspec() + "-" + textColor.toCss() + "-" + backgroundColor.toCss(), properties);
     }
@@ -618,6 +620,7 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
         properties.put(FONT_FAMILIES, Collections.singletonList(fontDef.getFamily()));
         properties.put(FONT_SIZE, fontDef.getSize());
         properties.put(COLOR, fontDef.getColor());
+        properties.put(BACKGROUND_COLOR, fontDef.getBackgroundColor());
         properties.put(FONT_STYLE, triStateSelect(fontDef.getItalic(), null, FONT_STYLE_VALUE_ITALIC, FONT_STYLE_VALUE_NORMAL));
         properties.put(FONT_WEIGHT, triStateSelect(fontDef.getBold(), null, FONT_WEIGHT_VALUE_BOLD, FONT_WEIGHT_VALUE_NORMAL));
         properties.put(TEXT_DECORATION_UNDERLINE, triStateSelect(fontDef.getUnderline(), null, TEXT_DECORATION_UNDERLINE_VALUE_LINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));

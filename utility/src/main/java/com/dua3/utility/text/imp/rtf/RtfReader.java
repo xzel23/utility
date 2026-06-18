@@ -401,6 +401,11 @@ public final class RtfReader {
                         style.colorIndex = Math.max(0, parameter);
                     }
                 }
+                case "highlight", "cb" -> {
+                    if (hasParameter) {
+                        style.backgroundColorIndex = Math.max(0, parameter);
+                    }
+                }
                 case "f" -> {
                     if (hasParameter) {
                         style.fontIndex = parameter;
@@ -766,6 +771,9 @@ public final class RtfReader {
                 if (k.color() != null) {
                     entries.add(Map.entry(Style.COLOR, k.color()));
                 }
+                if (k.backgroundColor() != null) {
+                    entries.add(Map.entry(Style.BACKGROUND_COLOR, k.backgroundColor()));
+                }
                 if (k.fontSize() != null) {
                     entries.add(Map.entry(Style.FONT_SIZE, k.fontSize()));
                 }
@@ -909,18 +917,27 @@ public final class RtfReader {
             boolean underline,
             boolean strikeThrough,
             @Nullable Color color,
+            @Nullable Color backgroundColor,
             @Nullable Float fontSize,
             @Nullable String fontFamily
     ) {
         private static StyleKey from(CharacterStyle style, Map<Integer, String> fontTable, Map<Integer, Color> colorTable) {
             Color color = style.colorIndex > 0 ? colorTable.get(style.colorIndex) : null;
+            Color backgroundColor = style.backgroundColorIndex > 0 ? colorTable.get(style.backgroundColorIndex) : null;
             Float fontSize = style.fontSize > 0 ? style.fontSize : null;
             String fontFamily = style.fontIndex >= 0 ? fontTable.get(style.fontIndex) : null;
-            return new StyleKey(style.bold, style.italic, style.underline, style.strikeThrough, color, fontSize, fontFamily);
+            return new StyleKey(style.bold, style.italic, style.underline, style.strikeThrough, color, backgroundColor, fontSize, fontFamily);
         }
 
         private boolean isEmpty() {
-            return !bold && !italic && !underline && !strikeThrough && color == null && fontSize == null && fontFamily == null;
+            return !bold
+                    && !italic
+                    && !underline
+                    && !strikeThrough
+                    && color == null
+                    && backgroundColor == null
+                    && fontSize == null
+                    && fontFamily == null;
         }
     }
 
@@ -930,6 +947,7 @@ public final class RtfReader {
         private boolean underline;
         private boolean strikeThrough;
         private int colorIndex;
+        private int backgroundColorIndex;
         private int fontIndex;
         private float fontSize;
         private int baselineShiftHalfPoints;
@@ -944,6 +962,7 @@ public final class RtfReader {
             this.underline = false;
             this.strikeThrough = false;
             this.colorIndex = 0;
+            this.backgroundColorIndex = 0;
             this.fontIndex = defaultFontIndex;
             this.fontSize = -1f;
             this.baselineShiftHalfPoints = 0;
@@ -956,6 +975,7 @@ public final class RtfReader {
             copy.underline = this.underline;
             copy.strikeThrough = this.strikeThrough;
             copy.colorIndex = this.colorIndex;
+            copy.backgroundColorIndex = this.backgroundColorIndex;
             copy.fontIndex = this.fontIndex;
             copy.fontSize = this.fontSize;
             copy.baselineShiftHalfPoints = this.baselineShiftHalfPoints;

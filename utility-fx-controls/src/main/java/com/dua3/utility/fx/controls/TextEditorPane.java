@@ -65,6 +65,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private final BooleanProperty underline = new SimpleBooleanProperty(this, "underline", false);
     private final BooleanProperty strikeThrough = new SimpleBooleanProperty(this, "strikeThrough", false);
     private final ObjectProperty<@Nullable Color> textColor = new SimpleObjectProperty<>(this, "textColor");
+    private final ObjectProperty<@Nullable Color> backgroundColor = new SimpleObjectProperty<>(this, "backgroundColor");
     private final StringProperty fontFamily = new SimpleStringProperty(this, "fontFamily");
     private final DoubleProperty fontSize = new SimpleDoubleProperty(this, "fontSize", 0.0);
     private final ObjectProperty<RichText> committedValue;
@@ -364,6 +365,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private void initFormatPropertyListeners() {
         textColor.addListener((obs, oldValue, newValue) -> onAttributePropertyChanged(Style.COLOR, newValue));
+        backgroundColor.addListener((obs, oldValue, newValue) -> onAttributePropertyChanged(Style.BACKGROUND_COLOR, newValue));
         fontFamily.addListener((obs, oldValue, newValue) -> onFontFamilyChanged(newValue));
         fontSize.addListener((obs, oldValue, newValue) -> onFontSizeChanged(newValue.doubleValue()));
     }
@@ -700,6 +702,33 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      */
     public final void setTextColor(@Nullable Color value) {
         textColor.set(value);
+    }
+
+    /**
+     * Background-color property for current formatting state.
+     *
+     * @return background-color property
+     */
+    public final ObjectProperty<@Nullable Color> backgroundColorProperty() {
+        return backgroundColor;
+    }
+
+    /**
+     * Returns current text background color setting.
+     *
+     * @return current background color or {@code null}
+     */
+    public final @Nullable Color getBackgroundColor() {
+        return backgroundColor.get();
+    }
+
+    /**
+     * Sets text background color for subsequent input or current selection formatting.
+     *
+     * @param value background color, or {@code null}
+     */
+    public final void setBackgroundColor(@Nullable Color value) {
+        backgroundColor.set(value);
     }
 
     /**
@@ -1872,6 +1901,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         Font fallbackFont = getFont();
         @Nullable Color colorAtCaret = Optional.ofNullable(resolveColor(attributes, styles))
                 .orElseGet(fallbackFont::getColor);
+        @Nullable Color backgroundColorAtCaret = Optional.ofNullable(resolveBackgroundColor(attributes, styles))
+                .orElseGet(fallbackFont::getBackgroundColor);
         @Nullable String familyAtCaret = Optional.ofNullable(resolveFontFamily(attributes, styles))
                 .orElseGet(fallbackFont::getFamily);
         double sizeAtCaret = resolveFontSize(attributes, styles);
@@ -1886,6 +1917,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             setUnderline(underlineAtCaret);
             setStrikeThrough(strikeThroughAtCaret);
             setTextColor(colorAtCaret);
+            setBackgroundColor(backgroundColorAtCaret);
             setFontFamily(familyAtCaret);
             setFontSize(sizeAtCaret);
         } finally {
@@ -1923,6 +1955,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private static @Nullable Color resolveColor(TextAttributes attributes, List<Style> styles) {
         return resolveAttribute(attributes, styles, Style.COLOR) instanceof Color color ? color : null;
+    }
+
+    private static @Nullable Color resolveBackgroundColor(TextAttributes attributes, List<Style> styles) {
+        return resolveAttribute(attributes, styles, Style.BACKGROUND_COLOR) instanceof Color color ? color : null;
     }
 
     private static @Nullable String resolveFontFamily(TextAttributes attributes, List<Style> styles) {
@@ -1995,6 +2031,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             rtb.push(Style.COLOR, color);
         }
 
+        @Nullable Color background = getBackgroundColor();
+        if (background != null) {
+            rtb.push(Style.BACKGROUND_COLOR, background);
+        }
+
         @Nullable String family = getFontFamily();
         if (family != null && !family.isBlank()) {
             rtb.push(Style.FONT_FAMILIES, List.of(family));
@@ -2012,6 +2053,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
         if (family != null && !family.isBlank()) {
             rtb.pop(Style.FONT_FAMILIES);
+        }
+        if (background != null) {
+            rtb.pop(Style.BACKGROUND_COLOR);
         }
         if (color != null) {
             rtb.pop(Style.COLOR);

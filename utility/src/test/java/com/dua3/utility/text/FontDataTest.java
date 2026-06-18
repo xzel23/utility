@@ -32,7 +32,7 @@ class FontDataTest {
         fontDef.setUnderline(underline);
         fontDef.setStrikeThrough(strikeThrough);
 
-        String fontspec = fontDef.fontspec() + "-*";
+        String fontspec = fontDef.fontspec();
         String cssStyle = fontDef.getCssStyle();
         double ascent = 10.0;
         double descent = 3.0;
@@ -64,8 +64,8 @@ class FontDataTest {
         assertEquals(italic, fontData.italic());
         assertEquals(underline, fontData.underline());
         assertEquals(strikeThrough, fontData.strikeThrough());
-        // The FontData constructor removes the "-*" suffix from fontspec
-        String expectedFontspec = fontspec.substring(0, fontspec.length() - 2);
+        // The FontData constructor removes foreground/background color placeholders from fontspec.
+        String expectedFontspec = stripColorPlaceholders(fontspec);
         assertEquals(expectedFontspec, fontData.fontspec());
         assertEquals(cssStyle, fontData.cssStyle());
         assertEquals(ascent, fontData.ascent());
@@ -465,5 +465,15 @@ class FontDataTest {
 
         // The family method should return the first family in the list
         assertEquals("Arial", fontData.family());
+    }
+
+    private static String stripColorPlaceholders(String fontspec) {
+        String normalized = fontspec;
+        int stripped = 0;
+        while (stripped < 2 && normalized.endsWith("-*")) {
+            normalized = normalized.substring(0, normalized.length() - 2);
+            stripped++;
+        }
+        return normalized;
     }
 }

@@ -399,6 +399,20 @@ class FontTest {
     }
 
     @Test
+    void testWithBackgroundColor() {
+        FontData fontData = FontData.get("Arial", 12.0f, false, false, false, false, false, 10.0, 2.0, 12.0, 5.0);
+        Color color = Color.BLACK;
+
+        Font font = Font.getFont(fontData, color);
+        Font highlightedFont = font.withBackgroundColor(Color.YELLOW);
+
+        assertEquals(Color.YELLOW, highlightedFont.getBackgroundColor());
+        assertEquals(font.getColor(), highlightedFont.getColor());
+        assertEquals(font.getFamily(), highlightedFont.getFamily());
+        assertEquals(font.getSizeInPoints(), highlightedFont.getSizeInPoints());
+    }
+
+    @Test
     void testGetFontData() {
         FontData fontData = FontData.get("Arial", 12.0f, false, false, false, false, false, 10.0, 2.0, 12.0, 5.0);
         Color color = Color.BLACK;

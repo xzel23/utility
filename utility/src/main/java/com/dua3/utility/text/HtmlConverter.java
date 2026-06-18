@@ -1,5 +1,6 @@
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Color;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -605,7 +606,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                      Style.TEXT_DECORATION_UNDERLINE,
                      Style.TEXT_DECORATION_LINE_THROUGH,
                      Style.FONT_VARIANT,
-                     Style.COLOR -> true;
+                     Style.COLOR,
+                     Style.BACKGROUND_COLOR -> true;
                 default -> false;
             };
         }
@@ -650,11 +652,16 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             return isDefinedAndDifferent(fd.getFamilies(), currentDefaultFontDef.getFamilies())
                     || isDefinedAndDifferent(fd.getSize(), currentDefaultFontDef.getSize())
                     || isDefinedAndDifferent(fd.getColor(), currentDefaultFontDef.getColor())
+                    || isDefinedAndDifferent(normalizeBackgroundColor(fd.getBackgroundColor()), normalizeBackgroundColor(currentDefaultFontDef.getBackgroundColor()))
                     || isDefinedAndDifferent(fd.getType(), currentDefaultFontDef.getType());
         }
 
         private static <T> boolean isDefinedAndDifferent(@Nullable T value, @Nullable T reference) {
             return value != null && !Objects.equals(value, reference);
+        }
+
+        private static @Nullable Color normalizeBackgroundColor(@Nullable Color color) {
+            return color != null && color.isTransparent() ? null : color;
         }
 
         @Override

@@ -41,8 +41,10 @@ public final class FontDef {
     private static final String FONT_STYLE = "font-style: ";
     private static final String TEXT_DECORATION = "text-decoration:";
     private static final String LINE_THROUGH = "line-through";
+    private static final String BACKGROUND_COLOR = "background-color: ";
 
     private @Nullable Color color;
+    private @Nullable Color backgroundColor;
     private @Nullable Float size;
     private @Nullable List<String> families;
     private @Nullable Boolean bold;
@@ -67,6 +69,18 @@ public final class FontDef {
     public static FontDef color(@Nullable Color col) {
         FontDef fd = new FontDef();
         fd.setColor(col);
+        return fd;
+    }
+
+    /**
+     * Create FontDef instance with only the background color attribute set.
+     *
+     * @param col the background color
+     * @return new FontDef instance
+     */
+    public static FontDef backgroundColor(@Nullable Color col) {
+        FontDef fd = new FontDef();
+        fd.setBackgroundColor(col);
         return fd;
     }
 
@@ -192,8 +206,15 @@ public final class FontDef {
                             break;
                         }
 
-                        // check for color
-                        fd.setColor(Color.valueOf(s));
+                        // check for color(s)
+                        Color parsedColor = Color.valueOf(s);
+                        if (fd.getColor() == null) {
+                            fd.setColor(parsedColor);
+                        } else if (fd.getBackgroundColor() == null) {
+                            fd.setBackgroundColor(parsedColor);
+                        } else {
+                            throw new IllegalArgumentException("invalid fontspec: " + fontspec);
+                        }
                     }
                 }
             }
@@ -232,6 +253,7 @@ public final class FontDef {
 
             switch (attribute) {
                 case "color" -> fd.setColor(parseColor(value));
+                case "background-color" -> fd.setBackgroundColor(parseColor(value));
                 case "font-size" -> fd.setSize(parseFontSize(value));
                 case "font-family" -> fd.setFamilies(parseFontFamilies(value, true));
                 case "font-weight" -> fd.setBold(parseFontWeight(value));
@@ -456,7 +478,8 @@ public final class FontDef {
                 LangUtil.triStateSelect(underline, "-underline", "-none", "-*") +
                 LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "-*") +
                 '-' + (size != null ? size : "*") +
-                '-' + (color != null ? color.toCss() : "*");
+                '-' + (color != null ? color.toCss() : "*") +
+                '-' + (backgroundColor != null ? backgroundColor.toCss() : "*");
     }
 
     /**
@@ -496,6 +519,24 @@ public final class FontDef {
      */
     public void setColor(@Nullable Color color) {
         this.color = color;
+    }
+
+    /**
+     * Retrieves the background color attribute associated with this instance.
+     *
+     * @return the background color attribute, or null if no background color is defined
+     */
+    public @Nullable Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    /**
+     * Sets the background color attribute of the FontDef instance.
+     *
+     * @param backgroundColor the background color to set, which can be null
+     */
+    public void setBackgroundColor(@Nullable Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
     /**
@@ -637,6 +678,7 @@ public final class FontDef {
                 && Objects.equals(type, other.type)
                 && Objects.equals(families, other.families)
                 && Objects.equals(color, other.color)
+                && Objects.equals(backgroundColor, other.backgroundColor)
                 && Objects.equals(bold, other.bold)
                 && Objects.equals(italic, other.italic)
                 && Objects.equals(underline, other.underline)
@@ -645,7 +687,7 @@ public final class FontDef {
 
     @Override
     public int hashCode() {
-        return Objects.hash(color, size, type, families, bold, italic, underline, strikeThrough);
+        return Objects.hash(color, backgroundColor, size, type, families, bold, italic, underline, strikeThrough);
     }
 
     @Override
@@ -688,6 +730,7 @@ public final class FontDef {
         }
 
         appendIfNonNull(css, color, "color: ", color, ";");
+        appendIfNonNull(css, backgroundColor, BACKGROUND_COLOR, backgroundColor, ";");
 
         return css.toString().stripTrailing();
     }
@@ -706,6 +749,7 @@ public final class FontDef {
      */
     public boolean matches(Font font) {
         return nullOrEquals(color, font.getColor())
+                && nullOrEquals(backgroundColor, font.getBackgroundColor())
                 && nullOrEquals(size, font.getSizeInPoints())
                 && nullOrEquals(getFamily(), font.getFamily())
                 && nullOrEquals(bold, font.isBold())
@@ -724,6 +768,7 @@ public final class FontDef {
      */
     public boolean matches(FontDef fd) {
         return nullOrEquals(color, fd.getColor())
+                && nullOrEquals(backgroundColor, fd.getBackgroundColor())
                 && nullOrEquals(size, fd.getSize())
                 && nullOrEquals(getFamily(), fd.getFamily())
                 && nullOrEquals(bold, fd.getBold())
@@ -740,6 +785,7 @@ public final class FontDef {
      */
     public void merge(FontDef delta) {
         if (delta.color != null) this.color = delta.color;
+        if (delta.backgroundColor != null) this.backgroundColor = delta.backgroundColor;
         if (delta.size != null) this.size = delta.size;
         if (delta.type != null) this.type = delta.type;
         if (delta.families != null) this.families = delta.families;
@@ -756,6 +802,15 @@ public final class FontDef {
      */
     public void ifColorDefined(Consumer<? super Color> c) {
         consumeIfDefined(color, c);
+    }
+
+    /**
+     * Run action if a value for the background color property is defined.
+     *
+     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     */
+    public void ifBackgroundColorDefined(Consumer<? super Color> c) {
+        consumeIfDefined(backgroundColor, c);
     }
 
     /**
@@ -830,6 +885,7 @@ public final class FontDef {
      */
     public boolean isEmpty() {
         return color == null
+                && backgroundColor == null
                 && size == null
                 && type == null
                 && families == null
@@ -847,6 +903,7 @@ public final class FontDef {
     public FontDef copy() {
         FontDef copy = new FontDef();
         copy.color = color;
+        copy.backgroundColor = backgroundColor;
         copy.size = size;
         copy.families = families == null ? null : List.copyOf(families);
         copy.bold = bold;

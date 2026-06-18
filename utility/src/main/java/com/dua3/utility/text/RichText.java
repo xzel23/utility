@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
@@ -566,6 +567,7 @@ public final class RichText
      *                                   or if start is greater than end
      * @throws NullPointerException if {@code builder} is {@code null}
      */
+    @Override
     public void appendTo(RichTextBuilder builder, int from, int to) {
         Objects.checkFromToIndex(from, to, length());
         builder.ensureCapacity(builder.length() + to - from);
@@ -1153,6 +1155,7 @@ public final class RichText
                         || isSignificantChange(s.ignoreFontWeight(), fda.getBold(), fdb.getBold())
                         || isSignificantChange(s.ignoreItalic(), fda.getItalic(), fdb.getItalic())
                         || isSignificantChange(s.ignoreTextColor(), fda.getColor(), fdb.getColor())
+                        || isSignificantChange(false, normalizeBackgroundColor(fda.getBackgroundColor()), normalizeBackgroundColor(fdb.getBackgroundColor()))
                         || isSignificantChange(s.ignoreUnderline(), fda.getUnderline(), fdb.getUnderline())
                         || isSignificantChange(s.ignoreStrikeThrough(), fda.getStrikeThrough(), fdb.getStrikeThrough())
                         || isSignificantChange(s.ignoreFontFamily(), s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
@@ -1177,6 +1180,10 @@ public final class RichText
      */
     private static boolean isSignificantChange(boolean ignored, @Nullable Object a, @Nullable Object b) {
         return !ignored && !Objects.equals(a, b);
+    }
+
+    private static @Nullable Color normalizeBackgroundColor(@Nullable Color color) {
+        return color != null && color.isTransparent() ? null : color;
     }
 
     /**
