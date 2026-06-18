@@ -443,6 +443,44 @@ class HtmlConverterTest {
         assertEquals("ab", HtmlConverter.create().convert(text));
     }
 
+    /**
+     * Regression test derived from PDF conversion:
+     * font-derived styles should still map to inline tags ({@code <b>, <i>, <u>, <strike>})
+     * and line breaks should honor convertLineBreaksTo.
+     * <p>
+     * This currently fails and documents the desired output for the pending converter fix.
+     */
+    @Test
+    void testPdfDerivedFontStylesShouldUseInlineTags() {
+        Style regular = Style.create("regular", FontUtil.getInstance().getFont("Helvetica-12").toFontDef());
+        Style bold = Style.create("bold", FontUtil.getInstance().getFont("Helvetica-12-bold").toFontDef());
+        Style italic = Style.create("italic", FontUtil.getInstance().getFont("Helvetica-12-italic").toFontDef());
+        Style underline = Style.create("underline", FontUtil.getInstance().getFont("Helvetica-12-underline").toFontDef());
+        Style strike = Style.create("strike", FontUtil.getInstance().getFont("Helvetica-12-strikethrough").toFontDef());
+
+        String text = "a          b          c          d          e\nX";
+        RichText rt = new RichText(
+                new Run(text, 0, 1, styleAttributes(regular)),
+                new Run(text, 1, 11, styleAttributes(bold)),
+                new Run(text, 12, 11, styleAttributes(italic)),
+                new Run(text, 23, 11, styleAttributes(underline)),
+                new Run(text, 34, 11, styleAttributes(strike)),
+                new Run(text, 45, 1, TextAttributes.none()),
+                new Run(text, 46, 1, styleAttributes(bold))
+        );
+
+        HtmlConverter converter = HtmlConverter.create(
+                HtmlConverter.convertLineBreaksTo("<br>\n")
+        );
+
+        String expected = """
+                a<b>          b</b><i>          c</i><u>          d</u><strike>          e</strike><br>
+                <b>X</b>""";
+
+        String actual = converter.convert(rt);
+        assertEquals(expected, actual);
+    }
+
     private static HtmlTag getBlockTag(String value) {
         return switch (value) {
             case "h1" -> HtmlTag.tag("<h1>", "</h1>", HtmlTag.FormattingHint.LINE_BREAK_BEFORE_TAG);
@@ -506,5 +544,11 @@ class HtmlConverterTest {
                 "<h2>Header 2</h2>";
 
         assertEquals(expected, result);
+    }
+
+    private static TextAttributes styleAttributes(Style style) {
+        return TextAttributes.of(Map.of(
+                RichText.ATTRIBUTE_NAME_STYLE_LIST, List.of(style)
+        ));
     }
 }
