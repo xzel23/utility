@@ -287,7 +287,21 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     private void addSimpleStyleMapping(String attr, Object value, HtmlTag tag) {
-        addStyleMapping(attr, v -> Objects.equals(v, value) ? tag : HtmlTag.emptyTag());
+        addStyleMapping(attr, v -> Objects.equals(v, value) && !isRedundantDefaultInlineStyleAttribute(attr, v) ? tag : HtmlTag.emptyTag());
+    }
+
+    private boolean isRedundantDefaultInlineStyleAttribute(String styleName, @Nullable Object value) {
+        return switch (styleName) {
+            case Style.FONT_WEIGHT ->
+                    Objects.equals(value, Style.FONT_WEIGHT_VALUE_BOLD) && Boolean.TRUE.equals(currentDefaultFontDef.getBold());
+            case Style.FONT_STYLE ->
+                    Objects.equals(value, Style.FONT_STYLE_VALUE_ITALIC) && Boolean.TRUE.equals(currentDefaultFontDef.getItalic());
+            case Style.TEXT_DECORATION_UNDERLINE ->
+                    Objects.equals(value, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE) && Boolean.TRUE.equals(currentDefaultFontDef.getUnderline());
+            case Style.TEXT_DECORATION_LINE_THROUGH ->
+                    Objects.equals(value, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE) && Boolean.TRUE.equals(currentDefaultFontDef.getStrikeThrough());
+            default -> false;
+        };
     }
 
     void doAddDefaultMappings() {

@@ -503,6 +503,37 @@ class HtmlConverterTest {
         assertEquals("<b>a<br>\nb</b>", actual);
     }
 
+    @Test
+    void testHeadingShouldNotEmitRedundantBoldTag() {
+        Style headingStyle = Style.create("heading-style", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
+
+        RichText text = new RichTextBuilder()
+                .push("level", 1)
+                .push(headingStyle)
+                .append("Universal Declaration of Human Rights")
+                .pop(headingStyle)
+                .pop("level")
+                .toRichText();
+
+        HtmlConverter converter = HtmlConverter.create(
+                HtmlConverter.mapAttribute("level", change -> {
+                    int level = change.newValue() != null ? (int) change.newValue() : 0;
+                    return HtmlTag.headerTag(
+                            level > 0 ? "<h" + level + ">" : "",
+                            level > 0 ? "</h" + level + ">" : "",
+                            level > 0 ? level : -1
+                    );
+                }),
+                HtmlConverter.headerStyleMapper(level -> level == 1
+                        ? new HtmlConverter.HeaderStyle(level, headingStyle, Style.EMPTY)
+                        : HtmlConverter.HeaderStyle.EMPTY),
+                HtmlConverter.convertLineBreaksTo("")
+        );
+
+        String actual = converter.convert(text).strip();
+        assertEquals("<h1>Universal Declaration of Human Rights</h1>", actual);
+    }
+
     private static HtmlTag getBlockTag(String value) {
         return switch (value) {
             case "h1" -> HtmlTag.tag("<h1>", "</h1>", HtmlTag.FormattingHint.LINE_BREAK_BEFORE_TAG);
