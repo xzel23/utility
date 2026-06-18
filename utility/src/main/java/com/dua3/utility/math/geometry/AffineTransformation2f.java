@@ -79,10 +79,18 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     public static AffineTransformation2f rotate(double alpha, Vector2f c) {
         double sinAlpha = Math.sin(alpha);
         double cosAlpha = Math.cos(alpha);
-        double oneMinusCosAlpha = 1 - cosAlpha;
+        double oneMinusCosAlpha = 1.0 - cosAlpha;
+
+        float s = (float) sinAlpha;
+        float co = (float) cosAlpha;
+        float omc = (float) oneMinusCosAlpha;
+
+        float cx = c.x();
+        float cy = c.y();
+
         return new AffineTransformation2f(
-                (float) cosAlpha, (float) -sinAlpha, (float) (c.x() * oneMinusCosAlpha + c.y() * sinAlpha),
-                (float) sinAlpha, (float) cosAlpha, (float) (c.y() * oneMinusCosAlpha - c.x() * sinAlpha)
+                co, -s, Math.fma(cx, omc, cy * s),
+                s, co, Math.fma(cy, omc, -(cx * s))
         );
     }
 
@@ -161,8 +169,13 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      */
     public AffineTransformation2f append(AffineTransformation2f at) {
         return new AffineTransformation2f(
-                at.a * a + at.b * d, at.a * b + at.b * e, at.a * c + at.b * f + at.c,
-                at.d * a + at.e * d, at.d * b + at.e * e, at.d * c + at.e * f + at.f
+                Math.fma(at.a, a, at.b * d),
+                Math.fma(at.a, b, at.b * e),
+                Math.fma(at.a, c, Math.fma(at.b, f, at.c)),
+                Math.fma(at.d, a, at.e * d),
+                Math.fma(at.d, b, at.e * e),
+                Math.fma(at.d, c, Math.fma(at.e, f, at.f))
+
         );
     }
 
@@ -184,8 +197,8 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      * @return the result of transformation
      */
     public Vector2f transform(float x, float y) {
-        float xt = a * x + b * y + c;
-        float yt = d * x + e * y + f;
+        float xt = Math.fma(a, x, Math.fma(b, y, c));
+        float yt = Math.fma(d, x, Math.fma(e, y, f));
         return Vector2f.of(xt, yt);
     }
 
@@ -262,14 +275,23 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     private @Nullable AffineTransformation2f calculateInverse() {
-        float det = e * a - b * d;
+        float det = Math.fma(e, a, -b * d);
+
         if (det == 0) {
             return null;
         }
-        return new AffineTransformation2f(
-                e / det, -b / det, (b * f - e * c) / det,
-                -d / det, a / det, (c * d - a * f) / det
-        );
+
+        float m00 = e;
+        float m01 = -b;
+        float m10 = -d;
+        float m11 = a;
+
+        float t0 = Math.fma(b, f, -e * c);
+        float t1 = Math.fma(c, d, -a * f);
+
+        float invDet = 1.0f / det;
+
+        return new AffineTransformation2f(m00 * invDet, m01 * invDet, t0 * invDet, m10 * invDet, m11 * invDet, t1 * invDet);
     }
 
     /**
