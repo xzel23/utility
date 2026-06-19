@@ -23,6 +23,7 @@ import java.util.function.UnaryOperator;
 public final class HtmlConverter extends TagBasedConverter<String> {
 
     private static final String SPAN_CLOSE = "</span>";
+    private static final String CSS_CLASS_WILDCARD_PLACEHOLDER = "any";
 
     /**
      * Flag indicating whether a new paragraph should be started when more text is appended.
@@ -396,6 +397,10 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         this.lineEndReplacement = lineEndReplacement;
     }
 
+    private static String getCssClassForFontDef(FontDef fontDef) {
+        return fontDef.fontspec().replace("*", CSS_CLASS_WILDCARD_PLACEHOLDER);
+    }
+
     /**
      * Get tag for style name.
      *
@@ -625,7 +630,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                             .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
                 }
                 if (!Objects.equals(currentDefaultFontDef, fd)) {
-                    tags.add(HtmlTag.tag("<span class='" + fd.fontspec() + "'>", SPAN_CLOSE));
+                    tags.add(HtmlTag.tag("<span class='" + getCssClassForFontDef(fd) + "'>", SPAN_CLOSE));
                 }
             } else {
                 for (Style style : styles) {
