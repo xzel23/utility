@@ -97,6 +97,21 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
     }
 
     @Override
+    public HSVColor withAlpha(int a) {
+        return a == a() ? this : withAlpha(a / 255.0);
+    }
+
+    @Override
+    public HSVColor withAlpha(double a) {
+        return new HSVColor(h, s, v, (float) a);
+    }
+
+    @Override
+    public HSVColor multiplyAlpha(double f) {
+        return withAlpha(alpha() * f);
+    }
+
+    @Override
     public String toString() {
         return toCss();
     }

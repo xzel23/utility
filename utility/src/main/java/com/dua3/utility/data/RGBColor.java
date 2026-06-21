@@ -135,6 +135,21 @@ public record RGBColor(int argb) implements Color {
         return toHSLColor().darker().toRGBColor();
     }
 
+    @Override
+    public RGBColor withAlpha(int a) {
+        return a == a() ? this : new RGBColor(r(), g(), b(), Math.clamp(a, 0, 255));
+    }
+
+    @Override
+    public RGBColor withAlpha(double a) {
+        return withAlpha(Math.clamp((int) Math.round(a * 255), 0, 255));
+    }
+
+    @Override
+    public RGBColor multiplyAlpha(double f) {
+        return withAlpha(a() * f);
+    }
+
     /**
      * Get green component of color.
      *
