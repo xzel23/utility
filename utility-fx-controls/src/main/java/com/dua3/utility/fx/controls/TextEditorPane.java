@@ -68,8 +68,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private final ObjectProperty<RichText> committedValue;
     private final RichText defaultValue;
     private final InputControlState<RichText> state;
-    private final List<EditState> undoStack = new ArrayList<>();
-    private final List<EditState> redoStack = new ArrayList<>();
+    private final List<HistoryEntry> undoStack = new ArrayList<>();
+    private final List<HistoryEntry> redoStack = new ArrayList<>();
     private final SelectionModel selectionModel = new SelectionModel();
     private @Nullable ScrollPane scrollPane;
     private boolean inHistoryNavigation;
@@ -1144,26 +1144,32 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int e = Math.clamp(Math.max(start, end), 0, max);
 
         RichText current = getText();
-        RichText prefix = current.subSequence(0, s);
-        RichText suffix = current.subSequence(e, current.length());
-
-        RichTextBuilder rtb = new RichTextBuilder(current.length() - (e - s) + text.length());
-        rtb.append(prefix);
-        rtb.append(text);
-        rtb.append(suffix);
-        RichText updated = rtb.toRichText();
+        RichText inserted = detachedRichText(text);
+        RichText updated = replaceRange(current, s, e, inserted);
 
         if (current.equals(updated)) {
-            int newCaret = s + text.length();
+            int newCaret = s + inserted.length();
             setSelectionState(newCaret, newCaret);
             return;
         }
 
-        pushUndoState();
-        pendingTextEdit = new PendingTextEdit(s, e, text.length());
-        setText(updated);
+        int beforeAnchor = getAnchor();
+        int beforeCaret = getCaretPosition();
+        int newCaret = s + inserted.length();
+        RichText removed = detachedSubSequence(current, s, e);
 
-        int newCaret = s + text.length();
+        pushHistoryEntry(new TextReplaceHistoryEntry(
+                s,
+                removed,
+                inserted,
+                beforeAnchor,
+                beforeCaret,
+                newCaret,
+                newCaret
+        ));
+
+        pendingTextEdit = new PendingTextEdit(s, e, inserted.length());
+        setText(updated);
         setSelectionState(newCaret, newCaret);
         updateHistoryState();
     }
@@ -1363,36 +1369,39 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * Performs one undo step.
      */
     public void undo() {
-        undoOrRedo(undoStack, redoStack);
+        undoOrRedo(undoStack, redoStack, true);
     }
 
     /**
      * Performs one redo step.
      */
     public void redo() {
-        undoOrRedo(redoStack, undoStack);
+        undoOrRedo(redoStack, undoStack, false);
     }
 
     /**
      * Performs an undo or redo operation by managing the provided undo and redo stacks.
-     * The method restores the previous state from the undo stack and saves the current
-     * state into the redo stack. It ensures application of the restored state and updates
-     * the history navigation state.
+     * The method applies one history entry from the source stack and pushes it to the
+     * target stack while updating history navigation state.
      *
-     * @param undoStack the stack containing the states for undo operations.
-     * @param redoStack the stack containing the states for redo operations.
+     * @param sourceStack stack to consume (undo or redo)
+     * @param targetStack opposite stack to receive the entry
+     * @param undo true for undo operation, false for redo operation
      */
-    private void undoOrRedo(List<EditState> undoStack, List<EditState> redoStack) {
-        if (undoStack.isEmpty()) {
+    private void undoOrRedo(List<HistoryEntry> sourceStack, List<HistoryEntry> targetStack, boolean undo) {
+        if (sourceStack.isEmpty()) {
             return;
         }
 
-        EditState current = snapshot();
-        EditState previous = undoStack.removeLast();
+        HistoryEntry entry = sourceStack.removeLast();
         inHistoryNavigation = true;
         try {
-            redoStack.add(current);
-            applyState(previous);
+            if (undo) {
+                entry.applyUndo(this);
+            } else {
+                entry.applyRedo(this);
+            }
+            targetStack.add(entry);
         } finally {
             inHistoryNavigation = false;
         }
@@ -1439,9 +1448,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return;
         }
 
-        pushUndoState();
+        EditState before = snapshot();
         pendingTextEdit = null;
         setText(updated);
+        EditState after = snapshot();
+        pushHistoryEntry(new SnapshotHistoryEntry(before, after));
         updateHistoryState();
     }
 
@@ -2213,11 +2224,39 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return text == null ? RichText.emptyText() : text;
     }
 
-    private void pushUndoState() {
+    private static RichText detachedRichText(CharSequence text) {
+        if (text.isEmpty()) {
+            return RichText.emptyText();
+        }
+
+        RichTextBuilder rtb = new RichTextBuilder(text.length());
+        rtb.append(text);
+        return rtb.toRichText();
+    }
+
+    private static RichText detachedSubSequence(RichText text, int start, int end) {
+        if (start == end) {
+            return RichText.emptyText();
+        }
+
+        RichTextBuilder rtb = new RichTextBuilder(end - start);
+        text.appendTo(rtb, start, end);
+        return rtb.toRichText();
+    }
+
+    private static RichText replaceRange(RichText source, int start, int end, RichText replacement) {
+        RichTextBuilder rtb = new RichTextBuilder(source.length() - (end - start) + replacement.length());
+        source.appendTo(rtb, 0, start);
+        replacement.appendTo(rtb);
+        source.appendTo(rtb, end, source.length());
+        return rtb.toRichText();
+    }
+
+    private void pushHistoryEntry(HistoryEntry entry) {
         if (inHistoryNavigation) {
             return;
         }
-        undoStack.add(snapshot());
+        undoStack.add(entry);
         trimHistory(undoStack);
         redoStack.clear();
     }
@@ -2228,7 +2267,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         updateHistoryState();
     }
 
-    private void trimHistory(List<EditState> stack) {
+    private void trimHistory(List<HistoryEntry> stack) {
         while (stack.size() > MAX_HISTORY_SIZE) {
             stack.removeFirst();
         }
@@ -2242,6 +2281,22 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         pendingTextEdit = null;
         setText(state.text());
         setSelectionState(state.anchor(), state.caret());
+    }
+
+    private void applyHistoryTextReplace(int start, int end, RichText replacement, int anchorPos, int caretPos) {
+        RichText current = getText();
+        int s = Math.clamp(Math.min(start, end), 0, current.length());
+        int e = Math.clamp(Math.max(start, end), 0, current.length());
+        RichText updated = replaceRange(current, s, e, replacement);
+
+        if (current.equals(updated)) {
+            setSelectionState(anchorPos, caretPos);
+            return;
+        }
+
+        pendingTextEdit = new PendingTextEdit(s, e, replacement.length());
+        setText(updated);
+        setSelectionState(anchorPos, caretPos);
     }
 
     private void applyCommittedValue(@Nullable RichText value) {
@@ -2330,4 +2385,42 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private record EditState(RichText text, int anchor, int caret) {}
+
+    private sealed interface HistoryEntry permits TextReplaceHistoryEntry, SnapshotHistoryEntry {
+        void applyUndo(TextEditorPane pane);
+
+        void applyRedo(TextEditorPane pane);
+    }
+
+    private record TextReplaceHistoryEntry(
+            int start,
+            RichText removedText,
+            RichText insertedText,
+            int beforeAnchor,
+            int beforeCaret,
+            int afterAnchor,
+            int afterCaret
+    ) implements HistoryEntry {
+        @Override
+        public void applyUndo(TextEditorPane pane) {
+            pane.applyHistoryTextReplace(start, start + insertedText.length(), removedText, beforeAnchor, beforeCaret);
+        }
+
+        @Override
+        public void applyRedo(TextEditorPane pane) {
+            pane.applyHistoryTextReplace(start, start + removedText.length(), insertedText, afterAnchor, afterCaret);
+        }
+    }
+
+    private record SnapshotHistoryEntry(EditState before, EditState after) implements HistoryEntry {
+        @Override
+        public void applyUndo(TextEditorPane pane) {
+            pane.applyState(before);
+        }
+
+        @Override
+        public void applyRedo(TextEditorPane pane) {
+            pane.applyState(after);
+        }
+    }
 }

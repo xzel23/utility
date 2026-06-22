@@ -129,6 +129,72 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testUndoRestoresOriginalSelectionAndRedoRestoresCaret() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("abcdef");
+            editor.selectRange(1, 4);
+
+            editor.replaceSelection("X");
+            assertEquals("aXef", editor.getText().toString());
+            assertEquals(2, editor.getAnchor());
+            assertEquals(2, editor.getCaretPosition());
+
+            editor.undo();
+            assertEquals("abcdef", editor.getText().toString());
+            assertEquals(1, editor.getAnchor());
+            assertEquals(4, editor.getCaretPosition());
+            assertEquals(3, editor.getSelection().getLength());
+
+            editor.redo();
+            assertEquals("aXef", editor.getText().toString());
+            assertEquals(2, editor.getAnchor());
+            assertEquals(2, editor.getCaretPosition());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testUndoRedoFormattingChange() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("abcd");
+            editor.selectRange(1, 3);
+            editor.apply(Style.BOLD);
+
+            assertTrue(editor.getText().stylesAt(1).contains(Style.BOLD));
+            assertTrue(editor.getText().stylesAt(2).contains(Style.BOLD));
+
+            editor.undo();
+            assertFalse(editor.getText().stylesAt(1).contains(Style.BOLD));
+            assertFalse(editor.getText().stylesAt(2).contains(Style.BOLD));
+
+            editor.redo();
+            assertTrue(editor.getText().stylesAt(1).contains(Style.BOLD));
+            assertTrue(editor.getText().stylesAt(2).contains(Style.BOLD));
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testUndoRedoKeepsInsertedRichTextStyle() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("ab");
+            RichText boldX = RichText.valueOf("X", Style.BOLD);
+
+            editor.replaceText(1, 1, boldX);
+            assertEquals("aXb", editor.getText().toString());
+            assertTrue(editor.getText().stylesAt(1).contains(Style.BOLD));
+
+            editor.undo();
+            assertEquals("ab", editor.getText().toString());
+
+            editor.redo();
+            assertEquals("aXb", editor.getText().toString());
+            assertTrue(editor.getText().stylesAt(1).contains(Style.BOLD));
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testCopyCutPasteRoundTrip() throws Exception {
         runOnFxThreadAndWait(() -> {
             TextEditorPane editor = new TextEditorPane("hello world");
