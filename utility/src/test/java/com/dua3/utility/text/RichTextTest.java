@@ -463,6 +463,60 @@ class RichTextTest {
     }
 
     @Test
+    void testReplaceRangeMergesAdjacentRunsWithSameAttributes() {
+        RichText source = RichText.valueOf("abc");
+        RichText updated = source.replace(1, 2, RichText.valueOf("X"));
+
+        assertEquals(RichText.valueOf("aXc"), updated);
+        assertEquals(1, updated.runs().size());
+    }
+
+    @Test
+    void testReplaceRangePreservesStylesAcrossBoundaries() {
+        RichTextBuilder sourceBuilder = new RichTextBuilder();
+        sourceBuilder.push(Style.BOLD);
+        sourceBuilder.append("ab");
+        sourceBuilder.pop(Style.BOLD);
+        sourceBuilder.push(Style.ITALIC);
+        sourceBuilder.append("cd");
+        sourceBuilder.pop(Style.ITALIC);
+        sourceBuilder.append("ef");
+        RichText source = sourceBuilder.toRichText();
+
+        RichTextBuilder replacementBuilder = new RichTextBuilder();
+        replacementBuilder.push(Style.UNDERLINE);
+        replacementBuilder.append("XY");
+        replacementBuilder.pop(Style.UNDERLINE);
+        RichText replacement = replacementBuilder.toRichText();
+
+        RichText updated = source.replace(1, 4, replacement);
+
+        assertEquals("aXYef", updated.toString());
+        assertTrue(updated.stylesAt(0).contains(Style.BOLD));
+        assertTrue(updated.stylesAt(1).contains(Style.UNDERLINE));
+        assertTrue(updated.stylesAt(2).contains(Style.UNDERLINE));
+        assertTrue(updated.stylesAt(3).isEmpty());
+        assertTrue(updated.stylesAt(4).isEmpty());
+    }
+
+    @Test
+    void testReplaceRangeWholeTextReturnsReplacement() {
+        RichText source = RichText.valueOf("abcdef");
+        RichText replacement = RichText.valueOf("XYZ").apply(Style.BOLD);
+
+        RichText updated = source.replace(0, source.length(), replacement);
+        assertSame(replacement, updated);
+    }
+
+    @Test
+    void testReplaceRangeInvalidRangeThrows() {
+        RichText source = RichText.valueOf("abc");
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> source.replace(-1, 1, RichText.emptyText()));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> source.replace(1, 4, RichText.emptyText()));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> source.replace(2, 1, RichText.emptyText()));
+    }
+
+    @Test
     void testLines() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
