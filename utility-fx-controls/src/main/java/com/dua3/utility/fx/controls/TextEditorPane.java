@@ -29,7 +29,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -49,8 +48,6 @@ import java.util.Optional;
  * but operating on {@link RichText}. Real editing behavior will be added incrementally.
  */
 public class TextEditorPane extends TextPane implements InputControl<RichText> {
-    private static final String STYLE_LIST_ATTRIBUTE = "__styles";
-
     private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
     private final BooleanProperty toolbarVisible = new SimpleBooleanProperty(this, "toolbarVisible", false);
     private final ReadOnlyIntegerWrapper length = new ReadOnlyIntegerWrapper(this, "length", 0);
@@ -79,6 +76,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private boolean updatingPropertiesFromText;
     private boolean normalizingIncomingText;
     private double preferredCaretX = Double.NaN;
+    private final List<LogicalBlock> logicalBlocks = new ArrayList<>();
+    private @Nullable PendingTextEdit pendingTextEdit;
+    private @Nullable VisualLineCache visualLineCache;
     private static final int MAX_HISTORY_SIZE = 256;
 
     /**
@@ -112,6 +112,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         this.defaultValue = initial;
         this.committedValue = new SimpleObjectProperty<>(this, "value", initial);
         this.state = new ObjectInputControlState<>(committedValue, () -> defaultValue, value -> Optional.empty());
+        rebuildLogicalBlocks(initial.toString());
 
         committedValue.addListener((obs, oldValue, newValue) -> applyCommittedValue(newValue));
 
@@ -133,7 +134,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 }
             }
 
-            length.set(newValue == null ? 0 : newValue.length());
+            RichText oldText = oldValue == null ? RichText.emptyText() : oldValue;
+            RichText currentText = newValue == null ? RichText.emptyText() : newValue;
+            onTextChanged(oldText, currentText);
+            length.set(currentText.length());
             setSelectionState(getAnchor(), getCaretPosition());
         });
 
@@ -151,6 +155,157 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         focusedProperty().addListener((v, o, n) -> state.validate());
 
         initSelectionInteraction();
+    }
+
+    private void onTextChanged(RichText oldText, RichText newText) {
+        String oldValue = oldText.toString();
+        String newValue = newText.toString();
+
+        PendingTextEdit edit = pendingTextEdit;
+        pendingTextEdit = null;
+
+        if (oldValue.equals(newValue)) {
+            invalidateAllBlockLayouts();
+            invalidateVisualLineCache();
+            return;
+        }
+
+        if (edit != null && matchesPendingEdit(oldValue, newValue, edit)) {
+            applyIncrementalBlockUpdate(oldValue, newValue, edit);
+        } else {
+            rebuildLogicalBlocks(newValue);
+        }
+        invalidateVisualLineCache();
+    }
+
+    private static boolean matchesPendingEdit(String oldValue, String newValue, PendingTextEdit edit) {
+        if (edit.start() < 0 || edit.end() < edit.start() || edit.end() > oldValue.length()) {
+            return false;
+        }
+        int expectedLength = oldValue.length() - (edit.end() - edit.start()) + edit.replacementLength();
+        return expectedLength == newValue.length();
+    }
+
+    private void rebuildLogicalBlocks(String text) {
+        logicalBlocks.clear();
+        int lineStart = 0;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '\n') {
+                logicalBlocks.add(new LogicalBlock(lineStart, i));
+                lineStart = i + 1;
+            }
+        }
+        logicalBlocks.add(new LogicalBlock(lineStart, text.length()));
+    }
+
+    private void applyIncrementalBlockUpdate(String oldText, String newText, PendingTextEdit edit) {
+        if (logicalBlocks.isEmpty()) {
+            rebuildLogicalBlocks(newText);
+            return;
+        }
+
+        int segmentStart = lineStart(oldText, edit.start());
+        int segmentEndOld = lineEnd(oldText, edit.end());
+        int delta = edit.replacementLength() - (edit.end() - edit.start());
+        int segmentEndNew = Math.clamp(segmentEndOld + delta, 0, newText.length());
+
+        int prefixCount = firstBlockAtOrAfter(segmentStart);
+        int suffixIndex = firstBlockAfter(segmentEndOld);
+
+        List<LogicalBlock> updatedBlocks = new ArrayList<>(logicalBlocks.size() + 8);
+        for (int i = 0; i < prefixCount; i++) {
+            updatedBlocks.add(logicalBlocks.get(i));
+        }
+
+        updatedBlocks.addAll(buildBlocksInRange(newText, segmentStart, segmentEndNew));
+
+        for (int i = suffixIndex; i < logicalBlocks.size(); i++) {
+            LogicalBlock block = logicalBlocks.get(i);
+            block.start += delta;
+            block.end += delta;
+            updatedBlocks.add(block);
+        }
+
+        logicalBlocks.clear();
+        logicalBlocks.addAll(updatedBlocks);
+        if (logicalBlocks.isEmpty()) {
+            logicalBlocks.add(new LogicalBlock(0, 0));
+        }
+    }
+
+    private static List<LogicalBlock> buildBlocksInRange(String text, int startInclusive, int endInclusive) {
+        int start = Math.clamp(startInclusive, 0, text.length());
+        int end = Math.clamp(endInclusive, start, text.length());
+
+        List<LogicalBlock> blocks = new ArrayList<>();
+        int lineStart = start;
+        while (lineStart <= end) {
+            int newline = text.indexOf('\n', lineStart);
+            if (newline < 0 || newline > end) {
+                blocks.add(new LogicalBlock(lineStart, end));
+                break;
+            }
+            blocks.add(new LogicalBlock(lineStart, newline));
+            lineStart = newline + 1;
+        }
+
+        if (blocks.isEmpty()) {
+            blocks.add(new LogicalBlock(start, start));
+        }
+        return blocks;
+    }
+
+    private static int lineStart(String text, int position) {
+        int p = Math.clamp(position, 0, text.length());
+        if (p == 0) {
+            return 0;
+        }
+        int newline = text.lastIndexOf('\n', p - 1);
+        return newline < 0 ? 0 : newline + 1;
+    }
+
+    private static int lineEnd(String text, int position) {
+        int p = Math.clamp(position, 0, text.length());
+        int newline = text.indexOf('\n', p);
+        return newline < 0 ? text.length() : newline;
+    }
+
+    private int firstBlockAtOrAfter(int position) {
+        int low = 0;
+        int high = logicalBlocks.size();
+        while (low < high) {
+            int mid = (low + high) >>> 1;
+            if (logicalBlocks.get(mid).start < position) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    }
+
+    private int firstBlockAfter(int position) {
+        int low = 0;
+        int high = logicalBlocks.size();
+        while (low < high) {
+            int mid = (low + high) >>> 1;
+            if (logicalBlocks.get(mid).start <= position) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    }
+
+    private void invalidateAllBlockLayouts() {
+        for (LogicalBlock block : logicalBlocks) {
+            block.invalidateLayout();
+        }
+    }
+
+    private void invalidateVisualLineCache() {
+        visualLineCache = null;
     }
 
     private void initSelectionInteraction() {
@@ -1005,6 +1160,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         pushUndoState();
+        pendingTextEdit = new PendingTextEdit(s, e, text.length());
         setText(updated);
 
         int newCaret = s + text.length();
@@ -1284,6 +1440,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         pushUndoState();
+        pendingTextEdit = null;
         setText(updated);
         updateHistoryState();
     }
@@ -1550,129 +1707,105 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     List<VisualLine> buildVisualLines(double wrapWidth) {
-        double availableWidth = wrapWidth;
-        if (!Double.isFinite(availableWidth) || availableWidth <= 1.0) {
-            double fallback = getWidth() - snappedLeftInset() - snappedRightInset();
-            availableWidth = Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
+        double availableWidth = resolveAvailableWidth(wrapWidth);
+        Font baseFont = getFont();
+        double widthKey = isWrapText() ? availableWidth : Double.POSITIVE_INFINITY;
+
+        VisualLineCache cache = visualLineCache;
+        if (cache != null
+                && Double.compare(cache.widthKey(), widthKey) == 0
+                && Objects.equals(cache.font(), baseFont)) {
+            return cache.lines();
         }
 
-        TextPane.Layout layout = createLayout(availableWidth);
-        Font baseFont = getFont();
+        if (logicalBlocks.isEmpty()) {
+            rebuildLogicalBlocks(getText().toString());
+        }
+
         double defaultLineHeight = Math.max(1.0, baseFont.getFontData().height());
         FontUtil fontUtil = FontUtil.getInstance();
-
         List<VisualLine> lines = new ArrayList<>();
-        for (List<FragmentedText.Fragment> fragmentLine : layout.renderLines()) {
-            VisualLine line = toVisualLine(fragmentLine, layout.layoutTextData(), fontUtil, defaultLineHeight);
-            if (line == null) {
+        double yOffset = 0.0;
+
+        for (LogicalBlock block : logicalBlocks) {
+            ensureBlockLayout(block, availableWidth, widthKey, baseFont, defaultLineHeight, fontUtil);
+            List<LocalVisualLine> localLines = block.localLines;
+            if (localLines == null || localLines.isEmpty()) {
+                lines.add(new VisualLine(block.start, block.start, yOffset, defaultLineHeight, new double[]{0.0}));
+                yOffset += defaultLineHeight;
                 continue;
             }
-            if (line.length() == 0 && !isLogicalEmptyLine(line.start())) {
-                continue;
+
+            for (LocalVisualLine line : localLines) {
+                lines.add(new VisualLine(
+                        block.start + line.startOffset(),
+                        block.start + line.endOffset(),
+                        yOffset + line.top(),
+                        line.height(),
+                        line.boundaries()
+                ));
             }
-            if (!lines.isEmpty()) {
-                VisualLine previous = lines.getLast();
-                if (line.length() == 0 && previous.length() == 0
-                        && line.start() == previous.start() && line.end() == previous.end()) {
-                    continue;
-                }
-            }
-            lines.add(line);
+            yOffset += Math.max(1.0, block.height);
         }
 
         if (lines.isEmpty()) {
             lines.add(new VisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
         }
 
-        String text = getText().toString();
-        lines = addMissingLogicalEmptyLines(lines, text, defaultLineHeight);
-
-        return lines;
+        List<VisualLine> cached = List.copyOf(lines);
+        visualLineCache = new VisualLineCache(widthKey, baseFont, cached);
+        return cached;
     }
 
-    private boolean isLogicalEmptyLine(int position) {
-        return isLogicalEmptyLine(getText().toString(), position);
+    private double resolveAvailableWidth(double wrapWidth) {
+        double availableWidth = wrapWidth;
+        if (!Double.isFinite(availableWidth) || availableWidth <= 1.0) {
+            double fallback = getWidth() - snappedLeftInset() - snappedRightInset();
+            availableWidth = Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
+        }
+        return availableWidth;
     }
 
-    private static boolean isLogicalEmptyLine(String text, int position) {
-        int p = Math.clamp(position, 0, text.length());
-        boolean atLineStart = p == 0 || text.charAt(p - 1) == '\n';
-        boolean atLineEnd = p == text.length() || text.charAt(p) == '\n';
-        return atLineStart && atLineEnd;
-    }
-
-    private static List<VisualLine> addMissingLogicalEmptyLines(List<VisualLine> sourceLines, String text, double defaultLineHeight) {
-        if (text.isEmpty()) {
-            return sourceLines;
+    private void ensureBlockLayout(
+            LogicalBlock block,
+            double availableWidth,
+            double widthKey,
+            Font baseFont,
+            double defaultLineHeight,
+            FontUtil fontUtil
+    ) {
+        if (block.hasLayout(widthKey, baseFont)) {
+            return;
         }
 
-        List<VisualLine> lines = sourceLines;
-        for (int p = 0; p <= text.length(); p++) {
-            if (!isLogicalEmptyLine(text, p) || containsExactLine(lines, p)) {
-                continue;
+        if (block.start == block.end) {
+            block.localLines = List.of(new LocalVisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
+            block.height = defaultLineHeight;
+            block.layoutWidthKey = widthKey;
+            block.layoutFont = baseFont;
+            return;
+        }
+
+        RichText blockText = getText(block.start, block.end);
+        TextPane.Layout layout = createLayout(blockText, availableWidth);
+        List<LocalVisualLine> localLines = new ArrayList<>();
+        for (List<FragmentedText.Fragment> fragmentLine : layout.renderLines()) {
+            LocalVisualLine line = toLocalVisualLine(fragmentLine, layout.layoutTextData(), fontUtil, defaultLineHeight);
+            if (line != null) {
+                localLines.add(line);
             }
-            lines = insertEmptyLine(lines, p, defaultLineHeight);
-        }
-        return lines;
-    }
-
-    private static boolean containsExactLine(List<VisualLine> lines, int position) {
-        return lines.stream().anyMatch(line -> line.start() == position && line.end() == position);
-    }
-
-    private static List<VisualLine> insertEmptyLine(List<VisualLine> sourceLines, int position, double defaultLineHeight) {
-        List<VisualLine> result = new ArrayList<>(sourceLines.size() + 1);
-        int insertIndex = 0;
-        while (insertIndex < sourceLines.size() && sourceLines.get(insertIndex).end() <= position) {
-            insertIndex++;
         }
 
-        VisualLine previous = insertIndex > 0 ? sourceLines.get(insertIndex - 1) : null;
-        VisualLine next = insertIndex < sourceLines.size() ? sourceLines.get(insertIndex) : null;
-
-        double height = Math.max(1.0, defaultLineHeight);
-        if (previous != null && next != null) {
-            height = Math.clamp(previous.height(), 1.0, next.height());
-        } else if (previous != null) {
-            height = Math.max(1.0, previous.height());
-        } else if (next != null) {
-            height = Math.max(1.0, next.height());
-        }
-
-        boolean shiftFollowing = false;
-        double top;
-        if (previous != null && next != null) {
-            top = previous.top() + previous.height();
-            double gap = next.top() - top;
-            if (gap > 0.5) {
-                height = Math.clamp(height, 1.0, gap);
-            } else {
-                shiftFollowing = true;
-            }
-        } else if (previous != null) {
-            top = previous.top() + previous.height();
-        } else if (next != null) {
-            top = Math.max(0.0, next.top() - height);
-            if (top + height > next.top() + 0.5) {
-                shiftFollowing = true;
-            }
+        if (localLines.isEmpty()) {
+            localLines.add(new LocalVisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
+            block.height = defaultLineHeight;
         } else {
-            top = 0.0;
+            block.height = Math.max(defaultLineHeight, layout.height());
         }
 
-        for (int i = 0; i < insertIndex; i++) {
-            result.add(sourceLines.get(i));
-        }
-
-        result.add(new VisualLine(position, position, top, height, new double[]{0.0}));
-
-        for (int i = insertIndex; i < sourceLines.size(); i++) {
-            VisualLine line = sourceLines.get(i);
-            double adjustedTop = shiftFollowing ? line.top() + height : line.top();
-            result.add(new VisualLine(line.start(), line.end(), adjustedTop, line.height(), line.boundaries()));
-        }
-
-        return result;
+        block.localLines = List.copyOf(localLines);
+        block.layoutWidthKey = widthKey;
+        block.layoutFont = baseFont;
     }
 
     private double currentWrapWidth() {
@@ -1692,7 +1825,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
     }
 
-    private static @Nullable VisualLine toVisualLine(
+    private static @Nullable LocalVisualLine toLocalVisualLine(
             List<FragmentedText.Fragment> fragmentLine,
             TextPane.LayoutTextData mapping,
             FontUtil fontUtil,
@@ -1727,7 +1860,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         if (lineStart == Integer.MAX_VALUE || lineEnd < lineStart) {
-            return new VisualLine(0, 0, lineTop, Math.max(1.0, lineHeight), new double[]{0.0});
+            return new LocalVisualLine(0, 0, lineTop, Math.max(1.0, lineHeight), new double[]{0.0});
         }
 
         double[] boundaries = new double[lineEnd - lineStart + 1];
@@ -1740,7 +1873,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             boundaries[sourcePos - lineStart] = x;
         }
 
-        return new VisualLine(lineStart, lineEnd, lineTop, Math.max(1.0, lineHeight), boundaries);
+        return new LocalVisualLine(lineStart, lineEnd, lineTop, Math.max(1.0, lineHeight), boundaries);
     }
 
     private static double textWidth(FontUtil fontUtil, Run run, int length, Font font) {
@@ -2106,6 +2239,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private void applyState(EditState state) {
+        pendingTextEdit = null;
         setText(state.text());
         setSelectionState(state.anchor(), state.caret());
     }
@@ -2118,6 +2252,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
         normalizingIncomingText = true;
         try {
+            pendingTextEdit = null;
             setText(committed);
         } finally {
             normalizingIncomingText = false;
@@ -2131,6 +2266,39 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private void updateHistoryState() {
         undoable.set(!undoStack.isEmpty());
         redoable.set(!redoStack.isEmpty());
+    }
+
+    private record PendingTextEdit(int start, int end, int replacementLength) {}
+
+    private record VisualLineCache(double widthKey, Font font, List<VisualLine> lines) {}
+
+    private record LocalVisualLine(int startOffset, int endOffset, double top, double height, double[] boundaries) {}
+
+    private static final class LogicalBlock {
+        private int start;
+        private int end;
+        private double layoutWidthKey = Double.NaN;
+        private @Nullable Font layoutFont;
+        private @Nullable List<LocalVisualLine> localLines;
+        private double height = Double.NaN;
+
+        private LogicalBlock(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        private boolean hasLayout(double widthKey, Font font) {
+            return localLines != null
+                    && Double.compare(layoutWidthKey, widthKey) == 0
+                    && Objects.equals(layoutFont, font);
+        }
+
+        private void invalidateLayout() {
+            layoutWidthKey = Double.NaN;
+            layoutFont = null;
+            localLines = null;
+            height = Double.NaN;
+        }
     }
 
     record VisualLine(int start, int end, double top, double height, double[] boundaries) {

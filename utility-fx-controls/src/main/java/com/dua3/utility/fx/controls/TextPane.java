@@ -364,14 +364,20 @@ public class TextPane extends Control {
     }
 
     Layout createLayout(double availableWidth) {
-        RichText richText = getText();
-        Font font = getFont();
+        return createLayout(getText(), availableWidth);
+    }
+
+    Layout createLayout(RichText richText, double availableWidth) {
+        return createLayout(richText, getFont(), isWrapText(), availableWidth);
+    }
+
+    private static Layout createLayout(RichText richText, Font font, boolean wrapText, double availableWidth) {
         com.dua3.utility.text.FontUtil fontUtil = com.dua3.utility.text.FontUtil.getInstance();
         LayoutTextData layoutTextData = createLayoutTextData(richText, font, fontUtil);
         RichText layoutText = layoutTextData.text();
 
         float width = (float) Math.max(1.0, availableWidth);
-        float wrapWidth = isWrapText() ? width : FragmentedText.NO_WRAP;
+        float wrapWidth = wrapText ? width : FragmentedText.NO_WRAP;
         FragmentedText layoutFragments = FragmentedText.generateFragments(
                 layoutText,
                 fontUtil,
@@ -398,7 +404,7 @@ public class TextPane extends Control {
                 VAnchor.TOP,
                 wrapWidth
         );
-        float renderWidth = isWrapText() ? width : Math.max(width, renderFragments.actualWidth());
+        float renderWidth = wrapText ? width : Math.max(width, renderFragments.actualWidth());
 
         List<InlineControlPlacement> placements = new ArrayList<>();
         for (List<FragmentedText.Fragment> line : layoutFragments.lines()) {
