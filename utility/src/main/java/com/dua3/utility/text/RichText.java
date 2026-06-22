@@ -248,6 +248,7 @@ public final class RichText
      * @param b text
      * @return true, if a and b consist of the same characters with the same styling
      */
+    @SuppressWarnings("java:S4274") // keep the assertion!
     public static boolean textAndFontEquals(@Nullable RichText a, @Nullable RichText b) {
         if (a == b) {
             return true;
