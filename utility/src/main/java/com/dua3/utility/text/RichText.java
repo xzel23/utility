@@ -894,6 +894,98 @@ public final class RichText
         return runs.isEmpty() ? emptyText() : new RichText(runs.toArray(Run[]::new));
     }
 
+    /**
+     * Returns the number of leading characters that are equal in this text and {@code other},
+     * including matching text attributes.
+     *
+     * @param other other text
+     * @return common prefix length
+     */
+    public int commonPrefixLength(RichText other) {
+        Objects.requireNonNull(other, "other");
+        if (this == other) {
+            return length;
+        }
+
+        int limit = Math.min(length, other.length);
+        int prefix = 0;
+
+        while (prefix < limit) {
+            Run runA = runAt(prefix);
+            Run runB = other.runAt(prefix);
+            if (!runA.attributes().equals(runB.attributes())) {
+                break;
+            }
+
+            int runEndA = runA.getEnd() - start;
+            int runEndB = runB.getEnd() - other.start;
+            int chunkLength = Math.min(limit - prefix, Math.min(runEndA - prefix, runEndB - prefix));
+            int matched = matchingPrefixChars(this, other, prefix, prefix, chunkLength);
+            prefix += matched;
+            if (matched < chunkLength) {
+                break;
+            }
+        }
+
+        return prefix;
+    }
+
+    /**
+     * Returns the number of trailing characters that are equal in this text and {@code other},
+     * including matching text attributes.
+     *
+     * @param other other text
+     * @return common suffix length
+     */
+    public int commonSuffixLength(RichText other) {
+        Objects.requireNonNull(other, "other");
+        if (this == other) {
+            return length;
+        }
+
+        int limit = Math.min(length, other.length);
+        int suffix = 0;
+        int endThis = length;
+        int endOther = other.length;
+
+        while (suffix < limit) {
+            Run runThis = runAt(endThis - 1);
+            Run runOther = other.runAt(endOther - 1);
+            if (!runThis.attributes().equals(runOther.attributes())) {
+                break;
+            }
+
+            int runStartThis = runThis.getStart() - start;
+            int runStartOther = runOther.getStart() - other.start;
+            int chunkLength = Math.min(limit - suffix, Math.min(endThis - runStartThis, endOther - runStartOther));
+            int matched = matchingSuffixChars(this, other, endThis, endOther, chunkLength);
+            suffix += matched;
+            endThis -= matched;
+            endOther -= matched;
+            if (matched < chunkLength) {
+                break;
+            }
+        }
+
+        return suffix;
+    }
+
+    private static int matchingPrefixChars(RichText a, RichText b, int startA, int startB, int length) {
+        int matched = 0;
+        while (matched < length && a.charAt(startA + matched) == b.charAt(startB + matched)) {
+            matched++;
+        }
+        return matched;
+    }
+
+    private static int matchingSuffixChars(RichText a, RichText b, int endA, int endB, int length) {
+        int matched = 0;
+        while (matched < length && a.charAt(endA - matched - 1) == b.charAt(endB - matched - 1)) {
+            matched++;
+        }
+        return matched;
+    }
+
     private static int appendRuns(List<Run> target, CharSequence base, RichText source, int from, int to, int writePos) {
         if (from >= to) {
             return writePos;

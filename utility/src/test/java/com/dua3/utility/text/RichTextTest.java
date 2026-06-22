@@ -517,6 +517,38 @@ class RichTextTest {
     }
 
     @Test
+    void testCommonPrefixLengthForInsertReplacement() {
+        RichText source = RichText.valueOf("abcdef");
+        RichText updated = source.replace(2, 4, RichText.valueOf("XYZ"));
+
+        assertEquals(2, source.commonPrefixLength(updated));
+    }
+
+    @Test
+    void testCommonSuffixLengthForInsertReplacement() {
+        RichText source = RichText.valueOf("abcdef");
+        RichText updated = source.replace(2, 4, RichText.valueOf("XYZ"));
+
+        assertEquals(2, source.commonSuffixLength(updated));
+    }
+
+    @Test
+    void testCommonPrefixAndSuffixLengthForStyleOnlyChange() {
+        RichText source = RichText.valueOf("0123456789");
+        RichText updated = source.apply(Style.BOLD, 3, 7);
+
+        assertEquals(3, source.commonPrefixLength(updated));
+        assertEquals(3, source.commonSuffixLength(updated));
+    }
+
+    @Test
+    void testCommonPrefixAndSuffixLengthForEqualTexts() {
+        RichText source = RichText.valueOf("abcdef");
+        assertEquals(source.length(), source.commonPrefixLength(source));
+        assertEquals(source.length(), source.commonSuffixLength(source));
+    }
+
+    @Test
     void testLines() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
