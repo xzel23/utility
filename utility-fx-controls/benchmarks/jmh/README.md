@@ -24,3 +24,4 @@ Commit a timestamped copy from `build/reports/jmh/results.json` into this direct
 - `2026-06-22-text-editor-pane-large-file-baseline-fx-shutdown-fix.md`: rerun after JavaFX shutdown fix.
 - `2026-06-22-text-editor-pane-large-file-baseline-non-text-history.md`: rerun after adding non-text history benchmarks.
 - `2026-06-22-text-editor-pane-large-file-baseline-format-history-range-entry.md`: rerun after switching formatting history from snapshot to range entry.
+- `2026-06-22-text-editor-pane-large-file-baseline-block-payload-cache.md`: rerun after caching per-block rich text payload in logical blocks.

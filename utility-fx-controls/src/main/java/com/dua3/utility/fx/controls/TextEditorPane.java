@@ -112,7 +112,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         this.defaultValue = initial;
         this.committedValue = new SimpleObjectProperty<>(this, "value", initial);
         this.state = new ObjectInputControlState<>(committedValue, () -> defaultValue, value -> Optional.empty());
-        rebuildLogicalBlocks(initial.toString());
+        rebuildLogicalBlocks(initial);
 
         committedValue.addListener((obs, oldValue, newValue) -> applyCommittedValue(newValue));
 
@@ -164,43 +164,42 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         PendingTextEdit edit = pendingTextEdit;
         pendingTextEdit = null;
 
-        if (oldValue.equals(newValue)) {
-            invalidateAllBlockLayouts();
+        if (edit != null && matchesPendingEdit(oldValue, newValue, edit)) {
+            applyIncrementalBlockUpdate(oldValue, newValue, newText, edit);
             invalidateVisualLineCache();
             return;
         }
 
-        if (edit != null && matchesPendingEdit(oldValue, newValue, edit)) {
-            applyIncrementalBlockUpdate(oldValue, newValue, edit);
-        } else {
-            rebuildLogicalBlocks(newValue);
+        if (oldValue.equals(newValue)) {
+            rebuildLogicalBlocks(newText);
+            invalidateVisualLineCache();
+            return;
         }
+
+        rebuildLogicalBlocks(newText);
         invalidateVisualLineCache();
     }
 
-    private static boolean matchesPendingEdit(String oldValue, String newValue, PendingTextEdit edit) {
-        if (edit.start() < 0 || edit.end() < edit.start() || edit.end() > oldValue.length()) {
-            return false;
-        }
-        int expectedLength = oldValue.length() - (edit.end() - edit.start()) + edit.replacementLength();
-        return expectedLength == newValue.length();
+    private static LogicalBlock createLogicalBlock(RichText text, int start, int end) {
+        return new LogicalBlock(start, end, detachedSubSequence(text, start, end));
     }
 
-    private void rebuildLogicalBlocks(String text) {
+    private void rebuildLogicalBlocks(RichText text) {
+        String plainText = text.toString();
         logicalBlocks.clear();
         int lineStart = 0;
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '\n') {
-                logicalBlocks.add(new LogicalBlock(lineStart, i));
+        for (int i = 0; i < plainText.length(); i++) {
+            if (plainText.charAt(i) == '\n') {
+                logicalBlocks.add(createLogicalBlock(text, lineStart, i));
                 lineStart = i + 1;
             }
         }
-        logicalBlocks.add(new LogicalBlock(lineStart, text.length()));
+        logicalBlocks.add(createLogicalBlock(text, lineStart, plainText.length()));
     }
 
-    private void applyIncrementalBlockUpdate(String oldText, String newText, PendingTextEdit edit) {
+    private void applyIncrementalBlockUpdate(String oldText, String newText, RichText newRichText, PendingTextEdit edit) {
         if (logicalBlocks.isEmpty()) {
-            rebuildLogicalBlocks(newText);
+            rebuildLogicalBlocks(newRichText);
             return;
         }
 
@@ -217,7 +216,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             updatedBlocks.add(logicalBlocks.get(i));
         }
 
-        updatedBlocks.addAll(buildBlocksInRange(newText, segmentStart, segmentEndNew));
+        updatedBlocks.addAll(buildBlocksInRange(newText, newRichText, segmentStart, segmentEndNew));
 
         for (int i = suffixIndex; i < logicalBlocks.size(); i++) {
             LogicalBlock block = logicalBlocks.get(i);
@@ -229,11 +228,19 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         logicalBlocks.clear();
         logicalBlocks.addAll(updatedBlocks);
         if (logicalBlocks.isEmpty()) {
-            logicalBlocks.add(new LogicalBlock(0, 0));
+            logicalBlocks.add(createLogicalBlock(newRichText, 0, 0));
         }
     }
 
-    private static List<LogicalBlock> buildBlocksInRange(String text, int startInclusive, int endInclusive) {
+    private static boolean matchesPendingEdit(String oldValue, String newValue, PendingTextEdit edit) {
+        if (edit.start() < 0 || edit.end() < edit.start() || edit.end() > oldValue.length()) {
+            return false;
+        }
+        int expectedLength = oldValue.length() - (edit.end() - edit.start()) + edit.replacementLength();
+        return expectedLength == newValue.length();
+    }
+
+    private static List<LogicalBlock> buildBlocksInRange(String text, RichText richText, int startInclusive, int endInclusive) {
         int start = Math.clamp(startInclusive, 0, text.length());
         int end = Math.clamp(endInclusive, start, text.length());
 
@@ -242,15 +249,15 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         while (lineStart <= end) {
             int newline = text.indexOf('\n', lineStart);
             if (newline < 0 || newline > end) {
-                blocks.add(new LogicalBlock(lineStart, end));
+                blocks.add(createLogicalBlock(richText, lineStart, end));
                 break;
             }
-            blocks.add(new LogicalBlock(lineStart, newline));
+            blocks.add(createLogicalBlock(richText, lineStart, newline));
             lineStart = newline + 1;
         }
 
         if (blocks.isEmpty()) {
-            blocks.add(new LogicalBlock(start, start));
+            blocks.add(createLogicalBlock(richText, start, start));
         }
         return blocks;
     }
@@ -1747,7 +1754,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         if (logicalBlocks.isEmpty()) {
-            rebuildLogicalBlocks(getText().toString());
+            rebuildLogicalBlocks(getText());
         }
 
         double defaultLineHeight = Math.max(1.0, baseFont.getFontData().height());
@@ -1814,7 +1821,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return;
         }
 
-        RichText blockText = getText(block.start, block.end);
+        RichText blockText = block.text;
         TextPane.Layout layout = createLayout(blockText, availableWidth);
         List<LocalVisualLine> localLines = new ArrayList<>();
         for (List<FragmentedText.Fragment> fragmentLine : layout.renderLines()) {
@@ -2339,14 +2346,16 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private static final class LogicalBlock {
         private int start;
         private int end;
+        private final RichText text;
         private double layoutWidthKey = Double.NaN;
         private @Nullable Font layoutFont;
         private @Nullable List<LocalVisualLine> localLines;
         private double height = Double.NaN;
 
-        private LogicalBlock(int start, int end) {
+        private LogicalBlock(int start, int end, RichText text) {
             this.start = start;
             this.end = end;
+            this.text = text;
         }
 
         private boolean hasLayout(double widthKey, Font font) {
