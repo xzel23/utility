@@ -1,5 +1,7 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.data.Color;
+import com.dua3.utility.text.Style;
 import javafx.application.Platform;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -50,6 +52,9 @@ public class TextEditorPaneLargeFileBenchmark {
     private TextEditorPane editor;
     private int middlePos;
     private int nearEndPos;
+    private int formattingStart;
+    private int formattingEnd;
+    private int formattingProbePos;
 
     @Setup(Level.Trial)
     public void setupTrial() {
@@ -57,6 +62,14 @@ public class TextEditorPaneLargeFileBenchmark {
         largeText = createLargeDocument(lineCount, LINE_LENGTH);
         middlePos = Math.max(0, largeText.length() / 2);
         nearEndPos = Math.max(0, largeText.length() - 1);
+        int selectionLength = Math.min(512, Math.max(1, largeText.length()));
+        formattingStart = Math.max(0, middlePos - selectionLength / 2);
+        formattingEnd = Math.min(largeText.length(), formattingStart + selectionLength);
+        if (formattingEnd <= formattingStart) {
+            formattingStart = Math.max(0, largeText.length() - 1);
+            formattingEnd = largeText.length();
+        }
+        formattingProbePos = formattingStart;
     }
 
     @Setup(Level.Iteration)
@@ -108,6 +121,39 @@ public class TextEditorPaneLargeFileBenchmark {
     @Benchmark
     public int buildVisualLinesCacheHit() {
         return FxJmhSupport.callOnFxThreadAndWait(() -> editor().buildVisualLines(wrapText ? WRAP_WIDTH : Double.POSITIVE_INFINITY).size());
+    }
+
+    @Benchmark
+    public int applyBoldToSelectionThenUndo() {
+        return FxJmhSupport.callOnFxThreadAndWait(() -> {
+            TextEditorPane textEditor = editor();
+            textEditor.selectRange(formattingStart, formattingEnd);
+            textEditor.markBold(true);
+            boolean applied = Style.FONT_WEIGHT_VALUE_BOLD.equals(
+                    textEditor.getText().attributesAt(formattingProbePos).get(Style.FONT_WEIGHT)
+            );
+            textEditor.undo();
+            boolean reverted = !Style.FONT_WEIGHT_VALUE_BOLD.equals(
+                    textEditor.getText().attributesAt(formattingProbePos).get(Style.FONT_WEIGHT)
+            );
+            return applied && reverted ? textEditor.getLength() : -textEditor.getLength();
+        });
+    }
+
+    @Benchmark
+    public int applyTextColorToSelectionThenUndoRedo() {
+        return FxJmhSupport.callOnFxThreadAndWait(() -> {
+            TextEditorPane textEditor = editor();
+            textEditor.selectRange(formattingStart, formattingEnd);
+            textEditor.setTextColor(Color.BLUE);
+            boolean applied = Color.BLUE.equals(textEditor.getText().attributesAt(formattingProbePos).get(Style.COLOR));
+            textEditor.undo();
+            boolean undone = !Color.BLUE.equals(textEditor.getText().attributesAt(formattingProbePos).get(Style.COLOR));
+            textEditor.redo();
+            boolean redone = Color.BLUE.equals(textEditor.getText().attributesAt(formattingProbePos).get(Style.COLOR));
+            textEditor.undo();
+            return applied && undone && redone ? textEditor.getLength() : -textEditor.getLength();
+        });
     }
 
     private TextEditorPane editor() {
