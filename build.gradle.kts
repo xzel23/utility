@@ -11,9 +11,12 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import java.io.File
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JvmVendorSpec
 
 plugins {
     id("java-library")
@@ -330,6 +333,15 @@ subprojects {
             warmupIterations = 2
             iterations = 5
             fork = 1
+        }
+
+        tasks.withType<JavaCompile>().configureEach {
+            if (name == "jmhCompileGeneratedClasses") {
+                javaCompiler.set(javaToolchains.compilerFor {
+                    languageVersion.set(JavaLanguageVersion.of(21))
+                    vendor.set(JvmVendorSpec.BELLSOFT)
+                })
+            }
         }
     }
 
