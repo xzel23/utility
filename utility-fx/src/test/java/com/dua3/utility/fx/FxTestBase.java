@@ -25,9 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public abstract class FxTestBase {
 
-    private static boolean platformInitialized = false;
     private static Stage sharedStage;
-    private static final Object lock = new Object();
 
     /**
      * Initialize the JavaFX platform if it's not already initialized.
@@ -35,24 +33,41 @@ public abstract class FxTestBase {
      */
     @BeforeAll
     public static void initializePlatform() {
-        synchronized (lock) {
-            if (!platformInitialized) {
-                try {
-                    Platform.startup(() -> System.out.println("JavaFX Platform initialized"));
-                    platformInitialized = true;
-                    PlatformHelper.runAndWait(() -> {
-                        sharedStage = new Stage();
-                        sharedStage.setTitle("FxTestBase");
-                        sharedStage.setWidth(800);
-                        sharedStage.setHeight(600);
-                    });
-                } catch (IllegalStateException e) {
-                    // Platform already running, which is fine
-                    System.out.println("JavaFX Platform was already running");
-                    platformInitialized = true;
-                }
-            }
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            Platform.startup(latch::countDown);
+        } catch (IllegalStateException ex) {
+            // if the Platform is already running, start right now
+            latch.countDown();
         }
+        await(latch);
+    }
+
+    /**
+     * Waits for the specified {@code CountDownLatch} to reach the count of zero within a timeout period.
+     * Throws an {@code IllegalStateException} if the timeout occurs or the thread is interrupted
+     * while waiting.
+     *
+     * @param latch the {@code CountDownLatch} to wait on. It must not be null.
+     * @throws IllegalStateException if the waiting thread is interrupted or the latch times out
+     *         before reaching the count of zero.
+     */
+    private static void await(CountDownLatch latch) {
+        try {
+            if (!latch.await(30, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("Timed out while starting JavaFX toolkit");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while starting JavaFX toolkit", e);
+        }
+
+        PlatformHelper.runAndWait(() -> {
+            sharedStage = new Stage();
+            sharedStage.setTitle("FxTestBase");
+            sharedStage.setWidth(800);
+            sharedStage.setHeight(600);
+        });
     }
 
     /**

@@ -6,6 +6,7 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.ui.AbstractGraphicsTest;
+import com.dua3.utility.ui.Graphics;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -34,26 +35,39 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class FxGraphicsTest extends AbstractGraphicsTest {
 
-    private static boolean platformInitialized = false;
-    private static final Object lock = new Object();
-
     /**
      * Initialize the JavaFX platform if it's not already initialized.
      * This method is synchronized to prevent multiple concurrent initializations.
      */
     @BeforeAll
     static void initializePlatform() {
-        synchronized (lock) {
-            if (!platformInitialized) {
-                try {
-                    Platform.startup(() -> System.out.println("JavaFX Platform initialized"));
-                    platformInitialized = true;
-                } catch (IllegalStateException e) {
-                    // Platform already running, which is fine
-                    System.out.println("JavaFX Platform was already running");
-                    platformInitialized = true;
-                }
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            Platform.startup(latch::countDown);
+        } catch (IllegalStateException ex) {
+            // if the Platform is already running, start right now
+            latch.countDown();
+        }
+        await(latch);
+    }
+
+    /**
+     * Waits for the specified {@code CountDownLatch} to reach the count of zero within a timeout period.
+     * Throws an {@code IllegalStateException} if the timeout occurs or the thread is interrupted
+     * while waiting.
+     *
+     * @param latch the {@code CountDownLatch} to wait on. It must not be null.
+     * @throws IllegalStateException if the waiting thread is interrupted or the latch times out
+     *         before reaching the count of zero.
+     */
+    private static void await(CountDownLatch latch) {
+        try {
+            if (!latch.await(30, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("Timed out while starting JavaFX toolkit");
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while starting JavaFX toolkit", e);
         }
     }
 
@@ -68,6 +82,7 @@ class FxGraphicsTest extends AbstractGraphicsTest {
 
     private Canvas canvas;
     private GraphicsContext gc;
+    private Graphics graphics;
     private WritableImage writableImage;
 
     @BeforeEach
@@ -81,9 +96,10 @@ class FxGraphicsTest extends AbstractGraphicsTest {
                 // Create a Canvas with software rendering
                 canvas = new Canvas(IMAGE_WIDTH, IMAGE_HEIGHT);
                 gc = canvas.getGraphicsContext2D();
+                graphics = new FxGraphics(gc, IMAGE_WIDTH, IMAGE_HEIGHT);
 
                 // Create the FxGraphics instance
-                setGraphics(new FxGraphics(gc, IMAGE_WIDTH, IMAGE_HEIGHT));
+                setGraphics(graphics);
 
                 LangUtil.unchecked(super::setUp).run();
             } finally {
@@ -102,7 +118,7 @@ class FxGraphicsTest extends AbstractGraphicsTest {
     @AfterEach
     @Override
     public void tearDown() {
-        super.tearDown();
+        graphics.close();
     }
 
     @Override
