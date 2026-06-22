@@ -26,3 +26,4 @@ Commit a timestamped copy from `build/reports/jmh/results.json` into this direct
 - `2026-06-22-text-editor-pane-large-file-baseline-format-history-range-entry.md`: rerun after switching formatting history from snapshot to range entry.
 - `2026-06-22-text-editor-pane-large-file-baseline-block-payload-cache.md`: rerun after caching per-block rich text payload in logical blocks.
 - `2026-06-22-text-editor-pane-large-file-baseline-step1-richtext-splice.md`: step 1 rerun after replacing full-text rebuilds with segmented `RichText.replace(...)` in text-edit paths.
+- `2026-06-22-text-editor-pane-large-file-baseline-step2-changed-range-history.md`: step 2 rerun after switching formatting history to minimal changed-range extraction (`RichText.findChangedRange(...)`).

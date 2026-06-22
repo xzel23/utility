@@ -1476,15 +1476,20 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return;
         }
 
-        IndexRange selectionRange = getSelection();
-        int start = Math.clamp(selectionRange.getStart(), 0, current.length());
-        int end = Math.clamp(selectionRange.getEnd(), start, current.length());
-        RichText removed = detachedSubSequence(current, start, end);
-        RichText inserted = detachedSubSequence(updated, start, end);
+        ChangeRange changed = findChangedRange(current, updated);
+        if (changed.isEmpty()) {
+            return;
+        }
+
+        int start = changed.start();
+        int endInCurrent = changed.endInCurrent();
+        int endInUpdated = changed.endInUpdated();
+        RichText removed = detachedSubSequence(current, start, endInCurrent);
+        RichText inserted = detachedSubSequence(updated, start, endInUpdated);
         int beforeAnchor = getAnchor();
         int beforeCaret = getCaretPosition();
 
-        pendingTextEdit = new PendingTextEdit(start, end, inserted.length());
+        pendingTextEdit = new PendingTextEdit(start, endInCurrent, inserted.length());
         setText(updated);
         int afterAnchor = getAnchor();
         int afterCaret = getCaretPosition();
@@ -1499,6 +1504,13 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 afterCaret
         ));
         updateHistoryState();
+    }
+
+    private static ChangeRange findChangedRange(RichText current, RichText updated) {
+        int prefix = current.commonPrefixLength(updated);
+        int maxSuffix = Math.min(current.length(), updated.length()) - prefix;
+        int suffix = Math.min(current.commonSuffixLength(updated), maxSuffix);
+        return new ChangeRange(prefix, current.length() - suffix, updated.length() - suffix);
     }
 
     /**
@@ -2348,6 +2360,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private void updateHistoryState() {
         undoable.set(!undoStack.isEmpty());
         redoable.set(!redoStack.isEmpty());
+    }
+
+    private record ChangeRange(int start, int endInCurrent, int endInUpdated) {
+        private boolean isEmpty() {
+            return start == endInCurrent && start == endInUpdated;
+        }
     }
 
     private record PendingTextEdit(int start, int end, int replacementLength) {}

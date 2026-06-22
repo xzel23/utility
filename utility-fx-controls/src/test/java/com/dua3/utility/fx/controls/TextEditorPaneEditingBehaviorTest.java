@@ -175,6 +175,34 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testUndoRedoFormattingChangeWithPartiallyFormattedSelection() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("abcd");
+
+            editor.selectRange(1, 3);
+            editor.apply(Style.BOLD);
+            editor.selectRange(0, 4);
+            editor.apply(Style.BOLD);
+
+            for (int i = 0; i < editor.getLength(); i++) {
+                assertTrue(editor.getText().stylesAt(i).contains(Style.BOLD));
+            }
+
+            editor.undo();
+            assertFalse(editor.getText().stylesAt(0).contains(Style.BOLD));
+            assertTrue(editor.getText().stylesAt(1).contains(Style.BOLD));
+            assertTrue(editor.getText().stylesAt(2).contains(Style.BOLD));
+            assertFalse(editor.getText().stylesAt(3).contains(Style.BOLD));
+
+            editor.redo();
+            for (int i = 0; i < editor.getLength(); i++) {
+                assertTrue(editor.getText().stylesAt(i).contains(Style.BOLD));
+            }
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testUndoRedoKeepsInsertedRichTextStyle() throws Exception {
         runOnFxThreadAndWait(() -> {
             TextEditorPane editor = new TextEditorPane("ab");
