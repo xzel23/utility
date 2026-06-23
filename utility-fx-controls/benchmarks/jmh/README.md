@@ -30,3 +30,4 @@ Commit a timestamped copy from `build/reports/jmh/results.json` into this direct
 - `2026-06-22-text-editor-pane-large-file-baseline-step1-block-core-document.md`: step 1 rerun after moving `TextEditorPane` edit authority to logical-block document state (with `TextPane.text` as synchronized mirror).
 - `2026-06-22-text-editor-pane-large-file-baseline-step3-decoupled-textpane-mirror.md`: step 3 rerun after decoupling editor internals from per-edit `TextPane.text` mirror synchronization.
 - `2026-06-23-text-editor-pane-large-file-baseline-step4-true-block-core-document.md`: step 4 rerun after making logical blocks the true mutable core and materializing full document text lazily.
+- `2026-06-23-text-editor-pane-large-file-comparison-initial-vs-final.md`: consolidated initial-vs-final comparison (`2026-06-22` baseline vs final step 4).
