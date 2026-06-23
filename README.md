@@ -269,6 +269,9 @@ This release introduces some major changes, both to existing interfaces and also
   `Image` and a derived abstract class `MutableImage` that are used consistently. Unless there are explicit
   reasons, user code should stick to these two instead of directly using the implementing classes.
 
+- service loaders consider a class loader hierarchy when loading service providers for better compatibility with
+  spring and other frameworks.
+
 - Dependency updates and minor improvements and bug fixes.
 
 ### 22.7.0
