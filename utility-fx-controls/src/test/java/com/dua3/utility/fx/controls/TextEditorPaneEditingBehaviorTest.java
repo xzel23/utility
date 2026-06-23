@@ -6,6 +6,8 @@ import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -377,19 +379,26 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
             TextEditorPane editor = new TextEditorPane("abc");
             long initialVersion = editor.getDocumentVersion();
 
-            AtomicInteger documentTextChanges = new AtomicInteger();
+            ObjectBinding<RichText> observedDocument = Bindings.createObjectBinding(
+                    editor::getDocumentText,
+                    editor.documentVersionProperty()
+            );
+            observedDocument.get();
+
+            AtomicInteger documentBindingChanges = new AtomicInteger();
             AtomicInteger documentVersionChanges = new AtomicInteger();
 
-            editor.documentTextProperty().addListener((obs, oldVal, newVal) -> documentTextChanges.incrementAndGet());
+            observedDocument.addListener((obs, oldVal, newVal) -> documentBindingChanges.incrementAndGet());
             editor.documentVersionProperty().addListener((obs, oldVal, newVal) -> documentVersionChanges.incrementAndGet());
 
             editor.replaceText(1, 2, "X");
 
+            assertEquals("aXc", observedDocument.get().toString());
             assertEquals("aXc", editor.getDocumentText().toString());
             assertEquals("aXc", editor.getText().toString());
             assertEquals("abc", editor.textProperty().get().toString());
             assertEquals(initialVersion + 1L, editor.getDocumentVersion());
-            assertEquals(1, documentTextChanges.get());
+            assertEquals(1, documentBindingChanges.get());
             assertEquals(1, documentVersionChanges.get());
         });
     }
@@ -401,12 +410,22 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
             TextEditorPane editor = new TextEditorPane("abc");
             long initialVersion = editor.getDocumentVersion();
 
+            ObjectBinding<RichText> observedDocument = Bindings.createObjectBinding(
+                    editor::getDocumentText,
+                    editor.documentVersionProperty()
+            );
+            observedDocument.get();
+            AtomicInteger documentBindingChanges = new AtomicInteger();
+            observedDocument.addListener((obs, oldVal, newVal) -> documentBindingChanges.incrementAndGet());
+
             editor.setText("xyz");
 
             assertEquals("xyz", editor.textProperty().get().toString());
+            assertEquals("xyz", observedDocument.get().toString());
             assertEquals("xyz", editor.getDocumentText().toString());
             assertEquals("xyz", editor.getText().toString());
             assertEquals(initialVersion + 1L, editor.getDocumentVersion());
+            assertEquals(1, documentBindingChanges.get());
         });
     }
 

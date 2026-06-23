@@ -6,10 +6,12 @@ import com.dua3.utility.fx.controls.RichTextBuilderFx;
 import com.dua3.utility.fx.controls.TextEditorPane;
 import com.dua3.utility.fx.controls.TextPane;
 import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.Style;
 import com.dua3.utility.text.RichTextBuilderExtBase;
+import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.VAnchor;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -58,6 +60,17 @@ public class TextEditorPaneSample extends Application {
         editor.setPrefWidth(600);
         editor.setMaxHeight(1000);
 
+        TextPane liveDocumentPane = new TextPane();
+        liveDocumentPane.setWrapText(true);
+        liveDocumentPane.setPrefWidth(600);
+        liveDocumentPane.setMaxHeight(1000);
+        ObjectBinding<RichText> liveDocumentBinding = Bindings.createObjectBinding(
+                editor::getDocumentText,
+                editor.documentVersionProperty()
+        );
+        liveDocumentPane.textProperty().bind(liveDocumentBinding);
+        liveDocumentPane.wrapTextProperty().bind(editor.wrapTextProperty());
+
         TextPane committedValuePane = new TextPane();
         committedValuePane.setWrapText(true);
         committedValuePane.setPrefWidth(600);
@@ -65,6 +78,7 @@ public class TextEditorPaneSample extends Application {
         committedValuePane.textProperty().bind(editor.valueProperty());
         committedValuePane.wrapTextProperty().bind(editor.wrapTextProperty());
         editor.setHyperlinkHandler(uri -> handleSampleUri(status, uri));
+        liveDocumentPane.setHyperlinkHandler(uri -> handleSampleUri(status, uri));
         committedValuePane.setHyperlinkHandler(uri -> handleSampleUri(status, uri));
 
         CheckBox wrap = new CheckBox("Wrap text");
@@ -83,6 +97,7 @@ public class TextEditorPaneSample extends Application {
         width.setShowTickLabels(true);
         width.setShowTickMarks(true);
         editor.prefWidthProperty().bind(width.valueProperty());
+        liveDocumentPane.prefWidthProperty().bind(width.valueProperty());
         committedValuePane.prefWidthProperty().bind(width.valueProperty());
 
         Label selectionInfo = new Label();
@@ -125,10 +140,23 @@ public class TextEditorPaneSample extends Application {
         HBox actionRow = new HBox(12, applyButton, resetButton, committedInfo);
         actionRow.setPadding(new Insets(4, 0, 4, 0));
 
+        Label liveDocumentHeader = new Label("Live Document (documentVersionProperty + getDocumentText)");
         Label committedHeader = new Label("Committed Value (InputControl valueProperty)");
 
-        VBox content = new VBox(8, controls, editor, selectionInfo, actionRow, committedHeader, committedValuePane, status);
+        VBox content = new VBox(
+                8,
+                controls,
+                editor,
+                selectionInfo,
+                actionRow,
+                liveDocumentHeader,
+                liveDocumentPane,
+                committedHeader,
+                committedValuePane,
+                status
+        );
         VBox.setVgrow(editor, Priority.ALWAYS);
+        VBox.setVgrow(liveDocumentPane, Priority.ALWAYS);
         VBox.setVgrow(committedValuePane, Priority.ALWAYS);
         content.setPadding(new Insets(12));
 

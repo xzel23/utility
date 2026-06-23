@@ -50,7 +50,9 @@ import java.util.Optional;
  * but operating on {@link RichText}. Real editing behavior will be added incrementally.
  *
  * <p>For observing live editor mutations, use {@link #documentVersionProperty()} and fetch current text via
- * {@link #getDocumentText()}. {@link #textProperty()} is treated as the external input channel and
+ * {@link #getDocumentText()} (for example with
+ * {@code Bindings.createObjectBinding(editor::getDocumentText, editor.documentVersionProperty())}).
+ * {@link #textProperty()} is treated as the external input channel and
  * is not synchronized on each internal edit.
  */
 public class TextEditorPane extends TextPane implements InputControl<RichText> {
@@ -209,6 +211,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      *
      * <p>Use {@link #documentVersionProperty()} as the edit-change signal and
      * {@link #getDocumentText()} to retrieve the current document text.
+     * This snapshot property is not intended as the primary edit notification channel.
      *
      * @return read-only document text property
      */
