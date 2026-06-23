@@ -39,6 +39,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
@@ -192,7 +193,7 @@ public class TextPane extends Control {
      *
      * @return text
      */
-    public final RichText getText() {
+    public RichText getText() {
         return text.get();
     }
 
@@ -578,7 +579,7 @@ public class TextPane extends Control {
         if (node.getScene() == null) {
             Pane tempRoot = new Pane(node);
             // Attach temporarily so CSS/skin-dependent preferred sizes are available.
-            new Scene(tempRoot);
+            LangUtil.ignore(new Scene(tempRoot));
             tempRoot.applyCss();
             node.applyCss();
             node.autosize();
@@ -740,42 +741,24 @@ public class TextPane extends Control {
     }
 
     private static Optional<URI> toUri(@Nullable Object value) {
-        if (value instanceof URI uri) {
-            return Optional.of(uri);
-        }
-        if (value instanceof CharSequence cs) {
-            String text = cs.toString().trim();
-            if (text.isEmpty()) {
-                return Optional.empty();
+        return switch (value) {
+            case URI uri -> Optional.of(uri);
+            case CharSequence cs -> {
+                String text = cs.toString().trim();
+                if (text.isEmpty()) {
+                    yield Optional.empty();
+                }
+                try {
+                    yield Optional.of(new URI(text));
+                } catch (URISyntaxException ex) {
+                    yield Optional.empty();
+                }
             }
-            try {
-                return Optional.of(new URI(text));
-            } catch (URISyntaxException ex) {
-                return Optional.empty();
-            }
-        }
-        return Optional.empty();
+            case null, default -> Optional.empty();
+        };
     }
 
-    private static void wireHyperlinkAction(TextPane control, Hyperlink hyperlink) {
-        if (hyperlink.getOnAction() != null) {
-            return;
-        }
-
-        Optional<URI> target = toUri(hyperlink.getUserData());
-        if (target.isEmpty()) {
-            return;
-        }
-
-        hyperlink.setOnAction(evt -> {
-            Consumer<URI> handler = control.getHyperlinkHandler();
-            if (handler != null) {
-                handler.accept(target.get());
-            }
-        });
-    }
-
-    private static void wireButtonAction(TextPane control, Button button) {
+    private static void wireButtonAction(TextPane control, ButtonBase button) {
         if (button.getOnAction() != null) {
             return;
         }
@@ -785,16 +768,11 @@ public class TextPane extends Control {
             return;
         }
 
-        button.setOnAction(evt -> {
-            Consumer<URI> handler = control.getHyperlinkHandler();
-            if (handler != null) {
-                handler.accept(target.get());
-            }
-        });
+        button.setOnAction(evt -> control.getHyperlinkHandler().accept(target.get()));
     }
 
     private static void openUriUsingDesktop(URI uri) {
-        if (uri == null || !Desktop.isDesktopSupported()) {
+        if (!Desktop.isDesktopSupported()) {
             return;
         }
 
@@ -835,10 +813,6 @@ public class TextPane extends Control {
 
     private static double getInlineReferenceAscent(Run run, Font fallbackFont) {
         return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT, fallbackFont::getAscent);
-    }
-
-    private static double getInlineReferenceDescent(Run run, Font fallbackFont) {
-        return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT, fallbackFont::getDescent);
     }
 
     private static double getInlineNodeDescent(Run run) {
@@ -1067,8 +1041,8 @@ public class TextPane extends Control {
         private final VBox editorRoot = new VBox();
         private boolean dirty = true;
         private double lastAvailableWidth = Double.NaN;
-        private RichText lastText;
-        private Font lastFont;
+        private RichText lastText = RichText.emptyText();
+        private Font lastFont = FontUtil.getInstance().getDefaultFont();
         private boolean lastWrapText;
         private boolean blink = true;
         private final @Nullable TextEditorPane editor;
@@ -1175,7 +1149,11 @@ public class TextPane extends Control {
                 getChildren().setAll(scrollPane);
             }
 
-            control.textProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            if (editor != null) {
+                editor.documentVersionProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            } else {
+                control.textProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            }
             control.wrapTextProperty().addListener((obs, oldVal, newVal) -> {
                 scrollPane.setFitToWidth(newVal);
                 scrollPane.setHbarPolicy(newVal == Boolean.TRUE ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -1727,10 +1705,7 @@ public class TextPane extends Control {
                 if (node instanceof Labeled labeled) {
                     labeled.setFont(FxFontUtil.getInstance().convert(placement.font()));
                 }
-                if (node instanceof Hyperlink hyperlink) {
-                    wireHyperlinkAction(control, hyperlink);
-                }
-                if (node instanceof Button button) {
+                if (node instanceof ButtonBase button) {
                     wireButtonAction(control, button);
                 }
                 node.setManaged(false);

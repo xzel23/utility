@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Timeout;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -366,6 +367,46 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
             assertEquals("committed", editor.get().toString());
             assertFalse(editor.isUndoable());
             assertFalse(editor.isRedoable());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testDocumentObservationApiTracksInternalEdits() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("abc");
+            long initialVersion = editor.getDocumentVersion();
+
+            AtomicInteger documentTextChanges = new AtomicInteger();
+            AtomicInteger documentVersionChanges = new AtomicInteger();
+
+            editor.documentTextProperty().addListener((obs, oldVal, newVal) -> documentTextChanges.incrementAndGet());
+            editor.documentVersionProperty().addListener((obs, oldVal, newVal) -> documentVersionChanges.incrementAndGet());
+
+            editor.replaceText(1, 2, "X");
+
+            assertEquals("aXc", editor.getDocumentText().toString());
+            assertEquals("aXc", editor.getText().toString());
+            assertEquals("abc", editor.textProperty().get().toString());
+            assertEquals(initialVersion + 1L, editor.getDocumentVersion());
+            assertEquals(1, documentTextChanges.get());
+            assertEquals(1, documentVersionChanges.get());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testDocumentObservationApiTracksExternalSetText() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("abc");
+            long initialVersion = editor.getDocumentVersion();
+
+            editor.setText("xyz");
+
+            assertEquals("xyz", editor.textProperty().get().toString());
+            assertEquals("xyz", editor.getDocumentText().toString());
+            assertEquals("xyz", editor.getText().toString());
+            assertEquals(initialVersion + 1L, editor.getDocumentVersion());
         });
     }
 

@@ -124,7 +124,11 @@ public final class FxUtil {
      * @param color the color
      * @return the JavaFX color
      */
-    public static Color convert(com.dua3.utility.data.Color color) {
+    public static Color convert(com.dua3.utility.data.@Nullable Color color) {
+        if (color == null) {
+            return Color.TRANSPARENT;
+        }
+
         int argb = color.argb();
 
         int a = (argb >> 24) & 0xff;
@@ -141,7 +145,11 @@ public final class FxUtil {
      * @param color the JavaFX color
      * @return the color
      */
-    public static com.dua3.utility.data.Color convert(Color color) {
+    public static com.dua3.utility.data.Color convert(@Nullable Color color) {
+        if (color == null) {
+            return com.dua3.utility.data.Color.TRANSPARENT_BLACK;
+        }
+
         return com.dua3.utility.data.Color.rgba(
                 MathUtil.roundToInt(color.getRed() * 255.0),
                 MathUtil.roundToInt(color.getGreen() * 255.0),
@@ -477,7 +485,7 @@ public final class FxUtil {
         content.putString(text.toString());
         String token = cacheRichText(text);
         content.put(INTERNAL_RICH_TEXT_TOKEN, token);
-//        content.putHtml(converter.convert(text));
+// FIXME       content.putHtml(converter.convert(text));
         RtfConverter.get().ifPresent(rtfConverter -> content.putRtf(rtfConverter.convert(text)));
         clipboard.setContent(content);
     }

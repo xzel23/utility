@@ -18,6 +18,8 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.beans.property.ReadOnlyLongProperty;
+import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -46,6 +48,10 @@ import java.util.Optional;
  *
  * <p>This class currently provides a stub editing API surface, modeled after JavaFX {@code TextInputControl},
  * but operating on {@link RichText}. Real editing behavior will be added incrementally.
+ *
+ * <p>For observing live editor mutations, use {@link #documentTextProperty()} or
+ * {@link #documentVersionProperty()}. {@link #textProperty()} is treated as the external input channel and
+ * is not synchronized on each internal edit.
  */
 public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
@@ -75,11 +81,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private boolean inHistoryNavigation;
     private boolean updatingPropertiesFromText;
     private boolean normalizingIncomingText;
-    private boolean syncingTextFromDocument;
     private double preferredCaretX = Double.NaN;
     private final List<LogicalBlock> logicalBlocks = new ArrayList<>();
     private @Nullable VisualLineCache visualLineCache;
     private RichText documentText = RichText.emptyText();
+    private final ReadOnlyObjectWrapper<RichText> document = new ReadOnlyObjectWrapper<>(this, "documentText", RichText.emptyText());
+    private final ReadOnlyLongWrapper documentVersion = new ReadOnlyLongWrapper(this, "documentVersion", 0L);
     private static final int MAX_HISTORY_SIZE = 256;
 
     /**
@@ -99,8 +106,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
         getStyleClass().add("text-editor-pane");
 
-        RichText initial = normalizeIncomingText(getText());
-        if (!initial.equals(getText())) {
+        RichText initial = normalizeIncomingText(textProperty().get());
+        if (!initial.equals(textProperty().get())) {
             normalizingIncomingText = true;
             try {
                 setText(initial);
@@ -109,8 +116,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             }
         }
 
-        initial = getText();
+        initial = normalizeIncomingText(textProperty().get());
         documentText = initial;
+        document.set(initial);
         this.defaultValue = initial;
         this.committedValue = new SimpleObjectProperty<>(this, "value", initial);
         this.state = new ObjectInputControlState<>(committedValue, () -> defaultValue, value -> Optional.empty());
@@ -139,9 +147,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             RichText oldText = oldValue == null ? RichText.emptyText() : oldValue;
             RichText currentText = newValue == null ? RichText.emptyText() : newValue;
             documentText = currentText;
-            if (!syncingTextFromDocument && !Objects.equals(oldText, currentText)) {
+            if (!Objects.equals(oldText, currentText)) {
+                document.set(currentText);
                 rebuildLogicalBlocks(currentText);
                 invalidateVisualLineCache();
+                markDocumentChanged();
             }
             length.set(currentText.length());
             setSelectionState(getAnchor(), getCaretPosition());
@@ -180,14 +190,52 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         logicalBlocks.add(createLogicalBlock(text, lineStart, length));
     }
 
-    private void setTextFromDocument(RichText text) {
-        documentText = text;
-        syncingTextFromDocument = true;
-        try {
-            setText(text);
-        } finally {
-            syncingTextFromDocument = false;
-        }
+    /**
+     * Returns the current rich-text document.
+     *
+     * <p>Unlike {@link #textProperty()}, this value tracks all internal editor edits.
+     *
+     * @return current document text
+     */
+    public final RichText getDocumentText() {
+        return documentText;
+    }
+
+    /**
+     * Read-only property exposing the live editor document.
+     *
+     * <p>Use this property to observe internal edit operations.
+     *
+     * @return read-only document text property
+     */
+    public final ReadOnlyObjectProperty<RichText> documentTextProperty() {
+        return document.getReadOnlyProperty();
+    }
+
+    /**
+     * Returns the current document version.
+     *
+     * <p>The value increments whenever the editor document changes.
+     *
+     * @return document version
+     */
+    public final long getDocumentVersion() {
+        return documentVersion.get();
+    }
+
+    /**
+     * Read-only property exposing the document version.
+     *
+     * <p>Use this property as a lightweight invalidation signal for document changes.
+     *
+     * @return read-only document version property
+     */
+    public final ReadOnlyLongProperty documentVersionProperty() {
+        return documentVersion.getReadOnlyProperty();
+    }
+
+    private void markDocumentChanged() {
+        documentVersion.set(documentVersion.get() + 1L);
     }
 
     private DocumentReplaceResult replaceDocumentRange(int start, int end, RichText replacement) {
@@ -239,7 +287,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             logicalBlocks.add(new LogicalBlock(0, 0, RichText.emptyText()));
         }
         documentText = currentDocument.replace(s, e, replacement);
+        document.set(documentText);
+        length.set(documentText.length());
         invalidateVisualLineCache();
+        markDocumentChanged();
         return new DocumentReplaceResult(s, e, removed, true);
     }
 
@@ -1011,6 +1062,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return redoable.getReadOnlyProperty();
     }
 
+    @Override
+    public RichText getText() {
+        return documentText;
+    }
+
     /**
      * Returns a text slice between two offsets.
      *
@@ -1195,7 +1251,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 newCaret
         ));
 
-        setTextFromDocument(documentText);
         setSelectionState(newCaret, newCaret);
         updateHistoryState();
     }
@@ -1488,8 +1543,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int beforeCaret = getCaretPosition();
 
         replaceDocumentRange(start, endInCurrent, inserted);
-        documentText = updated;
-        setTextFromDocument(updated);
         int afterAnchor = getAnchor();
         int afterCaret = getCaretPosition();
 
@@ -2333,7 +2386,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         replaceDocumentRange(s, e, replacement);
-        setTextFromDocument(updated);
         setSelectionState(anchorPos, caretPos);
     }
 
@@ -2391,13 +2443,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return localLines != null
                     && Double.compare(layoutWidthKey, widthKey) == 0
                     && Objects.equals(layoutFont, font);
-        }
-
-        private void invalidateLayout() {
-            layoutWidthKey = Double.NaN;
-            layoutFont = null;
-            localLines = null;
-            height = Double.NaN;
         }
     }
 
