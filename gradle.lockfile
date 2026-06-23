@@ -1,6 +1,7 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
+com.github.joniles:rtfparserkit:1.16.0=aggregateCodeCoverageReportResults
 com.github.spotbugs:spotbugs-annotations:4.10.2=spotbugs
 com.github.spotbugs:spotbugs:4.10.2=spotbugs
 com.github.stephenc.jcip:jcip-annotations:1.0-1=spotbugs
@@ -26,6 +27,7 @@ org.jacoco:org.jacoco.report:0.8.14=jacocoAnt
 org.jspecify:jspecify:1.0.0=aggregateCodeCoverageReportResults
 org.junit:junit-bom:6.1.0=spotbugs
 org.kordamp.ikonli:ikonli-core:12.4.0=aggregateCodeCoverageReportResults
+org.kordamp.ikonli:ikonli-feather-pack:12.4.0=aggregateCodeCoverageReportResults
 org.kordamp.ikonli:ikonli-javafx:12.4.0=aggregateCodeCoverageReportResults
 org.openjdk.jmh:jmh-core:1.36=jmh,jmhCompileClasspath,jmhRuntimeClasspath
 org.openjdk.jmh:jmh-generator-asm:1.36=jmh,jmhCompileClasspath,jmhRuntimeClasspath
