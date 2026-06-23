@@ -1,6 +1,7 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
+# To regenerate this file, run: ./gradlew :dependencies --write-locks
 com.github.joniles:rtfparserkit:1.16.0=aggregateCodeCoverageReportResults
 com.github.spotbugs:spotbugs-annotations:4.10.2=spotbugs
 com.github.spotbugs:spotbugs:4.10.2=spotbugs
