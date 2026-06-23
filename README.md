@@ -236,6 +236,44 @@ could not be loaded.
 
 ## Changes
 
+### 23.0.0 (in progress)
+
+This release introduces some major changes, both to existing interfaces and also by adding new functionality.
+
+- `MathUtil`:
+    - Removed `kahanSum()` and `NeumeierSum()`; `sum()` now uses a hybrid Kahan/pairwise algorithm.
+    - `sumOfSquares()`: removed the Kahan and Neumaier overloads; the standard version uses Kahan now.
+    - Improved accuracy (and performance on modern architectures) by using fma (fast-multipy-add)
+      for many operations (transformations, root finding, and others)
+
+- `Font`, `RichText` and related classes:
+    - Added support for background colors.
+    - Added support for inline nodes like images.
+    - Improved HTML conversion.
+    - Added RTF support.
+    - Many methods having overloads for `String` and `RichText` have been replaced by a single one
+      taking a `CharSequence` argument instead. This reduces code size and helps to reduce conversions
+      and temporary object creations.
+
+- The `Color` interface is sealed now with implementations `RGBColor`, `HSVColor`, and `HSLColor`.
+    - Added `HSLColor` implementation.
+    - `brighter()` and `darker()` now use HSL to determine the new color values. This allows to get brighter colors
+      even for fully saturated colors.
+
+- JavaFX module:
+    - Added new `TextPane` and `TextEditorPane` controls for displaying and editing rich text content.
+    - `FxUtil` supplies text in RTF format when copying RichText.
+
+- The `Image` interface, derived interfaces, and implementing classes have been refactored for less code
+  duplication, a cleaner interface, and some performance improvements were made. There now is an interface
+  `Image` and a derived abstract class `MutableImage` that are used consistently. Unless there are explicit
+  reasons, user code should stick to these two instead of directly using the implementing classes.
+
+- service loaders consider a class loader hierarchy when loading service providers for better compatibility with
+  spring and other frameworks.
+
+- Dependency updates and minor improvements and bug fixes.
+
 ### 22.7.0
 
 - RichText.valueOf() accepts null values, the returned text will match that of String.valueOf(null)

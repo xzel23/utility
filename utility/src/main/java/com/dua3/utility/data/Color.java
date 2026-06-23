@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * A common interface for different color implementations.
  */
-public interface Color {
+public sealed interface Color permits HSLColor, HSVColor, RGBColor {
     /**
      * Factor to apply when generating a brighter or darker version of a color.
      */
@@ -860,6 +860,44 @@ public interface Color {
     default HSVColor toHSVColor() {
         return HSVColor.valueOf(argb());
     }
+
+    /**
+     * Convert this color to {@link HSVColor}.
+     *
+     * @return this color as RGBColor instance
+     */
+    default HSLColor toHSLColor() {
+        return HSLColor.valueOf(argb());
+    }
+
+    /**
+     * Returns a new Color instance with the specified alpha value applied.
+     * The alpha value determines the transparency level of the color.
+     *
+     * @param a the alpha value to apply to the color in the range [0 .. 255],
+     *              where 0 represents fully transparent and 255 represents fully opaque
+     * @return a new Color instance with the updated alpha value
+     */
+    Color withAlpha(int a);
+
+    /**
+     * Returns a new Color instance with the specified alpha value applied.
+     * The alpha value determines the transparency level of the color.
+     *
+     * @param alpha the alpha value to apply to the color in the range [0.0 .. 1.0],
+     *              where 0.0 represents fully transparent and 1.0 represents fully opaque
+     * @return a new Color instance with the updated alpha value
+     */
+    Color withAlpha(double alpha);
+
+    /**
+     * Multiplies the current alpha value of the color by the specified alpha factor.
+     *
+     * @param alpha the multiplier for the alpha value, where 0.0 makes the color fully transparent
+     *              and 1.0 keeps the alpha value unchanged.
+     * @return a new Color instance with the modified alpha value resulting from the multiplication.
+     */
+    Color multiplyAlpha(double alpha);
 
     /**
      * Get CSS compatible string representation of this color.

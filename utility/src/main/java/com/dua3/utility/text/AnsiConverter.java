@@ -147,6 +147,11 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
          */
         protected void applyFontChanges(FontDef changes) {
             changes.ifColorDefined(c -> buffer.append(AnsiCode.fg(c)));
+            changes.ifBackgroundColorDefined(c -> {
+                if (!c.isTransparent()) {
+                    buffer.append(AnsiCode.bg(c.toRGBColor()));
+                }
+            });
             changes.ifBoldDefined(c -> buffer.append(AnsiCode.bold(c)));
             changes.ifUnderlineDefined(c -> buffer.append(AnsiCode.underline(c)));
             changes.ifStrikeThroughDefined(c -> buffer.append(AnsiCode.strikeThrough(c)));

@@ -103,6 +103,18 @@ class FontDefTest {
     }
 
     @Test
+    void testParseFontspecWithBackgroundColor() {
+        String fontspec = "TimesNewRoman-bold-italic-12-red-yellow";
+        FontDef result = FontDef.parseFontspec(fontspec);
+        assertEquals("TimesNewRoman", result.getFamily());
+        assertTrue(result.getBold());
+        assertTrue(result.getItalic());
+        assertEquals(12, result.getSize());
+        assertEquals(Color.valueOf("red"), result.getColor());
+        assertEquals(Color.valueOf("yellow"), result.getBackgroundColor());
+    }
+
+    @Test
     void testParseFontspecWithInvalidColor() {
         String fontspec = "TimesNewRoman-bold-italic-12-undefinedColor";
         Assertions.assertThrows(IllegalArgumentException.class, () -> FontDef.parseFontspec(fontspec));
@@ -116,12 +128,13 @@ class FontDefTest {
 
     @Test
     void testParseCssBasic() {
-        String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: Arial; font-weight: bold; font-style: italic; }";
+        String fontdef = "{ font-size: 14px; color: #FFFFFF; background-color: #ffff00; font-family: Arial; font-weight: bold; font-style: italic; }";
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
 
         assertEquals(10.5f, fd.getSize()); // 14px = 10.5pt
         assertEquals(Color.WHITE, fd.getColor());
+        assertEquals(Color.YELLOW, fd.getBackgroundColor());
         assertEquals("Arial", fd.getFamily());
         assertEquals(List.of("Arial"), fd.getFamilies());
         assertTrue(fd.getBold());
@@ -195,7 +208,7 @@ class FontDefTest {
         fd.setItalic(true);
 
         // assuming the fontspec() method returns a font specification in the format 'family-bold/regular/italic-14.0-#FFFFFF'
-        String expectedFontSpec = "Arial-bold-italic-*-*-14.0-#ffffff";
+        String expectedFontSpec = "Arial-bold-italic-*-*-14.0-#ffffff-*";
         String actualFontSpec = fd.fontspec();
 
         // put your appropriate assertions here
@@ -208,11 +221,12 @@ class FontDefTest {
 
         fd.setSize(14.0f);
         fd.setColor(Color.WHITE);
+        fd.setBackgroundColor(Color.YELLOW);
         fd.setFamily("Arial");
         fd.setBold(true);
         fd.setItalic(true);
 
-        String expected = "font-family: Arial; font-size: 14.0pt; font-weight: bold; font-style: italic; color: #ffffff;";
+        String expected = "font-family: Arial; font-size: 14.0pt; font-weight: bold; font-style: italic; color: #ffffff;background-color: #ffff00;";
         String actual = fd.getCssStyle();
 
         assertEquals(expected, actual);

@@ -26,6 +26,11 @@ public interface RichTextConverter<T> {
         }
         props.put(Style.FONT_SIZE, font.getSizeInPoints());
         props.put(Style.COLOR, font.getColor());
+        if (font.getBackgroundColor().isTransparent()) {
+            props.remove(Style.BACKGROUND_COLOR);
+        } else {
+            props.put(Style.BACKGROUND_COLOR, font.getBackgroundColor());
+        }
         props.put(Style.FONT_STYLE, font.isItalic() ? Style.FONT_STYLE_VALUE_ITALIC : Style.FONT_STYLE_VALUE_NORMAL);
         props.put(Style.FONT_WEIGHT, font.isBold() ? Style.FONT_WEIGHT_VALUE_BOLD : Style.FONT_WEIGHT_VALUE_NORMAL);
         props.put(Style.TEXT_DECORATION_UNDERLINE, font.isUnderline() ? Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE : Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE);

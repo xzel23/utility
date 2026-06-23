@@ -145,15 +145,11 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
 
     @SuppressWarnings("unchecked")
     private static FontDef getFontDefInternal(Map<? super String, @Nullable Object> attributes) {
-        Font font = (Font) attributes.get(Style.FONT);
-        if (font != null) {
-            return font.toFontDef();
-        }
-
         FontDef fd = new FontDef();
         DataUtil.ifPresent(attributes, Style.FONT_FAMILIES, v -> fd.setFamilies((List<String>) v));
         DataUtil.ifPresent(attributes, Style.FONT_SIZE, v -> fd.setSize((Float) v));
         DataUtil.ifPresent(attributes, Style.COLOR, v -> fd.setColor((Color) v));
+        DataUtil.ifPresent(attributes, Style.BACKGROUND_COLOR, v -> fd.setBackgroundColor((Color) v));
         DataUtil.ifPresent(attributes, Style.FONT_WEIGHT, v -> fd.setBold(Objects.equals(v, Style.FONT_WEIGHT_VALUE_BOLD)));
         DataUtil.ifPresent(attributes, Style.TEXT_DECORATION_UNDERLINE, v -> fd.setUnderline(Objects.equals(v, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE)));
         DataUtil.ifPresent(attributes, Style.TEXT_DECORATION_LINE_THROUGH, v -> fd.setStrikeThrough(Objects.equals(v, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)));
@@ -194,4 +190,3 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
     }
 
 }
-

@@ -75,7 +75,9 @@ public final class MathUtil {
                 return xb;
             }
 
-            double xc = xa - ya * (xb - xa) / (yb - ya);
+            double dx = xb - xa;
+            double dy = yb - ya;
+            double xc = Math.fma(-ya, dx / dy, xa);
 
             if (Double.isNaN(xc)) {
                 return Double.NaN;
@@ -620,11 +622,7 @@ public final class MathUtil {
      * @return the sum of all values
      */
     public static double sum(double... args) {
-        double sum = 0.0;
-        for (double a : args) {
-            sum += a;
-        }
-        return sum;
+        return sumUnchecked(args, 0, args.length);
     }
 
     /**
@@ -638,105 +636,44 @@ public final class MathUtil {
      */
     public static double sum(double[] args, int off, int len) {
         Objects.checkFromIndexSize(off, len, args.length);
-
-        double sum = 0.0;
-        for (int i = off, end = off + len; i < end; i++) {
-            sum += args[i];
-        }
-        return sum;
+        return sumUnchecked(args, off, len);
     }
 
-    /**
-     * Computes the sum of the given numbers using Kahan summation.
-     *
-     * @param args the numbers to sum
-     * @return the compensated sum
-     */
-    public static double sumKahan(double... args) {
-        double sum = 0.0;
-        double c = 0.0;
+    private static double sumUnchecked(double[] a, int off, int len) {
+        if (len < 64) {
+            // Kahan
+            double sum = 0.0;
+            double c = 0.0;
+            int infSign = 0; // 0 = none, +1 = +inf, -1 = -inf
+            for (int i = off, end = off + len; i < end; i++) {
+                double x = a[i];
 
-        for (double a : args) {
-            double y = a - c;
-            double t = sum + y;
-            c = (t - sum) - y;
-            sum = t;
-        }
-        return sum;
-    }
+                if (Double.isNaN(x)) return Double.NaN;
 
-    /**
-     * Computes the sum of a range of values using Kahan summation.
-     *
-     * @param args the source array
-     * @param off the start index
-     * @param len the number of elements to include
-     * @return the compensated sum of the selected range
-     * @throws IndexOutOfBoundsException if {@code off} or {@code len} describe an invalid range
-     */
-    public static double sumKahan(double[] args, int off, int len) {
-        Objects.checkFromIndexSize(off, len, args.length);
+                if (Double.isInfinite(x)) {
+                    int s = x > 0 ? 1 : -1;
+                    if (infSign != 0 && infSign != s) {
+                        return Double.NaN;
+                    }
+                    infSign = s;
+                    continue;
+                }
 
-        double sum = 0.0;
-        double c = 0.0;
-
-        for (int i = off, end = off + len; i < end; i++) {
-            double y = args[i] - c;
-            double t = sum + y;
-            c = (t - sum) - y;
-            sum = t;
-        }
-        return sum;
-    }
-
-    /**
-     * Computes the sum of the given numbers using Neumaier's compensation algorithm.
-     *
-     * @param args the numbers to sum
-     * @return the compensated sum
-     */
-    public static double sumNeumaier(double... args) {
-        double sum = 0.0;
-        double c = 0.0;
-
-        for (double a : args) {
-            double t = sum + a;
-            if (Math.abs(sum) >= Math.abs(a)) {
-                c += (sum - t) + a;
-            } else {
-                c += (a - t) + sum;
+                double y = x - c;
+                double t = sum + y;
+                c = (t - sum) - y;
+                sum = t;
             }
-            sum = t;
-        }
-        return sum + c;
-    }
 
-    /**
-     * Computes the sum of a range of values using Neumaier's compensation algorithm.
-     *
-     * @param args the source array
-     * @param off the start index
-     * @param len the number of elements to include
-     * @return the compensated sum of the selected range
-     * @throws IndexOutOfBoundsException if {@code off} or {@code len} describe an invalid range
-     */
-    public static double sumNeumaier(double[] args, int off, int len) {
-        Objects.checkFromIndexSize(off, len, args.length);
-
-        double sum = 0.0;
-        double c = 0.0;
-
-        for (int i = off, end = off + len; i < end; i++) {
-            double a = args[i];
-            double t = sum + a;
-            if (Math.abs(sum) >= Math.abs(a)) {
-                c += (sum - t) + a;
-            } else {
-                c += (a - t) + sum;
+            if (infSign != 0) {
+                return infSign > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
             }
-            sum = t;
+            return sum;
+        } else {
+            // pairwise
+            int mid = len / 2;
+            return sumUnchecked(a, off, mid) + sumUnchecked(a, off + mid, len - mid);
         }
-        return sum + c;
     }
 
     /**
@@ -773,51 +710,13 @@ public final class MathUtil {
     }
 
     /**
-     * Calculates the sum of the squares of the given arguments.
-     * <p>
-     * The sum is calculated using pairwise fused multiply-add (FMA) operations
-     * to improve accuracy for large numbers of arguments.
-     * <p>
-     * On hot paths, prefer passing a pre-allocated array instead of the varargs calling style.
-     *
-     * @param args the numbers for which the sum of squares is to be calculated
-     * @return the sum of the squares of the provided numbers
-     */
-    public static double sumOfSquares(double... args) {
-        double sum = 0.0;
-        for (double a : args) {
-            sum = Math.fma(a, a, sum);
-        }
-        return sum;
-    }
-
-    /**
-     * Computes the sum of squares of the specified range within an array.
-     *
-     * @param args the array of doubles containing the elements to be squared and summed
-     * @param off the starting index of the range to be processed
-     * @param len the number of elements in the range to be processed
-     * @return the sum of squares of the elements within the specified range
-     * @throws IndexOutOfBoundsException if the range specified by {@code off} and {@code len} is invalid
-     */
-    public static double sumOfSquares(double[] args, int off, int len) {
-        Objects.checkFromIndexSize(off, len, args.length);
-        double sum = 0.0;
-        for (int i = off, end = off + len; i < end; i++) {
-            double a = args[i];
-            sum = Math.fma(a, a, sum);
-        }
-        return sum;
-    }
-
-    /**
      * Calculates the sum of the squares of the given numbers using the Kahan summation algorithm
      * to reduce the numerical error during the summation process.
      *
      * @param args the numbers whose squares are to be summed; can be empty or contain any number of elements
      * @return the sum of the squares of the given numbers
      */
-    public static double sumOfSquaresKahan(double... args) {
+    public static double sumOfSquares(double... args) {
         double sum = 0.0;
         double c = 0.0; // compensation for lost low-order bits
 
@@ -842,7 +741,7 @@ public final class MathUtil {
      * @throws IndexOutOfBoundsException if {@code off} is negative, {@code len} is negative,
      *                                   or {@code off + len} exceeds the length of the array
      */
-    public static double sumOfSquaresKahan(double[] args, int off, int len) {
+    public static double sumOfSquares(double[] args, int off, int len) {
         Objects.checkFromIndexSize(off, len, args.length);
 
         double sum = 0.0;
@@ -857,64 +756,4 @@ public final class MathUtil {
         }
         return sum;
     }
-
-    /**
-     * Computes the sum of squares of the given numbers using Neumaier's compensation algorithm.
-     * This method reduces the numerical errors that arise from the finite precision of floating-point arithmetic.
-     *
-     * @param args The input numbers for which the sum of squares is to be calculated.
-     *             These can be zero or more double values.
-     * @return The precise sum of squares of the input numbers, adjusted for numerical stability.
-     */
-    public static double sumOfSquaresNeumaier(double... args) {
-        double sum = 0.0;
-        double c = 0.0; // accumulated compensation
-
-        for (double a : args) {
-            double x = Math.fma(a, a, 0.0); // exact intent: square term via FMA path
-            double t = sum + x;
-
-            if (Math.abs(sum) >= Math.abs(x)) {
-                c += (sum - t) + x;
-            } else {
-                c += (x - t) + sum;
-            }
-            sum = t;
-        }
-        return sum + c;
-    }
-
-    /**
-     * Computes the sum of squares of a portion of the input array using Neumaier's compensation algorithm
-     * to minimize numerical errors during the summation.
-     *
-     * @param args the input array containing the values to be squared and summed
-     * @param off the starting offset in the array
-     * @param len the number of elements to include in the computation, starting from the offset
-     * @return the sum of the squares of the specified portion of the input array
-     * @throws NullPointerException if the input array {@code args} is null
-     * @throws IndexOutOfBoundsException if the specified {@code off} or {@code len} is invalid, such that it
-     *         falls outside the bounds of the input array
-     */
-    public static double sumOfSquaresNeumaier(double[] args, int off, int len) {
-        Objects.checkFromIndexSize(off, len, args.length);
-
-        double sum = 0.0;
-        double c = 0.0; // accumulated compensation
-
-        for (int i = off, end = off + len; i < end; i++) {
-            double a = args[i];
-            double x = Math.fma(a, a, 0.0);
-            double t = sum + x;
-
-            if (Math.abs(sum) >= Math.abs(x)) {
-                c += (sum - t) + x;
-            } else {
-                c += (x - t) + sum;
-            }
-            sum = t;
-        }
-        return sum + c;
-    }
-
 }

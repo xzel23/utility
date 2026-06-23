@@ -18,8 +18,10 @@ import org.jspecify.annotations.Nullable;
 public class Font {
 
     private static final ObjectCache fontCache = new ObjectCache();
+    private static final Color DEFAULT_BACKGROUND_COLOR = Color.TRANSPARENT_WHITE;
     private final FontData fontData;
     private final Color color;
+    private final Color backgroundColor;
     private final int hash;
 
     /**
@@ -27,11 +29,13 @@ public class Font {
      *
      * @param fontData The font data specifying the font's typeface, size, and style.
      * @param color The color of the font. It defines the text color associated with the font.
+     * @param backgroundColor The background color associated with the font.
      */
-    protected Font(FontData fontData, Color color) {
+    protected Font(FontData fontData, Color color, Color backgroundColor) {
         this.fontData = fontData;
         this.color = color;
-        this.hash = fontData.hashCode() + 17 * color.hashCode();
+        this.backgroundColor = backgroundColor;
+        this.hash = fontData.hashCode() + 17 * color.hashCode() + 31 * backgroundColor.hashCode();
     }
 
     /**
@@ -42,7 +46,19 @@ public class Font {
      * @return A Font instance matching the provided font data and color from the cache.
      */
     public static Font getFont(FontData fontData, Color color) {
-        return fontCache.get(new Font(fontData, color));
+        return getFont(fontData, color, DEFAULT_BACKGROUND_COLOR);
+    }
+
+    /**
+     * Retrieves a Font instance from the cache based on the specified font data, text color, and background color.
+     *
+     * @param fontData The font data specifying the font's typeface, size, and style.
+     * @param color The color of the font, defining the text color associated with it.
+     * @param backgroundColor The background color associated with the font.
+     * @return A Font instance matching the provided font data and colors from the cache.
+     */
+    public static Font getFont(FontData fontData, Color color, Color backgroundColor) {
+        return fontCache.get(new Font(fontData, color, backgroundColor));
     }
 
     /**
@@ -54,7 +70,10 @@ public class Font {
      * @return true, if a and b have the same attributes
      */
     public static boolean similar(Font a, Font b) {
-        return a.hash == b.hash && FontData.similar(a.fontData, b.fontData) && a.color.equals(b.color);
+        return a.hash == b.hash
+                && FontData.similar(a.fontData, b.fontData)
+                && a.color.equals(b.color)
+                && a.backgroundColor.equals(b.backgroundColor);
     }
 
     /**
@@ -67,6 +86,7 @@ public class Font {
     public static FontDef delta(@Nullable Font a, @Nullable Font b) {
         FontDef delta = FontData.delta(a == null ? null : a.fontData, b == null ? null : b.fontData);
         FontData.deltaHelper(a, b, Font::getColor, delta::setColor);
+        FontData.deltaHelper(a, b, Font::getBackgroundColor, delta::setBackgroundColor);
         return delta;
     }
 
@@ -77,6 +97,15 @@ public class Font {
      */
     public final Color getColor() {
         return color;
+    }
+
+    /**
+     * Get text background color.
+     *
+     * @return the text background color.
+     */
+    public final Color getBackgroundColor() {
+        return backgroundColor;
     }
 
     /**
@@ -169,7 +198,10 @@ public class Font {
             return true;
         }
         Font other = (Font) obj;
-        return hash == other.hash && fontData.equals(other.fontData) && color.equals(other.color);
+        return hash == other.hash
+                && fontData.equals(other.fontData)
+                && color.equals(other.color)
+                && backgroundColor.equals(other.backgroundColor);
     }
 
     /**
@@ -178,7 +210,7 @@ public class Font {
      * @return fontstyle definition
      */
     public final String getCssStyle() {
-        return fontData.cssStyle() + " color: " + color.toCss() + ";";
+        return fontData.cssStyle() + " color: " + color.toCss() + "; background-color: " + backgroundColor.toCss() + ";";
     }
 
     /**
@@ -187,7 +219,7 @@ public class Font {
      * @return font description
      */
     public final String fontspec() {
-        return fontData.fontspec() + "-" + color.toCss();
+        return fontData.fontspec() + "-" + color.toCss() + "-" + backgroundColor.toCss();
     }
 
     /**
@@ -198,6 +230,10 @@ public class Font {
     public final FontDef toFontDef() {
         FontDef fontDef = fontData.fontDef();
         fontDef.setColor(getColor());
+        Color bg = getBackgroundColor();
+        if (!bg.isTransparent()) {
+            fontDef.setBackgroundColor(bg);
+        }
         return fontDef;
     }
 
@@ -315,6 +351,16 @@ public class Font {
      */
     public Font withColor(Color color) {
         return color.equals(getColor()) ? this : FontUtil.getInstance().deriveFont(this, FontDef.color(color));
+    }
+
+    /**
+     * Return a font derived from this font by replacing the background color with the given value.
+     *
+     * @param color the value to use
+     * @return a copy of this font with the background color set to the requested value, or this font if values match
+     */
+    public Font withBackgroundColor(Color color) {
+        return color.equals(getBackgroundColor()) ? this : FontUtil.getInstance().deriveFont(this, FontDef.backgroundColor(color));
     }
 
     /**

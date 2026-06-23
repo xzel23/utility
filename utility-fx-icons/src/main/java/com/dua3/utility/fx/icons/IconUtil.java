@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
+import java.util.stream.Stream;
 
 /**
  * The IconUtil class provides utility methods for working with icons.
@@ -33,10 +34,11 @@ public final class IconUtil {
      * @return an optional icon that matches the given name, or an empty optional if the icon does not exist
      */
     public static Optional<Icon> iconFromName(String name) {
-        Class<IconProvider> iconProviderClass = IconProvider.class;
-        return ServiceLoader.load(iconProviderClass)
-                .stream()
-                .peek(provider -> LOG.trace("found {} implementation: {}", iconProviderClass.getName(), provider.getClass().getName()))
+        Class<IconProvider> cls = IconProvider.class;
+        return Stream.of(Thread.currentThread().getContextClassLoader(), IconUtil.class.getClassLoader(), ClassLoader.getSystemClassLoader())
+                .distinct()
+                .flatMap(cl -> ServiceLoader.load(cls, cl).stream())
+                .peek(provider -> LOG.trace("found {} implementation: {}", cls.getName(), provider.getClass().getName()))
                 .map(provider -> provider.get().forName(name).orElse(null))
                 .filter(Objects::nonNull)
                 .findFirst();
@@ -48,9 +50,9 @@ public final class IconUtil {
      * @return a collection of strings representing the names of the available icon providers
      */
     public static Collection<String> iconProviderNames() {
-        Class<IconProvider> iconProviderClass = IconProvider.class;
-        return ServiceLoader.load(iconProviderClass)
-                .stream()
+        return Stream.of(Thread.currentThread().getContextClassLoader(), IconUtil.class.getClassLoader(), ClassLoader.getSystemClassLoader())
+                .distinct()
+                .flatMap(cl -> ServiceLoader.load(IconProvider.class, cl).stream())
                 .map(p -> p.type().getName()).toList();
     }
 

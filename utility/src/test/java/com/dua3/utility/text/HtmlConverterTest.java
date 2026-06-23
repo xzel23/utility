@@ -84,7 +84,7 @@ class HtmlConverterTest {
         builder.append(".");
         builder.pop(sans);
         RichText rt = builder.toRichText();
-        String expected = "<span style='font-family: sans-serif'>Keyboard input is shown in a <code>monospaced</code> typeface, direct speech is shown in a font with <span style='font-family: serif'>serifs</span>.</span>";
+        String expected = "<span style='font-family: sans-serif'>Keyboard input is shown in a <span style='font-family: monospace'>monospaced</span> typeface, direct speech is shown in a font with <span style='font-family: serif'>serifs</span>.</span>";
         String actual = HtmlConverter.create().convert(rt);
 
         assertEquals(expected, actual);
@@ -95,8 +95,8 @@ class HtmlConverterTest {
         Font arial = FontUtil.getInstance().getFont("arial-16-bold");
         Font courier = FontUtil.getInstance().getFont("courier-12");
 
-        Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
-        Style style2 = Style.create("style2", Map.entry(Style.FONT, courier));
+        Style style1 = Style.create("style1", arial.toFontDef());
+        Style style2 = Style.create("style2", courier.toFontDef());
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
@@ -118,8 +118,8 @@ class HtmlConverterTest {
         Font arial = FontUtil.getInstance().getFont("arial-16-bold");
         Font times = FontUtil.getInstance().getFont("courier-12");
 
-        Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
-        Style style2 = Style.create("style2", Map.entry(Style.FONT, times));
+        Style style1 = Style.create("style1", arial.toFontDef());
+        Style style2 = Style.create("style2", times.toFontDef());
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
@@ -130,7 +130,7 @@ class HtmlConverterTest {
         builder.append(" too many fonts!");
         builder.pop(style1);
         RichText rt = builder.toRichText();
-        String expected = "<span class='arial-bold-normal-none-no_line-16.0-#000000'>Don&apos;t <span class='courier-regular-normal-none-no_line-12.0-#000000'>mix</span> too many fonts!</span>";
+        String expected = "<span class='arial-bold-normal-none-no_line-16.0-#000000-any'>Don&apos;t <span class='courier-regular-normal-none-no_line-12.0-#000000-any'>mix</span> too many fonts!</span>";
         String actual = HtmlConverter.create(HtmlConverter.useCss(true)).convert(rt);
 
         assertEquals(expected, actual);
@@ -179,7 +179,7 @@ class HtmlConverterTest {
 
         // Create a simple RichText with a font
         Font arial = FontUtil.getInstance().getFont("arial-12-bold");
-        Style style = Style.create("style", Map.entry(Style.FONT, arial));
+        Style style = Style.create("style", arial.toFontDef());
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style);
@@ -187,21 +187,21 @@ class HtmlConverterTest {
         builder.pop(style);
         RichText rt = builder.toRichText();
 
-        // With CSS, should use class attribute
-        String withCssResult = withCss.convert(rt);
-        assertTrue(withCssResult.contains("class='"));
-        assertFalse(withCssResult.contains("style='"));
-
         // Without CSS, should use style attribute
         String withoutCssResult = withoutCss.convert(rt);
         assertFalse(withoutCssResult.contains("class='"));
         assertTrue(withoutCssResult.contains("style='"));
+
+        // With CSS, should use class attribute
+        String withCssResult = withCss.convert(rt);
+        assertTrue(withCssResult.contains("class='"));
+        assertFalse(withCssResult.contains("style='"));
     }
 
     @Test
     void testCustomMapping() {
         // Test custom mapping
-        HtmlConverter converter = HtmlConverter.createBlank(HtmlConverter.map(Style.FONT_WEIGHT, value -> {
+        HtmlConverter converter = HtmlConverter.createBlank(HtmlConverter.mapStyle(Style.FONT_WEIGHT, value -> {
             if (Style.FONT_WEIGHT_VALUE_BOLD.equals(value)) {
                 return HtmlTag.tag("<strong>", "</strong>");
             }
@@ -280,11 +280,11 @@ class HtmlConverterTest {
     @Test
     void testRefineStyleProperties() {
         HtmlConverter noRefineConverter = HtmlConverter.createBlank(
-                HtmlConverter.map("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag())
+                HtmlConverter.mapStyle("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag())
         );
 
         HtmlConverter converter = HtmlConverter.createBlank(
-                HtmlConverter.map("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag()),
+                HtmlConverter.mapStyle("x-test", value -> Objects.equals("ok", value) ? HtmlTag.tag("<x>", "</x>") : HtmlTag.emptyTag()),
                 HtmlConverter.refineStyleProperties(props -> {
                     Map<String, Object> map = new LinkedHashMap<>(props);
                     map.put("x-test", "ok");
@@ -386,22 +386,6 @@ class HtmlConverterTest {
     }
 
     @Test
-    void testInlineTextDecorations() {
-        Font font = FontUtil.getInstance().getFont("arial-16-bold");
-        Map<String, Object> input = new LinkedHashMap<>();
-        input.put(Style.FONT, font);
-        input.put("custom", "value");
-
-        Map<String, Object> result = HtmlConverter.inlineTextDecorations(input);
-
-        assertFalse(result.containsKey(Style.FONT));
-        assertEquals("value", result.get("custom"));
-        assertEquals(font.getFamilies(), result.get(Style.FONT_FAMILIES));
-        assertEquals(font.getSizeInPoints(), result.get(Style.FONT_SIZE));
-        assertEquals(Style.FONT_WEIGHT_VALUE_BOLD, result.get(Style.FONT_WEIGHT));
-    }
-
-    @Test
     void testCreateWithCollectionOptions() {
         HtmlConverter converter = HtmlConverter.create(List.of(HtmlConverter.useCss(true)));
         assertTrue(converter.isUseCss());
@@ -422,7 +406,7 @@ class HtmlConverterTest {
     @Test
     void testGet() {
         HtmlConverter converter = HtmlConverter.createBlank(
-                HtmlConverter.map("mapped", value -> HtmlTag.tag("<mapped>", "</mapped>")),
+                HtmlConverter.mapStyle("mapped", value -> HtmlTag.tag("<mapped>", "</mapped>")),
                 HtmlConverter.defaultMapper((attribute, value) -> HtmlTag.tag("<default>", "</default>"))
         );
 
@@ -459,6 +443,97 @@ class HtmlConverterTest {
         assertEquals("ab", HtmlConverter.create().convert(text));
     }
 
+    /**
+     * Regression test derived from PDF conversion:
+     * font-derived styles should still map to inline tags ({@code <b>, <i>, <u>, <strike>})
+     * and line breaks should honor convertLineBreaksTo.
+     * <p>
+     * This currently fails and documents the desired output for the pending converter fix.
+     */
+    @Test
+    void testPdfDerivedFontStylesShouldUseInlineTags() {
+        Style regular = Style.create("regular", FontUtil.getInstance().getFont("Helvetica-12").toFontDef());
+        Style bold = Style.create("bold", FontUtil.getInstance().getFont("Helvetica-12-bold").toFontDef());
+        Style italic = Style.create("italic", FontUtil.getInstance().getFont("Helvetica-12-italic").toFontDef());
+        Style underline = Style.create("underline", FontUtil.getInstance().getFont("Helvetica-12-underline").toFontDef());
+        Style strike = Style.create("strike", FontUtil.getInstance().getFont("Helvetica-12-strikethrough").toFontDef());
+
+        String text = "a          b          c          d          e\nX";
+        RichText rt = new RichText(
+                new Run(text, 0, 1, styleAttributes(regular)),
+                new Run(text, 1, 11, styleAttributes(bold)),
+                new Run(text, 12, 11, styleAttributes(italic)),
+                new Run(text, 23, 11, styleAttributes(underline)),
+                new Run(text, 34, 11, styleAttributes(strike)),
+                new Run(text, 45, 1, TextAttributes.none()),
+                new Run(text, 46, 1, styleAttributes(bold))
+        );
+
+        HtmlConverter converter = HtmlConverter.create(
+                HtmlConverter.convertLineBreaksTo("<br>\n")
+        );
+
+        String expected = """
+                a<b>          b</b><i>          c</i><u>          d</u><strike>          e</strike><br>
+                <b>X</b>""";
+
+        String actual = converter.convert(rt);
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Regression test for line break conversion when a split marker directly follows a newline in the same run.
+     * <p>
+     * This occurs in some transformed RichText pipelines and used to produce raw '\n' instead of mapped '<br>'.
+     */
+    @Test
+    void testConvertLineBreaksToWhenSplitMarkerFollowsNewline() {
+        RichText text = new RichTextBuilder()
+                .push(Style.BOLD)
+                .append("a\n")
+                .appendSplitMarker()
+                .append("b")
+                .pop(Style.BOLD)
+                .toRichText();
+
+        String actual = HtmlConverter.create(
+                HtmlConverter.convertLineBreaksTo("<br>\n")
+        ).convert(text);
+
+        assertEquals("<b>a<br>\nb</b>", actual);
+    }
+
+    @Test
+    void testHeadingShouldNotEmitRedundantBoldTag() {
+        Style headingStyle = Style.create("heading-style", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
+
+        RichText text = new RichTextBuilder()
+                .push("level", 1)
+                .push(headingStyle)
+                .append("Universal Declaration of Human Rights")
+                .pop(headingStyle)
+                .pop("level")
+                .toRichText();
+
+        HtmlConverter converter = HtmlConverter.create(
+                HtmlConverter.mapAttribute("level", change -> {
+                    int level = change.newValue() != null ? (int) change.newValue() : 0;
+                    return HtmlTag.headerTag(
+                            level > 0 ? "<h" + level + ">" : "",
+                            level > 0 ? "</h" + level + ">" : "",
+                            level > 0 ? level : -1
+                    );
+                }),
+                HtmlConverter.headerStyleMapper(level -> level == 1
+                        ? new HtmlConverter.HeaderStyle(level, headingStyle, Style.EMPTY)
+                        : HtmlConverter.HeaderStyle.EMPTY),
+                HtmlConverter.convertLineBreaksTo("")
+        );
+
+        String actual = converter.convert(text).strip();
+        assertEquals("<h1>Universal Declaration of Human Rights</h1>", actual);
+    }
+
     private static HtmlTag getBlockTag(String value) {
         return switch (value) {
             case "h1" -> HtmlTag.tag("<h1>", "</h1>", HtmlTag.FormattingHint.LINE_BREAK_BEFORE_TAG);
@@ -487,7 +562,6 @@ class HtmlConverterTest {
 
                     return HtmlTag.tag(open, close);
                 }),
-                HtmlConverter.refineStyleProperties(HtmlConverter::inlineTextDecorations),
                 HtmlConverter.convertLineBreaksTo("")
         );
 
@@ -523,5 +597,11 @@ class HtmlConverterTest {
                 "<h2>Header 2</h2>";
 
         assertEquals(expected, result);
+    }
+
+    private static TextAttributes styleAttributes(Style style) {
+        return TextAttributes.of(Map.of(
+                RichText.ATTRIBUTE_NAME_STYLE_LIST, List.of(style)
+        ));
     }
 }

@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,6 +34,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A class representing files of a certain type.
@@ -47,9 +49,17 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      */
     private static final Set<FileType<?>> FILE_TYPES = new CopyOnWriteArraySet<>();
 
-    // Load FileType  implementations
+    // Load FileType implementations
     static {
-        ServiceLoader.load(FileType.class).forEach(FileType::addType);
+        Collection<String> loaded = new HashSet<>();
+        Stream.of(Thread.currentThread().getContextClassLoader(), FileType.class.getClassLoader(), ClassLoader.getSystemClassLoader())
+                .distinct()
+                .flatMap(cl -> ServiceLoader.load(FileType.class, cl).stream())
+                .forEach(provider -> {
+                    if (loaded.add(provider.type().getName())) {
+                        FILE_TYPES.add(provider.get());
+                    }
+                });
     }
 
     private final String name;

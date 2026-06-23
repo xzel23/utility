@@ -45,14 +45,6 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
         return new HSVColor(h, s, max, a);
     }
 
-    private static int argbf(float a, float r, float g, float b) {
-        int ri = Math.round(r * 255);
-        int gi = Math.round(g * 255);
-        int bi = Math.round(b * 255);
-        int ai = Math.round(a * 255);
-        return (ai << 24) + (ri << 16) + (gi << 8) + bi;
-    }
-
     @Override
     public int a() {
         return Math.round(255 * alpha);
@@ -84,29 +76,55 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
         float t = v * (1 - s * (1 - f));
 
         return switch (hi) {
-            case 0, 6 -> argbf(alpha, v, t, p);
-            case 1 -> argbf(alpha, q, v, p);
-            case 2 -> argbf(alpha, p, v, t);
-            case 3 -> argbf(alpha, p, q, v);
-            case 4 -> argbf(alpha, t, p, v);
-            case 5 -> argbf(alpha, v, p, q);
+            case 0, 6 -> RGBColor.argbf(alpha, v, t, p);
+            case 1 -> RGBColor.argbf(alpha, q, v, p);
+            case 2 -> RGBColor.argbf(alpha, p, v, t);
+            case 3 -> RGBColor.argbf(alpha, p, q, v);
+            case 4 -> RGBColor.argbf(alpha, t, p, v);
+            case 5 -> RGBColor.argbf(alpha, v, p, q);
             default -> throw new IllegalStateException("could not convert to RGB");
         };
     }
 
     @Override
-    public Color brighter() {
-        return new HSVColor(h(), s(), Math.min(v() / F_BRIGHTEN, 1), alpha);
+    public HSVColor brighter() {
+        return toHSLColor().brighter().toHSVColor();
     }
 
     @Override
-    public Color darker() {
-        return new HSVColor(h(), s(), v() * F_BRIGHTEN, alpha);
+    public HSVColor darker() {
+        return toHSLColor().darker().toHSVColor();
+    }
+
+    @Override
+    public HSVColor withAlpha(int a) {
+        return a == a() ? this : withAlpha(a / 255.0);
+    }
+
+    @Override
+    public HSVColor withAlpha(double a) {
+        return new HSVColor(h, s, v, (float) a);
+    }
+
+    @Override
+    public HSVColor multiplyAlpha(double f) {
+        return withAlpha(alpha() * f);
     }
 
     @Override
     public String toString() {
         return toCss();
+    }
+
+    @Override
+    public HSLColor toHSLColor() {
+        float c = v * s;
+        float l = v - c / 2.0f;
+
+        float denominator = 1.0f - Math.abs(2.0f * l - 1.0f);
+        float sl = denominator == 0.0f ? 0.0f : c / denominator;
+
+        return new HSLColor(h, sl, l, alpha);
     }
 }
     

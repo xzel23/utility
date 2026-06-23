@@ -82,6 +82,43 @@ class RtfConverterTest {
     }
 
     @Test
+    void testRoundTripBackgroundColor() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Before ");
+        builder.push(Style.background(Color.YELLOW));
+        builder.append("Highlighted");
+        builder.pop(Style.background(Color.YELLOW));
+        builder.append(" After");
+
+        RichText expected = builder.toRichText();
+        String rtf = converter.fromRichText(expected);
+        RichText actual = converter.toRichText(rtf);
+
+        assertEquals(expected.toString(), actual.toString());
+        assertTrue(rtf.contains("\\highlight"));
+
+        int highlightedPos = actual.indexOf("Highlighted");
+        assertEquals(Color.YELLOW, actual.runAt(highlightedPos).getFontDef().getBackgroundColor());
+    }
+
+    @Test
+    void testToRichTextParsesBackgroundColor() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        String rtf = "{\\rtf1\\ansi\\deff0{\\colortbl ;\\red255\\green255\\blue0;}\\pard\\highlight1 Highlighted\\highlight0 Plain\\par}";
+
+        RichText actual = converter.toRichText(rtf);
+
+        assertEquals("HighlightedPlain\n", actual.toString());
+        int highlightedPos = actual.indexOf("Highlighted");
+        assertEquals(Color.YELLOW, actual.runAt(highlightedPos).getFontDef().getBackgroundColor());
+
+        int plainPos = actual.indexOf("Plain");
+        assertEquals(null, actual.runAt(plainPos).getFontDef().getBackgroundColor());
+    }
+
+    @Test
     void testRoundTripInlineImage() {
         RtfConverter rtfConverter = RtfConverter.get().orElse(null);
         Assumptions.assumeTrue(rtfConverter != null, "RtfConverter not available");

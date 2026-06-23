@@ -45,6 +45,14 @@ public record RGBColor(int argb) implements Color {
                 + shiftComponentValue(b, SHIFT_B));
     }
 
+    static int argbf(float a, float r, float g, float b) {
+        int ri = Math.round(r * 255);
+        int gi = Math.round(g * 255);
+        int bi = Math.round(b * 255);
+        int ai = Math.round(a * 255);
+        return (ai << 24) + (ri << 16) + (gi << 8) + bi;
+    }
+
     private static int shiftComponentValue(int value, int bits) {
         LangUtil.checkArg(value >= 0 && value <= 255, "value out of range: %d", value);
         return value << bits;
@@ -119,35 +127,27 @@ public record RGBColor(int argb) implements Color {
 
     @Override
     public RGBColor brighter() {
-        int r = r();
-        int g = g();
-        int b = b();
-        int alpha = a();
-
-        int i = (int) (1.0 / (1.0 - F_BRIGHTEN));
-        if (r == 0 && g == 0 && b == 0) {
-            return new RGBColor(i, i, i, alpha);
-        }
-
-        if (r > 0 && r < i) {
-            r = i;
-        }
-        if (g > 0 && g < i) {
-            g = i;
-        }
-        if (b > 0 && b < i) {
-            b = i;
-        }
-
-        //noinspection NumericCastThatLosesPrecision
-        return new RGBColor(Math.min((int) (r / F_BRIGHTEN), 255), Math.min((int) (g / F_BRIGHTEN), 255),
-                Math.min((int) (b / F_BRIGHTEN), 255), alpha);
+        return toHSLColor().brighter().toRGBColor();
     }
 
     @Override
     public RGBColor darker() {
-        //noinspection NumericCastThatLosesPrecision
-        return new RGBColor((int) (r() * F_BRIGHTEN), (int) (g() * F_BRIGHTEN), (int) (b() * F_BRIGHTEN), a());
+        return toHSLColor().darker().toRGBColor();
+    }
+
+    @Override
+    public RGBColor withAlpha(int a) {
+        return a == a() ? this : new RGBColor(r(), g(), b(), Math.clamp(a, 0, 255));
+    }
+
+    @Override
+    public RGBColor withAlpha(double a) {
+        return withAlpha(Math.clamp((int) Math.round(a * 255), 0, 255));
+    }
+
+    @Override
+    public RGBColor multiplyAlpha(double f) {
+        return withAlpha(a() * f);
     }
 
     /**

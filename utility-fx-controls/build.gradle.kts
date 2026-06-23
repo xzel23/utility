@@ -32,3 +32,16 @@ tasks.withType<Test> {
         "-Dsun.java2d.pmoffscreen=false"
     )
 }
+
+jmh {
+    resultFormat = "JSON"
+    resultsFile = layout.buildDirectory.file("reports/jmh/results.json").get().asFile
+    profilers = listOf("gc")
+    jvmArgsAppend = listOf(
+        "-Djava.awt.headless=true",
+        "-Dprism.order=sw",
+        "-Dsun.java2d.d3d=false",
+        "-Dsun.java2d.opengl=false",
+        "-Dsun.java2d.pmoffscreen=false"
+    )
+}

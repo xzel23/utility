@@ -45,6 +45,7 @@ public class FxGraphics implements Graphics {
         Font font = DEFAULT_FONT;
         javafx.scene.text.Font fxFont = DEFAULT_FONT_FX;
         javafx.scene.paint.Color fxTextColor = FxUtil.convert(font.getColor());
+        javafx.scene.paint.Color fxBackgroundColor = FxUtil.convert(font.getBackgroundColor());
 
         boolean isStrikeThrough = false;
         boolean isUnderline = false;
@@ -348,6 +349,7 @@ public class FxGraphics implements Graphics {
         assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.fxTextColor = FxUtil.convert(font.getColor());
+        state.fxBackgroundColor = FxUtil.convert(font.getBackgroundColor());
         state.font = font;
         state.fxFont = FONT_UTIL.convert(state.font.scaled(scale));
         state.isStrikeThrough = font.isStrikeThrough();
@@ -363,16 +365,25 @@ public class FxGraphics implements Graphics {
     public void drawText(CharSequence text, float x, float y) {
         assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
+        if (text.isEmpty()) {
+            return;
+        }
+
         gc.setFont(state.fxFont);
+        Text t = new Text(text.toString());
+        t.setFont(state.fxFont);
+        Bounds r = t.getBoundsInLocal();
+        if (!state.font.getBackgroundColor().isTransparent()) {
+            gc.setFill(state.fxBackgroundColor);
+            gc.fillRect(x, y + r.getMinY(), r.getWidth(), r.getHeight());
+        }
+
         gc.setFill(state.fxTextColor);
         gc.fillText(text.toString(), x, y);
 
         if (state.isStrikeThrough || state.isUnderline) {
             double strokeWidth = state.fxFont.getSize() / 15.0f;
 
-            Text t = new Text(text.toString());
-            t.setFont(state.fxFont);
-            Bounds r = t.getBoundsInLocal();
             double wStroke = r.getWidth();
 
             gc.setStroke(state.fxTextColor);

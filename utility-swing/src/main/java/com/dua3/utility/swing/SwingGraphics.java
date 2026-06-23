@@ -81,6 +81,7 @@ public class SwingGraphics implements Graphics {
         private Font font = DEFAULT_FONT;
         private java.awt.Font awtFont = DEFAULT_FONT_AWT;
         private java.awt.Color awtTextColor = SwingUtil.convert(font.getColor());
+        private java.awt.Color awtBackgroundColor = SwingUtil.convert(font.getBackgroundColor());
         private boolean isUnderlined = false;
         private boolean isStrikeThrough = false;
     }
@@ -273,6 +274,7 @@ public class SwingGraphics implements Graphics {
         assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.awtTextColor = (SwingUtil.convert(font.getColor()));
+        state.awtBackgroundColor = SwingUtil.convert(font.getBackgroundColor());
         state.isUnderlined = font.isUnderline();
         state.isStrikeThrough = font.isStrikeThrough();
         state.font = font;
@@ -404,9 +406,10 @@ public class SwingGraphics implements Graphics {
         }
 
         g2d.setColor(state.awtTextColor);
+        var metrics = g2d.getFontMetrics(state.awtFont);
 
         // Line height, derived from the font metric
-        float lineHeight = g2d.getFontMetrics(state.awtFont).getHeight();
+        float lineHeight = metrics.getHeight();
 
         int lineStart = 0;
         float offsetY = 0;
@@ -426,6 +429,16 @@ public class SwingGraphics implements Graphics {
                     as.addAttribute(TextAttribute.FONT, state.awtFont, 0, textLine.length());
                     as.addAttribute(TextAttribute.UNDERLINE, state.isUnderlined ? TextAttribute.UNDERLINE_ON : null, 0, textLine.length());
                     as.addAttribute(TextAttribute.STRIKETHROUGH, state.isStrikeThrough ? TextAttribute.STRIKETHROUGH_ON : null, 0, textLine.length());
+
+                    if (!state.font.getBackgroundColor().isTransparent()) {
+                        int width = metrics.stringWidth(textLine.toString());
+                        if (width > 0) {
+                            int top = Math.round(y + offsetY - metrics.getAscent());
+                            g2d.setColor(state.awtBackgroundColor);
+                            g2d.fillRect(Math.round(x), top, width, Math.round(lineHeight));
+                            g2d.setColor(state.awtTextColor);
+                        }
+                    }
 
                     // Draw the line
                     g2d.drawString(as.getIterator(), x, y + offsetY);

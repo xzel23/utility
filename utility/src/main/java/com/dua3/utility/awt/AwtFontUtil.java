@@ -283,10 +283,13 @@ public final class AwtFontUtil implements FontUtil {
         );
 
         Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
-        if (fontData.equals(baseFont.getFontData()) && color.equals(baseFont.getColor())) {
+        Color backgroundColor = Objects.requireNonNullElse(fontDef.getBackgroundColor(), font.getBackgroundColor());
+        if (fontData.equals(baseFont.getFontData())
+                && color.equals(baseFont.getColor())
+                && backgroundColor.equals(baseFont.getBackgroundColor())) {
             return baseFont; // avoid creating unnecessary instance
         } else {
-            return Font.getFont(fontData, color);
+            return Font.getFont(fontData, color, backgroundColor);
         }
     }
 

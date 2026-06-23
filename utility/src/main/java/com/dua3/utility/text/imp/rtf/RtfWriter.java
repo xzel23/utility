@@ -56,6 +56,10 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             if (color != null) {
                 colors.computeIfAbsent(color, key -> colors.size() + 1);
             }
+            Color backgroundColor = normalizeBackgroundColor(fontDef.getBackgroundColor());
+            if (backgroundColor != null) {
+                colors.computeIfAbsent(backgroundColor, key -> colors.size() + 1);
+            }
         }
 
         this.fontIndexByName = Map.copyOf(fonts);
@@ -159,6 +163,11 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             if (color != null) {
                 int colorIndex = colorIndexByColor.getOrDefault(color, 0);
                 appendControlWord("cf", colorIndex);
+            }
+            Color backgroundColor = normalizeBackgroundColor(fontDef.getBackgroundColor());
+            if (backgroundColor != null) {
+                int colorIndex = colorIndexByColor.getOrDefault(backgroundColor, 0);
+                appendControlWord("highlight", colorIndex);
             }
 
             if (Boolean.TRUE.equals(fontDef.getBold())) {
@@ -643,6 +652,13 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             int b = value & 0xFF;
             buffer.append(HEX[b >>> 4]).append(HEX[b & 0x0F]);
         }
+    }
+
+    private static @Nullable Color normalizeBackgroundColor(@Nullable Color color) {
+        if (color == null || color.isTransparent()) {
+            return null;
+        }
+        return color;
     }
 
     private record InlineImageExportData(

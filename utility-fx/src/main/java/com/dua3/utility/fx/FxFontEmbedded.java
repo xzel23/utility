@@ -15,8 +15,17 @@ public final class FxFontEmbedded extends Font {
 
     private final javafx.scene.text.Font fxFont;
 
-    FxFontEmbedded(javafx.scene.text.Font fxFont, List<String> families, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
-        super(prepareEmbeddedFontData(fxFont, families, bold, italic, underline, strikeThrough), color);
+    FxFontEmbedded(
+            javafx.scene.text.Font fxFont,
+            List<String> families,
+            Color color,
+            Color backgroundColor,
+            boolean bold,
+            boolean italic,
+            boolean underline,
+            boolean strikeThrough
+    ) {
+        super(prepareEmbeddedFontData(fxFont, families, bold, italic, underline, strikeThrough), color, backgroundColor);
         this.fxFont = fxFont;
     }
 

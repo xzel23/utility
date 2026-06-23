@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
@@ -247,6 +248,7 @@ public final class RichText
      * @param b text
      * @return true, if a and b consist of the same characters with the same styling
      */
+    @SuppressWarnings("java:S4274") // keep the assertion!
     public static boolean textAndFontEquals(@Nullable RichText a, @Nullable RichText b) {
         if (a == b) {
             return true;
@@ -566,6 +568,7 @@ public final class RichText
      *                                   or if start is greater than end
      * @throws NullPointerException if {@code builder} is {@code null}
      */
+    @Override
     public void appendTo(RichTextBuilder builder, int from, int to) {
         Objects.checkFromToIndex(from, to, length());
         builder.ensureCapacity(builder.length() + to - from);
@@ -856,6 +859,172 @@ public final class RichText
     }
 
     /**
+     * Replaces a text range with the supplied {@code replacement}.
+     * <p>
+     * This method avoids rebuilding a monolithic backing string. Instead it splices
+     * run metadata and uses a segmented shared character sequence as backing storage.
+     *
+     * @param start start index (inclusive)
+     * @param end end index (exclusive)
+     * @param replacement replacement rich text
+     * @return updated rich text
+     */
+    public RichText replace(int start, int end, RichText replacement) {
+        Objects.requireNonNull(replacement, "replacement");
+        Objects.checkFromToIndex(start, end, length);
+
+        if (start == end && replacement.isEmpty()) {
+            return this;
+        }
+        if (start == 0 && end == length) {
+            return replacement;
+        }
+
+        CharSequence newBase = SegmentedCharSequence.splice(
+                new Segment(text, this.start, this.start + start),
+                new Segment(replacement.text, replacement.start, replacement.start + replacement.length),
+                new Segment(text, this.start + end, this.start + length)
+        );
+
+        List<Run> runs = new ArrayList<>(Math.max(1, run.length + replacement.run.length + 4));
+        int writePos = 0;
+        writePos = appendRuns(runs, newBase, this, 0, start, writePos);
+        writePos = appendRuns(runs, newBase, replacement, 0, replacement.length, writePos);
+        appendRuns(runs, newBase, this, end, length, writePos);
+
+        return runs.isEmpty() ? emptyText() : new RichText(runs.toArray(Run[]::new));
+    }
+
+    /**
+     * Returns the number of leading characters that are equal in this text and {@code other},
+     * including matching text attributes.
+     *
+     * @param other other text
+     * @return common prefix length
+     */
+    public int commonPrefixLength(RichText other) {
+        Objects.requireNonNull(other, "other");
+        if (this == other) {
+            return length;
+        }
+
+        int limit = Math.min(length, other.length);
+        int prefix = 0;
+
+        while (prefix < limit) {
+            Run runA = runAt(prefix);
+            Run runB = other.runAt(prefix);
+            if (!runA.attributes().equals(runB.attributes())) {
+                break;
+            }
+
+            int runEndA = runA.getEnd() - start;
+            int runEndB = runB.getEnd() - other.start;
+            int chunkLength = Math.min(limit - prefix, Math.min(runEndA - prefix, runEndB - prefix));
+            int matched = matchingPrefixChars(this, other, prefix, prefix, chunkLength);
+            prefix += matched;
+            if (matched < chunkLength) {
+                break;
+            }
+        }
+
+        return prefix;
+    }
+
+    /**
+     * Returns the number of trailing characters that are equal in this text and {@code other},
+     * including matching text attributes.
+     *
+     * @param other other text
+     * @return common suffix length
+     */
+    public int commonSuffixLength(RichText other) {
+        Objects.requireNonNull(other, "other");
+        if (this == other) {
+            return length;
+        }
+
+        int limit = Math.min(length, other.length);
+        int suffix = 0;
+        int endThis = length;
+        int endOther = other.length;
+
+        while (suffix < limit) {
+            Run runThis = runAt(endThis - 1);
+            Run runOther = other.runAt(endOther - 1);
+            if (!runThis.attributes().equals(runOther.attributes())) {
+                break;
+            }
+
+            int runStartThis = runThis.getStart() - start;
+            int runStartOther = runOther.getStart() - other.start;
+            int chunkLength = Math.min(limit - suffix, Math.min(endThis - runStartThis, endOther - runStartOther));
+            int matched = matchingSuffixChars(this, other, endThis, endOther, chunkLength);
+            suffix += matched;
+            endThis -= matched;
+            endOther -= matched;
+            if (matched < chunkLength) {
+                break;
+            }
+        }
+
+        return suffix;
+    }
+
+    private static int matchingPrefixChars(RichText a, RichText b, int startA, int startB, int length) {
+        int matched = 0;
+        while (matched < length && a.charAt(startA + matched) == b.charAt(startB + matched)) {
+            matched++;
+        }
+        return matched;
+    }
+
+    private static int matchingSuffixChars(RichText a, RichText b, int endA, int endB, int length) {
+        int matched = 0;
+        while (matched < length && a.charAt(endA - matched - 1) == b.charAt(endB - matched - 1)) {
+            matched++;
+        }
+        return matched;
+    }
+
+    private static int appendRuns(List<Run> target, CharSequence base, RichText source, int from, int to, int writePos) {
+        if (from >= to) {
+            return writePos;
+        }
+
+        int absFrom = source.start + from;
+        int absTo = source.start + to;
+        for (Run srcRun : source.run) {
+            if (srcRun.getEnd() <= absFrom || srcRun.getStart() >= absTo) {
+                continue;
+            }
+
+            int segStart = Math.max(srcRun.getStart(), absFrom);
+            int segEnd = Math.min(srcRun.getEnd(), absTo);
+            int segLength = segEnd - segStart;
+            if (segLength <= 0) {
+                continue;
+            }
+
+            TextAttributes attributes = srcRun.attributes();
+            if (!target.isEmpty()) {
+                int lastIndex = target.size() - 1;
+                Run lastRun = target.get(lastIndex);
+                if (lastRun.getEnd() == writePos && lastRun.attributes().equals(attributes)) {
+                    target.set(lastIndex, new Run(base, lastRun.getStart(), lastRun.length() + segLength, attributes));
+                    writePos += segLength;
+                    continue;
+                }
+            }
+
+            target.add(new Run(base, writePos, segLength, attributes));
+            writePos += segLength;
+        }
+
+        return writePos;
+    }
+
+    /**
      * Replaces the first substring of this RichText that matches the given regular expression
      * with the specified replacement RichText.
      *
@@ -1119,6 +1288,187 @@ public final class RichText
         return Arrays.stream(run);
     }
 
+    private record Segment(CharSequence base, int start, int end) {
+        private Segment {
+            Objects.checkFromToIndex(start, end, base.length());
+        }
+
+        private int length() {
+            return end - start;
+        }
+    }
+
+    private static final class SegmentedCharSequence implements CharSequence {
+        private static final int MAX_SEGMENTS = 512;
+
+        private final Segment[] segments;
+        private final int[] segmentEnds;
+        private final int length;
+
+        private int cachedSegmentIndex = -1;
+        private int cachedSegmentStart;
+        private int cachedSegmentEnd;
+
+        private SegmentedCharSequence(Segment[] segments, int[] segmentEnds, int length) {
+            this.segments = segments;
+            this.segmentEnds = segmentEnds;
+            this.length = length;
+        }
+
+        private static CharSequence splice(Segment... segments) {
+            List<Segment> flatSegments = new ArrayList<>(segments.length + 4);
+            for (Segment segment : segments) {
+                appendSlice(flatSegments, segment.base, segment.start, segment.end);
+            }
+            return compact(flatSegments);
+        }
+
+        private static CharSequence compact(List<Segment> flatSegments) {
+            if (flatSegments.isEmpty()) {
+                return "";
+            }
+
+            if (flatSegments.size() == 1) {
+                Segment segment = flatSegments.getFirst();
+                return segment.start == 0 && segment.end == segment.base.length()
+                        ? segment.base
+                        : segment.base.subSequence(segment.start, segment.end);
+            }
+
+            int totalLength = 0;
+            for (Segment segment : flatSegments) {
+                totalLength += segment.length();
+            }
+
+            if (flatSegments.size() > MAX_SEGMENTS) {
+                StringBuilder sb = new StringBuilder(totalLength);
+                for (Segment segment : flatSegments) {
+                    sb.append(segment.base, segment.start, segment.end);
+                }
+                return sb.toString();
+            }
+
+            Segment[] segmentArray = flatSegments.toArray(Segment[]::new);
+            int[] segmentEnds = new int[segmentArray.length];
+            int end = 0;
+            for (int i = 0; i < segmentArray.length; i++) {
+                end += segmentArray[i].length();
+                segmentEnds[i] = end;
+            }
+            return new SegmentedCharSequence(segmentArray, segmentEnds, totalLength);
+        }
+
+        private static void appendSlice(List<Segment> target, CharSequence base, int from, int to) {
+            if (from == to) {
+                return;
+            }
+            Objects.checkFromToIndex(from, to, base.length());
+
+            if (base instanceof SegmentedCharSequence segmented) {
+                segmented.appendSliceTo(target, from, to);
+                return;
+            }
+
+            appendSegment(target, new Segment(base, from, to));
+        }
+
+        private static void appendSegment(List<Segment> target, Segment segment) {
+            if (segment.length() == 0) {
+                return;
+            }
+            if (!target.isEmpty()) {
+                int lastIndex = target.size() - 1;
+                Segment last = target.get(lastIndex);
+                if (last.base == segment.base && last.end == segment.start) {
+                    target.set(lastIndex, new Segment(last.base, last.start, segment.end));
+                    return;
+                }
+            }
+            target.add(segment);
+        }
+
+        private void appendSliceTo(List<Segment> target, int from, int to) {
+            if (from == to) {
+                return;
+            }
+            Objects.checkFromToIndex(from, to, length);
+
+            int cursor = 0;
+            for (Segment segment : segments) {
+                int segmentLength = segment.length();
+                int segmentStart = cursor;
+                int segmentEnd = cursor + segmentLength;
+
+                if (segmentEnd <= from) {
+                    cursor = segmentEnd;
+                    continue;
+                }
+                if (segmentStart >= to) {
+                    break;
+                }
+
+                int localStart = Math.max(from, segmentStart) - segmentStart;
+                int localEnd = Math.min(to, segmentEnd) - segmentStart;
+                appendSegment(target, new Segment(segment.base, segment.start + localStart, segment.start + localEnd));
+                cursor = segmentEnd;
+            }
+        }
+
+        @Override
+        public int length() {
+            return length;
+        }
+
+        @Override
+        public char charAt(int index) {
+            int i = Objects.checkIndex(index, length);
+            int segmentIndex = locateSegment(i);
+            Segment segment = segments[segmentIndex];
+            return segment.base.charAt(segment.start + (i - cachedSegmentStart));
+        }
+
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            Objects.checkFromToIndex(start, end, length);
+            if (start == 0 && end == length) {
+                return this;
+            }
+            if (start == end) {
+                return "";
+            }
+
+            List<Segment> sliced = new ArrayList<>(4);
+            appendSliceTo(sliced, start, end);
+            return compact(sliced);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder(length);
+            for (Segment segment : segments) {
+                sb.append(segment.base, segment.start, segment.end);
+            }
+            return sb.toString();
+        }
+
+        private int locateSegment(int index) {
+            int cached = cachedSegmentIndex;
+            if (cached >= 0 && index >= cachedSegmentStart && index < cachedSegmentEnd) {
+                return cached;
+            }
+
+            int segmentIndex = Arrays.binarySearch(segmentEnds, index + 1);
+            if (segmentIndex < 0) {
+                segmentIndex = -segmentIndex - 1;
+            }
+
+            cachedSegmentIndex = segmentIndex;
+            cachedSegmentStart = segmentIndex == 0 ? 0 : segmentEnds[segmentIndex - 1];
+            cachedSegmentEnd = segmentEnds[segmentIndex];
+            return segmentIndex;
+        }
+    }
+
     /**
      * Returns a BiPredicate that checks whether two RichText objects are equal based on the provided ComparisonSettings.
      *
@@ -1153,6 +1503,7 @@ public final class RichText
                         || isSignificantChange(s.ignoreFontWeight(), fda.getBold(), fdb.getBold())
                         || isSignificantChange(s.ignoreItalic(), fda.getItalic(), fdb.getItalic())
                         || isSignificantChange(s.ignoreTextColor(), fda.getColor(), fdb.getColor())
+                        || isSignificantChange(false, normalizeBackgroundColor(fda.getBackgroundColor()), normalizeBackgroundColor(fdb.getBackgroundColor()))
                         || isSignificantChange(s.ignoreUnderline(), fda.getUnderline(), fdb.getUnderline())
                         || isSignificantChange(s.ignoreStrikeThrough(), fda.getStrikeThrough(), fdb.getStrikeThrough())
                         || isSignificantChange(s.ignoreFontFamily(), s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
@@ -1177,6 +1528,10 @@ public final class RichText
      */
     private static boolean isSignificantChange(boolean ignored, @Nullable Object a, @Nullable Object b) {
         return !ignored && !Objects.equals(a, b);
+    }
+
+    private static @Nullable Color normalizeBackgroundColor(@Nullable Color color) {
+        return color != null && color.isTransparent() ? null : color;
     }
 
     /**

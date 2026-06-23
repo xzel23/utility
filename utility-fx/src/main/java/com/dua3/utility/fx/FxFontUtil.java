@@ -279,7 +279,16 @@ public final class FxFontUtil implements FontUtil {
     public com.dua3.utility.text.Font loadFontAs(InputStream in, com.dua3.utility.text.Font font) throws IOException {
         Font fxFont = Font.loadFont(in, font.getSizeInPoints());
         LangUtil.check(fxFont != null, () -> new IOException("no font loaded"));
-        return new com.dua3.utility.fx.FxFontEmbedded(fxFont, font.getFamilies(), font.getColor(), font.isBold(), font.isItalic(), font.isUnderline(), font.isStrikeThrough());
+        return new com.dua3.utility.fx.FxFontEmbedded(
+                fxFont,
+                font.getFamilies(),
+                font.getColor(),
+                font.getBackgroundColor(),
+                font.isBold(),
+                font.isItalic(),
+                font.isUnderline(),
+                font.isStrikeThrough()
+        );
     }
 
     @Override
@@ -316,10 +325,13 @@ public final class FxFontUtil implements FontUtil {
         );
 
         Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
-        if (fontData.equals(baseFont.getFontData()) && color.equals(baseFont.getColor())) {
+        Color backgroundColor = Objects.requireNonNullElse(fontDef.getBackgroundColor(), font.getBackgroundColor());
+        if (fontData.equals(baseFont.getFontData())
+                && color.equals(baseFont.getColor())
+                && backgroundColor.equals(baseFont.getBackgroundColor())) {
             return baseFont; // avoid creating unnecessary instance
         } else {
-            return com.dua3.utility.text.Font.getFont(fontData, color);
+            return com.dua3.utility.text.Font.getFont(fontData, color, backgroundColor);
         }
     }
 

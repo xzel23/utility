@@ -82,7 +82,7 @@ class StyledDocumentConverterTest {
     void testConvertWithCustomFont() throws BadLocationException {
         // Get a custom font
         Font customFont = FontUtil.getInstance().getFont("arial-14-bold");
-        Style customStyle = Style.create("customFont", Map.entry(Style.FONT, customFont));
+        Style customStyle = Style.create("customFont", customFont.toFontDef());
 
         // Create RichText with custom font
         RichTextBuilder builder = new RichTextBuilder();

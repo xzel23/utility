@@ -213,14 +213,15 @@ class RichTextTest {
         RichText serif = text.apply(Style.SERIF);
         RichText sans = text.apply(Style.SANS_SERIF);
         RichText texts = RichText.valueOf("texts");
-        RichText arial = text.apply(Style.create("arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("Arial-12"))));
-        RichText arialSubset = text.apply(Style.create("AAAAAA+arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("AAAAAA+Arial-12"))));
-        RichText helvetica = text.apply(Style.create("arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("Helvetica-12"))));
+        RichText arial = text.apply(Style.create("arial", FontUtil.getInstance().getFont("Arial-12").toFontDef()));
+        RichText arialSubset = text.apply(Style.create("AAAAAA+arial", FontUtil.getInstance().getFont("AAAAAA+Arial-12").toFontDef()));
+        RichText helvetica = text.apply(Style.create("arial", FontUtil.getInstance().getFont("Helvetica-12").toFontDef()));
 
         BiPredicate<RichText, RichText> ignoreColor = RichText.equalizer(ComparisonSettings.builder().setIgnoreTextColor(true).build());
         assertTrue(ignoreColor.test(text, text.apply(Style.RED)));
         assertTrue(ignoreColor.test(text.apply(Style.BLUE), text.apply(Style.RED)));
         assertTrue(ignoreColor.test(text.apply(Style.BLUE), text));
+        assertFalse(ignoreColor.test(text, text.apply(Style.background(Color.YELLOW))));
         assertFalse(ignoreColor.test(texts, text));
         assertFalse(ignoreColor.test(text.apply(Style.ITALIC), text));
         assertFalse(ignoreColor.test(text, text.apply(Style.BOLD)));
@@ -459,6 +460,92 @@ class RichTextTest {
     void testReplaceFirstStringArgument_MalformedRegex() {
         RichText input = RichText.valueOf("Hello, world!");
         Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceFirst("[ol", "!"));
+    }
+
+    @Test
+    void testReplaceRangeMergesAdjacentRunsWithSameAttributes() {
+        RichText source = RichText.valueOf("abc");
+        RichText updated = source.replace(1, 2, RichText.valueOf("X"));
+
+        assertEquals(RichText.valueOf("aXc"), updated);
+        assertEquals(1, updated.runs().size());
+    }
+
+    @Test
+    void testReplaceRangePreservesStylesAcrossBoundaries() {
+        RichTextBuilder sourceBuilder = new RichTextBuilder();
+        sourceBuilder.push(Style.BOLD);
+        sourceBuilder.append("ab");
+        sourceBuilder.pop(Style.BOLD);
+        sourceBuilder.push(Style.ITALIC);
+        sourceBuilder.append("cd");
+        sourceBuilder.pop(Style.ITALIC);
+        sourceBuilder.append("ef");
+        RichText source = sourceBuilder.toRichText();
+
+        RichTextBuilder replacementBuilder = new RichTextBuilder();
+        replacementBuilder.push(Style.UNDERLINE);
+        replacementBuilder.append("XY");
+        replacementBuilder.pop(Style.UNDERLINE);
+        RichText replacement = replacementBuilder.toRichText();
+
+        RichText updated = source.replace(1, 4, replacement);
+
+        assertEquals("aXYef", updated.toString());
+        assertTrue(updated.stylesAt(0).contains(Style.BOLD));
+        assertTrue(updated.stylesAt(1).contains(Style.UNDERLINE));
+        assertTrue(updated.stylesAt(2).contains(Style.UNDERLINE));
+        assertTrue(updated.stylesAt(3).isEmpty());
+        assertTrue(updated.stylesAt(4).isEmpty());
+    }
+
+    @Test
+    void testReplaceRangeWholeTextReturnsReplacement() {
+        RichText source = RichText.valueOf("abcdef");
+        RichText replacement = RichText.valueOf("XYZ").apply(Style.BOLD);
+
+        RichText updated = source.replace(0, source.length(), replacement);
+        assertSame(replacement, updated);
+    }
+
+    @Test
+    void testReplaceRangeInvalidRangeThrows() {
+        RichText source = RichText.valueOf("abc");
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> source.replace(-1, 1, RichText.emptyText()));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> source.replace(1, 4, RichText.emptyText()));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> source.replace(2, 1, RichText.emptyText()));
+    }
+
+    @Test
+    void testCommonPrefixLengthForInsertReplacement() {
+        RichText source = RichText.valueOf("abcdef");
+        RichText updated = source.replace(2, 4, RichText.valueOf("XYZ"));
+
+        assertEquals(2, source.commonPrefixLength(updated));
+    }
+
+    @Test
+    void testCommonSuffixLengthForInsertReplacement() {
+        RichText source = RichText.valueOf("abcdef");
+        RichText updated = source.replace(2, 4, RichText.valueOf("XYZ"));
+
+        assertEquals(2, source.commonSuffixLength(updated));
+    }
+
+    @Test
+    void testCommonPrefixAndSuffixLengthForStyleOnlyChange() {
+        RichText source = RichText.valueOf("0123456789");
+        RichText updated = source.apply(Style.BOLD, 3, 7);
+
+        assertEquals(3, source.commonPrefixLength(updated));
+        assertEquals(3, source.commonSuffixLength(updated));
+    }
+
+    @Test
+    void testCommonPrefixAndSuffixLengthForEqualTexts() {
+        RichText source = RichText.valueOf("abcdef");
+        assertEquals(source.length(), source.commonPrefixLength(source));
+        assertEquals(source.length(), source.commonSuffixLength(source));
     }
 
     @Test

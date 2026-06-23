@@ -39,6 +39,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
@@ -192,7 +193,7 @@ public class TextPane extends Control {
      *
      * @return text
      */
-    public final RichText getText() {
+    public RichText getText() {
         return text.get();
     }
 
@@ -364,14 +365,20 @@ public class TextPane extends Control {
     }
 
     Layout createLayout(double availableWidth) {
-        RichText richText = getText();
-        Font font = getFont();
+        return createLayout(getText(), availableWidth);
+    }
+
+    Layout createLayout(RichText richText, double availableWidth) {
+        return createLayout(richText, getFont(), isWrapText(), availableWidth);
+    }
+
+    private static Layout createLayout(RichText richText, Font font, boolean wrapText, double availableWidth) {
         com.dua3.utility.text.FontUtil fontUtil = com.dua3.utility.text.FontUtil.getInstance();
         LayoutTextData layoutTextData = createLayoutTextData(richText, font, fontUtil);
         RichText layoutText = layoutTextData.text();
 
         float width = (float) Math.max(1.0, availableWidth);
-        float wrapWidth = isWrapText() ? width : FragmentedText.NO_WRAP;
+        float wrapWidth = wrapText ? width : FragmentedText.NO_WRAP;
         FragmentedText layoutFragments = FragmentedText.generateFragments(
                 layoutText,
                 fontUtil,
@@ -398,32 +405,52 @@ public class TextPane extends Control {
                 VAnchor.TOP,
                 wrapWidth
         );
-        float renderWidth = isWrapText() ? width : Math.max(width, renderFragments.actualWidth());
+        float renderWidth = wrapText ? width : Math.max(width, renderFragments.actualWidth());
 
         List<InlineControlPlacement> placements = new ArrayList<>();
         for (List<FragmentedText.Fragment> line : layoutFragments.lines()) {
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            float lineTop = line.getFirst().y();
+            float lineBottom = lineTop;
+            double lineAscent = 0.0;
+            for (FragmentedText.Fragment fragment : line) {
+                lineBottom = Math.max(lineBottom, fragment.y() + fragment.h());
+                double fragmentAscent = fragment.font().getAscent();
+                if (fragment.text() instanceof Run run) {
+                    fragmentAscent = getInlineReferenceAscent(run, fragment.font());
+                }
+                lineAscent = Math.max(lineAscent, fragmentAscent);
+            }
+
+            float lineHeight = Math.max(0.0f, lineBottom - lineTop);
+            lineAscent = Math.clamp(lineAscent, 0.0, lineHeight);
+            double lineDescent = Math.max(0.0, lineHeight - lineAscent);
+            float baselineY = (float) (lineTop + lineAscent);
+
             for (FragmentedText.Fragment fragment : line) {
                 if (fragment.text() instanceof Run run) {
                     Node node = createInlineNode(run);
                     if (node != null) {
                         VAnchor vAnchor = getInlineNodeVAnchor(run);
-                        double refAscent = getInlineReferenceAscent(run, fragment.font());
-                        double refDescent = getInlineReferenceDescent(run, fragment.font());
-                        float baselineY = (float) (fragment.y() + refAscent);
                         double descent = getInlineNodeDescent(run);
                         double leadingWidth = getInlineLeadingWidth(run);
                         placements.add(new InlineControlPlacement(
                                 node,
                                 (float) (fragment.x() - leadingWidth),
-                                fragment.y(),
+                                lineTop,
                                 fragment.w(),
-                                fragment.h(),
+                                lineHeight,
                                 baselineY,
                                 fragment.font(),
                                 vAnchor,
-                                refAscent,
-                                refDescent,
-                                descent
+                                lineAscent,
+                                lineDescent,
+                                descent,
+                                run.getStart(),
+                                run.getEnd()
                         ));
                     }
                 }
@@ -552,7 +579,7 @@ public class TextPane extends Control {
         if (node.getScene() == null) {
             Pane tempRoot = new Pane(node);
             // Attach temporarily so CSS/skin-dependent preferred sizes are available.
-            new Scene(tempRoot);
+            LangUtil.ignore(new Scene(tempRoot));
             tempRoot.applyCss();
             node.applyCss();
             node.autosize();
@@ -714,42 +741,24 @@ public class TextPane extends Control {
     }
 
     private static Optional<URI> toUri(@Nullable Object value) {
-        if (value instanceof URI uri) {
-            return Optional.of(uri);
-        }
-        if (value instanceof CharSequence cs) {
-            String text = cs.toString().trim();
-            if (text.isEmpty()) {
-                return Optional.empty();
+        return switch (value) {
+            case URI uri -> Optional.of(uri);
+            case CharSequence cs -> {
+                String text = cs.toString().trim();
+                if (text.isEmpty()) {
+                    yield Optional.empty();
+                }
+                try {
+                    yield Optional.of(new URI(text));
+                } catch (URISyntaxException ex) {
+                    yield Optional.empty();
+                }
             }
-            try {
-                return Optional.of(new URI(text));
-            } catch (URISyntaxException ex) {
-                return Optional.empty();
-            }
-        }
-        return Optional.empty();
+            case null, default -> Optional.empty();
+        };
     }
 
-    private static void wireHyperlinkAction(TextPane control, Hyperlink hyperlink) {
-        if (hyperlink.getOnAction() != null) {
-            return;
-        }
-
-        Optional<URI> target = toUri(hyperlink.getUserData());
-        if (target.isEmpty()) {
-            return;
-        }
-
-        hyperlink.setOnAction(evt -> {
-            Consumer<URI> handler = control.getHyperlinkHandler();
-            if (handler != null) {
-                handler.accept(target.get());
-            }
-        });
-    }
-
-    private static void wireButtonAction(TextPane control, Button button) {
+    private static void wireButtonAction(TextPane control, ButtonBase button) {
         if (button.getOnAction() != null) {
             return;
         }
@@ -759,16 +768,11 @@ public class TextPane extends Control {
             return;
         }
 
-        button.setOnAction(evt -> {
-            Consumer<URI> handler = control.getHyperlinkHandler();
-            if (handler != null) {
-                handler.accept(target.get());
-            }
-        });
+        button.setOnAction(evt -> control.getHyperlinkHandler().accept(target.get()));
     }
 
     private static void openUriUsingDesktop(URI uri) {
-        if (uri == null || !Desktop.isDesktopSupported()) {
+        if (!Desktop.isDesktopSupported()) {
             return;
         }
 
@@ -809,10 +813,6 @@ public class TextPane extends Control {
 
     private static double getInlineReferenceAscent(Run run, Font fallbackFont) {
         return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT, fallbackFont::getAscent);
-    }
-
-    private static double getInlineReferenceDescent(Run run, Font fallbackFont) {
-        return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT, fallbackFont::getDescent);
     }
 
     private static double getInlineNodeDescent(Run run) {
@@ -909,7 +909,9 @@ public class TextPane extends Control {
                     placement.vAnchor(),
                     placement.referenceAscent(),
                     placement.referenceDescent(),
-                    placement.descent()
+                    placement.descent(),
+                    placement.runStart(),
+                    placement.runEnd()
             ));
         }
         return shifted;
@@ -973,7 +975,9 @@ public class TextPane extends Control {
             VAnchor vAnchor,
             double referenceAscent,
             double referenceDescent,
-            double descent
+            double descent,
+            int runStart,
+            int runEnd
     ) {}
 
     record LayoutTextData(
@@ -1008,11 +1012,21 @@ public class TextPane extends Control {
         private static final double DRAG_AUTOSCROLL_TICK_MS = 40.0;
         private static final SequencedCollection<String> AVAILABLE_FONTS = FxFontUtil.getInstance().getFamilies(FontUtil.FontTypes.ALL);
         private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
-        private static final Color[] DEFAULT_COLORS = {
+        private static final Color[] DEFAULT_TEXT_COLORS = {
                 Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
-                Color.DARKRED, Color.RED, Color.RED.brighter(),
-                Color.DARKGREEN, Color.GREEN, Color.GREEN.brighter(),
-                Color.DARKBLUE, Color.BLUE, Color.BLUE.brighter(),
+                Color.RED.darker(), Color.RED, Color.RED.brighter(),
+                Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
+                Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
+                Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
+                Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
+                Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
+        };
+        private static final Color[] DEFAULT_BACKGROUND_COLORS = {
+                Color.TRANSPARENT_WHITE,
+                Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
+                Color.RED.darker(), Color.RED, Color.RED.brighter(),
+                Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
+                Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
                 Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
                 Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
                 Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
@@ -1027,8 +1041,8 @@ public class TextPane extends Control {
         private final VBox editorRoot = new VBox();
         private boolean dirty = true;
         private double lastAvailableWidth = Double.NaN;
-        private RichText lastText;
-        private Font lastFont;
+        private RichText lastText = RichText.emptyText();
+        private Font lastFont = FontUtil.getInstance().getDefaultFont();
         private boolean lastWrapText;
         private boolean blink = true;
         private final @Nullable TextEditorPane editor;
@@ -1059,7 +1073,9 @@ public class TextPane extends Control {
             contentPane.getStyleClass().add("content");
             selectionLayer.setMouseTransparent(true);
             caretLayer.setMouseTransparent(true);
-            contentPane.getChildren().setAll(selectionLayer, canvas, inlineLayer, caretLayer);
+            // Keep selection overlay above text and inline nodes so selection stays visible
+            // even when text background colors or inline controls are present.
+            contentPane.getChildren().setAll(canvas, inlineLayer, selectionLayer, caretLayer);
 
             scrollPane.setFitToWidth(control.isWrapText());
             scrollPane.setHbarPolicy(control.isWrapText() ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -1081,8 +1097,13 @@ public class TextPane extends Control {
 
                 ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS).build();
                 ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
-                ComboBoxEx<Color> colorList = Controls.comboBoxEx(DEFAULT_COLORS)
+                ComboBoxEx<Color> textColorList = Controls.comboBoxEx(DEFAULT_TEXT_COLORS)
                         .defaultValue(() -> Color.BLACK)
+                        .format(color -> LangUtil.mapNonNullOrElse(color, Color::toArgb, ""))
+                        .graphic(color -> new Rectangle(16, 16, FxUtil.convert(color)))
+                        .build();
+                ComboBoxEx<Color> backgroundColorList = Controls.comboBoxEx(DEFAULT_BACKGROUND_COLORS)
+                        .defaultValue(() -> Color.TRANSPARENT_WHITE)
                         .format(color -> LangUtil.mapNonNullOrElse(color, Color::toArgb, ""))
                         .graphic(color -> new Rectangle(16, 16, FxUtil.convert(color)))
                         .build();
@@ -1091,7 +1112,7 @@ public class TextPane extends Control {
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
                 underlineButton.selectedProperty().bindBidirectional(editor.underlineProperty());
                 strikeThroughButton.selectedProperty().bindBidirectional(editor.strikeThroughProperty());
-                bindFontLists(editor, fontList, sizeList, colorList);
+                bindFontLists(editor, fontList, sizeList, textColorList, backgroundColorList);
                 undoButton.disableProperty().bind(editor.undoableProperty().not());
                 redoButton.disableProperty().bind(editor.redoableProperty().not());
                 copyButton.setFocusTraversable(false);
@@ -1108,7 +1129,8 @@ public class TextPane extends Control {
                         new Separator(),
                         fontList,
                         sizeList,
-                        colorList,
+                        textColorList,
+                        backgroundColorList,
                         new Separator(),
                         boldButton,
                         italicsButton,
@@ -1127,7 +1149,11 @@ public class TextPane extends Control {
                 getChildren().setAll(scrollPane);
             }
 
-            control.textProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            if (editor != null) {
+                editor.documentVersionProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            } else {
+                control.textProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            }
             control.wrapTextProperty().addListener((obs, oldVal, newVal) -> {
                 scrollPane.setFitToWidth(newVal);
                 scrollPane.setHbarPolicy(newVal == Boolean.TRUE ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -1182,25 +1208,26 @@ public class TextPane extends Control {
                     .build();
         }
 
-    private static ToggleButton createToggleButton(String text, Node graphic, TextEditorPane editor, BiConsumer<TextEditorPane, Boolean> action) {
-        return Controls.toggleButton()
-                .tooltip(text)
-                .graphic(graphic)
-                .action(e -> {
-                    if (!(e.getSource() instanceof ToggleButton tb)) {
-                        throw new IllegalStateException("Unexpected source");
-                    }
-                    action.accept(editor, tb.isSelected());
-                    editor.requestFocus();
-                })
-                .build();
-    }
+        private static ToggleButton createToggleButton(String text, Node graphic, TextEditorPane editor, BiConsumer<TextEditorPane, Boolean> action) {
+            return Controls.toggleButton()
+                    .tooltip(text)
+                    .graphic(graphic)
+                    .action(e -> {
+                        if (!(e.getSource() instanceof ToggleButton tb)) {
+                            throw new IllegalStateException("Unexpected source");
+                        }
+                        action.accept(editor, tb.isSelected());
+                        editor.requestFocus();
+                    })
+                    .build();
+        }
 
         private static void bindFontLists(
                 TextEditorPane editor,
                 ComboBoxEx<String> fontList,
                 ComboBoxEx<Float> sizeList,
-                ComboBoxEx<Color> colorList
+                ComboBoxEx<Color> textColorList,
+                ComboBoxEx<Color> backgroundColorList
         ) {
             AtomicBoolean synchronizing = new AtomicBoolean(false);
 
@@ -1255,18 +1282,39 @@ public class TextPane extends Control {
                             return;
                         }
 
-                        ensureValuePresent(colorList, newValue);
-                        if (!Objects.equals(colorList.valueProperty().getValue(), newValue)) {
-                            colorList.valueProperty().setValue(newValue);
+                        ensureValuePresent(textColorList, newValue);
+                        if (!Objects.equals(textColorList.valueProperty().getValue(), newValue)) {
+                            textColorList.valueProperty().setValue(newValue);
                         }
                     }));
 
-            colorList.valueProperty().addListener((obs, oldValue, newValue) -> {
+            textColorList.valueProperty().addListener((obs, oldValue, newValue) -> {
                 if (synchronizing.get() || newValue == null) {
                     return;
                 }
                 if (!Objects.equals(editor.getTextColor(), newValue)) {
                     editor.setTextColor(newValue);
+                }
+            });
+
+            editor.backgroundColorProperty().addListener((obs, oldValue, newValue) ->
+                    synchronizeFromEditor(synchronizing, () -> {
+                        if (newValue == null) {
+                            return;
+                        }
+
+                        ensureValuePresent(backgroundColorList, newValue);
+                        if (!Objects.equals(backgroundColorList.valueProperty().getValue(), newValue)) {
+                            backgroundColorList.valueProperty().setValue(newValue);
+                        }
+                    }));
+
+            backgroundColorList.valueProperty().addListener((obs, oldValue, newValue) -> {
+                if (synchronizing.get() || newValue == null) {
+                    return;
+                }
+                if (!Objects.equals(editor.getBackgroundColor(), newValue)) {
+                    editor.setBackgroundColor(newValue);
                 }
             });
 
@@ -1290,9 +1338,17 @@ public class TextPane extends Control {
 
                 Color currentColor = editor.getTextColor();
                 if (currentColor != null) {
-                    ensureValuePresent(colorList, currentColor);
-                    if (!Objects.equals(colorList.valueProperty().getValue(), currentColor)) {
-                        colorList.valueProperty().setValue(currentColor);
+                    ensureValuePresent(textColorList, currentColor);
+                    if (!Objects.equals(textColorList.valueProperty().getValue(), currentColor)) {
+                        textColorList.valueProperty().setValue(currentColor);
+                    }
+                }
+
+                Color currentBackgroundColor = editor.getBackgroundColor();
+                if (currentBackgroundColor != null) {
+                    ensureValuePresent(backgroundColorList, currentBackgroundColor);
+                    if (!Objects.equals(backgroundColorList.valueProperty().getValue(), currentBackgroundColor)) {
+                        backgroundColorList.valueProperty().setValue(currentBackgroundColor);
                     }
                 }
             });
@@ -1636,17 +1692,7 @@ public class TextPane extends Control {
             contentPane.setPrefSize(canvas.getWidth(), canvas.getHeight());
             contentPane.resize(canvas.getWidth(), canvas.getHeight());
 
-            renderEditorOverlay(control, availableWidth, layout);
             ensureEditorContentHeight(control, availableWidth, previousCanvasHeight);
-            if (editor != null && caretVisibilityRequested) {
-                Bounds viewport = scrollPane.getViewportBounds();
-                if (viewport.getWidth() > 1.0 && viewport.getHeight() > 1.0) {
-                    ensureCaretVisible(editor, availableWidth);
-                } else if (editor.getCaretPosition() == editor.getLength()) {
-                    scrollPane.setVvalue(1.0);
-                }
-                caretVisibilityRequested = false;
-            }
 
             inlineLayer.getChildren().clear();
             Set<Node> added = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -1659,10 +1705,7 @@ public class TextPane extends Control {
                 if (node instanceof Labeled labeled) {
                     labeled.setFont(FxFontUtil.getInstance().convert(placement.font()));
                 }
-                if (node instanceof Hyperlink hyperlink) {
-                    wireHyperlinkAction(control, hyperlink);
-                }
-                if (node instanceof Button button) {
+                if (node instanceof ButtonBase button) {
                     wireButtonAction(control, button);
                 }
                 node.setManaged(false);
@@ -1674,6 +1717,17 @@ public class TextPane extends Control {
                 double x = placement.x();
                 double y = computeInlineNodeY(placement, prefH, baselineOffset);
                 node.resizeRelocate(x, y, prefW, prefH);
+            }
+
+            renderEditorOverlay(control, availableWidth, layout);
+            if (editor != null && caretVisibilityRequested) {
+                Bounds viewport = scrollPane.getViewportBounds();
+                if (viewport.getWidth() > 1.0 && viewport.getHeight() > 1.0) {
+                    ensureCaretVisible(editor, availableWidth);
+                } else if (editor.getCaretPosition() == editor.getLength()) {
+                    scrollPane.setVvalue(1.0);
+                }
+                caretVisibilityRequested = false;
             }
 
             try (Graphics graphics = new FxGraphics(canvas)) {
@@ -1750,9 +1804,22 @@ public class TextPane extends Control {
 
             IndexRange selection = editor.getSelection();
             if (selection.getLength() > 0) {
+                int sourceSelStart = selection.getStart();
+                int sourceSelEnd = selection.getEnd();
                 int selStart = layout.layoutTextData().sourceToLayoutPosition(selection.getStart());
                 int selEnd = layout.layoutTextData().sourceToLayoutPosition(selection.getEnd());
                 FontUtil fontUtil = FontUtil.getInstance();
+
+                // Draw full-node selection markers for inline nodes based on source-range overlap.
+                for (InlineControlPlacement placement : layout.placements()) {
+                    if (!isInlinePlacementSelected(layout.layoutTextData(), placement, sourceSelStart, sourceSelEnd)) {
+                        continue;
+                    }
+                    Rectangle marker = createInlineSelectionMarker(placement);
+                    marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
+                    selectionLayer.getChildren().add(marker);
+                }
+
                 for (List<FragmentedText.Fragment> line : layout.renderLines()) {
                     if (line.isEmpty()) {
                         continue;
@@ -1768,6 +1835,11 @@ public class TextPane extends Control {
                         int from = Math.max(selStart, fragStart);
                         int to = Math.min(selEnd, fragEnd);
                         if (from >= to) {
+                            continue;
+                        }
+
+                        if (hasInlineNode(run)) {
+                            // Inline-node selections are handled above using placement bounds.
                             continue;
                         }
 
@@ -1809,6 +1881,44 @@ public class TextPane extends Control {
                     caretLayer.getChildren().add(caret);
                 }
             }
+        }
+
+        private static boolean isInlinePlacementSelected(
+                LayoutTextData layoutTextData,
+                InlineControlPlacement placement,
+                int sourceSelStart,
+                int sourceSelEnd
+        ) {
+            int from = layoutTextData.layoutToSourcePosition(placement.runStart());
+            int to = layoutTextData.layoutToSourcePosition(placement.runEnd());
+            int sourceFrom = Math.min(from, to);
+            int sourceTo = Math.max(from, to);
+            return sourceSelStart < sourceTo && sourceFrom < sourceSelEnd;
+        }
+
+        private static Rectangle createInlineSelectionMarker(InlineControlPlacement placement) {
+            Node node = placement.node();
+            Bounds nodeBounds = node.getBoundsInParent();
+
+            double x = nodeBounds.getMinX();
+            double width = Math.max(1.0, nodeBounds.getWidth());
+            double top = nodeBounds.getMinY();
+            double bottom = nodeBounds.getMaxY();
+
+            // Text-like inline controls (buttons/hyperlinks/etc.) should follow line selection height.
+            // Images (ImageView) keep their full visual height.
+            if (node instanceof Control) {
+                double lineTop = placement.y();
+                double lineBottom = placement.y() + placement.h();
+                top = Math.max(top, lineTop);
+                bottom = Math.min(bottom, lineBottom);
+                if (bottom <= top) {
+                    top = lineTop;
+                    bottom = lineBottom;
+                }
+            }
+
+            return new Rectangle(x, top, width, Math.max(1.0, bottom - top));
         }
 
         private static double textWidth(FontUtil fontUtil, Run run, int length, Font font) {
