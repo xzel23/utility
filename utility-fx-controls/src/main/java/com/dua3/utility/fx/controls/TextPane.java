@@ -19,6 +19,7 @@ import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextUtil;
+import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.ui.HAnchor;
@@ -116,7 +117,7 @@ public class TextPane extends Control {
             Map.entry(Style.COLOR, Color.TRANSPARENT_BLACK)
     );
 
-    private final ObjectProperty<RichText> text = new SimpleObjectProperty<>(this, "text", RichText.emptyText());
+    private final ObjectProperty<ToRichText> text = new SimpleObjectProperty<>(this, "text", RichText.emptyText());
     private final BooleanProperty wrapText = new SimpleBooleanProperty(this, "wrapText", false);
     private final ObjectProperty<Font> font = new SimpleObjectProperty<>(this, "font", FONT_UTIL.getDefaultFont());
     private final ObjectProperty<Consumer<URI>> hyperlinkHandler = new SimpleObjectProperty<>(this, "hyperlinkHandler", TextPane::openUriUsingDesktop);
@@ -184,7 +185,7 @@ public class TextPane extends Control {
      *
      * @return text property
      */
-    public final ObjectProperty<RichText> textProperty() {
+    public final ObjectProperty<ToRichText> textProperty() {
         return text;
     }
 
@@ -194,7 +195,7 @@ public class TextPane extends Control {
      * @return text
      */
     public RichText getText() {
-        return text.get();
+        return text.get().toRichText();
     }
 
     /**

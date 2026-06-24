@@ -397,7 +397,7 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
             assertEquals("aXc", observedDocument.get().toString());
             assertEquals("aXc", editor.getDocumentText().toString());
             assertEquals("aXc", editor.getText().toString());
-            assertEquals("abc", editor.textProperty().get().toString());
+            assertEquals("aXc", editor.textProperty().get().toRichText().toString());
             assertEquals(initialVersion + 1L, editor.getDocumentVersion());
             assertEquals(1, documentBindingChanges.get());
             assertEquals(1, documentVersionChanges.get());
@@ -421,7 +421,7 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
 
             editor.setText("xyz");
 
-            assertEquals("xyz", editor.textProperty().get().toString());
+            assertEquals("xyz", editor.textProperty().get().toRichText().toString());
             assertEquals("xyz", observedDocument.get().toString());
             assertEquals("xyz", editor.getDocumentText().toString());
             assertEquals("xyz", editor.getText().toString());

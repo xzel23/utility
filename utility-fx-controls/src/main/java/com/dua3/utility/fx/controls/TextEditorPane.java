@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxUtil;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.FragmentedText;
@@ -54,8 +55,8 @@ import java.util.stream.Stream;
  * <p>For observing live editor mutations, use {@link #documentVersionProperty()} and fetch current text via
  * {@link #getDocumentText()} (for example with
  * {@code Bindings.createObjectBinding(editor::getDocumentText, editor.documentVersionProperty())}).
- * {@link #textProperty()} is treated as the external input channel and
- * is not synchronized on each internal edit.
+ * {@link #textProperty()} exposes {@link ToRichText} snapshots and is updated on
+ * each document change.
  */
 public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
@@ -84,7 +85,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private @Nullable ScrollPane scrollPane;
     private boolean inHistoryNavigation;
     private boolean updatingPropertiesFromText;
-    private boolean normalizingIncomingText;
+    private boolean syncingTextPropertyFromDocument;
     private double preferredCaretX = Double.NaN;
     private final List<LogicalBlock> logicalBlocks = new ArrayList<>();
     private @Nullable VisualLineCache visualLineCache;
@@ -112,16 +113,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         getStyleClass().add("text-editor-pane");
 
         RichText initial = normalizeIncomingText(textProperty().get());
-        if (!initial.equals(textProperty().get())) {
-            normalizingIncomingText = true;
-            try {
-                setText(initial);
-            } finally {
-                normalizingIncomingText = false;
-            }
-        }
-
-        initial = normalizeIncomingText(textProperty().get());
         documentText = initial;
         documentTextDirty = false;
         document.set(initial);
@@ -137,21 +128,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         initFormatPropertyListeners();
 
         textProperty().addListener((obs, oldValue, newValue) -> {
-            if (!normalizingIncomingText) {
-                RichText normalized = normalizeIncomingText(newValue);
-                if (!normalized.equals(newValue)) {
-                    normalizingIncomingText = true;
-                    try {
-                        setText(normalized);
-                    } finally {
-                        normalizingIncomingText = false;
-                    }
-                    return;
-                }
+            if (syncingTextPropertyFromDocument) {
+                return;
             }
 
-            RichText oldText = oldValue == null ? RichText.emptyText() : oldValue;
-            RichText currentText = newValue == null ? RichText.emptyText() : newValue;
+            RichText oldText = normalizeIncomingText(oldValue);
+            RichText currentText = normalizeIncomingText(newValue);
             documentText = currentText;
             documentTextDirty = false;
             if (!Objects.equals(oldText, currentText)) {
@@ -200,7 +182,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     /**
      * Returns the current rich-text document.
      *
-     * <p>Unlike {@link #textProperty()}, this value tracks all internal editor edits.
+     * <p>This returns the materialized document model.
+     * {@link #textProperty()} publishes lazy {@link ToRichText} snapshots.
      *
      * @return current document text
      */
@@ -312,6 +295,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         invalidateDocumentTextSnapshot();
         invalidateVisualLineCache();
         markDocumentChanged();
+        syncTextPropertyWithDocumentSnapshot();
         return new DocumentReplaceResult(s, e, removed, true);
     }
 
@@ -1127,10 +1111,16 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @return stream of rich-text lines
      */
     public Stream<RichText> lines() {
-        List<RichText> lineSnapshot = logicalBlocks.isEmpty()
-                ? List.of(RichText.emptyText())
-                : logicalBlocks.stream().map(block -> block.text).toList();
-        return lineSnapshot.stream();
+        return snapshotLines().stream();
+    }
+
+    /**
+     * Creates a snapshot of the current lines from the logical blocks by extracting their text content.
+     *
+     * @return a list of {@code RichText} objects representing the text content of all logical blocks.
+     */
+    private List<RichText> snapshotLines() {
+        return logicalBlocks.stream().map(block -> block.text).toList();
     }
 
     /**
@@ -1143,17 +1133,23 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @throws IOException if writing fails
      */
     public void appendTo(Appendable appendable) throws IOException {
-        Objects.requireNonNull(appendable, "appendable");
-
-        List<RichText> lineSnapshot = logicalBlocks.isEmpty()
-                ? List.of(RichText.emptyText())
-                : logicalBlocks.stream().map(block -> block.text).toList();
-
+        List<RichText> lineSnapshot = snapshotLines();
         for (int i = 0; i < lineSnapshot.size(); i++) {
             appendPlainText(lineSnapshot.get(i), appendable);
             if (i + 1 < lineSnapshot.size()) {
                 appendable.append('\n');
             }
+        }
+    }
+
+    private void syncTextPropertyWithDocumentSnapshot() {
+        List<RichText> lineSnapshot = snapshotLines();
+        ToRichText snapshot = createLazySnapshot(lineSnapshot);
+        syncingTextPropertyFromDocument = true;
+        try {
+            textProperty().set(snapshot);
+        } finally {
+            syncingTextPropertyFromDocument = false;
         }
     }
 
@@ -2430,8 +2426,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return rtb.toRichText();
     }
 
-    private RichText normalizeIncomingText(@Nullable RichText text) {
-        return text == null ? RichText.emptyText() : text;
+    private RichText normalizeIncomingText(@Nullable ToRichText text) {
+        if (text == null) {
+            return RichText.emptyText();
+        }
+
+        return text.toRichText();
     }
 
     private static RichText detachedRichText(CharSequence text) {
@@ -2459,6 +2459,36 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             char c = text.charAt(i);
             if (c != RichText.SPLIT_MARKER) {
                 appendable.append(c);
+            }
+        }
+    }
+
+    private static ToRichText createLazySnapshot(List<RichText> lines) {
+        List<RichText> snapshot = List.copyOf(lines);
+        LangUtil.CachingSupplier<RichText> materialized = LangUtil.cache(() -> {
+            RichTextBuilder rtb = new RichTextBuilder();
+            appendSnapshotToBuilder(snapshot, rtb);
+            return rtb.toRichText();
+        });
+
+        return new ToRichText() {
+            @Override
+            public RichText toRichText() {
+                return materialized.get();
+            }
+
+            @Override
+            public void appendTo(RichTextBuilder builder) {
+                appendSnapshotToBuilder(snapshot, builder);
+            }
+        };
+    }
+
+    private static void appendSnapshotToBuilder(List<RichText> lineSnapshot, RichTextBuilder builder) {
+        for (int i = 0; i < lineSnapshot.size(); i++) {
+            lineSnapshot.get(i).appendTo(builder);
+            if (i + 1 < lineSnapshot.size()) {
+                builder.append('\n');
             }
         }
     }
@@ -2503,12 +2533,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return;
         }
 
-        normalizingIncomingText = true;
-        try {
-            setText(committed);
-        } finally {
-            normalizingIncomingText = false;
-        }
+        setText(committed);
 
         int caret = Math.clamp(getCaretPosition(), 0, committed.length());
         setSelectionState(caret, caret);
