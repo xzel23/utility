@@ -24,7 +24,11 @@ public interface ToRichText {
      *
      * @param builder the builder
      */
-    void appendTo(RichTextBuilder builder);
+    default void appendTo(RichTextBuilder builder) {
+        RichText text = toRichText();
+        builder.reserve(text.length());
+        builder.append(text);
+    }
 
     /**
      * Appends a portion of this object's rich text representation to the specified

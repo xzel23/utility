@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -207,7 +208,7 @@ class RichTextBuilderTest {
 
         // Check that the style was applied
         Object styleList = rt.stream().findFirst().get().getAttributes().get(RichText.ATTRIBUTE_NAME_STYLE_LIST);
-        assertTrue(styleList instanceof List);
+        assertInstanceOf(List.class, styleList);
         assertEquals(1, ((List<?>) styleList).size());
     }
 

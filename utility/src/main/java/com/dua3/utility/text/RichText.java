@@ -553,7 +553,7 @@ public final class RichText
 
     @Override
     public void appendTo(RichTextBuilder builder) {
-        builder.ensureCapacity(builder.length() + length());
+        builder.reserve(length());
         forEach(builder::appendRun);
     }
 
@@ -571,7 +571,7 @@ public final class RichText
     @Override
     public void appendTo(RichTextBuilder builder, int from, int to) {
         Objects.checkFromToIndex(from, to, length());
-        builder.ensureCapacity(builder.length() + to - from);
+        builder.reserve(to - from);
         forEach(r -> {
             if (r.getEnd() <= from || r.getStart() >= to) {
                 return;

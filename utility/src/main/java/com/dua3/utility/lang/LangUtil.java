@@ -1003,7 +1003,7 @@ public final class LangUtil {
     }
 
     /**
-     * Create a lazy, caching Supplier. Upon first invocation of `get()`, `s.get()`
+     * Create a lazy, caching Supplier. Upon the first invocation of `get()`, `s.get()`
      * is called to create the object to be returned. Each subsequent call will
      * return the same object without invoking `s.get()` again.
      *

@@ -203,7 +203,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
     @Override
     public void appendTo(RichTextBuilder builder) {
-        builder.ensureCapacity(builder.length() + length());
+        builder.reserve(length());
         for (Run run : getRuns()) {
             builder.appendRun(run);
         }
@@ -217,6 +217,17 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      */
     public void ensureCapacity(int minimumCapacity) {
         buffer.ensureCapacity(minimumCapacity);
+    }
+
+    /**
+     * Ensures the internal buffer has enough capacity to accommodate additional characters.
+     * This method increases the buffer capacity if the current capacity is insufficient
+     * for the specified additional capacity.
+     *
+     * @param capacity the additional number of characters for which capacity is to be ensured
+     */
+    public void reserve(int capacity) {
+        buffer.ensureCapacity(buffer.length() + capacity);
     }
 
     /**
