@@ -14,6 +14,7 @@ import javafx.scene.input.KeyEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -426,6 +427,46 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
             assertEquals("xyz", editor.getText().toString());
             assertEquals(initialVersion + 1L, editor.getDocumentVersion());
             assertEquals(1, documentBindingChanges.get());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testLinesReturnsSnapshotAtInvocationTime() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("one\ntwo");
+
+            List<String> snapshotBeforeEdit = editor.lines().map(RichText::toString).toList();
+            editor.replaceText(0, 3, "ONE");
+            List<String> afterEdit = editor.lines().map(RichText::toString).toList();
+
+            assertEquals(List.of("one", "two"), snapshotBeforeEdit);
+            assertEquals(List.of("ONE", "two"), afterEdit);
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testAppendToWritesPlainTextAcrossLogicalLines() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("ab\n");
+
+            StringBuilder sb = new StringBuilder();
+            try {
+                editor.appendTo(sb);
+            } catch (IOException e) {
+                throw new AssertionError(e);
+            }
+            assertEquals("ab\n", sb.toString());
+
+            editor.replaceText(0, 2, "xy");
+            StringBuilder sb2 = new StringBuilder();
+            try {
+                editor.appendTo(sb2);
+            } catch (IOException e) {
+                throw new AssertionError(e);
+            }
+            assertEquals("xy\n", sb2.toString());
         });
     }
 

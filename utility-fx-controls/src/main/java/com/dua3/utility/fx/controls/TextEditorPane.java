@@ -36,12 +36,14 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.jspecify.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Text editor control based on {@link TextPane}.
@@ -1117,6 +1119,45 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     /**
+     * Returns a snapshot stream over the current logical lines.
+     *
+     * <p>The returned stream reflects the document state at invocation time.
+     * Subsequent edits do not affect the stream contents.
+     *
+     * @return stream of rich-text lines
+     */
+    public Stream<RichText> lines() {
+        List<RichText> lineSnapshot = logicalBlocks.isEmpty()
+                ? List.of(RichText.emptyText())
+                : logicalBlocks.stream().map(block -> block.text).toList();
+        return lineSnapshot.stream();
+    }
+
+    /**
+     * Appends the current plain-text document contents to the given appendable.
+     *
+     * <p>This method writes line by line from the editor's logical document
+     * representation and avoids building a full-document {@link RichText} instance.
+     *
+     * @param appendable target appendable
+     * @throws IOException if writing fails
+     */
+    public void appendTo(Appendable appendable) throws IOException {
+        Objects.requireNonNull(appendable, "appendable");
+
+        List<RichText> lineSnapshot = logicalBlocks.isEmpty()
+                ? List.of(RichText.emptyText())
+                : logicalBlocks.stream().map(block -> block.text).toList();
+
+        for (int i = 0; i < lineSnapshot.size(); i++) {
+            appendPlainText(lineSnapshot.get(i), appendable);
+            if (i + 1 < lineSnapshot.size()) {
+                appendable.append('\n');
+            }
+        }
+    }
+
+    /**
      * Appends plain text.
      *
      * @param text text to append
@@ -2089,7 +2130,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     static double xForIndex(VisualLine line, int index) {
-        int offset = Math.clamp(index - line.start(), 0, line.length());
+        int offset = Math.clamp((long) index - line.start(), 0, line.length());
         return line.boundaries()[offset];
     }
 
@@ -2411,6 +2452,15 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         RichTextBuilder rtb = new RichTextBuilder(end - start);
         text.appendTo(rtb, start, end);
         return rtb.toRichText();
+    }
+
+    private static void appendPlainText(RichText text, Appendable appendable) throws IOException {
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c != RichText.SPLIT_MARKER) {
+                appendable.append(c);
+            }
+        }
     }
 
     private void pushHistoryEntry(HistoryEntry entry) {
