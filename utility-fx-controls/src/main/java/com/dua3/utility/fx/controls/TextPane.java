@@ -24,6 +24,8 @@ import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.ui.HAnchor;
 import com.dua3.utility.ui.InlineNode;
+import com.dua3.utility.ui.RichTextPane;
+import com.dua3.utility.ui.RichTextRenderer;
 import com.dua3.utility.ui.VAnchor;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -92,7 +94,7 @@ import java.util.function.Function;
  * <p>Inline controls can be embedded by assigning styles containing
  * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE_FACTORY} to a run.
  */
-public class TextPane extends Control {
+public class TextPane extends Control implements RichTextPane {
 
     /**
      * A shared instance of {@link FxFontUtil} used for font-related utilities
@@ -1734,26 +1736,7 @@ public class TextPane extends Control {
             try (Graphics graphics = new FxGraphics(canvas)) {
                 graphics.reset();
                 graphics.setFont(control.getFont());
-                for (List<FragmentedText.Fragment> line : layout.renderLines()) {
-                    double lineBaseline = line.stream()
-                            .filter(fragment -> !isInvisibleInlinePlaceholder(fragment))
-                            .mapToDouble(fragment -> fragment.font().getAscent())
-                            .max()
-                            .orElseGet(() -> line.stream()
-                                    .mapToDouble(fragment -> fragment.font().getAscent())
-                                    .max()
-                                    .orElse(0.0));
-                    for (FragmentedText.Fragment fragment : line) {
-                        graphics.setFont(fragment.font());
-                        graphics.drawText(
-                                fragment.text().toString(),
-                                fragment.x(),
-                                (float) (fragment.y() + lineBaseline),
-                                HAnchor.LEFT,
-                                VAnchor.BASELINE
-                        );
-                    }
-                }
+                RichTextRenderer.renderFragmentLines(graphics, layout.renderLines(), TextPaneSkin::isInvisibleInlinePlaceholder);
             }
         }
 
