@@ -69,7 +69,7 @@ tasks.register("printVersion") {
 
 dependencies {
     // Aggregate all subprojects for JaCoCo report aggregation
-    jacocoAggregation(rootProject)
+    jacocoAggregation(project(":"))
     jacocoAggregation(project(":utility"))
     jacocoAggregation(project(":utility-db"))
     jacocoAggregation(project(":utility-swing"))
@@ -277,7 +277,7 @@ subprojects {
 
         testing {
             suites {
-                val test by getting(JvmTestSuite::class) {
+                getByName<JvmTestSuite>("test") {
                     useJUnitJupiter()
                     dependencies {
                         implementation(rootProject.libs.slb4j)
@@ -450,7 +450,7 @@ subprojects {
     }
 
     // Task to publish to staging directory per subproject
-    val publishToStagingDirectory by tasks.registering {
+    tasks.register("publishToStagingDirectory") {
         group = "publishing"
         description = "Publish artifacts to root staging directory for JReleaser"
 
