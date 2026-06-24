@@ -1143,8 +1143,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private void syncTextPropertyWithDocumentSnapshot() {
-        List<RichText> lineSnapshot = snapshotLines();
-        ToRichText snapshot = createLazySnapshot(lineSnapshot);
+        ToRichText snapshot = createLazySnapshot(snapshotLines());
         syncingTextPropertyFromDocument = true;
         try {
             textProperty().set(snapshot);
@@ -2463,11 +2462,25 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
     }
 
+    /**
+     * Creates a lazy snapshot of the provided list of {@code RichText} objects.
+     * The returned {@code ToRichText} instance generates the composed {@code RichText}
+     * lazily only when required, caching the result for subsequent calls.
+     *
+     * @param lines a list of {@code RichText} objects to include in the snapshot;
+     *              the snapshot provides a read-only representation of these objects.
+     *              <strong>{@code snapshot} should be immutable.
+     *
+     * @return a {@code ToRichText} instance that allows accessing the lazily generated
+     *         {@code RichText} or appending the snapshot content to a {@code RichTextBuilder}.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static ToRichText createLazySnapshot(List<RichText> lines) {
-        List<RichText> snapshot = List.copyOf(lines);
-        LangUtil.CachingSupplier<RichText> materialized = LangUtil.cache(() -> {
+        List[] snapshot = {lines};
+        LangUtil.StrongCachingSupplier<RichText> materialized = LangUtil.cache(() -> {
             RichTextBuilder rtb = new RichTextBuilder();
-            appendSnapshotToBuilder(snapshot, rtb);
+            appendSnapshotToBuilder(snapshot[0], rtb);
+            snapshot[0] = null;
             return rtb.toRichText();
         });
 
@@ -2479,7 +2492,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
             @Override
             public void appendTo(RichTextBuilder builder) {
-                appendSnapshotToBuilder(snapshot, builder);
+                List<RichText> list = snapshot[0];
+                if (list == null) {
+                    materialized.get().appendTo(builder);
+                } else {
+                    appendSnapshotToBuilder(list, builder);
+                }
             }
         };
     }

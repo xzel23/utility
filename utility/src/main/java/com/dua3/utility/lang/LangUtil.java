@@ -1011,7 +1011,7 @@ public final class LangUtil {
      * @param supplier the Supplier
      * @return caching Supplier
      */
-    public static <T extends @Nullable Object> CachingSupplier<T> cache(Supplier<T> supplier) {
+    public static <T extends @Nullable Object> StrongCachingSupplier<T> cache(Supplier<T> supplier) {
         return new StrongCachingSupplier<>(supplier);
     }
 
@@ -1846,6 +1846,15 @@ public final class LangUtil {
                 initialized = false;
             }
         }
+
+        /**
+         * Checks whether the cached value has been initialized.
+         *
+         * @return {@code true} if the cached value has been initialized, otherwise {@code false}
+         */
+        public boolean isInitialized() {
+            return initialized;
+        }
     }
 
     /**
@@ -1922,6 +1931,7 @@ public final class LangUtil {
      */
     private static final class LazyFormatter {
         private volatile @Nullable String s;
+        @SuppressWarnings("java:S3077") // volatile is safe here
         private volatile @Nullable Object @Nullable [] args;
 
         private LazyFormatter(@Nullable String fmt, Object... fmtArgs) {
