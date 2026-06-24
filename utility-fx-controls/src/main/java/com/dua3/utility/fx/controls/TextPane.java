@@ -290,6 +290,11 @@ public class TextPane extends Control implements RichTextPane {
         font.set(value);
     }
 
+    @Override
+    public final void setTextFont(Font value) {
+        setFont(value);
+    }
+
     /**
      * Set the rendering font.
      *
@@ -365,6 +370,11 @@ public class TextPane extends Control implements RichTextPane {
      */
     public Font getFont() {
         return font.get();
+    }
+
+    @Override
+    public Font getTextFont() {
+        return getFont();
     }
 
     Layout createLayout(double availableWidth) {

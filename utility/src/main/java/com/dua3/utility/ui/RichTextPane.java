@@ -47,14 +47,14 @@ public interface RichTextPane {
      *
      * @return current font
      */
-    Font getFont();
+    Font getTextFont();
 
     /**
      * Sets the rendering font.
      *
      * @param value font
      */
-    void setFont(Font value);
+    void setTextFont(Font value);
 
     /**
      * Returns the hyperlink handler used for inline hyperlinks.

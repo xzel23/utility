@@ -12,6 +12,7 @@ import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.ToRichText;
+import com.dua3.utility.ui.RichTextEditorModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -93,6 +94,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private boolean documentTextDirty;
     private final ReadOnlyObjectWrapper<RichText> document = new ReadOnlyObjectWrapper<>(this, "documentText", RichText.emptyText());
     private final ReadOnlyLongWrapper documentVersion = new ReadOnlyLongWrapper(this, "documentVersion", 0L);
+    private final RichTextEditorModel sharedModel;
     private static final int MAX_HISTORY_SIZE = 256;
 
     /**
@@ -116,6 +118,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         documentText = initial;
         documentTextDirty = false;
         document.set(initial);
+        this.sharedModel = new RichTextEditorModel(initial);
         this.defaultValue = initial;
         this.committedValue = new SimpleObjectProperty<>(this, "value", initial);
         this.state = new ObjectInputControlState<>(committedValue, () -> defaultValue, value -> Optional.empty());
@@ -141,6 +144,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 rebuildLogicalBlocks(currentText);
                 invalidateVisualLineCache();
                 markDocumentChanged();
+                sharedModel.setText(currentText, true);
             }
             length.set(currentText.length());
             setSelectionState(getAnchor(), getCaretPosition());
@@ -228,6 +232,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private void markDocumentChanged() {
         documentVersion.set(documentVersion.get() + 1L);
+        sharedModel.setText(materializeDocumentText(), true);
     }
 
     private void invalidateDocumentTextSnapshot() {
@@ -2192,6 +2197,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private void setSelectionState(int anchorPos, int caretPos) {
         selectionModel.selectRange(anchorPos, caretPos);
+        sharedModel.selectRange(anchorPos, caretPos);
         updatePropertiesFromCaretPosition();
     }
 
