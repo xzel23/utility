@@ -18,9 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
@@ -67,8 +64,8 @@ public final class SwingTextEditorPaneSample {
         Runnable syncLiveDocument = () -> liveDocumentPane.setText(editor.getText());
         Runnable updateSelectionInfo = () -> selectionInfo.setText(
                 "Caret: " + editor.getCaretPosition()
-                        + "  Selection: [" + editor.getTextComponent().getSelectionStart()
-                        + ", " + editor.getTextComponent().getSelectionEnd() + ")"
+                        + "  Selection: [" + editor.getSelectionStart()
+                        + ", " + editor.getSelectionEnd() + ")"
                         + "  Selected: \"" + oneLine(editor.getSelectedText()) + "\""
         );
 
@@ -81,25 +78,10 @@ public final class SwingTextEditorPaneSample {
             updateSelectionInfo.run();
         };
 
-        DocumentListener documentListener = new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                syncAll.run();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                syncAll.run();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                syncAll.run();
-            }
-        };
-
-        attachDocumentListener(editor, documentListener, syncAll);
-        editor.getTextComponent().addCaretListener(evt -> updateSelectionInfo.run());
+        editor.addPropertyChangeListener("documentVersion", evt -> syncAll.run());
+        editor.addPropertyChangeListener("caretPosition", evt -> updateSelectionInfo.run());
+        editor.addPropertyChangeListener("selectionStart", evt -> updateSelectionInfo.run());
+        editor.addPropertyChangeListener("selectionEnd", evt -> updateSelectionInfo.run());
 
         JCheckBox wrap = new JCheckBox("Wrap text", true);
         wrap.addActionListener(e -> {
@@ -109,8 +91,8 @@ public final class SwingTextEditorPaneSample {
             committedValuePane.setWrapText(enabled);
         });
 
-        JCheckBox editable = new JCheckBox("Editable", editor.getTextComponent().isEditable());
-        editable.addActionListener(e -> editor.getTextComponent().setEditable(editable.isSelected()));
+        JCheckBox editable = new JCheckBox("Editable", editor.isEditable());
+        editable.addActionListener(e -> editor.setEditable(editable.isSelected()));
 
         JSlider width = new JSlider(220, 780, 640);
         width.setPaintTicks(true);
@@ -222,20 +204,6 @@ public final class SwingTextEditorPaneSample {
         frame.setSize(980, 820);
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
-    }
-
-    private static void attachDocumentListener(TextEditorPane editor, DocumentListener listener, Runnable syncAction) {
-        Document initial = editor.getTextComponent().getDocument();
-        initial.addDocumentListener(listener);
-        editor.getTextComponent().addPropertyChangeListener("document", evt -> {
-            if (evt.getOldValue() instanceof Document oldDocument) {
-                oldDocument.removeDocumentListener(listener);
-            }
-            if (evt.getNewValue() instanceof Document newDocument) {
-                newDocument.addDocumentListener(listener);
-            }
-            syncAction.run();
-        });
     }
 
     private static String oneLine(RichText text) {

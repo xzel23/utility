@@ -1,38 +1,49 @@
 package com.dua3.utility.swing;
 
-import com.dua3.utility.awt.AwtFontUtil;
+import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.ui.HAnchor;
 import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextPane;
+import com.dua3.utility.ui.RichTextRenderer;
+import com.dua3.utility.ui.RichTextVisualLayoutHelper;
+import com.dua3.utility.ui.VAnchor;
+import com.dua3.utility.text.VerticalAlignment;
 import org.jspecify.annotations.Nullable;
 
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.StyledDocument;
-import java.awt.Desktop;
+import javax.swing.JViewport;
+import javax.swing.Scrollable;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.HierarchyBoundsAdapter;
+import java.awt.event.HierarchyEvent;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
  * Swing rich-text viewer.
- *
- * <p>The Swing implementation stores and edits text using a {@link StyledDocument}.
- * {@link #getText()} returns the current document text as {@link RichText}.
  */
 public class TextPane extends JScrollPane implements RichTextPane {
 
-    private final RichTextTextPane textComponent = new RichTextTextPane();
     protected final RichTextEditorModel model;
+    private final RichTextCanvas textComponent = new RichTextCanvas();
     private boolean wrapText;
     private Font textFont = FontUtil.getInstance().getDefaultFont();
     private Consumer<URI> hyperlinkHandler = TextPane::openUriUsingDesktop;
-    private boolean callbacksEnabled;
+    private @Nullable RenderLayoutCache renderLayoutCache;
 
     /**
      * Creates an empty text pane.
@@ -50,19 +61,37 @@ public class TextPane extends JScrollPane implements RichTextPane {
         model = new RichTextEditorModel(text);
         setViewportView(textComponent);
         setWrapText(false);
-        textComponent.setEditable(false);
         textComponent.setFocusable(false);
-        textComponent.setFont(AwtFontUtil.getInstance().convert(textFont));
-        applyTextModelToDocument();
-        callbacksEnabled = true;
+        textComponent.setFont(com.dua3.utility.awt.AwtFontUtil.getInstance().convert(textFont));
+
+        // keep layout cache in sync with viewport geometry changes
+        getViewport().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                invalidateRenderLayout();
+            }
+        });
+
+        // viewport changes after reparenting should also invalidate layout
+        addHierarchyBoundsListener(new HierarchyBoundsAdapter() {
+            @Override
+            public void ancestorResized(HierarchyEvent e) {
+                invalidateRenderLayout();
+            }
+        });
+        addHierarchyListener(e -> {
+            if ((e.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) != 0) {
+                invalidateRenderLayout();
+            }
+        });
     }
 
     /**
-     * Returns the underlying Swing text component.
+     * Returns the underlying text component.
      *
      * @return underlying text component
      */
-    public final JTextPane getTextComponent() {
+    public final JComponent getTextComponent() {
         return textComponent;
     }
 
@@ -73,7 +102,8 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
     @Override
     public final void setText(@Nullable CharSequence value) {
-        setTextInternal(value == null ? RichText.emptyText() : RichText.valueOf(value), true);
+        model.setText(value == null ? RichText.emptyText() : RichText.valueOf(value));
+        onModelChanged();
     }
 
     @Override
@@ -83,9 +113,12 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
     @Override
     public final void setWrapText(boolean value) {
+        if (wrapText == value) {
+            return;
+        }
         wrapText = value;
-        textComponent.setWrapText(value);
         setHorizontalScrollBarPolicy(value ? HORIZONTAL_SCROLLBAR_NEVER : HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        invalidateRenderLayout();
         revalidate();
         repaint();
     }
@@ -98,11 +131,8 @@ public class TextPane extends JScrollPane implements RichTextPane {
     @Override
     public final void setTextFont(Font value) {
         textFont = Objects.requireNonNull(value);
-        textComponent.setFont(AwtFontUtil.getInstance().convert(textFont));
-        applyTextModelToDocument();
-        if (callbacksEnabled) {
-            onDocumentReplaced(textComponent.getStyledDocument());
-        }
+        textComponent.setFont(com.dua3.utility.awt.AwtFontUtil.getInstance().convert(textFont));
+        invalidateRenderLayout();
     }
 
     @Override
@@ -116,71 +146,137 @@ public class TextPane extends JScrollPane implements RichTextPane {
     }
 
     /**
-     * Called after the document backing the text component has been replaced.
+     * Indicates whether this pane supports editing.
      *
-     * @param document new document
+     * @return false for read-only viewer
      */
-    protected void onDocumentReplaced(StyledDocument document) {
+    public boolean isEditable() {
+        return false;
+    }
+
+    /**
+     * Hook called after text/model updates.
+     */
+    protected void onModelChanged() {
+        invalidateRenderLayout();
+    }
+
+    /**
+     * Hook for subclasses to paint overlays such as selection/caret.
+     *
+     * @param g2 graphics
+     * @param layout current layout
+     */
+    protected void paintOverlay(Graphics2D g2, RenderLayout layout) {
         // default no-op
     }
 
     /**
-     * Replaces the text model.
+     * Returns the current render layout used by the view component.
      *
-     * @param value text value
-     * @param preserveHistory true to preserve history in the model
+     * @return current layout
      */
-    protected final void setTextModel(RichText value, boolean preserveHistory) {
-        model.setText(value, preserveHistory);
-    }
-
-    private void setTextInternal(RichText value, boolean notifyDocumentReplaced) {
-        model.setText(value);
-        applyTextModelToDocument();
-        if (notifyDocumentReplaced && callbacksEnabled) {
-            onDocumentReplaced(textComponent.getStyledDocument());
-        }
-    }
-
-    protected final void applyTextModelToDocument() {
-        StyledDocument document = createStyledDocument(model.getText());
-        textComponent.setStyledDocument(document);
+    protected final RenderLayout getRenderLayout() {
+        return layoutForWidth(textComponent.getLayoutWidthHint(false));
     }
 
     /**
-     * Creates a Swing styled document for the given rich text.
+     * Maps a point in text-component coordinates to the nearest source index.
      *
-     * @param value source text
-     * @return converted styled document
+     * @param point point in component coordinates
+     * @return nearest source index
      */
-    protected StyledDocument createStyledDocument(RichText value) {
-        try {
-            return StyledDocumentConverter
-                    .create(StyledDocumentConverter.defaultFont(textFont))
-                    .convert(value);
-        } catch (RuntimeException ex) {
-            // keep control usable even if conversion fails for unsupported attributes
-            DefaultStyledDocument fallback = new DefaultStyledDocument();
-            try {
-                fallback.insertString(0, value.toString(), null);
-            } catch (BadLocationException e) {
-                throw new IllegalStateException("failed to create fallback document", e);
-            }
-            return fallback;
+    protected final int indexForPoint(Point point) {
+        RenderLayout layout = getRenderLayout();
+        return RichTextVisualLayoutHelper.indexForPoint(layout.visualLines(), point.getX(), point.getY());
+    }
+
+    /**
+     * Explicitly invalidates cached layout and repaints.
+     */
+    protected final void invalidateRenderLayout() {
+        renderLayoutCache = null;
+        textComponent.revalidate();
+        textComponent.repaint();
+    }
+
+    private RenderLayout layoutForWidth(double widthHint) {
+        double width = Math.max(1.0, widthHint);
+        double widthKey = wrapText ? width : Double.POSITIVE_INFINITY;
+        RichText text = model.getText();
+        RenderLayoutCache cache = renderLayoutCache;
+        if (cache != null
+                && Double.compare(cache.widthKey(), widthKey) == 0
+                && cache.wrapText() == wrapText
+                && Objects.equals(cache.text(), text)
+                && Objects.equals(cache.font(), textFont)) {
+            return cache.layout();
         }
+
+        RenderLayout layout = createLayout(text, width);
+        renderLayoutCache = new RenderLayoutCache(widthKey, wrapText, text, textFont, layout);
+        return layout;
+    }
+
+    private RenderLayout createLayout(RichText richText, double availableWidth) {
+        FontUtil fontUtil = FontUtil.getInstance();
+        float width = (float) Math.max(1.0, availableWidth);
+        float wrapWidth = wrapText ? width : FragmentedText.NO_WRAP;
+
+        FragmentedText renderFragments = FragmentedText.generateFragments(
+                richText,
+                fontUtil,
+                textFont,
+                width,
+                Float.MAX_VALUE,
+                Alignment.LEFT,
+                VerticalAlignment.TOP,
+                HAnchor.LEFT,
+                VAnchor.TOP,
+                wrapWidth
+        );
+
+        double defaultLineHeight = Math.max(1.0, textFont.getFontData().height());
+        List<RichTextVisualLayoutHelper.VisualLine> visualLines = RichTextVisualLayoutHelper.buildVisualLines(
+                RichTextVisualLayoutHelper.splitLogicalBlocks(richText),
+                defaultLineHeight,
+                blockText -> {
+                    FragmentedText blockFragments = FragmentedText.generateFragments(
+                            blockText,
+                            fontUtil,
+                            textFont,
+                            width,
+                            Float.MAX_VALUE,
+                            Alignment.LEFT,
+                            VerticalAlignment.TOP,
+                            HAnchor.LEFT,
+                            VAnchor.TOP,
+                            wrapWidth
+                    );
+                    return new RichTextVisualLayoutHelper.BlockLayout(
+                            blockFragments.lines(),
+                            Math.max(defaultLineHeight, blockFragments.actualHeight()),
+                            layoutPosition -> layoutPosition
+                    );
+                }
+        );
+
+        double renderWidth = wrapText ? width : Math.max(width, renderFragments.actualWidth());
+        double renderHeight = Math.max(defaultLineHeight, renderFragments.actualHeight());
+        return new RenderLayout(renderFragments.lines(), visualLines, renderWidth, renderHeight);
     }
 
     private static void openUriUsingDesktop(URI uri) {
-        if (!Desktop.isDesktopSupported()) {
+        if (!java.awt.Desktop.isDesktopSupported()) {
             return;
         }
 
-        Desktop desktop = Desktop.getDesktop();
+        java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
         try {
             String scheme = uri.getScheme();
-            if ("mailto".equalsIgnoreCase(scheme) && desktop.isSupported(Desktop.Action.MAIL)) {
+            if ("mailto".equalsIgnoreCase(scheme) && desktop.isSupported(java.awt.Desktop.Action.MAIL)) {
                 desktop.mail(uri);
-            } else if (desktop.isSupported(Desktop.Action.BROWSE)) {
+            } else if (desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
                 desktop.browse(uri);
             }
         } catch (IOException | UnsupportedOperationException ignored) {
@@ -188,17 +284,102 @@ public class TextPane extends JScrollPane implements RichTextPane {
         }
     }
 
-    private static final class RichTextTextPane extends JTextPane {
-        private boolean wrapText;
+    protected record RenderLayout(
+            List<List<FragmentedText.Fragment>> renderLines,
+            List<RichTextVisualLayoutHelper.VisualLine> visualLines,
+            double width,
+            double height
+    ) {}
 
-        void setWrapText(boolean value) {
-            wrapText = value;
-            revalidate();
+    private record RenderLayoutCache(
+            double widthKey,
+            boolean wrapText,
+            RichText text,
+            Font font,
+            RenderLayout layout
+    ) {}
+
+    private final class RichTextCanvas extends JComponent implements Scrollable {
+
+        private double getLayoutWidthHint(boolean forPreferredSize) {
+            if (wrapText) {
+                JViewport viewport = TextPane.this.getViewport();
+                if (viewport != null) {
+                    double viewportWidth = viewport.getExtentSize().getWidth();
+                    if (viewportWidth > 1.0) {
+                        return viewportWidth;
+                    }
+                }
+
+                if (!forPreferredSize && getWidth() > 1.0) {
+                    return getWidth();
+                }
+            }
+
+            if (getWidth() > 1.0) {
+                return getWidth();
+            }
+
+            JViewport viewport = TextPane.this.getViewport();
+            if (viewport != null && viewport.getExtentSize().width > 1) {
+                return viewport.getExtentSize().width;
+            }
+
+            return Math.max(1.0, TextPane.this.getWidth() - TextPane.this.getInsets().left - TextPane.this.getInsets().right);
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            double widthHint = getLayoutWidthHint(true);
+            RenderLayout layout = layoutForWidth(widthHint);
+            int prefWidth = (int) Math.ceil(Math.max(1.0, wrapText ? widthHint : layout.width()));
+            int prefHeight = (int) Math.ceil(Math.max(1.0, layout.height()));
+            return new Dimension(prefWidth, prefHeight);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            RenderLayout layout = layoutForWidth(getLayoutWidthHint(false));
+
+            Graphics2D g2 = (Graphics2D) g.create();
+            try {
+                try (SwingGraphics graphics = new SwingGraphics(g2, new Rectangle(0, 0, getWidth(), getHeight()))) {
+                    graphics.reset();
+                    graphics.setFont(textFont);
+                    RichTextRenderer.renderFragmentLines(graphics, layout.renderLines());
+                }
+                paintOverlay(g2, layout);
+            } finally {
+                g2.dispose();
+            }
+        }
+
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return Math.max(1, (int) Math.ceil(textFont.getFontData().height()));
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            int lineHeight = getScrollableUnitIncrement(visibleRect, orientation, direction);
+            return Math.max(lineHeight, visibleRect.height - lineHeight);
         }
 
         @Override
         public boolean getScrollableTracksViewportWidth() {
             return wrapText;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
         }
     }
 }

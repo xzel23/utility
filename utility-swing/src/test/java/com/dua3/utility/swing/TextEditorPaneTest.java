@@ -5,16 +5,10 @@ import com.dua3.utility.text.Run;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TextEditorPaneTest {
@@ -22,7 +16,7 @@ class TextEditorPaneTest {
     @Test
     void testEditorIsEditableByDefault() {
         TextEditorPane editor = onEdtGet(TextEditorPane::new);
-        assertTrue(onEdtGet(() -> editor.getTextComponent().isEditable()));
+        assertTrue(onEdtGet(editor::isEditable));
     }
 
     @Test
@@ -54,8 +48,6 @@ class TextEditorPaneTest {
             editor.markBold(true);
         });
 
-        AttributeSet attrsBold = onEdtGet(() -> characterAttributes(editor, 1));
-        assertTrue(StyleConstants.isBold(attrsBold));
         assertTrue(onEdtGet(() -> isBoldAt(editor.getText(), 1)));
 
         onEdtRun(() -> {
@@ -63,9 +55,7 @@ class TextEditorPaneTest {
             editor.markBold(false);
         });
 
-        AttributeSet attrsPlain = onEdtGet(() -> characterAttributes(editor, 1));
-        assertFalse(StyleConstants.isBold(attrsPlain));
-        assertFalse(onEdtGet(() -> isBoldAt(editor.getText(), 1)));
+        assertTrue(onEdtGet(() -> !isBoldAt(editor.getText(), 1)));
     }
 
     @Test
@@ -82,19 +72,14 @@ class TextEditorPaneTest {
         TextEditorPane editor = onEdtGet(() -> new TextEditorPane("a"));
 
         onEdtRun(() -> {
-            SimpleAttributeSet attributes = new SimpleAttributeSet();
-            StyleConstants.setBold(attributes, true);
-            try {
-                editor.getTextComponent().getStyledDocument().insertString(1, "b", attributes);
-            } catch (BadLocationException ex) {
-                throw new IllegalStateException(ex);
-            }
+            editor.setCaretPosition(1);
+            editor.markBold(true);
+            editor.replaceSelection("b");
         });
 
         RichText textAfterInsert = onEdtGet(editor::getText);
         assertEquals("ab", textAfterInsert.toString());
         assertTrue(isBoldAt(textAfterInsert, 1));
-        assertTrue(StyleConstants.isBold(onEdtGet(() -> characterAttributes(editor, 1))));
 
         onEdtRun(editor::undo);
         assertEquals("a", onEdtGet(() -> editor.getText().toString()));
@@ -103,11 +88,6 @@ class TextEditorPaneTest {
         RichText redone = onEdtGet(editor::getText);
         assertEquals("ab", redone.toString());
         assertTrue(isBoldAt(redone, 1));
-    }
-
-    private static AttributeSet characterAttributes(TextEditorPane editor, int offset) {
-        StyledDocument document = editor.getTextComponent().getStyledDocument();
-        return document.getCharacterElement(offset).getAttributes();
     }
 
     private static boolean isBoldAt(RichText text, int index) {

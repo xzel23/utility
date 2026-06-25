@@ -4,15 +4,13 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
-import com.dua3.utility.text.FontUtil;
-import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
-import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.ui.RichTextEditorModel;
+import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -40,7 +38,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1920,36 +1917,22 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         double defaultLineHeight = Math.max(1.0, baseFont.getFontData().height());
-        FontUtil fontUtil = FontUtil.getInstance();
-        List<VisualLine> lines = new ArrayList<>();
-        double yOffset = 0.0;
-
-        for (LogicalBlock block : logicalBlocks) {
-            ensureBlockLayout(block, availableWidth, widthKey, baseFont, defaultLineHeight, fontUtil);
-            List<LocalVisualLine> localLines = block.localLines;
-            if (localLines == null || localLines.isEmpty()) {
-                lines.add(new VisualLine(block.start, block.start, yOffset, defaultLineHeight, new double[]{0.0}));
-                yOffset += defaultLineHeight;
-                continue;
-            }
-
-            for (LocalVisualLine line : localLines) {
-                lines.add(new VisualLine(
-                        block.start + line.startOffset(),
-                        block.start + line.endOffset(),
-                        yOffset + line.top(),
-                        line.height(),
-                        line.boundaries()
-                ));
-            }
-            yOffset += Math.max(1.0, block.height);
-        }
-
-        if (lines.isEmpty()) {
-            lines.add(new VisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
-        }
-
-        List<VisualLine> cached = List.copyOf(lines);
+        List<RichTextVisualLayoutHelper.LogicalBlock> blocks = logicalBlocks.stream()
+                .map(block -> new RichTextVisualLayoutHelper.LogicalBlock(block.start, block.end, block.text))
+                .toList();
+        List<RichTextVisualLayoutHelper.VisualLine> helperLines = RichTextVisualLayoutHelper.buildVisualLines(
+                blocks,
+                defaultLineHeight,
+                blockText -> {
+                    TextPane.Layout layout = createLayout(blockText, availableWidth);
+                    return new RichTextVisualLayoutHelper.BlockLayout(
+                            layout.renderLines(),
+                            layout.height(),
+                            layout.layoutTextData()::layoutToSourcePosition
+                    );
+                }
+        );
+        List<VisualLine> cached = helperLines.stream().map(VisualLine::fromHelper).toList();
         visualLineCache = new VisualLineCache(widthKey, baseFont, cached);
         return cached;
     }
@@ -1961,48 +1944,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             availableWidth = Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
         }
         return availableWidth;
-    }
-
-    private void ensureBlockLayout(
-            LogicalBlock block,
-            double availableWidth,
-            double widthKey,
-            Font baseFont,
-            double defaultLineHeight,
-            FontUtil fontUtil
-    ) {
-        if (block.hasLayout(widthKey, baseFont)) {
-            return;
-        }
-
-        if (block.start == block.end) {
-            block.localLines = List.of(new LocalVisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
-            block.height = defaultLineHeight;
-            block.layoutWidthKey = widthKey;
-            block.layoutFont = baseFont;
-            return;
-        }
-
-        RichText blockText = block.text;
-        TextPane.Layout layout = createLayout(blockText, availableWidth);
-        List<LocalVisualLine> localLines = new ArrayList<>();
-        for (List<FragmentedText.Fragment> fragmentLine : layout.renderLines()) {
-            LocalVisualLine line = toLocalVisualLine(fragmentLine, layout.layoutTextData(), fontUtil, defaultLineHeight);
-            if (line != null) {
-                localLines.add(line);
-            }
-        }
-
-        if (localLines.isEmpty()) {
-            localLines.add(new LocalVisualLine(0, 0, 0.0, defaultLineHeight, new double[]{0.0}));
-            block.height = defaultLineHeight;
-        } else {
-            block.height = Math.max(defaultLineHeight, layout.height());
-        }
-
-        block.localLines = List.copyOf(localLines);
-        block.layoutWidthKey = widthKey;
-        block.layoutFont = baseFont;
     }
 
     private double currentWrapWidth() {
@@ -2022,133 +1963,24 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
     }
 
-    private static @Nullable LocalVisualLine toLocalVisualLine(
-            List<FragmentedText.Fragment> fragmentLine,
-            TextPane.LayoutTextData mapping,
-            FontUtil fontUtil,
-            double defaultLineHeight
-    ) {
-        if (fragmentLine.isEmpty()) {
-            return null;
-        }
-
-        double lineTop = fragmentLine.getFirst().y();
-        double lineHeight = fragmentLine.stream().mapToDouble(FragmentedText.Fragment::h).max().orElse(defaultLineHeight);
-        Map<Integer, Double> sourceBoundaries = new LinkedHashMap<>();
-
-        int lineStart = Integer.MAX_VALUE;
-        int lineEnd = Integer.MIN_VALUE;
-
-        for (FragmentedText.Fragment fragment : fragmentLine) {
-            if (!(fragment.text() instanceof Run run)) {
-                continue;
-            }
-
-            int fragmentStart = run.getStart();
-            int fragmentEnd = run.getEnd();
-            for (int layoutPos = fragmentStart; layoutPos <= fragmentEnd; layoutPos++) {
-                int rel = layoutPos - fragmentStart;
-                double x = fragment.x() + textWidth(fontUtil, run, rel, fragment.font());
-                int sourcePos = mapping.layoutToSourcePosition(layoutPos);
-                lineStart = Math.min(lineStart, sourcePos);
-                lineEnd = Math.max(lineEnd, sourcePos);
-                sourceBoundaries.merge(sourcePos, x, Math::min);
-            }
-        }
-
-        if (lineStart == Integer.MAX_VALUE || lineEnd < lineStart) {
-            return new LocalVisualLine(0, 0, lineTop, Math.max(1.0, lineHeight), new double[]{0.0});
-        }
-
-        double[] boundaries = new double[lineEnd - lineStart + 1];
-        double x = sourceBoundaries.getOrDefault(lineStart, 0.0);
-        for (int sourcePos = lineStart; sourcePos <= lineEnd; sourcePos++) {
-            Double mappedX = sourceBoundaries.get(sourcePos);
-            if (mappedX != null) {
-                x = mappedX;
-            }
-            boundaries[sourcePos - lineStart] = x;
-        }
-
-        return new LocalVisualLine(lineStart, lineEnd, lineTop, Math.max(1.0, lineHeight), boundaries);
-    }
-
-    private static double textWidth(FontUtil fontUtil, Run run, int length, Font font) {
-        if (length <= 0) {
-            return 0.0;
-        }
-        if (length >= run.length()) {
-            return fontUtil.getTextWidth(run, font);
-        }
-        return fontUtil.getTextWidth(run.subSequence(0, length), font);
-    }
-
     static int indexForPoint(List<VisualLine> lines, double x, double y) {
-        if (lines.isEmpty()) {
-            return 0;
-        }
-
-        if (y <= lines.getFirst().top()) {
-            return indexForX(lines.getFirst(), 0);
-        }
-
-        for (VisualLine line : lines) {
-            if (y < line.top() + line.height()) {
-                return indexForX(line, x);
-            }
-        }
-
-        return indexForX(lines.getLast(), Double.MAX_VALUE);
+        return RichTextVisualLayoutHelper.indexForPoint(toHelperLines(lines), x, y);
     }
 
     static int lineIndexForCaret(List<VisualLine> lines, int caret) {
-        int fallback = lines.size() - 1;
-        for (int i = 0; i < lines.size(); i++) {
-            VisualLine line = lines.get(i);
-            if (caret < line.start()) {
-                return Math.max(0, i - 1);
-            }
-
-            if (caret > line.end()) {
-                fallback = i;
-                continue;
-            }
-
-            // At shared boundaries (especially empty lines), prefer the latest matching line
-            // so caret positions can resolve to visually empty lines.
-            int candidate = i;
-            while (candidate + 1 < lines.size()) {
-                VisualLine next = lines.get(candidate + 1);
-                if (caret < next.start() || caret > next.end()) {
-                    break;
-                }
-                candidate++;
-            }
-            return candidate;
-        }
-        return fallback;
+        return RichTextVisualLayoutHelper.lineIndexForCaret(toHelperLines(lines), caret);
     }
 
     static double xForIndex(VisualLine line, int index) {
-        int offset = Math.clamp((long) index - line.start(), 0, line.length());
-        return line.boundaries()[offset];
+        return RichTextVisualLayoutHelper.xForIndex(line.toHelper(), index);
     }
 
     static int indexForX(VisualLine line, double x) {
-        if (x <= line.minX()) {
-            return line.start();
-        }
-        if (x >= line.maxX()) {
-            return line.end();
-        }
-        double[] boundaries = line.boundaries();
-        for (int i = 0; i < line.length(); i++) {
-            double midpoint = (boundaries[i] + boundaries[i + 1]) * 0.5;
-            if (x < midpoint) {
-                return line.start() + i;
-            }
-        }
-        return line.end();
+        return RichTextVisualLayoutHelper.indexForX(line.toHelper(), x);
+    }
+
+    private static List<RichTextVisualLayoutHelper.VisualLine> toHelperLines(List<VisualLine> lines) {
+        return lines.stream().map(VisualLine::toHelper).toList();
     }
 
     private int previousWordStart(int from) {
@@ -2579,41 +2411,25 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private record VisualLineCache(double widthKey, Font font, List<VisualLine> lines) {}
 
-    private record LocalVisualLine(int startOffset, int endOffset, double top, double height, double[] boundaries) {}
-
     private static final class LogicalBlock {
         private int start;
         private int end;
         private final RichText text;
-        private double layoutWidthKey = Double.NaN;
-        private @Nullable Font layoutFont;
-        private @Nullable List<LocalVisualLine> localLines;
-        private double height = Double.NaN;
 
         private LogicalBlock(int start, int end, RichText text) {
             this.start = start;
             this.end = end;
             this.text = text;
         }
-
-        private boolean hasLayout(double widthKey, Font font) {
-            return localLines != null
-                    && Double.compare(layoutWidthKey, widthKey) == 0
-                    && Objects.equals(layoutFont, font);
-        }
     }
 
     record VisualLine(int start, int end, double top, double height, double[] boundaries) {
-        int length() {
-            return Math.max(0, end - start);
+        RichTextVisualLayoutHelper.VisualLine toHelper() {
+            return new RichTextVisualLayoutHelper.VisualLine(start, end, top, height, boundaries);
         }
 
-        double minX() {
-            return boundaries.length == 0 ? 0 : boundaries[0];
-        }
-
-        double maxX() {
-            return boundaries.length == 0 ? 0 : boundaries[boundaries.length - 1];
+        static VisualLine fromHelper(RichTextVisualLayoutHelper.VisualLine line) {
+            return new VisualLine(line.start(), line.end(), line.top(), line.height(), line.boundaries());
         }
     }
 

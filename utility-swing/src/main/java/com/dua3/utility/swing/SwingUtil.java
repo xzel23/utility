@@ -119,6 +119,7 @@ public final class SwingUtil {
      *                          invoked
      * @return new Action instance
      */
+    @SuppressWarnings({"UseOfClone", "java:S2975"})
     public static Action createAction(String name, Consumer<? super ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
             @Serial
@@ -129,7 +130,6 @@ public final class SwingUtil {
                 onActionPerformed.accept(evt);
             }
 
-            @SuppressWarnings("UseOfClone")
             @Override
             public AbstractAction clone() throws CloneNotSupportedException {
                 return (AbstractAction) super.clone();
@@ -145,6 +145,7 @@ public final class SwingUtil {
      *                          invoked
      * @return new Action instance
      */
+    @SuppressWarnings({"UseOfClone", "java:S2975"})
     public static Action createAction(String name, Runnable onActionPerformed) {
         return new AbstractAction(name) {
             @Serial
@@ -155,10 +156,8 @@ public final class SwingUtil {
                 onActionPerformed.run();
             }
 
-            @SuppressWarnings("UseOfClone")
             @Override
             public AbstractAction clone() throws CloneNotSupportedException {
-                //noinspection UseOfClone
                 return (AbstractAction) super.clone();
             }
         };
@@ -199,6 +198,24 @@ public final class SwingUtil {
         StringSelection selection = new StringSelection(text);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);
+    }
+
+    /**
+     * Retrieves a string from the system clipboard, if available.
+     * Attempts to access the clipboard contents and checks if the data can
+     * be interpreted as a string.
+     *
+     * @return an {@code Optional} containing the string from the clipboard if present and accessible;
+     *         otherwise, an empty {@code Optional}.
+     */
+    public static Optional<String> getStringFromClipboard() {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            return clipboard.getData(DataFlavor.stringFlavor) instanceof String s ? Optional.of(s) : Optional.empty();
+        } catch (HeadlessException | IOException | UnsupportedFlavorException e) {
+            LOG.warn("could not get clipboard contents", e);
+            return Optional.empty();
+        }
     }
 
     /**

@@ -7,7 +7,6 @@ import com.dua3.utility.text.RichTextBuilder;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Supplier;
 
@@ -33,7 +32,7 @@ class TextPaneTest {
 
         RichText current = onEdtGet(pane::getText);
         assertEquals(text, current);
-        assertEquals("Hello world", onEdtGet(() -> documentText(pane)));
+        assertEquals("Hello world", onEdtGet(() -> pane.getText().toString()));
     }
 
     @Test
@@ -63,15 +62,7 @@ class TextPaneTest {
     @Test
     void testDefaultReadOnlyBehavior() {
         TextPane pane = onEdtGet(TextPane::new);
-        assertFalse(onEdtGet(() -> pane.getTextComponent().isEditable()));
-    }
-
-    private static String documentText(TextPane pane) {
-        try {
-            return pane.getTextComponent().getDocument().getText(0, pane.getTextComponent().getDocument().getLength());
-        } catch (BadLocationException ex) {
-            throw new IllegalStateException(ex);
-        }
+        assertFalse(onEdtGet(pane::isEditable));
     }
 
     private static void onEdtRun(Runnable action) {

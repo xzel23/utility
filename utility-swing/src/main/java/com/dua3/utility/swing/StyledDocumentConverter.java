@@ -174,7 +174,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         protected void apply(Map<String, Pair<@Nullable Object, @Nullable Object>> changedAttributes) {
             Map<String, @Nullable Object> attributes = new HashMap<>();
             changedAttributes.forEach((attribute, values) -> attributes.put(attribute, values.second()));
-            // apply the default font styles 
+            // apply the default font styles
             currentFont = FontUtil.getInstance().deriveFont(currentFont, TextAttributes.getFontDef(attributes));
             currentAttributes = createAttributeSet(currentFont);
         }
