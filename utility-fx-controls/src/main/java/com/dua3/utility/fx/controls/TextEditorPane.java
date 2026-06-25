@@ -1409,21 +1409,24 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * Moves caret to start of previous word.
      */
     public void previousWord() {
-        positionCaret(previousWordStart(getCaretPosition()));
+        int from = getCaretPosition();
+        positionCaret(RichTextEditUtil.previousWordStart(materializeDocumentText().toString(), from));
     }
 
     /**
      * Moves caret to start of next word.
      */
     public void nextWord() {
-        positionCaret(nextWordStart(getCaretPosition()));
+        int from = getCaretPosition();
+        positionCaret(RichTextEditUtil.nextWordStart(materializeDocumentText().toString(), from));
     }
 
     /**
      * Moves caret to end of next word.
      */
     public void endOfNextWord() {
-        positionCaret(nextWordEnd(getCaretPosition()));
+        int from = getCaretPosition();
+        positionCaret(RichTextEditUtil.nextWordEnd(materializeDocumentText().toString(), from));
     }
 
     /**
@@ -1444,21 +1447,24 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * Extends selection to start of previous word.
      */
     public void selectPreviousWord() {
-        selectPositionCaret(previousWordStart(getCaretPosition()));
+        int from = getCaretPosition();
+        selectPositionCaret(RichTextEditUtil.previousWordStart(materializeDocumentText().toString(), from));
     }
 
     /**
      * Extends selection to start of next word.
      */
     public void selectNextWord() {
-        selectPositionCaret(nextWordStart(getCaretPosition()));
+        int from = getCaretPosition();
+        selectPositionCaret(RichTextEditUtil.nextWordStart(materializeDocumentText().toString(), from));
     }
 
     /**
      * Extends selection to end of next word.
      */
     public void selectEndOfNextWord() {
-        selectPositionCaret(nextWordEnd(getCaretPosition()));
+        int from = getCaretPosition();
+        selectPositionCaret(RichTextEditUtil.nextWordEnd(materializeDocumentText().toString(), from));
     }
 
     /**
@@ -1653,7 +1659,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private int hitTest(MouseEvent evt) {
         Point2D p = toContentPoint(evt);
-        return indexForPoint(buildVisualLines(currentWrapWidth()), p.getX(), p.getY());
+        List<VisualLine> lines = buildVisualLines(currentWrapWidth());
+        return RichTextVisualLayoutHelper.indexForPoint(lines, p.getX(), p.getY());
     }
 
     private void selectWordAt(int pos) {
@@ -1693,13 +1700,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         int caret = getCaretPosition();
-        int currentLineIndex = lineIndexForCaret(lines, caret);
+        int currentLineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
         if (currentLineIndex < 0) {
             return;
         }
 
         VisualLine currentLine = lines.get(currentLineIndex);
-        double x = Double.isNaN(preferredCaretX) ? xForIndex(currentLine, caret) : preferredCaretX;
+        double x;
+        x = Double.isNaN(preferredCaretX) ? RichTextVisualLayoutHelper.xForIndex(currentLine, caret) : preferredCaretX;
 
         int targetLineIndex = currentLineIndex + delta;
         int targetCaret;
@@ -1708,9 +1716,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         } else if (targetLineIndex >= lines.size()) {
             VisualLine line = lines.getLast();
             targetCaret = line.end();
-            x = xForIndex(line, targetCaret);
+            x = RichTextVisualLayoutHelper.xForIndex(line, targetCaret);
         } else {
-            targetCaret = indexForX(lines.get(targetLineIndex), x);
+            targetCaret = RichTextVisualLayoutHelper.indexForX(lines.get(targetLineIndex), x);
         }
 
         if (extendSelection) {
@@ -1733,13 +1741,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         int caret = getCaretPosition();
-        int currentLineIndex = lineIndexForCaret(lines, caret);
+        int currentLineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
         if (currentLineIndex < 0 || currentLineIndex >= lines.size()) {
             return;
         }
 
         VisualLine currentLine = lines.get(currentLineIndex);
-        double x = Double.isNaN(preferredCaretX) ? xForIndex(currentLine, caret) : preferredCaretX;
+        double x;
+        x = Double.isNaN(preferredCaretX) ? RichTextVisualLayoutHelper.xForIndex(currentLine, caret) : preferredCaretX;
 
         double pageHeight = 0.0;
         ScrollPane sp = getScrollPane();
@@ -1760,7 +1769,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         double targetY = currentLine.top() + delta * pageHeight;
-        int targetCaret = indexForPoint(lines, x, targetY);
+        int targetCaret = RichTextVisualLayoutHelper.indexForPoint(lines, x, targetY);
 
         if (extendSelection) {
             selectPositionCaret(targetCaret);
@@ -1894,34 +1903,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
         double fallback = getWidth() - snappedLeftInset() - snappedRightInset();
         return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
-    }
-
-    static int indexForPoint(List<VisualLine> lines, double x, double y) {
-        return RichTextVisualLayoutHelper.indexForPoint(lines, x, y);
-    }
-
-    static int lineIndexForCaret(List<VisualLine> lines, int caret) {
-        return RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
-    }
-
-    static double xForIndex(VisualLine line, int index) {
-        return RichTextVisualLayoutHelper.xForIndex(line, index);
-    }
-
-    static int indexForX(VisualLine line, double x) {
-        return RichTextVisualLayoutHelper.indexForX(line, x);
-    }
-
-    private int previousWordStart(int from) {
-        return RichTextEditUtil.previousWordStart(materializeDocumentText().toString(), from);
-    }
-
-    private int nextWordStart(int from) {
-        return RichTextEditUtil.nextWordStart(materializeDocumentText().toString(), from);
-    }
-
-    private int nextWordEnd(int from) {
-        return RichTextEditUtil.nextWordEnd(materializeDocumentText().toString(), from);
     }
 
     private void setSelectionState(int anchorPos, int caretPos) {

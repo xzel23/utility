@@ -6,6 +6,7 @@ import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
+import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
@@ -38,7 +39,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             VisualLine emptyLine = lines.get(emptyLineIndex);
             editor.positionCaret(emptyLine.start());
 
-            int resolvedLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
+            int resolvedLine = RichTextVisualLayoutHelper.lineIndexForCaret(lines, editor.getCaretPosition());
             assertEquals(emptyLineIndex, resolvedLine);
         });
     }
@@ -57,7 +58,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
             VisualLine emptyLine = lines.get(emptyLineIndex);
             double y = emptyLine.top() + emptyLine.height() * 0.5;
-            int caret = TextEditorPane.indexForPoint(lines, 0.0, y);
+            int caret = RichTextVisualLayoutHelper.indexForPoint(lines, 0.0, y);
             assertEquals(emptyLine.start(), caret);
         });
     }
@@ -78,7 +79,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
             List<VisualLine> lines = editor.buildVisualLines(400.0);
             int caret = editor.getCaretPosition();
-            int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
+            int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             assertEquals(lines.size() - 1, lineIndex);
             assertEquals(caret, lines.get(lineIndex).start());
             assertEquals(caret, lines.get(lineIndex).end());
@@ -100,7 +101,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             assertTrue(lines.size() >= 4, "expected four logical lines after trailing insertion");
 
             int textEnd = editor.getLength();
-            int lastLineIndex = TextEditorPane.lineIndexForCaret(lines, textEnd);
+            int lastLineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, textEnd);
             assertEquals(lines.size() - 1, lastLineIndex);
 
             VisualLine lastLine = lines.getLast();
@@ -130,7 +131,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             assertNotNull(targetLayoutLine, "target layout line not found");
 
             double y = targetLayoutLine.top() + targetLayoutLine.height() * 0.5;
-            int hitCaret = TextEditorPane.indexForPoint(visualLines, 0.0, y);
+            int hitCaret = RichTextVisualLayoutHelper.indexForPoint(visualLines, 0.0, y);
             assertEquals(targetPos, hitCaret, "hit test resolved to wrong source position");
         });
     }
@@ -156,7 +157,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             assertNotNull(targetLayoutLine, "target layout line not found");
 
             double y = targetLayoutLine.top() + targetLayoutLine.height() * 0.5;
-            int hitCaret = TextEditorPane.indexForPoint(visualLines, 0.0, y);
+            int hitCaret = RichTextVisualLayoutHelper.indexForPoint(visualLines, 0.0, y);
             assertEquals(targetPos, hitCaret, "hit test resolved to wrong source position");
         });
     }
@@ -173,15 +174,15 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             editor.positionCaret(start);
 
             List<VisualLine> lines = editor.buildVisualLines(600.0);
-            int currentLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
+            int currentLine = RichTextVisualLayoutHelper.lineIndexForCaret(lines, editor.getCaretPosition());
             assertTrue(currentLine >= 0);
 
             VisualLine line = lines.get(currentLine);
-            double x = TextEditorPane.xForIndex(line, editor.getCaretPosition());
+            double x = RichTextVisualLayoutHelper.xForIndex(line, editor.getCaretPosition());
             double viewportHeight = viewportHeight(editor);
             assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected a visible editor viewport");
 
-            int expectedCaret = TextEditorPane.indexForPoint(lines, x, line.top() + viewportHeight);
+            int expectedCaret = RichTextVisualLayoutHelper.indexForPoint(lines, x, line.top() + viewportHeight);
             editor.processKeyPressed(keyPressed(KeyCode.PAGE_DOWN, false));
 
             assertEquals(expectedCaret, editor.getCaretPosition());
@@ -201,15 +202,15 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             editor.positionCaret(start);
 
             List<VisualLine> lines = editor.buildVisualLines(600.0);
-            int currentLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
+            int currentLine = RichTextVisualLayoutHelper.lineIndexForCaret(lines, editor.getCaretPosition());
             assertTrue(currentLine >= 0);
 
             VisualLine line = lines.get(currentLine);
-            double x = TextEditorPane.xForIndex(line, editor.getCaretPosition());
+            double x = RichTextVisualLayoutHelper.xForIndex(line, editor.getCaretPosition());
             double viewportHeight = viewportHeight(editor);
             assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected a visible editor viewport");
 
-            int expectedCaret = TextEditorPane.indexForPoint(lines, x, line.top() - viewportHeight);
+            int expectedCaret = RichTextVisualLayoutHelper.indexForPoint(lines, x, line.top() - viewportHeight);
             editor.processKeyPressed(keyPressed(KeyCode.PAGE_UP, false));
 
             assertEquals(expectedCaret, editor.getCaretPosition());
@@ -229,15 +230,15 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             editor.positionCaret(anchor);
 
             List<VisualLine> lines = editor.buildVisualLines(600.0);
-            int currentLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
+            int currentLine = RichTextVisualLayoutHelper.lineIndexForCaret(lines, editor.getCaretPosition());
             assertTrue(currentLine >= 0);
 
             VisualLine line = lines.get(currentLine);
-            double x = TextEditorPane.xForIndex(line, editor.getCaretPosition());
+            double x = RichTextVisualLayoutHelper.xForIndex(line, editor.getCaretPosition());
             double viewportHeight = viewportHeight(editor);
             assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected a visible editor viewport");
 
-            int expectedCaret = TextEditorPane.indexForPoint(lines, x, line.top() + viewportHeight);
+            int expectedCaret = RichTextVisualLayoutHelper.indexForPoint(lines, x, line.top() + viewportHeight);
             editor.processKeyPressed(keyPressed(KeyCode.PAGE_DOWN, true));
 
             assertEquals(anchor, editor.getAnchor());
@@ -277,7 +278,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
             List<VisualLine> lines = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
             int caret = editor.getCaretPosition();
-            int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
+            int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             assertTrue(lineIndex >= 0);
             VisualLine caretLine = lines.get(lineIndex);
             double caretBottom = caretLine.top() + caretLine.height();
@@ -327,7 +328,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
             List<VisualLine> lines = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
             int caret = editor.getCaretPosition();
-            int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
+            int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             assertTrue(lineIndex >= 0);
             VisualLine caretLine = lines.get(lineIndex);
             double caretBottom = caretLine.top() + caretLine.height();
@@ -346,7 +347,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
             List<VisualLine> linesAfterMove = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
             int movedCaret = editor.getCaretPosition();
-            int movedLineIndex = TextEditorPane.lineIndexForCaret(linesAfterMove, movedCaret);
+            int movedLineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(linesAfterMove, movedCaret);
             assertTrue(movedLineIndex >= 0);
             VisualLine movedCaretLine = linesAfterMove.get(movedLineIndex);
             double movedCaretBottom = movedCaretLine.top() + movedCaretLine.height();

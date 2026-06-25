@@ -26,6 +26,7 @@ import com.dua3.utility.ui.HAnchor;
 import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.RichTextPane;
 import com.dua3.utility.ui.RichTextRenderer;
+import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VAnchor;
 import com.dua3.utility.ui.VisualLine;
 import javafx.animation.Animation;
@@ -1468,7 +1469,7 @@ public class TextPane extends Control implements RichTextPane {
             }
 
             Point2D point = contentPane.sceneToLocal(sceneX, dragSceneY);
-            int caret = TextEditorPane.indexForPoint(lines, point.getX(), point.getY());
+            int caret = RichTextVisualLayoutHelper.indexForPoint(lines, point.getX(), point.getY());
             editor.selectPositionCaret(caret);
         }
 
@@ -1494,13 +1495,13 @@ public class TextPane extends Control implements RichTextPane {
             }
 
             int caret = editor.getCaretPosition();
-            int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
+            int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             if (lineIndex < 0 || lineIndex >= lines.size()) {
                 return;
             }
 
             VisualLine line = lines.get(lineIndex);
-            double caretX = TextEditorPane.xForIndex(line, caret);
+            double caretX = RichTextVisualLayoutHelper.xForIndex(line, caret);
             double caretWidth = Math.max(1.0, editor.getFont().getFontData().spaceWidth());
 
             scrollHorizontallyToInclude(caretX, caretWidth);
@@ -1768,7 +1769,7 @@ public class TextPane extends Control implements RichTextPane {
                 return;
             }
 
-            int lineIndex = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
+            int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, editor.getCaretPosition());
             if (lineIndex < 0 || lineIndex >= lines.size()) {
                 return;
             }
@@ -1861,10 +1862,10 @@ public class TextPane extends Control implements RichTextPane {
                     List<VisualLine> lines = editor.buildVisualLines(availableWidth);
                     if (!lines.isEmpty()) {
                         int caretPosition = editor.getCaretPosition();
-                        int lineIndex = TextEditorPane.lineIndexForCaret(lines, caretPosition);
+                        int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caretPosition);
                         if (lineIndex >= 0 && lineIndex < lines.size()) {
                             VisualLine line = lines.get(lineIndex);
-                            double x = TextEditorPane.xForIndex(line, caretPosition);
+                            double x = RichTextVisualLayoutHelper.xForIndex(line, caretPosition);
                             caretInfo = new CaretInfo(x, line.top(), line.height());
                         }
                     }
