@@ -9,8 +9,13 @@ import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.ToRichText;
+import com.dua3.utility.ui.ChangeRange;
+import com.dua3.utility.ui.DocumentReplaceResult;
+import com.dua3.utility.ui.RichTextEditHistory;
+import com.dua3.utility.ui.RichTextEditUtil;
 import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
+import com.dua3.utility.ui.VisualLineCache;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -77,16 +82,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private final ObjectProperty<RichText> committedValue;
     private final RichText defaultValue;
     private final InputControlState<RichText> state;
-    private final List<HistoryEntry> undoStack = new ArrayList<>();
-    private final List<HistoryEntry> redoStack = new ArrayList<>();
+    private final RichTextEditHistory history = new RichTextEditHistory(MAX_HISTORY_SIZE);
     private final SelectionModel selectionModel = new SelectionModel();
     private @Nullable ScrollPane scrollPane;
-    private boolean inHistoryNavigation;
     private boolean updatingPropertiesFromText;
     private boolean syncingTextPropertyFromDocument;
     private double preferredCaretX = Double.NaN;
-    private final List<LogicalBlock> logicalBlocks = new ArrayList<>();
-    private @Nullable VisualLineCache visualLineCache;
+    private final List<RichTextVisualLayoutHelper.LogicalBlock> logicalBlocks = new ArrayList<>();
+    private @Nullable VisualLineCache<VisualLine> visualLineCache;
     private RichText documentText;
     private boolean documentTextDirty;
     private final ReadOnlyObjectWrapper<RichText> document = new ReadOnlyObjectWrapper<>(this, "documentText", RichText.emptyText());
@@ -163,21 +166,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         initSelectionInteraction();
     }
 
-    private static LogicalBlock createLogicalBlock(RichText text, int start, int end) {
-        return new LogicalBlock(start, end, detachedSubSequence(text, start, end));
-    }
-
     private void rebuildLogicalBlocks(RichText text) {
         logicalBlocks.clear();
-        int lineStart = 0;
-        int length = text.length();
-        for (int i = 0; i < length; i++) {
-            if (text.charAt(i) == '\n') {
-                logicalBlocks.add(createLogicalBlock(text, lineStart, i));
-                lineStart = i + 1;
-            }
-        }
-        logicalBlocks.add(createLogicalBlock(text, lineStart, length));
+        logicalBlocks.addAll(RichTextVisualLayoutHelper.splitLogicalBlocks(text));
     }
 
     /**
@@ -253,20 +244,20 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int e = Math.clamp(Math.max(start, end), 0, max);
 
         if (logicalBlocks.isEmpty()) {
-            logicalBlocks.add(new LogicalBlock(0, 0, RichText.emptyText()));
+            logicalBlocks.add(new RichTextVisualLayoutHelper.LogicalBlock(0, 0, RichText.emptyText()));
         }
 
         int startBlockIndex = blockIndexForPosition(s);
         int endBlockIndex = blockIndexForPosition(e);
-        int segmentStart = logicalBlocks.get(startBlockIndex).start;
-        int segmentEndOld = logicalBlocks.get(endBlockIndex).end;
+        int segmentStart = logicalBlocks.get(startBlockIndex).start();
+        int segmentEndOld = logicalBlocks.get(endBlockIndex).end();
 
         int prefixCount = firstBlockAtOrAfter(segmentStart);
         int suffixIndex = firstBlockAfter(segmentEndOld);
         RichText segmentText = buildSegmentText(prefixCount, suffixIndex);
         int localStart = s - segmentStart;
         int localEnd = e - segmentStart;
-        RichText removed = detachedSubSequence(segmentText, localStart, localEnd);
+        RichText removed = RichTextEditUtil.detachedSubSequence(segmentText, localStart, localEnd);
         if (removed.equals(replacement)) {
             return new DocumentReplaceResult(s, e, removed, false);
         }
@@ -274,7 +265,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         RichText updatedSegment = segmentText.replace(localStart, localEnd, replacement);
         int delta = updatedSegment.length() - segmentText.length();
 
-        List<LogicalBlock> updatedBlocks = new ArrayList<>(logicalBlocks.size() + 8);
+        List<RichTextVisualLayoutHelper.LogicalBlock> updatedBlocks = new ArrayList<>(logicalBlocks.size() + 8);
         for (int i = 0; i < prefixCount; i++) {
             updatedBlocks.add(logicalBlocks.get(i));
         }
@@ -282,16 +273,18 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         updatedBlocks.addAll(splitSegmentIntoBlocks(updatedSegment, segmentStart));
 
         for (int i = suffixIndex; i < logicalBlocks.size(); i++) {
-            LogicalBlock block = logicalBlocks.get(i);
-            block.start += delta;
-            block.end += delta;
-            updatedBlocks.add(block);
+            RichTextVisualLayoutHelper.LogicalBlock block = logicalBlocks.get(i);
+            updatedBlocks.add(new RichTextVisualLayoutHelper.LogicalBlock(
+                    block.start() + delta,
+                    block.end() + delta,
+                    block.text()
+            ));
         }
 
         logicalBlocks.clear();
         logicalBlocks.addAll(updatedBlocks);
         if (logicalBlocks.isEmpty()) {
-            logicalBlocks.add(new LogicalBlock(0, 0, RichText.emptyText()));
+            logicalBlocks.add(new RichTextVisualLayoutHelper.LogicalBlock(0, 0, RichText.emptyText()));
         }
         length.set(documentLength());
         invalidateDocumentTextSnapshot();
@@ -302,7 +295,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private int documentLength() {
-        return logicalBlocks.isEmpty() ? 0 : logicalBlocks.getLast().end;
+        return logicalBlocks.isEmpty() ? 0 : logicalBlocks.getLast().end();
     }
 
     private RichText readDocumentRange(int start, int end) {
@@ -315,13 +308,13 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
         int startBlockIndex = blockIndexForPosition(s);
         int endBlockIndex = blockIndexForPosition(e);
-        int segmentStart = logicalBlocks.get(startBlockIndex).start;
-        int segmentEnd = logicalBlocks.get(endBlockIndex).end;
+        int segmentStart = logicalBlocks.get(startBlockIndex).start();
+        int segmentEnd = logicalBlocks.get(endBlockIndex).end();
 
         int fromBlockIndex = firstBlockAtOrAfter(segmentStart);
         int toBlockIndexExclusive = firstBlockAfter(segmentEnd);
         RichText segmentText = buildSegmentText(fromBlockIndex, toBlockIndexExclusive);
-        return detachedSubSequence(segmentText, s - segmentStart, e - segmentStart);
+        return RichTextEditUtil.detachedSubSequence(segmentText, s - segmentStart, e - segmentStart);
     }
 
     private RichText buildSegmentText(int fromBlockIndex, int toBlockIndexExclusive) {
@@ -331,8 +324,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
         int expectedLength = 0;
         for (int i = fromBlockIndex; i < toBlockIndexExclusive; i++) {
-            LogicalBlock block = logicalBlocks.get(i);
-            expectedLength += block.end - block.start;
+            RichTextVisualLayoutHelper.LogicalBlock block = logicalBlocks.get(i);
+            expectedLength += block.end() - block.start();
             if (i + 1 < toBlockIndexExclusive) {
                 expectedLength++;
             }
@@ -340,8 +333,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
         RichTextBuilder rtb = new RichTextBuilder(Math.max(expectedLength, 0));
         for (int i = fromBlockIndex; i < toBlockIndexExclusive; i++) {
-            LogicalBlock block = logicalBlocks.get(i);
-            block.text.appendTo(rtb);
+            RichTextVisualLayoutHelper.LogicalBlock block = logicalBlocks.get(i);
+            block.text().appendTo(rtb);
             if (i + 1 < toBlockIndexExclusive) {
                 rtb.append('\n');
             }
@@ -349,21 +342,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return rtb.toRichText();
     }
 
-    private static List<LogicalBlock> splitSegmentIntoBlocks(RichText text, int baseStart) {
-        List<LogicalBlock> blocks = new ArrayList<>();
-        int lineStart = 0;
-        int length = text.length();
-        for (int i = 0; i < length; i++) {
-            if (text.charAt(i) == '\n') {
-                blocks.add(new LogicalBlock(baseStart + lineStart, baseStart + i, detachedSubSequence(text, lineStart, i)));
-                lineStart = i + 1;
-            }
-        }
-        blocks.add(new LogicalBlock(baseStart + lineStart, baseStart + length, detachedSubSequence(text, lineStart, length)));
-        if (blocks.isEmpty()) {
-            blocks.add(new LogicalBlock(baseStart, baseStart, RichText.emptyText()));
-        }
-        return blocks;
+    private static List<RichTextVisualLayoutHelper.LogicalBlock> splitSegmentIntoBlocks(RichText text, int baseStart) {
+        return RichTextVisualLayoutHelper.splitLogicalBlocks(text).stream()
+                .map(block -> new RichTextVisualLayoutHelper.LogicalBlock(
+                        baseStart + block.start(),
+                        baseStart + block.end(),
+                        block.text()
+                ))
+                .toList();
     }
 
     private int blockIndexForPosition(int position) {
@@ -376,10 +362,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int high = logicalBlocks.size() - 1;
         while (low <= high) {
             int mid = (low + high) >>> 1;
-            LogicalBlock block = logicalBlocks.get(mid);
-            if (p < block.start) {
+            RichTextVisualLayoutHelper.LogicalBlock block = logicalBlocks.get(mid);
+            if (p < block.start()) {
                 high = mid - 1;
-            } else if (p > block.end) {
+            } else if (p > block.end()) {
                 low = mid + 1;
             } else {
                 return mid;
@@ -393,7 +379,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int high = logicalBlocks.size();
         while (low < high) {
             int mid = (low + high) >>> 1;
-            if (logicalBlocks.get(mid).start < position) {
+            if (logicalBlocks.get(mid).start() < position) {
                 low = mid + 1;
             } else {
                 high = mid;
@@ -407,7 +393,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int high = logicalBlocks.size();
         while (low < high) {
             int mid = (low + high) >>> 1;
-            if (logicalBlocks.get(mid).start <= position) {
+            if (logicalBlocks.get(mid).start() <= position) {
                 low = mid + 1;
             } else {
                 high = mid;
@@ -1122,7 +1108,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @return a list of {@code RichText} objects representing the text content of all logical blocks.
      */
     private List<RichText> snapshotLines() {
-        return logicalBlocks.stream().map(block -> block.text).toList();
+        return logicalBlocks.stream().map(RichTextVisualLayoutHelper.LogicalBlock::text).toList();
     }
 
     /**
@@ -1137,7 +1123,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     public void appendTo(Appendable appendable) throws IOException {
         List<RichText> lineSnapshot = snapshotLines();
         for (int i = 0; i < lineSnapshot.size(); i++) {
-            appendPlainText(lineSnapshot.get(i), appendable);
+            RichTextEditUtil.appendPlainText(lineSnapshot.get(i), appendable);
             if (i + 1 < lineSnapshot.size()) {
                 appendable.append('\n');
             }
@@ -1302,7 +1288,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      */
     public void replaceText(int start, int end, @Nullable CharSequence replacement) {
         CharSequence text = Objects.requireNonNullElse(replacement, "");
-        RichText inserted = detachedRichText(text);
+        RichText inserted = RichTextEditUtil.detachedRichText(text);
         DocumentReplaceResult result = replaceDocumentRange(start, end, inserted);
         int s = result.start();
         int newCaret = s + inserted.length();
@@ -1314,7 +1300,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int beforeAnchor = getAnchor();
         int beforeCaret = getCaretPosition();
 
-        pushHistoryEntry(new TextReplaceHistoryEntry(
+        history.push(new RichTextEditHistory.TextReplaceHistoryEntry(
                 s,
                 result.removed(),
                 inserted,
@@ -1523,43 +1509,18 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * Performs one undo step.
      */
     public void undo() {
-        undoOrRedo(undoStack, redoStack, true);
+        if (history.undo(this::applyHistoryTextReplace)) {
+            updateHistoryState();
+        }
     }
 
     /**
      * Performs one redo step.
      */
     public void redo() {
-        undoOrRedo(redoStack, undoStack, false);
-    }
-
-    /**
-     * Performs an undo or redo operation by managing the provided undo and redo stacks.
-     * The method applies one history entry from the source stack and pushes it to the
-     * target stack while updating history navigation state.
-     *
-     * @param sourceStack stack to consume (undo or redo)
-     * @param targetStack opposite stack to receive the entry
-     * @param undo true for undo operation, false for redo operation
-     */
-    private void undoOrRedo(List<HistoryEntry> sourceStack, List<HistoryEntry> targetStack, boolean undo) {
-        if (sourceStack.isEmpty()) {
-            return;
+        if (history.redo(this::applyHistoryTextReplace)) {
+            updateHistoryState();
         }
-
-        HistoryEntry entry = sourceStack.removeLast();
-        inHistoryNavigation = true;
-        try {
-            if (undo) {
-                entry.applyUndo(this);
-            } else {
-                entry.applyRedo(this);
-            }
-            targetStack.add(entry);
-        } finally {
-            inHistoryNavigation = false;
-        }
-        updateHistoryState();
     }
 
     /**
@@ -1602,7 +1563,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             return;
         }
 
-        ChangeRange changed = findChangedRange(current, updated);
+        ChangeRange changed = RichTextEditUtil.findChangedRange(current, updated);
         if (changed.isEmpty()) {
             return;
         }
@@ -1610,8 +1571,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int start = changed.start();
         int endInCurrent = changed.endInCurrent();
         int endInUpdated = changed.endInUpdated();
-        RichText removed = detachedSubSequence(current, start, endInCurrent);
-        RichText inserted = detachedSubSequence(updated, start, endInUpdated);
+        RichText removed = RichTextEditUtil.detachedSubSequence(current, start, endInCurrent);
+        RichText inserted = RichTextEditUtil.detachedSubSequence(updated, start, endInUpdated);
         int beforeAnchor = getAnchor();
         int beforeCaret = getCaretPosition();
 
@@ -1619,7 +1580,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         int afterAnchor = getAnchor();
         int afterCaret = getCaretPosition();
 
-        pushHistoryEntry(new TextReplaceHistoryEntry(
+        history.push(new RichTextEditHistory.TextReplaceHistoryEntry(
                 start,
                 removed,
                 inserted,
@@ -1629,13 +1590,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 afterCaret
         ));
         updateHistoryState();
-    }
-
-    private static ChangeRange findChangedRange(RichText current, RichText updated) {
-        int prefix = current.commonPrefixLength(updated);
-        int maxSuffix = Math.min(current.length(), updated.length()) - prefix;
-        int suffix = Math.min(current.commonSuffixLength(updated), maxSuffix);
-        return new ChangeRange(prefix, current.length() - suffix, updated.length() - suffix);
     }
 
     /**
@@ -1703,26 +1657,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private void selectWordAt(int pos) {
         String text = materializeDocumentText().toString();
-        if (text.isEmpty()) {
-            setSelectionState(0, 0);
-            return;
-        }
-
-        int p = Math.clamp(pos, 0, text.length());
-        if (p == text.length() && p > 0) {
-            p--;
-        }
-
-        boolean word = isWordChar(text.charAt(p));
-        int start = p;
-        int end = p;
-        while (start > 0 && isWordChar(text.charAt(start - 1)) == word) {
-            start--;
-        }
-        while (end < text.length() && isWordChar(text.charAt(end)) == word) {
-            end++;
-        }
-        setSelectionState(start, end);
+        RichTextEditUtil.WordRange range = RichTextEditUtil.wordRangeAt(text, pos);
+        setSelectionState(range.start(), range.end());
         preferredCaretX = Double.NaN;
     }
 
@@ -1905,7 +1841,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         Font baseFont = getFont();
         double widthKey = isWrapText() ? availableWidth : Double.POSITIVE_INFINITY;
 
-        VisualLineCache cache = visualLineCache;
+        VisualLineCache<VisualLine> cache = visualLineCache;
         if (cache != null
                 && Double.compare(cache.widthKey(), widthKey) == 0
                 && Objects.equals(cache.font(), baseFont)) {
@@ -1917,9 +1853,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         double defaultLineHeight = Math.max(1.0, baseFont.getFontData().height());
-        List<RichTextVisualLayoutHelper.LogicalBlock> blocks = logicalBlocks.stream()
-                .map(block -> new RichTextVisualLayoutHelper.LogicalBlock(block.start, block.end, block.text))
-                .toList();
+        List<RichTextVisualLayoutHelper.LogicalBlock> blocks = List.copyOf(logicalBlocks);
         List<RichTextVisualLayoutHelper.VisualLine> helperLines = RichTextVisualLayoutHelper.buildVisualLines(
                 blocks,
                 defaultLineHeight,
@@ -1933,7 +1867,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 }
         );
         List<VisualLine> cached = helperLines.stream().map(VisualLine::fromHelper).toList();
-        visualLineCache = new VisualLineCache(widthKey, baseFont, cached);
+        visualLineCache = new VisualLineCache<>(widthKey, baseFont, cached);
         return cached;
     }
 
@@ -1984,47 +1918,15 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private int previousWordStart(int from) {
-        String text = materializeDocumentText().toString();
-        int i = Math.clamp(from, 0, text.length());
-        if (i == 0) {
-            return 0;
-        }
-        i--;
-        while (i > 0 && !isWordChar(text.charAt(i))) {
-            i--;
-        }
-        while (i > 0 && isWordChar(text.charAt(i - 1))) {
-            i--;
-        }
-        return i;
+        return RichTextEditUtil.previousWordStart(materializeDocumentText().toString(), from);
     }
 
     private int nextWordStart(int from) {
-        String text = materializeDocumentText().toString();
-        int i = Math.clamp(from, 0, text.length());
-        while (i < text.length() && isWordChar(text.charAt(i))) {
-            i++;
-        }
-        while (i < text.length() && !isWordChar(text.charAt(i))) {
-            i++;
-        }
-        return i;
+        return RichTextEditUtil.nextWordStart(materializeDocumentText().toString(), from);
     }
 
     private int nextWordEnd(int from) {
-        String text = materializeDocumentText().toString();
-        int i = Math.clamp(from, 0, text.length());
-        while (i < text.length() && !isWordChar(text.charAt(i))) {
-            i++;
-        }
-        while (i < text.length() && isWordChar(text.charAt(i))) {
-            i++;
-        }
-        return i;
-    }
-
-    private static boolean isWordChar(char c) {
-        return Character.isLetterOrDigit(c) || c == '_';
+        return RichTextEditUtil.nextWordEnd(materializeDocumentText().toString(), from);
     }
 
     private void setSelectionState(int anchorPos, int caretPos) {
@@ -2112,13 +2014,13 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
         int p = Math.clamp(index, 0, documentLength() - 1);
         int blockIndex = blockIndexForPosition(p);
-        LogicalBlock block = logicalBlocks.get(blockIndex);
-        int localIndex = p - block.start;
+        RichTextVisualLayoutHelper.LogicalBlock block = logicalBlocks.get(blockIndex);
+        int localIndex = p - block.start();
 
-        if (localIndex >= 0 && localIndex < block.text.length()) {
-            return block.text.charAt(localIndex);
+        if (localIndex >= 0 && localIndex < block.text().length()) {
+            return block.text().charAt(localIndex);
         }
-        if (p == block.end && blockIndex + 1 < logicalBlocks.size()) {
+        if (p == block.end() && blockIndex + 1 < logicalBlocks.size()) {
             return '\n';
         }
         return '\0';
@@ -2271,35 +2173,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return text.toRichText();
     }
 
-    private static RichText detachedRichText(CharSequence text) {
-        if (text.isEmpty()) {
-            return RichText.emptyText();
-        }
-
-        RichTextBuilder rtb = new RichTextBuilder(text.length());
-        rtb.append(text);
-        return rtb.toRichText();
-    }
-
-    private static RichText detachedSubSequence(RichText text, int start, int end) {
-        if (start == end) {
-            return RichText.emptyText();
-        }
-
-        RichTextBuilder rtb = new RichTextBuilder(end - start);
-        text.appendTo(rtb, start, end);
-        return rtb.toRichText();
-    }
-
-    private static void appendPlainText(RichText text, Appendable appendable) throws IOException {
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (c != RichText.SPLIT_MARKER) {
-                appendable.append(c);
-            }
-        }
-    }
-
     /**
      * Creates a lazy snapshot of the provided list of {@code RichText} objects.
      * The returned {@code ToRichText} instance generates the composed {@code RichText}
@@ -2349,25 +2222,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
     }
 
-    private void pushHistoryEntry(HistoryEntry entry) {
-        if (inHistoryNavigation) {
-            return;
-        }
-        undoStack.add(entry);
-        trimHistory(undoStack);
-        redoStack.clear();
-    }
-
     private void clearHistory() {
-        undoStack.clear();
-        redoStack.clear();
+        history.clear();
         updateHistoryState();
-    }
-
-    private void trimHistory(List<HistoryEntry> stack) {
-        while (stack.size() > MAX_HISTORY_SIZE) {
-            stack.removeFirst();
-        }
     }
 
     private void applyHistoryTextReplace(int start, int end, RichText replacement, int anchorPos, int caretPos) {
@@ -2397,30 +2254,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private void updateHistoryState() {
-        undoable.set(!undoStack.isEmpty());
-        redoable.set(!redoStack.isEmpty());
-    }
-
-    private record ChangeRange(int start, int endInCurrent, int endInUpdated) {
-        private boolean isEmpty() {
-            return start == endInCurrent && start == endInUpdated;
-        }
-    }
-
-    private record DocumentReplaceResult(int start, int end, RichText removed, boolean changed) {}
-
-    private record VisualLineCache(double widthKey, Font font, List<VisualLine> lines) {}
-
-    private static final class LogicalBlock {
-        private int start;
-        private int end;
-        private final RichText text;
-
-        private LogicalBlock(int start, int end, RichText text) {
-            this.start = start;
-            this.end = end;
-            this.text = text;
-        }
+        undoable.set(history.canUndo());
+        redoable.set(history.canRedo());
     }
 
     record VisualLine(int start, int end, double top, double height, double[] boundaries) {
@@ -2444,32 +2279,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
             int end = Math.max(a, c);
             selection.set(new IndexRange(start, end));
             selectedText.set(getText(start, end));
-        }
-    }
-
-    private sealed interface HistoryEntry permits TextReplaceHistoryEntry {
-        void applyUndo(TextEditorPane pane);
-
-        void applyRedo(TextEditorPane pane);
-    }
-
-    private record TextReplaceHistoryEntry(
-            int start,
-            RichText removedText,
-            RichText insertedText,
-            int beforeAnchor,
-            int beforeCaret,
-            int afterAnchor,
-            int afterCaret
-    ) implements HistoryEntry {
-        @Override
-        public void applyUndo(TextEditorPane pane) {
-            pane.applyHistoryTextReplace(start, start + insertedText.length(), removedText, beforeAnchor, beforeCaret);
-        }
-
-        @Override
-        public void applyRedo(TextEditorPane pane) {
-            pane.applyHistoryTextReplace(start, start + removedText.length(), insertedText, afterAnchor, afterCaret);
         }
     }
 

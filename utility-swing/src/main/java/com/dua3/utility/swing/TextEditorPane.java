@@ -4,6 +4,7 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.RichTextEditUtil;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import org.jspecify.annotations.Nullable;
 
@@ -815,36 +816,11 @@ public class TextEditorPane extends TextPane {
     }
 
     private int previousWordStart(int from) {
-        String text = model.getText().toString();
-        int i = Math.clamp(from, 0, text.length());
-        if (i == 0) {
-            return 0;
-        }
-        i--;
-        while (i > 0 && !isWordChar(text.charAt(i))) {
-            i--;
-        }
-        while (i > 0 && isWordChar(text.charAt(i - 1))) {
-            i--;
-        }
-        return i;
+        return RichTextEditUtil.previousWordStart(model.getText().toString(), from);
     }
 
     private int nextWordEnd(int from) {
-        String text = model.getText().toString();
-        int i = Math.clamp(from, 0, text.length());
-        int n = text.length();
-        while (i < n && !isWordChar(text.charAt(i))) {
-            i++;
-        }
-        while (i < n && isWordChar(text.charAt(i))) {
-            i++;
-        }
-        return i;
-    }
-
-    private static boolean isWordChar(char c) {
-        return Character.isLetterOrDigit(c) || c == '_';
+        return RichTextEditUtil.nextWordEnd(model.getText().toString(), from);
     }
 
 }

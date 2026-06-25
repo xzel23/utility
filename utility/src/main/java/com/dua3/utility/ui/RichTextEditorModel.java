@@ -5,8 +5,6 @@ import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -21,9 +19,7 @@ public class RichTextEditorModel {
     private RichText text;
     private int anchor;
     private int caret;
-    private final List<HistoryEntry> undoStack = new ArrayList<>();
-    private final List<HistoryEntry> redoStack = new ArrayList<>();
-    private final int maxHistorySize;
+    private final RichTextEditHistory history;
 
     /**
      * Creates an empty editor model.
@@ -49,7 +45,7 @@ public class RichTextEditorModel {
      */
     public RichTextEditorModel(RichText text, int maxHistorySize) {
         this.text = detach(text);
-        this.maxHistorySize = Math.max(1, maxHistorySize);
+        this.history = new RichTextEditHistory(maxHistorySize);
         this.anchor = 0;
         this.caret = 0;
     }
@@ -285,7 +281,7 @@ public class RichTextEditorModel {
      * @return true if undo stack is non-empty
      */
     public boolean canUndo() {
-        return !undoStack.isEmpty();
+        return history.canUndo();
     }
 
     /**
@@ -294,7 +290,7 @@ public class RichTextEditorModel {
      * @return true if redo stack is non-empty
      */
     public boolean canRedo() {
-        return !redoStack.isEmpty();
+        return history.canRedo();
     }
 
     /**
@@ -303,16 +299,11 @@ public class RichTextEditorModel {
      * @return true if an undo step was applied
      */
     public boolean undo() {
-        if (undoStack.isEmpty()) {
-            return false;
-        }
-
-        HistoryEntry entry = undoStack.removeLast();
-        replaceTextInternal(entry.start(), entry.start() + entry.inserted().length(), entry.removed(), false);
-        anchor = entry.beforeAnchor();
-        caret = entry.beforeCaret();
-        redoStack.add(entry);
-        return true;
+        return history.undo((start, end, replacement, anchorPos, caretPos) -> {
+            replaceTextInternal(start, end, replacement, false);
+            anchor = anchorPos;
+            caret = caretPos;
+        });
     }
 
     /**
@@ -321,24 +312,18 @@ public class RichTextEditorModel {
      * @return true if a redo step was applied
      */
     public boolean redo() {
-        if (redoStack.isEmpty()) {
-            return false;
-        }
-
-        HistoryEntry entry = redoStack.removeLast();
-        replaceTextInternal(entry.start(), entry.start() + entry.removed().length(), entry.inserted(), false);
-        anchor = entry.afterAnchor();
-        caret = entry.afterCaret();
-        undoStack.add(entry);
-        return true;
+        return history.redo((start, end, replacement, anchorPos, caretPos) -> {
+            replaceTextInternal(start, end, replacement, false);
+            anchor = anchorPos;
+            caret = caretPos;
+        });
     }
 
     /**
      * Clears undo/redo history.
      */
     public void clearHistory() {
-        undoStack.clear();
-        redoStack.clear();
+        history.clear();
     }
 
     private boolean applyFormattingChange(RichText updated) {
@@ -347,7 +332,7 @@ public class RichTextEditorModel {
             return false;
         }
 
-        ChangeRange changed = findChangedRange(current, updated);
+        ChangeRange changed = RichTextEditUtil.findChangedRange(current, updated);
         if (changed.isEmpty()) {
             return false;
         }
@@ -359,11 +344,11 @@ public class RichTextEditorModel {
         int endInCurrent = changed.endInCurrent();
         int endInUpdated = changed.endInUpdated();
 
-        RichText removed = detach(current.subSequence(start, endInCurrent));
-        RichText inserted = detach(updated.subSequence(start, endInUpdated));
+        RichText removed = RichTextEditUtil.detachedSubSequence(current, start, endInCurrent);
+        RichText inserted = RichTextEditUtil.detachedSubSequence(updated, start, endInUpdated);
 
         replaceTextInternal(start, endInCurrent, inserted, false);
-        pushHistory(new HistoryEntry(start, removed, inserted, beforeAnchor, beforeCaret, anchor, caret));
+        pushHistory(new RichTextEditHistory.TextReplaceHistoryEntry(start, removed, inserted, beforeAnchor, beforeCaret, anchor, caret));
         return true;
     }
 
@@ -387,31 +372,20 @@ public class RichTextEditorModel {
         selectRange(newCaret, newCaret);
 
         if (trackHistory) {
-            pushHistory(new HistoryEntry(s, removed, inserted, beforeAnchor, beforeCaret, anchor, caret));
+            pushHistory(new RichTextEditHistory.TextReplaceHistoryEntry(s, removed, inserted, beforeAnchor, beforeCaret, anchor, caret));
         }
 
         return true;
     }
 
-    private void pushHistory(HistoryEntry entry) {
-        undoStack.add(entry);
-        if (undoStack.size() > maxHistorySize) {
-            undoStack.removeFirst();
-        }
-        redoStack.clear();
+    private void pushHistory(RichTextEditHistory.TextReplaceHistoryEntry entry) {
+        history.push(entry);
     }
 
     private static RichText detach(RichText text) {
         RichTextBuilder builder = new RichTextBuilder(text.length());
         text.appendTo(builder);
         return builder.toRichText();
-    }
-
-    private static ChangeRange findChangedRange(RichText current, RichText updated) {
-        int prefix = current.commonPrefixLength(updated);
-        int maxSuffix = Math.min(current.length(), updated.length()) - prefix;
-        int suffix = Math.min(current.commonSuffixLength(updated), maxSuffix);
-        return new ChangeRange(prefix, current.length() - suffix, updated.length() - suffix);
     }
 
     /**
@@ -431,19 +405,4 @@ public class RichTextEditorModel {
         }
     }
 
-    private record HistoryEntry(
-            int start,
-            RichText removed,
-            RichText inserted,
-            int beforeAnchor,
-            int beforeCaret,
-            int afterAnchor,
-            int afterCaret
-    ) {}
-
-    private record ChangeRange(int start, int endInCurrent, int endInUpdated) {
-        boolean isEmpty() {
-            return start == endInCurrent && start == endInUpdated;
-        }
-    }
 }

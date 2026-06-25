@@ -3,7 +3,6 @@ package com.dua3.utility.ui;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
 import org.jspecify.annotations.Nullable;
 
@@ -138,11 +137,11 @@ public final class RichTextVisualLayoutHelper {
         int length = text.length();
         for (int i = 0; i < length; i++) {
             if (text.charAt(i) == '\n') {
-                logicalBlocks.add(new LogicalBlock(lineStart, i, detachedSubSequence(text, lineStart, i)));
+                logicalBlocks.add(new LogicalBlock(lineStart, i, RichTextEditUtil.detachedSubSequence(text, lineStart, i)));
                 lineStart = i + 1;
             }
         }
-        logicalBlocks.add(new LogicalBlock(lineStart, length, detachedSubSequence(text, lineStart, length)));
+        logicalBlocks.add(new LogicalBlock(lineStart, length, RichTextEditUtil.detachedSubSequence(text, lineStart, length)));
         return List.copyOf(logicalBlocks);
     }
 
@@ -370,13 +369,4 @@ public final class RichTextVisualLayoutHelper {
         return fontUtil.getTextWidth(run.subSequence(0, length), font);
     }
 
-    private static RichText detachedSubSequence(RichText text, int start, int end) {
-        if (start >= end) {
-            return RichText.emptyText();
-        }
-
-        RichTextBuilder builder = new RichTextBuilder(end - start);
-        text.appendTo(builder, start, end);
-        return builder.toRichText();
-    }
 }
