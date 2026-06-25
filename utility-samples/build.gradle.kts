@@ -20,3 +20,11 @@ tasks.register<JavaExec>("runSwingComboBoxExSample") {
     mainClass.set("com.dua3.utility.samples.SwingComboBoxExSample")
     enableAssertions = true
 }
+
+tasks.register<JavaExec>("runSwingTextEditorPaneSample") {
+    description = "Run the SwingTextEditorPaneSample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.SwingTextEditorPaneSample")
+    enableAssertions = true
+}
