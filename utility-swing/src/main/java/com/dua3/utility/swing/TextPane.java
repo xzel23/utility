@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
@@ -59,7 +60,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
      * @param text initial text
      */
     public TextPane(@Nullable CharSequence text) {
-        model = new RichTextEditorModel(text);
+        model = new RichTextEditorModel(text, AwtFontUtil.getInstance());
         setViewportView(textComponent);
         setWrapText(false);
         textComponent.setFocusable(false);
@@ -238,9 +239,10 @@ public class TextPane extends JScrollPane implements RichTextPane {
         );
 
         double defaultLineHeight = Math.max(1.0, textFont.getFontData().height());
-        List<VisualLine> visualLines = RichTextVisualLayoutHelper.buildVisualLines(
-                RichTextVisualLayoutHelper.splitLogicalBlocks(richText),
-                defaultLineHeight,
+        List<VisualLine> visualLines = model.buildVisualLines(
+                availableWidth,
+                wrapText,
+                textFont,
                 blockText -> {
                     FragmentedText blockFragments = FragmentedText.generateFragments(
                             blockText,

@@ -3,9 +3,14 @@ package com.dua3.utility.ui;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 import org.jspecify.annotations.Nullable;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Toolkit-agnostic rich-text editor model.
@@ -19,13 +24,15 @@ public class RichTextEditorModel {
     private RichText text;
     private int anchor;
     private int caret;
+    private final FontUtil fontUtil;
     private final RichTextEditHistory history;
+    private @Nullable VisualLineCache visualLineCache;
 
     /**
      * Creates an empty editor model.
      */
     public RichTextEditorModel() {
-        this(RichText.emptyText());
+        this(RichText.emptyText(), DEFAULT_MAX_HISTORY_SIZE, FontUtil.getInstance());
     }
 
     /**
@@ -34,7 +41,17 @@ public class RichTextEditorModel {
      * @param text initial text
      */
     public RichTextEditorModel(@Nullable CharSequence text) {
-        this(text == null ? RichText.emptyText() : RichText.valueOf(text), DEFAULT_MAX_HISTORY_SIZE);
+        this(text == null ? RichText.emptyText() : RichText.valueOf(text), DEFAULT_MAX_HISTORY_SIZE, FontUtil.getInstance());
+    }
+
+    /**
+     * Creates an editor model with initial text and explicit font utility.
+     *
+     * @param text initial text
+     * @param fontUtil font utility used for layout-related calculations
+     */
+    public RichTextEditorModel(@Nullable CharSequence text, FontUtil fontUtil) {
+        this(text == null ? RichText.emptyText() : RichText.valueOf(text), DEFAULT_MAX_HISTORY_SIZE, fontUtil);
     }
 
     /**
@@ -44,7 +61,19 @@ public class RichTextEditorModel {
      * @param maxHistorySize maximum number of history entries
      */
     public RichTextEditorModel(RichText text, int maxHistorySize) {
+        this(text, maxHistorySize, FontUtil.getInstance());
+    }
+
+    /**
+     * Creates an editor model with initial text, history size and explicit font utility.
+     *
+     * @param text initial text
+     * @param maxHistorySize maximum number of history entries
+     * @param fontUtil font utility used for layout-related calculations
+     */
+    public RichTextEditorModel(RichText text, int maxHistorySize, FontUtil fontUtil) {
         this.text = detach(text);
+        this.fontUtil = Objects.requireNonNull(fontUtil, "fontUtil");
         this.history = new RichTextEditHistory(maxHistorySize);
         this.anchor = 0;
         this.caret = 0;
@@ -57,6 +86,53 @@ public class RichTextEditorModel {
      */
     public RichText getText() {
         return text;
+    }
+
+    /**
+     * Returns the font utility used by this model for layout calculations.
+     *
+     * @return font utility
+     */
+    public FontUtil getFontUtil() {
+        return fontUtil;
+    }
+
+    /**
+     * Returns a detached text slice between offsets.
+     *
+     * @param start start offset (inclusive)
+     * @param end end offset (exclusive)
+     * @return detached text slice
+     */
+    public RichText getText(int start, int end) {
+        return RichTextEditUtil.detachedSubSequence(text, start, end);
+    }
+
+    /**
+     * Returns a snapshot of logical lines, preserving trailing empty lines.
+     *
+     * @return snapshot list of lines
+     */
+    public List<RichText> snapshotLines() {
+        return RichTextVisualLayoutHelper.splitLogicalBlocks(text).stream()
+                .map(RichTextVisualLayoutHelper.LogicalBlock::text)
+                .toList();
+    }
+
+    /**
+     * Appends plain-text contents (without split markers) to an appendable.
+     *
+     * @param appendable append target
+     * @throws IOException if writing fails
+     */
+    public void appendPlainTextTo(Appendable appendable) throws IOException {
+        List<RichText> lineSnapshot = snapshotLines();
+        for (int i = 0; i < lineSnapshot.size(); i++) {
+            RichTextEditUtil.appendPlainText(lineSnapshot.get(i), appendable);
+            if (i + 1 < lineSnapshot.size()) {
+                appendable.append('\n');
+            }
+        }
     }
 
     /**
@@ -75,6 +151,7 @@ public class RichTextEditorModel {
      */
     public void setText(RichText value) {
         text = detach(value);
+        invalidateVisualLineCache();
         clearHistory();
         selectRange(0, 0);
     }
@@ -87,6 +164,7 @@ public class RichTextEditorModel {
      */
     public void setText(RichText value, boolean preserveHistory) {
         text = detach(value);
+        invalidateVisualLineCache();
         if (!preserveHistory) {
             clearHistory();
         }
@@ -100,6 +178,81 @@ public class RichTextEditorModel {
      */
     public int length() {
         return text.length();
+    }
+
+    /**
+     * Computes previous-word start offset.
+     *
+     * @param from starting offset
+     * @return previous-word start
+     */
+    public int previousWordStart(int from) {
+        return RichTextEditUtil.previousWordStart(text.toString(), from);
+    }
+
+    /**
+     * Computes next-word start offset.
+     *
+     * @param from starting offset
+     * @return next-word start
+     */
+    public int nextWordStart(int from) {
+        return RichTextEditUtil.nextWordStart(text.toString(), from);
+    }
+
+    /**
+     * Computes next-word end offset.
+     *
+     * @param from starting offset
+     * @return next-word end
+     */
+    public int nextWordEnd(int from) {
+        return RichTextEditUtil.nextWordEnd(text.toString(), from);
+    }
+
+    /**
+     * Computes the word/non-word range around a given offset.
+     *
+     * @param position probe offset
+     * @return range around the probe position
+     */
+    public RichTextEditUtil.WordRange wordRangeAt(int position) {
+        return RichTextEditUtil.wordRangeAt(text.toString(), position);
+    }
+
+    /**
+     * Builds or reuses cached visual lines for the current text.
+     *
+     * @param availableWidth layout width
+     * @param wrapText whether wrapping is enabled
+     * @param baseFont base font
+     * @param blockLayoutFactory callback producing block layouts
+     * @return visual lines in source coordinates
+     */
+    public List<VisualLine> buildVisualLines(
+            double availableWidth,
+            boolean wrapText,
+            Font baseFont,
+            Function<? super RichText, RichTextVisualLayoutHelper.BlockLayout> blockLayoutFactory
+    ) {
+        double width = Math.max(1.0, availableWidth);
+        double widthKey = wrapText ? width : Double.POSITIVE_INFINITY;
+        VisualLineCache cache = visualLineCache;
+        if (cache != null
+                && Double.compare(cache.widthKey(), widthKey) == 0
+                && Objects.equals(cache.font(), baseFont)) {
+            return cache.lines();
+        }
+
+        double defaultLineHeight = Math.max(1.0, baseFont.getFontData().height());
+        List<VisualLine> lines = RichTextVisualLayoutHelper.buildVisualLines(
+                RichTextVisualLayoutHelper.splitLogicalBlocks(text),
+                defaultLineHeight,
+                fontUtil,
+                blockLayoutFactory
+        );
+        visualLineCache = new VisualLineCache(widthKey, baseFont, lines);
+        return lines;
     }
 
     /**
@@ -348,6 +501,7 @@ public class RichTextEditorModel {
         RichText inserted = RichTextEditUtil.detachedSubSequence(updated, start, endInUpdated);
 
         replaceTextInternal(start, endInCurrent, inserted, false);
+        selectRange(beforeAnchor, beforeCaret);
         pushHistory(new RichTextEditHistory.TextReplaceHistoryEntry(start, removed, inserted, beforeAnchor, beforeCaret, anchor, caret));
         return true;
     }
@@ -368,6 +522,7 @@ public class RichTextEditorModel {
         int beforeCaret = caret;
 
         text = detach(text.replace(s, e, inserted));
+        invalidateVisualLineCache();
         int newCaret = s + inserted.length();
         selectRange(newCaret, newCaret);
 
@@ -386,6 +541,10 @@ public class RichTextEditorModel {
         RichTextBuilder builder = new RichTextBuilder(text.length());
         text.appendTo(builder);
         return builder.toRichText();
+    }
+
+    private void invalidateVisualLineCache() {
+        visualLineCache = null;
     }
 
     /**

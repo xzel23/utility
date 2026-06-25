@@ -107,7 +107,26 @@ public final class RichTextVisualLayoutHelper {
             double defaultLineHeight,
             Function<? super RichText, BlockLayout> blockLayoutFactory
     ) {
+        return buildVisualLines(logicalBlocks, defaultLineHeight, FontUtil.getInstance(), blockLayoutFactory);
+    }
+
+    /**
+     * Builds visual lines for logical blocks using the given font metrics backend.
+     *
+     * @param logicalBlocks logical blocks
+     * @param defaultLineHeight fallback line height
+     * @param fontUtil font utility used for glyph metrics
+     * @param blockLayoutFactory layout factory per logical block
+     * @return immutable visual lines
+     */
+    public static List<VisualLine> buildVisualLines(
+            List<LogicalBlock> logicalBlocks,
+            double defaultLineHeight,
+            FontUtil fontUtil,
+            Function<? super RichText, BlockLayout> blockLayoutFactory
+    ) {
         Objects.requireNonNull(logicalBlocks, "logicalBlocks");
+        Objects.requireNonNull(fontUtil, "fontUtil");
         Objects.requireNonNull(blockLayoutFactory, "blockLayoutFactory");
 
         double lineHeight = Math.max(1.0, defaultLineHeight);
@@ -115,7 +134,6 @@ public final class RichTextVisualLayoutHelper {
             return List.of(new VisualLine(0, 0, 0.0, lineHeight, new double[]{0.0}));
         }
 
-        FontUtil fontUtil = FontUtil.getInstance();
         List<VisualLine> lines = new ArrayList<>();
         double yOffset = 0.0;
         for (LogicalBlock block : logicalBlocks) {

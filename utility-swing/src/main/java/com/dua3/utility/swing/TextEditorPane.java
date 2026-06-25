@@ -4,7 +4,6 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
-import com.dua3.utility.ui.RichTextEditUtil;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
 import org.jspecify.annotations.Nullable;
@@ -817,11 +816,11 @@ public class TextEditorPane extends TextPane {
     }
 
     private int previousWordStart(int from) {
-        return RichTextEditUtil.previousWordStart(model.getText().toString(), from);
+        return model.previousWordStart(from);
     }
 
     private int nextWordEnd(int from) {
-        return RichTextEditUtil.nextWordEnd(model.getText().toString(), from);
+        return model.nextWordEnd(from);
     }
 
 }
