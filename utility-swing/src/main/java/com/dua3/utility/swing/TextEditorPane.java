@@ -1,9 +1,8 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextBuilder;
-import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
 import org.jspecify.annotations.Nullable;
@@ -31,7 +30,6 @@ public class TextEditorPane extends TextPane {
     private boolean typingUnderline;
     private boolean typingStrikeThrough;
     private int dragAnchor = -1;
-    private double preferredCaretX = Double.NaN;
     private long documentVersion;
 
     private int lastAnchor;
@@ -185,8 +183,7 @@ public class TextEditorPane extends TextPane {
      */
     public void replaceSelection(@Nullable CharSequence value) {
         RichText replacement = toRichTextWithTypingStyles(value);
-        var selection = model.getSelection();
-        if (model.replaceText(selection.start(), selection.end(), replacement)) {
+        if (model.replaceSelection(replacement)) {
             onModelChanged();
         } else {
             onSelectionChanged(false);
@@ -211,7 +208,7 @@ public class TextEditorPane extends TextPane {
      * Toggles bold style.
      */
     public void markBold() {
-        markBold(model.getSelection().length() == 0 ? !typingBold : !isSelectionStyled(Style.BOLD));
+        markBold(model.getSelection().length() == 0 ? !typingBold : !model.isSelectionStyled(Style.BOLD));
     }
 
     /**
@@ -232,7 +229,7 @@ public class TextEditorPane extends TextPane {
      * Toggles italic style.
      */
     public void markItalic() {
-        markItalic(model.getSelection().length() == 0 ? !typingItalic : !isSelectionStyled(Style.ITALIC));
+        markItalic(model.getSelection().length() == 0 ? !typingItalic : !model.isSelectionStyled(Style.ITALIC));
     }
 
     /**
@@ -253,7 +250,7 @@ public class TextEditorPane extends TextPane {
      * Toggles underline style.
      */
     public void markUnderline() {
-        markUnderline(model.getSelection().length() == 0 ? !typingUnderline : !isSelectionStyled(Style.UNDERLINE));
+        markUnderline(model.getSelection().length() == 0 ? !typingUnderline : !model.isSelectionStyled(Style.UNDERLINE));
     }
 
     /**
@@ -274,7 +271,7 @@ public class TextEditorPane extends TextPane {
      * Toggles strike-through style.
      */
     public void markStrikeThrough() {
-        markStrikeThrough(model.getSelection().length() == 0 ? !typingStrikeThrough : !isSelectionStyled(Style.LINE_THROUGH));
+        markStrikeThrough(model.getSelection().length() == 0 ? !typingStrikeThrough : !model.isSelectionStyled(Style.LINE_THROUGH));
     }
 
     /**
@@ -292,9 +289,8 @@ public class TextEditorPane extends TextPane {
      * @param position caret position
      */
     public void setCaretPosition(int position) {
-        int p = Math.clamp(position, 0, getText().length());
-        model.selectRange(p, p);
-        onSelectionChanged(true);
+        model.positionCaret(position);
+        onSelectionChanged(false);
     }
 
     /**
@@ -312,7 +308,8 @@ public class TextEditorPane extends TextPane {
      * Selects all text.
      */
     public void selectAll() {
-        selectRange(0, getText().length());
+        model.selectAll();
+        onSelectionChanged(true);
     }
 
     /**
@@ -365,16 +362,11 @@ public class TextEditorPane extends TextPane {
      * @return true if text was deleted
      */
     public boolean deletePreviousChar() {
-        var selection = model.getSelection();
-        if (selection.length() > 0) {
-            replaceSelection("");
+        if (model.deletePreviousChar()) {
+            onModelChanged();
             return true;
         }
-        int caret = model.getCaretPosition();
-        if (caret <= 0) {
-            return false;
-        }
-        return replaceRange(caret - 1, caret, RichText.emptyText());
+        return false;
     }
 
     /**
@@ -383,16 +375,11 @@ public class TextEditorPane extends TextPane {
      * @return true if text was deleted
      */
     public boolean deleteNextChar() {
-        var selection = model.getSelection();
-        if (selection.length() > 0) {
-            replaceSelection("");
+        if (model.deleteNextChar()) {
+            onModelChanged();
             return true;
         }
-        int caret = model.getCaretPosition();
-        if (caret >= model.length()) {
-            return false;
-        }
-        return replaceRange(caret, caret + 1, RichText.emptyText());
+        return false;
     }
 
     @Override
@@ -596,6 +583,14 @@ public class TextEditorPane extends TextPane {
                 moveCaretVertical(1, shift);
                 event.consume();
             }
+            case KeyEvent.VK_PAGE_UP -> {
+                moveCaretPage(-1, shift);
+                event.consume();
+            }
+            case KeyEvent.VK_PAGE_DOWN -> {
+                moveCaretPage(1, shift);
+                event.consume();
+            }
             case KeyEvent.VK_HOME -> {
                 moveCaretLineBoundary(false, shift);
                 event.consume();
@@ -633,76 +628,35 @@ public class TextEditorPane extends TextPane {
     }
 
     private void moveCaretHorizontal(int direction, boolean extendSelection, boolean wordNavigation) {
-        int caret = model.getCaretPosition();
-        int target = switch (direction) {
-            case -1 -> wordNavigation ? previousWordStart(caret) : Math.max(0, caret - 1);
-            case 1 -> wordNavigation ? nextWordEnd(caret) : Math.min(model.length(), caret + 1);
-            default -> caret;
-        };
-        moveCaretTo(target, extendSelection, true);
+        if (model.moveHorizontal(direction, extendSelection, wordNavigation)) {
+            onSelectionChanged(false);
+        }
     }
 
     private void moveCaretVertical(int deltaLines, boolean extendSelection) {
         List<VisualLine> lines = getRenderLayout().visualLines();
-        if (lines.isEmpty()) {
-            return;
+        if (model.moveLine(lines, deltaLines, extendSelection)) {
+            onSelectionChanged(false);
         }
+    }
 
-        int caret = model.getCaretPosition();
-        int currentLineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
-        if (currentLineIndex < 0 || currentLineIndex >= lines.size()) {
-            return;
+    private void moveCaretPage(int deltaPages, boolean extendSelection) {
+        List<VisualLine> lines = getRenderLayout().visualLines();
+        if (model.movePage(lines, deltaPages, extendSelection)) {
+            onSelectionChanged(false);
         }
-
-        int targetLineIndex = Math.clamp((long) currentLineIndex + deltaLines, 0, lines.size() - 1);
-        VisualLine currentLine = lines.get(currentLineIndex);
-        double x = Double.isNaN(preferredCaretX)
-                ? RichTextVisualLayoutHelper.xForIndex(currentLine, caret)
-                : preferredCaretX;
-
-        int targetCaret = RichTextVisualLayoutHelper.indexForX(lines.get(targetLineIndex), x);
-        preferredCaretX = x;
-        moveCaretTo(targetCaret, extendSelection, false);
     }
 
     private void moveCaretLineBoundary(boolean toEnd, boolean extendSelection) {
         List<VisualLine> lines = getRenderLayout().visualLines();
-        if (lines.isEmpty()) {
-            return;
+        if (model.moveLineBoundary(lines, toEnd, extendSelection)) {
+            onSelectionChanged(false);
         }
-        int caret = model.getCaretPosition();
-        int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
-        if (lineIndex < 0 || lineIndex >= lines.size()) {
-            return;
-        }
-
-        VisualLine line = lines.get(lineIndex);
-        int target = toEnd ? line.end() : line.start();
-        moveCaretTo(target, extendSelection, true);
-    }
-
-    private void moveCaretTo(int target, boolean extendSelection, boolean resetPreferredX) {
-        int clamped = Math.clamp(target, 0, getText().length());
-        if (extendSelection) {
-            model.selectRange(model.getAnchor(), clamped);
-        } else {
-            model.selectRange(clamped, clamped);
-        }
-        onSelectionChanged(resetPreferredX);
-    }
-
-    private boolean replaceRange(int start, int end, RichText replacement) {
-        if (model.replaceText(start, end, replacement)) {
-            onModelChanged();
-            return true;
-        }
-        onSelectionChanged(false);
-        return false;
     }
 
     private void onSelectionChanged(boolean resetPreferredX) {
         if (resetPreferredX) {
-            preferredCaretX = Double.NaN;
+            model.resetPreferredCaretX();
         }
 
         int anchor = model.getAnchor();
@@ -736,91 +690,32 @@ public class TextEditorPane extends TextPane {
     }
 
     private RichText toRichTextWithTypingStyles(@Nullable CharSequence text) {
-        if (text == null || text.isEmpty()) {
-            return RichText.emptyText();
-        }
-
-        RichTextBuilder builder = new RichTextBuilder(text.length());
-        if (typingBold) {
-            builder.push(Style.BOLD);
-        }
-        if (typingItalic) {
-            builder.push(Style.ITALIC);
-        }
-        if (typingUnderline) {
-            builder.push(Style.UNDERLINE);
-        }
-        if (typingStrikeThrough) {
-            builder.push(Style.LINE_THROUGH);
-        }
-
-        builder.append(text);
-
-        if (typingStrikeThrough) {
-            builder.pop(Style.LINE_THROUGH);
-        }
-        if (typingUnderline) {
-            builder.pop(Style.UNDERLINE);
-        }
-        if (typingItalic) {
-            builder.pop(Style.ITALIC);
-        }
-        if (typingBold) {
-            builder.pop(Style.BOLD);
-        }
-        return builder.toRichText();
+        return RichTextEditorModel.toRichText(
+                text,
+                typingBold,
+                typingItalic,
+                typingUnderline,
+                typingStrikeThrough,
+                null,
+                null,
+                null,
+                0.0
+        );
     }
 
     private void syncTypingStylesFromCaret() {
-        int caret = model.getCaretPosition();
-        int probe = Math.clamp(caret > 0 ? caret - 1 : caret, 0, Math.max(0, model.length() - 1));
-        typingBold = hasStyleAt(probe, Style.BOLD);
-        typingItalic = hasStyleAt(probe, Style.ITALIC);
-        typingUnderline = hasStyleAt(probe, Style.UNDERLINE);
-        typingStrikeThrough = hasStyleAt(probe, Style.LINE_THROUGH);
-    }
-
-    private boolean isSelectionStyled(Style style) {
-        var selection = model.getSelection();
-        if (selection.length() == 0) {
-            int caret = model.getCaretPosition();
-            int probe = Math.clamp(caret > 0 ? caret - 1 : caret, 0, Math.max(0, model.length() - 1));
-            return hasStyleAt(probe, style);
+        RichTextEditorModel.CaretProperties properties = model.resolveCaretProperties(getTextFont());
+        if (properties == null) {
+            typingBold = false;
+            typingItalic = false;
+            typingUnderline = false;
+            typingStrikeThrough = false;
+            return;
         }
-
-        for (Run run : model.getText()) {
-            int overlapStart = Math.max(selection.start(), run.getStart());
-            int overlapEnd = Math.min(selection.end(), run.getEnd());
-            if (overlapStart >= overlapEnd) {
-                continue;
-            }
-            if (!run.getStyles().contains(style)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean hasStyleAt(int index, Style style) {
-        if (model.length() == 0) {
-            return false;
-        }
-
-        int probe = Math.clamp(index, 0, model.length() - 1);
-        for (Run run : model.getText()) {
-            if (run.getStart() <= probe && probe < run.getEnd()) {
-                return run.getStyles().contains(style);
-            }
-        }
-        return false;
-    }
-
-    private int previousWordStart(int from) {
-        return model.previousWordStart(from);
-    }
-
-    private int nextWordEnd(int from) {
-        return model.nextWordEnd(from);
+        typingBold = properties.bold();
+        typingItalic = properties.italic();
+        typingUnderline = properties.underline();
+        typingStrikeThrough = properties.strikeThrough();
     }
 
 }

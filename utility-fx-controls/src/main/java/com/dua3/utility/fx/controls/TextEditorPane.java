@@ -3,14 +3,11 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxUtil;
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
-import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.ToRichText;
-import com.dua3.utility.ui.RichTextEditUtil;
+import com.dua3.utility.ui.IndexRange;
 import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
@@ -32,7 +29,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -82,7 +78,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private @Nullable ScrollPane scrollPane;
     private boolean updatingPropertiesFromText;
     private boolean syncingTextPropertyFromDocument;
-    private double preferredCaretX = Double.NaN;
     private final ReadOnlyObjectWrapper<RichText> document = new ReadOnlyObjectWrapper<>(this, "documentText", RichText.emptyText());
     private final ReadOnlyLongWrapper documentVersion = new ReadOnlyLongWrapper(this, "documentVersion", 0L);
     private final RichTextEditorModel sharedModel;
@@ -108,6 +103,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         RichText initial = normalizeIncomingText(textProperty().get());
         document.set(initial);
         this.sharedModel = new RichTextEditorModel(initial, MAX_HISTORY_SIZE, FxFontUtil.getInstance());
+        sharedModel.setPageWidthProvider(model -> {
+            double fallback = getWidth() - snappedLeftInset() - snappedRightInset();
+            return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
+        });
+        sharedModel.setPageHeightProvider(model -> resolvePageHeightFromView());
+        sharedModel.setWrapWidthProvider(model -> resolveCurrentWrapWidthFromView());
         this.defaultValue = initial;
         this.committedValue = new SimpleObjectProperty<>(this, "value", initial);
         this.state = new ObjectInputControlState<>(committedValue, () -> defaultValue, value -> Optional.empty());
@@ -222,7 +223,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
         updateHistoryState();
         syncSelectionFromModel();
-        preferredCaretX = Double.NaN;
     }
 
     private void syncSelectionFromModel() {
@@ -336,7 +336,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 evt.consume();
             }
             case LEFT -> {
-                preferredCaretX = Double.NaN;
+                sharedModel.resetPreferredCaretX();
                 if (shortcut) {
                     if (shift) {
                         selectPreviousWord();
@@ -351,7 +351,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 evt.consume();
             }
             case RIGHT -> {
-                preferredCaretX = Double.NaN;
+                sharedModel.resetPreferredCaretX();
                 if (shortcut) {
                     if (shift) {
                         selectNextWord();
@@ -382,7 +382,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 evt.consume();
             }
             case HOME -> {
-                preferredCaretX = Double.NaN;
+                sharedModel.resetPreferredCaretX();
                 if (shift) {
                     selectHome();
                 } else {
@@ -391,7 +391,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 evt.consume();
             }
             case END -> {
-                preferredCaretX = Double.NaN;
+                sharedModel.resetPreferredCaretX();
                 if (shift) {
                     selectEnd();
                 } else {
@@ -927,15 +927,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     /**
-     * Creates a snapshot of the current lines from the logical blocks by extracting their text content.
-     *
-     * @return a list of {@code RichText} objects representing the text content of all logical blocks.
-     */
-    private List<RichText> snapshotLines() {
-        return sharedModel.snapshotLines();
-    }
-
-    /**
      * Appends the current plain-text document contents to the given appendable.
      *
      * <p>This method writes line by line from the editor's logical document
@@ -949,7 +940,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private void syncTextPropertyWithDocumentSnapshot() {
-        ToRichText snapshot = createLazySnapshot(snapshotLines());
+        ToRichText snapshot = sharedModel.createLazySnapshot();
         syncingTextPropertyFromDocument = true;
         try {
             textProperty().set(snapshot);
@@ -1013,14 +1004,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @return {@code true} if text was deleted
      */
     public boolean deletePreviousChar() {
-        IndexRange range = getSelection();
-        if (range.getLength() > 0) {
-            deleteText(range);
-            return true;
-        }
-        int caret = getCaretPosition();
-        if (caret > 0) {
-            deleteText(caret - 1, caret);
+        if (sharedModel.deletePreviousChar()) {
+            onModelTextMutated(true);
             return true;
         }
         return false;
@@ -1032,14 +1017,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @return {@code true} if text was deleted
      */
     public boolean deleteNextChar() {
-        IndexRange range = getSelection();
-        if (range.getLength() > 0) {
-            deleteText(range);
-            return true;
-        }
-        int caret = getCaretPosition();
-        if (caret < getLength()) {
-            deleteText(caret, caret + 1);
+        if (sharedModel.deleteNextChar()) {
+            onModelTextMutated(true);
             return true;
         }
         return false;
@@ -1052,6 +1031,15 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      */
     public void deleteText(IndexRange range) {
         replaceText(range.getStart(), range.getEnd(), "");
+    }
+
+    /**
+     * Deletes text inside the given JavaFX range.
+     *
+     * @param range JavaFX range to delete
+     */
+    public void deleteText(javafx.scene.control.IndexRange range) {
+        deleteText(toIndexRange(range));
     }
 
     /**
@@ -1075,6 +1063,16 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     /**
+     * Replaces the given JavaFX range with plain text.
+     *
+     * @param range JavaFX range
+     * @param text replacement text
+     */
+    public void replaceText(javafx.scene.control.IndexRange range, @Nullable CharSequence text) {
+        replaceText(toIndexRange(range), text);
+    }
+
+    /**
      * Replaces the given range with text rendered using a font.
      *
      * @param range range to replace
@@ -1083,6 +1081,17 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      */
     public void replaceText(IndexRange range, @Nullable CharSequence text, Font font) {
         replaceText(range.getStart(), range.getEnd(), toRichText(text, font));
+    }
+
+    /**
+     * Replaces the given JavaFX range with text rendered using a font.
+     *
+     * @param range JavaFX range
+     * @param text replacement text
+     * @param font font to apply
+     */
+    public void replaceText(javafx.scene.control.IndexRange range, @Nullable CharSequence text, Font font) {
+        replaceText(toIndexRange(range), text, font);
     }
 
     /**
@@ -1118,8 +1127,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @param replacement replacement text
      */
     public void replaceSelection(@Nullable CharSequence replacement) {
-        IndexRange r = getSelection();
-        replaceText(r.getStart(), r.getEnd(), Objects.requireNonNullElse(replacement, ""));
+        if (sharedModel.replaceSelection(Objects.requireNonNullElse(replacement, ""))) {
+            onModelTextMutated(true);
+        } else {
+            syncSelectionFromModel();
+        }
     }
 
     /**
@@ -1133,18 +1145,28 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     /**
+     * Selects the given JavaFX range.
+     *
+     * @param range JavaFX range
+     */
+    public void selectRange(javafx.scene.control.IndexRange range) {
+        setSelectionState(range.getStart(), range.getEnd());
+    }
+
+    /**
      * Selects the full document.
      */
     public void selectAll() {
-        setSelectionState(0, getLength());
+        sharedModel.selectAll();
+        syncSelectionFromModel();
     }
 
     /**
      * Clears the current selection.
      */
     public void deselect() {
-        int caret = getCaretPosition();
-        setSelectionState(caret, caret);
+        sharedModel.deselect();
+        syncSelectionFromModel();
     }
 
     /**
@@ -1160,9 +1182,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @param pos target caret position
      */
     public void positionCaret(int pos) {
-        int p = Math.clamp(pos, 0, getLength());
-        setSelectionState(p, p);
-        preferredCaretX = Double.NaN;
+        sharedModel.positionCaret(pos);
+        syncSelectionFromModel();
     }
 
     /**
@@ -1171,111 +1192,120 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @param pos new caret position
      */
     public void selectPositionCaret(int pos) {
-        setSelectionState(getAnchor(), pos);
+        sharedModel.selectPositionCaret(pos);
+        syncSelectionFromModel();
     }
 
     /**
      * Moves caret to document start.
      */
     public void home() {
-        positionCaret(0);
+        sharedModel.home();
+        syncSelectionFromModel();
     }
 
     /**
      * Moves caret to document end.
      */
     public void end() {
-        positionCaret(getLength());
+        sharedModel.end();
+        syncSelectionFromModel();
     }
 
     /**
      * Moves caret one character forward.
      */
     public void forward() {
-        positionCaret(getCaretPosition() + 1);
+        sharedModel.forward();
+        syncSelectionFromModel();
     }
 
     /**
      * Moves caret one character backward.
      */
     public void backward() {
-        positionCaret(getCaretPosition() - 1);
+        sharedModel.backward();
+        syncSelectionFromModel();
     }
 
     /**
      * Moves caret to start of previous word.
      */
     public void previousWord() {
-        int from = getCaretPosition();
-        positionCaret(sharedModel.previousWordStart(from));
+        sharedModel.previousWord();
+        syncSelectionFromModel();
     }
 
     /**
      * Moves caret to start of next word.
      */
     public void nextWord() {
-        int from = getCaretPosition();
-        positionCaret(sharedModel.nextWordStart(from));
+        sharedModel.nextWord();
+        syncSelectionFromModel();
     }
 
     /**
      * Moves caret to end of next word.
      */
     public void endOfNextWord() {
-        int from = getCaretPosition();
-        positionCaret(sharedModel.nextWordEnd(from));
+        sharedModel.endOfNextWord();
+        syncSelectionFromModel();
     }
 
     /**
      * Extends selection one character backward.
      */
     public void selectBackward() {
-        selectPositionCaret(getCaretPosition() - 1);
+        sharedModel.selectBackward();
+        syncSelectionFromModel();
     }
 
     /**
      * Extends selection one character forward.
      */
     public void selectForward() {
-        selectPositionCaret(getCaretPosition() + 1);
+        sharedModel.selectForward();
+        syncSelectionFromModel();
     }
 
     /**
      * Extends selection to start of previous word.
      */
     public void selectPreviousWord() {
-        int from = getCaretPosition();
-        selectPositionCaret(sharedModel.previousWordStart(from));
+        sharedModel.selectPreviousWord();
+        syncSelectionFromModel();
     }
 
     /**
      * Extends selection to start of next word.
      */
     public void selectNextWord() {
-        int from = getCaretPosition();
-        selectPositionCaret(sharedModel.nextWordStart(from));
+        sharedModel.selectNextWord();
+        syncSelectionFromModel();
     }
 
     /**
      * Extends selection to end of next word.
      */
     public void selectEndOfNextWord() {
-        int from = getCaretPosition();
-        selectPositionCaret(sharedModel.nextWordEnd(from));
+        sharedModel.selectEndOfNextWord();
+        syncSelectionFromModel();
     }
 
     /**
      * Extends selection to document start.
      */
     public void selectHome() {
-        selectPositionCaret(0);
+        sharedModel.selectHome();
+        syncSelectionFromModel();
     }
 
     /**
      * Extends selection to document end.
      */
     public void selectEnd() {
-        selectPositionCaret(getLength());
+        sharedModel.selectEnd();
+        syncSelectionFromModel();
     }
 
     /**
@@ -1345,10 +1375,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @param enabled {@code true} to apply, {@code false} to remove
      */
     public void setStyle(Style style, boolean enabled) {
-        if (enabled) {
-            apply(style);
-        } else {
-            remove(style);
+        if (sharedModel.setStyle(style, enabled)) {
+            onModelTextMutated(true);
         }
     }
 
@@ -1369,7 +1397,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @param enabled {@code true} for bold, {@code false} for normal weight
      */
     public void markBold(boolean enabled) {
-        applyAttributeToSelection(Style.FONT_WEIGHT, enabled ? Style.FONT_WEIGHT_VALUE_BOLD : Style.FONT_WEIGHT_VALUE_NORMAL);
+        if (sharedModel.markAttribute(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD, Style.FONT_WEIGHT_VALUE_NORMAL, enabled)) {
+            onModelTextMutated(true);
+        }
     }
 
     /**
@@ -1378,7 +1408,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @param enabled {@code true} for italic, {@code false} for normal style
      */
     public void markItalic(boolean enabled) {
-        applyAttributeToSelection(Style.FONT_STYLE, enabled ? Style.FONT_STYLE_VALUE_ITALIC : Style.FONT_STYLE_VALUE_NORMAL);
+        if (sharedModel.markAttribute(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC, Style.FONT_STYLE_VALUE_NORMAL, enabled)) {
+            onModelTextMutated(true);
+        }
     }
 
     /**
@@ -1387,8 +1419,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @param enabled {@code true} to underline, {@code false} to remove underline
      */
     public void markUnderline(boolean enabled) {
-        applyAttributeToSelection(Style.TEXT_DECORATION_UNDERLINE,
-                enabled ? Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE : Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE);
+        if (sharedModel.markAttribute(
+                Style.TEXT_DECORATION_UNDERLINE,
+                Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE,
+                Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE,
+                enabled
+        )) {
+            onModelTextMutated(true);
+        }
     }
 
     /**
@@ -1397,8 +1435,14 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      * @param enabled {@code true} to strike through, {@code false} to remove
      */
     public void markStrikeThrough(boolean enabled) {
-        applyAttributeToSelection(Style.TEXT_DECORATION_LINE_THROUGH,
-                enabled ? Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE : Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE);
+        if (sharedModel.markAttribute(
+                Style.TEXT_DECORATION_LINE_THROUGH,
+                Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE,
+                Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE,
+                enabled
+        )) {
+            onModelTextMutated(true);
+        }
     }
 
     /**
@@ -1428,119 +1472,29 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private void selectWordAt(int pos) {
-        RichTextEditUtil.WordRange range = sharedModel.wordRangeAt(pos);
+        IndexRange range = sharedModel.wordSelectionRangeAt(pos);
         setSelectionState(range.start(), range.end());
-        preferredCaretX = Double.NaN;
+        sharedModel.resetPreferredCaretX();
     }
 
     private void selectLineAt(int pos) {
-        String text = materializeDocumentText().toString();
-        if (text.isEmpty()) {
-            setSelectionState(0, 0);
-            return;
-        }
-
-        int p = Math.clamp(pos, 0, text.length());
-        assert p > 0; // we already checked text is not empty
-        if (p == text.length()) {
-            p--;
-        }
-
-        int start = p <= 0 ? 0 : text.lastIndexOf('\n', p - 1) + 1;
-        int end = text.indexOf('\n', p);
-        if (end < 0) {
-            end = text.length();
-        }
-
-        setSelectionState(start, end);
-        preferredCaretX = Double.NaN;
+        IndexRange range = sharedModel.lineRangeAt(pos);
+        setSelectionState(range.start(), range.end());
+        sharedModel.resetPreferredCaretX();
     }
 
     private void moveLine(int delta, boolean extendSelection) {
         List<VisualLine> lines = buildVisualLines(currentWrapWidth());
-        if (lines.isEmpty()) {
-            return;
+        if (sharedModel.moveLine(lines, delta, extendSelection)) {
+            syncSelectionFromModel();
         }
-
-        int caret = getCaretPosition();
-        int currentLineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
-        if (currentLineIndex < 0) {
-            return;
-        }
-
-        VisualLine currentLine = lines.get(currentLineIndex);
-        double x;
-        x = Double.isNaN(preferredCaretX) ? RichTextVisualLayoutHelper.xForIndex(currentLine, caret) : preferredCaretX;
-
-        int targetLineIndex = currentLineIndex + delta;
-        int targetCaret;
-        if (targetLineIndex < 0) {
-            targetCaret = 0;
-        } else if (targetLineIndex >= lines.size()) {
-            VisualLine line = lines.getLast();
-            targetCaret = line.end();
-            x = RichTextVisualLayoutHelper.xForIndex(line, targetCaret);
-        } else {
-            targetCaret = RichTextVisualLayoutHelper.indexForX(lines.get(targetLineIndex), x);
-        }
-
-        if (extendSelection) {
-            selectPositionCaret(targetCaret);
-        } else {
-            positionCaret(targetCaret);
-        }
-
-        preferredCaretX = x;
     }
 
     private void movePage(int delta, boolean extendSelection) {
-        if (delta == 0) {
-            return;
-        }
-
         List<VisualLine> lines = buildVisualLines(currentWrapWidth());
-        if (lines.isEmpty()) {
-            return;
+        if (sharedModel.movePage(lines, delta, extendSelection)) {
+            syncSelectionFromModel();
         }
-
-        int caret = getCaretPosition();
-        int currentLineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
-        if (currentLineIndex < 0 || currentLineIndex >= lines.size()) {
-            return;
-        }
-
-        VisualLine currentLine = lines.get(currentLineIndex);
-        double x;
-        x = Double.isNaN(preferredCaretX) ? RichTextVisualLayoutHelper.xForIndex(currentLine, caret) : preferredCaretX;
-
-        double pageHeight = 0.0;
-        ScrollPane sp = getScrollPane();
-        if (sp != null) {
-            double viewportHeight = sp.getViewportBounds().getHeight();
-            if (Double.isFinite(viewportHeight) && viewportHeight > 1.0) {
-                pageHeight = viewportHeight;
-            }
-        }
-
-        if (pageHeight <= 1.0) {
-            double fallback = getHeight() - snappedTopInset() - snappedBottomInset();
-            if (Double.isFinite(fallback) && fallback > 1.0) {
-                pageHeight = fallback;
-            } else {
-                pageHeight = Math.max(1.0, currentLine.height());
-            }
-        }
-
-        double targetY = currentLine.top() + delta * pageHeight;
-        int targetCaret = RichTextVisualLayoutHelper.indexForPoint(lines, x, targetY);
-
-        if (extendSelection) {
-            selectPositionCaret(targetCaret);
-        } else {
-            positionCaret(targetCaret);
-        }
-
-        preferredCaretX = x;
     }
 
     private Point2D toContentPoint(MouseEvent evt) {
@@ -1610,7 +1564,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     List<VisualLine> buildVisualLines(double wrapWidth) {
-        double availableWidth = resolveAvailableWidth(wrapWidth);
+        double availableWidth = sharedModel.resolveAvailableWidth(wrapWidth);
         Font baseFont = getFont();
         return sharedModel.buildVisualLines(
                 availableWidth,
@@ -1628,15 +1582,66 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     private double resolveAvailableWidth(double wrapWidth) {
-        double availableWidth = wrapWidth;
-        if (!Double.isFinite(availableWidth) || availableWidth <= 1.0) {
-            double fallback = getWidth() - snappedLeftInset() - snappedRightInset();
-            availableWidth = Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
-        }
-        return availableWidth;
+        return sharedModel.resolveAvailableWidth(wrapWidth);
     }
 
     private double currentWrapWidth() {
+        return sharedModel.currentWrapWidth();
+    }
+
+    private void setSelectionState(int anchorPos, int caretPos) {
+        sharedModel.selectRange(anchorPos, caretPos);
+        syncSelectionFromModel();
+    }
+
+    private void updatePropertiesFromCaretPosition() {
+        RichTextEditorModel.CaretProperties properties = sharedModel.resolveCaretProperties(getFont());
+        if (properties == null) {
+            return;
+        }
+
+        updatingPropertiesFromText = true;
+        try {
+            setBold(properties.bold());
+            setItalic(properties.italic());
+            setUnderline(properties.underline());
+            setStrikeThrough(properties.strikeThrough());
+            setTextColor(properties.textColor());
+            setBackgroundColor(properties.backgroundColor());
+            setFontFamily(properties.fontFamily());
+            setFontSize(properties.fontSize());
+        } finally {
+            updatingPropertiesFromText = false;
+        }
+    }
+
+    private static RichText toRichText(@Nullable CharSequence text, Font font) {
+        return RichTextEditorModel.toRichText(text, font);
+    }
+
+    private RichText toRichTextWithCurrentProperties(@Nullable CharSequence text) {
+        return RichTextEditorModel.toRichText(
+                text,
+                isBold(),
+                isItalic(),
+                isUnderline(),
+                isStrikeThrough(),
+                getTextColor(),
+                getBackgroundColor(),
+                getFontFamily(),
+                getFontSize()
+        );
+    }
+
+    private RichText normalizeIncomingText(@Nullable ToRichText text) {
+        if (text == null) {
+            return RichText.emptyText();
+        }
+
+        return text.toRichText();
+    }
+
+    private double resolveCurrentWrapWidthFromView() {
         if (!isWrapText()) {
             return Double.POSITIVE_INFINITY;
         }
@@ -1653,289 +1658,21 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
     }
 
-    private void setSelectionState(int anchorPos, int caretPos) {
-        selectionModel.selectRange(anchorPos, caretPos);
-        sharedModel.selectRange(anchorPos, caretPos);
-        updatePropertiesFromCaretPosition();
-    }
-
-    private void updatePropertiesFromCaretPosition() {
-        int textLength = documentLength();
-        if (textLength == 0) {
-            return;
-        }
-
-        int idx = getPropertyProbeIndex(textLength);
-        if (charAtDocument(idx) == '\n') {
-            idx = idx > 0 ? idx - 1 : Math.min(idx + 1, textLength - 1);
-        }
-
-        RichText probe = getText(idx, idx + 1);
-        if (probe.isEmpty()) {
-            return;
-        }
-
-        TextAttributes attributes = probe.attributesAt(0);
-        List<Style> styles = probe.stylesAt(0);
-
-        boolean boldAtCaret = styles.contains(Style.BOLD)
-                || Objects.equals(resolveAttribute(attributes, styles, Style.FONT_WEIGHT), Style.FONT_WEIGHT_VALUE_BOLD);
-
-        Object fontStyle = resolveAttribute(attributes, styles, Style.FONT_STYLE);
-        boolean italicAtCaret = styles.contains(Style.ITALIC)
-                || Objects.equals(fontStyle, Style.FONT_STYLE_VALUE_ITALIC)
-                || Objects.equals(fontStyle, Style.FONT_STYLE_VALUE_OBLIQUE);
-
-        boolean underlineAtCaret = styles.contains(Style.UNDERLINE)
-                || Objects.equals(resolveAttribute(attributes, styles, Style.TEXT_DECORATION_UNDERLINE), Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE);
-
-        boolean strikeThroughAtCaret = styles.contains(Style.LINE_THROUGH)
-                || Objects.equals(resolveAttribute(attributes, styles, Style.TEXT_DECORATION_LINE_THROUGH), Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE);
-
-        Font fallbackFont = getFont();
-        Color colorAtCaret = Optional.ofNullable(resolveColor(attributes, styles))
-                .orElseGet(fallbackFont::getColor);
-        Color backgroundColorAtCaret = Optional.ofNullable(resolveBackgroundColor(attributes, styles))
-                .orElseGet(fallbackFont::getBackgroundColor);
-        String familyAtCaret = Optional.ofNullable(resolveFontFamily(attributes, styles))
-                .orElseGet(fallbackFont::getFamily);
-        double sizeAtCaret = resolveFontSize(attributes, styles);
-        if (!Double.isFinite(sizeAtCaret) || sizeAtCaret <= 0.0) {
-            sizeAtCaret = fallbackFont.getSizeInPoints();
-        }
-
-        updatingPropertiesFromText = true;
-        try {
-            setBold(boldAtCaret);
-            setItalic(italicAtCaret);
-            setUnderline(underlineAtCaret);
-            setStrikeThrough(strikeThroughAtCaret);
-            setTextColor(colorAtCaret);
-            setBackgroundColor(backgroundColorAtCaret);
-            setFontFamily(familyAtCaret);
-            setFontSize(sizeAtCaret);
-        } finally {
-            updatingPropertiesFromText = false;
-        }
-    }
-
-    private int getPropertyProbeIndex(int textLength) {
-        IndexRange selectionRange = getSelection();
-        if (selectionRange.getLength() > 0) {
-            int start = selectionRange.getStart();
-            int end = selectionRange.getEnd();
-            int caret = getCaretPosition();
-            int idx = caret <= start ? start : caret - 1;
-            return Math.clamp(idx, start, end - 1);
-        }
-        return Math.clamp(getCaretPosition(), 0, textLength - 1);
-    }
-
-    private char charAtDocument(int index) {
-        int textLength = documentLength();
-        if (textLength == 0) {
-            return '\0';
-        }
-        int p = Math.clamp(index, 0, textLength - 1);
-        RichText probe = sharedModel.getText(p, p + 1);
-        return probe.isEmpty() ? '\0' : probe.charAt(0);
-    }
-
-    private static @Nullable Object resolveAttribute(TextAttributes attributes, List<Style> styles, String name) {
-        Object value = attributes.get(name);
-        if (value != null) {
-            return value;
-        }
-
-        for (int i = styles.size() - 1; i >= 0; i--) {
-            value = styles.get(i).get(name);
-            if (value != null) {
-                return value;
+    private double resolvePageHeightFromView() {
+        ScrollPane sp = getScrollPane();
+        if (sp != null) {
+            double viewportHeight = sp.getViewportBounds().getHeight();
+            if (Double.isFinite(viewportHeight) && viewportHeight > 1.0) {
+                return viewportHeight;
             }
         }
 
-        return null;
+        double fallback = getHeight() - snappedTopInset() - snappedBottomInset();
+        return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 0.0;
     }
 
-    private static @Nullable Color resolveColor(TextAttributes attributes, List<Style> styles) {
-        return resolveAttribute(attributes, styles, Style.COLOR) instanceof Color color ? color : null;
-    }
-
-    private static @Nullable Color resolveBackgroundColor(TextAttributes attributes, List<Style> styles) {
-        return resolveAttribute(attributes, styles, Style.BACKGROUND_COLOR) instanceof Color color ? color : null;
-    }
-
-    private static @Nullable String resolveFontFamily(TextAttributes attributes, List<Style> styles) {
-        Object value = resolveAttribute(attributes, styles, Style.FONT_FAMILIES);
-        if (value instanceof List<?> families && !families.isEmpty()) {
-            Object family = families.getFirst();
-            if (family != null) {
-                return family.toString();
-            }
-        }
-        return null;
-    }
-
-    private static double resolveFontSize(TextAttributes attributes, List<Style> styles) {
-        Object value = resolveAttribute(attributes, styles, Style.FONT_SIZE);
-        if (value instanceof Number n) {
-            return n.doubleValue();
-        }
-        return Optional.<Font>empty().map(Font::getSizeInPoints).orElse(0.0f);
-    }
-
-    private static RichText toRichText(@Nullable CharSequence text, Font font) {
-        if (text == null || text.isEmpty()) {
-            return RichText.emptyText();
-        }
-
-        Style style = Style.create(font);
-        RichTextBuilder rtb = new RichTextBuilder(text.length());
-        rtb.push(style);
-        rtb.append(text);
-        rtb.pop(style);
-
-        return rtb.toRichText();
-    }
-
-    private void applyAttributeToSelection(String name, @Nullable Object value) {
-        if (value == null) {
-            return;
-        }
-
-        IndexRange range = getSelection();
-        if (range.getLength() == 0) {
-            return;
-        }
-        if (sharedModel.applyAttributeToSelection(name, value)) {
-            onModelTextMutated(true);
-        }
-    }
-
-    private RichText toRichTextWithCurrentProperties(@Nullable CharSequence text) {
-        if (text == null || text.isEmpty()) {
-            return RichText.emptyText();
-        }
-
-        RichTextBuilder rtb = new RichTextBuilder(text.length());
-        if (isBold()) {
-            rtb.push(Style.BOLD);
-        }
-        if (isItalic()) {
-            rtb.push(Style.ITALIC);
-        }
-        if (isUnderline()) {
-            rtb.push(Style.UNDERLINE);
-        }
-        if (isStrikeThrough()) {
-            rtb.push(Style.LINE_THROUGH);
-        }
-
-        Color color = getTextColor();
-        if (color != null) {
-            rtb.push(Style.COLOR, color);
-        }
-
-        Color background = getBackgroundColor();
-        if (background != null) {
-            rtb.push(Style.BACKGROUND_COLOR, background);
-        }
-
-        String family = getFontFamily();
-        if (family != null && !family.isBlank()) {
-            rtb.push(Style.FONT_FAMILIES, List.of(family));
-        }
-
-        double size = getFontSize();
-        if (size > 0.0 && Double.isFinite(size)) {
-            rtb.push(Style.FONT_SIZE, (float) size);
-        }
-
-        rtb.append(text);
-
-        if (size > 0.0 && Double.isFinite(size)) {
-            rtb.pop(Style.FONT_SIZE);
-        }
-        if (family != null && !family.isBlank()) {
-            rtb.pop(Style.FONT_FAMILIES);
-        }
-        if (background != null) {
-            rtb.pop(Style.BACKGROUND_COLOR);
-        }
-        if (color != null) {
-            rtb.pop(Style.COLOR);
-        }
-        if (isStrikeThrough()) {
-            rtb.pop(Style.LINE_THROUGH);
-        }
-        if (isUnderline()) {
-            rtb.pop(Style.UNDERLINE);
-        }
-        if (isItalic()) {
-            rtb.pop(Style.ITALIC);
-        }
-        if (isBold()) {
-            rtb.pop(Style.BOLD);
-        }
-
-        return rtb.toRichText();
-    }
-
-    private RichText normalizeIncomingText(@Nullable ToRichText text) {
-        if (text == null) {
-            return RichText.emptyText();
-        }
-
-        return text.toRichText();
-    }
-
-    /**
-     * Creates a lazy snapshot of the provided list of {@code RichText} objects.
-     * The returned {@code ToRichText} instance generates the composed {@code RichText}
-     * lazily only when required, caching the result for subsequent calls.
-     *
-     * @param lines a list of {@code RichText} objects to include in the snapshot;
-     *              the snapshot provides a read-only representation of these objects.
-     *              <strong>{@code snapshot} should be immutable.
-     *
-     * @return a {@code ToRichText} instance that allows accessing the lazily generated
-     *         {@code RichText} or appending the snapshot content to a {@code RichTextBuilder}.
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static ToRichText createLazySnapshot(List<RichText> lines) {
-        List[] snapshot = {lines};
-        LangUtil.StrongCachingSupplier<RichText> materialized = LangUtil.cache(() -> {
-            RichTextBuilder rtb = new RichTextBuilder();
-            appendSnapshotToBuilder(snapshot[0], rtb);
-            snapshot[0] = null;
-            return rtb.toRichText();
-        });
-
-        return new ToRichText() {
-            @Override
-            public RichText toRichText() {
-                return materialized.get();
-            }
-
-            @Override
-            public void appendTo(RichTextBuilder builder) {
-                List<RichText> list = snapshot[0];
-                if (list == null) {
-                    materialized.get().appendTo(builder);
-                } else {
-                    appendSnapshotToBuilder(list, builder);
-                }
-            }
-        };
-    }
-
-    private static void appendSnapshotToBuilder(List<RichText> lineSnapshot, RichTextBuilder builder) {
-        for (int i = 0; i < lineSnapshot.size(); i++) {
-            lineSnapshot.get(i).appendTo(builder);
-            if (i + 1 < lineSnapshot.size()) {
-                builder.append('\n');
-            }
-        }
+    private static IndexRange toIndexRange(javafx.scene.control.IndexRange range) {
+        return new IndexRange(range.getStart(), range.getEnd());
     }
 
     private void clearHistory() {

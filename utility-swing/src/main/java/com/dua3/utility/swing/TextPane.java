@@ -61,6 +61,9 @@ public class TextPane extends JScrollPane implements RichTextPane {
      */
     public TextPane(@Nullable CharSequence text) {
         model = new RichTextEditorModel(text, AwtFontUtil.getInstance());
+        model.setPageWidthProvider(m -> resolvePageWidthFromView());
+        model.setPageHeightProvider(m -> resolvePageHeightFromView());
+        model.setWrapWidthProvider(m -> resolveCurrentWrapWidthFromView());
         setViewportView(textComponent);
         setWrapText(false);
         textComponent.setFocusable(false);
@@ -203,7 +206,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
     }
 
     private RenderLayout layoutForWidth(double widthHint) {
-        double width = Math.max(1.0, widthHint);
+        double width = model.resolveAvailableWidth(widthHint);
         double widthKey = wrapText ? width : Double.POSITIVE_INFINITY;
         RichText text = model.getText();
         RenderLayoutCache cache = renderLayoutCache;
@@ -218,6 +221,49 @@ public class TextPane extends JScrollPane implements RichTextPane {
         RenderLayout layout = createLayout(text, width);
         renderLayoutCache = new RenderLayoutCache(widthKey, wrapText, text, textFont, layout);
         return layout;
+    }
+
+    private double resolveCurrentWrapWidthFromView() {
+        if (!wrapText) {
+            return Double.POSITIVE_INFINITY;
+        }
+        return resolvePageWidthFromView();
+    }
+
+    private double resolvePageWidthFromView() {
+        JViewport viewport = getViewport();
+        if (viewport != null) {
+            double viewportWidth = viewport.getExtentSize().getWidth();
+            if (Double.isFinite(viewportWidth) && viewportWidth > 1.0) {
+                return viewportWidth;
+            }
+        }
+
+        double componentWidth = textComponent.getWidth();
+        if (Double.isFinite(componentWidth) && componentWidth > 1.0) {
+            return componentWidth;
+        }
+
+        double fallback = (double) getWidth() - getInsets().left - getInsets().right;
+        return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
+    }
+
+    private double resolvePageHeightFromView() {
+        JViewport viewport = getViewport();
+        if (viewport != null) {
+            double viewportHeight = viewport.getExtentSize().getHeight();
+            if (Double.isFinite(viewportHeight) && viewportHeight > 1.0) {
+                return viewportHeight;
+            }
+        }
+
+        double componentHeight = textComponent.getHeight();
+        if (Double.isFinite(componentHeight) && componentHeight > 1.0) {
+            return componentHeight;
+        }
+
+        double fallback = (double) getHeight() - getInsets().top - getInsets().bottom;
+        return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 0.0;
     }
 
     private RenderLayout createLayout(RichText richText, double availableWidth) {
