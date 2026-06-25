@@ -15,6 +15,7 @@ import com.dua3.utility.ui.RichTextEditHistory;
 import com.dua3.utility.ui.RichTextEditUtil;
 import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
+import com.dua3.utility.ui.VisualLine;
 import com.dua3.utility.ui.VisualLineCache;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -89,7 +90,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private boolean syncingTextPropertyFromDocument;
     private double preferredCaretX = Double.NaN;
     private final List<RichTextVisualLayoutHelper.LogicalBlock> logicalBlocks = new ArrayList<>();
-    private @Nullable VisualLineCache<VisualLine> visualLineCache;
+    private @Nullable VisualLineCache visualLineCache;
     private RichText documentText;
     private boolean documentTextDirty;
     private final ReadOnlyObjectWrapper<RichText> document = new ReadOnlyObjectWrapper<>(this, "documentText", RichText.emptyText());
@@ -1841,11 +1842,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         Font baseFont = getFont();
         double widthKey = isWrapText() ? availableWidth : Double.POSITIVE_INFINITY;
 
-        VisualLineCache<VisualLine> cache = visualLineCache;
-        if (cache != null
-                && Double.compare(cache.widthKey(), widthKey) == 0
-                && Objects.equals(cache.font(), baseFont)) {
-            return cache.lines();
+        if (visualLineCache != null
+                && Double.compare(visualLineCache.widthKey(), widthKey) == 0
+                && Objects.equals(visualLineCache.font(), baseFont)) {
+            return visualLineCache.lines();
         }
 
         if (logicalBlocks.isEmpty()) {
@@ -1854,7 +1854,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
         double defaultLineHeight = Math.max(1.0, baseFont.getFontData().height());
         List<RichTextVisualLayoutHelper.LogicalBlock> blocks = List.copyOf(logicalBlocks);
-        List<RichTextVisualLayoutHelper.VisualLine> helperLines = RichTextVisualLayoutHelper.buildVisualLines(
+        List<VisualLine> lines = RichTextVisualLayoutHelper.buildVisualLines(
                 blocks,
                 defaultLineHeight,
                 blockText -> {
@@ -1866,9 +1866,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                     );
                 }
         );
-        List<VisualLine> cached = helperLines.stream().map(VisualLine::fromHelper).toList();
-        visualLineCache = new VisualLineCache<>(widthKey, baseFont, cached);
-        return cached;
+        visualLineCache = new VisualLineCache(widthKey, baseFont, lines);
+        return lines;
     }
 
     private double resolveAvailableWidth(double wrapWidth) {
@@ -1898,23 +1897,19 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     }
 
     static int indexForPoint(List<VisualLine> lines, double x, double y) {
-        return RichTextVisualLayoutHelper.indexForPoint(toHelperLines(lines), x, y);
+        return RichTextVisualLayoutHelper.indexForPoint(lines, x, y);
     }
 
     static int lineIndexForCaret(List<VisualLine> lines, int caret) {
-        return RichTextVisualLayoutHelper.lineIndexForCaret(toHelperLines(lines), caret);
+        return RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
     }
 
     static double xForIndex(VisualLine line, int index) {
-        return RichTextVisualLayoutHelper.xForIndex(line.toHelper(), index);
+        return RichTextVisualLayoutHelper.xForIndex(line, index);
     }
 
     static int indexForX(VisualLine line, double x) {
-        return RichTextVisualLayoutHelper.indexForX(line.toHelper(), x);
-    }
-
-    private static List<RichTextVisualLayoutHelper.VisualLine> toHelperLines(List<VisualLine> lines) {
-        return lines.stream().map(VisualLine::toHelper).toList();
+        return RichTextVisualLayoutHelper.indexForX(line, x);
     }
 
     private int previousWordStart(int from) {
@@ -2256,16 +2251,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
     private void updateHistoryState() {
         undoable.set(history.canUndo());
         redoable.set(history.canRedo());
-    }
-
-    record VisualLine(int start, int end, double top, double height, double[] boundaries) {
-        RichTextVisualLayoutHelper.VisualLine toHelper() {
-            return new RichTextVisualLayoutHelper.VisualLine(start, end, top, height, boundaries);
-        }
-
-        static VisualLine fromHelper(RichTextVisualLayoutHelper.VisualLine line) {
-            return new VisualLine(line.start(), line.end(), line.top(), line.height(), line.boundaries());
-        }
     }
 
     private final class SelectionModel {

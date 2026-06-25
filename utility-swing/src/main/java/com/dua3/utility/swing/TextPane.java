@@ -12,6 +12,7 @@ import com.dua3.utility.ui.RichTextRenderer;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VAnchor;
 import com.dua3.utility.text.VerticalAlignment;
+import com.dua3.utility.ui.VisualLine;
 import org.jspecify.annotations.Nullable;
 
 import javax.swing.JComponent;
@@ -38,12 +39,12 @@ import java.util.function.Consumer;
  */
 public class TextPane extends JScrollPane implements RichTextPane {
 
-    protected final RichTextEditorModel model;
+    protected final transient RichTextEditorModel model;
     private final RichTextCanvas textComponent = new RichTextCanvas();
     private boolean wrapText;
-    private Font textFont = FontUtil.getInstance().getDefaultFont();
-    private Consumer<URI> hyperlinkHandler = TextPane::openUriUsingDesktop;
-    private @Nullable RenderLayoutCache renderLayoutCache;
+    private transient Font textFont = FontUtil.getInstance().getDefaultFont();
+    private transient Consumer<URI> hyperlinkHandler = TextPane::openUriUsingDesktop;
+    private transient @Nullable RenderLayoutCache renderLayoutCache;
 
     /**
      * Creates an empty text pane.
@@ -237,7 +238,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
         );
 
         double defaultLineHeight = Math.max(1.0, textFont.getFontData().height());
-        List<RichTextVisualLayoutHelper.VisualLine> visualLines = RichTextVisualLayoutHelper.buildVisualLines(
+        List<VisualLine> visualLines = RichTextVisualLayoutHelper.buildVisualLines(
                 RichTextVisualLayoutHelper.splitLogicalBlocks(richText),
                 defaultLineHeight,
                 blockText -> {
@@ -286,7 +287,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
     protected record RenderLayout(
             List<List<FragmentedText.Fragment>> renderLines,
-            List<RichTextVisualLayoutHelper.VisualLine> visualLines,
+            List<VisualLine> visualLines,
             double width,
             double height
     ) {}
@@ -325,7 +326,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 return viewport.getExtentSize().width;
             }
 
-            return Math.max(1.0, TextPane.this.getWidth() - TextPane.this.getInsets().left - TextPane.this.getInsets().right);
+            return Math.max(1.0, (double) TextPane.this.getWidth() - TextPane.this.getInsets().left - TextPane.this.getInsets().right);
         }
 
         @Override

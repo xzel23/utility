@@ -11,9 +11,8 @@ import java.util.Objects;
  * @param widthKey cached width key
  * @param font cached base font
  * @param lines cached lines
- * @param <T> visual line type
  */
-public record VisualLineCache<T>(double widthKey, Font font, List<T> lines) {
+public record VisualLineCache(double widthKey, Font font, List<VisualLine> lines) {
     /**
      * Constructor.
      *

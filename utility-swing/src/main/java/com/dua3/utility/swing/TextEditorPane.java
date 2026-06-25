@@ -6,6 +6,7 @@ import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.RichTextEditUtil;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
+import com.dua3.utility.ui.VisualLine;
 import org.jspecify.annotations.Nullable;
 
 import javax.swing.SwingUtilities;
@@ -408,7 +409,7 @@ public class TextEditorPane extends TextPane {
 
     @Override
     protected void paintOverlay(Graphics2D g2, RenderLayout layout) {
-        List<RichTextVisualLayoutHelper.VisualLine> lines = layout.visualLines();
+        List<VisualLine> lines = layout.visualLines();
         if (lines.isEmpty()) {
             return;
         }
@@ -416,7 +417,7 @@ public class TextEditorPane extends TextPane {
         var selection = model.getSelection();
         if (selection.length() > 0) {
             g2.setColor(SELECTION_COLOR);
-            for (RichTextVisualLayoutHelper.VisualLine line : lines) {
+            for (VisualLine line : lines) {
                 int from = Math.max(selection.start(), line.start());
                 int to = Math.min(selection.end(), line.end());
                 if (from >= to) {
@@ -437,7 +438,7 @@ public class TextEditorPane extends TextPane {
             int caret = model.getCaretPosition();
             int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             if (lineIndex >= 0 && lineIndex < lines.size()) {
-                RichTextVisualLayoutHelper.VisualLine line = lines.get(lineIndex);
+                VisualLine line = lines.get(lineIndex);
                 int x = (int) Math.round(RichTextVisualLayoutHelper.xForIndex(line, caret));
                 int y1 = (int) Math.floor(line.top());
                 int y2 = (int) Math.ceil(line.top() + line.height());
@@ -643,7 +644,7 @@ public class TextEditorPane extends TextPane {
     }
 
     private void moveCaretVertical(int deltaLines, boolean extendSelection) {
-        List<RichTextVisualLayoutHelper.VisualLine> lines = getRenderLayout().visualLines();
+        List<VisualLine> lines = getRenderLayout().visualLines();
         if (lines.isEmpty()) {
             return;
         }
@@ -655,7 +656,7 @@ public class TextEditorPane extends TextPane {
         }
 
         int targetLineIndex = Math.clamp((long) currentLineIndex + deltaLines, 0, lines.size() - 1);
-        RichTextVisualLayoutHelper.VisualLine currentLine = lines.get(currentLineIndex);
+        VisualLine currentLine = lines.get(currentLineIndex);
         double x = Double.isNaN(preferredCaretX)
                 ? RichTextVisualLayoutHelper.xForIndex(currentLine, caret)
                 : preferredCaretX;
@@ -666,7 +667,7 @@ public class TextEditorPane extends TextPane {
     }
 
     private void moveCaretLineBoundary(boolean toEnd, boolean extendSelection) {
-        List<RichTextVisualLayoutHelper.VisualLine> lines = getRenderLayout().visualLines();
+        List<VisualLine> lines = getRenderLayout().visualLines();
         if (lines.isEmpty()) {
             return;
         }
@@ -676,7 +677,7 @@ public class TextEditorPane extends TextPane {
             return;
         }
 
-        RichTextVisualLayoutHelper.VisualLine line = lines.get(lineIndex);
+        VisualLine line = lines.get(lineIndex);
         int target = toEnd ? line.end() : line.start();
         moveCaretTo(target, extendSelection, true);
     }

@@ -27,6 +27,7 @@ import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.RichTextPane;
 import com.dua3.utility.ui.RichTextRenderer;
 import com.dua3.utility.ui.VAnchor;
+import com.dua3.utility.ui.VisualLine;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -1455,7 +1456,7 @@ public class TextPane extends Control implements RichTextPane {
                 return;
             }
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(getAvailableWidth());
+            List<VisualLine> lines = editor.buildVisualLines(getAvailableWidth());
             if (lines.isEmpty()) {
                 return;
             }
@@ -1487,7 +1488,7 @@ public class TextPane extends Control implements RichTextPane {
         }
 
         private void ensureCaretVisible(TextEditorPane editor, double availableWidth) {
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(availableWidth);
+            List<VisualLine> lines = editor.buildVisualLines(availableWidth);
             if (lines.isEmpty()) {
                 return;
             }
@@ -1498,7 +1499,7 @@ public class TextPane extends Control implements RichTextPane {
                 return;
             }
 
-            TextEditorPane.VisualLine line = lines.get(lineIndex);
+            VisualLine line = lines.get(lineIndex);
             double caretX = TextEditorPane.xForIndex(line, caret);
             double caretWidth = Math.max(1.0, editor.getFont().getFontData().spaceWidth());
 
@@ -1762,7 +1763,7 @@ public class TextPane extends Control implements RichTextPane {
                 return;
             }
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(availableWidth);
+            List<VisualLine> lines = editor.buildVisualLines(availableWidth);
             if (lines.isEmpty()) {
                 return;
             }
@@ -1772,7 +1773,7 @@ public class TextPane extends Control implements RichTextPane {
                 return;
             }
 
-            TextEditorPane.VisualLine line = lines.get(lineIndex);
+            VisualLine line = lines.get(lineIndex);
             double requiredHeight = Math.ceil(line.top() + line.height());
             if (requiredHeight > canvas.getHeight()) {
                 canvas.setHeight(requiredHeight);
@@ -1857,12 +1858,12 @@ public class TextPane extends Control implements RichTextPane {
                 int layoutCaretPosition = layout.layoutTextData().sourceToLayoutPosition(editor.getCaretPosition());
                 CaretInfo caretInfo = findCaret(layout.renderLines(), layoutCaretPosition);
                 if (caretInfo == null) {
-                    List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(availableWidth);
+                    List<VisualLine> lines = editor.buildVisualLines(availableWidth);
                     if (!lines.isEmpty()) {
                         int caretPosition = editor.getCaretPosition();
                         int lineIndex = TextEditorPane.lineIndexForCaret(lines, caretPosition);
                         if (lineIndex >= 0 && lineIndex < lines.size()) {
-                            TextEditorPane.VisualLine line = lines.get(lineIndex);
+                            VisualLine line = lines.get(lineIndex);
                             double x = TextEditorPane.xForIndex(line, caretPosition);
                             caretInfo = new CaretInfo(x, line.top(), line.height());
                         }

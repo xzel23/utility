@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.VisualLine;
 import javafx.application.Platform;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -112,7 +113,7 @@ public class TextEditorPaneLargeFileBenchmark {
         return FxJmhSupport.callOnFxThreadAndWait(() -> {
             TextEditorPane textEditor = editor();
             textEditor.replaceText(middlePos, middlePos + 1, "Z");
-            List<TextEditorPane.VisualLine> lines = textEditor.buildVisualLines(wrapText ? WRAP_WIDTH : Double.POSITIVE_INFINITY);
+            List<VisualLine> lines = textEditor.buildVisualLines(wrapText ? WRAP_WIDTH : Double.POSITIVE_INFINITY);
             textEditor.undo();
             return lines.size();
         });

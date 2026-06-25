@@ -6,6 +6,7 @@ import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
+import com.dua3.utility.ui.VisualLine;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -30,11 +31,11 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             editor.setWrapText(false);
             addToScene(editor);
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(400.0);
+            List<VisualLine> lines = editor.buildVisualLines(400.0);
             int emptyLineIndex = findEmptyLine(lines);
             assertTrue(emptyLineIndex >= 0, "expected an empty visual line");
 
-            TextEditorPane.VisualLine emptyLine = lines.get(emptyLineIndex);
+            VisualLine emptyLine = lines.get(emptyLineIndex);
             editor.positionCaret(emptyLine.start());
 
             int resolvedLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
@@ -50,11 +51,11 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             editor.setWrapText(false);
             addToScene(editor);
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(400.0);
+            List<VisualLine> lines = editor.buildVisualLines(400.0);
             int emptyLineIndex = findEmptyLine(lines);
             assertTrue(emptyLineIndex >= 0, "expected an empty visual line");
 
-            TextEditorPane.VisualLine emptyLine = lines.get(emptyLineIndex);
+            VisualLine emptyLine = lines.get(emptyLineIndex);
             double y = emptyLine.top() + emptyLine.height() * 0.5;
             int caret = TextEditorPane.indexForPoint(lines, 0.0, y);
             assertEquals(emptyLine.start(), caret);
@@ -75,7 +76,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
             assertEquals("abc\n\n", editor.getText().toString());
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(400.0);
+            List<VisualLine> lines = editor.buildVisualLines(400.0);
             int caret = editor.getCaretPosition();
             int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
             assertEquals(lines.size() - 1, lineIndex);
@@ -95,14 +96,14 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             editor.insertText(editor.getLength(), "\n\n");
             assertEquals("a\nb\n\n", editor.getText().toString());
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(400.0);
+            List<VisualLine> lines = editor.buildVisualLines(400.0);
             assertTrue(lines.size() >= 4, "expected four logical lines after trailing insertion");
 
             int textEnd = editor.getLength();
             int lastLineIndex = TextEditorPane.lineIndexForCaret(lines, textEnd);
             assertEquals(lines.size() - 1, lastLineIndex);
 
-            TextEditorPane.VisualLine lastLine = lines.getLast();
+            VisualLine lastLine = lines.getLast();
             assertEquals(textEnd, lastLine.start());
             assertEquals(textEnd, lastLine.end());
         });
@@ -119,7 +120,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             addToScene(editor);
 
             double width = 500.0;
-            List<TextEditorPane.VisualLine> visualLines = editor.buildVisualLines(width);
+            List<VisualLine> visualLines = editor.buildVisualLines(width);
             TextPane.Layout layout = editor.createLayout(width);
 
             int targetPos = text.toString().indexOf("after-inline");
@@ -145,7 +146,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             addToScene(editor);
 
             double width = 600.0;
-            List<TextEditorPane.VisualLine> visualLines = editor.buildVisualLines(width);
+            List<VisualLine> visualLines = editor.buildVisualLines(width);
             TextPane.Layout layout = editor.createLayout(width);
 
             int targetPos = text.toString().indexOf("line-after-control");
@@ -171,11 +172,11 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             int start = lineStart(editor.getText().toString(), 10);
             editor.positionCaret(start);
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(600.0);
+            List<VisualLine> lines = editor.buildVisualLines(600.0);
             int currentLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
             assertTrue(currentLine >= 0);
 
-            TextEditorPane.VisualLine line = lines.get(currentLine);
+            VisualLine line = lines.get(currentLine);
             double x = TextEditorPane.xForIndex(line, editor.getCaretPosition());
             double viewportHeight = viewportHeight(editor);
             assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected a visible editor viewport");
@@ -199,11 +200,11 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             int start = lineStart(editor.getText().toString(), 30);
             editor.positionCaret(start);
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(600.0);
+            List<VisualLine> lines = editor.buildVisualLines(600.0);
             int currentLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
             assertTrue(currentLine >= 0);
 
-            TextEditorPane.VisualLine line = lines.get(currentLine);
+            VisualLine line = lines.get(currentLine);
             double x = TextEditorPane.xForIndex(line, editor.getCaretPosition());
             double viewportHeight = viewportHeight(editor);
             assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected a visible editor viewport");
@@ -227,11 +228,11 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             int anchor = lineStart(editor.getText().toString(), 12);
             editor.positionCaret(anchor);
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(600.0);
+            List<VisualLine> lines = editor.buildVisualLines(600.0);
             int currentLine = TextEditorPane.lineIndexForCaret(lines, editor.getCaretPosition());
             assertTrue(currentLine >= 0);
 
-            TextEditorPane.VisualLine line = lines.get(currentLine);
+            VisualLine line = lines.get(currentLine);
             double x = TextEditorPane.xForIndex(line, editor.getCaretPosition());
             double viewportHeight = viewportHeight(editor);
             assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected a visible editor viewport");
@@ -274,11 +275,11 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             double viewportHeight = scrollPane.getViewportBounds().getHeight();
             assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected visible viewport");
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
+            List<VisualLine> lines = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
             int caret = editor.getCaretPosition();
             int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
             assertTrue(lineIndex >= 0);
-            TextEditorPane.VisualLine caretLine = lines.get(lineIndex);
+            VisualLine caretLine = lines.get(lineIndex);
             double caretBottom = caretLine.top() + caretLine.height();
 
             double contentHeight = Math.max(scrollPane.getContent().getLayoutBounds().getHeight(), 1.0);
@@ -324,11 +325,11 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             double viewportHeight = scrollPane.getViewportBounds().getHeight();
             assertTrue(Double.isFinite(viewportHeight) && viewportHeight > 1.0, "expected visible viewport");
 
-            List<TextEditorPane.VisualLine> lines = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
+            List<VisualLine> lines = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
             int caret = editor.getCaretPosition();
             int lineIndex = TextEditorPane.lineIndexForCaret(lines, caret);
             assertTrue(lineIndex >= 0);
-            TextEditorPane.VisualLine caretLine = lines.get(lineIndex);
+            VisualLine caretLine = lines.get(lineIndex);
             double caretBottom = caretLine.top() + caretLine.height();
 
             double contentHeight = Math.max(scrollPane.getContent().getLayoutBounds().getHeight(), 1.0);
@@ -343,11 +344,11 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             editor.applyCss();
             editor.layout();
 
-            List<TextEditorPane.VisualLine> linesAfterMove = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
+            List<VisualLine> linesAfterMove = editor.buildVisualLines(scrollPane.getViewportBounds().getWidth());
             int movedCaret = editor.getCaretPosition();
             int movedLineIndex = TextEditorPane.lineIndexForCaret(linesAfterMove, movedCaret);
             assertTrue(movedLineIndex >= 0);
-            TextEditorPane.VisualLine movedCaretLine = linesAfterMove.get(movedLineIndex);
+            VisualLine movedCaretLine = linesAfterMove.get(movedLineIndex);
             double movedCaretBottom = movedCaretLine.top() + movedCaretLine.height();
 
             double movedVisibleTop = scrollPane.getVvalue() * maxOffset;
@@ -465,9 +466,9 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
     private record LayoutLine(double top, double height) {}
 
-    private static int findEmptyLine(List<TextEditorPane.VisualLine> lines) {
+    private static int findEmptyLine(List<VisualLine> lines) {
         for (int i = 0; i < lines.size(); i++) {
-            TextEditorPane.VisualLine line = lines.get(i);
+            VisualLine line = lines.get(i);
             if (line.start() == line.end()) {
                 return i;
             }
