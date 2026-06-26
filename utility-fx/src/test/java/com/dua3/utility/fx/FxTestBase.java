@@ -41,6 +41,8 @@ public abstract class FxTestBase {
             latch.countDown();
         }
         await(latch);
+
+        PlatformHelper.runAndWait(() -> Platform.setImplicitExit(false));
     }
 
     /**
@@ -77,8 +79,12 @@ public abstract class FxTestBase {
      */
     @AfterAll
     public static void cleanupPlatform() {
-        // Intentionally empty - we don't want to shut down the platform between test classes
-        System.out.println("JavaFX test completed, keeping platform running for subsequent tests");
+        PlatformHelper.runAndWait(() -> {
+            if (sharedStage != null) {
+                sharedStage.hide();
+                sharedStage.setScene(null);
+            }
+        });
     }
 
     /**

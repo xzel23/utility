@@ -13,9 +13,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,6 +37,7 @@ public abstract class FxTestBase {
     }
 
     private static Stage stage;
+    private static final List<Stage> openStages = new CopyOnWriteArrayList<>();
 
     /**
      * Initialize the JavaFX platform if it's not already initialized.
@@ -50,6 +53,8 @@ public abstract class FxTestBase {
             latch.countDown();
         }
         await(latch);
+
+        PlatformHelper.runAndWait(() -> Platform.setImplicitExit(false));
     }
 
     /**
@@ -79,8 +84,19 @@ public abstract class FxTestBase {
      */
     @AfterAll
     public static void cleanupPlatform() {
-        // Intentionally empty - we don't want to shut down the platform between test classes
-        System.out.println("JavaFX test completed, keeping platform running for subsequent tests");
+        PlatformHelper.runAndWait(() -> {
+            for (Stage s : openStages) {
+                try {
+                    s.hide();
+                    s.setScene(null);
+                    s.close();
+                } catch (RuntimeException ignored) {
+                    // best-effort cleanup
+                }
+            }
+            openStages.clear();
+            stage = null;
+        });
     }
 
     /**
@@ -124,6 +140,7 @@ public abstract class FxTestBase {
             stage.setTitle("FxTestBase");
             stage.setWidth(800);
             stage.setHeight(600);
+
             StackPane root = new StackPane();
             root.getChildren().add(node);
             Scene scn = new Scene(root, 800, 600);
@@ -135,6 +152,7 @@ public abstract class FxTestBase {
             if (!stage.isShowing()) {
                 stage.show();
             }
+            openStages.add(stage);
 
             Platform.requestNextPulse();
 
