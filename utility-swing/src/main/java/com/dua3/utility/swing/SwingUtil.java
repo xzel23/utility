@@ -206,15 +206,6 @@ public final class SwingUtil {
     }
 
     /**
-     * Set clipboard content.
-     *
-     * @param text the text to set
-     */
-    public static void setClipboardText(String text) {
-        copyToClipboard(text);
-    }
-
-    /**
      * Copy rich text to the clipboard.
      *
      * @param csq the text

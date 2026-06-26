@@ -329,7 +329,7 @@ public class TextEditorPane extends TextPane {
         if (selected.isEmpty()) {
             return;
         }
-        SwingUtil.setClipboardText(selected.toString());
+        SwingUtil.copyToClipboard(selected);
     }
 
     /**
@@ -353,7 +353,7 @@ public class TextEditorPane extends TextPane {
         if (!editable) {
             return;
         }
-        SwingUtil.getStringFromClipboard().ifPresent(this::replaceSelection);
+        SwingUtil.getTextFromClipboard().ifPresent(this::replaceSelection);
     }
 
     /**
