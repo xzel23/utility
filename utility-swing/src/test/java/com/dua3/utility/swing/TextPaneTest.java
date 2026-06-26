@@ -1,17 +1,27 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.lang.WrappedException;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.RichTextBuilderExtBase;
+import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.InlineNode;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.AbstractButton;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,11 +50,11 @@ class TextPaneTest {
         TextPane pane = onEdtGet(TextPane::new);
 
         assertFalse(onEdtGet(pane::isWrapText));
-        assertEquals(TextPane.HORIZONTAL_SCROLLBAR_AS_NEEDED, onEdtGet(pane::getHorizontalScrollBarPolicy));
+        assertEquals(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED, onEdtGet(pane::getHorizontalScrollBarPolicy));
 
         onEdtRun(() -> pane.setWrapText(true));
         assertTrue(onEdtGet(pane::isWrapText));
-        assertEquals(TextPane.HORIZONTAL_SCROLLBAR_NEVER, onEdtGet(pane::getHorizontalScrollBarPolicy));
+        assertEquals(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER, onEdtGet(pane::getHorizontalScrollBarPolicy));
     }
 
     @Test
@@ -65,6 +75,87 @@ class TextPaneTest {
         assertFalse(onEdtGet(pane::isEditable));
     }
 
+    @Test
+    void testInlineHyperlinkRendersAndInvokesHandler() {
+        URI target = URI.create("testapp://setStatus?text=Hyperlink");
+        RichText text = createInlineControlText(
+                new InlineNode<>(
+                        "Hyperlink",
+                        RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK,
+                        RichTextBuilderExtBase.encodeInlineHyperlinkData(target.toString(), "Hyperlink")
+                )
+        );
+
+        TestTextPane pane = onEdtGet(TestTextPane::new);
+        AtomicReference<URI> clickedUri = new AtomicReference<>();
+
+        onEdtRun(() -> {
+            pane.setHyperlinkHandler(clickedUri::set);
+            pane.setWrapText(true);
+            pane.setText(text);
+            pane.setSize(480, 200);
+            pane.getTextComponent().setSize(480, 200);
+        });
+
+        TextPane.RenderLayout layout = onEdtGet(pane::renderLayoutForTest);
+        assertEquals(1, layout.placements().size());
+        assertInstanceOf(AbstractButton.class, layout.placements().getFirst().component());
+
+        onEdtRun(((AbstractButton) layout.placements().getFirst().component())::doClick);
+        assertEquals(target, clickedUri.get());
+    }
+
+    @Test
+    void testInlineButtonRendersAndInvokesHandler() {
+        URI target = URI.create("testapp://buttonAction?name=InlineButton");
+        RichText text = createInlineControlText(
+                new InlineNode<>(
+                        "Button",
+                        RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON,
+                        RichTextBuilderExtBase.encodeInlineButtonData(target.toString(), "Button")
+                )
+        );
+
+        TestTextPane pane = onEdtGet(TestTextPane::new);
+        AtomicReference<URI> clickedUri = new AtomicReference<>();
+
+        onEdtRun(() -> {
+            pane.setHyperlinkHandler(clickedUri::set);
+            pane.setWrapText(true);
+            pane.setText(text);
+            pane.setSize(480, 200);
+            pane.getTextComponent().setSize(480, 200);
+        });
+
+        TextPane.RenderLayout layout = onEdtGet(pane::renderLayoutForTest);
+        assertEquals(1, layout.placements().size());
+        assertInstanceOf(AbstractButton.class, layout.placements().getFirst().component());
+
+        onEdtRun(((AbstractButton) layout.placements().getFirst().component())::doClick);
+        assertEquals(target, clickedUri.get());
+    }
+
+    private static RichText createInlineControlText(InlineNode<?> inlineNode) {
+        Style inlineStyle = Style.create(
+                "inline-test",
+                Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, inlineNode)
+        );
+
+        return new RichTextBuilder()
+                .append("before ")
+                .push(inlineStyle)
+                .append(String.valueOf(RichTextBuilderExtBase.INLINE_NODE_MARKER))
+                .pop(inlineStyle)
+                .append(" after")
+                .toRichText();
+    }
+
+    private static final class TestTextPane extends TextPane {
+        TextPane.RenderLayout renderLayoutForTest() {
+            return getRenderLayout();
+        }
+    }
+
     private static void onEdtRun(Runnable action) {
         if (SwingUtilities.isEventDispatchThread()) {
             action.run();
@@ -75,9 +166,9 @@ class TextPaneTest {
             SwingUtilities.invokeAndWait(action);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(ex);
+            throw new WrappedException(ex);
         } catch (InvocationTargetException ex) {
-            throw new RuntimeException(ex.getCause());
+            throw new WrappedException(ex);
         }
     }
 

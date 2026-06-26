@@ -1,28 +1,47 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.awt.AwtFontUtil;
+import com.dua3.utility.awt.AwtImageUtil;
+import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.RichTextBuilderExtBase;
+import com.dua3.utility.text.Run;
+import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextUtil;
+import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextPane;
 import com.dua3.utility.ui.RichTextRenderer;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VAnchor;
-import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.VisualLine;
 import org.jspecify.annotations.Nullable;
 
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
@@ -31,14 +50,33 @@ import java.awt.event.HierarchyBoundsAdapter;
 import java.awt.event.HierarchyEvent;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
+import java.util.function.Function;
 
 /**
  * Swing rich-text viewer.
  */
 public class TextPane extends JScrollPane implements RichTextPane {
+
+    private static final String NO_BREAK_SPACE = "\u00A0";
+    private static final String STYLE_LIST_ATTRIBUTE = "__styles";
+    private static final String STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT = TextPane.class.getName() + ".inlineReferenceAscent";
+    private static final String STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH = TextPane.class.getName() + ".inlineLeadingWidth";
+    private static final String CLIENT_PROPERTY_INLINE_TARGET_URI = TextPane.class.getName() + ".inlineTargetUri";
+    private static final Style STYLE_INVISIBLE_TEXT = Style.create(
+            "text-pane-invisible",
+            Map.entry(Style.COLOR, Color.TRANSPARENT_BLACK)
+    );
 
     protected final transient RichTextEditorModel model;
     private final RichTextCanvas textComponent = new RichTextCanvas();
@@ -66,6 +104,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
         model.setWrapWidthProvider(m -> resolveCurrentWrapWidthFromView());
         setViewportView(textComponent);
         setWrapText(false);
+        textComponent.setLayout(null);
         textComponent.setFocusable(false);
         textComponent.setFont(com.dua3.utility.awt.AwtFontUtil.getInstance().convert(textFont));
 
@@ -201,6 +240,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
      */
     protected final void invalidateRenderLayout() {
         renderLayoutCache = null;
+        textComponent.invalidateInlineLayout();
         textComponent.revalidate();
         textComponent.repaint();
     }
@@ -271,8 +311,35 @@ public class TextPane extends JScrollPane implements RichTextPane {
         float width = (float) Math.max(1.0, availableWidth);
         float wrapWidth = wrapText ? width : FragmentedText.NO_WRAP;
 
-        FragmentedText renderFragments = FragmentedText.generateFragments(
-                richText,
+        LayoutTextData layoutTextData = createLayoutTextData(richText, textFont, fontUtil);
+        RichText layoutText = layoutTextData.text();
+
+        FragmentedText layoutFragments = generateFragments(layoutText, fontUtil, width, wrapWidth);
+        RichText renderedText = createRenderedText(layoutText);
+        FragmentedText renderFragments = generateFragments(renderedText, fontUtil, width, wrapWidth);
+
+        List<InlineComponentPlacement> placements = collectInlinePlacements(layoutFragments, textFont, fontUtil);
+        LineShiftData lineShiftData = computeLineShifts(renderFragments, placements);
+        Map<Float, Float> lineShiftByY = lineShiftData.lineShiftByY();
+        List<InlineComponentPlacement> shiftedPlacements = shiftPlacements(placements, lineShiftByY);
+        List<List<FragmentedText.Fragment>> shiftedRenderLines = shiftRenderLines(renderFragments, lineShiftByY);
+
+        double defaultLineHeight = Math.max(1.0, textFont.getFontData().height());
+        List<VisualLine> visualLines = model.buildVisualLines(
+                availableWidth,
+                wrapText,
+                textFont,
+                blockText -> createVisualBlockLayout(blockText, fontUtil, width, wrapWidth, defaultLineHeight)
+        );
+
+        double renderWidth = wrapText ? width : Math.max(width, renderFragments.actualWidth());
+        double renderHeight = Math.max(defaultLineHeight, computeRenderedHeight(shiftedRenderLines, lineShiftData.tailOverflowBelow(), textFont));
+        return new RenderLayout(shiftedRenderLines, visualLines, shiftedPlacements, renderWidth, renderHeight);
+    }
+
+    private FragmentedText generateFragments(RichText text, FontUtil fontUtil, float width, float wrapWidth) {
+        return FragmentedText.generateFragments(
+                text,
                 fontUtil,
                 textFont,
                 width,
@@ -283,36 +350,610 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 VAnchor.TOP,
                 wrapWidth
         );
+    }
 
-        double defaultLineHeight = Math.max(1.0, textFont.getFontData().height());
-        List<VisualLine> visualLines = model.buildVisualLines(
-                availableWidth,
-                wrapText,
-                textFont,
-                blockText -> {
-                    FragmentedText blockFragments = FragmentedText.generateFragments(
-                            blockText,
-                            fontUtil,
-                            textFont,
-                            width,
-                            Float.MAX_VALUE,
-                            Alignment.LEFT,
-                            VerticalAlignment.TOP,
-                            HAnchor.LEFT,
-                            VAnchor.TOP,
-                            wrapWidth
-                    );
-                    return new RichTextVisualLayoutHelper.BlockLayout(
-                            blockFragments.lines(),
-                            Math.max(defaultLineHeight, blockFragments.actualHeight()),
-                            layoutPosition -> layoutPosition
-                    );
-                }
+    private RichTextVisualLayoutHelper.BlockLayout createVisualBlockLayout(
+            RichText blockText,
+            FontUtil fontUtil,
+            float width,
+            float wrapWidth,
+            double defaultLineHeight
+    ) {
+        LayoutTextData blockLayoutTextData = createLayoutTextData(blockText, textFont, fontUtil);
+        RichText blockLayoutText = blockLayoutTextData.text();
+
+        FragmentedText blockLayoutFragments = generateFragments(blockLayoutText, fontUtil, width, wrapWidth);
+        RichText blockRenderedText = createRenderedText(blockLayoutText);
+        FragmentedText blockRenderFragments = generateFragments(blockRenderedText, fontUtil, width, wrapWidth);
+        List<InlineComponentPlacement> blockPlacements = collectInlinePlacements(blockLayoutFragments, textFont, fontUtil);
+
+        LineShiftData lineShiftData = computeLineShifts(blockRenderFragments, blockPlacements);
+        List<List<FragmentedText.Fragment>> shiftedLines = shiftRenderLines(blockRenderFragments, lineShiftData.lineShiftByY());
+        double height = Math.max(defaultLineHeight, computeRenderedHeight(shiftedLines, lineShiftData.tailOverflowBelow(), textFont));
+
+        return new RichTextVisualLayoutHelper.BlockLayout(
+                shiftedLines,
+                height,
+                blockLayoutTextData::layoutToSourcePosition
         );
+    }
 
-        double renderWidth = wrapText ? width : Math.max(width, renderFragments.actualWidth());
-        double renderHeight = Math.max(defaultLineHeight, renderFragments.actualHeight());
-        return new RenderLayout(renderFragments.lines(), visualLines, renderWidth, renderHeight);
+    private List<InlineComponentPlacement> collectInlinePlacements(
+            FragmentedText layoutFragments,
+            Font baseFont,
+            FontUtil fontUtil
+    ) {
+        List<InlineComponentPlacement> placements = new ArrayList<>();
+
+        for (List<FragmentedText.Fragment> line : layoutFragments.lines()) {
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            float lineTop = line.getFirst().y();
+            float lineBottom = lineTop;
+            double lineAscent = 0.0;
+            for (FragmentedText.Fragment fragment : line) {
+                lineBottom = Math.max(lineBottom, fragment.y() + fragment.h());
+                double fragmentAscent = fragment.font().getAscent();
+                if (fragment.text() instanceof Run run) {
+                    fragmentAscent = getInlineReferenceAscent(run, fragment.font());
+                }
+                lineAscent = Math.max(lineAscent, fragmentAscent);
+            }
+
+            float lineHeight = Math.max(0.0f, lineBottom - lineTop);
+            lineAscent = Math.clamp(lineAscent, 0.0, lineHeight);
+            double lineDescent = Math.max(0.0, lineHeight - lineAscent);
+            float baselineY = (float) (lineTop + lineAscent);
+
+            for (FragmentedText.Fragment fragment : line) {
+                if (!(fragment.text() instanceof Run run)) {
+                    continue;
+                }
+
+                Component component = createInlineComponent(run, baseFont, fontUtil);
+                if (component == null) {
+                    continue;
+                }
+
+                VAnchor vAnchor = getInlineNodeVAnchor(run);
+                double descent = getInlineNodeDescent(run);
+                double leadingWidth = getInlineLeadingWidth(run);
+                placements.add(new InlineComponentPlacement(
+                        component,
+                        (float) (fragment.x() - leadingWidth),
+                        lineTop,
+                        fragment.w(),
+                        lineHeight,
+                        baselineY,
+                        fragment.font(),
+                        vAnchor,
+                        lineAscent,
+                        lineDescent,
+                        descent
+                ));
+            }
+        }
+
+        return placements;
+    }
+
+    private LayoutTextData createLayoutTextData(RichText source, Font baseFont, FontUtil fontUtil) {
+        RichTextBuilder builder = new RichTextBuilder(source.length());
+        List<Integer> layoutToSourceBoundaries = new ArrayList<>(source.length() + 1);
+        layoutToSourceBoundaries.add(0);
+        int sourcePosition = 0;
+
+        for (Run run : source) {
+            List<String> pushedAttributes = pushNonStyleAttributes(builder, run);
+            List<Style> styles = run.getStyles();
+            styles.forEach(builder::push);
+
+            if (hasInlineNode(run)) {
+                Component component = createInlineComponent(run, baseFont, fontUtil);
+                if (component != null) {
+                    Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
+                    setInlineComponentFont(component, runFont);
+
+                    double controlWidth = measureComponentWidth(component);
+                    String text = run.toString();
+                    double markerWidth = fontUtil.getTextDimension(run, runFont).width();
+                    double extraWidth = controlWidth - markerWidth;
+                    Style leadingWidthStyle = null;
+
+                    if (extraWidth > 0.5) {
+                        double spaceWidth = Math.max(1.0, runFont.getFontData().spaceWidth());
+                        int extraSpaces = (int) Math.ceil(extraWidth / spaceWidth);
+                        if (extraSpaces > 0) {
+                            String leadingPadding = NO_BREAK_SPACE.repeat(extraSpaces);
+                            builder.append(leadingPadding);
+                            for (int i = 0; i < leadingPadding.length(); i++) {
+                                layoutToSourceBoundaries.add(sourcePosition);
+                            }
+                            double leadingWidth = fontUtil.getTextWidth(leadingPadding, runFont);
+                            leadingWidthStyle = Style.create(
+                                    "text-pane-inline-leading-width",
+                                    Map.entry(STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH, leadingWidth)
+                            );
+                        }
+                    }
+
+                    if (leadingWidthStyle != null) {
+                        builder.push(leadingWidthStyle);
+                    }
+
+                    builder.append(text);
+                    for (int i = 0; i < text.length(); i++) {
+                        layoutToSourceBoundaries.add(++sourcePosition);
+                    }
+
+                    if (leadingWidthStyle != null) {
+                        builder.pop(leadingWidthStyle);
+                    }
+                } else {
+                    String text = run.toString();
+                    builder.append(text);
+                    for (int i = 0; i < text.length(); i++) {
+                        layoutToSourceBoundaries.add(++sourcePosition);
+                    }
+                }
+            } else {
+                String text = run.toString();
+                builder.append(text);
+                for (int i = 0; i < text.length(); i++) {
+                    layoutToSourceBoundaries.add(++sourcePosition);
+                }
+            }
+
+            for (int i = styles.size() - 1; i >= 0; i--) {
+                builder.pop(styles.get(i));
+            }
+            for (int i = pushedAttributes.size() - 1; i >= 0; i--) {
+                builder.pop(pushedAttributes.get(i));
+            }
+        }
+
+        RichText layoutText = builder.toRichText();
+        int[] layoutToSourceMap = new int[layoutText.length() + 1];
+        int count = Math.min(layoutToSourceBoundaries.size(), layoutToSourceMap.length);
+        for (int i = 0; i < count; i++) {
+            layoutToSourceMap[i] = Math.clamp(layoutToSourceBoundaries.get(i), 0, source.length());
+        }
+        for (int i = count; i < layoutToSourceMap.length; i++) {
+            layoutToSourceMap[i] = source.length();
+        }
+
+        return new LayoutTextData(layoutText, layoutToSourceMap);
+    }
+
+    private static RichText createRenderedText(RichText source) {
+        RichTextBuilder builder = new RichTextBuilder(source.length());
+        for (Run run : source) {
+            List<String> pushedAttributes = pushNonStyleAttributes(builder, run);
+            List<Style> styles = run.getStyles();
+            styles.forEach(builder::push);
+            if (hasInlineNode(run)) {
+                builder.push(STYLE_INVISIBLE_TEXT);
+                builder.append(run.toString());
+                builder.pop(STYLE_INVISIBLE_TEXT);
+            } else {
+                builder.append(run.toString());
+            }
+            for (int i = styles.size() - 1; i >= 0; i--) {
+                builder.pop(styles.get(i));
+            }
+            for (int i = pushedAttributes.size() - 1; i >= 0; i--) {
+                builder.pop(pushedAttributes.get(i));
+            }
+        }
+        return builder.toRichText();
+    }
+
+    private static List<String> pushNonStyleAttributes(RichTextBuilder builder, Run run) {
+        List<String> pushedAttributes = new ArrayList<>();
+        for (Map.Entry<String, @Nullable Object> entry : run.attributes().entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (STYLE_LIST_ATTRIBUTE.equals(key) || value == null) {
+                continue;
+            }
+            builder.push(key, value);
+            pushedAttributes.add(key);
+        }
+        return pushedAttributes;
+    }
+
+    private static boolean hasInlineNode(Run run) {
+        for (Style style : run.getStyles()) {
+            if (style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY) != null
+                    || style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private @Nullable Component createInlineComponent(Run run, Font baseFont, FontUtil fontUtil) {
+        if (TextUtil.isWhitespaceOnly(run)) {
+            return null;
+        }
+
+        String text = run.toString();
+        Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
+        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+            Style style = run.getStyles().get(i);
+
+            Object factory = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY);
+            if (factory instanceof Function<?, ?> f) {
+                @SuppressWarnings("unchecked")
+                Function<String, ?> fn = (Function<String, ?>) f;
+                Component component = toSwingInlineComponent(fn.apply(text), style);
+                if (component != null) {
+                    initializeInlineComponent(component, runFont);
+                    return component;
+                }
+            }
+
+            Component component = toSwingInlineComponent(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE), style);
+            if (component != null) {
+                initializeInlineComponent(component, runFont);
+                return component;
+            }
+        }
+        return null;
+    }
+
+    private void initializeInlineComponent(Component component, Font runFont) {
+        setInlineComponentFont(component, runFont);
+        if (component instanceof JComponent jc) {
+            jc.setFocusable(false);
+        }
+        if (component instanceof AbstractButton button) {
+            wireButtonAction(this, button);
+        }
+    }
+
+    private static @Nullable Component toSwingInlineComponent(@Nullable Object value, Style style) {
+        double maxWidth = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH);
+        double maxHeight = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT);
+
+        Object wrapped = value;
+        if (wrapped instanceof InlineNode<?> inlineNode) {
+            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(inlineNode.getMimeType())) {
+                RichTextBuilderExtBase.ButtonData buttonData = RichTextBuilderExtBase.decodeInlineButtonData(inlineNode.getData());
+                String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
+                        ? cs.toString()
+                        : (buttonData.text().isBlank() ? buttonData.target() : buttonData.text());
+                JButton button = new JButton(text);
+                button.setFocusable(false);
+                toUri(buttonData.target()).ifPresent(uri -> button.putClientProperty(CLIENT_PROPERTY_INLINE_TARGET_URI, uri));
+                return button;
+            }
+
+            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK.equals(inlineNode.getMimeType())) {
+                RichTextBuilderExtBase.HyperlinkData hyperlinkData = RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData());
+                String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
+                        ? cs.toString()
+                        : (hyperlinkData.text().isBlank() ? hyperlinkData.target() : hyperlinkData.text());
+                JButton hyperlink = createHyperlinkButton(text);
+                hyperlink.setFocusable(false);
+                toUri(hyperlinkData.target()).ifPresent(uri -> hyperlink.putClientProperty(CLIENT_PROPERTY_INLINE_TARGET_URI, uri));
+                return hyperlink;
+            }
+
+            Image decodedImage = decodeInlineImage(inlineNode);
+            wrapped = decodedImage != null ? decodedImage : inlineNode.getWrapped();
+        }
+
+        if (wrapped instanceof JComponent jc) {
+            applyImageScaling(jc, maxWidth, maxHeight);
+            return jc;
+        }
+        if (wrapped instanceof Component component) {
+            return component;
+        }
+        if (wrapped instanceof Image image) {
+            return createImageLabel(new ImageIcon(AwtImageUtil.getInstance().toImage(image)), maxWidth, maxHeight);
+        }
+        if (wrapped instanceof java.awt.Image awtImage) {
+            return createImageLabel(new ImageIcon(awtImage), maxWidth, maxHeight);
+        }
+        if (wrapped instanceof Icon icon) {
+            return createImageLabel(icon, maxWidth, maxHeight);
+        }
+        return null;
+    }
+
+    private static JButton createHyperlinkButton(String text) {
+        JButton hyperlink = new JButton(text);
+        hyperlink.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        hyperlink.setBorderPainted(false);
+        hyperlink.setContentAreaFilled(false);
+        hyperlink.setOpaque(false);
+        hyperlink.setHorizontalAlignment(SwingConstants.LEFT);
+        hyperlink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        hyperlink.setForeground(new java.awt.Color(0x1D, 0x4E, 0x89));
+        hyperlink.setMargin(new Insets(0, 0, 0, 0));
+        return hyperlink;
+    }
+
+    private static @Nullable Image decodeInlineImage(InlineNode<?> inlineNode) {
+        try {
+            return InlineNode.decodeArgbImageData(inlineNode.getData());
+        } catch (RuntimeException ex) {
+            return null;
+        }
+    }
+
+    private static JLabel createImageLabel(Icon icon, double maxWidth, double maxHeight) {
+        JLabel label = new JLabel(icon);
+        label.setFocusable(false);
+        applyImageScaling(label, maxWidth, maxHeight);
+        return label;
+    }
+
+    private static double getPositiveStyleValue(Style style, String key) {
+        Object value = style.get(key);
+        if (value instanceof Number n) {
+            double d = n.doubleValue();
+            if (Double.isFinite(d) && d > 0.0) {
+                return d;
+            }
+        }
+        return Double.NaN;
+    }
+
+    private static void applyImageScaling(Component component, double maxWidth, double maxHeight) {
+        if (!(component instanceof JLabel label)) {
+            return;
+        }
+        if (!(label.getIcon() instanceof ImageIcon imageIcon)) {
+            return;
+        }
+
+        ImageIcon scaled = scaleImageIcon(imageIcon, maxWidth, maxHeight);
+        if (scaled != imageIcon) {
+            label.setIcon(scaled);
+        }
+    }
+
+    private static ImageIcon scaleImageIcon(ImageIcon icon, double maxWidth, double maxHeight) {
+        boolean hasWidth = Double.isFinite(maxWidth) && maxWidth > 0.0;
+        boolean hasHeight = Double.isFinite(maxHeight) && maxHeight > 0.0;
+        if (!hasWidth && !hasHeight) {
+            return icon;
+        }
+
+        int sourceWidth = Math.max(1, icon.getIconWidth());
+        int sourceHeight = Math.max(1, icon.getIconHeight());
+        double scale = 1.0;
+        if (hasWidth) {
+            scale = Math.min(scale, maxWidth / sourceWidth);
+        }
+        if (hasHeight) {
+            scale = Math.min(scale, maxHeight / sourceHeight);
+        }
+        if (!Double.isFinite(scale) || scale <= 0.0 || Math.abs(scale - 1.0) < 0.01) {
+            return icon;
+        }
+
+        int targetWidth = Math.max(1, (int) Math.round(sourceWidth * scale));
+        int targetHeight = Math.max(1, (int) Math.round(sourceHeight * scale));
+        java.awt.Image scaledImage = icon.getImage().getScaledInstance(targetWidth, targetHeight, java.awt.Image.SCALE_SMOOTH);
+        return new ImageIcon(scaledImage);
+    }
+
+    private static void setInlineComponentFont(Component component, Font runFont) {
+        if (!(component instanceof JLabel) && !(component instanceof AbstractButton)) {
+            return;
+        }
+        component.setFont(AwtFontUtil.getInstance().convert(runFont));
+    }
+
+    private static double measureComponentWidth(Component component) {
+        return Math.max(1.0, component.getPreferredSize().getWidth());
+    }
+
+    private static Optional<URI> toUri(@Nullable Object value) {
+        return switch (value) {
+            case URI uri -> Optional.of(uri);
+            case CharSequence cs -> {
+                String text = cs.toString().trim();
+                if (text.isEmpty()) {
+                    yield Optional.empty();
+                }
+                try {
+                    yield Optional.of(new URI(text));
+                } catch (URISyntaxException ex) {
+                    yield Optional.empty();
+                }
+            }
+            case null, default -> Optional.empty();
+        };
+    }
+
+    private static void wireButtonAction(TextPane control, AbstractButton button) {
+        if (button.getActionListeners().length > 0) {
+            return;
+        }
+
+        Object targetValue = button.getClientProperty(CLIENT_PROPERTY_INLINE_TARGET_URI);
+        Optional<URI> target = toUri(targetValue);
+        if (target.isEmpty()) {
+            return;
+        }
+
+        button.addActionListener(evt -> control.getHyperlinkHandler().accept(target.get()));
+    }
+
+    private static VAnchor getInlineNodeVAnchor(Run run) {
+        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+            Style style = run.getStyles().get(i);
+            Object anchor = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR);
+            if (anchor instanceof VAnchor vAnchor) {
+                return vAnchor;
+            }
+        }
+        return VAnchor.BASELINE;
+    }
+
+    private static double getInlineReferenceValue(Run run, String styleName, DoubleSupplier fallbackValueSupplier) {
+        for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+            Style style = run.getStyles().get(i);
+            Object value = style.get(styleName);
+            if (value instanceof Number n) {
+                return n.doubleValue();
+            }
+        }
+        return fallbackValueSupplier.getAsDouble();
+    }
+
+    private static double getInlineReferenceAscent(Run run, Font fallbackFont) {
+        return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT, fallbackFont::getAscent);
+    }
+
+    private static double getInlineNodeDescent(Run run) {
+        return getInlineReferenceValue(run, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT, () -> Double.NaN);
+    }
+
+    private static double getInlineLeadingWidth(Run run) {
+        return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH, () -> 0.0);
+    }
+
+    private static double computeInlineDescent(InlineComponentPlacement placement, double prefH, int baselineOffset) {
+        return Double.isFinite(placement.descent())
+                ? Math.max(0.0, placement.descent())
+                : (baselineOffset >= 0 ? Math.max(0.0, prefH - baselineOffset) : 0.0);
+    }
+
+    private static double computeInlineComponentY(InlineComponentPlacement placement, double prefH, int baselineOffset) {
+        double lineTop = placement.y();
+        double lineBottom = placement.y() + placement.h();
+        double inlineDescent = computeInlineDescent(placement, prefH, baselineOffset);
+        return switch (placement.vAnchor()) {
+            case TOP -> lineTop;
+            case BOTTOM -> lineBottom - prefH;
+            case MIDDLE -> {
+                double textCenterY = placement.baselineY() + (placement.referenceDescent() - placement.referenceAscent()) / 2.0;
+                yield textCenterY - prefH / 2.0;
+            }
+            case BASELINE -> placement.baselineY() - (prefH - inlineDescent);
+        };
+    }
+
+    private static LineShiftData computeLineShifts(FragmentedText renderFragments, List<InlineComponentPlacement> placements) {
+        Map<Float, Float> overflowAboveByLineY = new java.util.HashMap<>();
+        Map<Float, Float> overflowBelowByLineY = new java.util.HashMap<>();
+
+        for (InlineComponentPlacement placement : placements) {
+            Component component = placement.component();
+            Dimension prefSize = component.getPreferredSize();
+            double prefW = Math.max(1.0, prefSize.getWidth());
+            double prefH = Math.max(1.0, prefSize.getHeight());
+            int baselineOffset = component.getBaseline((int) Math.ceil(prefW), (int) Math.ceil(prefH));
+            double componentY = computeInlineComponentY(placement, prefH, baselineOffset);
+            double componentBottom = componentY + prefH;
+            float overflowAbove = (float) Math.max(0.0, placement.y() - componentY);
+            float overflowBelow = (float) Math.max(0.0, componentBottom - (placement.y() + placement.h()));
+            if (overflowAbove > 0.0f) {
+                overflowAboveByLineY.merge(placement.y(), overflowAbove, Math::max);
+            }
+            if (overflowBelow > 0.0f) {
+                overflowBelowByLineY.merge(placement.y(), overflowBelow, Math::max);
+            }
+        }
+
+        Map<Float, Float> lineShiftByY = new java.util.HashMap<>();
+        float cumulativeShift = 0.0f;
+        float lastLineShift = 0.0f;
+        for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
+            if (line.isEmpty()) {
+                continue;
+            }
+            float lineY = line.getFirst().y();
+            cumulativeShift += overflowAboveByLineY.getOrDefault(lineY, 0.0f);
+            lineShiftByY.put(lineY, cumulativeShift);
+            lastLineShift = cumulativeShift;
+            cumulativeShift += overflowBelowByLineY.getOrDefault(lineY, 0.0f);
+        }
+        float tailOverflowBelow = Math.max(0.0f, cumulativeShift - lastLineShift);
+        return new LineShiftData(lineShiftByY, tailOverflowBelow);
+    }
+
+    private static List<InlineComponentPlacement> shiftPlacements(
+            List<InlineComponentPlacement> placements,
+            Map<Float, Float> lineShiftByY
+    ) {
+        if (lineShiftByY.isEmpty()) {
+            return placements;
+        }
+
+        List<InlineComponentPlacement> shifted = new ArrayList<>(placements.size());
+        for (InlineComponentPlacement placement : placements) {
+            float dy = lineShiftByY.getOrDefault(placement.y(), 0.0f);
+            shifted.add(new InlineComponentPlacement(
+                    placement.component(),
+                    placement.x(),
+                    placement.y() + dy,
+                    placement.w(),
+                    placement.h(),
+                    placement.baselineY() + dy,
+                    placement.font(),
+                    placement.vAnchor(),
+                    placement.referenceAscent(),
+                    placement.referenceDescent(),
+                    placement.descent()
+            ));
+        }
+        return shifted;
+    }
+
+    private static List<List<FragmentedText.Fragment>> shiftRenderLines(
+            FragmentedText fragments,
+            Map<Float, Float> lineShiftByY
+    ) {
+        if (lineShiftByY.isEmpty()) {
+            return fragments.lines();
+        }
+
+        List<List<FragmentedText.Fragment>> shiftedLines = new ArrayList<>(fragments.lines().size());
+        for (List<FragmentedText.Fragment> line : fragments.lines()) {
+            if (line.isEmpty()) {
+                shiftedLines.add(List.of());
+                continue;
+            }
+            float lineY = line.getFirst().y();
+            float dy = lineShiftByY.getOrDefault(lineY, 0.0f);
+            if (dy == 0.0f) {
+                shiftedLines.add(line);
+                continue;
+            }
+            List<FragmentedText.Fragment> shiftedLine = new ArrayList<>(line.size());
+            for (FragmentedText.Fragment fragment : line) {
+                shiftedLine.add(new FragmentedText.Fragment(
+                        fragment.x(),
+                        fragment.y() + dy,
+                        fragment.w(),
+                        fragment.h(),
+                        fragment.baseLine(),
+                        fragment.font(),
+                        fragment.text()
+                ));
+            }
+            shiftedLines.add(shiftedLine);
+        }
+        return shiftedLines;
+    }
+
+    private static float computeRenderedHeight(List<List<FragmentedText.Fragment>> lines, float tailOverflowBelow, Font fallbackFont) {
+        float maxBottom = 0.0f;
+        for (List<FragmentedText.Fragment> line : lines) {
+            for (FragmentedText.Fragment fragment : line) {
+                maxBottom = Math.max(maxBottom, fragment.y() + fragment.h());
+            }
+        }
+        return (float) Math.max(fallbackFont.getFontData().height(), maxBottom + Math.max(0.0f, tailOverflowBelow));
     }
 
     private static void openUriUsingDesktop(URI uri) {
@@ -336,9 +977,36 @@ public class TextPane extends JScrollPane implements RichTextPane {
     protected record RenderLayout(
             List<List<FragmentedText.Fragment>> renderLines,
             List<VisualLine> visualLines,
+            List<InlineComponentPlacement> placements,
             double width,
             double height
     ) {}
+
+    private record LayoutTextData(
+            RichText text,
+            int[] layoutToSourceMap
+    ) {
+        int layoutToSourcePosition(int layoutPosition) {
+            int pos = Math.clamp(layoutPosition, 0, layoutToSourceMap.length - 1);
+            return layoutToSourceMap[pos];
+        }
+    }
+
+    protected record InlineComponentPlacement(
+            Component component,
+            float x,
+            float y,
+            float w,
+            float h,
+            float baselineY,
+            Font font,
+            VAnchor vAnchor,
+            double referenceAscent,
+            double referenceDescent,
+            double descent
+    ) {}
+
+    private record LineShiftData(Map<Float, Float> lineShiftByY, float tailOverflowBelow) {}
 
     private record RenderLayoutCache(
             double widthKey,
@@ -349,6 +1017,15 @@ public class TextPane extends JScrollPane implements RichTextPane {
     ) {}
 
     private final class RichTextCanvas extends JComponent implements Scrollable {
+
+        private transient @Nullable RenderLayout appliedInlineLayout;
+
+        private void invalidateInlineLayout() {
+            appliedInlineLayout = null;
+            if (getComponentCount() > 0) {
+                removeAll();
+            }
+        }
 
         private double getLayoutWidthHint(boolean forPreferredSize) {
             if (wrapText) {
@@ -391,6 +1068,9 @@ public class TextPane extends JScrollPane implements RichTextPane {
             super.paintComponent(g);
 
             RenderLayout layout = layoutForWidth(getLayoutWidthHint(false));
+            if (appliedInlineLayout != layout) {
+                syncInlineComponents(layout);
+            }
 
             Graphics2D g2 = (Graphics2D) g.create();
             try {
@@ -403,6 +1083,45 @@ public class TextPane extends JScrollPane implements RichTextPane {
             } finally {
                 g2.dispose();
             }
+        }
+
+        private void syncInlineComponents(RenderLayout layout) {
+            if (appliedInlineLayout == layout) {
+                return;
+            }
+
+            Set<Component> used = Collections.newSetFromMap(new IdentityHashMap<>());
+
+            for (InlineComponentPlacement placement : layout.placements()) {
+                Component component = placement.component();
+                if (!used.add(component)) {
+                    continue;
+                }
+
+                if (component.getParent() != this) {
+                    add(component);
+                }
+                if (component instanceof AbstractButton button) {
+                    wireButtonAction(TextPane.this, button);
+                }
+
+                Dimension pref = component.getPreferredSize();
+                int prefW = Math.max(1, (int) Math.ceil(pref.getWidth()));
+                int prefH = Math.max(1, (int) Math.ceil(pref.getHeight()));
+                int baselineOffset = component.getBaseline(prefW, prefH);
+                double y = computeInlineComponentY(placement, prefH, baselineOffset);
+                int x = (int) Math.floor(placement.x());
+                component.setBounds(x, (int) Math.floor(y), prefW, prefH);
+                component.setVisible(true);
+            }
+
+            for (Component child : getComponents()) {
+                if (!used.contains(child)) {
+                    remove(child);
+                }
+            }
+
+            appliedInlineLayout = layout;
         }
 
         @Override
