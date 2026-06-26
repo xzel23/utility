@@ -249,6 +249,7 @@ This release introduces some major changes, both to existing interfaces and also
 - Replaced `FxUtil.copyToClibboard(String)` and `FxUtil.copyToClibboard(RichText)` by
   `FxUtil.copyToClibboard(CharSequence)`; RTF and HTML automatically added to the clipboard.
 - Added `RichTextRuns` interface to avoid temporary `RichText` instances.
+- Cleanup clipboard handling in `SwingUtil`.
 
 ### Changes in 23.0.0-beta
 
