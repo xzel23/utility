@@ -1,5 +1,7 @@
 package com.dua3.utility.ui;
 
+import java.util.Arrays;
+
 /**
  * Visual line in source-coordinate space.
  *
@@ -48,5 +50,27 @@ public record VisualLine(int start, int end, double top, double height, double[]
      */
     public double maxX() {
         return boundaries.length == 0 ? 0.0 : boundaries[boundaries.length - 1];
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof VisualLine that)) return false;
+
+        return start == that.start &&
+                end == that.end &&
+                Double.compare(that.top, top) == 0 &&
+                Double.compare(that.height, height) == 0 &&
+                Arrays.equals(boundaries, that.boundaries);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Integer.hashCode(start);
+        result = 31 * result + Integer.hashCode(end);
+        result = 31 * result + Double.hashCode(top);
+        result = 31 * result + Double.hashCode(height);
+        result = 31 * result + Arrays.hashCode(boundaries);
+        return result;
     }
 }
