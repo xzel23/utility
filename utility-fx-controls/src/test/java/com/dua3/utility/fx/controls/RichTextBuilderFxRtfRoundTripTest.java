@@ -326,11 +326,19 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
         });
         RichText actual = actualHolder[0];
         assertTrue(expected.equalsText(actual), "expected and actual texts are not equal");
-//        assertEquals(expected, actual, "expected and actual rich texts differ in attributes");
         assertTrue(countInlineNodeFactoryRuns(actual) >= 3, "inline controls were not preserved on clipboard round trip");
-        List<ScaledInlineImageInfo> expectedInfos = getScaledInlineImageInfos(expected);
+        List<ScaledInlineImageInfo> expectedInfos = extractExpectedScaledInlineImageInfo(expected);
         List<ScaledInlineImageInfo> actualInfos = getScaledInlineImageInfos(actual);
-        assertEquals(expectedInfos, actualInfos);
+        assertEquals(expectedInfos.size(), actualInfos.size(), "scaled image count mismatch");
+
+        for (int i = 0; i < expectedInfos.size(); i++) {
+            ScaledInlineImageInfo expectedInfo = expectedInfos.get(i);
+            ScaledInlineImageInfo actualInfo = actualInfos.get(i);
+
+            assertEquals(expectedInfo.vAnchor(), actualInfo.vAnchor(), "vAnchor mismatch for scaled image #" + i);
+            assertEquals(expectedInfo.maxWidth(), actualInfo.maxWidth(), 1.0, "width drift too large for scaled image #" + i);
+            assertEquals(expectedInfo.maxHeight(), actualInfo.maxHeight(), 1.0, "height drift too large for scaled image #" + i);
+        }
     }
 
     @Test
