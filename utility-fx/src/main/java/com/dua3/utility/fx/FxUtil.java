@@ -48,7 +48,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -72,13 +71,10 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -107,14 +103,6 @@ public final class FxUtil {
 
     private static final Pattern PATTERN_FILENAME_AND_DOT = Pattern.compile("^\\*\\.");
     private static final FxFontUtil FX_FONT_UTIL = FxFontUtil.getInstance();
-    private static final DataFormat INTERNAL_RICH_TEXT_TOKEN = new DataFormat("application/x-dua3-rich-text-token");
-    private static final int INTERNAL_RICH_TEXT_CACHE_SIZE = 64;
-    private static final Map<String, RichText> INTERNAL_RICH_TEXT_CACHE = new LinkedHashMap<>(INTERNAL_RICH_TEXT_CACHE_SIZE + 1, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<String, RichText> eldest) {
-            return size() > INTERNAL_RICH_TEXT_CACHE_SIZE;
-        }
-    };
 
     private FxUtil() { /* utility class */ }
 
@@ -463,30 +451,28 @@ public final class FxUtil {
     /**
      * Copy rich text to the clipboard.
      *
-     * @param text the text
+     * @param csq the text
      */
-    public static void copyToClipboard(RichText text) {
-        HtmlConverter converter = HtmlConverter.create(
-                HtmlConverter.useCss(false),
-                HtmlConverter.convertLineBreaksTo("<br>\n")
-        );
-        copyToClipboard(text, converter);
-    }
-
-    /**
-     * Copy rich text to the clipboard.
-     *
-     * @param text the text
-     * @param converter the converter to use
-     */
-    public static void copyToClipboard(RichText text, HtmlConverter converter) {
+    public static void copyToClipboard(CharSequence csq) {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
-        content.putString(text.toString());
-        String token = cacheRichText(text);
-        content.put(INTERNAL_RICH_TEXT_TOKEN, token);
-// FIXME       content.putHtml(converter.convert(text));
-        RtfConverter.get().ifPresent(rtfConverter -> content.putRtf(rtfConverter.convert(text)));
+
+        // rich text
+        if (csq instanceof RichText text) {
+            // RTF
+            RtfConverter.get().ifPresent(rtfConverter -> content.putRtf(rtfConverter.convert(text)));
+
+            // HTML
+            HtmlConverter converter = HtmlConverter.create(
+                    HtmlConverter.useCss(false),
+                    HtmlConverter.convertLineBreaksTo("<br>\n")
+            );
+            content.putHtml(converter.convert(text));
+        }
+
+        // plain text
+        content.putString(csq.toString());
+
         clipboard.setContent(content);
     }
 
@@ -562,11 +548,6 @@ public final class FxUtil {
     public static Optional<RichText> getTextFromClipboard() {
         Clipboard clipboard = Clipboard.getSystemClipboard();
 
-        RichText cached = getCachedRichTextFromClipboard(clipboard);
-        if (cached != null) {
-            return Optional.of(cached);
-        }
-
         String rtfString = clipboard.getRtf();
         if (rtfString != null) {
             Optional<RtfConverter> rtfConverter = RtfConverter.get();
@@ -576,24 +557,6 @@ public final class FxUtil {
         }
 
         return Optional.of(RichText.valueOf(Objects.requireNonNullElse(clipboard.getString(), "")));
-    }
-
-    private static String cacheRichText(RichText text) {
-        String token = UUID.randomUUID().toString();
-        synchronized (INTERNAL_RICH_TEXT_CACHE) {
-            INTERNAL_RICH_TEXT_CACHE.put(token, text);
-        }
-        return token;
-    }
-
-    private static @Nullable RichText getCachedRichTextFromClipboard(Clipboard clipboard) {
-        Object value = clipboard.getContent(INTERNAL_RICH_TEXT_TOKEN);
-        if (!(value instanceof String token) || token.isBlank()) {
-            return null;
-        }
-        synchronized (INTERNAL_RICH_TEXT_CACHE) {
-            return INTERNAL_RICH_TEXT_CACHE.get(token);
-        }
     }
 
     /**
