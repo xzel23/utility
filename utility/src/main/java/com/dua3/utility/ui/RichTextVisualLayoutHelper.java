@@ -32,6 +32,12 @@ public final class RichTextVisualLayoutHelper {
      */
     @FunctionalInterface
     public interface LayoutToSourcePosition {
+        /**
+         * Maps a layout position to its corresponding source position.
+         *
+         * @param layoutPosition the position in the layout to be mapped
+         * @return the corresponding source position
+         */
         int map(int layoutPosition);
     }
 

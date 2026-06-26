@@ -66,6 +66,6 @@ public interface RichTextConverter<T> {
      * @param text the text to convert
      * @return conversion result
      */
-    T convert(RichText text);
+    T convert(ToRichText text);
 
 }

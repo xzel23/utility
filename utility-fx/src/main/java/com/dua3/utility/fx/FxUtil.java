@@ -8,6 +8,7 @@ import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RtfConverter;
+import com.dua3.utility.text.ToRichText;
 import javafx.animation.AnimationTimer;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.Property;
@@ -437,18 +438,6 @@ public final class FxUtil {
     }
 
     /**
-     * Copy text to the clipboard.
-     *
-     * @param s the text
-     */
-    public static void copyToClipboard(String s) {
-        final Clipboard clipboard = Clipboard.getSystemClipboard();
-        final ClipboardContent content = new ClipboardContent();
-        content.putString(s);
-        clipboard.setContent(content);
-    }
-
-    /**
      * Copy rich text to the clipboard.
      *
      * @param csq the text
@@ -458,7 +447,7 @@ public final class FxUtil {
         final ClipboardContent content = new ClipboardContent();
 
         // rich text
-        if (csq instanceof RichText text) {
+        if (csq instanceof ToRichText text) {
             // RTF
             RtfConverter.get().ifPresent(rtfConverter -> content.putRtf(rtfConverter.convert(text)));
 

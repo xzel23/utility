@@ -35,14 +35,13 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
     /**
      * Create a converter for the given argument.
-     * @param textLength the expected input text length
      * @return new converter instance
      */
-    protected abstract TagBasedConverterImpl<T> createConverter(int textLength);
+    protected abstract TagBasedConverterImpl<T> createConverter();
 
     @Override
-    public T convert(RichText text) {
-        return createConverter(text.length()).append(text).get();
+    public T convert(ToRichText text) {
+        return createConverter().append(text).get();
     }
 
     /**
@@ -127,13 +126,14 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
          * @param text the rich text content to be appended
          * @return the current instance of {@code TagBasedConverterImpl<T>} after appending the given rich text
          */
-        protected TagBasedConverterImpl<T> append(RichText text) {
+        protected TagBasedConverterImpl<T> append(ToRichText text) {
             // open attributes in opening order; each entry stores the current attribute value in newValue
             List<AttributeChange> openAttributes = new ArrayList<>();
             TextAttributes currentAttributes = TextAttributes.none();
 
             List<Style> openStyles = new ArrayList<>();
-            for (Run run : text) {
+            RichTextRuns runs = text instanceof RichTextRuns rtr ? rtr : text.toRichText();
+            for (Run run : runs) {
                 // determine attribute-related changes
                 List<AttributeChange> attributesToClose = new ArrayList<>();
                 List<AttributeChange> attributesToOpen = new ArrayList<>();

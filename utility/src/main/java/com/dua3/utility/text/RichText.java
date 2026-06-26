@@ -36,7 +36,7 @@ import static com.dua3.utility.lang.LangUtil.NULL_STRING;
  */
 @SuppressWarnings("MagicCharacter")
 public final class RichText
-        implements Iterable<Run>, AttributedCharSequence, ToRichText {
+        implements AttributedCharSequence, ToRichText, RichTextRuns {
 
     /**
      * A character used as a delimiter or marker to insert where subsequent text segment should not be
@@ -521,7 +521,7 @@ public final class RichText
 
     @Override
     public Iterator<Run> iterator() {
-        return Arrays.stream(run).iterator();
+        return LangUtil.asUnmodifiableList(run).iterator();
     }
 
     /**
@@ -1275,8 +1275,14 @@ public final class RichText
      *
      * @return unmodifiable list of runs
      */
+    @Override
     public List<Run> runs() {
         return List.of(run);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return AttributedCharSequence.super.isEmpty();
     }
 
     /**
@@ -1284,6 +1290,7 @@ public final class RichText
      *
      * @return stream of runs
      */
+    @Override
     public Stream<Run> runStream() {
         return Arrays.stream(run);
     }

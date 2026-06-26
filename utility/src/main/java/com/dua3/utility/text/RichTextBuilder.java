@@ -13,11 +13,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 /**
  * A builder class for rich text data.
@@ -29,7 +31,7 @@ import java.util.function.BiFunction;
  * {@link #push(Style)}/{@link #pop(Style)} or {@link #compose(String, BiFunction)}/{@link #decompose(String)}
  * pairs of methods.
  */
-public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
+public class RichTextBuilder implements Appendable, ToRichText, CharSequence, RichTextRuns {
 
     private record PositionAttributes(int pos, CompactableSortedMap<String, Object> attributes) {}
 
@@ -136,6 +138,26 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
     public RichText toRichText() {
         Run[] runs = getRuns();
         return new RichText(runs);
+    }
+
+    @Override
+    public List<Run> runs() {
+        return LangUtil.asUnmodifiableList(getRuns());
+    }
+
+    @Override
+    public Stream<Run> runStream() {
+        return runs().stream();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return buffer.isEmpty();
+    }
+
+    @Override
+    public Iterator<Run> iterator() {
+        return runs().iterator();
     }
 
     private Run[] getRuns() {

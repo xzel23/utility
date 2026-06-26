@@ -11,19 +11,19 @@ import java.util.function.Function;
  *
  * @param <T> the target type for the conversion
  */
-public interface RichTextConverterExt<T> extends RichTextConverter<T>, Converter<RichText, T> {
+public interface RichTextConverterExt<T> extends RichTextConverter<T>, Converter<ToRichText, T> {
     @Override
-    default Function<RichText, T> a2b() {
+    default Function<ToRichText, T> a2b() {
         return this::convert;
     }
 
     @Override
-    default Function<T, RichText> b2a() {
+    default Function<T, ToRichText> b2a() {
         return this::convertBack;
     }
 
     @Override
-    default T convert(RichText text) {
+    default T convert(ToRichText text) {
         return fromRichText(text);
     }
 
@@ -46,5 +46,5 @@ public interface RichTextConverterExt<T> extends RichTextConverter<T>, Converter
      * @param text the RichText object to be converted
      * @return an object of type T created from the given RichText
      */
-    T fromRichText(RichText text);
+    T fromRichText(ToRichText text);
 }

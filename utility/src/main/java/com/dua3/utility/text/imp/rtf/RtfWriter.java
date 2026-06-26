@@ -11,8 +11,10 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.RichTextBuilderExtBase.ButtonData;
 import com.dua3.utility.text.RichTextBuilderExtBase.HyperlinkData;
+import com.dua3.utility.text.RichTextRuns;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.VAnchor;
 import org.jspecify.annotations.Nullable;
@@ -44,11 +46,11 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
     private final Map<String, Integer> fontIndexByName;
     private final Map<Color, Integer> colorIndexByColor;
 
-    private RtfWriter(RichText text) {
+    private RtfWriter(ToRichText text) {
         LinkedHashMap<String, Integer> fonts = new LinkedHashMap<>();
         LinkedHashMap<Color, Integer> colors = new LinkedHashMap<>();
 
-        for (Run run : text) {
+        for (Run run : text.toRichText()) {
             FontDef fontDef = run.getFontDef();
 
             String family = fontDef.getFamily();
@@ -76,12 +78,12 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
      * @param text the text to convert
      * @return the generated RTF string
      */
-    public static String write(RichText text) {
+    public static String write(ToRichText text) {
         return new RtfWriter(text).convert(text);
     }
 
     @Override
-    protected AttributeBasedConverterImpl<String> createConverter(RichText text) {
+    protected AttributeBasedConverterImpl<String> createConverter() {
         return new RtfWriterImpl();
     }
 
@@ -115,8 +117,9 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
         }
 
         @Override
-        protected AttributeBasedConverterImpl<String> append(RichText text) {
-            for (Run run : text) {
+        protected AttributeBasedConverterImpl<String> append(ToRichText text) {
+            RichTextRuns runs = text instanceof RichTextRuns rtr ? rtr : text.toRichText();
+            for (Run run : runs) {
                 appendRun(run);
             }
             return this;

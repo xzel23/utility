@@ -10,7 +10,6 @@ import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
-import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.TextAttributes;
 import org.jspecify.annotations.Nullable;
 
@@ -139,7 +138,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     }
 
     @Override
-    protected AttributeBasedConverterImpl<StyledDocument> createConverter(RichText text) {
+    protected AttributeBasedConverterImpl<StyledDocument> createConverter() {
         return new StyledDocumentConverterImpl();
     }
 

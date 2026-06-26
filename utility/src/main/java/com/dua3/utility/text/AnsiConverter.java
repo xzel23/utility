@@ -90,8 +90,8 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
     }
 
     @Override
-    protected AnsiConverterImpl createConverter(RichText text) {
-        return new AnsiConverterImpl(text);
+    protected AnsiConverterImpl createConverter() {
+        return new AnsiConverterImpl();
     }
 
     /**
@@ -103,9 +103,9 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
 
         private final StringBuilder buffer;
 
-        AnsiConverterImpl(RichText text) {
+        AnsiConverterImpl() {
             super(DEFAULT_ATTRIBUTES);
-            this.buffer = new StringBuilder(text.length() * 11 / 10);
+            this.buffer = new StringBuilder();
             if (reset) buffer.append(AnsiCode.reset());
             if (reverseVideo) buffer.append(AnsiCode.reverse(true));
         }

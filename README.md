@@ -240,6 +240,18 @@ could not be loaded.
 
 This release introduces some major changes, both to existing interfaces and also by adding new functionality.
 
+### Changes in 23.0.0-beta2
+
+- Added equivalent swing classes for the JavaFX `TextPane` and `TextEditorPane` classes and refactored the JavaFX 
+  implementation so that both Swing and JavaFX classes share the same code.
+- Changed `TaskProcessorAsync` to use the ClassLoader of the calling thread for the processing tasks. This should 
+  fix some Spring Boot classpath issues.
+- Replaced `FxUtil.copyToClibboard(String)` and `FxUtil.copyToClibboard(RichText)` by
+  `FxUtil.copyToClibboard(CharSequence)`; RTF and HTML automatically added to the clipboard.
+- Added `RichTextRuns` interface to avoid temporary `RichText` instances.
+
+### Changes in 23.0.0-beta
+
 - `MathUtil`:
     - Removed `kahanSum()` and `NeumeierSum()`; `sum()` now uses a hybrid Kahan/pairwise algorithm.
     - `sumOfSquares()`: removed the Kahan and Neumaier overloads; the standard version uses Kahan now.

@@ -12,6 +12,10 @@ import com.dua3.utility.math.geometry.Line2f;
 import com.dua3.utility.math.geometry.MoveTo2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
+import com.dua3.utility.text.HtmlConverter;
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RtfConverter;
+import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.ui.Graphics;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
@@ -37,11 +41,12 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
@@ -53,13 +58,18 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -73,6 +83,12 @@ public final class SwingUtil {
      * Logger instance.
      */
     private static final Logger LOG = LogManager.getLogger(SwingUtil.class);
+
+    private static final ClipboardOwner NO_OP_CLIPBOARD_OWNER = (clipboard, contents) -> {};
+    private static final DataFlavor RTF_STRING_FLAVOR = createTextFlavor("text/rtf;class=java.lang.String");
+    private static final DataFlavor HTML_STRING_FLAVOR = createTextFlavor("text/html;class=java.lang.String");
+    private static final String COULD_NOT_SET_CLIPBOARD_CONTENTS = "could not set clipboard contents";
+    private static final String COULD_NOT_GET_CLIPBOARD_CONTENTS = "could not get clipboard contents";
 
     static {
         boolean isHeadless = GraphicsEnvironment.isHeadless();
@@ -195,9 +211,62 @@ public final class SwingUtil {
      * @param text the text to set
      */
     public static void setClipboardText(String text) {
-        StringSelection selection = new StringSelection(text);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(selection, selection);
+        copyToClipboard(text);
+    }
+
+    /**
+     * Copy rich text to the clipboard.
+     *
+     * @param csq the text
+     */
+    public static void copyToClipboard(CharSequence csq) {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(createTextClipboardTransferable(csq), NO_OP_CLIPBOARD_OWNER);
+        } catch (HeadlessException e) {
+            LOG.warn(COULD_NOT_SET_CLIPBOARD_CONTENTS, e);
+        }
+    }
+
+    /**
+     * Copy image to clipboard.
+     *
+     * @param image the image
+     */
+    public static void copyToClipboard(BufferedImage image) {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(new ImageTransferable(image), NO_OP_CLIPBOARD_OWNER);
+        } catch (HeadlessException e) {
+            LOG.warn(COULD_NOT_SET_CLIPBOARD_CONTENTS, e);
+        }
+    }
+
+    /**
+     * Copy file/folder to clipboard.
+     *
+     * @param path the path to the file/folder to copy to the clipboard
+     */
+    public static void copyToClipboard(Path path) {
+        copyToClipboard(List.of(path));
+    }
+
+    /**
+     * Copy files/folders to clipboard.
+     *
+     * @param paths the list of paths to copy to the clipboard
+     */
+    public static void copyToClipboard(Collection<? extends Path> paths) {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            List<File> files = new ArrayList<>(paths.size());
+            for (Path path : paths) {
+                files.add(path.toAbsolutePath().toFile());
+            }
+            clipboard.setContents(new FileListTransferable(files), NO_OP_CLIPBOARD_OWNER);
+        } catch (HeadlessException e) {
+            LOG.warn(COULD_NOT_SET_CLIPBOARD_CONTENTS, e);
+        }
     }
 
     /**
@@ -211,10 +280,155 @@ public final class SwingUtil {
     public static Optional<String> getStringFromClipboard() {
         try {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            return clipboard.getData(DataFlavor.stringFlavor) instanceof String s ? Optional.of(s) : Optional.empty();
-        } catch (HeadlessException | IOException | UnsupportedFlavorException e) {
-            LOG.warn("could not get clipboard contents", e);
+            Transferable transferable = clipboard.getContents(null);
+            return getTransferDataAsString(transferable, DataFlavor.stringFlavor);
+        } catch (HeadlessException e) {
+            LOG.warn(COULD_NOT_GET_CLIPBOARD_CONTENTS, e);
             return Optional.empty();
+        }
+    }
+
+    /**
+     * Retrieves text content from the system clipboard. The method first attempts to fetch RTF-formatted
+     * text from the clipboard. If RTF content is available, it is converted to a RichText instance and returned.
+     * If RTF content is not present, it falls back to retrieving plain text from the clipboard,
+     * ensuring a RichText instance is returned with either the retrieved string or an empty string if no text is available.
+     *
+     * @return an Optional containing a RichText instance with the clipboard's content,
+     *         or an Optional with an empty RichText if no text is available in the clipboard.
+     */
+    public static Optional<RichText> getTextFromClipboard() {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable transferable = clipboard.getContents(null);
+
+            if (transferable != null) {
+                Optional<String> rtfString = getTransferDataAsString(transferable, RTF_STRING_FLAVOR);
+                if (rtfString.isPresent()) {
+                    Optional<RtfConverter> rtfConverter = RtfConverter.get();
+                    if (rtfConverter.isPresent()) {
+                        return Optional.of(rtfConverter.get().toRichText(rtfString.get()));
+                    }
+                }
+            }
+
+            return Optional.of(RichText.valueOf(getStringFromClipboard().orElse("")));
+        } catch (HeadlessException e) {
+            LOG.warn(COULD_NOT_GET_CLIPBOARD_CONTENTS, e);
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Retrieves an image from the system clipboard if one is available.
+     *
+     * @return an {@code Optional} containing the image if the clipboard contains an image,
+     *         or an empty {@code Optional} if no image is present in the clipboard.
+     */
+    public static Optional<BufferedImage> getImageFromClipboard() {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable transferable = clipboard.getContents(null);
+            if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+                Object data = transferable.getTransferData(DataFlavor.imageFlavor);
+                if (data instanceof BufferedImage bufferedImage) {
+                    return Optional.of(bufferedImage);
+                }
+                if (data instanceof Image image) {
+                    return Optional.of(toBufferedImage(image));
+                }
+            }
+        } catch (HeadlessException | IOException | UnsupportedFlavorException e) {
+            LOG.warn(COULD_NOT_GET_CLIPBOARD_CONTENTS, e);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Retrieves a collection of file paths from the system clipboard.
+     * If the clipboard contains files, their paths are returned as a collection.
+     * Otherwise, an empty collection is returned.
+     *
+     * @return A collection of file paths retrieved from the clipboard or an empty collection
+     *         if no files are present on the clipboard.
+     */
+    public static Collection<Path> getFilesFromClipboard() {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable transferable = clipboard.getContents(null);
+            if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                Object data = transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                if (data instanceof Collection<?> files) {
+                    List<Path> paths = new ArrayList<>();
+                    for (Object file : files) {
+                        if (file instanceof File f) {
+                            paths.add(f.toPath());
+                        }
+                    }
+                    return paths;
+                }
+            }
+        } catch (HeadlessException | IOException | UnsupportedFlavorException e) {
+            LOG.warn(COULD_NOT_GET_CLIPBOARD_CONTENTS, e);
+        }
+        return List.of();
+    }
+
+    private static Transferable createTextClipboardTransferable(CharSequence csq) {
+        Map<DataFlavor, Object> data = new LinkedHashMap<>();
+        data.put(DataFlavor.stringFlavor, csq.toString());
+
+        if (csq instanceof ToRichText text) {
+            RtfConverter.get().ifPresent(rtfConverter -> data.put(RTF_STRING_FLAVOR, rtfConverter.convert(text)));
+
+            HtmlConverter htmlConverter = HtmlConverter.create(
+                    HtmlConverter.useCss(false),
+                    HtmlConverter.convertLineBreaksTo("<br>\n")
+            );
+            data.put(HTML_STRING_FLAVOR, htmlConverter.convert(text));
+        }
+
+        return new MultiFlavorTransferable(data);
+    }
+
+    private static Optional<String> getTransferDataAsString(@Nullable Transferable transferable, DataFlavor flavor) {
+        if (transferable == null || !transferable.isDataFlavorSupported(flavor)) {
+            return Optional.empty();
+        }
+        try {
+            Object data = transferable.getTransferData(flavor);
+            return switch (data) {
+                case String s -> Optional.of(s);
+                case null, default -> Optional.empty();
+            };
+        } catch (IOException | UnsupportedFlavorException e) {
+            LOG.warn("could not read clipboard data for flavor {}", flavor, e);
+            return Optional.empty();
+        }
+    }
+
+    private static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage bufferedImage) {
+            return bufferedImage;
+        }
+
+        int width = Math.max(1, image.getWidth(null));
+        int height = Math.max(1, image.getHeight(null));
+        BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g2 = result.createGraphics();
+        try {
+            g2.drawImage(image, 0, 0, null);
+        } finally {
+            g2.dispose();
+        }
+        return result;
+    }
+
+    private static DataFlavor createTextFlavor(String mimeType) {
+        try {
+            return new DataFlavor(mimeType);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("failed to initialize clipboard data flavor: " + mimeType, e);
         }
     }
 
@@ -605,6 +819,84 @@ public final class SwingUtil {
         g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
         g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    }
+
+    private static final class MultiFlavorTransferable implements Transferable {
+        private final Map<DataFlavor, Object> dataByFlavor;
+
+        private MultiFlavorTransferable(Map<DataFlavor, Object> dataByFlavor) {
+            this.dataByFlavor = Map.copyOf(dataByFlavor);
+        }
+
+        @Override
+        public DataFlavor[] getTransferDataFlavors() {
+            return dataByFlavor.keySet().toArray(DataFlavor[]::new);
+        }
+
+        @Override
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return dataByFlavor.containsKey(flavor);
+        }
+
+        @Override
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+            if (!isDataFlavorSupported(flavor)) {
+                throw new UnsupportedFlavorException(flavor);
+            }
+            return dataByFlavor.get(flavor);
+        }
+    }
+
+    private static final class ImageTransferable implements Transferable {
+        private final BufferedImage image;
+
+        private ImageTransferable(BufferedImage image) {
+            this.image = image;
+        }
+
+        @Override
+        public DataFlavor[] getTransferDataFlavors() {
+            return new DataFlavor[]{DataFlavor.imageFlavor};
+        }
+
+        @Override
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return DataFlavor.imageFlavor.equals(flavor);
+        }
+
+        @Override
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+            if (!isDataFlavorSupported(flavor)) {
+                throw new UnsupportedFlavorException(flavor);
+            }
+            return image;
+        }
+    }
+
+    private static final class FileListTransferable implements Transferable {
+        private final List<File> files;
+
+        private FileListTransferable(List<File> files) {
+            this.files = List.copyOf(files);
+        }
+
+        @Override
+        public DataFlavor[] getTransferDataFlavors() {
+            return new DataFlavor[]{DataFlavor.javaFileListFlavor};
+        }
+
+        @Override
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return DataFlavor.javaFileListFlavor.equals(flavor);
+        }
+
+        @Override
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+            if (!isDataFlavorSupported(flavor)) {
+                throw new UnsupportedFlavorException(flavor);
+            }
+            return files;
+        }
     }
 
     private static class SwingDropFilesTarget extends DropTarget {

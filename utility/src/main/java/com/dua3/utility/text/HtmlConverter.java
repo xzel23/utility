@@ -258,7 +258,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     @Override
-    public String convert(RichText text) {
+    public String convert(ToRichText text) {
         FontDef defaultHeaderFontDef = getHeaderStyle.apply(0).text().getFontDef();
         currentDefaultFontDef = defaultHeaderFontDef.isEmpty() ? baseFont.toFontDef() : defaultHeaderFontDef;
         return super.convert(text);
@@ -284,8 +284,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     @Override
-    protected TagBasedConverterImpl<String> createConverter(int textLength) {
-        return new HtmlConverterImpl(textLength);
+    protected TagBasedConverterImpl<String> createConverter() {
+        return new HtmlConverterImpl();
     }
 
     private void addSimpleStyleMapping(String attr, Object value, HtmlTag tag) {
@@ -429,8 +429,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         private final StringBuilder buffer;
 
-        HtmlConverterImpl(int textLength) {
-            this.buffer = new StringBuilder(textLength * 5 / 4);
+        HtmlConverterImpl() {
+            this.buffer = new StringBuilder();
         }
 
         @Override

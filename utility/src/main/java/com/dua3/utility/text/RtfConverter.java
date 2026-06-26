@@ -3,7 +3,6 @@ package com.dua3.utility.text;
 import com.dua3.utility.text.imp.rtf.RtfReader;
 import com.dua3.utility.text.imp.rtf.RtfWriter;
 
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -33,7 +32,7 @@ public final class RtfConverter implements RichTextConverterExt<String> {
     }
 
     @Override
-    public String fromRichText(RichText text) {
+    public String fromRichText(ToRichText text) {
         return RtfWriter.write(text);
     }
 }

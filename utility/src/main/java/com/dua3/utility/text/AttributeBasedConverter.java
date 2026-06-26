@@ -11,7 +11,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Base class for attribute-based converters.
@@ -28,10 +27,9 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
     /**
      * Factory method to create a compatible converter implementation instance for this converter.
      *
-     * @param text the text to be converted
      * @return instance of the implementation class
      */
-    protected abstract AttributeBasedConverterImpl<T> createConverter(RichText text);
+    protected abstract AttributeBasedConverterImpl<T> createConverter();
 
     /**
      * Convert {@link RichText} instance to the target class.
@@ -40,8 +38,8 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
      * @return the conversion result
      */
     @Override
-    public T convert(RichText text) {
-        return createConverter(text).append(text).get();
+    public T convert(ToRichText text) {
+        return createConverter().append(text).get();
     }
 
     /**
@@ -142,9 +140,9 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param text the text to append
          * @return this instance
          */
-        protected AttributeBasedConverterImpl<T> append(RichText text) {
+        protected AttributeBasedConverterImpl<T> append(ToRichText text) {
             // apply all runs of the text
-            for (Run run : text) {
+            for (Run run : text.toRichText()) {
                 setStyle(run);
                 appendChars(run);
             }
