@@ -26,6 +26,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,10 +69,32 @@ public final class RtfReader {
 
     @NullUnmarked
     private static final class StyledRtfParser {
+        private static final Map<Color, Style> PREDEFINED_TEXT_COLOR_STYLES = Map.of(
+                Color.BLACK, Style.BLACK,
+                Color.WHITE, Style.WHITE,
+                Color.RED, Style.RED,
+                Color.GREEN, Style.GREEN,
+                Color.BLUE, Style.BLUE,
+                Color.YELLOW, Style.YELLOW,
+                Color.GRAY, Style.GRAY,
+                Color.DARKGRAY, Style.DARKGRAY,
+                Color.LIGHTGRAY, Style.LIGHTGRAY
+        );
+
+        private static final Map<String, Style> STANDARD_FONT_CLASS_STYLES = Map.of(
+                Style.FONT_CLASS_VALUE_SANS_SERIF, Style.SANS_SERIF,
+                Style.FONT_CLASS_VALUE_SERIF, Style.SERIF,
+                Style.FONT_CLASS_VALUE_MONOSPACE, Style.MONOSPACE,
+                Style.FONT_CLASS_VALUE_CODE, Style.CODE
+        );
+
+        private static final Map<String, String> FONT_CLASS_BY_FAMILY = createFontClassByFamilyMap();
+
         private final RichTextBuilder builder = new RichTextBuilder();
         private final ArrayDeque<CharacterStyle> styleStack = new ArrayDeque<>();
-        private final Map<StyleKey, Style> styleCache = new HashMap<>();
+        private final Map<StyleKey, ResolvedStyle> styleCache = new HashMap<>();
         private final Map<Integer, String> fontTable = new HashMap<>();
+        private final Map<Integer, String> fontClassTable = new HashMap<>();
         private final Map<Integer, Color> colorTable = new HashMap<>();
         private final ArrayDeque<FieldState> fieldStack = new ArrayDeque<>();
 
@@ -82,6 +105,7 @@ public final class RtfReader {
         private boolean inFontTable = false;
         private int fontTableDepth = -1;
         private Integer currentFontIndex = null;
+        private @Nullable String currentFontClass = null;
         private final StringBuilder currentFontName = new StringBuilder();
 
         private boolean inColorTable = false;
@@ -165,6 +189,7 @@ public final class RtfReader {
             groupDepth++;
             if (inFontTable && groupDepth == fontTableDepth + 1) {
                 currentFontIndex = null;
+                currentFontClass = null;
                 currentFontName.setLength(0);
             }
         }
@@ -177,6 +202,7 @@ public final class RtfReader {
                 inFontTable = false;
                 fontTableDepth = -1;
                 currentFontIndex = null;
+                currentFontClass = null;
                 currentFontName.setLength(0);
             }
             if (inColorTable && groupDepth == colorTableDepth) {
@@ -350,6 +376,10 @@ public final class RtfReader {
             if (inFontTable) {
                 if ("f".equals(command) && hasParameter) {
                     currentFontIndex = parameter;
+                }
+                String fontClass = fontClassFromRtfControlWord(command);
+                if (fontClass != null) {
+                    currentFontClass = fontClass;
                 }
                 return;
             }
@@ -696,10 +726,16 @@ public final class RtfReader {
 
         private void finalizeCurrentFontEntry() {
             String fontName = currentFontName.toString().trim();
-            if (currentFontIndex != null && !fontName.isEmpty()) {
-                fontTable.put(currentFontIndex, fontName);
+            if (currentFontIndex != null) {
+                if (!fontName.isEmpty()) {
+                    fontTable.put(currentFontIndex, fontName);
+                }
+                if (currentFontClass != null) {
+                    fontClassTable.put(currentFontIndex, currentFontClass);
+                }
             }
             currentFontIndex = null;
+            currentFontClass = null;
             currentFontName.setLength(0);
         }
 
@@ -728,12 +764,15 @@ public final class RtfReader {
                 return;
             }
 
-            Style styleForText = resolveStyle();
-            if (styleForText == null && extraStyle == null) {
+            ResolvedStyle resolvedStyle = resolveStyle();
+            if (resolvedStyle.isEmpty() && extraStyle == null) {
                 builder.append(text);
             } else {
-                if (styleForText != null) {
+                for (Style styleForText : resolvedStyle.styles()) {
                     builder.push(styleForText);
+                }
+                for (Map.Entry<String, Object> attribute : resolvedStyle.attributes()) {
+                    builder.push(attribute.getKey(), attribute.getValue());
                 }
                 if (extraStyle != null) {
                     builder.push(extraStyle);
@@ -742,49 +781,106 @@ public final class RtfReader {
                 if (extraStyle != null) {
                     builder.pop(extraStyle);
                 }
-                if (styleForText != null) {
-                    builder.pop(styleForText);
+                List<Map.Entry<String, Object>> attributes = resolvedStyle.attributes();
+                for (int i = attributes.size() - 1; i >= 0; i--) {
+                    builder.pop(attributes.get(i).getKey());
+                }
+                List<Style> styles = resolvedStyle.styles();
+                for (int i = styles.size() - 1; i >= 0; i--) {
+                    builder.pop(styles.get(i));
                 }
             }
         }
 
-        private Style resolveStyle() {
-            StyleKey key = StyleKey.from(style, fontTable, colorTable);
+        private ResolvedStyle resolveStyle() {
+            StyleKey key = StyleKey.from(style, fontTable, fontClassTable, colorTable);
             if (key.isEmpty()) {
-                return null;
+                return ResolvedStyle.EMPTY;
             }
 
             return styleCache.computeIfAbsent(key, k -> {
-                List<Map.Entry<String, Object>> entries = new ArrayList<>(7);
+                List<Style> styles = new ArrayList<>(8);
+                List<Map.Entry<String, Object>> attributes = new ArrayList<>(4);
+
                 if (k.bold()) {
-                    entries.add(Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
+                    styles.add(Style.BOLD);
                 }
                 if (k.italic()) {
-                    entries.add(Map.entry(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC));
+                    styles.add(Style.ITALIC);
                 }
                 if (k.underline()) {
-                    entries.add(Map.entry(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE));
+                    styles.add(Style.UNDERLINE);
                 }
                 if (k.strikeThrough()) {
-                    entries.add(Map.entry(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE));
+                    styles.add(Style.LINE_THROUGH);
                 }
                 if (k.color() != null) {
-                    entries.add(Map.entry(Style.COLOR, k.color()));
+                    Style colorStyle = PREDEFINED_TEXT_COLOR_STYLES.get(k.color());
+                    if (colorStyle != null) {
+                        styles.add(colorStyle);
+                    } else {
+                        attributes.add(Map.entry(Style.COLOR, k.color()));
+                    }
                 }
                 if (k.backgroundColor() != null) {
-                    entries.add(Map.entry(Style.BACKGROUND_COLOR, k.backgroundColor()));
+                    attributes.add(Map.entry(Style.BACKGROUND_COLOR, k.backgroundColor()));
                 }
                 if (k.fontSize() != null) {
-                    entries.add(Map.entry(Style.FONT_SIZE, k.fontSize()));
+                    attributes.add(Map.entry(Style.FONT_SIZE, k.fontSize()));
+                }
+                String fontClass = resolveFontClass(k.fontFamily(), k.fontClass());
+                if (fontClass != null) {
+                    Style fontClassStyle = STANDARD_FONT_CLASS_STYLES.get(fontClass);
+                    if (fontClassStyle != null) {
+                        styles.add(fontClassStyle);
+                    } else {
+                        attributes.add(Map.entry(Style.FONT_CLASS, fontClass));
+                    }
                 }
                 if (k.fontFamily() != null) {
-                    entries.add(Map.entry(Style.FONT_FAMILIES, List.of(k.fontFamily())));
+                    attributes.add(Map.entry(Style.FONT_FAMILIES, List.of(k.fontFamily())));
                 }
 
-                @SuppressWarnings("unchecked")
-                Map.Entry<String, Object>[] styleEntries = entries.toArray(Map.Entry[]::new);
-                return Style.create("rtf-style-" + styleCache.size(), styleEntries);
+                return new ResolvedStyle(List.copyOf(styles), List.copyOf(attributes));
             });
+        }
+
+        private static @Nullable String resolveFontClass(@Nullable String fontFamily, @Nullable String declaredFontClass) {
+            if (declaredFontClass != null) {
+                return declaredFontClass;
+            }
+            if (fontFamily == null || fontFamily.isBlank()) {
+                return null;
+            }
+            return FONT_CLASS_BY_FAMILY.get(normalizeFontFamily(fontFamily));
+        }
+
+        private static @Nullable String fontClassFromRtfControlWord(String command) {
+            return switch (command) {
+                case "froman" -> Style.FONT_CLASS_VALUE_SERIF;
+                case "fswiss" -> Style.FONT_CLASS_VALUE_SANS_SERIF;
+                case "fmodern", "ftech" -> Style.FONT_CLASS_VALUE_MONOSPACE;
+                default -> null;
+            };
+        }
+
+        private static Map<String, String> createFontClassByFamilyMap() {
+            Map<String, String> mapping = new HashMap<>();
+            addFontFamilies(mapping, Style.FONT_CLASS_VALUE_SANS_SERIF, Style.FONT_FAMILIES_VALUE_SANS_SERIF);
+            addFontFamilies(mapping, Style.FONT_CLASS_VALUE_SERIF, Style.FONT_FAMILIES_VALUE_SERIF);
+            addFontFamilies(mapping, Style.FONT_CLASS_VALUE_MONOSPACE, Style.FONT_FAMILIES_VALUE_MONOSPACED);
+            mapping.put(normalizeFontFamily(Style.FONT_CLASS_VALUE_CODE), Style.FONT_CLASS_VALUE_CODE);
+            return Map.copyOf(mapping);
+        }
+
+        private static void addFontFamilies(Map<String, String> mapping, String fontClass, List<String> families) {
+            for (String family : families) {
+                mapping.put(normalizeFontFamily(family), fontClass);
+            }
+        }
+
+        private static String normalizeFontFamily(String fontFamily) {
+            return fontFamily.strip().toLowerCase(Locale.ROOT);
         }
 
         private static byte[] decodeHex(CharSequence hex) {
@@ -895,6 +991,17 @@ public final class RtfReader {
                 return result.toString();
             }
         }
+
+        private record ResolvedStyle(
+                List<Style> styles,
+                List<Map.Entry<String, Object>> attributes
+        ) {
+            private static final ResolvedStyle EMPTY = new ResolvedStyle(List.of(), List.of());
+
+            private boolean isEmpty() {
+                return styles.isEmpty() && attributes.isEmpty();
+            }
+        }
     }
 
     private static final class ParserInvocationHandler implements InvocationHandler {
@@ -919,14 +1026,19 @@ public final class RtfReader {
             @Nullable Color color,
             @Nullable Color backgroundColor,
             @Nullable Float fontSize,
-            @Nullable String fontFamily
+            @Nullable String fontFamily,
+            @Nullable String fontClass
     ) {
-        private static StyleKey from(CharacterStyle style, Map<Integer, String> fontTable, Map<Integer, Color> colorTable) {
+        private static StyleKey from(CharacterStyle style,
+                                     Map<Integer, String> fontTable,
+                                     Map<Integer, String> fontClassTable,
+                                     Map<Integer, Color> colorTable) {
             Color color = style.colorIndex > 0 ? colorTable.get(style.colorIndex) : null;
             Color backgroundColor = style.backgroundColorIndex > 0 ? colorTable.get(style.backgroundColorIndex) : null;
             Float fontSize = style.fontSize > 0 ? style.fontSize : null;
             String fontFamily = style.fontIndex >= 0 ? fontTable.get(style.fontIndex) : null;
-            return new StyleKey(style.bold, style.italic, style.underline, style.strikeThrough, color, backgroundColor, fontSize, fontFamily);
+            String fontClass = style.fontIndex >= 0 ? fontClassTable.get(style.fontIndex) : null;
+            return new StyleKey(style.bold, style.italic, style.underline, style.strikeThrough, color, backgroundColor, fontSize, fontFamily, fontClass);
         }
 
         private boolean isEmpty() {
@@ -937,7 +1049,8 @@ public final class RtfReader {
                     && color == null
                     && backgroundColor == null
                     && fontSize == null
-                    && fontFamily == null;
+                    && fontFamily == null
+                    && fontClass == null;
         }
     }
 

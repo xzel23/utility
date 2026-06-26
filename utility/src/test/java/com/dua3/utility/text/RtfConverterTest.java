@@ -329,21 +329,47 @@ class RtfConverterTest {
         int boldPos = actual.indexOf("Bold");
         assertEquals(Boolean.TRUE, actual.runAt(boldPos).getFontDef().getBold());
         assertEquals(12f, actual.runAt(boldPos).getFontDef().getSize());
+        assertTrue(actual.stylesAt(boldPos).contains(Style.BOLD));
+        assertTrue(actual.stylesAt(boldPos).contains(Style.SANS_SERIF));
 
         int italicRedPos = actual.indexOf("ItalicRed");
         assertEquals(Boolean.TRUE, actual.runAt(italicRedPos).getFontDef().getItalic());
         assertEquals(Color.RED, actual.runAt(italicRedPos).getFontDef().getColor());
+        assertTrue(actual.stylesAt(italicRedPos).contains(Style.ITALIC));
+        assertTrue(actual.stylesAt(italicRedPos).contains(Style.RED));
 
         int monoPos = actual.indexOf("Mono");
         assertEquals("Courier New", actual.runAt(monoPos).getFontDef().getFamily());
         assertEquals(10f, actual.runAt(monoPos).getFontDef().getSize());
+        assertTrue(actual.stylesAt(monoPos).contains(Style.MONOSPACE));
 
         int underPos = actual.indexOf("Under");
         assertEquals(Boolean.TRUE, actual.runAt(underPos).getFontDef().getUnderline());
+        assertTrue(actual.stylesAt(underPos).contains(Style.UNDERLINE));
 
         int strikePos = actual.indexOf("Strike");
         assertEquals(Boolean.TRUE, actual.runAt(strikePos).getFontDef().getStrikeThrough());
         assertNotNull(actual.runAt(strikePos).getFontDef());
+        assertTrue(actual.stylesAt(strikePos).contains(Style.LINE_THROUGH));
+    }
+
+    @Test
+    void testToRichTextUsesPredefinedFontAndColorStyles() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        String rtf = "{\\rtf1\\ansi\\deff0"
+                + "{\\fonttbl{\\f0\\froman Times New Roman;}{\\f1\\fswiss Arial;}{\\f2\\fmodern Courier New;}{\\f3\\fnil code;}}"
+                + "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green255\\blue255;}"
+                + "\\pard\\f0 Serif \\f1 Sans \\f2 Mono \\f3 Code \\cf1 Black\\cf0 \\cf2 White\\cf0\\par}";
+
+        RichText actual = converter.toRichText(rtf);
+
+        assertEquals("Serif Sans Mono Code BlackWhite\n", actual.toString());
+        assertTrue(actual.stylesAt(actual.indexOf("Serif")).contains(Style.SERIF));
+        assertTrue(actual.stylesAt(actual.indexOf("Sans")).contains(Style.SANS_SERIF));
+        assertTrue(actual.stylesAt(actual.indexOf("Mono")).contains(Style.MONOSPACE));
+        assertTrue(actual.stylesAt(actual.indexOf("Code")).contains(Style.CODE));
+        assertTrue(actual.stylesAt(actual.indexOf("Black")).contains(Style.BLACK));
+        assertTrue(actual.stylesAt(actual.indexOf("White")).contains(Style.WHITE));
     }
 
     @Test
