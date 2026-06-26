@@ -45,168 +45,183 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testRoundTripInlineImageViaRtf() throws Exception {
+        RtfConverter converter = RtfConverter.get().orElse(null);
+        Assumptions.assumeTrue(converter != null, "RtfConverter not available");
+
+        Image image = ImageUtil.getInstance().createImage(
+                2,
+                2,
+                new int[]{
+                        Color.RED.argb(), Color.GREEN.argb(),
+                        Color.BLUE.argb(), Color.YELLOW.argb()
+                }
+        );
+
+        RichTextBuilderFx builder = new RichTextBuilderFx();
+        builder.append("A");
+        builder.appendImage(image);
+        builder.append("B");
+        RichText expected = builder.toRichText();
+
+        String rtf = converter.fromRichText(expected);
+        RichText actual = converter.toRichText(rtf);
+
+        int inlinePos = actual.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER);
+        Object[] inlineAttributeHolder = new Object[1];
         runOnFxThreadAndWait(() -> {
-            RtfConverter converter = RtfConverter.get().orElse(null);
-            Assumptions.assumeTrue(converter != null, "RtfConverter not available");
-
-            Image image = ImageUtil.getInstance().createImage(
-                    2,
-                    2,
-                    new int[]{
-                            Color.RED.argb(), Color.GREEN.argb(),
-                            Color.BLUE.argb(), Color.YELLOW.argb()
-                    }
-            );
-
-            RichTextBuilderFx builder = new RichTextBuilderFx();
-            builder.append("A");
-            builder.appendImage(image);
-            builder.append("B");
-            RichText expected = builder.toRichText();
-
-            String rtf = converter.fromRichText(expected);
-            RichText actual = converter.toRichText(rtf);
-
-            assertEquals(expected.toString(), actual.toString());
-            assertTrue(rtf.contains("\\pict"));
-
-            int inlinePos = actual.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER);
-            assertTrue(inlinePos >= 0, "missing inline node marker after RTF round trip");
+            if (inlinePos < 0) {
+                return;
+            }
             Run run = actual.runAt(inlinePos);
-
-            Object inlineAttribute = run.getStyles().stream()
+            inlineAttributeHolder[0] = run.getStyles().stream()
                     .map(style -> style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE))
                     .filter(Objects::nonNull)
                     .findFirst()
                     .orElseThrow();
-
-            InlineNode<?> imported = assertInstanceOf(InlineNode.class, inlineAttribute);
-            Image importedImage = InlineNode.decodeArgbImageData(imported.getData());
-
-            assertEquals(image.width(), importedImage.width());
-            assertEquals(image.height(), importedImage.height());
-            assertTrue(Arrays.equals(image.getArgb(), importedImage.getArgb()));
         });
+
+        assertEquals(expected.toString(), actual.toString());
+        assertTrue(rtf.contains("\\pict"));
+        assertTrue(inlinePos >= 0, "missing inline node marker after RTF round trip");
+
+        InlineNode<?> imported = assertInstanceOf(InlineNode.class, inlineAttributeHolder[0]);
+        Image importedImage = InlineNode.decodeArgbImageData(imported.getData());
+        assertEquals(image.width(), importedImage.width());
+        assertEquals(image.height(), importedImage.height());
+        assertTrue(Arrays.equals(image.getArgb(), importedImage.getArgb()));
     }
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testRoundTripScaledInlineImageViaRtf() throws Exception {
+        RtfConverter converter = RtfConverter.get().orElse(null);
+        Assumptions.assumeTrue(converter != null, "RtfConverter not available");
+
+        Image image = ImageUtil.getInstance().createImage(
+                4,
+                2,
+                new int[]{
+                        Color.RED.argb(), Color.GREEN.argb(), Color.BLUE.argb(), Color.YELLOW.argb(),
+                        Color.YELLOW.argb(), Color.BLUE.argb(), Color.GREEN.argb(), Color.RED.argb()
+                }
+        );
+
+        RichTextBuilderFx builder = new RichTextBuilderFx();
+        builder.append("A");
+        builder.appendImage(image, 6f, 6f, VAnchor.TOP);
+        builder.append("B");
+        RichText expected = builder.toRichText();
+
+        String rtf = converter.fromRichText(expected);
+        RichText actual = converter.toRichText(rtf);
+        int inlinePos = actual.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER);
+        Style[] inlineStyleHolder = {null};
         runOnFxThreadAndWait(() -> {
-            RtfConverter converter = RtfConverter.get().orElse(null);
-            Assumptions.assumeTrue(converter != null, "RtfConverter not available");
-
-            Image image = ImageUtil.getInstance().createImage(
-                    4,
-                    2,
-                    new int[]{
-                            Color.RED.argb(), Color.GREEN.argb(), Color.BLUE.argb(), Color.YELLOW.argb(),
-                            Color.YELLOW.argb(), Color.BLUE.argb(), Color.GREEN.argb(), Color.RED.argb()
-                    }
-            );
-
-            RichTextBuilderFx builder = new RichTextBuilderFx();
-            builder.append("A");
-            builder.appendImage(image, 6f, 6f, VAnchor.TOP);
-            builder.append("B");
-            RichText expected = builder.toRichText();
-
-            String rtf = converter.fromRichText(expected);
-            RichText actual = converter.toRichText(rtf);
-
-            assertEquals(expected.toString(), actual.toString());
-            assertTrue(rtf.contains("\\pict"));
-            assertTrue(rtf.contains("\\picscalex"));
-            assertTrue(rtf.contains("\\picscaley"));
-            assertTrue(rtf.contains("\\up") || rtf.contains("\\dn"));
-            assertTrue(containsShiftedPictGroup(rtf));
-            assertEquals(4, controlWordValue(rtf, "picw"));
-            assertEquals(2, controlWordValue(rtf, "pich"));
-            assertEquals(60, controlWordValue(rtf, "picwgoal"));
-            assertEquals(30, controlWordValue(rtf, "pichgoal"));
-            assertEquals(150, controlWordValue(rtf, "picscalex"));
-            assertEquals(150, controlWordValue(rtf, "picscaley"));
-
-            int inlinePos = actual.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER);
-            assertTrue(inlinePos >= 0, "missing inline node marker after RTF round trip");
+            if (inlinePos < 0) {
+                return;
+            }
             Run run = actual.runAt(inlinePos);
-
-            Style style = run.getStyles().stream()
+            inlineStyleHolder[0] = run.getStyles().stream()
                     .filter(s -> s.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE) != null)
                     .findFirst()
                     .orElseThrow();
-
-            Object inlineAttribute = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
-            InlineNode<?> imported = assertInstanceOf(InlineNode.class, inlineAttribute);
-            Image importedImage = InlineNode.decodeArgbImageData(imported.getData());
-            assertEquals(image.width(), importedImage.width());
-            assertEquals(image.height(), importedImage.height());
-            assertTrue(Arrays.equals(image.getArgb(), importedImage.getArgb()));
-
-            Object vAnchor = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR);
-            assertEquals(VAnchor.TOP, vAnchor);
-
-            Number maxWidth = assertInstanceOf(Number.class, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH));
-            Number maxHeight = assertInstanceOf(Number.class, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT));
-            assertNotNull(maxWidth);
-            assertNotNull(maxHeight);
-            assertEquals(6.0, maxWidth.doubleValue(), 0.25);
-            assertEquals(3.0, maxHeight.doubleValue(), 0.25);
         });
+
+        assertEquals(expected.toString(), actual.toString());
+        assertTrue(rtf.contains("\\pict"));
+        assertTrue(rtf.contains("\\picscalex"));
+        assertTrue(rtf.contains("\\picscaley"));
+        assertTrue(rtf.contains("\\up") || rtf.contains("\\dn"));
+        assertTrue(containsShiftedPictGroup(rtf));
+        assertEquals(4, controlWordValue(rtf, "picw"));
+        assertEquals(2, controlWordValue(rtf, "pich"));
+        assertEquals(60, controlWordValue(rtf, "picwgoal"));
+        assertEquals(30, controlWordValue(rtf, "pichgoal"));
+        assertEquals(150, controlWordValue(rtf, "picscalex"));
+        assertEquals(150, controlWordValue(rtf, "picscaley"));
+        assertTrue(inlinePos >= 0, "missing inline node marker after RTF round trip");
+
+        Style style = inlineStyleHolder[0];
+        assertNotNull(style);
+        Object inlineAttribute = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
+        InlineNode<?> imported = assertInstanceOf(InlineNode.class, inlineAttribute);
+        Image importedImage = InlineNode.decodeArgbImageData(imported.getData());
+        assertEquals(image.width(), importedImage.width());
+        assertEquals(image.height(), importedImage.height());
+        assertTrue(Arrays.equals(image.getArgb(), importedImage.getArgb()));
+
+        Object vAnchor = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR);
+        assertEquals(VAnchor.TOP, vAnchor);
+
+        Number maxWidth = assertInstanceOf(Number.class, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH));
+        Number maxHeight = assertInstanceOf(Number.class, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT));
+        assertNotNull(maxWidth);
+        assertNotNull(maxHeight);
+        assertEquals(6.0, maxWidth.doubleValue(), 0.25);
+        assertEquals(3.0, maxHeight.doubleValue(), 0.25);
     }
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testImportedInlineImageScalingAppliedByTextPane() throws Exception {
+        RtfConverter converter = RtfConverter.get().orElse(null);
+        Assumptions.assumeTrue(converter != null, "RtfConverter not available");
+
+        Image image = ImageUtil.getInstance().createImage(
+                4,
+                2,
+                new int[]{
+                        Color.RED.argb(), Color.GREEN.argb(), Color.BLUE.argb(), Color.YELLOW.argb(),
+                        Color.YELLOW.argb(), Color.BLUE.argb(), Color.GREEN.argb(), Color.RED.argb()
+                }
+        );
+
+        RichTextBuilderFx builder = new RichTextBuilderFx();
+        builder.append("A");
+        builder.appendImage(image, 6f, 6f, VAnchor.TOP);
+        builder.append("B");
+
+        RichText imported = converter.toRichText(converter.fromRichText(builder.toRichText()));
+        int inlinePos = imported.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER);
+        Style[] styleHolder = {null};
+        Node[] inlineNodeHolder = {null};
         runOnFxThreadAndWait(() -> {
-            RtfConverter converter = RtfConverter.get().orElse(null);
-            Assumptions.assumeTrue(converter != null, "RtfConverter not available");
-
-            Image image = ImageUtil.getInstance().createImage(
-                    4,
-                    2,
-                    new int[]{
-                            Color.RED.argb(), Color.GREEN.argb(), Color.BLUE.argb(), Color.YELLOW.argb(),
-                            Color.YELLOW.argb(), Color.BLUE.argb(), Color.GREEN.argb(), Color.RED.argb()
-                    }
-            );
-
-            RichTextBuilderFx builder = new RichTextBuilderFx();
-            builder.append("A");
-            builder.appendImage(image, 6f, 6f, VAnchor.TOP);
-            builder.append("B");
-
-            RichText imported = converter.toRichText(converter.fromRichText(builder.toRichText()));
-            int inlinePos = imported.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER);
-            assertTrue(inlinePos >= 0, "missing inline node marker after RTF round trip");
+            if (inlinePos < 0) {
+                return;
+            }
             Run run = imported.runAt(inlinePos);
-
-            Style style = run.getStyles().stream()
+            styleHolder[0] = run.getStyles().stream()
                     .filter(s -> s.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE) != null)
                     .findFirst()
                     .orElseThrow();
-
-            double expectedWidth = assertInstanceOf(Number.class, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH)).doubleValue();
-            double expectedHeight = assertInstanceOf(Number.class, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT)).doubleValue();
-
-            ImageView imageView = assertInstanceOf(ImageView.class, createInlineNode(run));
-            assertTrue(imageView.isPreserveRatio());
-            assertEquals(expectedWidth, imageView.getFitWidth(), 0.25);
-            assertEquals(expectedHeight, imageView.getFitHeight(), 0.25);
+            inlineNodeHolder[0] = createInlineNode(run);
         });
+
+        assertTrue(inlinePos >= 0, "missing inline node marker after RTF round trip");
+        Style style = styleHolder[0];
+        assertNotNull(style);
+        ImageView imageView = assertInstanceOf(ImageView.class, inlineNodeHolder[0]);
+        assertNotNull(imageView);
+
+        double expectedWidth = assertInstanceOf(Number.class, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH)).doubleValue();
+        double expectedHeight = assertInstanceOf(Number.class, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT)).doubleValue();
+        assertTrue(imageView.isPreserveRatio());
+        assertEquals(expectedWidth, imageView.getFitWidth(), 0.25);
+        assertEquals(expectedHeight, imageView.getFitHeight(), 0.25);
     }
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testTextPaneHyperlinkDispatchesToCustomHandler() throws Exception {
+        URI uri = URI.create("testapp://setStatus?text=Button%201%20clicked");
+        RichTextBuilderFx builder = new RichTextBuilderFx();
+        builder.append("Before ");
+        builder.appendHyperlink("Button 1", uri);
+        builder.append(" After");
+        URI[] clickedHolder = {null};
+        Node[] nodeHolder = {null};
+
         runOnFxThreadAndWait(() -> {
-            URI uri = URI.create("testapp://setStatus?text=Button%201%20clicked");
-
-            RichTextBuilderFx builder = new RichTextBuilderFx();
-            builder.append("Before ");
-            builder.appendHyperlink("Button 1", uri);
-            builder.append(" After");
-
             AtomicReference<URI> clickedUri = new AtomicReference<>();
             TextPane pane = new TextPane(builder.toRichText());
             pane.setWrapText(true);
@@ -219,33 +234,36 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
             pane.layout();
 
             Node node = pane.lookup(".hyperlink");
-            Hyperlink hyperlink = assertInstanceOf(Hyperlink.class, node);
-            hyperlink.fire();
-
-            assertEquals(uri, clickedUri.get());
+            nodeHolder[0] = node;
+            if (node instanceof Hyperlink hyperlink) {
+                hyperlink.fire();
+            }
+            clickedHolder[0] = clickedUri.get();
         });
+        assertInstanceOf(Hyperlink.class, nodeHolder[0]);
+        assertEquals(uri, clickedHolder[0]);
     }
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testTextPaneInlineButtonDispatchesToCustomHandler() throws Exception {
+        URI uri = URI.create("dua3button://action?text=Button%201%20clicked");
+        InlineNode<String> buttonNode = new InlineNode<>(
+                "Button 1",
+                RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON,
+                RichTextBuilderExtBase.encodeInlineButtonData(uri.toString(), "Button 1")
+        );
+        Style buttonStyle = Style.create(
+                "button-inline",
+                Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, buttonNode)
+        );
+        RichTextBuilderFx builder = new RichTextBuilderFx();
+        builder.append("Before ");
+        builder.push(buttonStyle).append(RichTextBuilderExtBase.INLINE_NODE_MARKER).pop(buttonStyle);
+        builder.append(" After");
+        URI[] clickedHolder = {null};
+        Node[] nodeHolder = {null};
         runOnFxThreadAndWait(() -> {
-            URI uri = URI.create("dua3button://action?text=Button%201%20clicked");
-
-            InlineNode<String> buttonNode = new InlineNode<>(
-                    "Button 1",
-                    RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON,
-                    RichTextBuilderExtBase.encodeInlineButtonData(uri.toString(), "Button 1")
-            );
-            Style buttonStyle = Style.create(
-                    "button-inline",
-                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, buttonNode)
-            );
-            RichTextBuilderFx builder = new RichTextBuilderFx();
-            builder.append("Before ");
-            builder.push(buttonStyle).append(RichTextBuilderExtBase.INLINE_NODE_MARKER).pop(buttonStyle);
-            builder.append(" After");
-
             AtomicReference<URI> clickedUri = new AtomicReference<>();
             TextPane pane = new TextPane(builder.toRichText());
             pane.setWrapText(true);
@@ -258,11 +276,14 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
             pane.layout();
 
             Node node = pane.lookup(".button");
-            Button button = assertInstanceOf(Button.class, node);
-            button.fire();
-
-            assertEquals(uri, clickedUri.get());
+            nodeHolder[0] = node;
+            if (node instanceof Button button) {
+                button.fire();
+            }
+            clickedHolder[0] = clickedUri.get();
         });
+        assertInstanceOf(Button.class, nodeHolder[0]);
+        assertEquals(uri, clickedHolder[0]);
     }
 
     private static int controlWordValue(String rtf, String controlWord) {
@@ -282,8 +303,13 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
             Method method = TextPane.class.getDeclaredMethod("createInlineNode", Run.class);
             method.setAccessible(true);
             Object value = method.invoke(null, run);
-            assertNotNull(value);
-            return assertInstanceOf(Node.class, value);
+            if (value == null) {
+                throw new IllegalStateException("createInlineNode returned null");
+            }
+            if (!(value instanceof Node node)) {
+                throw new IllegalStateException("createInlineNode returned non-node: " + value.getClass().getName());
+            }
+            return node;
         } catch (ReflectiveOperationException ex) {
             throw new AssertionError("failed to create inline node", ex);
         }
@@ -292,48 +318,46 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testClipboardRoundTripPreservesInlineControlsAndImageScaling() throws Exception {
+        RichText expected = createSampleText(new Label());
+        RichText[] actualHolder = {null};
         runOnFxThreadAndWait(() -> {
-            RichText expected = createSampleText(new Label());
-
             FxUtil.copyToClipboard(expected);
-            RichText actual = FxUtil.getTextFromClipboard().orElseThrow();
-
-            assertEquals(expected, actual);
-            assertTrue(countInlineNodeFactoryRuns(actual) >= 3, "inline controls were not preserved on clipboard round trip");
-            assertEquals(getScaledInlineImageInfos(expected), getScaledInlineImageInfos(actual));
+            actualHolder[0] = FxUtil.getTextFromClipboard().orElseThrow();
         });
+        RichText actual = actualHolder[0];
+        assertTrue(expected.equalsText(actual), "expected and actual texts are not equal");
+        assertEquals(expected, actual, "expected and actual rich texts differ in attributes");
+        assertTrue(countInlineNodeFactoryRuns(actual) >= 3, "inline controls were not preserved on clipboard round trip");
+        assertEquals(getScaledInlineImageInfos(expected), getScaledInlineImageInfos(actual));
     }
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testRoundTripAllFeatures() throws Exception {
-        runOnFxThreadAndWait(() -> {
-            RtfConverter converter = RtfConverter.get().orElse(null);
-            Assumptions.assumeTrue(converter != null, "RtfConverter not available");
+        RtfConverter converter = RtfConverter.get().orElse(null);
+        Assumptions.assumeTrue(converter != null, "RtfConverter not available");
 
-            RichText expected = createSampleText(new Label());
-            String rtf = converter.fromRichText(expected);
-            RichText actual = converter.toRichText(rtf);
+        RichText expected = createSampleText(new Label());
+        String rtf = converter.fromRichText(expected);
+        RichText actual = converter.toRichText(rtf);
+        List<ScaledInlineImageInfo> expectedScaledImages = extractExpectedScaledInlineImageInfo(expected);
+        List<ScaledInlineImageInfo> actualScaledImages = getScaledInlineImageInfos(actual);
 
-            assertEquals(expected.toString(), actual.toString());
-            assertTrue(rtf.contains("\\pict"));
+        assertEquals(expected.toString(), actual.toString());
+        assertTrue(rtf.contains("\\pict"));
+        assertEquals(expectedScaledImages.size(), actualScaledImages.size(), "scaled image count mismatch");
+        assertEquals(5, actualScaledImages.size(), "unexpected number of scaled images in sample text");
 
-            List<ScaledInlineImageInfo> expectedScaledImages = extractExpectedScaledInlineImageInfo(expected);
-            List<ScaledInlineImageInfo> actualScaledImages = getScaledInlineImageInfos(actual);
-            assertEquals(expectedScaledImages.size(), actualScaledImages.size(), "scaled image count mismatch");
-            assertEquals(5, actualScaledImages.size(), "unexpected number of scaled images in sample text");
+        for (int i = 0; i < expectedScaledImages.size(); i++) {
+            ScaledInlineImageInfo expectedInfo = expectedScaledImages.get(i);
+            ScaledInlineImageInfo actualInfo = actualScaledImages.get(i);
 
-            for (int i = 0; i < expectedScaledImages.size(); i++) {
-                ScaledInlineImageInfo expectedInfo = expectedScaledImages.get(i);
-                ScaledInlineImageInfo actualInfo = actualScaledImages.get(i);
+            assertEquals(expectedInfo.vAnchor(), actualInfo.vAnchor(), "vAnchor mismatch for scaled image #" + i);
 
-                assertEquals(expectedInfo.vAnchor(), actualInfo.vAnchor(), "vAnchor mismatch for scaled image #" + i);
-
-                // RTF picscale values are integer percentages, so small size drift is expected.
-                assertEquals(expectedInfo.maxWidth(), actualInfo.maxWidth(), 1.0, "width drift too large for scaled image #" + i);
-                assertEquals(expectedInfo.maxHeight(), actualInfo.maxHeight(), 1.0, "height drift too large for scaled image #" + i);
-            }
-        });
+            // RTF picscale values are integer percentages, so small size drift is expected.
+            assertEquals(expectedInfo.maxWidth(), actualInfo.maxWidth(), 1.0, "width drift too large for scaled image #" + i);
+            assertEquals(expectedInfo.maxHeight(), actualInfo.maxHeight(), 1.0, "height drift too large for scaled image #" + i);
+        }
     }
 
     private static List<ScaledInlineImageInfo> extractExpectedScaledInlineImageInfo(RichText text) {
