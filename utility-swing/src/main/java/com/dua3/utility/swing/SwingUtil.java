@@ -59,9 +59,11 @@ import java.awt.event.AdjustmentListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -85,8 +87,8 @@ public final class SwingUtil {
     private static final Logger LOG = LogManager.getLogger(SwingUtil.class);
 
     private static final ClipboardOwner NO_OP_CLIPBOARD_OWNER = (clipboard, contents) -> {};
-    private static final DataFlavor RTF_STRING_FLAVOR = createTextFlavor("text/rtf;class=java.lang.String");
-    private static final DataFlavor HTML_STRING_FLAVOR = createTextFlavor("text/html;class=java.lang.String");
+    private static final DataFlavor RTF_STRING_FLAVOR = new DataFlavor("text/rtf", "RTF");
+    private static final DataFlavor HTML_STRING_FLAVOR = new DataFlavor("text/html", "HTML");
     private static final String COULD_NOT_SET_CLIPBOARD_CONTENTS = "could not set clipboard contents";
     private static final String COULD_NOT_GET_CLIPBOARD_CONTENTS = "could not get clipboard contents";
 
@@ -390,6 +392,7 @@ public final class SwingUtil {
             Object data = transferable.getTransferData(flavor);
             return switch (data) {
                 case String s -> Optional.of(s);
+                case ByteArrayInputStream bais -> Optional.of(new String(bais.readAllBytes(), StandardCharsets.UTF_8));
                 case null, default -> Optional.empty();
             };
         } catch (IOException | UnsupportedFlavorException e) {
