@@ -11,16 +11,19 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class RtfConverterTest {
 
@@ -43,7 +46,7 @@ class RtfConverterTest {
         Style mono = Style.create(
                 "mono-11",
                 Map.entry(Style.FONT_FAMILIES, List.of("Courier New")),
-                Map.entry(Style.FONT_SIZE, 11f)
+                Map.entry(Style.FONT_SIZE, 11.0f)
         );
         builder.push(mono);
         builder.append("Mono {\\}\tX");
@@ -74,7 +77,7 @@ class RtfConverterTest {
 
         int monoPos = actual.indexOf("Mono");
         assertEquals("Courier New", actual.runAt(monoPos).getFontDef().getFamily());
-        assertEquals(11f, actual.runAt(monoPos).getFontDef().getSize());
+        assertEquals(11.0f, actual.runAt(monoPos).getFontDef().getSize());
 
         int underStrikePos = actual.indexOf("UnderStrike");
         assertEquals(Boolean.TRUE, actual.runAt(underStrikePos).getFontDef().getUnderline());
@@ -115,7 +118,7 @@ class RtfConverterTest {
         assertEquals(Color.YELLOW, actual.runAt(highlightedPos).getFontDef().getBackgroundColor());
 
         int plainPos = actual.indexOf("Plain");
-        assertEquals(null, actual.runAt(plainPos).getFontDef().getBackgroundColor());
+        assertNull(actual.runAt(plainPos).getFontDef().getBackgroundColor());
     }
 
     @Test
@@ -171,7 +174,7 @@ class RtfConverterTest {
         Image importedImage = InlineNode.decodeArgbImageData(imported.getData());
         assertEquals(image.width(), importedImage.width());
         assertEquals(image.height(), importedImage.height());
-        assertTrue(Arrays.equals(image.getArgb(), importedImage.getArgb()));
+        assertArrayEquals(image.getArgb(), importedImage.getArgb());
     }
 
     @Test
@@ -328,7 +331,7 @@ class RtfConverterTest {
 
         int boldPos = actual.indexOf("Bold");
         assertEquals(Boolean.TRUE, actual.runAt(boldPos).getFontDef().getBold());
-        assertEquals(12f, actual.runAt(boldPos).getFontDef().getSize());
+        assertEquals(12.0f, actual.runAt(boldPos).getFontDef().getSize());
         assertTrue(actual.stylesAt(boldPos).contains(Style.BOLD));
         assertTrue(actual.stylesAt(boldPos).contains(Style.SANS_SERIF));
 
@@ -340,7 +343,7 @@ class RtfConverterTest {
 
         int monoPos = actual.indexOf("Mono");
         assertEquals("Courier New", actual.runAt(monoPos).getFontDef().getFamily());
-        assertEquals(10f, actual.runAt(monoPos).getFontDef().getSize());
+        assertEquals(10.0f, actual.runAt(monoPos).getFontDef().getSize());
         assertTrue(actual.stylesAt(monoPos).contains(Style.MONOSPACE));
 
         int underPos = actual.indexOf("Under");
@@ -370,6 +373,29 @@ class RtfConverterTest {
         assertTrue(actual.stylesAt(actual.indexOf("Code")).contains(Style.CODE));
         assertTrue(actual.stylesAt(actual.indexOf("Black")).contains(Style.BLACK));
         assertTrue(actual.stylesAt(actual.indexOf("White")).contains(Style.WHITE));
+    }
+
+    @Test
+    void testFromRichTextWritesStyleNameMetadataAndReaderUsesIt() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        Style namedBold = Style.create("my-custom-bold", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
+        RichText expected = RichText.valueOf("Bold", namedBold);
+
+        String rtf = converter.fromRichText(expected);
+        RichText actual = converter.toRichText(rtf);
+
+        assertTrue(rtf.contains("{\\*\\userprops DUA3STYLES:"), "missing style metadata group");
+        assertTrue(actual.stylesAt(actual.indexOf("Bold")).stream().anyMatch(s -> "my-custom-bold".equals(s.name())));
+    }
+
+    @Test
+    void testToRichTextUsesSyntheticStyleNameWhenMetadataIsMissing() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        RichText actual = converter.toRichText("{\\rtf1\\ansi\\deff0\\pard\\b Bold\\b0\\par}");
+
+        int boldPos = actual.indexOf("Bold");
+        assertTrue(boldPos >= 0);
+        assertTrue(actual.stylesAt(boldPos).stream().anyMatch(s -> s.name().startsWith("rtf-style-")));
     }
 
     @Test
@@ -407,7 +433,7 @@ class RtfConverterTest {
 
         assertStyle(actual, "Testdocument", true, false, false, false);
         assertFamilyContains(actual.runAt(actual.indexOf("Testdocument")).getFontDef().getFamily(), "Times", "Liberation");
-        assertEquals(18f, actual.runAt(actual.indexOf("Testdocument")).getFontDef().getSize());
+        assertEquals(18.0f, actual.runAt(actual.indexOf("Testdocument")).getFontDef().getSize());
 
         assertStyle(actual, "normal", false, false, false, false);
         assertStyle(actual, "bold", true, false, false, false);
@@ -435,16 +461,16 @@ class RtfConverterTest {
         assertFamilyContains(actual.runAt(actual.indexOf("Arial")).getFontDef().getFamily(), "Arial");
         assertFamilyContains(actual.runAt(actual.indexOf("Courier New")).getFontDef().getFamily(), "Courier");
 
-        assertEquals(8f, actual.runAt(actual.indexOf("8.0")).getFontDef().getSize());
-        assertEquals(9f, actual.runAt(actual.indexOf("9.0")).getFontDef().getSize());
-        assertEquals(10f, actual.runAt(actual.indexOf("10.0")).getFontDef().getSize());
-        assertEquals(11f, actual.runAt(actual.indexOf("11.0")).getFontDef().getSize());
-        assertEquals(12f, actual.runAt(actual.indexOf("12.0")).getFontDef().getSize());
-        assertEquals(14f, actual.runAt(actual.indexOf("14.0")).getFontDef().getSize());
-        assertEquals(18f, actual.runAt(actual.indexOf("18.0")).getFontDef().getSize());
-        assertEquals(24f, actual.runAt(actual.indexOf("24.0")).getFontDef().getSize());
-        assertEquals(32f, actual.runAt(actual.indexOf("32.0")).getFontDef().getSize());
-        assertEquals(44f, actual.runAt(actual.indexOf("44.0")).getFontDef().getSize());
+        assertEquals(8.0f, actual.runAt(actual.indexOf("8.0")).getFontDef().getSize());
+        assertEquals(9.0f, actual.runAt(actual.indexOf("9.0")).getFontDef().getSize());
+        assertEquals(10.0f, actual.runAt(actual.indexOf("10.0")).getFontDef().getSize());
+        assertEquals(11.0f, actual.runAt(actual.indexOf("11.0")).getFontDef().getSize());
+        assertEquals(12.0f, actual.runAt(actual.indexOf("12.0")).getFontDef().getSize());
+        assertEquals(14.0f, actual.runAt(actual.indexOf("14.0")).getFontDef().getSize());
+        assertEquals(18.0f, actual.runAt(actual.indexOf("18.0")).getFontDef().getSize());
+        assertEquals(24.0f, actual.runAt(actual.indexOf("24.0")).getFontDef().getSize());
+        assertEquals(32.0f, actual.runAt(actual.indexOf("32.0")).getFontDef().getSize());
+        assertEquals(44.0f, actual.runAt(actual.indexOf("44.0")).getFontDef().getSize());
     }
 
     private static void assertStyle(RichText text, String token, Boolean bold, Boolean italic, Boolean underline, Boolean strikeThrough) {
@@ -481,12 +507,12 @@ class RtfConverterTest {
 
     private static void assertFamilyContains(@Nullable String actualFamily, String... expectedParts) {
         assertNotNull(actualFamily, "font family is null");
-        String lowerCaseFamily = actualFamily.toLowerCase();
+        String lowerCaseFamily = actualFamily.toLowerCase(Locale.ROOT);
         for (String expectedPart : expectedParts) {
-            if (lowerCaseFamily.contains(expectedPart.toLowerCase())) {
+            if (lowerCaseFamily.contains(expectedPart.toLowerCase(Locale.ROOT))) {
                 return;
             }
         }
-        assertTrue(false, "unexpected font family: " + actualFamily);
+        fail("unexpected font family: " + actualFamily);
     }
 }

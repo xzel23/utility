@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,15 @@ import java.util.function.Function;
  */
 public final class RtfWriter extends AttributeBasedConverter<String> {
     private static final char[] HEX = "0123456789abcdef".toCharArray();
+    private static final String STYLE_NAME_METADATA_COMMAND = "userprops";
+    private static final String STYLE_NAME_METADATA_PREFIX = "DUA3STYLES:";
     private static final double TWIPS_PER_PIXEL = 15.0;
     private static final double POINTS_PER_TWIP = 1.0 / 20.0;
     private static final double POINTS_PER_PIXEL = 0.75;
     private static final double DEFAULT_FONT_SIZE_PT = 12.0;
     private static final double DEFAULT_ASCENT_RATIO = 0.8;
     private static final double DEFAULT_DESCENT_RATIO = 0.2;
+    private static final Base64.Encoder STYLE_NAMES_ENCODER = Base64.getUrlEncoder().withoutPadding();
     private final Map<String, Integer> fontIndexByName;
     private final Map<Color, Integer> colorIndexByColor;
 
@@ -145,6 +149,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
 
         private void appendRun(Run run) {
             buffer.append('{');
+            appendStyleNameMetadata(run);
 
             FontDef fontDef = run.getFontDef();
 
@@ -185,6 +190,20 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
 
             appendRunContent(run, fontDef);
             buffer.append('}');
+        }
+
+        private void appendStyleNameMetadata(Run run) {
+            String encodedStyleNames = encodeStyleNames(run.getStyles());
+            if (encodedStyleNames.isEmpty()) {
+                return;
+            }
+
+            buffer.append("{\\*\\")
+                    .append(STYLE_NAME_METADATA_COMMAND)
+                    .append(' ')
+                    .append(STYLE_NAME_METADATA_PREFIX)
+                    .append(encodedStyleNames)
+                    .append('}');
         }
 
         private void appendRunContent(Run run, FontDef fontDef) {
@@ -659,6 +678,24 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             return null;
         }
         return color;
+    }
+
+    private static String encodeStyleNames(List<Style> styles) {
+        StringBuilder joined = new StringBuilder();
+        for (Style style : styles) {
+            String name = style.name();
+            if (name.isBlank()) {
+                continue;
+            }
+            if (!joined.isEmpty()) {
+                joined.append('\n');
+            }
+            joined.append(name);
+        }
+        if (joined.isEmpty()) {
+            return "";
+        }
+        return STYLE_NAMES_ENCODER.encodeToString(joined.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     private record InlineImageExportData(

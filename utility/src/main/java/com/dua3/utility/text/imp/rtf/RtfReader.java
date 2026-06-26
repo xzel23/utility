@@ -22,8 +22,10 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.lang.reflect.Proxy;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +47,13 @@ public final class RtfReader {
     private static final double DEFAULT_ASCENT_RATIO = 0.8;
     private static final double DEFAULT_DESCENT_RATIO = 0.2;
     private static final Pattern HYPERLINK_INSTRUCTION_PATTERN = Pattern.compile("(?i)\\bHYPERLINK\\b\\s+(?:\"((?>[^\"\\\\]|\\\\.)*)\"|(\\S+))");
+    private static final String METADATA_COMMAND = "userprops";
+    private static final String METADATA_PREFIX = "DUA3STYLES:";
+    private static final String METADATA_INFO = "info";
+    private static final String METADATA_LISTOVERRIDETABLE = "listoverridetable";
+    private static final String METADATA_LISTTABLE = "listtable";
+    private static final String METADATA_STYLESHEET = "stylesheet";
+    private static final String METADATA_OPTIONALCOMMAND = "optionalcommand";
 
     private RtfReader() {
         // utility class
@@ -89,6 +98,7 @@ public final class RtfReader {
         );
 
         private static final Map<String, String> FONT_CLASS_BY_FAMILY = createFontClassByFamilyMap();
+        private static final Base64.Decoder STYLE_NAMES_DECODER = Base64.getUrlDecoder();
 
         private final RichTextBuilder builder = new RichTextBuilder();
         private final ArrayDeque<CharacterStyle> styleStack = new ArrayDeque<>();
@@ -126,7 +136,12 @@ public final class RtfReader {
         private int pictureHeightGoalTwips = 0;
         private int pictureScaleXPercent = 100;
         private int pictureScaleYPercent = 100;
+        private boolean inStyleNameMetadata = false;
+        private int styleNameMetadataDepth = -1;
+        private final StringBuilder styleNameMetadataText = new StringBuilder();
+        private @Nullable List<String> pendingStyleNames = null;
         private int inlineStyleId = 0;
+        private int syntheticStyleId = 0;
 
         private void parse(String rtf) {
             try {
@@ -225,6 +240,12 @@ public final class RtfReader {
                 pictureScaleXPercent = 100;
                 pictureScaleYPercent = 100;
             }
+            if (inStyleNameMetadata && groupDepth == styleNameMetadataDepth) {
+                pendingStyleNames = decodeStyleNames(styleNameMetadataText);
+                inStyleNameMetadata = false;
+                styleNameMetadataDepth = -1;
+                styleNameMetadataText.setLength(0);
+            }
 
             FieldState fieldState = fieldStack.peek();
             if (fieldState != null) {
@@ -256,6 +277,10 @@ public final class RtfReader {
             }
             if (inPicture) {
                 consumePictureText(text);
+                return;
+            }
+            if (inStyleNameMetadata) {
+                styleNameMetadataText.append(text);
                 return;
             }
             if (isIgnoringDestination()) {
@@ -331,6 +356,13 @@ public final class RtfReader {
                     }
                     return;
                 }
+            }
+
+            if (METADATA_COMMAND.equals(command)) {
+                inStyleNameMetadata = true;
+                styleNameMetadataDepth = groupDepth;
+                styleNameMetadataText.setLength(0);
+                return;
             }
 
             if (isIgnorableDestination(command, optional)) {
@@ -764,7 +796,7 @@ public final class RtfReader {
                 return;
             }
 
-            ResolvedStyle resolvedStyle = resolveStyle();
+            ResolvedStyle resolvedStyle = resolveStyle(consumePendingStyleNames());
             if (resolvedStyle.isEmpty() && extraStyle == null) {
                 builder.append(text);
             } else {
@@ -792,13 +824,19 @@ public final class RtfReader {
             }
         }
 
-        private ResolvedStyle resolveStyle() {
+        private List<String> consumePendingStyleNames() {
+            List<String> styleNames = pendingStyleNames != null ? pendingStyleNames : List.of();
+            pendingStyleNames = null;
+            return styleNames;
+        }
+
+        private ResolvedStyle resolveStyle(List<String> explicitStyleNames) {
             StyleKey key = StyleKey.from(style, fontTable, fontClassTable, colorTable);
             if (key.isEmpty()) {
                 return ResolvedStyle.EMPTY;
             }
 
-            return styleCache.computeIfAbsent(key, k -> {
+            ResolvedStyle baseStyle = styleCache.computeIfAbsent(key, k -> {
                 List<Style> styles = new ArrayList<>(8);
                 List<Map.Entry<String, Object>> attributes = new ArrayList<>(4);
 
@@ -843,6 +881,42 @@ public final class RtfReader {
 
                 return new ResolvedStyle(List.copyOf(styles), List.copyOf(attributes));
             });
+
+            List<Style> styleList = explicitStyleNames.isEmpty()
+                    ? withSyntheticStyleName(baseStyle.styles())
+                    : withExplicitStyleNames(baseStyle.styles(), explicitStyleNames);
+            return new ResolvedStyle(styleList, baseStyle.attributes());
+        }
+
+        private List<Style> withSyntheticStyleName(List<Style> baseStyles) {
+            List<Style> styles = new ArrayList<>(baseStyles.size() + 1);
+            styles.addAll(baseStyles);
+            styles.add(Style.create("rtf-style-" + syntheticStyleId++));
+            return List.copyOf(styles);
+        }
+
+        private static List<Style> withExplicitStyleNames(List<Style> baseStyles, List<String> explicitStyleNames) {
+            List<Style> styles = new ArrayList<>(Math.max(baseStyles.size(), explicitStyleNames.size()));
+            int count = Math.min(baseStyles.size(), explicitStyleNames.size());
+            for (int i = 0; i < count; i++) {
+                Style original = baseStyles.get(i);
+                String explicitName = explicitStyleNames.get(i);
+                if (explicitName.isBlank() || explicitName.equals(original.name())) {
+                    styles.add(original);
+                } else {
+                    styles.add(Style.create(explicitName, Map.copyOf(original)));
+                }
+            }
+            for (int i = count; i < baseStyles.size(); i++) {
+                styles.add(baseStyles.get(i));
+            }
+            for (int i = count; i < explicitStyleNames.size(); i++) {
+                String explicitName = explicitStyleNames.get(i);
+                if (!explicitName.isBlank()) {
+                    styles.add(Style.create(explicitName));
+                }
+            }
+            return List.copyOf(styles);
         }
 
         private static @Nullable String resolveFontClass(@Nullable String fontFamily, @Nullable String declaredFontClass) {
@@ -883,6 +957,30 @@ public final class RtfReader {
             return fontFamily.strip().toLowerCase(Locale.ROOT);
         }
 
+        private static List<String> decodeStyleNames(CharSequence encodedText) {
+            String text = encodedText.toString().trim();
+            if (!text.startsWith(METADATA_PREFIX)) {
+                return List.of();
+            }
+            String encoded = text.substring(METADATA_PREFIX.length()).trim();
+            if (encoded.isEmpty()) {
+                return List.of();
+            }
+            try {
+                String decoded = new String(STYLE_NAMES_DECODER.decode(encoded), StandardCharsets.UTF_8);
+                List<String> names = new ArrayList<>();
+                for (String part : decoded.split("\n", -1)) {
+                    String styleName = part.strip();
+                    if (!styleName.isEmpty()) {
+                        names.add(styleName);
+                    }
+                }
+                return List.copyOf(names);
+            } catch (IllegalArgumentException ex) {
+                return List.of();
+            }
+        }
+
         private static byte[] decodeHex(CharSequence hex) {
             int length = hex.length();
             if (length < 2) {
@@ -907,13 +1005,19 @@ public final class RtfReader {
         }
 
         private static boolean isIgnorableDestination(String command, boolean optional) {
-            return optional
-                    || "optionalcommand".equals(command)
-                    || "stylesheet".equals(command)
-                    || "listtable".equals(command)
-                    || "listoverridetable".equals(command)
-                    || "info".equals(command)
-                    || "userprops".equals(command);
+            if (optional) {
+                return true;
+            }
+
+            return switch (command) {
+                case METADATA_OPTIONALCOMMAND,
+                     METADATA_STYLESHEET,
+                     METADATA_LISTTABLE,
+                     METADATA_LISTOVERRIDETABLE,
+                     METADATA_INFO,
+                     METADATA_COMMAND -> true;
+                default -> false;
+            };
         }
 
         private static final class FieldState {
