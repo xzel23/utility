@@ -56,12 +56,27 @@ public class TaskProcessorAsync extends TaskProcessorBase {
         long id = nextId();
         LOG.debug("'{}' - submitting new task {}", getName(), id);
         registerId(id);
+
+        // 1. Capture the ClassLoader of the thread that calls submit().
+        // In Spring Boot fat JAR setups, this is the vital LaunchedURLClassLoader.
+        ClassLoader callingClassLoader = Thread.currentThread().getContextClassLoader();
+        if (callingClassLoader == null) {
+            callingClassLoader = getClass().getClassLoader(); // Fallback insurance
+        }
+        final ClassLoader classLoaderToUse = callingClassLoader;
+
         return CompletableFuture.supplyAsync(() -> {
+            Thread currentThread = Thread.currentThread();
+            ClassLoader originalClassLoader = currentThread.getContextClassLoader();
             try {
+                // 2. Temporarily assign the correct ClassLoader to the background thread
+                currentThread.setContextClassLoader(classLoaderToUse);
                 return task.call();
             } catch (Exception e) {
                 throw new CompletionException(e);
             } finally {
+                // 3. Restore the original ClassLoader to keep the thread pool clean
+                currentThread.setContextClassLoader(originalClassLoader);
                 LOG.debug("'{}' - task {} completed", getName(), id);
                 unregisterId(id);
             }
