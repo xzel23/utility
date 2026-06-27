@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.VisualLine;
 import javafx.application.Platform;
@@ -200,23 +201,9 @@ public class TextEditorPaneLargeFileBenchmark {
         }
 
         static void shutdown() {
-            if (!STARTED.get()) {
-                return;
+            if (STARTED.compareAndSet(true, false)) {
+                PlatformHelper.shutdown(30, TimeUnit.SECONDS);
             }
-
-            CountDownLatch latch = new CountDownLatch(1);
-            try {
-                Platform.runLater(() -> {
-                    try {
-                        Platform.exit();
-                    } finally {
-                        latch.countDown();
-                    }
-                });
-            } catch (IllegalStateException ex) {
-                latch.countDown();
-            }
-            await(latch);
         }
 
         static void runOnFxThreadAndWait(Runnable action) {

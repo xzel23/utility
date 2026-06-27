@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -129,6 +130,16 @@ public final class FxLauncher {
                     Thread.currentThread().interrupt(); // Restore the interrupt status
                 }
             }
+
+            // add shutdown hook
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                LOG.debug("shutdown hook: shutting down JavaFX platform");
+                shutdown(30, TimeUnit.SECONDS);
+            }, "JavaFX-Shutdown-Hook"));
+        }
+
+        public static void shutdown(long timeout, TimeUnit unit) {
+            PlatformHelper.shutdown(timeout, unit);
         }
 
         public static void run(Runnable r) {
@@ -184,6 +195,25 @@ public final class FxLauncher {
     public static <A extends Application>
     void launch(Class<A> cls, String... args) {
         PlatformGuard.launch(cls, args);
+    }
+
+    /**
+     * Shut down the JavaFX platform.
+     *
+     * @param timeout the maximum time to wait for the platform to shut down
+     * @param unit    the time unit of the timeout argument
+     */
+    public static void shutdown(long timeout, TimeUnit unit) {
+        PlatformGuard.shutdown(timeout, unit);
+    }
+
+    /**
+     * Shut down the JavaFX platform.
+     * <p>
+     * The default timeout is 30 seconds.
+     */
+    public static void shutdown() {
+        shutdown(30, TimeUnit.SECONDS);
     }
 
     /**

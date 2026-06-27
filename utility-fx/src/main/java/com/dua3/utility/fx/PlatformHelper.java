@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -22,6 +23,14 @@ public final class PlatformHelper {
      * Logger instance
      */
     private static final Logger LOG = LogManager.getLogger(PlatformHelper.class);
+
+    static {
+        // add shutdown hook to ensure JavaFX platform is shut down when JVM exits
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            LOG.debug("shutdown hook: shutting down JavaFX platform");
+            shutdown(30, TimeUnit.SECONDS);
+        }, "JavaFX-Shutdown-Hook"));
+    }
 
     /**
      * Utility class private constructor.
@@ -149,6 +158,46 @@ public final class PlatformHelper {
         if (!Platform.isFxApplicationThread()) {
             LOG.error("not on FX Application Thread");
             throw new IllegalStateException("not on FX Application Thread");
+        }
+    }
+
+    /**
+     * Shut down the JavaFX platform.
+     *
+     * @param timeout the maximum time to wait for the platform to shut down
+     * @param unit    the time unit of the timeout argument
+     * @return true if the platform shut down within the timeout, false otherwise
+     */
+    public static boolean shutdown(long timeout, TimeUnit unit) {
+        LOG.debug("Platform shutdown requested (timeout {} {})", timeout, unit);
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            Platform.runLater(() -> {
+                try {
+                    LOG.debug("calling Platform.exit()");
+                    Platform.exit();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        } catch (IllegalStateException e) {
+            // platform already shut down or not started
+            LOG.debug("Platform already shut down or not started");
+            return true;
+        }
+
+        try {
+            if (latch.await(timeout, unit)) {
+                LOG.debug("Platform shutdown successful");
+                return true;
+            } else {
+                LOG.warn("Platform shutdown timed out after {} {}", timeout, unit);
+                return false;
+            }
+        } catch (InterruptedException e) {
+            LOG.warn("Interrupted while waiting for platform shutdown", e);
+            Thread.currentThread().interrupt();
+            return false;
         }
     }
 
