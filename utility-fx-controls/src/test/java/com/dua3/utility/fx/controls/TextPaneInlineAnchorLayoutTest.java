@@ -7,6 +7,7 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.RichTextPaneLayoutHelper;
 import com.dua3.utility.ui.VAnchor;
 import javafx.scene.Node;
 import org.jspecify.annotations.Nullable;
@@ -45,7 +46,7 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
 
         addToScene(control);
 
-        TextPane.Layout layout = control.createLayout(control.getWidth());
+        RichTextPaneLayoutHelper.Layout<?> layout = control.createLayout(control.getWidth());
         List<LineMetrics> lineMetrics = computeLineMetrics(layout.renderLines());
         List<?> placements = layout.placements();
 

@@ -9,6 +9,7 @@ import com.dua3.utility.text.Style;
 import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.ui.IndexRange;
 import com.dua3.utility.ui.RichTextEditorModel;
+import com.dua3.utility.ui.RichTextPaneLayoutHelper;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
 import javafx.beans.property.BooleanProperty;
@@ -1571,7 +1572,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                 isWrapText(),
                 baseFont,
                 blockText -> {
-                    TextPane.Layout layout = createLayout(blockText, availableWidth);
+                    RichTextPaneLayoutHelper.Layout<?> layout = createLayout(blockText, availableWidth);
                     return new RichTextVisualLayoutHelper.BlockLayout(
                             layout.renderLines(),
                             layout.height(),
@@ -1579,10 +1580,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
                     );
                 }
         );
-    }
-
-    private double resolveAvailableWidth(double wrapWidth) {
-        return sharedModel.resolveAvailableWidth(wrapWidth);
     }
 
     private double currentWrapWidth() {

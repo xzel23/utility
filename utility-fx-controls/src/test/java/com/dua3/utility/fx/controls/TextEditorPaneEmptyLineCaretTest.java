@@ -6,6 +6,7 @@ import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
+import com.dua3.utility.ui.RichTextPaneLayoutHelper;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
 import javafx.scene.control.ScrollPane;
@@ -122,7 +123,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
             double width = 500.0;
             List<VisualLine> visualLines = editor.buildVisualLines(width);
-            TextPane.Layout layout = editor.createLayout(width);
+            RichTextPaneLayoutHelper.Layout<?> layout = editor.createLayout(width);
 
             int targetPos = text.toString().indexOf("after-inline");
             assertTrue(targetPos >= 0);
@@ -148,7 +149,7 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
             double width = 600.0;
             List<VisualLine> visualLines = editor.buildVisualLines(width);
-            TextPane.Layout layout = editor.createLayout(width);
+            RichTextPaneLayoutHelper.Layout<?> layout = editor.createLayout(width);
 
             int targetPos = text.toString().indexOf("line-after-control");
             assertTrue(targetPos >= 0);
@@ -382,9 +383,12 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
         return builder.toRichText();
     }
 
-    private static LayoutLine findLayoutLineForSourcePosition(TextPane.Layout layout, int sourcePosition) {
+    private static LayoutLine findLayoutLineForSourcePosition(
+            RichTextPaneLayoutHelper.Layout<?> layout,
+            int sourcePosition
+    ) {
         List<List<FragmentedText.Fragment>> lines = layout.renderLines();
-        TextPane.LayoutTextData mapping = layout.layoutTextData();
+        RichTextPaneLayoutHelper.LayoutTextData mapping = layout.layoutTextData();
         for (List<FragmentedText.Fragment> line : lines) {
             if (line.isEmpty()) {
                 continue;

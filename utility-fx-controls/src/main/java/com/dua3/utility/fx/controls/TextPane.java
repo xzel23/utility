@@ -14,7 +14,6 @@ import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
@@ -26,6 +25,7 @@ import com.dua3.utility.ui.HAnchor;
 import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.IndexRange;
 import com.dua3.utility.ui.RichTextPane;
+import com.dua3.utility.ui.RichTextPaneLayoutHelper;
 import com.dua3.utility.ui.RichTextRenderer;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VAnchor;
@@ -72,7 +72,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -110,16 +109,10 @@ public class TextPane extends Control implements RichTextPane {
      */
     protected static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
 
-    private static final String NO_BREAK_SPACE = "\u00A0";
-    private static final String STYLE_LIST_ATTRIBUTE = "__styles";
     private static final String STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT = TextPane.class.getName() + ".inlineReferenceAscent";
     private static final String STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT = TextPane.class.getName() + ".inlineReferenceDescent";
     private static final String STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH = TextPane.class.getName() + ".inlineLeadingWidth";
     private static final String DEFAULT_STYLE_CLASS = "text-pane";
-    private static final Style STYLE_INVISIBLE_TEXT = Style.create(
-            "text-pane-invisible",
-            Map.entry(Style.COLOR, Color.TRANSPARENT_BLACK)
-    );
 
     private final ObjectProperty<ToRichText> text = new SimpleObjectProperty<>(this, "text", RichText.emptyText());
     private final BooleanProperty wrapText = new SimpleBooleanProperty(this, "wrapText", false);
@@ -339,7 +332,7 @@ public class TextPane extends Control implements RichTextPane {
         double contentWidth = width > 0
                 ? Math.max(1.0, width - snappedLeftInset() - snappedRightInset())
                 : Math.ceil(getFont().getFontData().spaceWidth() * 40.0f);
-        Layout layout = createLayout(contentWidth);
+        RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = createLayout(contentWidth);
         double pref = snappedTopInset() + Math.ceil(layout.height()) + snappedBottomInset();
         return clampToMaxHeight(pref);
     }
@@ -379,48 +372,38 @@ public class TextPane extends Control implements RichTextPane {
         return getFont();
     }
 
-    Layout createLayout(double availableWidth) {
+    RichTextPaneLayoutHelper.Layout<InlineControlPlacement> createLayout(double availableWidth) {
         return createLayout(getText(), availableWidth);
     }
 
-    Layout createLayout(RichText richText, double availableWidth) {
+    RichTextPaneLayoutHelper.Layout<InlineControlPlacement> createLayout(RichText richText, double availableWidth) {
         return createLayout(richText, getFont(), isWrapText(), availableWidth);
     }
 
-    private static Layout createLayout(RichText richText, Font font, boolean wrapText, double availableWidth) {
-        com.dua3.utility.text.FontUtil fontUtil = com.dua3.utility.text.FontUtil.getInstance();
-        LayoutTextData layoutTextData = createLayoutTextData(richText, font, fontUtil);
-        RichText layoutText = layoutTextData.text();
-
-        float width = (float) Math.max(1.0, availableWidth);
-        float wrapWidth = wrapText ? width : FragmentedText.NO_WRAP;
-        FragmentedText layoutFragments = FragmentedText.generateFragments(
-                layoutText,
-                fontUtil,
+    private static RichTextPaneLayoutHelper.Layout<InlineControlPlacement> createLayout(
+            RichText richText,
+            Font font,
+            boolean wrapText,
+            double availableWidth
+    ) {
+        RichTextPaneLayoutHelper.LayoutPreparation prepared = RichTextPaneLayoutHelper.prepareLayout(
+                richText,
                 font,
-                width,
-                Float.MAX_VALUE,
-                Alignment.LEFT,
-                VerticalAlignment.TOP,
-                HAnchor.LEFT,
-                VAnchor.TOP,
-                wrapWidth
-                );
-
-        RichText renderedText = createRenderedText(layoutText);
-        FragmentedText renderFragments = FragmentedText.generateFragments(
-                renderedText,
-                fontUtil,
-                font,
-                width,
-                Float.MAX_VALUE,
-                Alignment.LEFT,
-                VerticalAlignment.TOP,
-                HAnchor.LEFT,
-                VAnchor.TOP,
-                wrapWidth
+                wrapText,
+                availableWidth,
+                STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH,
+                (run, runFont) -> {
+                    Node node = createInlineNode(run);
+                    if (node instanceof Labeled labeled) {
+                        labeled.setFont(FxFontUtil.getInstance().convert(runFont));
+                    }
+                    return node;
+                },
+                TextPane::measureNodeWidth
         );
-        float renderWidth = wrapText ? width : Math.max(width, renderFragments.actualWidth());
+
+        FragmentedText layoutFragments = prepared.layoutFragments();
+        FragmentedText renderFragments = prepared.renderFragments();
 
         List<InlineControlPlacement> placements = new ArrayList<>();
         for (List<FragmentedText.Fragment> line : layoutFragments.lines()) {
@@ -478,116 +461,13 @@ public class TextPane extends Control implements RichTextPane {
         List<List<FragmentedText.Fragment>> shiftedRenderLines = shiftRenderLines(renderFragments, lineShiftByY);
         float renderHeight = computeRenderedHeight(shiftedRenderLines, lineShiftData.tailOverflowBelow(), font);
 
-        return new Layout(shiftedRenderLines, shiftedPlacements, renderWidth, renderHeight, layoutTextData);
-    }
-
-    private static LayoutTextData createLayoutTextData(RichText source, Font baseFont, com.dua3.utility.text.FontUtil fontUtil) {
-        RichTextBuilder builder = new RichTextBuilder(source.length());
-        List<Integer> layoutToSourceBoundaries = new ArrayList<>(source.length() + 1);
-        layoutToSourceBoundaries.add(0);
-        int sourcePosition = 0;
-
-        for (Run run : source) {
-            List<String> pushedAttributes = pushNonStyleAttributes(builder, run);
-            List<Style> styles = run.getStyles();
-            styles.forEach(builder::push);
-            if (hasInlineNode(run)) {
-                Node node = createInlineNode(run);
-                if (node != null) {
-                    Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
-                    if (node instanceof Labeled labeled) {
-                        labeled.setFont(FxFontUtil.getInstance().convert(runFont));
-                    }
-                    double controlWidth = measureNodeWidth(node);
-                    String text = run.toString();
-                    double markerWidth = fontUtil.getTextDimension(run, runFont).width();
-                    double extraWidth = controlWidth - markerWidth;
-                    Style leadingWidthStyle = null;
-                    if (extraWidth > 0.5) {
-                        double spaceWidth = Math.max(1.0, runFont.getFontData().spaceWidth());
-                        int extraSpaces = (int) Math.ceil(extraWidth / spaceWidth);
-                        if (extraSpaces > 0) {
-                            String leadingPadding = NO_BREAK_SPACE.repeat(extraSpaces);
-                            builder.append(leadingPadding);
-                            for (int i = 0; i < leadingPadding.length(); i++) {
-                                layoutToSourceBoundaries.add(sourcePosition);
-                            }
-                            double leadingWidth = fontUtil.getTextWidth(leadingPadding, runFont);
-                            leadingWidthStyle = Style.create(
-                                    "text-pane-inline-leading-width",
-                                    Map.entry(STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH, leadingWidth)
-                            );
-                        }
-                    }
-                    if (leadingWidthStyle != null) {
-                        builder.push(leadingWidthStyle);
-                    }
-                    builder.append(text);
-                    for (int i = 0; i < text.length(); i++) {
-                        layoutToSourceBoundaries.add(++sourcePosition);
-                    }
-                    if (leadingWidthStyle != null) {
-                        builder.pop(leadingWidthStyle);
-                    }
-                } else {
-                    String text = run.toString();
-                    builder.append(text);
-                    for (int i = 0; i < text.length(); i++) {
-                        layoutToSourceBoundaries.add(++sourcePosition);
-                    }
-                }
-            } else {
-                String text = run.toString();
-                builder.append(text);
-                for (int i = 0; i < text.length(); i++) {
-                    layoutToSourceBoundaries.add(++sourcePosition);
-                }
-            }
-
-            for (int i = styles.size() - 1; i >= 0; i--) {
-                builder.pop(styles.get(i));
-            }
-            for (int i = pushedAttributes.size() - 1; i >= 0; i--) {
-                builder.pop(pushedAttributes.get(i));
-            }
-        }
-
-        RichText layoutText = builder.toRichText();
-        int layoutLength = layoutText.length();
-        int[] layoutToSourceMap = new int[layoutLength + 1];
-        int count = Math.min(layoutToSourceBoundaries.size(), layoutLength + 1);
-        for (int i = 0; i < count; i++) {
-            layoutToSourceMap[i] = Math.clamp(layoutToSourceBoundaries.get(i), 0, source.length());
-        }
-        for (int i = count; i < layoutToSourceMap.length; i++) {
-            layoutToSourceMap[i] = source.length();
-        }
-
-        int[] sourceToLayoutMap = buildSourceToLayoutMap(layoutToSourceMap, source.length());
-        return new LayoutTextData(layoutText, layoutToSourceMap, sourceToLayoutMap);
-    }
-
-    private static int[] buildSourceToLayoutMap(int[] layoutToSourceMap, int sourceLength) {
-        int[] sourceToLayout = new int[sourceLength + 1];
-        Arrays.fill(sourceToLayout, -1);
-
-        for (int layoutPos = 0; layoutPos < layoutToSourceMap.length; layoutPos++) {
-            int sourcePos = Math.clamp(layoutToSourceMap[layoutPos], 0, sourceLength);
-            if (sourceToLayout[sourcePos] < 0) {
-                sourceToLayout[sourcePos] = layoutPos;
-            }
-        }
-
-        int lastLayoutPos = 0;
-        for (int sourcePos = 0; sourcePos < sourceToLayout.length; sourcePos++) {
-            if (sourceToLayout[sourcePos] < 0) {
-                sourceToLayout[sourcePos] = lastLayoutPos;
-            } else {
-                lastLayoutPos = sourceToLayout[sourcePos];
-            }
-        }
-
-        return sourceToLayout;
+        return new RichTextPaneLayoutHelper.Layout<>(
+                shiftedRenderLines,
+                shiftedPlacements,
+                prepared.renderWidth(),
+                renderHeight,
+                prepared.layoutTextData()
+        );
     }
 
     private static double measureNodeWidth(Node node) {
@@ -605,53 +485,6 @@ public class TextPane extends Control implements RichTextPane {
         node.applyCss();
         node.autosize();
         return Math.max(node.prefWidth(-1), node.getLayoutBounds().getWidth());
-    }
-
-    private static RichText createRenderedText(RichText source) {
-        RichTextBuilder builder = new RichTextBuilder(source.length());
-        for (Run run : source) {
-            List<String> pushedAttributes = pushNonStyleAttributes(builder, run);
-            List<Style> styles = run.getStyles();
-            styles.forEach(builder::push);
-            if (hasInlineNode(run)) {
-                builder.push(STYLE_INVISIBLE_TEXT);
-                builder.append(run.toString());
-                builder.pop(STYLE_INVISIBLE_TEXT);
-            } else {
-                builder.append(run.toString());
-            }
-            for (int i = styles.size() - 1; i >= 0; i--) {
-                builder.pop(styles.get(i));
-            }
-            for (int i = pushedAttributes.size() - 1; i >= 0; i--) {
-                builder.pop(pushedAttributes.get(i));
-            }
-        }
-        return builder.toRichText();
-    }
-
-    private static List<String> pushNonStyleAttributes(RichTextBuilder builder, Run run) {
-        List<String> pushedAttributes = new ArrayList<>();
-        for (Map.Entry<String, @Nullable Object> entry : run.attributes().entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            if (STYLE_LIST_ATTRIBUTE.equals(key) || value == null) {
-                continue;
-            }
-            builder.push(key, value);
-            pushedAttributes.add(key);
-        }
-        return pushedAttributes;
-    }
-
-    private static boolean hasInlineNode(Run run) {
-        for (Style style : run.getStyles()) {
-            if (style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY) != null
-                    || style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE) != null) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private static @Nullable Node createInlineNode(Run run) {
@@ -993,30 +826,6 @@ public class TextPane extends Control implements RichTextPane {
             double descent,
             int runStart,
             int runEnd
-    ) {}
-
-    record LayoutTextData(
-            RichText text,
-            int[] layoutToSourceMap,
-            int[] sourceToLayoutMap
-    ) {
-        int layoutToSourcePosition(int layoutPosition) {
-            int pos = Math.clamp(layoutPosition, 0, layoutToSourceMap.length - 1);
-            return layoutToSourceMap[pos];
-        }
-
-        int sourceToLayoutPosition(int sourcePosition) {
-            int pos = Math.clamp(sourcePosition, 0, sourceToLayoutMap.length - 1);
-            return sourceToLayoutMap[pos];
-        }
-    }
-
-    record Layout(
-            List<List<FragmentedText.Fragment>> renderLines,
-            List<InlineControlPlacement> placements,
-            float width,
-            float height,
-            LayoutTextData layoutTextData
     ) {}
 
     private record LineShiftData(Map<Float, Float> lineShiftByY, float tailOverflowBelow) {}
@@ -1694,7 +1503,7 @@ public class TextPane extends Control implements RichTextPane {
 
         private void refresh(double availableWidth, boolean preserveContentHeight) {
             TextPane control = getSkinnable();
-            Layout layout = control.createLayout(availableWidth);
+            RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = control.createLayout(availableWidth);
             double previousCanvasHeight = canvas.getHeight();
 
             canvas.setWidth(Math.max(1.0, Math.ceil(layout.width())));
@@ -1756,7 +1565,7 @@ public class TextPane extends Control implements RichTextPane {
             if (!(fragment.text() instanceof Run run)) {
                 return false;
             }
-            return run.getStyles().contains(STYLE_INVISIBLE_TEXT);
+            return run.getStyles().contains(RichTextPaneLayoutHelper.STYLE_INVISIBLE_TEXT);
         }
 
         private void ensureEditorContentHeight(TextPane control, double availableWidth, double previousCanvasHeight) {
@@ -1790,7 +1599,11 @@ public class TextPane extends Control implements RichTextPane {
             }
         }
 
-        private void renderEditorOverlay(TextPane control, double availableWidth, Layout layout) {
+        private void renderEditorOverlay(
+                TextPane control,
+                double availableWidth,
+                RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout
+        ) {
             selectionLayer.getChildren().clear();
             caretLayer.getChildren().clear();
 
@@ -1834,7 +1647,7 @@ public class TextPane extends Control implements RichTextPane {
                             continue;
                         }
 
-                        if (hasInlineNode(run)) {
+                        if (RichTextPaneLayoutHelper.hasInlineNode(run)) {
                             // Inline-node selections are handled above using placement bounds.
                             continue;
                         }
@@ -1880,7 +1693,7 @@ public class TextPane extends Control implements RichTextPane {
         }
 
         private static boolean isInlinePlacementSelected(
-                LayoutTextData layoutTextData,
+                RichTextPaneLayoutHelper.LayoutTextData layoutTextData,
                 InlineControlPlacement placement,
                 int sourceSelStart,
                 int sourceSelEnd
