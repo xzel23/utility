@@ -17,11 +17,13 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,9 +46,9 @@ public final class AwtFontUtil implements FontUtil {
     private static final float DEFAULT_SIZE;
 
     static {
-        java.awt.Font labelFont = new JLabel().getFont();
-        DEFAULT_FAMILY = labelFont.getFamily();
-        DEFAULT_SIZE = labelFont.getSize();
+        java.awt.Font font = new JLabel().getFont();
+        DEFAULT_FAMILY = font.getFamily();
+        DEFAULT_SIZE = font.getSize();
     }
 
     static {
@@ -66,11 +68,30 @@ public final class AwtFontUtil implements FontUtil {
     private final Font defaultFont;
     private final Graphics2D graphics;
 
-    private static java.awt.Font getAwtFont(List<String> families, float size, boolean bold, boolean italic) {
+    private static java.awt.Font getAwtFont(List<String> families, float size, boolean bold, boolean italic, boolean underline, boolean strikethrough) {
         String family = families.stream().filter(FontList.ALL_FONTS::contains).findFirst().orElse(families.getFirst());
-        int style = (bold ? java.awt.Font.BOLD : java.awt.Font.PLAIN)
-                | (italic ? java.awt.Font.ITALIC : java.awt.Font.PLAIN);
-        return new java.awt.Font(family, style, Math.round(size));
+
+        Map<TextAttribute, Object> attributes = new HashMap<>();
+        attributes.put(TextAttribute.FAMILY, family);
+        attributes.put(TextAttribute.SIZE, size);
+
+        if (bold) attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+        if (italic) attributes.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+        if (underline) attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        if (strikethrough) attributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+
+        return new java.awt.Font(attributes);
+    }
+
+    private static java.awt.Font getAwtFont(FontData font) {
+        return getAwtFont(
+                font.families(),
+                font.size(),
+                font.bold(),
+                font.italic(),
+                font.underline(),
+                font.strikeThrough()
+        );
     }
 
     private static final class SingletonHolder {
@@ -79,7 +100,7 @@ public final class AwtFontUtil implements FontUtil {
 
     private AwtFontUtil() {
         graphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE).createGraphics();
-        defaultFont = convert(getAwtFont(List.of(DEFAULT_FAMILY), DEFAULT_SIZE, false, false));
+        defaultFont = convert(getAwtFont(List.of(DEFAULT_FAMILY), DEFAULT_SIZE, false, false, false, false));
     }
 
     /**
@@ -222,8 +243,9 @@ public final class AwtFontUtil implements FontUtil {
      * @return the corresponding {@code java.awt.Font} instance
      */
     public java.awt.Font convert(Font font) {
-        java.awt.Font awtFont = fontData2awtFont.computeIfAbsent(font.getFontData(), fd -> getAwtFont(fd.families(), fd.size(), fd.bold(), fd.italic()));
-        awtFont2FontData.putIfAbsent(awtFont, font.getFontData());
+        FontData fontData = font.getFontData();
+        java.awt.Font awtFont = fontData2awtFont.computeIfAbsent(fontData, AwtFontUtil::getAwtFont);
+        awtFont2FontData.putIfAbsent(awtFont, fontData);
         return awtFont;
     }
 
@@ -255,17 +277,22 @@ public final class AwtFontUtil implements FontUtil {
     }
 
     @Override
+    @SuppressWarnings({"java:S2259", "java:S4449"}) // false positives
     public Font deriveFont(Font font, FontDef fontDef) {
         List<String> families = Objects.requireNonNullElse(fontDef.getFamilies(), font.getFamilies());
-        float size = Objects.requireNonNullElse(fontDef.getSize(), font.getSizeInPoints());
-        boolean bold = Objects.requireNonNullElse(fontDef.getBold(), font.isBold());
-        boolean italic = Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic());
+        float size = Objects.requireNonNullElseGet(fontDef.getSize(), font::getSizeInPoints);
+        boolean bold = Objects.requireNonNullElseGet(fontDef.getBold(), font::isBold);
+        boolean italic = Objects.requireNonNullElseGet(fontDef.getItalic(), font::isItalic);
+        boolean underline = Objects.requireNonNullElseGet(fontDef.getUnderline(), font::isUnderline);
+        boolean strikethrough = Objects.requireNonNullElseGet(fontDef.getStrikeThrough(), font::isStrikeThrough);
 
         Font baseFont = convert(getAwtFont(
                 families,
                 size,
                 bold,
-                italic
+                italic,
+                underline,
+                strikethrough
         ));
 
         FontData fontData = FontData.get(
@@ -274,8 +301,8 @@ public final class AwtFontUtil implements FontUtil {
                 baseFont.getType() == FontType.MONOSPACED,
                 bold,
                 italic,
-                Objects.requireNonNullElse(fontDef.getUnderline(), font.isUnderline()),
-                Objects.requireNonNullElse(fontDef.getStrikeThrough(), font.isStrikeThrough()),
+                underline,
+                strikethrough,
                 baseFont.getAscent(),
                 baseFont.getDescent(),
                 baseFont.getHeight(),
@@ -285,8 +312,8 @@ public final class AwtFontUtil implements FontUtil {
         Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
         Color backgroundColor = Objects.requireNonNullElse(fontDef.getBackgroundColor(), font.getBackgroundColor());
         if (fontData.equals(baseFont.getFontData())
-                && color.equals(baseFont.getColor())
-                && backgroundColor.equals(baseFont.getBackgroundColor())) {
+                && Objects.equals(color, baseFont.getColor())
+                && Objects.equals(backgroundColor, baseFont.getBackgroundColor())) {
             return baseFont; // avoid creating unnecessary instance
         } else {
             return Font.getFont(fontData, color, backgroundColor);
