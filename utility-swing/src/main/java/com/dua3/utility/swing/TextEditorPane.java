@@ -331,6 +331,12 @@ public class TextEditorPane extends TextPane {
      * @return text color
      */
     public @Nullable Color getTextColor() {
+        if (model.getSelection().length() > 0) {
+            RichTextEditorModel.CaretProperties properties = model.resolveCaretProperties(getTextFont());
+            if (properties != null) {
+                return properties.textColor();
+            }
+        }
         return typingTextColor;
     }
 
@@ -358,6 +364,12 @@ public class TextEditorPane extends TextPane {
      * @return background color
      */
     public @Nullable Color getBackgroundColor() {
+        if (model.getSelection().length() > 0) {
+            RichTextEditorModel.CaretProperties properties = model.resolveCaretProperties(getTextFont());
+            if (properties != null) {
+                return properties.backgroundColor();
+            }
+        }
         return typingBackgroundColor;
     }
 
@@ -385,6 +397,12 @@ public class TextEditorPane extends TextPane {
      * @return font family
      */
     public @Nullable String getFontFamily() {
+        if (model.getSelection().length() > 0) {
+            RichTextEditorModel.CaretProperties properties = model.resolveCaretProperties(getTextFont());
+            if (properties != null) {
+                return properties.fontFamily();
+            }
+        }
         return typingFontFamily;
     }
 
@@ -412,6 +430,12 @@ public class TextEditorPane extends TextPane {
      * @return font size in points
      */
     public double getFontSize() {
+        if (model.getSelection().length() > 0) {
+            RichTextEditorModel.CaretProperties properties = model.resolveCaretProperties(getTextFont());
+            if (properties != null) {
+                return properties.fontSize();
+            }
+        }
         return typingFontSize;
     }
 

@@ -183,6 +183,18 @@ class TextEditorPaneTest {
         assertFalse(onEdtGet(editor::isBold));
     }
 
+    @Test
+    void testFontFamilyGetterReflectsSelectionFormatting() {
+        TextEditorPane editor = onEdtGet(() -> new TextEditorPane("abcd"));
+
+        onEdtRun(() -> {
+            editor.selectRange(1, 3);
+            editor.setFontFamily("UnitTestFamily");
+        });
+
+        assertEquals("UnitTestFamily", onEdtGet(editor::getFontFamily));
+    }
+
     private static boolean isBoldAt(RichText text, int index) {
         for (Run run : text) {
             if (run.getStart() <= index && index < run.getEnd()) {
