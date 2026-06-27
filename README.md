@@ -240,6 +240,13 @@ could not be loaded.
 
 This release introduces some major changes, both to existing interfaces and also by adding new functionality.
 
+#### To Do
+
+- Make Hyperlinks in non-editable JavaFX TextEditorPane clickable
+- Make the toolbar part of the interface and change Swing implementation to support showing and hiding the toolbar 
+  like in the JavaFX implementation.
+- Support showing the toolbar outside of the `TextPane`, i.e., floating or controlled by the main application.
+
 #### Changes in 23.0.0-beta2
 
 - Added equivalent swing classes for the JavaFX `TextPane` and `TextEditorPane` classes and refactored the JavaFX 
