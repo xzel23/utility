@@ -92,13 +92,15 @@ public final class RichTextEditUtil {
         if (i == 0) {
             return 0;
         }
-        i--;
-        while (i > 0 && !isWordChar(text.charAt(i))) {
+
+        do {
             i--;
-        }
+        } while (i > 0 && !isWordChar(text.charAt(i)));
+
         while (i > 0 && isWordChar(text.charAt(i - 1))) {
             i--;
         }
+
         return i;
     }
 
@@ -154,7 +156,7 @@ public final class RichTextEditUtil {
         }
 
         int p = Math.clamp(position, 0, n);
-        if (p == n && p > 0) {
+        if (p == n) {
             p--;
         }
 
