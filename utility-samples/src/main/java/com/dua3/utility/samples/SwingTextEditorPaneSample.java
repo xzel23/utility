@@ -24,7 +24,6 @@ import javax.swing.Icon;
 import javax.swing.JList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
@@ -32,6 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Insets;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -62,6 +62,8 @@ public final class SwingTextEditorPaneSample {
     };
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
     private static final Font DEFAULT_FONT = FONT_UTIL.getDefaultFont();
+
+    private static final Dimension SYMBOL_BUTTON_SIZE = new Dimension(24, 24);
 
     private SwingTextEditorPaneSample() {
         // no instances
@@ -126,37 +128,16 @@ public final class SwingTextEditorPaneSample {
         JCheckBox editable = new JCheckBox("Editable", editor.isEditable());
         editable.addActionListener(e -> editor.setEditable(editable.isSelected()));
 
-        JSlider width = new JSlider(220, 780, 640);
-        width.setPaintTicks(true);
-        width.setPaintLabels(true);
-        width.setMajorTickSpacing(140);
-        width.setMinorTickSpacing(20);
-        width.addChangeListener(e -> {
-            int w = width.getValue();
-            editor.setPreferredSize(new Dimension(w, 220));
-            liveDocumentPane.setPreferredSize(new Dimension(w, 200));
-            committedValuePane.setPreferredSize(new Dimension(w, 200));
-            editor.revalidate();
-            liveDocumentPane.revalidate();
-            committedValuePane.revalidate();
-        });
-
-        JButton cut = new JButton("✂");
-        cut.addActionListener(e -> editor.cut());
-        JButton copy = new JButton("⧉");
-        copy.addActionListener(e -> editor.copy());
-        JButton paste = new JButton("\uD83D\uDCCB");
-        paste.addActionListener(e -> editor.paste());
+        JButton cut = editButton("✂", editor::cut);
+        JButton copy = editButton("⧉", editor::copy);
+        JButton paste = editButton("\uD83D\uDCCB", editor::paste);
+        JButton undo = editButton("⟲", editor::undo);
+        JButton redo = editButton("⟳", editor::redo);
 
         JToggleButton bold = fontStyleButton("B", DEFAULT_FONT.withBold(true), editor::markBold);
         JToggleButton italic = fontStyleButton("I", DEFAULT_FONT.withItalic(true), editor::markItalic);
         JToggleButton underline = fontStyleButton("U", DEFAULT_FONT.withUnderline(true), editor::markUnderline);
         JToggleButton strike = fontStyleButton("S", DEFAULT_FONT.withStrikeThrough(true), editor::markStrikeThrough);
-
-        JButton undo = new JButton("⟲");
-        undo.addActionListener(e -> editor.undo());
-        JButton redo = new JButton("⟳");
-        redo.addActionListener(e -> editor.redo());
 
         JComboBox<String> fontList = new JComboBox<>(FONT_UTIL.getFamilies(FontUtil.FontTypes.ALL).toArray(new String[0]));
         JComboBox<Float> sizeList = new JComboBox<>(DEFAULT_FONT_SIZES);
@@ -260,35 +241,32 @@ public final class SwingTextEditorPaneSample {
         JPanel controlsRow = new JPanel();
         controlsRow.setLayout(new BoxLayout(controlsRow, BoxLayout.X_AXIS));
         controlsRow.add(wrap);
-        controlsRow.add(Box.createHorizontalStrut(8));
+        controlsRow.add(Box.createHorizontalStrut(4));
         controlsRow.add(editable);
-        controlsRow.add(Box.createHorizontalStrut(12));
-        controlsRow.add(new JLabel("Width:"));
-        controlsRow.add(Box.createHorizontalStrut(6));
-        controlsRow.add(width);
+        controlsRow.add(Box.createHorizontalStrut(8));
+        controlsRow.add(apply);
+        controlsRow.add(reset);
+        controlsRow.add(Box.createHorizontalGlue());
 
         JPanel toolbarRow = new JPanel();
         toolbarRow.setLayout(new BoxLayout(toolbarRow, BoxLayout.X_AXIS));
         toolbarRow.add(cut);
         toolbarRow.add(copy);
         toolbarRow.add(paste);
-        toolbarRow.add(Box.createHorizontalStrut(12));
+        toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(undo);
         toolbarRow.add(redo);
-        toolbarRow.add(Box.createHorizontalStrut(12));
+        toolbarRow.add(Box.createHorizontalStrut(8));
         toolbarRow.add(fontList);
         toolbarRow.add(sizeList);
-        toolbarRow.add(Box.createHorizontalStrut(4));
-        toolbarRow.add(textColorList);
-        toolbarRow.add(backgroundColorList);
-        toolbarRow.add(Box.createHorizontalStrut(12));
         toolbarRow.add(bold);
         toolbarRow.add(italic);
         toolbarRow.add(underline);
         toolbarRow.add(strike);
+        toolbarRow.add(Box.createHorizontalStrut(4));
+        toolbarRow.add(textColorList);
+        toolbarRow.add(backgroundColorList);
         toolbarRow.add(Box.createHorizontalGlue());
-        toolbarRow.add(apply);
-        toolbarRow.add(reset);
 
         JPanel actionRow = new JPanel();
         actionRow.setLayout(new BoxLayout(actionRow, BoxLayout.X_AXIS));
@@ -325,6 +303,7 @@ public final class SwingTextEditorPaneSample {
         frame.setLayout(new BorderLayout());
         frame.setContentPane(content);
         frame.setSize(980, 820);
+        frame.pack();
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
     }
@@ -333,10 +312,22 @@ public final class SwingTextEditorPaneSample {
         return text.toString().replace("\n", "\\n");
     }
 
+    private static JButton editButton(String text, Runnable action) {
+        JButton button = new JButton(text);
+        button.setPreferredSize(SYMBOL_BUTTON_SIZE);
+        button.setMinimumSize(SYMBOL_BUTTON_SIZE);
+        button.setMaximumSize(SYMBOL_BUTTON_SIZE);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.addActionListener(evt -> action.run());
+        return button;
+    }
+
     private static JToggleButton fontStyleButton(String text, Font font, Consumer<Boolean> action) {
         JToggleButton button = new JToggleButton(text);
         button.setFont(FONT_UTIL.convert(font));
-        button.setPreferredSize(new Dimension(24, 24));
+        button.setPreferredSize(SYMBOL_BUTTON_SIZE);
+        button.setMinimumSize(SYMBOL_BUTTON_SIZE);
+        button.setMaximumSize(SYMBOL_BUTTON_SIZE);
         button.addActionListener(evt -> action.accept(button.isSelected()));
         return button;
     }

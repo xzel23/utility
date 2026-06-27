@@ -240,7 +240,7 @@ could not be loaded.
 
 This release introduces some major changes, both to existing interfaces and also by adding new functionality.
 
-### Changes in 23.0.0-beta2
+#### Changes in 23.0.0-beta2
 
 - Added equivalent swing classes for the JavaFX `TextPane` and `TextEditorPane` classes and refactored the JavaFX 
   implementation so that both Swing and JavaFX classes share the same code.
@@ -251,7 +251,7 @@ This release introduces some major changes, both to existing interfaces and also
 - Added `RichTextRuns` interface to avoid temporary `RichText` instances.
 - Cleanup clipboard handling in `SwingUtil`.
 
-### Changes in 23.0.0-beta
+#### Changes in 23.0.0-beta
 
 - `MathUtil`:
     - Removed `kahanSum()` and `NeumeierSum()`; `sum()` now uses a hybrid Kahan/pairwise algorithm.
