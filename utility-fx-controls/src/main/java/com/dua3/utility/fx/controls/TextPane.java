@@ -944,8 +944,8 @@ public class TextPane extends Control implements RichTextPane {
                 pasteButton.setFocusTraversable(false);
 
                 ToolBar toolbar = new ToolBar(
-                        copyButton,
                         cutButton,
+                        copyButton,
                         pasteButton,
                         new Separator(),
                         undoButton,
@@ -953,13 +953,12 @@ public class TextPane extends Control implements RichTextPane {
                         new Separator(),
                         fontList,
                         sizeList,
-                        textColorList,
-                        backgroundColorList,
-                        new Separator(),
                         boldButton,
                         italicsButton,
                         underlineButton,
-                        strikeThroughButton
+                        strikeThroughButton,
+                        textColorList,
+                        backgroundColorList
                 );
 
                 toolbar.setFocusTraversable(false);
