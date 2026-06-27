@@ -2,6 +2,8 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
+import com.dua3.utility.text.Style;
+import com.dua3.utility.text.RichTextBuilder;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.SwingUtilities;
@@ -14,6 +16,7 @@ import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class TextEditorPaneTest {
 
@@ -160,6 +163,24 @@ class TextEditorPaneTest {
         Dimension h2 = onEdtGet(() -> trailingEmptyLine.getTextComponent().getPreferredSize());
 
         assertTrue(h2.height > h1.height, "Trailing empty line must increase preferred height");
+    }
+
+    @Test
+    void testCaretPositionListenerSeesUpdatedTypingStyle() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("a");
+        builder.push(Style.BOLD).append("b").pop(Style.BOLD);
+        TextEditorPane editor = onEdtGet(() -> new TextEditorPane(builder.toRichText()));
+
+        final boolean[] boldAtCaretEvent = {false};
+        onEdtRun(() -> editor.addPropertyChangeListener("caretPosition", evt -> boldAtCaretEvent[0] = editor.isBold()));
+
+        onEdtRun(() -> editor.setCaretPosition(1));
+
+        assertTrue(boldAtCaretEvent[0], "Caret listener should observe style at new caret position");
+
+        onEdtRun(() -> editor.setCaretPosition(0));
+        assertFalse(onEdtGet(editor::isBold));
     }
 
     private static boolean isBoldAt(RichText text, int index) {

@@ -869,9 +869,13 @@ public class TextEditorPane extends TextPane {
             model.resetPreferredCaretX();
         }
 
+        var selection = model.getSelection();
+        if (selection.length() == 0) {
+            syncTypingStylesFromCaret();
+        }
+
         int anchor = model.getAnchor();
         int caret = model.getCaretPosition();
-        var selection = model.getSelection();
         int selectionStart = selection.start();
         int selectionEnd = selection.end();
 
@@ -890,10 +894,6 @@ public class TextEditorPane extends TextPane {
         if (selectionEnd != lastSelectionEnd) {
             firePropertyChange("selectionEnd", lastSelectionEnd, selectionEnd);
             lastSelectionEnd = selectionEnd;
-        }
-
-        if (selection.length() == 0) {
-            syncTypingStylesFromCaret();
         }
 
         ensureCaretVisible();

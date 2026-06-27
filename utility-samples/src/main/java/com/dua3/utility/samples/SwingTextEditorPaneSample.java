@@ -17,6 +17,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFrame;
 import javax.swing.Icon;
@@ -140,11 +141,11 @@ public final class SwingTextEditorPaneSample {
             committedValuePane.revalidate();
         });
 
-        JButton copy = new JButton("Copy");
-        copy.addActionListener(e -> editor.copy());
-        JButton cut = new JButton("Cut");
+        JButton cut = new JButton("✂");
         cut.addActionListener(e -> editor.cut());
-        JButton paste = new JButton("Paste");
+        JButton copy = new JButton("⧉");
+        copy.addActionListener(e -> editor.copy());
+        JButton paste = new JButton("\uD83D\uDCCB");
         paste.addActionListener(e -> editor.paste());
 
         JToggleButton bold = fontStyleButton("B", DEFAULT_FONT.withBold(true), editor::markBold);
@@ -152,9 +153,9 @@ public final class SwingTextEditorPaneSample {
         JToggleButton underline = fontStyleButton("U", DEFAULT_FONT.withUnderline(true), editor::markUnderline);
         JToggleButton strike = fontStyleButton("S", DEFAULT_FONT.withStrikeThrough(true), editor::markStrikeThrough);
 
-        JButton undo = new JButton("Undo");
+        JButton undo = new JButton("⟲");
         undo.addActionListener(e -> editor.undo());
-        JButton redo = new JButton("Redo");
+        JButton redo = new JButton("⟳");
         redo.addActionListener(e -> editor.redo());
 
         JComboBox<String> fontList = new JComboBox<>(FONT_UTIL.getFamilies(FontUtil.FontTypes.ALL).toArray(new String[0]));
@@ -175,7 +176,9 @@ public final class SwingTextEditorPaneSample {
                 undo.setEnabled(editor.canUndo());
                 redo.setEnabled(editor.canRedo());
                 fontList.setSelectedItem(editor.getFontFamily());
-                sizeList.setSelectedItem((float) editor.getFontSize());
+                float editorFontSize = (float) editor.getFontSize();
+                ensureSortedFontSizeEntry(sizeList, editorFontSize);
+                sizeList.setSelectedItem(editorFontSize);
                 textColorList.setSelectedItem(editor.getTextColor());
                 backgroundColorList.setSelectedItem(editor.getBackgroundColor());
             } finally {
@@ -266,34 +269,25 @@ public final class SwingTextEditorPaneSample {
 
         JPanel toolbarRow = new JPanel();
         toolbarRow.setLayout(new BoxLayout(toolbarRow, BoxLayout.X_AXIS));
-        toolbarRow.add(copy);
-        toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(cut);
-        toolbarRow.add(Box.createHorizontalStrut(4));
+        toolbarRow.add(copy);
         toolbarRow.add(paste);
         toolbarRow.add(Box.createHorizontalStrut(12));
         toolbarRow.add(undo);
-        toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(redo);
         toolbarRow.add(Box.createHorizontalStrut(12));
         toolbarRow.add(fontList);
-        toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(sizeList);
         toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(textColorList);
-        toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(backgroundColorList);
         toolbarRow.add(Box.createHorizontalStrut(12));
         toolbarRow.add(bold);
-        toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(italic);
-        toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(underline);
-        toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(strike);
         toolbarRow.add(Box.createHorizontalGlue());
         toolbarRow.add(apply);
-        toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(reset);
 
         JPanel actionRow = new JPanel();
@@ -342,8 +336,35 @@ public final class SwingTextEditorPaneSample {
     private static JToggleButton fontStyleButton(String text, Font font, Consumer<Boolean> action) {
         JToggleButton button = new JToggleButton(text);
         button.setFont(FONT_UTIL.convert(font));
+        button.setPreferredSize(new Dimension(24, 24));
         button.addActionListener(evt -> action.accept(button.isSelected()));
         return button;
+    }
+
+    private static void ensureSortedFontSizeEntry(JComboBox<Float> sizeList, float size) {
+        if (!Float.isFinite(size) || size <= 0f) {
+            return;
+        }
+
+        @SuppressWarnings("unchecked")
+        DefaultComboBoxModel<Float> model = (DefaultComboBoxModel<Float>) sizeList.getModel();
+
+        int insertAt = model.getSize();
+        for (int i = 0; i < model.getSize(); i++) {
+            Float existing = model.getElementAt(i);
+            if (existing == null) {
+                continue;
+            }
+            int compare = Float.compare(existing, size);
+            if (compare == 0) {
+                return;
+            }
+            if (compare > 0) {
+                insertAt = i;
+                break;
+            }
+        }
+        model.insertElementAt(size, insertAt);
     }
 
     private static DefaultListCellRenderer createColorRenderer() {
