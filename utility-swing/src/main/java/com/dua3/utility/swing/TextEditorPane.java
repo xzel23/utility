@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.data.Color;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.RichTextEditorModel;
@@ -8,7 +9,6 @@ import com.dua3.utility.ui.VisualLine;
 import org.jspecify.annotations.Nullable;
 
 import javax.swing.SwingUtilities;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -23,13 +23,17 @@ import java.util.List;
  */
 public class TextEditorPane extends TextPane {
 
-    private static final Color SELECTION_COLOR = new Color(0.25f, 0.45f, 0.85f, 0.35f);
+    private static final java.awt.Color SELECTION_COLOR = new java.awt.Color(0.25f, 0.45f, 0.85f, 0.35f);
 
     private boolean editable = true;
     private boolean typingBold;
     private boolean typingItalic;
     private boolean typingUnderline;
     private boolean typingStrikeThrough;
+    private @Nullable Color typingTextColor;
+    private @Nullable Color typingBackgroundColor;
+    private @Nullable String typingFontFamily;
+    private double typingFontSize;
     private int dragAnchor = -1;
     private long documentVersion;
 
@@ -276,6 +280,150 @@ public class TextEditorPane extends TextPane {
     }
 
     /**
+     * Returns whether bold is active at current caret/selection.
+     *
+     * @return true if bold is active
+     */
+    public boolean isBold() {
+        return model.getSelection().length() == 0 ? typingBold : model.isSelectionStyled(Style.BOLD);
+    }
+
+    /**
+     * Returns whether italic is active at current caret/selection.
+     *
+     * @return true if italic is active
+     */
+    public boolean isItalic() {
+        return model.getSelection().length() == 0 ? typingItalic : model.isSelectionStyled(Style.ITALIC);
+    }
+
+    /**
+     * Returns whether underline is active at current caret/selection.
+     *
+     * @return true if underline is active
+     */
+    public boolean isUnderline() {
+        return model.getSelection().length() == 0 ? typingUnderline : model.isSelectionStyled(Style.UNDERLINE);
+    }
+
+    /**
+     * Returns whether strike-through is active at current caret/selection.
+     *
+     * @return true if strike-through is active
+     */
+    public boolean isStrikeThrough() {
+        return model.getSelection().length() == 0 ? typingStrikeThrough : model.isSelectionStyled(Style.LINE_THROUGH);
+    }
+
+    /**
+     * Returns current typing text color.
+     *
+     * @return text color
+     */
+    public @Nullable Color getTextColor() {
+        return typingTextColor;
+    }
+
+    /**
+     * Sets text color for selection or typing style.
+     *
+     * @param value text color
+     */
+    public void setTextColor(@Nullable Color value) {
+        if (value == null) {
+            return;
+        }
+        if (model.getSelection().length() == 0) {
+            typingTextColor = value;
+            return;
+        }
+        if (model.applyAttributeToSelection(Style.COLOR, value)) {
+            onModelChanged();
+        }
+    }
+
+    /**
+     * Returns current typing background color.
+     *
+     * @return background color
+     */
+    public @Nullable Color getBackgroundColor() {
+        return typingBackgroundColor;
+    }
+
+    /**
+     * Sets background color for selection or typing style.
+     *
+     * @param value background color
+     */
+    public void setBackgroundColor(@Nullable Color value) {
+        if (value == null) {
+            return;
+        }
+        if (model.getSelection().length() == 0) {
+            typingBackgroundColor = value;
+            return;
+        }
+        if (model.applyAttributeToSelection(Style.BACKGROUND_COLOR, value)) {
+            onModelChanged();
+        }
+    }
+
+    /**
+     * Returns current typing font family.
+     *
+     * @return font family
+     */
+    public @Nullable String getFontFamily() {
+        return typingFontFamily;
+    }
+
+    /**
+     * Sets font family for selection or typing style.
+     *
+     * @param value font family
+     */
+    public void setFontFamily(@Nullable String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+        if (model.getSelection().length() == 0) {
+            typingFontFamily = value;
+            return;
+        }
+        if (model.applyAttributeToSelection(Style.FONT_FAMILIES, List.of(value))) {
+            onModelChanged();
+        }
+    }
+
+    /**
+     * Returns current typing font size.
+     *
+     * @return font size in points
+     */
+    public double getFontSize() {
+        return typingFontSize;
+    }
+
+    /**
+     * Sets font size for selection or typing style.
+     *
+     * @param value font size in points
+     */
+    public void setFontSize(double value) {
+        if (!Double.isFinite(value) || value <= 0.0) {
+            return;
+        }
+        if (model.getSelection().length() == 0) {
+            typingFontSize = value;
+            return;
+        }
+        if (model.applyAttributeToSelection(Style.FONT_SIZE, (float) value)) {
+            onModelChanged();
+        }
+    }
+
+    /**
      * Returns caret position.
      *
      * @return caret position
@@ -429,7 +577,7 @@ public class TextEditorPane extends TextPane {
                 int x = (int) Math.round(RichTextVisualLayoutHelper.xForIndex(line, caret));
                 int y1 = (int) Math.floor(line.top());
                 int y2 = (int) Math.ceil(line.top() + line.height());
-                g2.setColor(Color.BLACK);
+                g2.setColor(java.awt.Color.BLACK);
                 g2.drawLine(x, y1, x, y2);
             }
         }
@@ -717,10 +865,10 @@ public class TextEditorPane extends TextPane {
                 typingItalic,
                 typingUnderline,
                 typingStrikeThrough,
-                null,
-                null,
-                null,
-                0.0
+                typingTextColor,
+                typingBackgroundColor,
+                typingFontFamily,
+                typingFontSize
         );
     }
 
@@ -731,12 +879,20 @@ public class TextEditorPane extends TextPane {
             typingItalic = false;
             typingUnderline = false;
             typingStrikeThrough = false;
+            typingTextColor = getTextFont().getColor();
+            typingBackgroundColor = getTextFont().getBackgroundColor();
+            typingFontFamily = getTextFont().getFamily();
+            typingFontSize = getTextFont().getSizeInPoints();
             return;
         }
         typingBold = properties.bold();
         typingItalic = properties.italic();
         typingUnderline = properties.underline();
         typingStrikeThrough = properties.strikeThrough();
+        typingTextColor = properties.textColor();
+        typingBackgroundColor = properties.backgroundColor();
+        typingFontFamily = properties.fontFamily();
+        typingFontSize = properties.fontSize();
     }
 
 }

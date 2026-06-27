@@ -1,8 +1,11 @@
 package com.dua3.utility.samples;
 
+import com.dua3.utility.awt.AwtFontUtil;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.swing.TextEditorPane;
 import com.dua3.utility.swing.TextPane;
+import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
@@ -12,19 +15,48 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFrame;
+import javax.swing.Icon;
+import javax.swing.JList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
+import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Swing sample for {@link TextEditorPane} and {@link TextPane}.
  */
 public final class SwingTextEditorPaneSample {
+    private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
+    private static final Color[] DEFAULT_TEXT_COLORS = {
+            Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
+            Color.RED.darker(), Color.RED, Color.RED.brighter(),
+            Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
+            Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
+            Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
+            Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
+            Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
+    };
+    private static final Color[] DEFAULT_BACKGROUND_COLORS = {
+            Color.TRANSPARENT_WHITE,
+            Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
+            Color.RED.darker(), Color.RED, Color.RED.brighter(),
+            Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
+            Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
+            Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
+            Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
+            Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
+    };
 
     private SwingTextEditorPaneSample() {
         // no instances
@@ -78,11 +110,6 @@ public final class SwingTextEditorPaneSample {
             updateSelectionInfo.run();
         };
 
-        editor.addPropertyChangeListener("documentVersion", evt -> syncAll.run());
-        editor.addPropertyChangeListener("caretPosition", evt -> updateSelectionInfo.run());
-        editor.addPropertyChangeListener("selectionStart", evt -> updateSelectionInfo.run());
-        editor.addPropertyChangeListener("selectionEnd", evt -> updateSelectionInfo.run());
-
         JCheckBox wrap = new JCheckBox("Wrap text", true);
         wrap.addActionListener(e -> {
             boolean enabled = wrap.isSelected();
@@ -109,18 +136,104 @@ public final class SwingTextEditorPaneSample {
             committedValuePane.revalidate();
         });
 
-        JButton bold = new JButton("B");
-        bold.addActionListener(e -> editor.markBold());
-        JButton italic = new JButton("I");
-        italic.addActionListener(e -> editor.markItalic());
-        JButton underline = new JButton("U");
-        underline.addActionListener(e -> editor.markUnderline());
-        JButton strike = new JButton("S");
-        strike.addActionListener(e -> editor.markStrikeThrough());
+        JButton copy = new JButton("Copy");
+        copy.addActionListener(e -> editor.copy());
+        JButton cut = new JButton("Cut");
+        cut.addActionListener(e -> editor.cut());
+        JButton paste = new JButton("Paste");
+        paste.addActionListener(e -> editor.paste());
+
+        JToggleButton bold = new JToggleButton("B");
+        bold.addActionListener(e -> editor.markBold(bold.isSelected()));
+        JToggleButton italic = new JToggleButton("I");
+        italic.addActionListener(e -> editor.markItalic(italic.isSelected()));
+        JToggleButton underline = new JToggleButton("U");
+        underline.addActionListener(e -> editor.markUnderline(underline.isSelected()));
+        JToggleButton strike = new JToggleButton("S");
+        strike.addActionListener(e -> editor.markStrikeThrough(strike.isSelected()));
         JButton undo = new JButton("Undo");
         undo.addActionListener(e -> editor.undo());
         JButton redo = new JButton("Redo");
         redo.addActionListener(e -> editor.redo());
+
+        JComboBox<String> fontList = new JComboBox<>(AwtFontUtil.getInstance().getFamilies(FontUtil.FontTypes.ALL).toArray(new String[0]));
+        JComboBox<Float> sizeList = new JComboBox<>(DEFAULT_FONT_SIZES);
+        JComboBox<Color> textColorList = new JComboBox<>(DEFAULT_TEXT_COLORS);
+        JComboBox<Color> backgroundColorList = new JComboBox<>(DEFAULT_BACKGROUND_COLORS);
+        textColorList.setRenderer(createColorRenderer());
+        backgroundColorList.setRenderer(createColorRenderer());
+
+        AtomicBoolean synchronizingToolbar = new AtomicBoolean(false);
+        Runnable syncToolbar = () -> {
+            synchronizingToolbar.set(true);
+            try {
+                bold.setSelected(editor.isBold());
+                italic.setSelected(editor.isItalic());
+                underline.setSelected(editor.isUnderline());
+                strike.setSelected(editor.isStrikeThrough());
+                undo.setEnabled(editor.canUndo());
+                redo.setEnabled(editor.canRedo());
+                fontList.setSelectedItem(editor.getFontFamily());
+                sizeList.setSelectedItem((float) editor.getFontSize());
+                textColorList.setSelectedItem(editor.getTextColor());
+                backgroundColorList.setSelectedItem(editor.getBackgroundColor());
+            } finally {
+                synchronizingToolbar.set(false);
+            }
+        };
+
+        editor.addPropertyChangeListener("documentVersion", evt -> {
+            syncAll.run();
+            syncToolbar.run();
+        });
+        editor.addPropertyChangeListener("caretPosition", evt -> {
+            updateSelectionInfo.run();
+            syncToolbar.run();
+        });
+        editor.addPropertyChangeListener("selectionStart", evt -> {
+            updateSelectionInfo.run();
+            syncToolbar.run();
+        });
+        editor.addPropertyChangeListener("selectionEnd", evt -> {
+            updateSelectionInfo.run();
+            syncToolbar.run();
+        });
+
+        fontList.addActionListener(e -> {
+            if (synchronizingToolbar.get()) {
+                return;
+            }
+            editor.setFontFamily((String) fontList.getSelectedItem());
+            editor.requestFocusInWindow();
+            syncToolbar.run();
+        });
+        sizeList.addActionListener(e -> {
+            if (synchronizingToolbar.get()) {
+                return;
+            }
+            Float size = (Float) sizeList.getSelectedItem();
+            if (size != null) {
+                editor.setFontSize(size);
+            }
+            editor.requestFocusInWindow();
+            syncToolbar.run();
+        });
+        textColorList.addActionListener(e -> {
+            if (synchronizingToolbar.get()) {
+                return;
+            }
+            editor.setTextColor((Color) textColorList.getSelectedItem());
+            editor.requestFocusInWindow();
+            syncToolbar.run();
+        });
+        backgroundColorList.addActionListener(e -> {
+            if (synchronizingToolbar.get()) {
+                return;
+            }
+            editor.setBackgroundColor((Color) backgroundColorList.getSelectedItem());
+            editor.requestFocusInWindow();
+            syncToolbar.run();
+        });
 
         JButton apply = new JButton("Apply");
         apply.addActionListener(e -> {
@@ -152,6 +265,24 @@ public final class SwingTextEditorPaneSample {
 
         JPanel toolbarRow = new JPanel();
         toolbarRow.setLayout(new BoxLayout(toolbarRow, BoxLayout.X_AXIS));
+        toolbarRow.add(copy);
+        toolbarRow.add(Box.createHorizontalStrut(4));
+        toolbarRow.add(cut);
+        toolbarRow.add(Box.createHorizontalStrut(4));
+        toolbarRow.add(paste);
+        toolbarRow.add(Box.createHorizontalStrut(12));
+        toolbarRow.add(undo);
+        toolbarRow.add(Box.createHorizontalStrut(4));
+        toolbarRow.add(redo);
+        toolbarRow.add(Box.createHorizontalStrut(12));
+        toolbarRow.add(fontList);
+        toolbarRow.add(Box.createHorizontalStrut(4));
+        toolbarRow.add(sizeList);
+        toolbarRow.add(Box.createHorizontalStrut(4));
+        toolbarRow.add(textColorList);
+        toolbarRow.add(Box.createHorizontalStrut(4));
+        toolbarRow.add(backgroundColorList);
+        toolbarRow.add(Box.createHorizontalStrut(12));
         toolbarRow.add(bold);
         toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(italic);
@@ -159,10 +290,6 @@ public final class SwingTextEditorPaneSample {
         toolbarRow.add(underline);
         toolbarRow.add(Box.createHorizontalStrut(4));
         toolbarRow.add(strike);
-        toolbarRow.add(Box.createHorizontalStrut(12));
-        toolbarRow.add(undo);
-        toolbarRow.add(Box.createHorizontalStrut(4));
-        toolbarRow.add(redo);
         toolbarRow.add(Box.createHorizontalGlue());
         toolbarRow.add(apply);
         toolbarRow.add(Box.createHorizontalStrut(4));
@@ -196,6 +323,7 @@ public final class SwingTextEditorPaneSample {
         content.add(status);
 
         syncAll.run();
+        syncToolbar.run();
 
         JFrame frame = new JFrame("TextEditorPane / TextPane Swing Sample");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -208,6 +336,44 @@ public final class SwingTextEditorPaneSample {
 
     private static String oneLine(RichText text) {
         return text.toString().replace("\n", "\\n");
+    }
+
+    private static DefaultListCellRenderer createColorRenderer() {
+        return new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Color c) {
+                    setText(c.toArgb());
+                    setIcon(new ColorIcon(c));
+                } else {
+                    setText("");
+                    setIcon(null);
+                }
+                return this;
+            }
+        };
+    }
+
+    private record ColorIcon(Color color) implements Icon {
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            java.awt.Color awt = SwingUtil.convert(color);
+            g.setColor(awt);
+            g.fillRect(x, y, getIconWidth(), getIconHeight());
+            g.setColor(Objects.equals(awt, java.awt.Color.BLACK) ? java.awt.Color.WHITE : java.awt.Color.BLACK);
+            g.drawRect(x, y, getIconWidth() - 1, getIconHeight() - 1);
+        }
+
+        @Override
+        public int getIconWidth() {
+            return 14;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 14;
+        }
     }
 
     private static RichText createSampleText() {
