@@ -17,7 +17,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -93,13 +92,6 @@ public class TextEditorPaneSample extends Application {
         toolbar.setSelected(editor.isToolbarVisible());
         toolbar.selectedProperty().bindBidirectional(editor.toolbarVisibleProperty());
 
-        Slider width = new Slider(220, 700, 500);
-        width.setShowTickLabels(true);
-        width.setShowTickMarks(true);
-        editor.prefWidthProperty().bind(width.valueProperty());
-        liveDocumentPane.prefWidthProperty().bind(width.valueProperty());
-        committedValuePane.prefWidthProperty().bind(width.valueProperty());
-
         Label selectionInfo = new Label();
         Runnable updateSelectionInfo = () -> selectionInfo.setText(
                 "Caret: " + editor.getCaretPosition()
@@ -133,12 +125,8 @@ public class TextEditorPaneSample extends Application {
             status.setText("Reset to default value.");
         });
 
-        HBox controls = new HBox(12, wrap, editable, toolbar, new Label("Width:"), width);
+        HBox controls = new HBox(12, wrap, editable, toolbar, applyButton, resetButton);
         controls.setPadding(new Insets(0, 0, 8, 0));
-        HBox.setHgrow(width, Priority.ALWAYS);
-
-        HBox actionRow = new HBox(12, applyButton, resetButton, committedInfo);
-        actionRow.setPadding(new Insets(4, 0, 4, 0));
 
         Label liveDocumentHeader = new Label("Live Document (documentVersionProperty + getDocumentText)");
         Label committedHeader = new Label("Committed Value (InputControl valueProperty)");
@@ -148,7 +136,6 @@ public class TextEditorPaneSample extends Application {
                 controls,
                 editor,
                 selectionInfo,
-                actionRow,
                 liveDocumentHeader,
                 liveDocumentPane,
                 committedHeader,
