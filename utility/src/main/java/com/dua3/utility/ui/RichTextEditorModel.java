@@ -28,7 +28,6 @@ import java.util.function.ToDoubleFunction;
 public class RichTextEditorModel {
 
     private static final int DEFAULT_MAX_HISTORY_SIZE = 256;
-    private static final String PROVIDER = "provider";
 
     private RichText text;
     private int anchor;
@@ -87,7 +86,7 @@ public class RichTextEditorModel {
      */
     public RichTextEditorModel(RichText text, int maxHistorySize, FontUtil fontUtil) {
         this.text = detach(text);
-        this.fontUtil = Objects.requireNonNull(fontUtil, "fontUtil");
+        this.fontUtil = fontUtil;
         this.history = new RichTextEditHistory(maxHistorySize);
         this.anchor = 0;
         this.caret = 0;
@@ -128,7 +127,7 @@ public class RichTextEditorModel {
      * @param provider width provider
      */
     public void setPageWidthProvider(ToDoubleFunction<RichTextEditorModel> provider) {
-        pageWidthProvider = Objects.requireNonNull(provider, PROVIDER);
+        pageWidthProvider = provider;
     }
 
     /**
@@ -137,7 +136,7 @@ public class RichTextEditorModel {
      * @param provider height provider
      */
     public void setPageHeightProvider(ToDoubleFunction<RichTextEditorModel> provider) {
-        pageHeightProvider = Objects.requireNonNull(provider, PROVIDER);
+        pageHeightProvider = provider;
     }
 
     /**
@@ -146,7 +145,7 @@ public class RichTextEditorModel {
      * @param provider wrap-width provider
      */
     public void setWrapWidthProvider(ToDoubleFunction<RichTextEditorModel> provider) {
-        wrapWidthProvider = Objects.requireNonNull(provider, PROVIDER);
+        wrapWidthProvider = provider;
     }
 
     /**
@@ -341,7 +340,6 @@ public class RichTextEditorModel {
      * @return true if style is active
      */
     public boolean hasStyleAt(int position, Style style) {
-        Objects.requireNonNull(style, "style");
         if (length() == 0) {
             return false;
         }
@@ -364,7 +362,6 @@ public class RichTextEditorModel {
      * @return true if the style is active everywhere in selection or at caret
      */
     public boolean isSelectionStyled(Style style) {
-        Objects.requireNonNull(style, "style");
         IndexRange selection = getSelection();
         if (selection.length() == 0) {
             return hasStyleAt(getPropertyProbeIndex(), style);

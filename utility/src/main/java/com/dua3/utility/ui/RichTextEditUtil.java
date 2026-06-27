@@ -4,7 +4,6 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Toolkit-independent rich-text editing helpers.
@@ -22,7 +21,6 @@ public final class RichTextEditUtil {
      * @return detached rich text
      */
     public static RichText detachedRichText(CharSequence text) {
-        Objects.requireNonNull(text, "text");
         if (text.isEmpty()) {
             return RichText.emptyText();
         }
@@ -41,7 +39,6 @@ public final class RichTextEditUtil {
      * @return detached subsequence
      */
     public static RichText detachedSubSequence(RichText text, int start, int end) {
-        Objects.requireNonNull(text, "text");
         int s = Math.clamp(Math.min(start, end), 0, text.length());
         int e = Math.clamp(Math.max(start, end), 0, text.length());
         if (s == e) {
@@ -61,8 +58,6 @@ public final class RichTextEditUtil {
      * @throws IOException if writing fails
      */
     public static void appendPlainText(RichText text, Appendable appendable) throws IOException {
-        Objects.requireNonNull(text, "text");
-        Objects.requireNonNull(appendable, "appendable");
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c != RichText.SPLIT_MARKER) {
@@ -79,8 +74,6 @@ public final class RichTextEditUtil {
      * @return changed range
      */
     public static ChangeRange findChangedRange(RichText current, RichText updated) {
-        Objects.requireNonNull(current, "current");
-        Objects.requireNonNull(updated, "updated");
         int prefix = current.commonPrefixLength(updated);
         int maxSuffix = Math.min(current.length(), updated.length()) - prefix;
         int suffix = Math.min(current.commonSuffixLength(updated), maxSuffix);
@@ -95,7 +88,6 @@ public final class RichTextEditUtil {
      * @return previous-word start
      */
     public static int previousWordStart(CharSequence text, int from) {
-        Objects.requireNonNull(text, "text");
         int i = Math.clamp(from, 0, text.length());
         if (i == 0) {
             return 0;
@@ -118,7 +110,6 @@ public final class RichTextEditUtil {
      * @return next-word start
      */
     public static int nextWordStart(CharSequence text, int from) {
-        Objects.requireNonNull(text, "text");
         int i = Math.clamp(from, 0, text.length());
         int n = text.length();
         while (i < n && isWordChar(text.charAt(i))) {
@@ -138,7 +129,6 @@ public final class RichTextEditUtil {
      * @return next-word end
      */
     public static int nextWordEnd(CharSequence text, int from) {
-        Objects.requireNonNull(text, "text");
         int i = Math.clamp(from, 0, text.length());
         int n = text.length();
         while (i < n && !isWordChar(text.charAt(i))) {
@@ -158,7 +148,6 @@ public final class RichTextEditUtil {
      * @return detected range
      */
     public static WordRange wordRangeAt(CharSequence text, int position) {
-        Objects.requireNonNull(text, "text");
         int n = text.length();
         if (n == 0) {
             return new WordRange(0, 0);

@@ -870,7 +870,6 @@ public final class RichText
      * @return updated rich text
      */
     public RichText replace(int start, int end, RichText replacement) {
-        Objects.requireNonNull(replacement, "replacement");
         Objects.checkFromToIndex(start, end, length);
 
         if (start == end && replacement.isEmpty()) {
@@ -903,7 +902,6 @@ public final class RichText
      * @return common prefix length
      */
     public int commonPrefixLength(RichText other) {
-        Objects.requireNonNull(other, "other");
         if (this == other) {
             return length;
         }
@@ -939,7 +937,6 @@ public final class RichText
      * @return common suffix length
      */
     public int commonSuffixLength(RichText other) {
-        Objects.requireNonNull(other, "other");
         if (this == other) {
             return length;
         }

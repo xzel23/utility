@@ -3,7 +3,6 @@ package com.dua3.utility.ui;
 import com.dua3.utility.text.Font;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Cached visual line layout keyed by width and base font.
@@ -21,7 +20,6 @@ public record VisualLineCache(double widthKey, Font font, List<VisualLine> lines
      * @param lines cached lines
      */
     public VisualLineCache {
-        Objects.requireNonNull(font, "font");
         lines = List.copyOf(lines);
     }
 }

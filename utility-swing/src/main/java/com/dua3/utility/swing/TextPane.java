@@ -164,7 +164,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
     @Override
     public final void setTextFont(Font value) {
-        textFont = Objects.requireNonNull(value);
+        textFont = value;
         textComponent.setFont(com.dua3.utility.awt.AwtFontUtil.getInstance().convert(textFont));
         invalidateRenderLayout();
     }
@@ -176,7 +176,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
     @Override
     public void setHyperlinkHandler(Consumer<URI> handler) {
-        hyperlinkHandler = Objects.requireNonNull(handler);
+        hyperlinkHandler = handler;
     }
 
     /**

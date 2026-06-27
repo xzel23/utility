@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -61,9 +60,6 @@ public final class RichTextVisualLayoutHelper {
          * @param layoutToSourcePosition mapping callback
          */
         public BlockLayout {
-            Objects.requireNonNull(renderLines, "renderLines");
-            Objects.requireNonNull(layoutToSourcePosition, "layoutToSourcePosition");
-
             List<List<FragmentedText.Fragment>> immutableLines = new ArrayList<>(renderLines.size());
             for (List<FragmentedText.Fragment> line : renderLines) {
                 immutableLines.add(List.copyOf(line));
@@ -85,8 +81,6 @@ public final class RichTextVisualLayoutHelper {
      * @return immutable list of logical blocks
      */
     public static List<LogicalBlock> splitLogicalBlocks(RichText text) {
-        Objects.requireNonNull(text, "text");
-
         List<LogicalBlock> logicalBlocks = new ArrayList<>();
         int lineStart = 0;
         int length = text.length();
@@ -131,10 +125,6 @@ public final class RichTextVisualLayoutHelper {
             FontUtil fontUtil,
             Function<? super RichText, BlockLayout> blockLayoutFactory
     ) {
-        Objects.requireNonNull(logicalBlocks, "logicalBlocks");
-        Objects.requireNonNull(fontUtil, "fontUtil");
-        Objects.requireNonNull(blockLayoutFactory, "blockLayoutFactory");
-
         double lineHeight = Math.max(1.0, defaultLineHeight);
         if (logicalBlocks.isEmpty()) {
             return List.of(new VisualLine(0, 0, 0.0, lineHeight, new double[]{0.0}));
@@ -149,7 +139,7 @@ public final class RichTextVisualLayoutHelper {
                 continue;
             }
 
-            BlockLayout layout = Objects.requireNonNull(blockLayoutFactory.apply(block.text()));
+            BlockLayout layout = blockLayoutFactory.apply(block.text());
             List<VisualLine> blockLines = new ArrayList<>();
             for (List<FragmentedText.Fragment> fragmentLine : layout.renderLines()) {
                 VisualLine localLine = toLocalVisualLine(fragmentLine, layout.layoutToSourcePosition(), fontUtil, lineHeight);

@@ -3,7 +3,6 @@ package com.dua3.utility.ui;
 import com.dua3.utility.text.FragmentedText;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -40,10 +39,6 @@ public final class RichTextRenderer {
             List<List<FragmentedText.Fragment>> lines,
             Predicate<FragmentedText.Fragment> excludedFromBaseline
     ) {
-        Objects.requireNonNull(graphics, "graphics");
-        Objects.requireNonNull(lines, "lines");
-        Objects.requireNonNull(excludedFromBaseline, "excludedFromBaseline");
-
         for (List<FragmentedText.Fragment> line : lines) {
             double lineBaseline = line.stream()
                     .filter(excludedFromBaseline.negate())

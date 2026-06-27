@@ -4,7 +4,6 @@ import com.dua3.utility.text.RichText;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Shared undo/redo history for text replacement operations.
@@ -93,7 +92,6 @@ public final class RichTextEditHistory {
      * @param entry history entry
      */
     public void push(TextReplaceHistoryEntry entry) {
-        Objects.requireNonNull(entry, "entry");
         undoStack.add(entry);
         while (undoStack.size() > maxHistorySize) {
             undoStack.removeFirst();
@@ -108,7 +106,6 @@ public final class RichTextEditHistory {
      * @return {@code true} if one step was applied
      */
     public boolean undo(TextReplaceApplier applier) {
-        Objects.requireNonNull(applier, "applier");
         if (undoStack.isEmpty()) {
             return false;
         }
@@ -132,7 +129,6 @@ public final class RichTextEditHistory {
      * @return {@code true} if one step was applied
      */
     public boolean redo(TextReplaceApplier applier) {
-        Objects.requireNonNull(applier, "applier");
         if (redoStack.isEmpty()) {
             return false;
         }
