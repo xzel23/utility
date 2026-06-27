@@ -5,7 +5,9 @@ import com.dua3.utility.text.Run;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.SwingUtilities;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -90,6 +92,43 @@ class TextEditorPaneTest {
         assertTrue(isBoldAt(redone, 1));
     }
 
+    @Test
+    void testUpAtFirstLineMovesCaretToLineStart() {
+        TextEditorPane editor = onEdtGet(() -> new TextEditorPane("abcd\nefgh"));
+
+        onEdtRun(() -> {
+            editor.setCaretPosition(2);
+            invokeKeyPressed(editor, KeyEvent.VK_UP);
+        });
+
+        assertEquals(0, onEdtGet(editor::getCaretPosition));
+    }
+
+    @Test
+    void testDownAtLastLineMovesCaretToLineEnd() {
+        TextEditorPane editor = onEdtGet(() -> new TextEditorPane("abcd\nefgh"));
+
+        onEdtRun(() -> {
+            editor.setCaretPosition(7);
+            invokeKeyPressed(editor, KeyEvent.VK_DOWN);
+        });
+
+        assertEquals(9, onEdtGet(editor::getCaretPosition));
+    }
+
+    @Test
+    void testEnterIsInsertedOnlyOnceWhenPressedAndTypedEventsFire() {
+        TextEditorPane editor = onEdtGet(() -> new TextEditorPane("a"));
+
+        onEdtRun(() -> {
+            editor.setCaretPosition(editor.getText().length());
+            invokeKeyPressed(editor, KeyEvent.VK_ENTER);
+            invokeKeyTyped(editor, '\n');
+        });
+
+        assertEquals("a\n", onEdtGet(() -> editor.getText().toString()));
+    }
+
     private static boolean isBoldAt(RichText text, int index) {
         for (Run run : text) {
             if (run.getStart() <= index && index < run.getEnd()) {
@@ -125,5 +164,39 @@ class TextEditorPaneTest {
         @SuppressWarnings("unchecked")
         T value = (T) result[0];
         return value;
+    }
+
+    private static void invokeKeyPressed(TextEditorPane editor, int keyCode) {
+        KeyEvent event = new KeyEvent(
+                editor.getTextComponent(),
+                KeyEvent.KEY_PRESSED,
+                System.currentTimeMillis(),
+                0,
+                keyCode,
+                KeyEvent.CHAR_UNDEFINED
+        );
+        invokePrivate(editor, "handleKeyPressed", event);
+    }
+
+    private static void invokeKeyTyped(TextEditorPane editor, char ch) {
+        KeyEvent event = new KeyEvent(
+                editor.getTextComponent(),
+                KeyEvent.KEY_TYPED,
+                System.currentTimeMillis(),
+                0,
+                KeyEvent.VK_UNDEFINED,
+                ch
+        );
+        invokePrivate(editor, "handleKeyTyped", event);
+    }
+
+    private static void invokePrivate(TextEditorPane editor, String methodName, KeyEvent event) {
+        try {
+            Method method = TextEditorPane.class.getDeclaredMethod(methodName, KeyEvent.class);
+            method.setAccessible(true);
+            method.invoke(editor, event);
+        } catch (ReflectiveOperationException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

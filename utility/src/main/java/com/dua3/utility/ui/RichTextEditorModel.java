@@ -799,7 +799,12 @@ public class RichTextEditorModel {
                 : preferredCaretX;
 
         int targetLineIndex = Math.clamp((long) currentLineIndex + deltaLines, 0, lines.size() - 1);
-        int targetCaret = RichTextVisualLayoutHelper.indexForX(lines.get(targetLineIndex), x);
+        int targetCaret;
+        if (targetLineIndex == currentLineIndex && deltaLines != 0) {
+            targetCaret = deltaLines < 0 ? lines.getFirst().start() : lines.getLast().end();
+        } else {
+            targetCaret = RichTextVisualLayoutHelper.indexForX(lines.get(targetLineIndex), x);
+        }
         preferredCaretX = x;
         return moveCaretTo(targetCaret, extendSelection, false);
     }

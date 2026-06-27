@@ -249,6 +249,38 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testUpAtFirstLineMovesCaretToLineStart() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("abcd\nefgh");
+            editor.setWrapText(false);
+            addToScene(editor);
+
+            editor.positionCaret(2);
+            editor.processKeyPressed(keyPressed(KeyCode.UP, false));
+
+            assertEquals(0, editor.getCaretPosition());
+            assertEquals(0, editor.getAnchor());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testDownAtLastLineMovesCaretToLineEnd() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("abcd\nefgh");
+            editor.setWrapText(false);
+            addToScene(editor);
+
+            editor.positionCaret(7);
+            editor.processKeyPressed(keyPressed(KeyCode.DOWN, false));
+
+            assertEquals(editor.getLength(), editor.getCaretPosition());
+            assertEquals(editor.getLength(), editor.getAnchor());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testAppendingAtDocumentEndKeepsCaretLineVisible() throws Exception {
         AtomicReference<TextEditorPane> editorRef = new AtomicReference<>();
         runOnFxThreadAndWait(() -> {

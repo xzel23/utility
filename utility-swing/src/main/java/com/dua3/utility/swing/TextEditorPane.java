@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -506,7 +507,7 @@ public class TextEditorPane extends TextPane {
             return;
         }
 
-        if (c >= 0x20 || c == '\n' || c == '\t') {
+        if (c >= 0x20 || c == '\t') {
             replaceSelection(String.valueOf(c));
             event.consume();
         }
@@ -686,7 +687,27 @@ public class TextEditorPane extends TextPane {
             syncTypingStylesFromCaret();
         }
 
+        ensureCaretVisible();
         getTextComponent().repaint();
+    }
+
+    private void ensureCaretVisible() {
+        List<VisualLine> lines = getRenderLayout().visualLines();
+        if (lines.isEmpty()) {
+            return;
+        }
+
+        int caret = model.getCaretPosition();
+        int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
+        if (lineIndex < 0 || lineIndex >= lines.size()) {
+            return;
+        }
+
+        VisualLine line = lines.get(lineIndex);
+        int x = (int) Math.floor(RichTextVisualLayoutHelper.xForIndex(line, caret));
+        int y = (int) Math.floor(line.top());
+        int h = Math.max(1, (int) Math.ceil(line.height()));
+        getTextComponent().scrollRectToVisible(new Rectangle(x, y, 2, h));
     }
 
     private RichText toRichTextWithTypingStyles(@Nullable CharSequence text) {
