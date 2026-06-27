@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.swing.SwingUtilities;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Supplier;
@@ -129,6 +130,26 @@ class TextEditorPaneTest {
         assertEquals("a\n", onEdtGet(() -> editor.getText().toString()));
     }
 
+    @Test
+    void testDoubleClickSelectsWord() {
+        TextEditorPane editor = onEdtGet(() -> new TextEditorPane("hello world"));
+
+        onEdtRun(() -> invokeMousePressed(editor, 2, 0, 0));
+
+        assertEquals(0, onEdtGet(editor::getSelectionStart));
+        assertEquals(5, onEdtGet(editor::getSelectionEnd));
+    }
+
+    @Test
+    void testTripleClickSelectsLine() {
+        TextEditorPane editor = onEdtGet(() -> new TextEditorPane("hello world\nnext"));
+
+        onEdtRun(() -> invokeMousePressed(editor, 3, 0, 0));
+
+        assertEquals(0, onEdtGet(editor::getSelectionStart));
+        assertEquals(11, onEdtGet(editor::getSelectionEnd));
+    }
+
     private static boolean isBoldAt(RichText text, int index) {
         for (Run run : text) {
             if (run.getStart() <= index && index < run.getEnd()) {
@@ -193,6 +214,27 @@ class TextEditorPaneTest {
     private static void invokePrivate(TextEditorPane editor, String methodName, KeyEvent event) {
         try {
             Method method = TextEditorPane.class.getDeclaredMethod(methodName, KeyEvent.class);
+            method.setAccessible(true);
+            method.invoke(editor, event);
+        } catch (ReflectiveOperationException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static void invokeMousePressed(TextEditorPane editor, int clickCount, int x, int y) {
+        MouseEvent event = new MouseEvent(
+                editor.getTextComponent(),
+                MouseEvent.MOUSE_PRESSED,
+                System.currentTimeMillis(),
+                MouseEvent.BUTTON1_DOWN_MASK,
+                x,
+                y,
+                clickCount,
+                false,
+                MouseEvent.BUTTON1
+        );
+        try {
+            Method method = TextEditorPane.class.getDeclaredMethod("processMousePressed", MouseEvent.class);
             method.setAccessible(true);
             method.invoke(editor, event);
         } catch (ReflectiveOperationException ex) {

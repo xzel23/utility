@@ -8,10 +8,14 @@ import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
 import org.jspecify.annotations.Nullable;
 
+import javax.swing.Timer;
 import javax.swing.SwingUtilities;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -24,18 +28,21 @@ import java.util.List;
 public class TextEditorPane extends TextPane {
 
     private static final java.awt.Color SELECTION_COLOR = new java.awt.Color(0.25f, 0.45f, 0.85f, 0.35f);
+    private static final int CARET_BLINK_DELAY_MS = 500;
 
     private boolean editable = true;
     private boolean typingBold;
     private boolean typingItalic;
     private boolean typingUnderline;
     private boolean typingStrikeThrough;
-    private @Nullable Color typingTextColor;
-    private @Nullable Color typingBackgroundColor;
+    private transient @Nullable Color typingTextColor;
+    private transient @Nullable Color typingBackgroundColor;
     private @Nullable String typingFontFamily;
     private double typingFontSize;
     private int dragAnchor = -1;
     private long documentVersion;
+    private boolean caretVisible = true;
+    private final Timer caretBlinkTimer;
 
     private int lastAnchor;
     private int lastCaret;
@@ -59,6 +66,9 @@ public class TextEditorPane extends TextPane {
 
         getTextComponent().setFocusable(true);
         getTextComponent().setFocusTraversalKeysEnabled(false);
+        caretBlinkTimer = new Timer(CARET_BLINK_DELAY_MS, e -> onCaretBlinkTick());
+        caretBlinkTimer.setRepeats(true);
+        caretBlinkTimer.setInitialDelay(CARET_BLINK_DELAY_MS);
         installInteractionHandlers();
         syncTypingStylesFromCaret();
     }
@@ -569,7 +579,7 @@ public class TextEditorPane extends TextPane {
             }
         }
 
-        if (editable && getTextComponent().isFocusOwner()) {
+        if (shouldPaintCaret() && caretVisible) {
             int caret = model.getCaretPosition();
             int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             if (lineIndex >= 0 && lineIndex < lines.size()) {
@@ -584,41 +594,34 @@ public class TextEditorPane extends TextPane {
     }
 
     private void installInteractionHandlers() {
+        getTextComponent().addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                restartCaretBlink();
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                stopCaretBlink();
+            }
+        });
+
         getTextComponent().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (!SwingUtilities.isLeftMouseButton(e)) {
-                    return;
-                }
-
-                getTextComponent().requestFocusInWindow();
-                int index = pointToIndex(e.getPoint());
-                if (e.isShiftDown()) {
-                    dragAnchor = model.getAnchor();
-                    model.selectRange(model.getAnchor(), index);
-                } else {
-                    dragAnchor = index;
-                    model.selectRange(index, index);
-                }
-                onSelectionChanged(true);
+                processMousePressed(e);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                dragAnchor = -1;
+                processMouseReleased(e);
             }
         });
 
         getTextComponent().addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (!SwingUtilities.isLeftMouseButton(e)) {
-                    return;
-                }
-                int anchor = dragAnchor >= 0 ? dragAnchor : model.getAnchor();
-                int index = pointToIndex(e.getPoint());
-                model.selectRange(anchor, index);
-                onSelectionChanged(false);
+                processMouseDragged(e);
             }
         });
 
@@ -633,6 +636,64 @@ public class TextEditorPane extends TextPane {
                 handleKeyPressed(e);
             }
         });
+    }
+
+    private void processMousePressed(MouseEvent event) {
+        if (!SwingUtilities.isLeftMouseButton(event)) {
+            return;
+        }
+
+        getTextComponent().requestFocusInWindow();
+
+        int index = pointToIndex(event.getPoint());
+        if (event.getClickCount() >= 3) {
+            selectLineAt(index);
+            dragAnchor = model.getAnchor();
+            onSelectionChanged(true);
+            return;
+        }
+
+        if (event.isShiftDown()) {
+            model.selectRange(model.getAnchor(), index);
+        } else {
+            model.selectRange(index, index);
+        }
+
+        if (event.getClickCount() >= 2) {
+            selectWordAt(index);
+        }
+
+        dragAnchor = model.getAnchor();
+        onSelectionChanged(true);
+    }
+
+    private void processMouseReleased(MouseEvent event) {
+        if (!SwingUtilities.isLeftMouseButton(event)) {
+            return;
+        }
+        dragAnchor = -1;
+    }
+
+    private void processMouseDragged(MouseEvent event) {
+        if ((event.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) == 0) {
+            return;
+        }
+        int anchor = dragAnchor >= 0 ? dragAnchor : model.getAnchor();
+        int index = pointToIndex(event.getPoint());
+        model.selectRange(anchor, index);
+        onSelectionChanged(false);
+    }
+
+    private void selectWordAt(int position) {
+        var range = model.wordSelectionRangeAt(position);
+        model.selectRange(range.start(), range.end());
+        model.resetPreferredCaretX();
+    }
+
+    private void selectLineAt(int position) {
+        var range = model.lineRangeAt(position);
+        model.selectRange(range.start(), range.end());
+        model.resetPreferredCaretX();
     }
 
     private int pointToIndex(Point point) {
@@ -836,6 +897,7 @@ public class TextEditorPane extends TextPane {
         }
 
         ensureCaretVisible();
+        restartCaretBlink();
         getTextComponent().repaint();
     }
 
@@ -893,6 +955,34 @@ public class TextEditorPane extends TextPane {
         typingBackgroundColor = properties.backgroundColor();
         typingFontFamily = properties.fontFamily();
         typingFontSize = properties.fontSize();
+    }
+
+    private boolean shouldPaintCaret() {
+        return editable && getTextComponent().isFocusOwner();
+    }
+
+    private void restartCaretBlink() {
+        if (!shouldPaintCaret()) {
+            return;
+        }
+        caretVisible = true;
+        caretBlinkTimer.restart();
+    }
+
+    private void stopCaretBlink() {
+        caretBlinkTimer.stop();
+        caretVisible = false;
+        getTextComponent().repaint();
+    }
+
+    private void onCaretBlinkTick() {
+        if (shouldPaintCaret()) {
+            caretVisible = !caretVisible;
+            getTextComponent().repaint();
+        } else {
+            caretVisible = false;
+            caretBlinkTimer.stop();
+        }
     }
 
 }
