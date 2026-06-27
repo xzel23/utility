@@ -5,6 +5,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.swing.TextEditorPane;
 import com.dua3.utility.swing.TextPane;
+import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
@@ -32,6 +33,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 /**
  * Swing sample for {@link TextEditorPane} and {@link TextPane}.
@@ -57,6 +59,8 @@ public final class SwingTextEditorPaneSample {
             Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
             Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
     };
+    private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
+    private static final Font DEFAULT_FONT = FONT_UTIL.getDefaultFont();
 
     private SwingTextEditorPaneSample() {
         // no instances
@@ -143,20 +147,17 @@ public final class SwingTextEditorPaneSample {
         JButton paste = new JButton("Paste");
         paste.addActionListener(e -> editor.paste());
 
-        JToggleButton bold = new JToggleButton("B");
-        bold.addActionListener(e -> editor.markBold(bold.isSelected()));
-        JToggleButton italic = new JToggleButton("I");
-        italic.addActionListener(e -> editor.markItalic(italic.isSelected()));
-        JToggleButton underline = new JToggleButton("U");
-        underline.addActionListener(e -> editor.markUnderline(underline.isSelected()));
-        JToggleButton strike = new JToggleButton("S");
-        strike.addActionListener(e -> editor.markStrikeThrough(strike.isSelected()));
+        JToggleButton bold = fontStyleButton("B", DEFAULT_FONT.withBold(true), editor::markBold);
+        JToggleButton italic = fontStyleButton("I", DEFAULT_FONT.withItalic(true), editor::markItalic);
+        JToggleButton underline = fontStyleButton("U", DEFAULT_FONT.withUnderline(true), editor::markUnderline);
+        JToggleButton strike = fontStyleButton("S", DEFAULT_FONT.withStrikeThrough(true), editor::markStrikeThrough);
+
         JButton undo = new JButton("Undo");
         undo.addActionListener(e -> editor.undo());
         JButton redo = new JButton("Redo");
         redo.addActionListener(e -> editor.redo());
 
-        JComboBox<String> fontList = new JComboBox<>(AwtFontUtil.getInstance().getFamilies(FontUtil.FontTypes.ALL).toArray(new String[0]));
+        JComboBox<String> fontList = new JComboBox<>(FONT_UTIL.getFamilies(FontUtil.FontTypes.ALL).toArray(new String[0]));
         JComboBox<Float> sizeList = new JComboBox<>(DEFAULT_FONT_SIZES);
         JComboBox<Color> textColorList = new JComboBox<>(DEFAULT_TEXT_COLORS);
         JComboBox<Color> backgroundColorList = new JComboBox<>(DEFAULT_BACKGROUND_COLORS);
@@ -336,6 +337,13 @@ public final class SwingTextEditorPaneSample {
 
     private static String oneLine(RichText text) {
         return text.toString().replace("\n", "\\n");
+    }
+
+    private static JToggleButton fontStyleButton(String text, Font font, Consumer<Boolean> action) {
+        JToggleButton button = new JToggleButton(text);
+        button.setFont(FONT_UTIL.convert(font));
+        button.addActionListener(evt -> action.accept(button.isSelected()));
+        return button;
     }
 
     private static DefaultListCellRenderer createColorRenderer() {
