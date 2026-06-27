@@ -325,6 +325,12 @@ public class TextPane extends JScrollPane implements RichTextPane {
         );
 
         double renderHeight = Math.max(defaultLineHeight, computeRenderedHeight(shiftedRenderLines, lineShiftData.tailOverflowBelow(), textFont));
+        // Fragment-rendered height can miss synthetic visual lines (e.g. trailing empty source line).
+        // Ensure the overall layout height always contains the full visual caret/selection space.
+        if (!visualLines.isEmpty()) {
+            VisualLine lastLine = visualLines.getLast();
+            renderHeight = Math.max(renderHeight, lastLine.top() + lastLine.height());
+        }
         RichTextPaneLayoutHelper.Layout<InlineComponentPlacement> layout = new RichTextPaneLayoutHelper.Layout<>(
                 shiftedRenderLines,
                 shiftedPlacements,

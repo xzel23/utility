@@ -5,6 +5,7 @@ import com.dua3.utility.text.Run;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.SwingUtilities;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -148,6 +149,17 @@ class TextEditorPaneTest {
 
         assertEquals(0, onEdtGet(editor::getSelectionStart));
         assertEquals(11, onEdtGet(editor::getSelectionEnd));
+    }
+
+    @Test
+    void testPreferredHeightIncludesTrailingEmptyLine() {
+        TextEditorPane singleLine = onEdtGet(() -> new TextEditorPane("abc"));
+        TextEditorPane trailingEmptyLine = onEdtGet(() -> new TextEditorPane("abc\n"));
+
+        Dimension h1 = onEdtGet(() -> singleLine.getTextComponent().getPreferredSize());
+        Dimension h2 = onEdtGet(() -> trailingEmptyLine.getTextComponent().getPreferredSize());
+
+        assertTrue(h2.height > h1.height, "Trailing empty line must increase preferred height");
     }
 
     private static boolean isBoldAt(RichText text, int index) {
