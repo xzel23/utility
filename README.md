@@ -242,6 +242,7 @@ This release introduces some major changes, both to existing interfaces and also
 
 #### To Do
 
+- Fix: when line has trailing whitespace, caret stays at position of last non-whitespace character.
 - Make Hyperlinks in non-editable JavaFX TextEditorPane clickable
 - Make the toolbar part of the interface and change Swing implementation to support showing and hiding the toolbar 
   like in the JavaFX implementation.
