@@ -3,6 +3,7 @@ package com.dua3.utility.swing;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.RichTextEditorPane;
 import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
@@ -25,12 +26,13 @@ import java.util.List;
 /**
  * Swing rich-text editor pane backed by a shared {@link com.dua3.utility.ui.RichTextEditorModel}.
  */
-public class TextEditorPane extends TextPane {
+public class TextEditorPane extends TextPane implements RichTextEditorPane {
 
     private static final java.awt.Color SELECTION_COLOR = new java.awt.Color(0.25f, 0.45f, 0.85f, 0.35f);
     private static final int CARET_BLINK_DELAY_MS = 500;
 
     private boolean editable = true;
+    private boolean enterKeyInsertsNewline = true;
     private boolean typingBold;
     private boolean typingItalic;
     private boolean typingUnderline;
@@ -111,6 +113,16 @@ public class TextEditorPane extends TextPane {
         getTextComponent().setFocusable(value);
         firePropertyChange("editable", old, value);
         repaint();
+    }
+
+    @Override
+    public boolean isEnterKeyInsertsNewline() {
+        return enterKeyInsertsNewline;
+    }
+
+    @Override
+    public void setEnterKeyInsertsNewline(boolean value) {
+        enterKeyInsertsNewline = value;
     }
 
     /**
@@ -846,10 +858,10 @@ public class TextEditorPane extends TextPane {
                 event.consume();
             }
             case KeyEvent.VK_ENTER -> {
-                if (editable) {
+                if (editable && enterKeyInsertsNewline) {
                     replaceSelection("\n");
+                    event.consume();
                 }
-                event.consume();
             }
             default -> {
                 // no-op

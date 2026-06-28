@@ -8,6 +8,7 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.ui.IndexRange;
+import com.dua3.utility.ui.RichTextEditorPane;
 import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextPaneLayoutHelper;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
@@ -54,8 +55,9 @@ import java.util.stream.Stream;
  * {@link #textProperty()} exposes {@link ToRichText} snapshots and is updated on
  * each document change.
  */
-public class TextEditorPane extends TextPane implements InputControl<RichText> {
+public class TextEditorPane extends TextPane implements InputControl<RichText>, RichTextEditorPane {
     private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
+    private final BooleanProperty enterKeyInsertsNewline = new SimpleBooleanProperty(this, "enterKeyInsertsNewline", true);
     private final BooleanProperty toolbarVisible = new SimpleBooleanProperty(this, "toolbarVisible", false);
     private final ReadOnlyIntegerWrapper length = new ReadOnlyIntegerWrapper(this, "length", 0);
     private final ReadOnlyObjectWrapper<RichText> selectedText = new ReadOnlyObjectWrapper<>(this, "selectedText", RichText.emptyText());
@@ -201,10 +203,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
 
     private void markDocumentChanged() {
         documentVersion.set(documentVersion.get() + 1L);
-    }
-
-    private int documentLength() {
-        return sharedModel.length();
     }
 
     private RichText materializeDocumentText() {
@@ -420,8 +418,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
         }
 
         if ("\r".equals(chars)) {
-            replaceSelection(toRichTextWithCurrentProperties("\n"));
-            evt.consume();
+            if (isEnterKeyInsertsNewline()) {
+                replaceSelection(toRichTextWithCurrentProperties("\n"));
+                evt.consume();
+            }
             return;
         }
 
@@ -519,6 +519,16 @@ public class TextEditorPane extends TextPane implements InputControl<RichText> {
      */
     public final boolean isEditable() {
         return editable.get();
+    }
+
+    @Override
+    public final boolean isEnterKeyInsertsNewline() {
+        return enterKeyInsertsNewline.get();
+    }
+
+    @Override
+    public final void setEnterKeyInsertsNewline(boolean value) {
+        enterKeyInsertsNewline.set(value);
     }
 
     /**
