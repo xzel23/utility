@@ -7,6 +7,7 @@ import com.dua3.utility.text.Run;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,6 +159,8 @@ public final class RichTextVisualLayoutHelper {
 
             if (blockLines.isEmpty()) {
                 blockLines.add(new VisualLine(block.start(), block.start(), yOffset, lineHeight, new double[]{0.0}));
+            } else {
+                extendLastLineToBlockEnd(blockLines, block, fontUtil);
             }
 
             lines.addAll(blockLines);
@@ -168,6 +171,42 @@ public final class RichTextVisualLayoutHelper {
             lines.add(new VisualLine(0, 0, 0.0, lineHeight, new double[]{0.0}));
         }
         return List.copyOf(lines);
+    }
+
+    private static void extendLastLineToBlockEnd(List<VisualLine> blockLines, LogicalBlock block, FontUtil fontUtil) {
+        VisualLine last = blockLines.getLast();
+        int missing = block.end() - last.end();
+        if (missing <= 0) {
+            return;
+        }
+
+        double[] extendedBoundaries = Arrays.copyOf(last.boundaries(), last.boundaries().length + missing);
+        double x = last.maxX();
+        double step = estimateTrailingWhitespaceStep(block.text(), fontUtil);
+        for (int i = 0; i < missing; i++) {
+            x += step;
+            extendedBoundaries[last.boundaries().length + i] = x;
+        }
+
+        blockLines.set(blockLines.size() - 1,
+                new VisualLine(last.start(), block.end(), last.top(), last.height(), extendedBoundaries));
+    }
+
+    private static double estimateTrailingWhitespaceStep(RichText text, FontUtil fontUtil) {
+        for (int i = text.length() - 1; i >= 0; i--) {
+            char ch = text.charAt(i);
+            if (!Character.isWhitespace(ch) || ch == '\n') {
+                break;
+            }
+            if (ch == ' ') {
+                for (Run run : text) {
+                    if (run.getStart() <= i && i < run.getEnd()) {
+                        return Math.max(0.0, fontUtil.getTextWidth(" ", fontUtil.getFont(run.getFontDef())));
+                    }
+                }
+            }
+        }
+        return 0.0;
     }
 
     /**
