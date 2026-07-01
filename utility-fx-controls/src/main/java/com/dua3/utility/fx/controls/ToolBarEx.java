@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -45,7 +46,7 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
 
     private final Map<Location, Supplier<@Nullable Parent>> locationToParent = new EnumMap<>(Location.class);
     private @Nullable Parent embeddedParent;
-    private @Nullable Scene mainScene;
+    private WeakReference<@Nullable Scene> mainScene = new WeakReference<>(null);
 
     /**
      * Constructs a {@code ToolBarExt} instance with the provided items.
@@ -70,7 +71,7 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                 embeddedParent = newValue;
 
                 // keep the owner up to date
-                newValue.sceneProperty().addListener((obs, oldVScene, newScene) -> mainScene = newScene);
+                newValue.sceneProperty().addListener((obs, oldVScene, newScene) -> mainScene = new WeakReference<>(newScene));
 
                 if (getLocation() != Location.EMBEDDED) {
                     removeFromParent(getNode());
@@ -159,9 +160,13 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                     }
                 } else if (stage == null) {
                     stage = new Stage(StageStyle.UNDECORATED);
-                    if (mainScene != null) {
-                        Window ownerWindow = mainScene.getWindow();
+                    if (mainScene.get() instanceof Scene sceneRef) {
+                        Window ownerWindow = sceneRef.getWindow();
                         stage.initOwner(ownerWindow);
+                        ownerWindow.onHidingProperty().addListener((obs, oldVal, newVal) -> {
+                            stage.close();
+                            stage = null;
+                        });
                     }
                     stage.setScene(scene);
                     stage.show();
