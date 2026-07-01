@@ -47,6 +47,7 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Swing rich-text editor pane backed by a shared {@link com.dua3.utility.ui.RichTextEditorModel}.
@@ -79,19 +80,19 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     };
     private static final Dimension SYMBOL_BUTTON_SIZE = new Dimension(24, 24);
 
-    private boolean editable = true;
-    private boolean enterKeyInsertsNewline = true;
-    private boolean typingBold;
-    private boolean typingItalic;
-    private boolean typingUnderline;
-    private boolean typingStrikeThrough;
+    private volatile boolean editable = true;
+    private volatile boolean enterKeyInsertsNewline = true;
+    private volatile boolean typingBold;
+    private volatile boolean typingItalic;
+    private volatile boolean typingUnderline;
+    private volatile boolean typingStrikeThrough;
     private transient @Nullable Color typingTextColor;
     private transient @Nullable Color typingBackgroundColor;
     private @Nullable String typingFontFamily;
-    private double typingFontSize;
+    private volatile double typingFontSize;
     private int dragAnchor = -1;
-    private long documentVersion;
-    private boolean caretVisible = true;
+    private final AtomicLong documentVersion = new AtomicLong();
+    private volatile boolean caretVisible = true;
     private final Timer caretBlinkTimer;
 
     private int lastAnchor;
@@ -228,7 +229,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
      * @return document version, incremented on each document mutation
      */
     public long getDocumentVersion() {
-        return documentVersion;
+        return documentVersion.get();
     }
 
     @Override
@@ -719,9 +720,8 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     protected void onModelChanged() {
         super.onModelChanged();
 
-        long oldVersion = documentVersion;
-        documentVersion++;
-        firePropertyChange("documentVersion", oldVersion, documentVersion);
+        long oldVersion = documentVersion.getAndIncrement();
+        firePropertyChange("documentVersion", oldVersion, oldVersion + 1L);
         firePropertyChange("text", null, model.getText());
         onSelectionChanged(true);
     }
