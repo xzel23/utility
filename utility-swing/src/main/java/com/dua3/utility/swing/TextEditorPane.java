@@ -27,6 +27,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
@@ -1286,7 +1287,11 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 toolbar.setVisible(true);
             } else if (toolbarLocation == DetachableNode.Location.APPLICATION && toolbarApplicationParent != null) {
                 setColumnHeaderView(null);
-                toolbarApplicationParent.add(toolbar, java.awt.BorderLayout.NORTH);
+                if (toolbarApplicationParent.getLayout() instanceof BorderLayout) {
+                    toolbarApplicationParent.add(toolbar, BorderLayout.NORTH);
+                } else {
+                    toolbarApplicationParent.add(toolbar, 0);
+                }
                 toolbar.setVisible(true);
             } else {
                 setColumnHeaderView(null);
