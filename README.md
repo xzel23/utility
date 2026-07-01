@@ -240,17 +240,11 @@ could not be loaded.
 
 This release introduces some major changes, both to existing interfaces and also by adding new functionality.
 
-#### To Do
-
-- Make Hyperlinks in non-editable JavaFX TextEditorPane clickable
-- SwingTextEditorPane: Make the toolbar part of the interface and change Swing implementation to support showing and 
-  hiding the toolbar like in the JavaFX implementation.
-
 #### Changes in 23.0.0-beta3
 
 - Fix: when line has trailing whitespace, caret stays at position of last non-whitespace character.
-- TextEditorPane (JavaFX implementation): Support showing the toolbar outside of the `TextPane`, i.e., floating or 
-  controlled by the main application.
+- TextEditorPane: Support showing the toolbar outside of the `TextPane`, i.e., floating or controlled by the
+  main application.
 
 #### Changes in 23.0.0-beta2
 
