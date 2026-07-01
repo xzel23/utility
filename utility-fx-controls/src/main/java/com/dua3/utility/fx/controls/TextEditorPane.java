@@ -34,6 +34,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -420,19 +421,16 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
             return;
         }
 
-        if ("\r".equals(chars)) {
-            if (isEnterKeyInsertsNewline()) {
-                replaceSelection(toRichTextWithCurrentProperties("\n"));
-                evt.consume();
+        switch (chars) {
+            case "\r" -> {
+                if (isEnterKeyInsertsNewline()) {
+                    replaceSelection(toRichTextWithCurrentProperties("\n"));
+                    evt.consume();
+                }
+                return;
             }
-            return;
-        }
-
-        if ("\u007F".equals(chars) || "\b".equals(chars)) {
-            return;
-        }
-        if ("\t".equals(chars)) {
-            return;
+            case "\u007F", "\b", "\t" -> {return;}
+            default -> { /* nothing to do */ }
         }
 
         boolean hasPrintable = chars.chars().anyMatch(c -> c >= 0x20 || c == '\n' || c == '\t');
