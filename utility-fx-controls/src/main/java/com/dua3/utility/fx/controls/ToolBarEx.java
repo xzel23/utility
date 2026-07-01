@@ -118,9 +118,10 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
         FloatingPane() {
             // Intercept mouse events during the capturing phase (on the way down) to make the floating pane draggable
             addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-                if (stage != null && isDraggableTarget(event.getTarget())) {
+                if (getBoundsInLocal().contains(event.getX(), event.getY()) && stage != null && isDraggableTarget(event.getTarget())) {
                     xOffset = event.getScreenX() - stage.getX();
                     yOffset = event.getScreenY() - stage.getY();
+                    event.consume();
                     // We do NOT consume the press here, allowing the button
                     // to still receive its click event down the line.
                 }
