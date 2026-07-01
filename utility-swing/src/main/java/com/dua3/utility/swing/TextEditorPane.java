@@ -97,6 +97,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
 
     private final JToolBar toolbar;
     private final AtomicBoolean synchronizingToolbar = new AtomicBoolean(false);
+    private final AtomicBoolean applyingToolbarLocation = new AtomicBoolean(false);
     private final JComboBox<String> fontList;
     private final JComboBox<Float> sizeList;
     private final JComboBox<Color> textColorList;
@@ -1221,13 +1222,19 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     }
 
     private void onToolbarHierarchyChanged(HierarchyEvent event) {
-        if ((event.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) == 0) {
+        long flags = event.getChangeFlags();
+        long relevantFlags = HierarchyEvent.PARENT_CHANGED | HierarchyEvent.SHOWING_CHANGED | HierarchyEvent.DISPLAYABILITY_CHANGED;
+        if ((flags & relevantFlags) == 0) {
             return;
         }
-        if (toolbarLocation == DetachableNode.Location.HIDDEN) {
+        if (applyingToolbarLocation.get()) {
             return;
         }
 
+        refreshToolbarLocationFromUi();
+    }
+
+    private void refreshToolbarLocationFromUi() {
         Container parent = toolbar.getParent();
         DetachableNode.Location newLocation = detectToolbarLocation(parent);
         if (newLocation != toolbarLocation) {
@@ -1238,48 +1245,57 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     }
 
     private DetachableNode.Location detectToolbarLocation(@Nullable Container parent) {
-        if (parent == null || !toolbar.isShowing()) {
+        if (parent == null) {
             return DetachableNode.Location.HIDDEN;
         }
         Container embeddedParent = getColumnHeader();
-        if (parent == embeddedParent || SwingUtilities.isDescendingFrom(parent, embeddedParent)) {
+        if (embeddedParent != null && (parent == embeddedParent || SwingUtilities.isDescendingFrom(parent, embeddedParent))) {
             return DetachableNode.Location.EMBEDDED;
         }
         if (toolbarApplicationParent != null && (parent == toolbarApplicationParent || SwingUtilities.isDescendingFrom(parent, toolbarApplicationParent))) {
             return DetachableNode.Location.APPLICATION;
         }
+        if (!toolbar.isVisible()) {
+            return DetachableNode.Location.HIDDEN;
+        }
         return DetachableNode.Location.FLOATING;
     }
 
     private void applyToolbarLocation() {
-        if (toolbarLocation == DetachableNode.Location.FLOATING) {
-            toolbar.setVisible(true);
-            return;
-        }
+        applyingToolbarLocation.set(true);
+        try {
+            if (toolbarLocation == DetachableNode.Location.FLOATING) {
+                toolbar.setVisible(true);
+                return;
+            }
 
-        Container currentParent = toolbar.getParent();
-        if (currentParent != null) {
-            currentParent.remove(toolbar);
-        }
+            Container currentParent = toolbar.getParent();
+            if (currentParent != null) {
+                currentParent.remove(toolbar);
+            }
 
-        if (toolbarLocation == DetachableNode.Location.EMBEDDED) {
-            setColumnHeaderView(toolbar);
-            toolbar.setVisible(true);
-        } else if (toolbarLocation == DetachableNode.Location.APPLICATION && toolbarApplicationParent != null) {
-            setColumnHeaderView(null);
-            toolbarApplicationParent.add(toolbar);
-            toolbar.setVisible(true);
-        } else {
-            setColumnHeaderView(null);
-            toolbar.setVisible(false);
-        }
+            if (toolbarLocation == DetachableNode.Location.EMBEDDED) {
+                setColumnHeaderView(toolbar);
+                toolbar.setVisible(true);
+            } else if (toolbarLocation == DetachableNode.Location.APPLICATION && toolbarApplicationParent != null) {
+                setColumnHeaderView(null);
+                toolbarApplicationParent.add(toolbar);
+                toolbar.setVisible(true);
+            } else {
+                setColumnHeaderView(null);
+                toolbar.setVisible(false);
+            }
 
-        if (toolbarApplicationParent != null) {
-            toolbarApplicationParent.revalidate();
-            toolbarApplicationParent.repaint();
+            if (toolbarApplicationParent != null) {
+                toolbarApplicationParent.revalidate();
+                toolbarApplicationParent.repaint();
+            }
+            revalidate();
+            repaint();
+        } finally {
+            applyingToolbarLocation.set(false);
+            refreshToolbarLocationFromUi();
         }
-        revalidate();
-        repaint();
     }
 
     private static JButton editButton(String text, Runnable action) {
