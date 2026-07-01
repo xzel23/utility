@@ -16,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -60,7 +61,7 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
             @SuppressWarnings("java:S4274")
             public void changed(ObservableValue<? extends @Nullable Parent> observable, @Nullable Parent oldValue, @Nullable Parent newValue) {
                 assert newValue != null : "expected non-null parent on first parent change";
-                Parent previousParent = locationToParent.computeIfAbsent(Location.EMBEDDED, k -> newValue);
+                Parent previousParent = locationToParent.put(Location.EMBEDDED, newValue);
                 assert previousParent == null : "expected previous parent to be null";
 
                 // keep the owner up to date
@@ -83,6 +84,11 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                 PlatformHelper.runAndWait(() -> {
                     Parent oldParent = getParent();
                     Parent newParent = locationToParent.get(newValue);
+
+                    // if application parent is not set, treat it as embedded
+                    if (newValue == Location.APPLICATION && newParent == null) {
+                        newParent = locationToParent.get(Location.EMBEDDED);
+                    }
 
                     if (newParent != oldParent) {
                         removeFromParent(oldParent);
@@ -145,7 +151,8 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                 } else if (stage == null) {
                     stage = new Stage(StageStyle.UNDECORATED);
                     if (mainScene != null) {
-                        stage.initOwner(mainScene.getWindow());
+                        Window ownerWindow = mainScene.getWindow();
+                        stage.initOwner(ownerWindow);
                     }
                     stage.setScene(scene);
                     stage.show();
