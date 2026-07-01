@@ -37,8 +37,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -109,7 +107,6 @@ public class TextPane extends Control implements RichTextPane {
     protected static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
 
     private static final String STYLE_ATTRIBUTE_INLINE_REFERENCE_ASCENT = TextPane.class.getName() + ".inlineReferenceAscent";
-    private static final String STYLE_ATTRIBUTE_INLINE_REFERENCE_DESCENT = TextPane.class.getName() + ".inlineReferenceDescent";
     private static final String STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH = TextPane.class.getName() + ".inlineLeadingWidth";
     private static final String DEFAULT_STYLE_CLASS = "text-pane";
 
@@ -133,47 +130,6 @@ public class TextPane extends Control implements RichTextPane {
     public TextPane(@Nullable CharSequence text) {
         this();
         setText(text);
-    }
-
-    /**
-     * Create a style that renders the run as an inline JavaFX node.
-     *
-     * @param styleName style name
-     * @param nodeFactory node factory receiving the run text
-     * @return style carrying the inline node factory
-     */
-    public static Style inlineNodeStyle(String styleName, Function<String, ? extends Node> nodeFactory) {
-        return Style.create(styleName, Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory));
-    }
-
-    /**
-     * Create a style for an inline {@link Hyperlink}.
-     *
-     * @param styleName style name
-     * @param action action handler
-     * @return style carrying an inline hyperlink factory
-     */
-    public static Style hyperlinkStyle(String styleName, EventHandler<ActionEvent> action) {
-        return inlineNodeStyle(styleName, text -> {
-            Hyperlink hyperlink = new Hyperlink(text);
-            hyperlink.setOnAction(action);
-            return hyperlink;
-        });
-    }
-
-    /**
-     * Create a style for an inline {@link Button}.
-     *
-     * @param styleName style name
-     * @param action action handler
-     * @return style carrying an inline button factory
-     */
-    public static Style buttonStyle(String styleName, EventHandler<ActionEvent> action) {
-        return inlineNodeStyle(styleName, text -> {
-            Button button = new Button(text);
-            button.setOnAction(action);
-            return button;
-        });
     }
 
     /**
