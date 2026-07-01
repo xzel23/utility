@@ -40,6 +40,7 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
     private final List<LocationListener> locationListeners = new ArrayList<>();
 
     private final Map<Location, @Nullable Parent> locationToParent = new EnumMap<>(Location.class);
+    private @Nullable Scene mainScene;
 
     /**
      * Constructs a {@code ToolBarExt} instance with the provided items.
@@ -59,7 +60,11 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
             @SuppressWarnings("java:S4274")
             public void changed(ObservableValue<? extends @Nullable Parent> observable, @Nullable Parent oldValue, @Nullable Parent newValue) {
                 assert newValue != null : "expected non-null parent on first parent change";
-                locationToParent.computeIfAbsent(Location.EMBEDDED, k -> newValue);
+                Parent previousParent = locationToParent.computeIfAbsent(Location.EMBEDDED, k -> newValue);
+                assert previousParent == null : "expected previous parent to be null";
+
+                // keep the owner up to date
+                newValue.sceneProperty().addListener((obs, oldVScene, newScene) -> mainScene = newScene);
 
                 if (getLocation() != Location.EMBEDDED) {
                     removeFromParent(getNode());
@@ -103,8 +108,9 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
         }
     }
 
-    static final class FloatingPane extends StackPane {
+    final class FloatingPane extends StackPane {
         private @Nullable Stage stage;
+        private final Scene scene = new Scene(this);
 
         private double xOffset = 0;
         private double yOffset = 0;
@@ -137,7 +143,10 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                     }
                 } else if (stage == null) {
                     stage = new Stage(StageStyle.UNDECORATED);
-                    stage.setScene(new Scene(this));
+                    if (mainScene != null) {
+                        stage.initOwner(mainScene.getWindow());
+                    }
+                    stage.setScene(scene);
                     stage.show();
                 }
             });
