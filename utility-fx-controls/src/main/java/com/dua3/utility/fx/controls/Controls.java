@@ -64,22 +64,22 @@ public final class Controls {
     }
 
     /**
-     * Creates a new instance of ComboBoxBuilder using the provided collection of values.
+     * Creates a new instance of {@link ComboBoxBuilder} using the provided collection of values.
      *
      * @param <T> the type of the items in the ComboBox
      * @param values a collection of values to be included in the combo box
-     * @return a new instance of ComboBoxBuilder initialized with the given values
+     * @return a new instance of {@code ComboBoxBuilder} initialized with the given values
      */
     public static <T> ComboBoxBuilder<T> comboBox(Collection<T> values) {
         return new ComboBoxBuilder<>(values);
     }
 
     /**
-     * Creates a new instance of ComboBoxBuilder using the provided values.
+     * Creates a new instance of {@link ComboBoxBuilder} using the provided values.
      *
      * @param <T> the type of the items in the ComboBox
      * @param values the values to be included in the combo box
-     * @return a new instance of ComboBoxBuilder initialized with the given values
+     * @return a new instance of {@code ComboBoxBuilder} initialized with the given values
      */
     @SafeVarargs
     public static <T> ComboBoxBuilder<T> comboBox(T... values) {
@@ -87,22 +87,22 @@ public final class Controls {
     }
 
     /**
-     * Creates a new instance of ComboBoxExBuilder using the provided collection of values.
+     * Creates a new instance of {@link ComboBoxExBuilder} using the provided collection of values.
      *
-     * @param <T> the type of the items in the ComboBoxEx
+     * @param <T> the type of the items in the {@link ComboBoxEx}
      * @param values a collection of values to be included in the combo box
-     * @return a new instance of ComboBoxExBuilder initialized with the given values
+     * @return a new instance of {@code ComboBoxExBuilderEx} initialized with the given values
      */
     public static <T> ComboBoxExBuilder<T> comboBoxEx(Collection<T> values) {
         return new ComboBoxExBuilder<>(values);
     }
 
     /**
-     * Creates a new instance of ComboBoxExBuilder using the provided values.
+     * Creates a new instance of {@link ComboBoxExBuilder} using the provided values.
      *
-     * @param <T> the type of the items in the ComboBoxEx
+     * @param <T> the type of the items in the {@link ComboBoxEx}
      * @param values the values to be included in the combo box
-     * @return a new instance of ComboBoxExBuilder initialized with the given values
+     * @return a new instance of {@code ComboBoxExBuilder} initialized with the given values
      */
     @SafeVarargs
     public static <T> ComboBoxExBuilder<T> comboBoxEx(T... values) {
@@ -112,36 +112,45 @@ public final class Controls {
     /**
      * Create {@link ButtonBuilder} instance for standard buttons.
      *
-     * @return new ButtonBuilder
+     * @return new {@code ButtonBuilder}
      */
     public static ButtonBuilder<Button> button() {
         return new ButtonBuilder<>(Button::new);
     }
 
     /**
-     * Create {@link ButtonBuilder} instance for toggle buttons.
+     * Create and return a {@link ToggleButtonBuilder} to create instances of {@link ToggleButton}.
      *
-     * @return new ButtonBuilder
+     * @return new {@code ToggleButtonBuilder}
      */
     public static ToggleButtonBuilder toggleButton() {
         return new ToggleButtonBuilder(ToggleButton::new);
     }
 
     /**
-     * Create {@link ButtonBuilder} instance for checkboxes.
+     * Creates and return a {@link ToolBarBuilder} to create instances of {@link ToolBarExt}.
      *
-     * @return new CheckBoxButtonBuilder
+     * @return a new instance of {@code ToolBarBuilder}
+     */
+    public static ToolBarBuilder toolBar() {
+        return new ToolBarBuilder();
+    }
+
+    /**
+     * Create {@link CheckBoxButtonBuilder} instance for checkboxes.
+     *
+     * @return new {@code CheckBoxButtonBuilder}
      */
     public static CheckBoxButtonBuilder checkbox() {
         return new CheckBoxButtonBuilder(CheckBox::new);
     }
 
     /**
-     * Creates a new FileInputBuilder instance with the given mode.
+     * Creates a new {@link FileInputBuilder} instance with the given mode.
      *
      * @param parentWinndw the parent window
      * @param mode the {@link FileDialogMode} of the file dialog
-     * @return a new FileInputBuilder instance
+     * @return a new {@code FileInputBuilder} instance
      */
     public static FileInputBuilder fileInput(@Nullable Window parentWinndw, FileDialogMode mode) {
         return new FileInputBuilder(parentWinndw, mode);
@@ -150,7 +159,7 @@ public final class Controls {
     /**
      * Create {@link SliderBuilder} instance.
      *
-     * @return new SliderBuilder
+     * @return new {@code SliderBuilder}
      */
     public static SliderBuilder slider() {
         return new SliderBuilder();
@@ -329,26 +338,26 @@ public final class Controls {
     }
 
     /**
-     * Get TextFieldBuilder for creating a TextField.
-     * @param locale the locale to use
-     * @return TextFieldBuilder instance
+     * Get a {@link TextFieldBuilder} for creating a TextField.
+     * @param locale the {@link Locale} to use
+     * @return new {@code TextFieldBuilder} instance
      */
     public static TextFieldBuilder textField(Locale locale) {
         return new TextFieldBuilder(locale);
     }
 
     /**
-     * Get TextFieldBuilder for creating a TextField.
-     * @return TextFieldBuilder instance
+     * Get {@link TextFieldBuilder} for creating a TextField.
+     * @return new {@code TextFieldBuilder} instance
      */
     public static TextAreaBuilder textArea() {
         return new TextAreaBuilder();
     }
 
     /**
-     * Make a region resizable by dragging its edge.
+     * Make a {@link Region} resizable by dragging its edge.
      *
-     * @param region  the region
+     * @param region  the {@code Region}
      * @param borders the borders to make draggable
      */
     public static void makeResizable(Region region, Position... borders) {
@@ -356,9 +365,9 @@ public final class Controls {
     }
 
     /**
-     * Make a region resizable by dragging its edge.
+     * Make a {@link Region} resizable by dragging its edge.
      *
-     * @param region       the region
+     * @param region       the {@code Region}
      * @param resizeMargin size of the draggable margin
      * @param borders      the borders to make draggable
      */
@@ -369,14 +378,14 @@ public final class Controls {
     /**
      * Create a new {@link MenuBuilder}.
      *
-     * @return a new MenuBuilder
+     * @return a new {@code MenuBuilder}
      */
     public static MenuBuilder menu() {
         return new MenuBuilder(Menu::new);
     }
 
     /**
-     * Creates and returns a new instance of {@code ChoiceMenuBuilder} with the specified collection of values.
+     * Creates and returns a new instance of {@link ChoiceMenuBuilder} with the specified collection of values.
      * <p>
      * Use an {@link ObservableList} for {@code values} to automatically update menu items.
      *
@@ -391,7 +400,7 @@ public final class Controls {
     /**
      * Create a new {@link MenuItemBuilderImpl}.
      *
-     * @return a new MenuItemBuilder
+     * @return a new {@code MenuItemBuilder}
      */
     public static MenuItemBuilderImpl menuItem() {
         return new MenuItemBuilderImpl(MenuItem::new);
@@ -400,47 +409,47 @@ public final class Controls {
     /**
      * Create a new {@link CheckMenuItemBuilder}.
      *
-     * @return a new CheckMenuItemBuilder
+     * @return a new {@code CheckMenuItemBuilder}
      */
     public static CheckMenuItemBuilder checkMenuItem() {
         return new CheckMenuItemBuilder(CheckMenuItem::new);
     }
 
     /**
-     * Creates and returns a new instance of TextBuilder.
+     * Creates and returns a new instance of {@link TextBuilder}.
      *
      * @param text the text
-     * @return a new instance of TextBuilder.
+     * @return a new instance of {@code TextBuilder}
      */
     public static TextBuilder text(String text) {
         return new TextBuilder(text);
     }
 
     /**
-     * Creates and returns a new instance of TextBuilder.
+     * Creates and returns a new instance of {@link TextBuilder}.
      *
      * @param text the text
-     * @return a new instance of TextBuilder.
+     * @return a new instance of {@code TextBuilder}
      */
     public static TextBuilder text(ObservableValue<String> text) {
         return new TextBuilder(text);
     }
 
     /**
-     * Creates and returns a new instance of LabelBuilder.
+     * Creates and returns a new instance of {@link LabelBuilder}.
      *
      * @param text the text
-     * @return a new instance of LabelBuilder.
+     * @return a new instance of {@code LabelBuilder}
      */
     public static LabelBuilder label(String text) {
         return new LabelBuilder(text);
     }
 
     /**
-     * Creates and returns a new instance of LabelBuilder.
+     * Creates and returns a new instance of {@link LabelBuilder}.
      *
      * @param text the text
-     * @return a new instance of LabelBuilder.
+     * @return a new instance of {@code LabelBuilder}
      */
     public static LabelBuilder label(ObservableValue<String> text) {
         return new LabelBuilder(text);
@@ -468,28 +477,28 @@ public final class Controls {
     }
 
     /**
-     * Creates a Background object based on the given Color.
+     * Creates a {@link Background} object based on the given Color.
      *
-     * @param color the Color to be used for the Background
-     * @return a new Background object with the specified Color
+     * @param color the {@link Color} to be used for the Background
+     * @return a new {@code Background} object with the specified {@code Color}
      */
     public static Background background(Color color) {
         return new Background(new BackgroundFill(FxUtil.convert(color), null, null));
     }
 
     /**
-     * Creates a spacer node with a default growth priority.
+     * Creates a spacer {@link Region} with a default growth priority.
      *
-     * @return a Region object configured as a spacer with the default Priority.ALWAYS.
+     * @return a {@code Region} object configured as a spacer with the default priority {@link Priority#ALWAYS}.
      */
     public static Region spacer() {
         return spacer(Priority.ALWAYS);
     }
 
     /**
-     * Creates a spacer region with the specified priority for horizontal and vertical growth.
+     * Creates a spacer {@link Region} with the specified priority for horizontal and vertical growth.
      *
-     * @param priority the growth priority to set for the spacer in horizontal and vertical layouts
+     * @param priority the growth {@link Priority} to set for the spacer in horizontal and vertical layouts
      * @return a spacer region configured with the specified growth priority
      */
     public static Region spacer(Priority priority) {
@@ -500,10 +509,10 @@ public final class Controls {
     }
 
     /**
-     * Creates a validator function that checks if the given value is non-null.
+     * Creates a validator {@link Function} that checks if the given value is non-null.
      * <p>
      * The returned function takes an input of type T and returns an {@code Optional<String>}
-     * containing an error message if the input is null, or an empty {@code Optional} otherwise.
+     * containing an error message if the input is {@code null}, or an empty {@link Optional} otherwise.
      *
      * @param <T> the type of the value to be validated
      * @return a {@code Function} that validates whether the input is non-null
@@ -513,7 +522,7 @@ public final class Controls {
     }
 
     /**
-     * Creates a validator function that checks if a given value lies within a specified range.
+     * Creates a validator {@link Function} that checks if a given value lies within a specified range.
      * <p>
      * If the input value is null or outside the range, an error message is returned.
      *
@@ -539,9 +548,9 @@ public final class Controls {
     }
 
     /**
-     * Creates a validator function that checks if the given value is non-null and not blank.
+     * Creates a validator {@link Function} that checks if the given value is non-null and not blank.
      * <p>
-     * If the input value is null or blank, an error message is returned.
+     * If the input value is {@code null} or blank, an error message is returned.
      *
      * @return a {@code Function} that validates whether the input is non-null and non-blank
      */

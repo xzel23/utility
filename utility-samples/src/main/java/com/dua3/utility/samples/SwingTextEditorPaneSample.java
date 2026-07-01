@@ -24,6 +24,7 @@ import javax.swing.Icon;
 import javax.swing.JList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
@@ -248,8 +249,8 @@ public final class SwingTextEditorPaneSample {
         controlsRow.add(reset);
         controlsRow.add(Box.createHorizontalGlue());
 
-        JPanel toolbarRow = new JPanel();
-        toolbarRow.setLayout(new BoxLayout(toolbarRow, BoxLayout.X_AXIS));
+        JToolBar toolbarRow = new JToolBar();
+//        toolbarRow.setLayout(new BoxLayout(toolbarRow, BoxLayout.X_AXIS));
         toolbarRow.add(cut);
         toolbarRow.add(copy);
         toolbarRow.add(paste);

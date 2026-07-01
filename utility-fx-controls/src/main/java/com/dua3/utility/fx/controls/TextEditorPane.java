@@ -7,6 +7,7 @@ import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.ToRichText;
+import com.dua3.utility.ui.DetachableNode;
 import com.dua3.utility.ui.IndexRange;
 import com.dua3.utility.ui.RichTextEditorPane;
 import com.dua3.utility.ui.RichTextEditorModel;
@@ -58,7 +59,7 @@ import java.util.stream.Stream;
 public class TextEditorPane extends TextPane implements InputControl<RichText>, RichTextEditorPane {
     private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
     private final BooleanProperty enterKeyInsertsNewline = new SimpleBooleanProperty(this, "enterKeyInsertsNewline", true);
-    private final BooleanProperty toolbarVisible = new SimpleBooleanProperty(this, "toolbarVisible", false);
+    private final ObjectProperty<DetachableNode.Location> toolbarLocation = new SimpleObjectProperty<>(this, "toolbarLocation", DetachableNode.Location.EMBEDDED);
     private final ReadOnlyIntegerWrapper length = new ReadOnlyIntegerWrapper(this, "length", 0);
     private final ReadOnlyObjectWrapper<RichText> selectedText = new ReadOnlyObjectWrapper<>(this, "selectedText", RichText.emptyText());
     private final ReadOnlyObjectWrapper<IndexRange> selection = new ReadOnlyObjectWrapper<>(this, "selection", new IndexRange(0, 0));
@@ -545,8 +546,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      *
      * @return toolbar visibility property
      */
-    public final BooleanProperty toolbarVisibleProperty() {
-        return toolbarVisible;
+    public final ObjectProperty<DetachableNode.Location> toolbarLocationProperty() {
+        return toolbarLocation;
     }
 
     /**
@@ -554,8 +555,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      *
      * @return {@code true} if toolbar is visible
      */
-    public final boolean isToolbarVisible() {
-        return toolbarVisible.get();
+    public final DetachableNode.Location getToolbarLocation() {
+        return toolbarLocation.getValue();
     }
 
     /**
@@ -563,8 +564,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      *
      * @param value {@code true} to show the toolbar
      */
-    public final void setToolbarVisible(boolean value) {
-        toolbarVisible.set(value);
+    public final void setToolbarLocation(DetachableNode.Location value) {
+        toolbarLocation.setValue(value);
     }
 
     /**

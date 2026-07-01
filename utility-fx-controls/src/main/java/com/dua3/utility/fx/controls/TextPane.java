@@ -943,27 +943,27 @@ public class TextPane extends Control implements RichTextPane {
                 cutButton.setFocusTraversable(false);
                 pasteButton.setFocusTraversable(false);
 
-                ToolBar toolbar = new ToolBar(
-                        cutButton,
-                        copyButton,
-                        pasteButton,
-                        new Separator(),
-                        undoButton,
-                        redoButton,
-                        new Separator(),
-                        fontList,
-                        sizeList,
-                        boldButton,
-                        italicsButton,
-                        underlineButton,
-                        strikeThroughButton,
-                        textColorList,
-                        backgroundColorList
-                );
-
-                toolbar.setFocusTraversable(false);
-                toolbar.visibleProperty().bind(editor.toolbarVisibleProperty());
-                toolbar.managedProperty().bind(editor.toolbarVisibleProperty());
+                ToolBarExt toolbar = Controls.toolBar()
+                        .items(
+                                cutButton,
+                                copyButton,
+                                pasteButton,
+                                new Separator(),
+                                undoButton,
+                                redoButton,
+                                new Separator(),
+                                fontList,
+                                sizeList,
+                                boldButton,
+                                italicsButton,
+                                underlineButton,
+                                strikeThroughButton,
+                                textColorList,
+                                backgroundColorList
+                        )
+                        .focusTraversable(false)
+                        .bindLocation(editor.toolbarLocationProperty())
+                        .build();
 
                 VBox.setVgrow(scrollPane, Priority.ALWAYS);
                 editorRoot.getChildren().setAll(toolbar, scrollPane);
@@ -1000,7 +1000,7 @@ public class TextPane extends Control implements RichTextPane {
                     invalidate();
                 });
                 editor.editableProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
-                editor.toolbarVisibleProperty().addListener((obs, oldVal, newVal) -> invalidate());
+                editor.toolbarLocationProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
                 // Route interaction through the internal ScrollPane so input works regardless of focus owner.
                 scrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, evt -> {

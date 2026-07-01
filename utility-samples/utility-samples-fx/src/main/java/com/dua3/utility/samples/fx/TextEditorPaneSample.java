@@ -2,12 +2,14 @@ package com.dua3.utility.samples.fx;
 
 import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.RichTextBuilderFx;
 import com.dua3.utility.fx.controls.TextEditorPane;
 import com.dua3.utility.fx.controls.TextPane;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.DetachableNode;
 import com.dua3.utility.ui.VAnchor;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
@@ -16,6 +18,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -55,7 +58,7 @@ public class TextEditorPaneSample extends Application {
 
         TextEditorPane editor = new TextEditorPane(text);
         editor.setWrapText(true);
-        editor.setToolbarVisible(true);
+        editor.setToolbarLocation(DetachableNode.Location.EMBEDDED);
         editor.setPrefWidth(600);
         editor.setMaxHeight(1000);
 
@@ -88,9 +91,10 @@ public class TextEditorPaneSample extends Application {
         editable.setSelected(editor.isEditable());
         editable.selectedProperty().bindBidirectional(editor.editableProperty());
 
-        CheckBox toolbar = new CheckBox("Toolbar");
-        toolbar.setSelected(editor.isToolbarVisible());
-        toolbar.selectedProperty().bindBidirectional(editor.toolbarVisibleProperty());
+        ComboBox<DetachableNode.Location> toolbarLocation = Controls.comboBox(DetachableNode.Location.values())
+                .initialValue(DetachableNode.Location.EMBEDDED)
+                .bind(editor.toolbarLocationProperty())
+                .build();
 
         Label selectionInfo = new Label();
         Runnable updateSelectionInfo = () -> selectionInfo.setText(
@@ -125,7 +129,7 @@ public class TextEditorPaneSample extends Application {
             status.setText("Reset to default value.");
         });
 
-        HBox controls = new HBox(12, wrap, editable, toolbar, applyButton, resetButton);
+        HBox controls = new HBox(12, wrap, editable, new Label("Toolbar Location:"), toolbarLocation, applyButton, resetButton);
         controls.setPadding(new Insets(0, 0, 8, 0));
 
         Label liveDocumentHeader = new Label("Live Document (documentVersionProperty + getDocumentText)");
@@ -142,6 +146,7 @@ public class TextEditorPaneSample extends Application {
                 committedValuePane,
                 status
         );
+
         VBox.setVgrow(editor, Priority.ALWAYS);
         VBox.setVgrow(liveDocumentPane, Priority.ALWAYS);
         VBox.setVgrow(committedValuePane, Priority.ALWAYS);

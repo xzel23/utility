@@ -17,6 +17,7 @@ import java.util.function.Supplier;
  */
 public abstract class ControlBuilder<C extends Control, B extends ControlBuilder<C, B>> extends RegionBuilder<C, B> {
     private @Nullable ObservableValue<String> tooltip;
+    private boolean focusTraversable = true;
 
     /**
      * Constructs a new instance of the ControlBuilder class using the specified factory.
@@ -25,6 +26,17 @@ public abstract class ControlBuilder<C extends Control, B extends ControlBuilder
      */
     protected ControlBuilder(Supplier<? extends C> factory) {
         super(factory);
+    }
+
+    /**
+     * Sets the focus-traversable property of the control being built.
+     *
+     * @param focusTraversable a boolean indicating whether the control should be focus traversable
+     * @return this builder instance for method chaining
+     */
+    public B focusTraversable(boolean focusTraversable) {
+        this.focusTraversable = focusTraversable;
+        return self();
     }
 
     /**
@@ -40,6 +52,7 @@ public abstract class ControlBuilder<C extends Control, B extends ControlBuilder
             tt.textProperty().bind(t);
             node.setTooltip(tt);
         });
+        node.setFocusTraversable(focusTraversable);
         return node;
     }
 
