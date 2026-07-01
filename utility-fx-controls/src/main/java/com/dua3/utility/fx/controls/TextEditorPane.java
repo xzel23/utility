@@ -32,6 +32,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -60,6 +61,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     private final BooleanProperty editable = new SimpleBooleanProperty(this, "editable", true);
     private final BooleanProperty enterKeyInsertsNewline = new SimpleBooleanProperty(this, "enterKeyInsertsNewline", true);
     private final ObjectProperty<DetachableNode.Location> toolbarLocation = new SimpleObjectProperty<>(this, "toolbarLocation", DetachableNode.Location.EMBEDDED);
+    private final ObjectProperty<@Nullable Parent> toolbarApplicationParent = new SimpleObjectProperty<>(this, "toolbarApplicationParent", null);
     private final ReadOnlyIntegerWrapper length = new ReadOnlyIntegerWrapper(this, "length", 0);
     private final ReadOnlyObjectWrapper<RichText> selectedText = new ReadOnlyObjectWrapper<>(this, "selectedText", RichText.emptyText());
     private final ReadOnlyObjectWrapper<IndexRange> selection = new ReadOnlyObjectWrapper<>(this, "selection", new IndexRange(0, 0));
@@ -566,6 +568,40 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      */
     public final void setToolbarLocation(DetachableNode.Location value) {
         toolbarLocation.setValue(value);
+    }
+
+    /**
+     * Toolbar application parent property.
+     * <p>
+     * This property controls what parent node to set for the toolbar when the toolbar location is set to
+     * {@link com.dua3.utility.ui.DetachableNode.Location#APPLICATION}.
+     *
+     * @return the toolbar application parent property
+     */
+    public final ObjectProperty<@Nullable Parent> toolbarApplicationParentProperty() {
+        return toolbarApplicationParent;
+    }
+
+    /**
+     * Retrieves the parent component to use as the toolbar's parent when the toolbar location is set to
+     * {@link com.dua3.utility.ui.DetachableNode.Location#APPLICATION}.
+     *
+     * @return the Parent object to be set as the toolbar's parent when the location is set to
+     *         {@link com.dua3.utility.ui.DetachableNode.Location#APPLICATION}.
+     */
+    public final @Nullable Parent getToolbarApplicationParent() {
+        return toolbarApplicationParent.getValue();
+    }
+
+    /**
+     * Sets the parent to show the toolbar in when the location is set to
+     * {@link com.dua3.utility.ui.DetachableNode.Location#APPLICATION}.
+     *
+     * @param value the Parent object to be set as the toolbar's parent when the location is set to
+     *              {@link com.dua3.utility.ui.DetachableNode.Location#APPLICATION}.
+     */
+    public final void setToolbarApplicationParent(@Nullable Parent value) {
+        toolbarApplicationParent.setValue(value);
     }
 
     /**

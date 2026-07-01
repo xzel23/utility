@@ -4,6 +4,7 @@ import com.dua3.utility.fx.controls.abstract_builders.ControlBuilder;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.ui.DetachableNode;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import org.jspecify.annotations.Nullable;
@@ -20,8 +21,8 @@ public class ToolBarBuilder extends ControlBuilder<ToolBarEx, ToolBarBuilder> {
 
     private final List<Node> items = new ArrayList<>();
 
-    private @Nullable Parent applicationParent;
     private @Nullable Property<DetachableNode.Location> location;
+    private @Nullable Property<@Nullable Parent> applicationParent;
 
     /**
      * Constructs a new instance of the ControlBuilder class using the specified factory.
@@ -62,7 +63,18 @@ public class ToolBarBuilder extends ControlBuilder<ToolBarEx, ToolBarBuilder> {
      * @return the current {@link ToolBarBuilder} instance, allowing method chaining.
      */
     public ToolBarBuilder applicationParent(Parent parent) {
-        this.applicationParent = parent;
+        this.applicationParent = new SimpleObjectProperty<>(parent);
+        return self();
+    }
+
+    /**
+     * Binds the application-level parent for the toolbar being built.
+     *
+     * @param applicationParent the parent component with which the toolbar will be associated.
+     * @return the current {@link ToolBarBuilder} instance, allowing method chaining.
+     */
+    public ToolBarBuilder bindApplicationParent(Property<@Nullable Parent> applicationParent) {
+        this.applicationParent = applicationParent;
         return self();
     }
 
@@ -85,7 +97,7 @@ public class ToolBarBuilder extends ControlBuilder<ToolBarEx, ToolBarBuilder> {
         ToolBarEx toolBarEx = super.build();
         toolBarEx.getItems().addAll(items);
         if (applicationParent != null) {
-            toolBarEx.setApplicationParent(applicationParent);
+            toolBarEx.applicationParentProperty().bind(applicationParent);
         }
         if (location != null) {
             toolBarEx.locationProperty().bind(location);

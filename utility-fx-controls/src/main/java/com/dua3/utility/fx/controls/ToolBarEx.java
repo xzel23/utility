@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.PlatformHelper;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.ui.DetachableNode;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A subclass of {@code ToolBar} that implements the {@code DetachableNode} interface, allowing it
@@ -37,10 +39,12 @@ import java.util.Map;
 public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Parent> {
     private static final Logger LOG = LogManager.getLogger(ToolBarEx.class);
 
+    private final Property<@Nullable Parent> applicationParent = new SimpleObjectProperty<>(this, "applicationParent", null);
     private final Property<Location> locationProperty = new SimpleObjectProperty<>(this, "location", Location.HIDDEN);
     private final List<LocationListener> locationListeners = new ArrayList<>();
 
-    private final Map<Location, @Nullable Parent> locationToParent = new EnumMap<>(Location.class);
+    private final Map<Location, Supplier<@Nullable Parent>> locationToParent = new EnumMap<>(Location.class);
+    private @Nullable Parent embeddedParent;
     private @Nullable Scene mainScene;
 
     /**
@@ -61,15 +65,16 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
             @SuppressWarnings("java:S4274")
             public void changed(ObservableValue<? extends @Nullable Parent> observable, @Nullable Parent oldValue, @Nullable Parent newValue) {
                 assert newValue != null : "expected non-null parent on first parent change";
-                Parent previousParent = locationToParent.put(Location.EMBEDDED, newValue);
-                assert previousParent == null : "expected previous parent to be null";
+                assert embeddedParent == null : "embeddedParent has already been set";
+
+                embeddedParent = newValue;
 
                 // keep the owner up to date
                 newValue.sceneProperty().addListener((obs, oldVScene, newScene) -> mainScene = newScene);
 
                 if (getLocation() != Location.EMBEDDED) {
                     removeFromParent(getNode());
-                    addToParent(locationToParent.get(getLocation()));
+                    addToParent(locationToParent.get(getLocation()).get());
                 }
 
                 // listener should only run once
@@ -77,17 +82,21 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
             }
         });
 
-        locationToParent.put(Location.HIDDEN, new StackPane());
-        locationToParent.put(Location.FLOATING, new FloatingPane());
+        locationToParent.put(Location.HIDDEN, LangUtil.cache(StackPane::new));
+        locationToParent.put(Location.FLOATING, LangUtil.cache(FloatingPane::new));
+        locationToParent.put(Location.EMBEDDED, () -> embeddedParent);
+        locationToParent.put(Location.APPLICATION, applicationParent::getValue);
+
+        assert locationToParent.size() == Location.values().length : "locationToParent should contain entries for all Location values";
 
         locationProperty.addListener((observable, oldValue, newValue) ->
                 PlatformHelper.runAndWait(() -> {
                     Parent oldParent = getParent();
-                    Parent newParent = locationToParent.get(newValue);
+                    Parent newParent = locationToParent.get(newValue).get();
 
                     // if application parent is not set, treat it as embedded
                     if (newValue == Location.APPLICATION && newParent == null) {
-                        newParent = locationToParent.get(Location.EMBEDDED);
+                        newParent = locationToParent.get(Location.EMBEDDED).get();
                     }
 
                     if (newParent != oldParent) {
@@ -213,9 +222,24 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
         return locationProperty;
     }
 
+    /**
+     * Returns the property representing the parent of this toolbar in the application context.
+     *
+     * @return a {@code Property<@Nullable Parent>} representing the parent of the toolbar in the application.
+     */
+    public Property<@Nullable Parent> applicationParentProperty() {
+        return applicationParent;
+    }
+
     @Override
     public void setApplicationParent(@Nullable Parent parent) {
         LOG.debug("setApplicationParent({})", parent);
-        locationToParent.put(Location.APPLICATION, parent);
+        applicationParent.setValue(parent);
+
+        //  if the toolbar is currently shown in the application, force update
+        if (getLocation() == Location.APPLICATION) {
+            setLocation(Location.HIDDEN);
+            setLocation(Location.APPLICATION);
+        }
     }
 }

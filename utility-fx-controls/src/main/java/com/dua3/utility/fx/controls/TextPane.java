@@ -918,6 +918,7 @@ public class TextPane extends Control implements RichTextPane {
                         )
                         .focusTraversable(false)
                         .bindLocation(editor.toolbarLocationProperty())
+                        .bindApplicationParent(editor.toolbarApplicationParentProperty())
                         .build();
 
                 VBox.setVgrow(scrollPane, Priority.ALWAYS);

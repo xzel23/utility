@@ -147,6 +147,8 @@ public class TextEditorPaneSample extends Application {
                 status
         );
 
+        editor.setToolbarApplicationParent(content);
+
         VBox.setVgrow(editor, Priority.ALWAYS);
         VBox.setVgrow(liveDocumentPane, Priority.ALWAYS);
         VBox.setVgrow(committedValuePane, Priority.ALWAYS);
