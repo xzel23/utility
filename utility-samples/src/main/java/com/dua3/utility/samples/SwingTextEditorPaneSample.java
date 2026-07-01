@@ -1,10 +1,8 @@
 package com.dua3.utility.samples;
 
-import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.swing.TextEditorPane;
 import com.dua3.utility.swing.TextPane;
-import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
@@ -28,8 +26,6 @@ import java.awt.Dimension;
  * Swing sample for {@link TextEditorPane} and {@link TextPane}.
  */
 public final class SwingTextEditorPaneSample {
-    private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
-
     private SwingTextEditorPaneSample() {
         // no instances
     }
@@ -95,18 +91,10 @@ public final class SwingTextEditorPaneSample {
 
         JComboBox<DetachableNode.Location> toolbarLocation = new JComboBox<>(DetachableNode.Location.values());
 
-        editor.addPropertyChangeListener("documentVersion", evt -> {
-            syncAll.run();
-        });
-        editor.addPropertyChangeListener("caretPosition", evt -> {
-            updateSelectionInfo.run();
-        });
-        editor.addPropertyChangeListener("selectionStart", evt -> {
-            updateSelectionInfo.run();
-        });
-        editor.addPropertyChangeListener("selectionEnd", evt -> {
-            updateSelectionInfo.run();
-        });
+        editor.addPropertyChangeListener("documentVersion", evt -> syncAll.run());
+        editor.addPropertyChangeListener("caretPosition", evt -> updateSelectionInfo.run());
+        editor.addPropertyChangeListener("selectionStart", evt -> updateSelectionInfo.run());
+        editor.addPropertyChangeListener("selectionEnd", evt -> updateSelectionInfo.run());
 
         JButton apply = new JButton("Apply");
         apply.addActionListener(e -> {
