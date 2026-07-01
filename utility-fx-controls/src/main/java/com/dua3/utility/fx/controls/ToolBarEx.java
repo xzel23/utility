@@ -110,20 +110,25 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
         private double yOffset = 0;
 
         FloatingPane() {
+            // Intercept mouse events during the capturing phase (on the way down) to make the floating pane draggable
             addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-                if (stage != null) {
+                if (stage != null && isDraggableTarget(event.getTarget())) {
                     xOffset = event.getScreenX() - stage.getX();
                     yOffset = event.getScreenY() - stage.getY();
+                    // We do NOT consume the press here, allowing the button
+                    // to still receive its click event down the line.
                 }
             });
 
             addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
-                if (stage != null) {
+                if (stage != null && isDraggableTarget(event.getTarget())) {
                     stage.setX(event.getScreenX() - xOffset);
                     stage.setY(event.getScreenY() - yOffset);
+                    event.consume(); // Consume the drag so inner controls don't fight it
                 }
             });
 
+            // automatically destroy the stage when the toolbar is removed
             getChildren().addListener((ListChangeListener<? super Node>) c -> {
                 if (c.getList().isEmpty()) {
                     if (stage != null) {
@@ -136,6 +141,22 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                     stage.show();
                 }
             });
+        }
+
+        private boolean isDraggableTarget(Object target) {
+            if (!(target instanceof Node node)) {
+                return false;
+            }
+
+            // Walk up the temporary tree to see if it's inside a Button or Control
+            while (node != null && node != this) {
+                if (node instanceof javafx.scene.control.Control && !(node instanceof javafx.scene.control.ToolBar)) {
+                    return false; // It's an interactive control, don't drag the window
+                }
+                node = node.getParent();
+            }
+
+            return true;
         }
     }
 
