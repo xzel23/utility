@@ -1,27 +1,48 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.DetachableNode;
 import com.dua3.utility.ui.RichTextEditorPane;
 import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
 import org.jspecify.annotations.Nullable;
 
+import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.SwingUtilities;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.HierarchyEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Swing rich-text editor pane backed by a shared {@link com.dua3.utility.ui.RichTextEditorModel}.
@@ -30,6 +51,29 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
 
     private static final java.awt.Color SELECTION_COLOR = new java.awt.Color(0.25f, 0.45f, 0.85f, 0.35f);
     private static final int CARET_BLINK_DELAY_MS = 500;
+    private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
+    private static final com.dua3.utility.text.Font DEFAULT_FONT = FONT_UTIL.getDefaultFont();
+    private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
+    private static final Color[] DEFAULT_TEXT_COLORS = {
+            Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
+            Color.RED.darker(), Color.RED, Color.RED.brighter(),
+            Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
+            Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
+            Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
+            Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
+            Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
+    };
+    private static final Color[] DEFAULT_BACKGROUND_COLORS = {
+            Color.TRANSPARENT_WHITE,
+            Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
+            Color.RED.darker(), Color.RED, Color.RED.brighter(),
+            Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
+            Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
+            Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
+            Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
+            Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
+    };
+    private static final Dimension SYMBOL_BUTTON_SIZE = new Dimension(24, 24);
 
     private boolean editable = true;
     private boolean enterKeyInsertsNewline = true;
@@ -51,6 +95,21 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     private int lastSelectionStart;
     private int lastSelectionEnd;
 
+    private final JToolBar toolbar;
+    private final AtomicBoolean synchronizingToolbar = new AtomicBoolean(false);
+    private final JComboBox<String> fontList;
+    private final JComboBox<Float> sizeList;
+    private final JComboBox<Color> textColorList;
+    private final JComboBox<Color> backgroundColorList;
+    private final JButton undoButton;
+    private final JButton redoButton;
+    private final JToggleButton boldButton;
+    private final JToggleButton italicButton;
+    private final JToggleButton underlineButton;
+    private final JToggleButton strikeButton;
+    private @Nullable Container toolbarApplicationParent;
+    private DetachableNode.Location toolbarLocation = DetachableNode.Location.EMBEDDED;
+
     /**
      * Creates an empty editor pane.
      */
@@ -71,8 +130,84 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         caretBlinkTimer = new Timer(CARET_BLINK_DELAY_MS, e -> onCaretBlinkTick());
         caretBlinkTimer.setRepeats(true);
         caretBlinkTimer.setInitialDelay(CARET_BLINK_DELAY_MS);
+
+        toolbar = new JToolBar();
+        toolbar.setFloatable(true);
+        toolbar.addHierarchyListener(this::onToolbarHierarchyChanged);
+
+        JButton cutButton = editButton("✂", this::cut);
+        JButton copyButton = editButton("⧉", this::copy);
+        JButton pasteButton = editButton("\uD83D\uDCCB", this::paste);
+        undoButton = editButton("⟲", this::undo);
+        redoButton = editButton("⟳", this::redo);
+        boldButton = fontStyleButton("B", DEFAULT_FONT.withBold(true), this::markBold);
+        italicButton = fontStyleButton("I", DEFAULT_FONT.withItalic(true), this::markItalic);
+        underlineButton = fontStyleButton("U", DEFAULT_FONT.withUnderline(true), this::markUnderline);
+        strikeButton = fontStyleButton("S", DEFAULT_FONT.withStrikeThrough(true), this::markStrikeThrough);
+        fontList = new JComboBox<>(FONT_UTIL.getFamilies(FontUtil.FontTypes.ALL).toArray(new String[0]));
+        sizeList = new JComboBox<>(DEFAULT_FONT_SIZES);
+        textColorList = new JComboBox<>(DEFAULT_TEXT_COLORS);
+        backgroundColorList = new JComboBox<>(DEFAULT_BACKGROUND_COLORS);
+        textColorList.setRenderer(createColorRenderer());
+        backgroundColorList.setRenderer(createColorRenderer());
+
+        toolbar.add(cutButton);
+        toolbar.add(copyButton);
+        toolbar.add(pasteButton);
+        toolbar.add(Box.createHorizontalStrut(4));
+        toolbar.add(undoButton);
+        toolbar.add(redoButton);
+        toolbar.add(Box.createHorizontalStrut(8));
+        toolbar.add(fontList);
+        toolbar.add(sizeList);
+        toolbar.add(boldButton);
+        toolbar.add(italicButton);
+        toolbar.add(underlineButton);
+        toolbar.add(strikeButton);
+        toolbar.add(Box.createHorizontalStrut(4));
+        toolbar.add(textColorList);
+        toolbar.add(backgroundColorList);
+        toolbar.add(Box.createHorizontalGlue());
+
         installInteractionHandlers();
+        installToolbarHandlers();
+        syncToolbar();
+        applyToolbarLocation();
         syncTypingStylesFromCaret();
+    }
+
+    public DetachableNode.Location getToolbarLocation() {
+        return toolbarLocation;
+    }
+
+    public void setToolbarLocation(DetachableNode.Location value) {
+        if (value == null) {
+            value = DetachableNode.Location.HIDDEN;
+        }
+        if (value == DetachableNode.Location.FLOATING && detectToolbarLocation(toolbar.getParent()) != DetachableNode.Location.FLOATING) {
+            return;
+        }
+        if (toolbarLocation == value) {
+            return;
+        }
+        DetachableNode.Location old = toolbarLocation;
+        toolbarLocation = value;
+        applyToolbarLocation();
+        firePropertyChange("toolbarLocation", old, value);
+    }
+
+    public @Nullable Container getToolbarApplicationParent() {
+        return toolbarApplicationParent;
+    }
+
+    public void setToolbarApplicationParent(@Nullable Container value) {
+        if (toolbarApplicationParent == value) {
+            return;
+        }
+        toolbarApplicationParent = value;
+        if (toolbarLocation == DetachableNode.Location.APPLICATION) {
+            applyToolbarLocation();
+        }
     }
 
     /**
@@ -1018,6 +1153,216 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         } else {
             caretVisible = false;
             caretBlinkTimer.stop();
+        }
+    }
+
+    private void installToolbarHandlers() {
+        PropertyChangeListener syncOnEditorChange = evt -> syncToolbar();
+        addPropertyChangeListener("documentVersion", syncOnEditorChange);
+        addPropertyChangeListener("caretPosition", syncOnEditorChange);
+        addPropertyChangeListener("selectionStart", syncOnEditorChange);
+        addPropertyChangeListener("selectionEnd", syncOnEditorChange);
+
+        fontList.addActionListener(e -> {
+            if (synchronizingToolbar.get()) {
+                return;
+            }
+            setFontFamily((String) fontList.getSelectedItem());
+            requestFocusInWindow();
+            syncToolbar();
+        });
+        sizeList.addActionListener(e -> {
+            if (synchronizingToolbar.get()) {
+                return;
+            }
+            Float size = (Float) sizeList.getSelectedItem();
+            if (size != null) {
+                setFontSize(size);
+            }
+            requestFocusInWindow();
+            syncToolbar();
+        });
+        textColorList.addActionListener(e -> {
+            if (synchronizingToolbar.get()) {
+                return;
+            }
+            setTextColor((Color) textColorList.getSelectedItem());
+            requestFocusInWindow();
+            syncToolbar();
+        });
+        backgroundColorList.addActionListener(e -> {
+            if (synchronizingToolbar.get()) {
+                return;
+            }
+            setBackgroundColor((Color) backgroundColorList.getSelectedItem());
+            requestFocusInWindow();
+            syncToolbar();
+        });
+    }
+
+    private void syncToolbar() {
+        synchronizingToolbar.set(true);
+        try {
+            boldButton.setSelected(isBold());
+            italicButton.setSelected(isItalic());
+            underlineButton.setSelected(isUnderline());
+            strikeButton.setSelected(isStrikeThrough());
+            undoButton.setEnabled(canUndo());
+            redoButton.setEnabled(canRedo());
+            fontList.setSelectedItem(getFontFamily());
+            float editorFontSize = (float) getFontSize();
+            ensureSortedFontSizeEntry(sizeList, editorFontSize);
+            sizeList.setSelectedItem(editorFontSize);
+            textColorList.setSelectedItem(getTextColor());
+            backgroundColorList.setSelectedItem(getBackgroundColor());
+        } finally {
+            synchronizingToolbar.set(false);
+        }
+    }
+
+    private void onToolbarHierarchyChanged(HierarchyEvent event) {
+        if ((event.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) == 0) {
+            return;
+        }
+        if (toolbarLocation == DetachableNode.Location.HIDDEN) {
+            return;
+        }
+
+        Container parent = toolbar.getParent();
+        DetachableNode.Location newLocation = detectToolbarLocation(parent);
+        if (newLocation != toolbarLocation) {
+            DetachableNode.Location old = toolbarLocation;
+            toolbarLocation = newLocation;
+            firePropertyChange("toolbarLocation", old, newLocation);
+        }
+    }
+
+    private DetachableNode.Location detectToolbarLocation(@Nullable Container parent) {
+        if (parent == null || !toolbar.isShowing()) {
+            return DetachableNode.Location.HIDDEN;
+        }
+        Container embeddedParent = getColumnHeader();
+        if (parent == embeddedParent || SwingUtilities.isDescendingFrom(parent, embeddedParent)) {
+            return DetachableNode.Location.EMBEDDED;
+        }
+        if (toolbarApplicationParent != null && (parent == toolbarApplicationParent || SwingUtilities.isDescendingFrom(parent, toolbarApplicationParent))) {
+            return DetachableNode.Location.APPLICATION;
+        }
+        return DetachableNode.Location.FLOATING;
+    }
+
+    private void applyToolbarLocation() {
+        if (toolbarLocation == DetachableNode.Location.FLOATING) {
+            toolbar.setVisible(true);
+            return;
+        }
+
+        Container currentParent = toolbar.getParent();
+        if (currentParent != null) {
+            currentParent.remove(toolbar);
+        }
+
+        if (toolbarLocation == DetachableNode.Location.EMBEDDED) {
+            setColumnHeaderView(toolbar);
+            toolbar.setVisible(true);
+        } else if (toolbarLocation == DetachableNode.Location.APPLICATION && toolbarApplicationParent != null) {
+            setColumnHeaderView(null);
+            toolbarApplicationParent.add(toolbar);
+            toolbar.setVisible(true);
+        } else {
+            setColumnHeaderView(null);
+            toolbar.setVisible(false);
+        }
+
+        if (toolbarApplicationParent != null) {
+            toolbarApplicationParent.revalidate();
+            toolbarApplicationParent.repaint();
+        }
+        revalidate();
+        repaint();
+    }
+
+    private static JButton editButton(String text, Runnable action) {
+        JButton button = new JButton(text);
+        button.setPreferredSize(SYMBOL_BUTTON_SIZE);
+        button.setMinimumSize(SYMBOL_BUTTON_SIZE);
+        button.setMaximumSize(SYMBOL_BUTTON_SIZE);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.addActionListener(evt -> action.run());
+        return button;
+    }
+
+    private static JToggleButton fontStyleButton(String text, com.dua3.utility.text.Font font, java.util.function.Consumer<Boolean> action) {
+        JToggleButton button = new JToggleButton(text);
+        button.setFont(FONT_UTIL.convert(font));
+        button.setPreferredSize(SYMBOL_BUTTON_SIZE);
+        button.setMinimumSize(SYMBOL_BUTTON_SIZE);
+        button.setMaximumSize(SYMBOL_BUTTON_SIZE);
+        button.addActionListener(evt -> action.accept(button.isSelected()));
+        return button;
+    }
+
+    private static void ensureSortedFontSizeEntry(JComboBox<Float> sizeList, float size) {
+        if (!Float.isFinite(size) || size <= 0f) {
+            return;
+        }
+
+        @SuppressWarnings("unchecked")
+        DefaultComboBoxModel<Float> model = (DefaultComboBoxModel<Float>) sizeList.getModel();
+
+        int insertAt = model.getSize();
+        for (int i = 0; i < model.getSize(); i++) {
+            Float existing = model.getElementAt(i);
+            if (existing == null) {
+                continue;
+            }
+            int compare = Float.compare(existing, size);
+            if (compare == 0) {
+                return;
+            }
+            if (compare > 0) {
+                insertAt = i;
+                break;
+            }
+        }
+        model.insertElementAt(size, insertAt);
+    }
+
+    private static DefaultListCellRenderer createColorRenderer() {
+        return new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, @Nullable Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Color c) {
+                    setText(c.toArgb());
+                    setIcon(new ColorIcon(c));
+                } else {
+                    setText("");
+                    setIcon(null);
+                }
+                return this;
+            }
+        };
+    }
+
+    private record ColorIcon(Color color) implements Icon {
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            java.awt.Color awt = SwingUtil.convert(color);
+            g.setColor(awt);
+            g.fillRect(x, y, getIconWidth(), getIconHeight());
+            g.setColor(Objects.equals(awt, java.awt.Color.BLACK) ? java.awt.Color.WHITE : java.awt.Color.BLACK);
+            g.drawRect(x, y, getIconWidth() - 1, getIconHeight() - 1);
+        }
+
+        @Override
+        public int getIconWidth() {
+            return 14;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 14;
         }
     }
 

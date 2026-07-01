@@ -1,15 +1,14 @@
 package com.dua3.utility.samples;
 
 import com.dua3.utility.awt.AwtFontUtil;
-import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.swing.TextEditorPane;
 import com.dua3.utility.swing.TextPane;
 import com.dua3.utility.text.Font;
-import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.DetachableNode;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,54 +16,19 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFrame;
-import javax.swing.Icon;
-import javax.swing.JList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 /**
  * Swing sample for {@link TextEditorPane} and {@link TextPane}.
  */
 public final class SwingTextEditorPaneSample {
-    private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
-    private static final Color[] DEFAULT_TEXT_COLORS = {
-            Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
-            Color.RED.darker(), Color.RED, Color.RED.brighter(),
-            Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
-            Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
-            Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
-            Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
-            Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
-    };
-    private static final Color[] DEFAULT_BACKGROUND_COLORS = {
-            Color.TRANSPARENT_WHITE,
-            Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
-            Color.RED.darker(), Color.RED, Color.RED.brighter(),
-            Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
-            Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
-            Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
-            Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
-            Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
-    };
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
-    private static final Font DEFAULT_FONT = FONT_UTIL.getDefaultFont();
-
-    private static final Dimension SYMBOL_BUTTON_SIZE = new Dimension(24, 24);
 
     private SwingTextEditorPaneSample() {
         // no instances
@@ -129,96 +93,19 @@ public final class SwingTextEditorPaneSample {
         JCheckBox editable = new JCheckBox("Editable", editor.isEditable());
         editable.addActionListener(e -> editor.setEditable(editable.isSelected()));
 
-        JButton cut = editButton("✂", editor::cut);
-        JButton copy = editButton("⧉", editor::copy);
-        JButton paste = editButton("\uD83D\uDCCB", editor::paste);
-        JButton undo = editButton("⟲", editor::undo);
-        JButton redo = editButton("⟳", editor::redo);
-
-        JToggleButton bold = fontStyleButton("B", DEFAULT_FONT.withBold(true), editor::markBold);
-        JToggleButton italic = fontStyleButton("I", DEFAULT_FONT.withItalic(true), editor::markItalic);
-        JToggleButton underline = fontStyleButton("U", DEFAULT_FONT.withUnderline(true), editor::markUnderline);
-        JToggleButton strike = fontStyleButton("S", DEFAULT_FONT.withStrikeThrough(true), editor::markStrikeThrough);
-
-        JComboBox<String> fontList = new JComboBox<>(FONT_UTIL.getFamilies(FontUtil.FontTypes.ALL).toArray(new String[0]));
-        JComboBox<Float> sizeList = new JComboBox<>(DEFAULT_FONT_SIZES);
-        JComboBox<Color> textColorList = new JComboBox<>(DEFAULT_TEXT_COLORS);
-        JComboBox<Color> backgroundColorList = new JComboBox<>(DEFAULT_BACKGROUND_COLORS);
-        textColorList.setRenderer(createColorRenderer());
-        backgroundColorList.setRenderer(createColorRenderer());
-
-        AtomicBoolean synchronizingToolbar = new AtomicBoolean(false);
-        Runnable syncToolbar = () -> {
-            synchronizingToolbar.set(true);
-            try {
-                bold.setSelected(editor.isBold());
-                italic.setSelected(editor.isItalic());
-                underline.setSelected(editor.isUnderline());
-                strike.setSelected(editor.isStrikeThrough());
-                undo.setEnabled(editor.canUndo());
-                redo.setEnabled(editor.canRedo());
-                fontList.setSelectedItem(editor.getFontFamily());
-                float editorFontSize = (float) editor.getFontSize();
-                ensureSortedFontSizeEntry(sizeList, editorFontSize);
-                sizeList.setSelectedItem(editorFontSize);
-                textColorList.setSelectedItem(editor.getTextColor());
-                backgroundColorList.setSelectedItem(editor.getBackgroundColor());
-            } finally {
-                synchronizingToolbar.set(false);
-            }
-        };
+        JComboBox<DetachableNode.Location> toolbarLocation = new JComboBox<>(DetachableNode.Location.values());
 
         editor.addPropertyChangeListener("documentVersion", evt -> {
             syncAll.run();
-            syncToolbar.run();
         });
         editor.addPropertyChangeListener("caretPosition", evt -> {
             updateSelectionInfo.run();
-            syncToolbar.run();
         });
         editor.addPropertyChangeListener("selectionStart", evt -> {
             updateSelectionInfo.run();
-            syncToolbar.run();
         });
         editor.addPropertyChangeListener("selectionEnd", evt -> {
             updateSelectionInfo.run();
-            syncToolbar.run();
-        });
-
-        fontList.addActionListener(e -> {
-            if (synchronizingToolbar.get()) {
-                return;
-            }
-            editor.setFontFamily((String) fontList.getSelectedItem());
-            editor.requestFocusInWindow();
-            syncToolbar.run();
-        });
-        sizeList.addActionListener(e -> {
-            if (synchronizingToolbar.get()) {
-                return;
-            }
-            Float size = (Float) sizeList.getSelectedItem();
-            if (size != null) {
-                editor.setFontSize(size);
-            }
-            editor.requestFocusInWindow();
-            syncToolbar.run();
-        });
-        textColorList.addActionListener(e -> {
-            if (synchronizingToolbar.get()) {
-                return;
-            }
-            editor.setTextColor((Color) textColorList.getSelectedItem());
-            editor.requestFocusInWindow();
-            syncToolbar.run();
-        });
-        backgroundColorList.addActionListener(e -> {
-            if (synchronizingToolbar.get()) {
-                return;
-            }
-            editor.setBackgroundColor((Color) backgroundColorList.getSelectedItem());
-            editor.requestFocusInWindow();
-            syncToolbar.run();
         });
 
         JButton apply = new JButton("Apply");
@@ -244,30 +131,14 @@ public final class SwingTextEditorPaneSample {
         controlsRow.add(wrap);
         controlsRow.add(Box.createHorizontalStrut(4));
         controlsRow.add(editable);
+        controlsRow.add(Box.createHorizontalStrut(12));
+        controlsRow.add(new JLabel("Toolbar Location:"));
+        controlsRow.add(Box.createHorizontalStrut(4));
+        controlsRow.add(toolbarLocation);
         controlsRow.add(Box.createHorizontalStrut(8));
         controlsRow.add(apply);
         controlsRow.add(reset);
         controlsRow.add(Box.createHorizontalGlue());
-
-        JToolBar toolbarRow = new JToolBar();
-//        toolbarRow.setLayout(new BoxLayout(toolbarRow, BoxLayout.X_AXIS));
-        toolbarRow.add(cut);
-        toolbarRow.add(copy);
-        toolbarRow.add(paste);
-        toolbarRow.add(Box.createHorizontalStrut(4));
-        toolbarRow.add(undo);
-        toolbarRow.add(redo);
-        toolbarRow.add(Box.createHorizontalStrut(8));
-        toolbarRow.add(fontList);
-        toolbarRow.add(sizeList);
-        toolbarRow.add(bold);
-        toolbarRow.add(italic);
-        toolbarRow.add(underline);
-        toolbarRow.add(strike);
-        toolbarRow.add(Box.createHorizontalStrut(4));
-        toolbarRow.add(textColorList);
-        toolbarRow.add(backgroundColorList);
-        toolbarRow.add(Box.createHorizontalGlue());
 
         JPanel actionRow = new JPanel();
         actionRow.setLayout(new BoxLayout(actionRow, BoxLayout.X_AXIS));
@@ -278,8 +149,6 @@ public final class SwingTextEditorPaneSample {
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         content.add(controlsRow);
-        content.add(Box.createVerticalStrut(8));
-        content.add(toolbarRow);
         content.add(Box.createVerticalStrut(8));
         content.add(new JLabel("Editor"));
         content.add(editor);
@@ -297,12 +166,21 @@ public final class SwingTextEditorPaneSample {
         content.add(status);
 
         syncAll.run();
-        syncToolbar.run();
+        toolbarLocation.setSelectedItem(editor.getToolbarLocation());
+        editor.addPropertyChangeListener("toolbarLocation", evt -> toolbarLocation.setSelectedItem(editor.getToolbarLocation()));
+        toolbarLocation.addActionListener(e -> {
+            DetachableNode.Location location = (DetachableNode.Location) toolbarLocation.getSelectedItem();
+            if (location != null) {
+                editor.setToolbarLocation(location);
+            }
+        });
 
         JFrame frame = new JFrame("TextEditorPane / TextPane Swing Sample");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setContentPane(content);
+        editor.setToolbarApplicationParent(frame.getContentPane());
+
         frame.setSize(980, 820);
         frame.pack();
         frame.setLocationByPlatform(true);
@@ -313,89 +191,6 @@ public final class SwingTextEditorPaneSample {
         return text.toString().replace("\n", "\\n");
     }
 
-    private static JButton editButton(String text, Runnable action) {
-        JButton button = new JButton(text);
-        button.setPreferredSize(SYMBOL_BUTTON_SIZE);
-        button.setMinimumSize(SYMBOL_BUTTON_SIZE);
-        button.setMaximumSize(SYMBOL_BUTTON_SIZE);
-        button.setMargin(new Insets(0, 0, 0, 0));
-        button.addActionListener(evt -> action.run());
-        return button;
-    }
-
-    private static JToggleButton fontStyleButton(String text, Font font, Consumer<Boolean> action) {
-        JToggleButton button = new JToggleButton(text);
-        button.setFont(FONT_UTIL.convert(font));
-        button.setPreferredSize(SYMBOL_BUTTON_SIZE);
-        button.setMinimumSize(SYMBOL_BUTTON_SIZE);
-        button.setMaximumSize(SYMBOL_BUTTON_SIZE);
-        button.addActionListener(evt -> action.accept(button.isSelected()));
-        return button;
-    }
-
-    private static void ensureSortedFontSizeEntry(JComboBox<Float> sizeList, float size) {
-        if (!Float.isFinite(size) || size <= 0f) {
-            return;
-        }
-
-        @SuppressWarnings("unchecked")
-        DefaultComboBoxModel<Float> model = (DefaultComboBoxModel<Float>) sizeList.getModel();
-
-        int insertAt = model.getSize();
-        for (int i = 0; i < model.getSize(); i++) {
-            Float existing = model.getElementAt(i);
-            if (existing == null) {
-                continue;
-            }
-            int compare = Float.compare(existing, size);
-            if (compare == 0) {
-                return;
-            }
-            if (compare > 0) {
-                insertAt = i;
-                break;
-            }
-        }
-        model.insertElementAt(size, insertAt);
-    }
-
-    private static DefaultListCellRenderer createColorRenderer() {
-        return new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof Color c) {
-                    setText(c.toArgb());
-                    setIcon(new ColorIcon(c));
-                } else {
-                    setText("");
-                    setIcon(null);
-                }
-                return this;
-            }
-        };
-    }
-
-    private record ColorIcon(Color color) implements Icon {
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            java.awt.Color awt = SwingUtil.convert(color);
-            g.setColor(awt);
-            g.fillRect(x, y, getIconWidth(), getIconHeight());
-            g.setColor(Objects.equals(awt, java.awt.Color.BLACK) ? java.awt.Color.WHITE : java.awt.Color.BLACK);
-            g.drawRect(x, y, getIconWidth() - 1, getIconHeight() - 1);
-        }
-
-        @Override
-        public int getIconWidth() {
-            return 14;
-        }
-
-        @Override
-        public int getIconHeight() {
-            return 14;
-        }
-    }
 
     private static RichText createSampleText() {
         RichTextBuilder builder = new RichTextBuilder();
