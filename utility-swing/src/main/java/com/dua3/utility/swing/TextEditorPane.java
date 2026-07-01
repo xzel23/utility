@@ -18,11 +18,13 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -108,6 +110,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     private final JToggleButton italicButton;
     private final JToggleButton underlineButton;
     private final JToggleButton strikeButton;
+    private @Nullable JDialog toolbarFloatingDialog;
     private @Nullable Container toolbarApplicationParent;
     private DetachableNode.Location toolbarLocation = DetachableNode.Location.EMBEDDED;
 
@@ -184,9 +187,6 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     public void setToolbarLocation(DetachableNode.Location value) {
         if (value == null) {
             value = DetachableNode.Location.HIDDEN;
-        }
-        if (value == DetachableNode.Location.FLOATING && detectToolbarLocation(toolbar.getParent()) != DetachableNode.Location.FLOATING) {
-            return;
         }
         if (toolbarLocation == value) {
             return;
@@ -1265,9 +1265,16 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         applyingToolbarLocation.set(true);
         try {
             if (toolbarLocation == DetachableNode.Location.FLOATING) {
-                toolbar.setVisible(true);
+                Container currentParent = toolbar.getParent();
+                if (currentParent != null) {
+                    currentParent.remove(toolbar);
+                }
+                setColumnHeaderView(null);
+                showToolbarFloatingWindow();
                 return;
             }
+
+            hideToolbarFloatingWindow();
 
             Container currentParent = toolbar.getParent();
             if (currentParent != null) {
@@ -1279,7 +1286,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 toolbar.setVisible(true);
             } else if (toolbarLocation == DetachableNode.Location.APPLICATION && toolbarApplicationParent != null) {
                 setColumnHeaderView(null);
-                toolbarApplicationParent.add(toolbar);
+                toolbarApplicationParent.add(toolbar, java.awt.BorderLayout.NORTH);
                 toolbar.setVisible(true);
             } else {
                 setColumnHeaderView(null);
@@ -1295,6 +1302,30 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         } finally {
             applyingToolbarLocation.set(false);
             refreshToolbarLocationFromUi();
+        }
+    }
+
+    private void showToolbarFloatingWindow() {
+        if (toolbarFloatingDialog == null || !toolbarFloatingDialog.isDisplayable()) {
+            toolbarFloatingDialog = new JDialog(SwingUtilities.getWindowAncestor(this));
+            toolbarFloatingDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+            toolbarFloatingDialog.getContentPane().setLayout(new java.awt.BorderLayout());
+        }
+
+        if (toolbar.getParent() != toolbarFloatingDialog.getContentPane()) {
+            toolbarFloatingDialog.getContentPane().add(toolbar, java.awt.BorderLayout.NORTH);
+        }
+        toolbar.setVisible(true);
+        toolbarFloatingDialog.pack();
+        if (!toolbarFloatingDialog.isShowing()) {
+            toolbarFloatingDialog.setLocationRelativeTo(this);
+        }
+        toolbarFloatingDialog.setVisible(true);
+    }
+
+    private void hideToolbarFloatingWindow() {
+        if (toolbarFloatingDialog != null) {
+            toolbarFloatingDialog.setVisible(false);
         }
     }
 
