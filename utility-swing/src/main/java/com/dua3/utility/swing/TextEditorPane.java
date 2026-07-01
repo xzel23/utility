@@ -34,6 +34,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.HierarchyEvent;
@@ -1238,6 +1239,31 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     private void refreshToolbarLocationFromUi() {
         Container parent = toolbar.getParent();
         DetachableNode.Location newLocation = detectToolbarLocation(parent);
+
+        if (toolbarLocation == DetachableNode.Location.APPLICATION && newLocation == DetachableNode.Location.FLOATING) {
+            if (toolbarApplicationParent != null && SwingUtilities.isDescendingFrom(toolbar, toolbarApplicationParent)) {
+                toolbarApplicationParent.remove(toolbar);
+            }
+            if (toolbarApplicationParent != null) {
+                toolbarApplicationParent.invalidate();
+                toolbarApplicationParent.revalidate();
+                toolbarApplicationParent.repaint();
+
+                Container applicationParentContainer = toolbarApplicationParent.getParent();
+                if (applicationParentContainer != null) {
+                    applicationParentContainer.invalidate();
+                    applicationParentContainer.revalidate();
+                    applicationParentContainer.repaint();
+                }
+                Window appWindow = SwingUtilities.getWindowAncestor(toolbarApplicationParent);
+                if (appWindow != null) {
+                    appWindow.invalidate();
+                    appWindow.validate();
+                    appWindow.repaint();
+                }
+            }
+        }
+
         if (newLocation != toolbarLocation) {
             DetachableNode.Location old = toolbarLocation;
             toolbarLocation = newLocation;
@@ -1265,6 +1291,8 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     private void applyToolbarLocation() {
         applyingToolbarLocation.set(true);
         try {
+            Window oldFloatingHost = SwingUtilities.getWindowAncestor(toolbar);
+
             if (toolbarLocation == DetachableNode.Location.FLOATING) {
                 Container currentParent = toolbar.getParent();
                 if (currentParent != null) {
@@ -1272,6 +1300,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 }
                 setColumnHeaderView(null);
                 showToolbarFloatingWindow();
+                hideNativeFloatingHost(oldFloatingHost);
                 return;
             }
 
@@ -1302,6 +1331,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 toolbarApplicationParent.revalidate();
                 toolbarApplicationParent.repaint();
             }
+            hideNativeFloatingHost(oldFloatingHost);
             revalidate();
             repaint();
         } finally {
@@ -1332,6 +1362,20 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         if (toolbarFloatingDialog != null) {
             toolbarFloatingDialog.setVisible(false);
         }
+    }
+
+    private void hideNativeFloatingHost(@Nullable Window oldFloatingHost) {
+        if (oldFloatingHost == null || oldFloatingHost == toolbarFloatingDialog) {
+            return;
+        }
+
+        Window editorWindow = SwingUtilities.getWindowAncestor(this);
+        if (oldFloatingHost == editorWindow) {
+            return;
+        }
+
+        oldFloatingHost.setVisible(false);
+        oldFloatingHost.dispose();
     }
 
     private static JButton editButton(String text, Runnable action) {
