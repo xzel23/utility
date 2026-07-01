@@ -4,11 +4,16 @@ import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.ui.DetachableNode;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ToolBar;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
@@ -16,9 +21,9 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.BiConsumer;
+import java.util.Map;
 
 /**
  * A subclass of {@code ToolBar} that implements the {@code DetachableNode} interface, allowing it
@@ -28,40 +33,13 @@ import java.util.function.BiConsumer;
  * {@code ToolBarExt} enables flexibility in the UI layout by allowing the toolbar to exist in different
  * states such as hidden, embedded, part of the application, or in an independent floating window.
  */
-public class ToolBarExt extends ToolBar implements DetachableNode<ToolBarExt, Parent, Parent> {
+public class ToolBarExt extends ToolBar implements DetachableNode<ToolBarExt, Parent> {
     private static final Logger LOG = LogManager.getLogger(ToolBarExt.class);
 
     private final Property<Location> locationProperty = new SimpleObjectProperty<>(this, "location", Location.HIDDEN);
     private final List<LocationListener> locationListeners = new ArrayList<>();
 
-    record ParentData(
-            @Nullable Parent parent,
-            BiConsumer<? super @Nullable Parent, ? super ToolBarExt> addToParent,
-            BiConsumer<? super @Nullable Parent, ? super ToolBarExt> removeFromParent
-    ) {
-        void setAsParentOf(ToolBarExt node) {
-            PlatformHelper.checkApplicationThread();
-
-            assert node.getParent() == null : "node already has a parent";
-            assert node.getScene() == null : "node already is added to a scene graph";
-
-            addToParent.accept(parent, node);
-        }
-
-        void removeAsParentOf(ToolBarExt node) {
-            PlatformHelper.checkApplicationThread();
-
-            removeFromParent.accept(parent, node);
-
-            assert node.getParent() == null : "node parent should be null now";
-            assert node.getScene() == null : "node should not be part of a scene graph now";
-        }
-    }
-
-    private final ParentData floatingParent;
-    private ParentData applicationParent;
-    private ParentData embeddedParent;
-    private ParentData hiddenParent;
+    private final Map<Location, @Nullable Parent> locationToParent = new EnumMap<>(Location.class);
 
     /**
      * Constructs a {@code ToolBarExt} instance with the provided items.
@@ -75,74 +53,90 @@ public class ToolBarExt extends ToolBar implements DetachableNode<ToolBarExt, Pa
     ) {
         super(items);
 
-        this.floatingParent = createFloatingParent();
-        this.hiddenParent = createHiddenParent();
-        this.embeddedParent = createHiddenParent();
-        this.applicationParent = createHiddenParent();
+        // use the parent that the toolbar is added to as the embedded location
+        parentProperty().addListener(new ChangeListener<>() {
+            @Override
+            @SuppressWarnings("java:S4274")
+            public void changed(ObservableValue<? extends @Nullable Parent> observable, @Nullable Parent oldValue, @Nullable Parent newValue) {
+                assert newValue != null : "expected non-null parent on first parent change";
+                locationToParent.computeIfAbsent(Location.EMBEDDED, k -> newValue);
 
-        locationProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue != oldValue) {
-                // remove from previous parent
-                getParentData(oldValue).removeAsParentOf(this);
-
-                // add to new parent
-                getParentData(newValue).setAsParentOf(this);
-
-                for (LocationListener listener : locationListeners) {
-                    listener.locationChanged(this, oldValue, newValue);
+                if (getLocation() != Location.EMBEDDED) {
+                    removeFromParent(getNode());
+                    addToParent(locationToParent.get(getLocation()));
                 }
+
+                // listener should only run once
+                parentProperty().removeListener(this);
             }
         });
-    }
 
-    private ParentData createFloatingParent() {
-        return new ParentData(
-                this,
-                // add to a new floating window
-                (parent, node) -> {
-                    assert this == node : "node is not this";
-                    assert getParent() == null : "node already has a parent";
-                    assert getScene() == null : "node already is added to a scene graph";
-                    Stage stage = new Stage(StageStyle.UNDECORATED);
-                    stage.setScene(new Scene(this));
-                },
-                // remove the floating window
-                (parent, node) -> {
-                    if (getScene() instanceof Scene scene && scene.getWindow() instanceof Stage stage) {
-                        // close the window wrapper
-                        assert stage.getStyle() == StageStyle.UNDECORATED;
-                        stage.close();
-                    }
-                    assert getParent() == null : "node already has a parent";
-                    assert getScene() == null : "node already is added to a scene graph";
-                });
-    }
+        locationToParent.put(Location.HIDDEN, new StackPane());
+        locationToParent.put(Location.FLOATING, new FloatingPane());
 
-    private ParentData createHiddenParent() {
-        return new ParentData(
-                null,
-                (p, n) -> {},
-                (q, n) -> {
-                    Node parentNode = n.getParent();
-                    if (n.getParent() != q && q != null) {
-                        throw new IllegalStateException("unexpected partent: " + parentNode + ", expected " + q);
+        locationProperty.addListener((observable, oldValue, newValue) ->
+                PlatformHelper.runAndWait(() -> {
+                    Parent oldParent = getParent();
+                    Parent newParent = locationToParent.get(newValue);
+
+                    if (newParent != oldParent) {
+                        removeFromParent(oldParent);
+                        addToParent(newParent);
                     }
-                    switch (parentNode) {
-                        case Pane pane -> pane.getChildren().remove(n);
-                        case null -> { /* ignore */ }
-                        default -> LOG.warn("unsupported parent type: {}", q.getClass().getName());
-                    }
-                }
+                })
         );
     }
 
-    private ParentData getParentData(Location location) {
-        return switch (location) {
-            case APPLICATION -> applicationParent;
-            case EMBEDDED -> embeddedParent;
-            case FLOATING -> floatingParent;
-            case HIDDEN -> hiddenParent;
-        };
+    private void removeFromParent(@Nullable Parent parent) {
+        switch (parent) {
+            case Pane pane -> pane.getChildren().remove(this);
+            case null -> { /* nothing to do */ }
+            default -> LOG.warn("cannot remove node from the unsupported parent type: {}", parent::getClass);
+        }
+    }
+
+    private void addToParent(@Nullable Parent parent) {
+        switch (parent) {
+            case Pane pane -> pane.getChildren().addFirst(this);
+            case null -> { /* nothing to do */ }
+            default -> LOG.warn("cannot add node to unsupported parent type: {}", parent::getClass);
+        }
+    }
+
+    static final class FloatingPane extends StackPane {
+        private @Nullable Stage stage;
+
+        private double xOffset = 0;
+        private double yOffset = 0;
+
+        FloatingPane() {
+            addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                if (stage != null) {
+                    xOffset = event.getScreenX() - stage.getX();
+                    yOffset = event.getScreenY() - stage.getY();
+                }
+            });
+
+            addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
+                if (stage != null) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+
+            getChildren().addListener((ListChangeListener<? super Node>) c -> {
+                if (c.getList().isEmpty()) {
+                    if (stage != null) {
+                        stage.close();
+                        stage = null;
+                    }
+                } else if (stage == null) {
+                    stage = new Stage(StageStyle.UNDECORATED);
+                    stage.setScene(new Scene(this));
+                    stage.show();
+                }
+            });
+        }
     }
 
     @Override
@@ -182,48 +176,8 @@ public class ToolBarExt extends ToolBar implements DetachableNode<ToolBarExt, Pa
     }
 
     @Override
-    public Optional<Parent> getEmbeddedParent() {
-        return Optional.ofNullable(embeddedParent.parent);
-    }
-
-    @Override
-    public void setEmbeddedParent(
-            @Nullable Parent parent,
-            BiConsumer<? super @Nullable Parent, ? super ToolBarExt> addToParent,
-            BiConsumer<? super @Nullable Parent, ? super ToolBarExt> removeFromParent
-    ) {
-        PlatformHelper.checkApplicationThread();
-
-        // remove from previous parent if necessary
-        embeddedParent.removeAsParentOf(this);
-
-        // set new values for fields
-        embeddedParent = new ParentData(parent, addToParent, removeFromParent);
-
-        // add to new parent
-        embeddedParent.setAsParentOf(this);
-    }
-
-    @Override
-    public Optional<Parent> getApplicationParent() {
-        return Optional.ofNullable(applicationParent.parent);
-    }
-
-    @Override
-    public void setApplicationParent(
-            @Nullable Parent parent,
-            BiConsumer<? super @Nullable Parent, ? super ToolBarExt> addToParent,
-            BiConsumer<? super @Nullable Parent, ? super ToolBarExt> removeFromParent
-    ) {
-        PlatformHelper.checkApplicationThread();
-
-        // remove from previous parent if necessary
-        applicationParent.removeAsParentOf(this);
-
-        // set new values for fields
-        applicationParent = new ParentData(parent, addToParent, removeFromParent);
-
-        // add to new parent
-        applicationParent.setAsParentOf(this);
+    public void setApplicationParent(@Nullable Parent parent) {
+        LOG.debug("setApplicationParent({})", parent);
+        locationToParent.put(Location.APPLICATION, parent);
     }
 }

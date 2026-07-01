@@ -2,17 +2,13 @@ package com.dua3.utility.ui;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
-import java.util.function.BiConsumer;
-
 /**
  * Interface for a node that can be detached from its parent.
  *
  * @param <N> the type of the node
- * @param <P> the type of the application parent node
- * @param <Q> the type of the embedded parent node
+ * @param <P> the type of the parent nodes
  */
-public interface DetachableNode<N, P, Q> {
+public interface DetachableNode<N, P> {
 
     /**
      * Enum representing the possible locations or visibility states for a detachable node.
@@ -51,7 +47,7 @@ public interface DetachableNode<N, P, Q> {
          * @param oldLocation the old {@code Location} of the specified node
          * @param newLocation the new {@code Location} of the specified node
          */
-        void locationChanged(DetachableNode<?, ?, ?> node, Location oldLocation, Location newLocation);
+        void locationChanged(DetachableNode<?, ?> node, Location oldLocation, Location newLocation);
     }
 
     /**
@@ -99,42 +95,7 @@ public interface DetachableNode<N, P, Q> {
      * Sets the parent for the current application context of the node and manages the
      * addition or removal process of the node into/from the parent.
      *
-     * @param parent the parent container to assign to the node; may be null to indicate no parent
-     * @param addToParent a {@code BiConsumer} representing the logic to add the node to the specified parent; cannot be null
-     * @param removeFromParent a {@code BiConsumer} representing the logic to remove the node from the specified parent; cannot be null
+     * @param parent the parent node to assign to the node; may be null to indicate no parent
      */
-    void setApplicationParent(
-            @Nullable P parent,
-            BiConsumer<? super @Nullable P, ? super N> addToParent,
-            BiConsumer<? super @Nullable P, ? super N> removeFromParent
-    );
-
-    /**
-     * Retrieves the parent application container of the current detachable node, if present.
-     *
-     * @return an {@code Optional} containing the parent application container
-     *         of the node, or an empty {@code Optional} if no parent is set.
-     */
-    Optional<P> getApplicationParent();
-
-    /**
-     * Sets the parent for the current node when it is embedded within another component.
-     *
-     * @param parent the parent component to set; may be null to indicate no parent
-     * @param addToParent a {@code BiConsumer} representing the logic to add the node to the specified parent; cannot be null
-     * @param removeFromParent a {@code BiConsumer} representing the logic to remove the node from the specified parent; cannot be null
-     */
-    void setEmbeddedParent(
-            @Nullable Q parent,
-            BiConsumer<? super @Nullable Q, ? super N> addToParent,
-            BiConsumer<? super @Nullable Q, ? super N> removeFromParent
-    );
-
-    /**
-     * Retrieves the embedded parent associated with this node. The embedded parent typically
-     * represents the parent node when this node is placed in an embedded context.
-     *
-     * @return an {@code Optional} containing the embedded parent if it exists, or an empty {@code Optional} if no embedded parent is set.
-     */
-    Optional<P> getEmbeddedParent();
+    void setApplicationParent(@Nullable P parent);
 }

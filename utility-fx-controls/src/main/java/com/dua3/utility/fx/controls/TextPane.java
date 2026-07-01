@@ -961,11 +961,6 @@ public class TextPane extends Control implements RichTextPane {
                                 textColorList,
                                 backgroundColorList
                         )
-                        .setEmbeddedParent(
-                                editorRoot,
-                                (parent, node) -> parent.getChildren().addFirst(node),
-                                (parent, node) -> parent.getChildren().remove(node)
-                        )
                         .focusTraversable(false)
                         .bindLocation(editor.toolbarLocationProperty())
                         .build();
