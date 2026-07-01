@@ -33,8 +33,8 @@ import java.util.Map;
  * {@code ToolBarExt} enables flexibility in the UI layout by allowing the toolbar to exist in different
  * states such as hidden, embedded, part of the application, or in an independent floating window.
  */
-public class ToolBarExt extends ToolBar implements DetachableNode<ToolBarExt, Parent> {
-    private static final Logger LOG = LogManager.getLogger(ToolBarExt.class);
+public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Parent> {
+    private static final Logger LOG = LogManager.getLogger(ToolBarEx.class);
 
     private final Property<Location> locationProperty = new SimpleObjectProperty<>(this, "location", Location.HIDDEN);
     private final List<LocationListener> locationListeners = new ArrayList<>();
@@ -48,7 +48,7 @@ public class ToolBarExt extends ToolBar implements DetachableNode<ToolBarExt, Pa
      *
      * @param items one or more {@code Node} elements to be included in the toolbar.
      */
-    public ToolBarExt(
+    public ToolBarEx(
             Node... items
     ) {
         super(items);
@@ -160,7 +160,7 @@ public class ToolBarExt extends ToolBar implements DetachableNode<ToolBarExt, Pa
     }
 
     @Override
-    public ToolBarExt getNode() {
+    public ToolBarEx getNode() {
         return this;
     }
 

@@ -128,7 +128,7 @@ public final class Controls {
     }
 
     /**
-     * Creates and return a {@link ToolBarBuilder} to create instances of {@link ToolBarExt}.
+     * Creates and return a {@link ToolBarBuilder} to create instances of {@link ToolBarEx}.
      *
      * @return a new instance of {@code ToolBarBuilder}
      */

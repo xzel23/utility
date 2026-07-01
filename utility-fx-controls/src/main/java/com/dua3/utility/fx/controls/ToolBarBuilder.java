@@ -13,10 +13,10 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A builder for constructing instances of {@link ToolBarExt}, providing a fluent API to configure
+ * A builder for constructing instances of {@link ToolBarEx}, providing a fluent API to configure
  * properties and manage toolbar items.
  */
-public class ToolBarBuilder extends ControlBuilder<ToolBarExt, ToolBarBuilder> {
+public class ToolBarBuilder extends ControlBuilder<ToolBarEx, ToolBarBuilder> {
 
     private final List<Node> items = new ArrayList<>();
 
@@ -28,7 +28,7 @@ public class ToolBarBuilder extends ControlBuilder<ToolBarExt, ToolBarBuilder> {
      *
      */
     protected ToolBarBuilder() {
-        super(ToolBarExt::new);
+        super(ToolBarEx::new);
     }
 
     /**
@@ -81,15 +81,15 @@ public class ToolBarBuilder extends ControlBuilder<ToolBarExt, ToolBarBuilder> {
     }
 
     @Override
-    public ToolBarExt build() {
-        ToolBarExt toolBarExt = super.build();
-        toolBarExt.getItems().addAll(items);
+    public ToolBarEx build() {
+        ToolBarEx toolBarEx = super.build();
+        toolBarEx.getItems().addAll(items);
         if (applicationParent != null) {
-            toolBarExt.setApplicationParent(applicationParent);
+            toolBarEx.setApplicationParent(applicationParent);
         }
         if (location != null) {
-            toolBarExt.locationProperty().bind(location);
+            toolBarEx.locationProperty().bind(location);
         }
-        return toolBarExt;
+        return toolBarEx;
     }
 }

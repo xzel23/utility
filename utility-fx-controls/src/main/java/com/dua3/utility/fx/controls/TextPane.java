@@ -51,7 +51,6 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Skin;
@@ -943,7 +942,7 @@ public class TextPane extends Control implements RichTextPane {
                 cutButton.setFocusTraversable(false);
                 pasteButton.setFocusTraversable(false);
 
-                ToolBarExt toolbar = Controls.toolBar()
+                ToolBarEx toolbar = Controls.toolBar()
                         .items(
                                 cutButton,
                                 copyButton,
