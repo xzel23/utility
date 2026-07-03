@@ -85,8 +85,9 @@ public final class FileObjectStore implements ObjectStore {
     public long write(URI path, InputStream in, OutputOption... options) throws IOException {
         Path resolved = resolve(path);
         OutputOption effectiveOption = ensureCanWrite(resolved, options);
-        if (resolved.getParent() != null) {
-            Files.createDirectories(resolved.getParent());
+        Path parent = resolved.getParent();
+        if (parent != null) {
+            Files.createDirectories(parent);
         }
         StandardCopyOption[] copyOptions = effectiveOption == OutputOption.CREATE_OR_REPLACE
                 ? new StandardCopyOption[]{StandardCopyOption.REPLACE_EXISTING}
@@ -122,8 +123,9 @@ public final class FileObjectStore implements ObjectStore {
     public OutputStream openOutputStream(URI path, OutputOption... options) throws IOException {
         Path resolved = resolve(path);
         OutputOption effectiveOption = ensureCanWrite(resolved, options);
-        if (resolved.getParent() != null) {
-            Files.createDirectories(resolved.getParent());
+        Path parent = resolved.getParent();
+        if (parent != null) {
+            Files.createDirectories(parent);
         }
         OpenOption[] soo = effectiveOption == OutputOption.CREATE_OR_REPLACE
                 ? new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING}
