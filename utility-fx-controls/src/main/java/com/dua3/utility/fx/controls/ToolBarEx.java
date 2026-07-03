@@ -70,6 +70,9 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
 
                 embeddedParent = newValue;
 
+                // listener should only run once
+                parentProperty().removeListener(this);
+
                 // keep the owner up to date
                 newValue.sceneProperty().addListener((obs, oldVScene, newScene) -> mainScene = new WeakReference<>(newScene));
 
@@ -77,9 +80,6 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                     removeFromParent(getNode());
                     addToParent(locationToParent.get(getLocation()).get());
                 }
-
-                // listener should only run once
-                parentProperty().removeListener(this);
             }
         });
 
