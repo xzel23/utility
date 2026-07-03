@@ -84,7 +84,11 @@ public interface ObjectStore extends AutoCloseable {
      * If the path corresponds to a folder, the method will provide a stream
      * of {@link ObjectInfo} objects representing the metadata of the folder's contents.
      * <p>
-     * <strong>Note:</strong> The caller must close the returned stream!
+     * <strong>Notes:</strong>
+     * <ul>
+     * <li>The caller must close the returned stream.
+     * <li>Implementations must ensure that the object graph is acyclic, or define how cycles are handled.
+     * </ul>
      *
      * @param path the {@code URI} of the folder or object to be listed; must not be {@link URI#isAbsolute() absolute}.
      * @return a stream of {@link ObjectInfo} instances representing the objects under the specified path
@@ -171,6 +175,9 @@ public interface ObjectStore extends AutoCloseable {
      * This method provides an {@link OutputStream} for writing data
      * to the object located at the specified path. If the object
      * already exists, its contents may be overwritten.
+     * <p>
+     * If any I/O error occurs while opening the output stream, the operation aborts
+     * and the store may be partially modified.
      *
      * @param path the {@link URI} specifying the location where the output data will be written
      * @param options the {@link OutputOption} specifying how to handle existing objects at the output location;
@@ -241,6 +248,7 @@ public interface ObjectStore extends AutoCloseable {
      * Deletes an object at the specified path recursively.
      * If the path refers to a folder, all its contents, including subfolders,
      * are deleted. If the path refers to a file, the file is deleted.
+     * If any deletion fails, the operation aborts and the store may be partially modified.
      *
      * @param path the {@link URI} representing the location of the object or folder to be deleted
      *
