@@ -32,7 +32,7 @@ public final class Zip implements AutoCloseable, Flushable {
     }
 
     /**
-     * Add file to zip.
+     * Add a file to the zip.
      * <p>
      * The file will be placed under the last created directory.
      *
@@ -46,9 +46,9 @@ public final class Zip implements AutoCloseable, Flushable {
     }
 
     /**
-     * Add non-binary (text) file to zip.
+     * Add a non-binary (text) file to the zip.
      * <p>
-     * text will be written as UTF-8 encoded data and the file will be placed under the last created directory.
+     * text will be written as UTF-8 encoded data, and the file will be placed under the last created directory.
      *
      * @param filename the filename
      * @param data     the data
@@ -59,7 +59,7 @@ public final class Zip implements AutoCloseable, Flushable {
     }
 
     /**
-     * Add file to zip.
+     * Add a file to the zip.
      * <p>
      * The file will be placed under the last created directory.
      *
@@ -80,7 +80,7 @@ public final class Zip implements AutoCloseable, Flushable {
     }
 
     /**
-     * Add directory to zip.
+     * Add a directory to the zip.
      * <p>
      * The directory will be placed under the last created directory unless it starts with '/' (denotes the zip's root).
      *
