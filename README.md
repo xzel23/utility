@@ -240,6 +240,10 @@ could not be loaded.
 
 This release introduces some major changes, both to existing interfaces and also by adding new functionality.
 
+#### Changes in 23.0.0-beta4 (in progress)
+
+- add new `ObjectStore` interface and a default `FileObjectStore` implementation.
+
 #### Changes in 23.0.0-beta3
 
 - Fix: when line has trailing whitespace, caret stays at position of last non-whitespace character.
