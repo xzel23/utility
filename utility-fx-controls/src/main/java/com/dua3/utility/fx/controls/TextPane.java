@@ -855,11 +855,20 @@ public class TextPane extends Control implements RichTextPane {
             // Keep selection overlay above text and inline nodes so selection stays visible
             // even when text background colors or inline controls are present.
             contentPane.getChildren().setAll(canvas, inlineLayer, selectionLayer, caretLayer);
+            contentPane.setMinSize(0.0, 0.0);
+            contentPane.setPrefSize(0.0, 0.0);
 
             scrollPane.setFitToWidth(control.isWrapText());
             scrollPane.setHbarPolicy(control.isWrapText() ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
             scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
             scrollPane.setFitToHeight(false);
+            scrollPane.setMinSize(0.0, 0.0);
+            scrollPane.setPrefViewportWidth(0.0);
+            scrollPane.setPrefViewportHeight(0.0);
+            scrollPane.setMinViewportWidth(0.0);
+            scrollPane.setMinViewportHeight(0.0);
+
+            editorRoot.setMinSize(0.0, 0.0);
 
             if (control instanceof TextEditorPane editor) {
                 Button copyButton = createButton("Copy", Controls.graphic(Feather.COPY.getDescription()), editor, TextEditorPane::copy);

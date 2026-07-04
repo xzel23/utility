@@ -77,7 +77,7 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                 newValue.sceneProperty().addListener((obs, oldVScene, newScene) -> mainScene = new WeakReference<>(newScene));
 
                 if (getLocation() != Location.EMBEDDED) {
-                    removeFromParent(getNode());
+                    removeFromParent(getParent());
                     addToParent(locationToParent.get(getLocation()).get());
                 }
             }
