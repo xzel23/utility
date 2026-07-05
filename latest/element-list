@@ -15,6 +15,7 @@ com.dua3.utility.fx.icons.ikonli
 com.dua3.utility.fx.web
 com.dua3.utility.i18n
 com.dua3.utility.io
+com.dua3.utility.io.imp
 com.dua3.utility.lang
 com.dua3.utility.math
 com.dua3.utility.math.geometry
@@ -22,5 +23,6 @@ com.dua3.utility.options
 com.dua3.utility.spi
 com.dua3.utility.swing
 com.dua3.utility.text
+com.dua3.utility.text.imp.rtf
 com.dua3.utility.ui
 com.dua3.utility.xml
