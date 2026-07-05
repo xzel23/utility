@@ -17,7 +17,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Setup the JDK for the build
       - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
@@ -26,16 +25,13 @@ jobs:
             21
             25
           java-package: 'jdk+fx'
-          cache: 'gradle'
 
-      # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
         id: gradle-version
         run: |
           GRADLE_VERSION=$(sed -n -e 's!.*gradle-!!' -e 's!-bin.zip!!p' < gradle/wrapper/gradle-wrapper.properties)
           echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
-          # Create a file with the Gradle version for other jobs to use
           mkdir -p build/gradle-version
           echo "$GRADLE_VERSION" > build/gradle-version/version.txt
 
@@ -54,7 +50,7 @@ jobs:
         run: gradle --no-daemon --build-cache assemble testClasses aggregateJavadoc publishToStagingDirectory
         id: compile
 
-      # Upload build artifacts for other jobs to use
+      # Upload artifacts
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -67,7 +63,6 @@ jobs:
           path-root: ${{ github.workspace }}
           if-no-files-found: error
 
-      # Upload staging directory
       - name: 'Upload staging directory'
         uses: actions/upload-artifact@v7
         with:
@@ -75,7 +70,6 @@ jobs:
           path: build/staging-deploy
           if-no-files-found: error
 
-      # Upload Javadoc
       - name: 'Upload Javadoc'
         uses: actions/upload-artifact@v7
         with:
@@ -98,21 +92,17 @@ jobs:
             21
             25
           java-package: 'jdk+fx'
-          cache: 'gradle'
 
-      # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
         uses: actions/download-artifact@v5
         with:
           name: build-artifacts
           path: ${{ github.workspace }}
 
-      # Read Gradle version from the file created in the build job
       - name: 'Read Gradle Version'
         id: gradle-version
         run: |
           GRADLE_VERSION=$(cat build/gradle-version/version.txt)
-          echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
@@ -134,7 +124,6 @@ jobs:
         env:
           DISPLAY: ":99"
 
-      # Upload coverage reports
       - name: Upload coverage reports
         uses: actions/upload-artifact@v7
         with:
@@ -159,22 +148,18 @@ jobs:
             21
             25
           java-package: 'jdk+fx'
-          cache: 'gradle'
 
-      # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
         uses: actions/download-artifact@v5
         with:
           name: build-artifacts
           path: ${{ github.workspace }}
 
-      # Read Gradle version from the file created in the build job
       - name: 'Read Gradle Version'
         id: gradle-version
         shell: bash
         run: |
           GRADLE_VERSION=$(cat build/gradle-version/version.txt)
-          echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
@@ -208,21 +193,17 @@ jobs:
             21
             25
           java-package: 'jdk+fx'
-          cache: 'gradle'
 
-      # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
         uses: actions/download-artifact@v5
         with:
           name: build-artifacts
           path: ${{ github.workspace }}
 
-      # Read Gradle version from the file created in the build job
       - name: 'Read Gradle Version'
         id: gradle-version
         run: |
           GRADLE_VERSION=$(cat build/gradle-version/version.txt)
-          echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
@@ -236,7 +217,6 @@ jobs:
             wrapper
             toolchains
 
-      # Download coverage reports
       - name: Download coverage reports
         uses: actions/download-artifact@v5
         with:
@@ -264,7 +244,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
@@ -279,7 +258,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Set up JDK
       - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
@@ -288,11 +266,9 @@ jobs:
             21
             25
           java-package: 'jdk+fx'
-          cache: 'gradle'
 
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v5
-        # Remove the gradle-version parameter or use wrapper
         with:
           gradle-home-cache-includes: |
             caches
@@ -321,7 +297,7 @@ jobs:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
   publish:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
     needs: [ test-linux, test-windows ]
     runs-on: ubuntu-latest
     permissions:
@@ -338,21 +314,17 @@ jobs:
             21
             25
           java-package: 'jdk+fx'
-          cache: 'gradle'
 
-      # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
         uses: actions/download-artifact@v5
         with:
           name: build-artifacts
           path: ${{ github.workspace }}
 
-      # Read Gradle version from the file created in the build job
       - name: 'Read Gradle Version'
         id: gradle-version
         run: |
           GRADLE_VERSION=$(cat build/gradle-version/version.txt)
-          echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
@@ -366,21 +338,21 @@ jobs:
             wrapper
             toolchains
 
-      # Download staging directory
       - name: Download staging directory
         uses: actions/download-artifact@v5
         with:
           name: staging-deploy
           path: build/staging-deploy
 
-      # Download Javadoc
       - name: Download Javadoc
         uses: actions/download-artifact@v5
         with:
           name: javadoc
           path: build/docs/javadoc
 
+      # Only deploy/upload binaries if we explicitly triggered on a release version tag
       - name: 'publish build'
+        if: startsWith(github.ref, 'refs/tags/v')
         run: gradle --no-daemon --build-cache --no-configuration-cache jreleaserDeploy jreleaserUpload
         env:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
