@@ -6,7 +6,7 @@ import java.io.OutputStream;
 /**
  * Raster image interface.
  */
-public interface Image {
+public interface Image extends Storable {
 
     /**
      * Get image width.
@@ -36,6 +36,7 @@ public interface Image {
      *
      * @return the default file extension, which is "png"
      */
+    @Override
     default String defaultExtension() {
         return "png";
     }
@@ -45,6 +46,7 @@ public interface Image {
      *
      * @return the MIME type as a String, defaulting to {@link ImageUtil#MIME_TYPE_PNG}
      */
+    @Override
     default String mimeType() {
         return ImageUtil.MIME_TYPE_PNG;
     }
@@ -55,6 +57,7 @@ public interface Image {
      * @param out the output stream to write the image data to; must not be null
      * @throws IOException if an I/O error occurs during the writing process
      */
+    @Override
     default void write(OutputStream out) throws IOException {
         ImageUtil.getInstance().write(this, out, mimeType());
     }

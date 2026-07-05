@@ -6,7 +6,7 @@ import java.io.OutputStream;
 /**
  * A common interface for storable objects.
  */
-public interface Storable extends Image {
+public interface Storable {
     /**
      * The standard file extension for this type of object.
      *
