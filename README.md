@@ -240,9 +240,11 @@ could not be loaded.
 
 This release introduces some major changes, both to existing interfaces and also by adding new functionality.
 
-#### Changes in 23.0.0-beta4 (in progress)
+#### Changes in 23.0.0-beta4
 
-- add new `ObjectStore` interface and a default `FileObjectStore` implementation.
+- add new `ObjectStore`, `ReadableObjectStore`, and `WriteableObjectStore`  interfaces and provide a default
+  `FileObjectStore` implementation.
+- small fixes and improvements
 
 #### Changes in 23.0.0-beta3
 
