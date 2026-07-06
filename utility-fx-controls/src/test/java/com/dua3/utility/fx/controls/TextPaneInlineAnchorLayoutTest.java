@@ -50,7 +50,7 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
 
             boolean sawWrappedInlinePlacement = false;
             double minPlacementX = Double.POSITIVE_INFINITY;
-            for (double width = 140.0; width <= 680.0; width += 2.0) {
+            for (int width = 140; width <= 680; width += 2) {
                 control.setPrefWidth(width);
                 control.setMinWidth(width);
                 control.setMaxWidth(width);
