@@ -278,6 +278,7 @@ class CryptUtilTest {
 
     @ParameterizedTest
     @EnumSource(AsymmetricAlgorithm.class)
+    @SuppressWarnings("java:S8786") // not an issue for test code
     void testHybridEncryption(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         // Add assumption for ECIES
         if (algorithm == AsymmetricAlgorithm.EC) {
