@@ -9,6 +9,8 @@ import com.dua3.utility.text.Run;
 import com.dua3.utility.ui.RichTextPaneLayoutHelper;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -457,14 +459,24 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
         return editor.lookupAll(".scroll-pane").stream()
                 .filter(ScrollPane.class::isInstance)
                 .map(ScrollPane.class::cast)
-                .filter(sp -> {
-                    if (!(sp.getContent() instanceof javafx.scene.layout.Pane pane)) {
-                        return false;
-                    }
-                    return pane.getStyleClass().contains("content");
-                })
+                .filter(sp -> containsStyleClass(sp.getContent(), "content"))
                 .findFirst()
                 .orElseThrow();
+    }
+
+    private static boolean containsStyleClass(Node node, String styleClass) {
+        if (node.getStyleClass().contains(styleClass)) {
+            return true;
+        }
+        if (!(node instanceof Parent parent)) {
+            return false;
+        }
+        for (Node child : parent.getChildrenUnmodifiable()) {
+            if (containsStyleClass(child, styleClass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String numberedLines(int count) {
