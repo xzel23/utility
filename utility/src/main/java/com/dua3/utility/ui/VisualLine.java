@@ -73,4 +73,15 @@ public record VisualLine(int start, int end, double top, double height, double[]
         result = 31 * result + Arrays.hashCode(boundaries);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "VisualLine{" +
+                "start=" + start +
+                ", end=" + end +
+                ", top=" + top +
+                ", height=" + height +
+                ", boundaries=" + Arrays.toString(boundaries) +
+                '}';
+    }
 }
