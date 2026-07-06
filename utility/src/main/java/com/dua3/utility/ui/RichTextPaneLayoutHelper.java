@@ -230,16 +230,13 @@ public final class RichTextPaneLayoutHelper {
                 I inline = inlineFactory.apply(run, runFont);
                 if (inline != null) {
                     Style leadingWidthStyle = null;
+                    String leadingPadding = "";
                     double extraWidth = inlineWidthFunction.applyAsDouble(inline) - fontUtil.getTextDimension(run, runFont).width();
                     if (extraWidth > 0.5) {
                         double spaceWidth = Math.max(1.0, runFont.getFontData().spaceWidth());
                         int extraSpaces = (int) Math.ceil(extraWidth / spaceWidth);
                         if (extraSpaces > 0) {
-                            String leadingPadding = NO_BREAK_SPACE.repeat(extraSpaces);
-                            builder.append(leadingPadding);
-                            for (int i = 0; i < leadingPadding.length(); i++) {
-                                layoutToSourceBoundaries.add(sourcePosition);
-                            }
+                            leadingPadding = NO_BREAK_SPACE.repeat(extraSpaces);
                             leadingWidthStyle = Style.create(
                                     "text-pane-inline-leading-width",
                                     Map.entry(inlineLeadingWidthStyleAttribute, fontUtil.getTextWidth(leadingPadding, runFont))
@@ -248,6 +245,12 @@ public final class RichTextPaneLayoutHelper {
                     }
                     if (leadingWidthStyle != null) {
                         builder.push(leadingWidthStyle);
+                    }
+                    if (!leadingPadding.isEmpty()) {
+                        builder.append(leadingPadding);
+                        for (int i = 0; i < leadingPadding.length(); i++) {
+                            layoutToSourceBoundaries.add(sourcePosition);
+                        }
                     }
                     sourcePosition = appendRunText(builder, layoutToSourceBoundaries, text, sourcePosition);
                     if (leadingWidthStyle != null) {

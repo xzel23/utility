@@ -425,10 +425,9 @@ public class TextPane extends Control implements RichTextPane {
                     if (node != null) {
                         VAnchor vAnchor = getInlineNodeVAnchor(run);
                         double descent = getInlineNodeDescent(run);
-                        double leadingWidth = getInlineLeadingWidth(run);
                         placements.add(new InlineControlPlacement(
                                 node,
-                                (float) (fragment.x() - leadingWidth),
+                                fragment.x(),
                                 lineTop,
                                 fragment.w(),
                                 lineHeight,
@@ -482,7 +481,7 @@ public class TextPane extends Control implements RichTextPane {
         if (TextUtil.isWhitespaceOnly(run)) {
             return null;
         }
-        String text = run.toString();
+        String text = inlineText(run);
         for (int i = run.getStyles().size() - 1; i >= 0; i--) {
             Style style = run.getStyles().get(i);
 
@@ -502,6 +501,19 @@ public class TextPane extends Control implements RichTextPane {
             }
         }
         return null;
+    }
+
+    private static String inlineText(Run run) {
+        String text = run.toString();
+        if (getInlineLeadingWidth(run) <= 0.0) {
+            return text;
+        }
+
+        int index = 0;
+        while (index < text.length() && text.charAt(index) == '\u00A0') {
+            index++;
+        }
+        return text.substring(index);
     }
 
     private static @Nullable Node toFxInlineNode(@Nullable Object value, Style style) {

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TextPaneInlineAnchorLayoutTest extends FxTestBase {
 
@@ -36,6 +37,42 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testTextEditorPaneInlineAnchorsUseLineMetricsOnMixedFontLines() throws Exception {
         runOnFxThreadAndWait(() -> assertInlineAnchorsUseLineMetrics(new TextEditorPane(createMixedFontInlineAnchorText())));
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testWrappedInlineNodesStayInsideContentArea() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextPane control = new TextPane(createWrappedInlineRegressionText());
+            control.setWrapText(true);
+
+            addToScene(control);
+
+            boolean sawWrappedInlinePlacement = false;
+            double minPlacementX = Double.POSITIVE_INFINITY;
+            for (double width = 140.0; width <= 680.0; width += 2.0) {
+                control.setPrefWidth(width);
+                control.setMinWidth(width);
+                control.setMaxWidth(width);
+                control.applyCss();
+                control.layout();
+
+                RichTextPaneLayoutHelper.Layout<?> layout = control.createLayout(width);
+                double firstLineTop = firstLineTop(layout.renderLines());
+                for (Object placement : layout.placements()) {
+                    double x = asDouble(placementValue(placement, "x"));
+                    double y = asDouble(placementValue(placement, "y"));
+                    minPlacementX = Math.min(minPlacementX, x);
+                    if (y > firstLineTop + 0.5) {
+                        sawWrappedInlinePlacement = true;
+                    }
+                }
+            }
+
+            assertTrue(Double.isFinite(minPlacementX), "expected inline node placements");
+            assertTrue(sawWrappedInlinePlacement, "expected inline placement on a wrapped line");
+            assertTrue(minPlacementX >= -0.5, "inline placement must stay inside content area (minX=" + minPlacementX + ")");
+        });
     }
 
     private static void assertInlineAnchorsUseLineMetrics(TextPane control) {
@@ -104,6 +141,15 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
         return builder.toRichText();
     }
 
+    private static RichText createWrappedInlineRegressionText() {
+        RichTextBuilderFx builder = new RichTextBuilderFx();
+        builder.append("wrap regression: ");
+        builder.append("prefix ".repeat(24));
+        builder.appendImage(createTestImage(96, 48));
+        builder.append(" suffix");
+        return builder.toRichText();
+    }
+
     private static Image createTestImage(int width, int height) {
         int[] argb = new int[width * height];
         for (int y = 0; y < height; y++) {
@@ -140,6 +186,15 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
             metrics.add(new LineMetrics(top, bottom, top + ascent));
         }
         return metrics;
+    }
+
+    private static double firstLineTop(List<List<FragmentedText.Fragment>> lines) {
+        for (List<FragmentedText.Fragment> line : lines) {
+            if (!line.isEmpty()) {
+                return line.getFirst().y();
+            }
+        }
+        return 0.0;
     }
 
     private static @Nullable LineMetrics findLineMetrics(List<LineMetrics> lines, double top) {
