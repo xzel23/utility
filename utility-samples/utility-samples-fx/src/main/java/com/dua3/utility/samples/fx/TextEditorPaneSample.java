@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -29,6 +30,7 @@ import javafx.stage.Stage;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
+import java.text.DecimalFormat;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -96,6 +98,27 @@ public class TextEditorPaneSample extends Application {
                 .bind(editor.toolbarLocationProperty())
                 .build();
 
+        Slider displayScaleSlider = new Slider(0.5, 3.0, 1.0);
+        displayScaleSlider.setPrefWidth(140);
+        displayScaleSlider.setBlockIncrement(0.1);
+        displayScaleSlider.setMajorTickUnit(0.5);
+        displayScaleSlider.setMinorTickCount(4);
+        displayScaleSlider.setShowTickMarks(true);
+        displayScaleSlider.setShowTickLabels(false);
+        displayScaleSlider.valueProperty().addListener((obs, oldValue, newValue) -> {
+            double scale = Math.round(newValue.doubleValue() * 10.0) / 10.0;
+            editor.setDisplayScale(scale);
+            liveDocumentPane.setDisplayScale(scale);
+            committedValuePane.setDisplayScale(scale);
+        });
+        DecimalFormat scaleFormat = new DecimalFormat("0.0");
+        Label scaleValueLabel = new Label(scaleFormat.format(displayScaleSlider.getValue()) + "x");
+        scaleValueLabel.setMinWidth(40);
+        scaleValueLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> scaleFormat.format(displayScaleSlider.getValue()) + "x",
+                displayScaleSlider.valueProperty()
+        ));
+
         Label selectionInfo = new Label();
         Runnable updateSelectionInfo = () -> selectionInfo.setText(
                 "Caret: " + editor.getCaretPosition()
@@ -129,7 +152,18 @@ public class TextEditorPaneSample extends Application {
             status.setText("Reset to default value.");
         });
 
-        HBox controls = new HBox(12, wrap, editable, new Label("Toolbar Location:"), toolbarLocation, applyButton, resetButton);
+        HBox controls = new HBox(
+                12,
+                wrap,
+                editable,
+                new Label("Toolbar Location:"),
+                toolbarLocation,
+                new Label("Display Scale:"),
+                displayScaleSlider,
+                scaleValueLabel,
+                applyButton,
+                resetButton
+        );
         controls.setPadding(new Insets(0, 0, 8, 0));
 
         Label liveDocumentHeader = new Label("Live Document (documentVersionProperty + getDocumentText)");

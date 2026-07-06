@@ -34,11 +34,14 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -60,6 +63,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.feather.Feather;
@@ -113,6 +117,7 @@ public class TextPane extends Control implements RichTextPane {
     private final ObjectProperty<ToRichText> text = new SimpleObjectProperty<>(this, "text", RichText.emptyText());
     private final BooleanProperty wrapText = new SimpleBooleanProperty(this, "wrapText", false);
     private final ObjectProperty<Font> font = new SimpleObjectProperty<>(this, "font", FONT_UTIL.getDefaultFont());
+    private final DoubleProperty displayScale = new SimpleDoubleProperty(this, "displayScale", 1.0);
     private final ObjectProperty<Consumer<URI>> hyperlinkHandler = new SimpleObjectProperty<>(this, "hyperlinkHandler", TextPane::openUriUsingDesktop);
 
     /**
@@ -255,6 +260,36 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     /**
+     * Returns the display scale property used for preview rendering.
+     *
+     * @return display-scale property
+     */
+    public final DoubleProperty displayScaleProperty() {
+        return displayScale;
+    }
+
+    /**
+     * Returns the current display scale used for preview rendering.
+     *
+     * @return display scale
+     */
+    public final double getDisplayScale() {
+        return displayScale.get();
+    }
+
+    /**
+     * Sets the display scale used for preview rendering.
+     *
+     * @param value display scale (&gt; 0)
+     */
+    public final void setDisplayScale(double value) {
+        if (!Double.isFinite(value) || value <= 0.0) {
+            throw new IllegalArgumentException("displayScale must be > 0: " + value);
+        }
+        displayScale.set(value);
+    }
+
+    /**
      * Creates the default skin implementation.
      *
      * @return default skin for this control
@@ -272,7 +307,7 @@ public class TextPane extends Control implements RichTextPane {
      */
     @Override
     protected double computePrefWidth(double height) {
-        double textWidth = getFont().getFontData().spaceWidth() * 40.0;
+        double textWidth = getFont().getFontData().spaceWidth() * 40.0 * getDisplayScale();
         return snappedLeftInset() + Math.ceil(textWidth) + snappedRightInset();
     }
 
@@ -284,11 +319,12 @@ public class TextPane extends Control implements RichTextPane {
      */
     @Override
     protected double computePrefHeight(double width) {
+        double scale = getDisplayScale();
         double contentWidth = width > 0
-                ? Math.max(1.0, width - snappedLeftInset() - snappedRightInset())
+                ? Math.max(1.0, (width - snappedLeftInset() - snappedRightInset()) / scale)
                 : Math.ceil(getFont().getFontData().spaceWidth() * 40.0f);
         RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = createLayout(contentWidth);
-        double pref = snappedTopInset() + Math.ceil(layout.height()) + snappedBottomInset();
+        double pref = snappedTopInset() + Math.ceil(layout.height() * scale) + snappedBottomInset();
         return clampToMaxHeight(pref);
     }
 
@@ -301,7 +337,7 @@ public class TextPane extends Control implements RichTextPane {
     @Override
     protected double computeMinHeight(double width) {
         Font font = getFont();
-        double min = snappedTopInset() + Math.ceil(font.getFontData().height()) + snappedBottomInset();
+        double min = snappedTopInset() + Math.ceil(font.getFontData().height() * getDisplayScale()) + snappedBottomInset();
         return clampToMaxHeight(min);
     }
 
@@ -816,10 +852,13 @@ public class TextPane extends Control implements RichTextPane {
         private final Canvas canvas = new Canvas();
         private final Pane inlineLayer = new Pane();
         private final Pane caretLayer = new Pane();
-        private final ScrollPane scrollPane = new ScrollPane(contentPane);
+        private final Scale contentScaleTransform = new Scale(1.0, 1.0, 0.0, 0.0);
+        private final Group scrollContent = new Group(contentPane);
+        private final ScrollPane scrollPane = new ScrollPane(scrollContent);
         private final VBox editorRoot = new VBox();
         private boolean dirty = true;
         private double lastAvailableWidth = Double.NaN;
+        private double lastDisplayScale = Double.NaN;
         private RichText lastText = RichText.emptyText();
         private Font lastFont = FontUtil.getInstance().getDefaultFont();
         private boolean lastWrapText;
@@ -855,6 +894,7 @@ public class TextPane extends Control implements RichTextPane {
             // Keep selection overlay above text and inline nodes so selection stays visible
             // even when text background colors or inline controls are present.
             contentPane.getChildren().setAll(canvas, inlineLayer, selectionLayer, caretLayer);
+            contentPane.getTransforms().setAll(contentScaleTransform);
             contentPane.setMinSize(0.0, 0.0);
             contentPane.setPrefSize(0.0, 0.0);
 
@@ -948,6 +988,7 @@ public class TextPane extends Control implements RichTextPane {
                 invalidate();
             });
             control.fontProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            control.displayScaleProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.widthProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.heightProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
@@ -1262,6 +1303,7 @@ public class TextPane extends Control implements RichTextPane {
         }
 
         private void ensureCaretVisible(TextEditorPane editor, double availableWidth) {
+            double scale = getSkinnable().getDisplayScale();
             List<VisualLine> lines = editor.buildVisualLines(availableWidth);
             if (lines.isEmpty()) {
                 return;
@@ -1274,17 +1316,17 @@ public class TextPane extends Control implements RichTextPane {
             }
 
             VisualLine line = lines.get(lineIndex);
-            double caretX = RichTextVisualLayoutHelper.xForIndex(line, caret);
-            double caretWidth = Math.max(1.0, editor.getFont().getFontData().spaceWidth());
+            double caretX = RichTextVisualLayoutHelper.xForIndex(line, caret) * scale;
+            double caretWidth = Math.max(1.0, editor.getFont().getFontData().spaceWidth() * scale);
 
             scrollHorizontallyToInclude(caretX, caretWidth);
-            scrollVerticallyToInclude(line.top(), line.top() + line.height());
+            scrollVerticallyToInclude(line.top() * scale, (line.top() + line.height()) * scale);
         }
 
         private boolean scrollHorizontallyToInclude(double x, double width) {
             Bounds viewport = scrollPane.getViewportBounds();
             double viewportWidth = viewport.getWidth();
-            double contentWidth = Math.max(contentPane.getLayoutBounds().getWidth(), canvas.getWidth());
+            double contentWidth = Math.max(contentPane.getBoundsInParent().getWidth(), canvas.getWidth() * getSkinnable().getDisplayScale());
             double maxOffset = Math.max(0.0, contentWidth - viewportWidth);
             if (viewportWidth <= 0.0 || maxOffset <= 0.0) {
                 return false;
@@ -1313,7 +1355,7 @@ public class TextPane extends Control implements RichTextPane {
         private boolean scrollVerticallyToInclude(double top, double bottom) {
             Bounds viewport = scrollPane.getViewportBounds();
             double viewportHeight = viewport.getHeight();
-            double contentHeight = Math.max(contentPane.getLayoutBounds().getHeight(), canvas.getHeight());
+            double contentHeight = Math.max(contentPane.getBoundsInParent().getHeight(), canvas.getHeight() * getSkinnable().getDisplayScale());
             double maxOffset = Math.max(0.0, contentHeight - viewportHeight);
             if (viewportHeight <= 0.0 || maxOffset <= 0.0) {
                 return false;
@@ -1346,7 +1388,7 @@ public class TextPane extends Control implements RichTextPane {
 
             Bounds viewport = scrollPane.getViewportBounds();
             double viewportHeight = viewport.getHeight();
-            double contentHeight = Math.max(contentPane.getLayoutBounds().getHeight(), canvas.getHeight());
+            double contentHeight = Math.max(contentPane.getBoundsInParent().getHeight(), canvas.getHeight() * getSkinnable().getDisplayScale());
             double maxOffset = Math.max(0.0, contentHeight - viewportHeight);
             if (viewportHeight <= 0.0 || maxOffset <= 0.0) {
                 return false;
@@ -1362,7 +1404,7 @@ public class TextPane extends Control implements RichTextPane {
             return true;
         }
 
-    private void invalidate() {
+        private void invalidate() {
             dirty = true;
             getSkinnable().requestLayout();
         }
@@ -1426,19 +1468,22 @@ public class TextPane extends Control implements RichTextPane {
         private void refreshIfNeeded() {
             TextPane control = getSkinnable();
             double availableWidth = getAvailableWidth();
+            double displayScale = control.getDisplayScale();
             RichText text = control.getText();
             Font font = control.getFont();
             boolean wrapText = control.isWrapText();
             boolean widthChanged = !Double.isFinite(lastAvailableWidth) || Math.abs(lastAvailableWidth - availableWidth) > 0.5;
+            boolean displayScaleChanged = !Double.isFinite(lastDisplayScale) || Math.abs(lastDisplayScale - displayScale) > 1.0e-6;
             boolean textChanged = !Objects.equals(lastText, text);
             boolean fontChanged = !Objects.equals(lastFont, font);
             boolean wrapChanged = lastWrapText != wrapText;
-            boolean geometryChanged = widthChanged || textChanged || fontChanged || wrapChanged;
+            boolean geometryChanged = widthChanged || displayScaleChanged || textChanged || fontChanged || wrapChanged;
             if (editor != null && textChanged && editor.getCaretPosition() == editor.getLength()) {
                 caretVisibilityRequested = true;
             }
             if (!dirty
                     && !widthChanged
+                    && !displayScaleChanged
                     && Objects.equals(lastText, text)
                     && Objects.equals(lastFont, font)
                     && lastWrapText == wrapText) {
@@ -1448,6 +1493,7 @@ public class TextPane extends Control implements RichTextPane {
             refresh(availableWidth, !geometryChanged);
             dirty = false;
             lastAvailableWidth = availableWidth;
+            lastDisplayScale = displayScale;
             lastText = text;
             lastFont = font;
             lastWrapText = wrapText;
@@ -1456,8 +1502,9 @@ public class TextPane extends Control implements RichTextPane {
         private double getAvailableWidth() {
             TextPane control = getSkinnable();
             Bounds vp = scrollPane.getViewportBounds();
+            double scale = control.getDisplayScale();
             double availableWidth = control.isWrapText()
-                    ? Math.max(1.0, vp.getWidth())
+                    ? Math.max(1.0, vp.getWidth() / scale)
                     : Math.max(1.0, control.getWidth());
             if (!Double.isFinite(availableWidth) || availableWidth <= 0.0) {
                 availableWidth = Math.max(1.0, control.computePrefWidth(-1));
@@ -1467,6 +1514,7 @@ public class TextPane extends Control implements RichTextPane {
 
         private void refresh(double availableWidth, boolean preserveContentHeight) {
             TextPane control = getSkinnable();
+            double scale = control.getDisplayScale();
             RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = control.createLayout(availableWidth);
             double previousCanvasHeight = canvas.getHeight();
 
@@ -1476,6 +1524,8 @@ public class TextPane extends Control implements RichTextPane {
                 layoutHeight = Math.max(layoutHeight, previousCanvasHeight);
             }
             canvas.setHeight(layoutHeight);
+            contentScaleTransform.setX(scale);
+            contentScaleTransform.setY(scale);
             contentPane.setMinSize(canvas.getWidth(), canvas.getHeight());
             contentPane.setPrefSize(canvas.getWidth(), canvas.getHeight());
             contentPane.resize(canvas.getWidth(), canvas.getHeight());
