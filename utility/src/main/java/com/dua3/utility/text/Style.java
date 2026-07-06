@@ -307,7 +307,7 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      * @return new instance
      */
     @SafeVarargs
-    public static Style create(String styleName, Map.Entry<String, @Nullable Object>... args) {
+    public static Style create(String styleName, Map.Entry<String, Object>... args) {
         assert (Arrays.stream(args).allMatch(Style::checkTypes)) : "invalid style arguments for style: " + styleName + " - " + Arrays.toString(args);
         return create(styleName, Map.ofEntries(args));
     }
