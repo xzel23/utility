@@ -904,7 +904,7 @@ public final class RtfReader {
                 if (explicitName.isBlank() || explicitName.equals(original.name())) {
                     styles.add(original);
                 } else {
-                    styles.add(Style.create(explicitName, Map.copyOf(original)));
+                    styles.add(Style.create(explicitName, original));
                 }
             }
             for (int i = count; i < baseStyles.size(); i++) {
