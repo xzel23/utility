@@ -184,14 +184,24 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         syncTypingStylesFromCaret();
     }
 
+    /**
+     * Retrieves the current location of the toolbar.
+     *
+     * @return the location of the toolbar as a DetachableNode.Location object
+     */
     public DetachableNode.Location getToolbarLocation() {
         return toolbarLocation;
     }
 
+    /**
+     * Sets the location of the toolbar to the specified value. The method updates
+     * the toolbar position and triggers necessary actions such as applying the new
+     * location and notifying listeners of the change in property.
+     *
+     * @param value the new location for the toolbar. It must be an instance of
+     *              {@code DetachableNode.Location}.
+     */
     public void setToolbarLocation(DetachableNode.Location value) {
-        if (value == null) {
-            value = DetachableNode.Location.HIDDEN;
-        }
         if (toolbarLocation == value) {
             return;
         }
@@ -201,10 +211,21 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         firePropertyChange("toolbarLocation", old, value);
     }
 
+    /**
+     * Retrieves the parent container for the toolbar application, if available.
+     *
+     * @return the parent container for the toolbar application, or null if no parent container is set.
+     */
     public @Nullable Container getToolbarApplicationParent() {
         return toolbarApplicationParent;
     }
 
+    /**
+     * Sets the parent container for the toolbar application.
+     *
+     * @param value the container to set as the toolbar application parent.
+     *              Can be null to remove the current parent.
+     */
     public void setToolbarApplicationParent(@Nullable Container value) {
         if (toolbarApplicationParent == value) {
             return;
