@@ -2,6 +2,7 @@ package com.dua3.utility.crypt;
 
 import com.dua3.utility.lang.LangUtil;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +30,7 @@ public final class PasswordUtil {
                 "1q2w3e", "asdf", "yxcv"
         ));
 
-        int currentYear = LocalDate.now().getYear();
+        int currentYear = LocalDate.now(Clock.systemUTC()).getYear();
         for (int i = 0; i < 100; i++) {
             patterns.add(Integer.toString(currentYear - 90 + i));
         }

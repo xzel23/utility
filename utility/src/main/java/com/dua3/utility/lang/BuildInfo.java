@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Properties;
 
@@ -76,7 +77,7 @@ public record BuildInfo(Version version, ZonedDateTime buildTime, String key, St
     public static BuildInfo create(String versionString, String key, String commit) {
         return new BuildInfo(
                 Version.valueOf(versionString),
-                ZonedDateTime.now(),
+                ZonedDateTime.now(Clock.systemUTC()),
                 key,
                 commit,
                 SystemInfo.getSystemInfo().getOsInfo()
