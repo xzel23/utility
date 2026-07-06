@@ -283,10 +283,14 @@ implements <a href="../ui/RichTextEditorPane.html" title="interface in com.dua3.
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Container.html" title="class or interface in java.awt" class="external-link">Container</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getToolbarApplicationParent()" class="member-name-link">getToolbarApplicationParent</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves the parent container for the toolbar application, if available.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../ui/DetachableNode.Location.html" title="enum class in com.dua3.utility.ui">DetachableNode.Location</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getToolbarLocation()" class="member-name-link">getToolbarLocation</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves the current location of the toolbar.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBold()" class="member-name-link">isBold</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -438,10 +442,14 @@ implements <a href="../ui/RichTextEditorPane.html" title="interface in com.dua3.
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setToolbarApplicationParent(java.awt.Container)" class="member-name-link">setToolbarApplicationParent</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Container.html" title="class or interface in java.awt" class="external-link">Container</a>&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the parent container for the toolbar application.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setToolbarLocation(com.dua3.utility.ui.DetachableNode.Location)" class="member-name-link">setToolbarLocation</a><wbr>(<a href="../ui/DetachableNode.Location.html" title="enum class in com.dua3.utility.ui">DetachableNode.Location</a>&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the location of the toolbar to the specified value.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#undo()" class="member-name-link">undo</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -512,24 +520,48 @@ implements <a href="../ui/RichTextEditorPane.html" title="interface in com.dua3.
 <section class="detail" id="getToolbarLocation()">
 <h3>getToolbarLocation</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../ui/DetachableNode.Location.html" title="enum class in com.dua3.utility.ui">DetachableNode.Location</a></span>&nbsp;<span class="element-name">getToolbarLocation</span>()</div>
+<div class="block">Retrieves the current location of the toolbar.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the location of the toolbar as a DetachableNode.Location object</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="setToolbarLocation(com.dua3.utility.ui.DetachableNode.Location)">
 <h3>setToolbarLocation</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setToolbarLocation</span><wbr><span class="parameters">(<a href="../ui/DetachableNode.Location.html" title="enum class in com.dua3.utility.ui">DetachableNode.Location</a>&nbsp;value)</span></div>
+<div class="block">Sets the location of the toolbar to the specified value. The method updates
+ the toolbar position and triggers necessary actions such as applying the new
+ location and notifying listeners of the change in property.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>value</code> - the new location for the toolbar. It must be an instance of
+              <code>DetachableNode.Location</code>.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getToolbarApplicationParent()">
 <h3>getToolbarApplicationParent</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Container.html" title="class or interface in java.awt" class="external-link">Container</a></span>&nbsp;<span class="element-name">getToolbarApplicationParent</span>()</div>
+<div class="block">Retrieves the parent container for the toolbar application, if available.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the parent container for the toolbar application, or null if no parent container is set.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="setToolbarApplicationParent(java.awt.Container)">
 <h3>setToolbarApplicationParent</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setToolbarApplicationParent</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Container.html" title="class or interface in java.awt" class="external-link">Container</a>&nbsp;value)</span></div>
+<div class="block">Sets the parent container for the toolbar application.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>value</code> - the container to set as the toolbar application parent.
+              Can be null to remove the current parent.</dd>
+</dl>
 </section>
 </li>
 <li>
