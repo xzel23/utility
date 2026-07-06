@@ -65,6 +65,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -2992,4 +2993,29 @@ public final class LangUtil {
         throw (E) e;
     }
 
+    /**
+     * Negates the current value of the provided AtomicBoolean and returns the negated value.
+     *
+     * @param value the AtomicBoolean whose value is to be negated
+     * @return the negated value of the provided AtomicBoolean
+     */
+    public static boolean negateAndGet(AtomicBoolean value) {
+        return !getAndnegate(value);
+    }
+
+    /**
+     * Atomically retrieves the current value of the given {@code AtomicBoolean}
+     * and negates it.
+     *
+     * @param value the {@code AtomicBoolean} instance whose value is to be
+     *              retrieved and negated
+     * @return the original value of the {@code AtomicBoolean} before negation
+     */
+    public static boolean getAndnegate(AtomicBoolean value) {
+        boolean current;
+        do {
+            current = value.get();
+        } while (!value.compareAndSet(current, !current));
+        return current;
+    }
 }
