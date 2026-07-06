@@ -179,7 +179,6 @@ public final class SwingTextEditorPaneSample {
         return text.toString().replace("\n", "\\n");
     }
 
-
     private static RichText createSampleText() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(Style.BOLD).append("Swing TextEditorPane/TextPane demo").pop(Style.BOLD).append('\n');

@@ -2,6 +2,7 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
@@ -92,7 +93,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     private volatile double typingFontSize;
     private int dragAnchor = -1;
     private final AtomicLong documentVersion = new AtomicLong();
-    private volatile boolean caretVisible = true;
+    private final AtomicBoolean caretVisible = new AtomicBoolean(true);
     private final Timer caretBlinkTimer;
 
     private int lastAnchor;
@@ -753,7 +754,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
             }
         }
 
-        if (shouldPaintCaret() && caretVisible) {
+        if (shouldPaintCaret() && isCaretVisible()) {
             int caret = model.getCaretPosition();
             int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             if (lineIndex >= 0 && lineIndex < lines.size()) {
@@ -765,6 +766,10 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 g2.drawLine(x, y1, x, y2);
             }
         }
+    }
+
+    private boolean isCaretVisible() {
+        return caretVisible.get();
     }
 
     private void installInteractionHandlers() {
@@ -1139,23 +1144,23 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         if (!shouldPaintCaret()) {
             return;
         }
-        caretVisible = true;
+        caretVisible.set(true);
         caretBlinkTimer.restart();
     }
 
     private void stopCaretBlink() {
         caretBlinkTimer.stop();
-        caretVisible = false;
+        caretVisible.set(false);
         getTextComponent().repaint();
     }
 
     private void onCaretBlinkTick() {
         if (shouldPaintCaret()) {
-            caretVisible = !caretVisible;
+            LangUtil.getAndnegate(caretVisible);
             getTextComponent().repaint();
         } else {
-            caretVisible = false;
             caretBlinkTimer.stop();
+            caretVisible.set(false);
         }
     }
 
