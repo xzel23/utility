@@ -14,9 +14,12 @@ import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -394,6 +397,14 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
         });
     }
 
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testCaretNodeDoesNotOverflowAtTopLeftEdge() {
+        Rectangle caret = createCaretNode(0.0, 0.0, 14.0);
+        assertTrue(caret.getBoundsInLocal().getMinX() >= -1.0e-6, "caret geometry must not extend left of x=0");
+        assertTrue(caret.getBoundsInLocal().getMinY() >= -1.0e-6, "caret geometry must not extend above y=0");
+    }
+
     private static RichText createInlineSampleText() {
         RichTextBuilderFx builder = new RichTextBuilderFx();
         builder.append("first line\n");
@@ -462,6 +473,21 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
                 .filter(sp -> containsStyleClass(sp.getContent(), "content"))
                 .findFirst()
                 .orElseThrow();
+    }
+
+    private static Rectangle createCaretNode(double x, double y, double height) {
+        try {
+            Class<?> skinClass = Class.forName(TextPane.class.getName() + "$TextPaneSkin");
+            Method factory = skinClass.getDeclaredMethod("createCaretNode", double.class, double.class, double.class);
+            factory.setAccessible(true);
+            Object value = factory.invoke(null, x, y, height);
+            if (value instanceof Rectangle rectangle) {
+                return rectangle;
+            }
+            throw new IllegalStateException("unexpected caret node type: " + value);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+            throw new IllegalStateException("cannot create caret node", ex);
+        }
     }
 
     private static boolean containsStyleClass(Node node, String styleClass) {

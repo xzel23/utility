@@ -61,7 +61,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.util.Duration;
@@ -901,6 +900,9 @@ public class TextPane extends Control implements RichTextPane {
             dragAutoscrollTimeline.setCycleCount(Animation.INDEFINITE);
 
             contentPane.getStyleClass().add("content");
+            inlineLayer.setManaged(false);
+            selectionLayer.setManaged(false);
+            caretLayer.setManaged(false);
             selectionLayer.setMouseTransparent(true);
             caretLayer.setMouseTransparent(true);
             // Keep selection overlay above text and inline nodes so selection stays visible
@@ -1710,10 +1712,7 @@ public class TextPane extends Control implements RichTextPane {
                     }
                 }
                 if (caretInfo != null) {
-                    Line caret = new Line(caretInfo.x(), caretInfo.y(), caretInfo.x(), caretInfo.y() + caretInfo.height());
-                    caret.setStroke(javafx.scene.paint.Color.BLACK);
-                    caret.setStrokeWidth(1.0);
-                    caretLayer.getChildren().add(caret);
+                    caretLayer.getChildren().add(createCaretNode(caretInfo.x(), caretInfo.y(), caretInfo.height()));
                 }
             }
         }
@@ -1764,6 +1763,16 @@ public class TextPane extends Control implements RichTextPane {
                 return fontUtil.getTextWidth(run, font);
             }
             return fontUtil.getTextWidth(run.subSequence(0, length), font);
+        }
+
+        private static Rectangle createCaretNode(double x, double y, double height) {
+            // Use fill-only geometry for caret rendering so bounds never spill by half a stroke
+            // pixel (which causes content-bound jitter when blink toggles).
+            Rectangle caret = new Rectangle(x, y, 1.0, Math.max(1.0, height));
+            caret.setFill(javafx.scene.paint.Color.BLACK);
+            caret.setStroke(null);
+            caret.setManaged(false);
+            return caret;
         }
 
         private static @Nullable CaretInfo findCaret(List<List<FragmentedText.Fragment>> lines, int layoutCaretPosition) {
