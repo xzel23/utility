@@ -517,12 +517,12 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
 
     @Override
     public Set<String> keySet() {
-        return properties.keySet();
+        return Collections.unmodifiableSet(properties.keySet());
     }
 
     @Override
     public Collection<@Nullable Object> values() {
-        return properties.values();
+        return Collections.unmodifiableCollection(properties.values());
     }
 
     @Override
