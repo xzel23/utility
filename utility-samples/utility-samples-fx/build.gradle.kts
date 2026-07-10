@@ -52,6 +52,11 @@ createJavaFxRunTask(
     "Run the DialogSample application."
 )
 createJavaFxRunTask(
+    "runFxLauncherSample",
+    "com.dua3.utility.samples.fx.FxLauncherSample",
+    "Run the FxLauncherSample application."
+)
+createJavaFxRunTask(
     "runIconViewSample",
     "com.dua3.utility.samples.fx.IconViewSample",
     "Run the IconViewSample application."
