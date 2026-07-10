@@ -240,6 +240,13 @@ could not be loaded.
 
 This release introduces some major changes, both to existing interfaces and also by adding new functionality.
 
+#### Changes in 23.0.0
+
+- fix slow JavaFX application shutdown
+- fix ClassNotFoundExceptioin in FxLauncher when SLB4J extension classes are not present
+- fix rendering issues and allow setting display scale in RichText controls
+- small fixes and improvements
+
 #### Changes in 23.0.0-beta4
 
 - add new `ObjectStore`, `ReadableObjectStore`, and `WriteableObjectStore`  interfaces and provide a default
