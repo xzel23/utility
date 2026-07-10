@@ -75,6 +75,32 @@ public final class RichTextPaneLayoutHelper {
         public int sourceToLayoutPosition(int sourcePosition) {
             return sourceToLayoutMap[Math.clamp(sourcePosition, 0, sourceToLayoutMap.length - 1)];
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof LayoutTextData other)) return false;
+
+            return java.util.Objects.equals(text, other.text) &&
+                    java.util.Arrays.equals(layoutToSourceMap, other.layoutToSourceMap) &&
+                    java.util.Arrays.equals(sourceToLayoutMap, other.sourceToLayoutMap);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = java.util.Objects.hash(text);
+            result = 31 * result + java.util.Arrays.hashCode(layoutToSourceMap);
+            result = 31 * result + java.util.Arrays.hashCode(sourceToLayoutMap);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "LayoutTextData{" +
+                    "text=" + text +
+                    ", layoutToSourceMap=" + java.util.Arrays.toString(layoutToSourceMap) +
+                    ", sourceToLayoutMap=" + java.util.Arrays.toString(sourceToLayoutMap) +
+                    '}';
+        }
     }
 
     /**
