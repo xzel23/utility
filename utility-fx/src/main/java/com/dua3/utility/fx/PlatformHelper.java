@@ -8,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -23,13 +24,20 @@ public final class PlatformHelper {
      * Logger instance
      */
     private static final Logger LOG = LogManager.getLogger(PlatformHelper.class);
+    private static final AtomicBoolean JVM_SHUTDOWN_IN_PROGRESS = new AtomicBoolean(false);
 
     static {
-        // add shutdown hook to ensure JavaFX platform is shut down when JVM exits
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            LOG.debug("shutdown hook: shutting down JavaFX platform");
-            shutdown(30, TimeUnit.SECONDS);
-        }, "JavaFX-Shutdown-Hook"));
+        // Mark JVM shutdown state.
+        // Do not call Platform.exit() from this hook because it can block indefinitely during JVM shutdown.
+        try {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                JVM_SHUTDOWN_IN_PROGRESS.set(true);
+                LOG.debug("shutdown hook: JVM shutdown detected");
+            }, "JavaFX-Shutdown-Hook"));
+        } catch (IllegalStateException ignored) {
+            // class initialization can happen while the JVM is already shutting down
+            JVM_SHUTDOWN_IN_PROGRESS.set(true);
+        }
     }
 
     /**
@@ -170,6 +178,29 @@ public final class PlatformHelper {
      */
     public static boolean shutdown(long timeout, TimeUnit unit) {
         LOG.debug("Platform shutdown requested (timeout {} {})", timeout, unit);
+
+        // During JVM shutdown, the JavaFX event thread may already be stopping and queued runLater tasks
+        // might never execute. Avoid any blocking shutdown attempts in this phase.
+        if (JVM_SHUTDOWN_IN_PROGRESS.get()) {
+            LOG.debug("JVM shutdown in progress, skipping JavaFX shutdown");
+            return true;
+        }
+
+        // Avoid posting back to the FX thread when already on it.
+        if (Platform.isFxApplicationThread()) {
+            try {
+                LOG.debug("calling Platform.exit() from FX thread");
+                Platform.exit();
+                return true;
+            } catch (IllegalStateException e) {
+                LOG.debug("Platform already shut down or not started");
+                return true;
+            } catch (Exception e) {
+                LOG.warn("Failed to shut down JavaFX platform", e);
+                return false;
+            }
+        }
+
         CountDownLatch latch = new CountDownLatch(1);
         try {
             Platform.runLater(() -> {
