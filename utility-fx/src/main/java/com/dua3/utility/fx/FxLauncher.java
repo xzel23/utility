@@ -535,9 +535,9 @@ public final class FxLauncher {
                 SLB4J.getDispatcher().addLogHandler(buffer);
                 return buffer;
             });
-        }
 
-        ApplicationUtil.addDarkModeListener(dark -> getLogWindow().ifPresent(window -> window.setDarkMode(dark)));
+            ApplicationUtil.addDarkModeListener(dark -> getLogWindow().ifPresent(window -> window.setDarkMode(dark)));
+        }
     }
 
     /**
