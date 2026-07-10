@@ -94,7 +94,8 @@ public final class FxLauncher {
     public static final int RC_ERROR = 1;
 
     private static final boolean HAS_SLB4J = LangUtil.isClassOnClasspath("org.slb4j.SLB4J");
-    private static final boolean HAS_SLB4J_EXT = HAS_SLB4J && LangUtil.isClassOnClasspath("org.slb4j.ext.LogBuffer");
+    private static final boolean HAS_SLB4J_EXT = HAS_SLB4J && SLB4J.isSlb4jExtAvailable();
+    private static final boolean HAS_SLB4J_EXT_FX = HAS_SLB4J && SLB4J.isSlb4jExtFxAvailable();
 
     private static final String I18N_KEY_LOG_MESSAGES = "dua3.utility.fx.launcher.log.messages";
 
@@ -526,7 +527,7 @@ public final class FxLauncher {
         SLB4J.setConfiguration(loggingConfiguration);
         LOG.debug("SLF4J configuration updated: {}", loggingConfiguration);
 
-        if (showLogWindow || isDebug()) {
+        if (showLogWindow || isDebug() && HAS_SLB4J_EXT_FX) {
             logBuffer.updateAndGet( buffer -> {
                 if (buffer == null) {
                     buffer = new LogBuffer();
@@ -576,7 +577,7 @@ public final class FxLauncher {
                 "--log-level"
         );
 
-        if (HAS_SLB4J_EXT) {
+        if (HAS_SLB4J_EXT_FX) {
             agp.addFlag(
                     I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_window.name"),
                     I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_window.description"),
