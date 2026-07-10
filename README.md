@@ -236,7 +236,7 @@ could not be loaded.
 
 ## Changes
 
-### 23.0.0 (in progress)
+### 23.0.0
 
 This release introduces some major changes, both to existing interfaces and also by adding new functionality.
 
