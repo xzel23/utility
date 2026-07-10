@@ -9,7 +9,7 @@ jspecify = "1.0.0"
 junit-bom = "6.1.1"
 log4j-bom = "2.26.1"
 rtfparserkit = "1.16.0"
-slb4j = "0.12.1"
+slb4j = "0.12.2"
 slf4j = "2.0.18"
 spotbugs = "4.10.2"
 
