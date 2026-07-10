@@ -944,6 +944,7 @@ public final class LangUtil {
      * @param f the mapping function to apply to the input, must accept and produce possibly nullable values
      * @return the result of applying the mapping function to the input, or null if the input is null
      */
+    @SuppressWarnings("java:S2637") // false positive
     public static <T, U extends @Nullable Object> U map(@Nullable T t, Function<? super @Nullable T, U> f) {
         return t == null ? null : f.apply(t);
     }
@@ -2599,6 +2600,7 @@ public final class LangUtil {
      * @param mapper the function to apply to the input value, must not be null
      * @return the result of applying the mapper function to the value, or null if the value is null
      */
+    @SuppressWarnings("java:S2637") // false positive
     public static <T, U extends @Nullable Object> U mapNonNull(@Nullable T value, Function<T, U> mapper) {
         return value == null ? null : mapper.apply(value);
     }
@@ -2655,7 +2657,7 @@ public final class LangUtil {
      * @return a comparator that is either the provided comparator or a natural order comparator
      *         if the provided comparator is null
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "java:S2637" /* false positive */})
     public static <T> Comparator<@Nullable T> orNaturalOrder(@Nullable Comparator<T> comparator) {
         return Objects.requireNonNullElse(comparator, (Comparator<T>) NullableNaturalOrderComparator.INSTANCE);
     }
@@ -2970,13 +2972,20 @@ public final class LangUtil {
     /**
      * Checks if the specified class is available on the classpath.
      *
-     * @param className the fully qualified name of the class to check (e.g., "java.util.List")
+     * @param fcqn the fully qualified name of the class to check (e.g., "java.util.List")
      * @return {@code true} if the class is found on the classpath, {@code false} otherwise
      */
-    public static boolean isClassOnClasspath(String className) {
-        String classResource = className.replace('.', '/') + ".class";
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        return loader.getResource(classResource) != null;
+    public static boolean isClassOnClasspath(String... fcqn) {
+        boolean result = true;
+        for (String className: fcqn) {
+            String classResource = className.replace('.', '/') + ".class";
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            if (loader.getResource(classResource) == null) {
+                LOG.debug("class is not on classpath: {}", className);
+                result = false;
+            }
+        }
+        return result;
     }
 
     /**
