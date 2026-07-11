@@ -13,10 +13,9 @@ import java.util.List;
 /**
  * Minimal JavaFX application launched through {@link FxLauncher}.
  */
-public class FxLauncherSample {
+public final class FxLauncherSample {
 
-    public static final String APP_NAME = "FxLauncher Sample";
-
+    private static final String APP_NAME = "FxLauncher Sample";
     private static final String APP_VERSION = "1.0.0";
     private static final String COPYRIGHT = "(c)2026";
     private static final String DEVELOPER_MAIL = "apps@dua3.com";
@@ -41,6 +40,14 @@ public class FxLauncherSample {
         );
     }
 
+    /**
+     * Private constructor.
+     */
+    private FxLauncherSample() { /* nothing to do */ }
+
+    /**
+     * The sample application class extending {@link Application}.
+     */
     public static class FxLauncherSampleApplication extends Application {
 
         /**
