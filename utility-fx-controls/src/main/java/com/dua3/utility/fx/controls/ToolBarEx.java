@@ -159,9 +159,12 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                         stage = null;
                     }
                 } else if (stage == null) {
+                    Scene ownerScene = mainScene.get();
+                    Node ownerFocusNode = ownerScene == null ? null : ownerScene.getFocusOwner();
+                    Window ownerWindow = ownerScene == null ? null : ownerScene.getWindow();
+
                     stage = new Stage(StageStyle.UNDECORATED);
-                    if (mainScene.get() instanceof Scene sceneRef) {
-                        Window ownerWindow = sceneRef.getWindow();
+                    if (ownerWindow != null) {
                         stage.initOwner(ownerWindow);
                         ownerWindow.onHidingProperty().addListener((obs, oldVal, newVal) -> {
                             stage.close();
@@ -170,6 +173,18 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                     }
                     stage.setScene(scene);
                     stage.show();
+                    restoreOwnerFocus(ownerWindow, ownerFocusNode);
+                }
+            });
+        }
+
+        private void restoreOwnerFocus(@Nullable Window ownerWindow, @Nullable Node ownerFocusNode) {
+            PlatformHelper.runLater(() -> {
+                if (ownerWindow != null && ownerWindow.isShowing()) {
+                    ownerWindow.requestFocus();
+                }
+                if (ownerFocusNode != null && ownerFocusNode.getScene() != null) {
+                    ownerFocusNode.requestFocus();
                 }
             });
         }

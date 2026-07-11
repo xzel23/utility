@@ -958,6 +958,20 @@ public class TextPane extends Control implements RichTextPane {
                         .graphic(color -> new Rectangle(16, 16, FxUtil.convert(color)))
                         .build();
 
+                copyButton.setFocusTraversable(false);
+                cutButton.setFocusTraversable(false);
+                pasteButton.setFocusTraversable(false);
+                undoButton.setFocusTraversable(false);
+                redoButton.setFocusTraversable(false);
+                boldButton.setFocusTraversable(false);
+                italicsButton.setFocusTraversable(false);
+                underlineButton.setFocusTraversable(false);
+                strikeThroughButton.setFocusTraversable(false);
+                fontList.setFocusTraversable(false);
+                sizeList.setFocusTraversable(false);
+                textColorList.setFocusTraversable(false);
+                backgroundColorList.setFocusTraversable(false);
+
                 boldButton.selectedProperty().bindBidirectional(editor.boldProperty());
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
                 underlineButton.selectedProperty().bindBidirectional(editor.underlineProperty());
@@ -965,9 +979,6 @@ public class TextPane extends Control implements RichTextPane {
                 bindFontLists(editor, fontList, sizeList, textColorList, backgroundColorList);
                 undoButton.disableProperty().bind(editor.undoableProperty().not());
                 redoButton.disableProperty().bind(editor.redoableProperty().not());
-                copyButton.setFocusTraversable(false);
-                cutButton.setFocusTraversable(false);
-                pasteButton.setFocusTraversable(false);
 
                 ToolBarEx toolbar = Controls.toolBar()
                         .items(
@@ -1101,6 +1112,7 @@ public class TextPane extends Control implements RichTextPane {
                 if (!Objects.equals(editor.getFontFamily(), newValue)) {
                     editor.setFontFamily(newValue);
                 }
+                editor.requestFocus();
             });
 
             editor.fontSizeProperty().addListener((obs, oldValue, newValue) ->
@@ -1125,6 +1137,7 @@ public class TextPane extends Control implements RichTextPane {
                 if (Double.compare(editor.getFontSize(), size) != 0) {
                     editor.setFontSize(size);
                 }
+                editor.requestFocus();
             });
 
             editor.textColorProperty().addListener((obs, oldValue, newValue) ->
@@ -1146,6 +1159,7 @@ public class TextPane extends Control implements RichTextPane {
                 if (!Objects.equals(editor.getTextColor(), newValue)) {
                     editor.setTextColor(newValue);
                 }
+                editor.requestFocus();
             });
 
             editor.backgroundColorProperty().addListener((obs, oldValue, newValue) ->
@@ -1167,6 +1181,7 @@ public class TextPane extends Control implements RichTextPane {
                 if (!Objects.equals(editor.getBackgroundColor(), newValue)) {
                     editor.setBackgroundColor(newValue);
                 }
+                editor.requestFocus();
             });
 
             synchronizeFromEditor(synchronizing, () -> {
