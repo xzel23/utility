@@ -2,6 +2,7 @@ package com.dua3.utility.ui;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
@@ -1154,6 +1155,7 @@ public class RichTextEditorModel {
         if (!Double.isFinite(sizeAtCaret) || sizeAtCaret <= 0.0) {
             sizeAtCaret = fallbackFont.getSizeInPoints();
         }
+        sizeAtCaret = MathUtil.round(sizeAtCaret, 2);
 
         return new CaretProperties(
                 boldAtCaret,
