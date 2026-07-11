@@ -1114,9 +1114,10 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         }
 
         VisualLine line = lines.get(lineIndex);
-        int x = (int) Math.floor(RichTextVisualLayoutHelper.xForIndex(line, caret));
-        int y = (int) Math.floor(line.top());
-        int h = Math.max(1, (int) Math.ceil(line.height()));
+        double scale = getDisplayScale();
+        int x = (int) Math.floor(RichTextVisualLayoutHelper.xForIndex(line, caret) * scale);
+        int y = (int) Math.floor(line.top() * scale);
+        int h = Math.max(1, (int) Math.ceil(line.height() * scale));
         getTextComponent().scrollRectToVisible(new Rectangle(x, y, 2, h));
     }
 

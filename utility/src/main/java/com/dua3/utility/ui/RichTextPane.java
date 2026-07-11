@@ -69,4 +69,18 @@ public interface RichTextPane {
      * @param handler hyperlink handler
      */
     void setHyperlinkHandler(Consumer<URI> handler);
+
+    /**
+     * Returns the current display scale used for preview rendering.
+     *
+     * @return display scale
+     */
+    double getDisplayScale();
+
+    /**
+     * Sets the display scale used for preview rendering.
+     *
+     * @param value display scale (&gt; 0)
+     */
+    void setDisplayScale(double value);
 }

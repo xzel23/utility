@@ -72,6 +72,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
     private final RichTextCanvas textComponent = new RichTextCanvas();
     private boolean wrapText;
     private transient Font textFont = FontUtil.getInstance().getDefaultFont();
+    private double displayScale = 1.0;
     private transient Consumer<URI> hyperlinkHandler = TextPane::openUriUsingDesktop;
     private transient @Nullable RenderLayoutCache renderLayoutCache;
 
@@ -169,6 +170,36 @@ public class TextPane extends JScrollPane implements RichTextPane {
         invalidateRenderLayout();
     }
 
+    /**
+     * Returns the display scale used for rendering and layout conversion.
+     *
+     * @return display scale
+     */
+    @Override
+    public final double getDisplayScale() {
+        return displayScale;
+    }
+
+    /**
+     * Sets the display scale used for rendering and layout conversion.
+     *
+     * @param value display scale (> 0)
+     */
+    @Override
+    public final void setDisplayScale(double value) {
+        if (!Double.isFinite(value) || value <= 0.0) {
+            throw new IllegalArgumentException("displayScale must be > 0: " + value);
+        }
+        if (Math.abs(displayScale - value) < 1.0e-6) {
+            return;
+        }
+
+        displayScale = value;
+        invalidateRenderLayout();
+        revalidate();
+        repaint();
+    }
+
     @Override
     public Consumer<URI> getHyperlinkHandler() {
         return hyperlinkHandler;
@@ -222,7 +253,8 @@ public class TextPane extends JScrollPane implements RichTextPane {
      */
     protected final int indexForPoint(Point point) {
         RenderLayout layout = getRenderLayout();
-        return RichTextVisualLayoutHelper.indexForPoint(layout.visualLines(), point.getX(), point.getY());
+        double scale = getDisplayScale();
+        return RichTextVisualLayoutHelper.indexForPoint(layout.visualLines(), point.getX() / scale, point.getY() / scale);
     }
 
     /**
@@ -261,39 +293,41 @@ public class TextPane extends JScrollPane implements RichTextPane {
     }
 
     private double resolvePageWidthFromView() {
+        double scale = getDisplayScale();
         JViewport viewport = getViewport();
         if (viewport != null) {
             double viewportWidth = viewport.getExtentSize().getWidth();
             if (Double.isFinite(viewportWidth) && viewportWidth > 1.0) {
-                return viewportWidth;
+                return viewportWidth / scale;
             }
         }
 
         double componentWidth = textComponent.getWidth();
         if (Double.isFinite(componentWidth) && componentWidth > 1.0) {
-            return componentWidth;
+            return componentWidth / scale;
         }
 
         double fallback = (double) getWidth() - getInsets().left - getInsets().right;
-        return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
+        return Double.isFinite(fallback) && fallback > 1.0 ? fallback / scale : 1.0;
     }
 
     private double resolvePageHeightFromView() {
+        double scale = getDisplayScale();
         JViewport viewport = getViewport();
         if (viewport != null) {
             double viewportHeight = viewport.getExtentSize().getHeight();
             if (Double.isFinite(viewportHeight) && viewportHeight > 1.0) {
-                return viewportHeight;
+                return viewportHeight / scale;
             }
         }
 
         double componentHeight = textComponent.getHeight();
         if (Double.isFinite(componentHeight) && componentHeight > 1.0) {
-            return componentHeight;
+            return componentHeight / scale;
         }
 
         double fallback = (double) getHeight() - getInsets().top - getInsets().bottom;
-        return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 0.0;
+        return Double.isFinite(fallback) && fallback > 1.0 ? fallback / scale : 0.0;
     }
 
     private RenderLayout createLayout(RichText richText, double availableWidth) {
@@ -883,38 +917,40 @@ public class TextPane extends JScrollPane implements RichTextPane {
         }
 
         private double getLayoutWidthHint(boolean forPreferredSize) {
+            double scale = getDisplayScale();
             if (wrapText) {
                 JViewport viewport = TextPane.this.getViewport();
                 if (viewport != null) {
                     double viewportWidth = viewport.getExtentSize().getWidth();
                     if (viewportWidth > 1.0) {
-                        return viewportWidth;
+                        return viewportWidth / scale;
                     }
                 }
 
                 if (!forPreferredSize && getWidth() > 1.0) {
-                    return getWidth();
+                    return getWidth() / scale;
                 }
             }
 
             if (getWidth() > 1.0) {
-                return getWidth();
+                return getWidth() / scale;
             }
 
             JViewport viewport = TextPane.this.getViewport();
             if (viewport != null && viewport.getExtentSize().width > 1) {
-                return viewport.getExtentSize().width;
+                return viewport.getExtentSize().width / scale;
             }
 
-            return Math.max(1.0, (double) TextPane.this.getWidth() - TextPane.this.getInsets().left - TextPane.this.getInsets().right);
+            return Math.max(1.0, ((double) TextPane.this.getWidth() - TextPane.this.getInsets().left - TextPane.this.getInsets().right) / scale);
         }
 
         @Override
         public Dimension getPreferredSize() {
+            double scale = getDisplayScale();
             double widthHint = getLayoutWidthHint(true);
             RenderLayout layout = layoutForWidth(widthHint);
-            int prefWidth = (int) Math.ceil(Math.max(1.0, wrapText ? widthHint : layout.width()));
-            int prefHeight = (int) Math.ceil(Math.max(1.0, layout.height()));
+            int prefWidth = (int) Math.ceil(Math.max(1.0, (wrapText ? widthHint : layout.width()) * scale));
+            int prefHeight = (int) Math.ceil(Math.max(1.0, layout.height() * scale));
             return new Dimension(prefWidth, prefHeight);
         }
 
@@ -929,7 +965,12 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
             Graphics2D g2 = (Graphics2D) g.create();
             try {
-                try (SwingGraphics graphics = new SwingGraphics(g2, new Rectangle(0, 0, getWidth(), getHeight()))) {
+                double scale = getDisplayScale();
+                int logicalWidth = (int) Math.max(1L, Math.round(Math.ceil(getWidth() / scale)));
+                int logicalHeight = (int) Math.max(1L, Math.round(Math.ceil(getHeight() / scale)));
+                g2.scale(scale, scale);
+
+                try (SwingGraphics graphics = new SwingGraphics(g2, new Rectangle(0, 0, logicalWidth, logicalHeight))) {
                     graphics.reset();
                     graphics.setFont(textFont);
                     RichTextRenderer.renderFragmentLines(graphics, layout.renderLines());
@@ -945,6 +986,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 return;
             }
 
+            double scale = getDisplayScale();
             Set<Component> used = Collections.newSetFromMap(new IdentityHashMap<>());
 
             for (InlineComponentPlacement placement : layout.placements()) {
@@ -965,8 +1007,11 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 int prefH = Math.max(1, (int) Math.ceil(pref.getHeight()));
                 int baselineOffset = component.getBaseline(prefW, prefH);
                 double y = computeInlineComponentY(placement, prefH, baselineOffset);
-                int x = (int) Math.floor(placement.x());
-                component.setBounds(x, (int) Math.floor(y), prefW, prefH);
+                int x = (int) Math.floor(placement.x() * scale);
+                int yPx = (int) Math.floor(y * scale);
+                int widthPx = Math.max(1, (int) Math.ceil(prefW * scale));
+                int heightPx = Math.max(1, (int) Math.ceil(prefH * scale));
+                component.setBounds(x, yPx, widthPx, heightPx);
                 component.setVisible(true);
             }
 
@@ -986,7 +1031,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
         @Override
         public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-            return Math.max(1, (int) Math.ceil(textFont.getFontData().height()));
+            return Math.max(1, (int) Math.ceil(textFont.getFontData().height() * getDisplayScale()));
         }
 
         @Override

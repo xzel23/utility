@@ -150,6 +150,7 @@ public class TextPane extends Control implements RichTextPane {
      *
      * @return text
      */
+    @Override
     public RichText getText() {
         return text.get().toRichText();
     }
@@ -159,6 +160,7 @@ public class TextPane extends Control implements RichTextPane {
      *
      * @param value text or {@code null} for empty text
      */
+    @Override
     public final void setText(@Nullable CharSequence value) {
         text.set(value == null ? RichText.emptyText() : RichText.valueOf(value));
     }
@@ -177,6 +179,7 @@ public class TextPane extends Control implements RichTextPane {
      *
      * @return hyperlink handler
      */
+    @Override
     public final Consumer<URI> getHyperlinkHandler() {
         return hyperlinkHandler.get();
     }
@@ -186,6 +189,7 @@ public class TextPane extends Control implements RichTextPane {
      *
      * @param handler hyperlink handler
      */
+    @Override
     public final void setHyperlinkHandler(Consumer<URI> handler) {
         hyperlinkHandler.set(handler);
     }
@@ -204,6 +208,7 @@ public class TextPane extends Control implements RichTextPane {
      *
      * @return true if wrapping is enabled
      */
+    @Override
     public final boolean isWrapText() {
         return wrapText.get();
     }
@@ -213,6 +218,7 @@ public class TextPane extends Control implements RichTextPane {
      *
      * @param value true to wrap text to available width
      */
+    @Override
     public final void setWrapText(boolean value) {
         wrapText.set(value);
     }
@@ -272,6 +278,7 @@ public class TextPane extends Control implements RichTextPane {
      *
      * @return display scale
      */
+    @Override
     public final double getDisplayScale() {
         return displayScale.get();
     }
@@ -281,6 +288,7 @@ public class TextPane extends Control implements RichTextPane {
      *
      * @param value display scale (&gt; 0)
      */
+    @Override
     public final void setDisplayScale(double value) {
         if (!Double.isFinite(value) || value <= 0.0) {
             throw new IllegalArgumentException("displayScale must be > 0: " + value);
