@@ -19,6 +19,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JToggleButton;
@@ -141,6 +142,8 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
 
         toolbar = new JToolBar();
         toolbar.setFloatable(true);
+        toolbar.setFocusable(false);
+        toolbar.setRequestFocusEnabled(false);
         toolbar.addHierarchyListener(this::onToolbarHierarchyChanged);
 
         JButton cutButton = editButton("✂", this::cut);
@@ -158,6 +161,19 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         backgroundColorList = new JComboBox<>(DEFAULT_BACKGROUND_COLORS);
         textColorList.setRenderer(createColorRenderer());
         backgroundColorList.setRenderer(createColorRenderer());
+        configureToolbarControl(cutButton);
+        configureToolbarControl(copyButton);
+        configureToolbarControl(pasteButton);
+        configureToolbarControl(undoButton);
+        configureToolbarControl(redoButton);
+        configureToolbarControl(boldButton);
+        configureToolbarControl(italicButton);
+        configureToolbarControl(underlineButton);
+        configureToolbarControl(strikeButton);
+        configureToolbarControl(fontList);
+        configureToolbarControl(sizeList);
+        configureToolbarControl(textColorList);
+        configureToolbarControl(backgroundColorList);
 
         toolbar.add(cutButton);
         toolbar.add(copyButton);
@@ -272,8 +288,31 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         boolean old = editable;
         editable = value;
         getTextComponent().setFocusable(value);
+        if (value) {
+            caretVisible.set(true);
+            restartCaretBlink();
+        } else {
+            stopCaretBlink();
+        }
         firePropertyChange("editable", old, value);
         repaint();
+    }
+
+    @Override
+    public void setVisible(boolean value) {
+        boolean oldVisible = isVisible();
+        if (oldVisible == value) {
+            super.setVisible(value);
+            return;
+        }
+
+        super.setVisible(value);
+        if (value && editable) {
+            caretVisible.set(true);
+            restartCaretBlink();
+        } else if (!value) {
+            stopCaretBlink();
+        }
     }
 
     @Override
@@ -1159,7 +1198,9 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     }
 
     private boolean shouldPaintCaret() {
-        return editable && getTextComponent().isFocusOwner();
+        return editable
+                && (getTextComponent().isFocusOwner()
+                || (toolbarLocation == DetachableNode.Location.FLOATING && isVisible()));
     }
 
     private void restartCaretBlink() {
@@ -1198,7 +1239,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 return;
             }
             setFontFamily((String) fontList.getSelectedItem());
-            requestFocusInWindow();
+            focusTextComponent();
             syncToolbar();
         });
         sizeList.addActionListener(e -> {
@@ -1209,7 +1250,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
             if (size != null) {
                 setFontSize(size);
             }
-            requestFocusInWindow();
+            focusTextComponent();
             syncToolbar();
         });
         textColorList.addActionListener(e -> {
@@ -1217,7 +1258,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 return;
             }
             setTextColor((Color) textColorList.getSelectedItem());
-            requestFocusInWindow();
+            focusTextComponent();
             syncToolbar();
         });
         backgroundColorList.addActionListener(e -> {
@@ -1225,9 +1266,13 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 return;
             }
             setBackgroundColor((Color) backgroundColorList.getSelectedItem());
-            requestFocusInWindow();
+            focusTextComponent();
             syncToolbar();
         });
+    }
+
+    private void focusTextComponent() {
+        getTextComponent().requestFocusInWindow();
     }
 
     private void syncToolbar() {
@@ -1371,6 +1416,8 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         if (toolbarFloatingDialog == null || !toolbarFloatingDialog.isDisplayable()) {
             toolbarFloatingDialog = new JDialog(SwingUtilities.getWindowAncestor(this));
             toolbarFloatingDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+            toolbarFloatingDialog.setAutoRequestFocus(false);
+            toolbarFloatingDialog.setFocusableWindowState(false);
             toolbarFloatingDialog.getContentPane().setLayout(new java.awt.BorderLayout());
         }
 
@@ -1383,6 +1430,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
             toolbarFloatingDialog.setLocationRelativeTo(this);
         }
         toolbarFloatingDialog.setVisible(true);
+        focusTextComponent();
     }
 
     private void hideToolbarFloatingWindow() {
@@ -1423,6 +1471,11 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         button.setMaximumSize(SYMBOL_BUTTON_SIZE);
         button.addActionListener(evt -> action.accept(button.isSelected()));
         return button;
+    }
+
+    private static void configureToolbarControl(JComponent control) {
+        control.setFocusable(false);
+        control.setRequestFocusEnabled(false);
     }
 
     private static void ensureSortedFontSizeEntry(JComboBox<Float> sizeList, float size) {
