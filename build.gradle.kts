@@ -156,16 +156,16 @@ allprojects {
     }
 
     jdk {
-        version = 21
+        version = rootProject.libs.versions.jdkVersion.get().toInt()
         javaFxBundled = true
 
         overrides {
             create("java25") {
-                version = 25
+                version = rootProject.libs.versions.javafxJdkVersion.get().toInt()
                 javaFxBundled = true
             }
             create("testJava25") {
-                version = 25
+                version = rootProject.libs.versions.javafxJdkVersion.get().toInt()
                 javaFxBundled = true
             }
         }

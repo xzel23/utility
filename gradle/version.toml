@@ -1,5 +1,7 @@
 [versions]
 projectVersion = "23.0.1"
+jdkVersion = "21"
+javafxJdkVersion = "25"
 atlantafx = "2.1.0"
 bouncycastle = "1.84"
 h2database = "2.4.240"

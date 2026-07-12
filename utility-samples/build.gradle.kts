@@ -1,7 +1,7 @@
 project.description = "Java utilities (samples)"
 
 jdk {
-    version = 25
+    version = rootProject.libs.versions.javafxJdkVersion.get().toInt()
     javaFxBundled = true
 }
 

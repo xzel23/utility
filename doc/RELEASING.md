@@ -28,7 +28,7 @@ following tasks:
 
 1. **Prepare the Release**
 
-   Update the `projectVersion` version in `gradle/libs.toml` to a non-SNAPSHOT version:
+   Update the `projectVersion` version in `gradle/version.toml` to a non-SNAPSHOT version:
 
    ```toml
    projectVersion = "X.Y.Z" # Replace X.Y.Z with the version you want to release
@@ -37,7 +37,7 @@ following tasks:
 2. **Commit and Tag the Release**
 
    ```bash
-   git add gradle/libs.toml
+   git add gradle/version.toml
    git commit -m "Release version X.Y.Z"
    git tag -a vX.Y.Z -m "Release version X.Y.Z"
    ```
@@ -67,7 +67,7 @@ following tasks:
 
 6. **Prepare for Next Development Iteration**
 
-   Update the `projectVersion` version in `gradle/libs.toml` to the next SNAPSHOT version:
+   Update the `projectVersion` version in `gradle/version.toml` to the next SNAPSHOT version:
 
    ```toml
    projectVersion = "X.Y.Z-SNAPSHOT" # Replace X.Y.Z with the next version
@@ -76,7 +76,7 @@ following tasks:
 7. **Commit the Changes**
 
    ```bash
-   git add gradle/libs.toml
+   git add gradle/version.toml
    git commit -m "Prepare for next development iteration"
    git push
    git push --tags
@@ -104,7 +104,7 @@ The prerequisites for publishing snapshots are the same as for releasing:
 
 1. **Ensure the Version is a SNAPSHOT Version**
 
-   Make sure the `projectVersion` version in `gradle/libs.toml` is a SNAPSHOT version:
+   Make sure the `projectVersion` version in `gradle/version.toml` is a SNAPSHOT version:
 
    ```toml
    projectVersion = "X.Y.Z-SNAPSHOT" # Replace X.Y.Z with the version you want to publish
