@@ -517,7 +517,7 @@ class HtmlConverterTest {
 
         HtmlConverter converter = HtmlConverter.create(
                 HtmlConverter.mapAttribute("level", change -> {
-                    int level = change.newValue() != null ? (int) change.newValue() : 0;
+                    int level = change.newValue() instanceof Number n ? n.intValue() : 0;
                     return HtmlTag.headerTag(
                             level > 0 ? "<h" + level + ">" : "",
                             level > 0 ? "</h" + level + ">" : "",

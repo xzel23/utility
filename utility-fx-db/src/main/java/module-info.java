@@ -33,6 +33,7 @@ import org.jspecify.annotations.NullMarked;
 open module com.dua3.utility.fx.db {
     exports com.dua3.utility.fx.db;
 
+    requires com.dua3.utility;
     requires com.dua3.utility.db;
     requires com.dua3.utility.fx;
     requires java.sql;

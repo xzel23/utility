@@ -1075,7 +1075,7 @@ class IoUtilTest {
 
             // Exclude hidden files starting with '.'
             Path destinationZip = root.resolve("filtered.zip");
-            IoUtil.zip(destinationZip, source, p -> !p.getFileName().toString().startsWith("."));
+            IoUtil.zip(destinationZip, source, p -> !String.valueOf(p.getFileName()).startsWith("."));
 
             Path destinationFolder = root.resolve("unzipped");
             Files.createDirectories(destinationFolder);
@@ -1105,7 +1105,7 @@ class IoUtilTest {
             Path source = root.resolve("test");
 
             Path destinationZip = root.resolve("customroot.zip");
-            IoUtil.zip(destinationZip, source, "MYROOT", p -> !p.getFileName().toString().startsWith("."));
+            IoUtil.zip(destinationZip, source, "MYROOT", p -> !String.valueOf(p.getFileName()).startsWith("."));
 
             Path destinationFolder = root.resolve("unzipped2");
             Files.createDirectories(destinationFolder);

@@ -16,6 +16,7 @@ package com.dua3.utility.fx.db;
 
 import com.dua3.utility.db.DbUtil;
 import com.dua3.utility.fx.PlatformHelper;
+import com.dua3.utility.lang.LangUtil;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -96,29 +97,29 @@ public final class FxDbUtil {
             int scale = meta.getScale(i);
 
             // define the formatting
-            Function<Object, String> format;
-            switch (sqlType) {
+            @SuppressWarnings("java:S3457")
+            Function<@Nullable  Object, String> format = switch (sqlType) {
                 case DATE -> //noinspection DataFlowIssue - format is not called for null arguments
-                        format = item -> DbUtil.toLocalDate(item).format(dateFormatter);
+                        item -> LangUtil.mapNonNull(DbUtil.toLocalDate(item), v -> v.format(dateFormatter));
                 case TIMESTAMP -> //noinspection DataFlowIssue - format is not called for null arguments
-                        format = item -> DbUtil.toLocalDateTime(item).format(timestampFormatter);
+                        item -> LangUtil.mapNonNull(DbUtil.toLocalDateTime(item), v -> v.format(timestampFormatter));
                 case TIME ->  //noinspection DataFlowIssue - format is not called for null arguments
-                        format = item -> DbUtil.toLocalDateTime(item).format(timeFormatter);
+                        item -> LangUtil.mapNonNull(DbUtil.toLocalDateTime(item), v -> v.format(timeFormatter));
 
                 // numbers that have scale
                 case DECIMAL, NUMERIC -> {
                     if (scale > 0) {
                         //noinspection StringConcatenationInFormatCall,StringConcatenationMissingWhitespace
-                        format = item -> String.format(locale, "%.0" + scale + "f", ((Number) item).doubleValue());
+                        yield item -> String.format(locale, "%.0" + scale + "f", ((Number) item).doubleValue());
                     } else {
-                        format = String::valueOf;
+                        yield String::valueOf;
                     }
                 }
 
                 // numbers that do not have scale
-                case DOUBLE, REAL, FLOAT -> format = String::valueOf;
-                default -> format = String::valueOf;
-            }
+                case DOUBLE, REAL, FLOAT -> String::valueOf;
+                case null, default -> String::valueOf;
+            };
             LOG.trace("column name: {} label: {} type: {} scale: {}", name, label, sqlType, scale);
 
             // CellValueFactory
