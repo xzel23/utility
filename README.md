@@ -236,7 +236,14 @@ could not be loaded.
 
 ## Changes
 
-### 23.0.1 (in progress)
+### 23.0.2
+
+- fix and optimize append(Run) ignoring run styles
+- optimize ImmutableSortedMap
+- fix possible NullPointerException in FxDbUtil
+- cleanup build script
+
+### 23.0.1
 
 - add scaling support to `RichTextPane` and derived classes
 
@@ -247,7 +254,7 @@ This release introduces some major changes, both to existing interfaces and also
 #### Changes in 23.0.0
 
 - fix slow JavaFX application shutdown
-- fix ClassNotFoundExceptioin in FxLauncher when SLB4J extension classes are not present
+- fix ClassNotFoundException in FxLauncher when SLB4J extension classes are not present
 - fix rendering issues and allow setting display scale in RichText controls
 - small fixes and improvements
 
