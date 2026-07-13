@@ -79,10 +79,10 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence, Ri
 
     @Override
     public RichTextBuilder append(@Nullable CharSequence csq) {
-        if (csq instanceof ToRichText trt) {
-            trt.appendTo(this);
-        } else {
-            buffer.append(csq);
+        switch (csq) {
+            case ToRichText trt -> trt.appendTo(this);
+            case Run run -> appendRun(run);
+            case null, default -> buffer.append(csq);
         }
         return self();
     }
@@ -92,6 +92,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence, Ri
         switch (csq) {
             case RichText rt -> rt.appendTo(this, start, end);
             case ToRichText trt -> trt.toRichText().subSequence(start, end).appendTo(this);
+            case Run run -> appendRun(run.subSequence(start, end));
             case null, default -> buffer.append(csq, start, end);
         }
         return self();
@@ -350,7 +351,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence, Ri
         }
 
         // append CharSequence
-        append(run);
+        buffer.append(run);
 
         // restore attributes
         attributes = split();
