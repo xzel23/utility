@@ -314,7 +314,8 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence, Ri
     void appendRun(Run run) {
         // set attributes
         Map<String, @Nullable Object> attributes = split();
-        Map<String, @Nullable Object> backup = new HashMap<>();
+        Map<String, @Nullable Object> entriesToAdd = new HashMap<>();
+        List<String> keysToRemove = new ArrayList<>();
         for (Entry<String, Object> entry : run.getAttributes().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -322,7 +323,11 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence, Ri
             if (key.equals(RichText.ATTRIBUTE_NAME_STYLE_LIST)) {
                 LangUtil.check(value instanceof List, "attribute '%s' must contain a list", key);
                 attributes.compute(key, (k, oldValue) -> {
-                    backup.put(key, oldValue);
+                    if (oldValue == null) {
+                        keysToRemove.add(key);
+                    } else {
+                        entriesToAdd.put(key, oldValue);
+                    }
                     if (oldValue == null) {
                         return new ArrayList<>((Collection<Style>) value);
                     } else {
@@ -336,7 +341,11 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence, Ri
                 });
             } else {
                 Object oldValue = attributes.put(key, value);
-                backup.put(key, oldValue);
+                if (oldValue == null) {
+                    keysToRemove.add(key);
+                } else {
+                    entriesToAdd.put(key, oldValue);
+                }
             }
         }
 
@@ -345,13 +354,8 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence, Ri
 
         // restore attributes
         attributes = split();
-        for (Entry<String, @Nullable Object> entry : backup.entrySet()) {
-            if (entry.getValue() == null) {
-                attributes.remove(entry.getKey());
-            } else {
-                attributes.put(entry.getKey(), entry.getValue());
-            }
-        }
+        attributes.putAll(entriesToAdd);
+        keysToRemove.forEach(attributes::remove);
     }
 
     /**
@@ -467,8 +471,8 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence, Ri
 
     private void compactParts() {
         // hot path: use indexed for loop for better performance
-        for (int i = 0; i < parts.size(); i++) {
-            parts.get(i).attributes().compact();
+        for (PositionAttributes part : parts) {
+            part.attributes().compact();
         }
     }
 
