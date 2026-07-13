@@ -2,11 +2,9 @@ package com.dua3.utility.lang;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -130,9 +128,14 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
             Map<K, V> map,
             @Nullable Comparator<? super K> comparator
     ) {
-        List<Entry<K, V>> entries = new ArrayList<>(map.size());
-        map.forEach((k, v) -> entries.add(new Entry<>(k, v, comparator)));
-        return entries.toArray(Entry[]::new);
+        Set<Map.Entry<K, V>> mapEntries = map.entrySet();
+        int n = mapEntries.size();
+        Entry<K, V>[] entries = new Entry[n];
+        int i = 0;
+        for (Map.Entry<K, V> mapEntry : mapEntries) {
+            entries[i++] = new Entry<>(mapEntry.getKey(), mapEntry.getValue(), comparator);
+        }
+        return entries;
     }
 
     @Override
