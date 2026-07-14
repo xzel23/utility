@@ -15,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -25,6 +26,8 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -36,12 +39,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -1256,5 +1262,46 @@ class IoUtilTest {
     @MethodSource("invalidPortableNames")
     void testIsPortableFileName_invalid(String name) {
         assertFalse(IoUtil.isPortableFileName(name), () -> "expected NOT portable: '" + name + "'");
+    }
+
+    @Test
+    void testNewBufferedReader_readsUtf8Content() throws IOException {
+        Path tempFile = Files.createTempFile("newBufferedReader-", ".txt");
+        try {
+            String content = "line 1\nline 2\nunicode: 你好, 世界! 🌍";
+            Files.writeString(tempFile, content, StandardCharsets.UTF_8);
+
+            try (BufferedReader br = IoUtil.newBufferedReader(tempFile.toUri())) {
+                String read = br.lines().collect(Collectors.joining("\n"));
+                assertEquals(content, read);
+            }
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testNewBufferedReader_emptyContent() throws IOException {
+        Path tempFile = Files.createTempFile("newBufferedReader-empty-", ".txt");
+        try {
+            Files.writeString(tempFile, "", StandardCharsets.UTF_8);
+            try (BufferedReader br = IoUtil.newBufferedReader(tempFile.toUri())) {
+                assertNull(br.readLine());
+            }
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testNewBufferedReader_nonExistentFileThrowsIOException() throws IOException {
+        Path tempDir = Files.createTempDirectory("newBufferedReader-missing-");
+        try {
+            Path missing = tempDir.resolve("does-not-exist.txt");
+            assertFalse(Files.exists(missing));
+            assertThrows(IOException.class, () -> IoUtil.newBufferedReader(missing.toUri()));
+        } finally {
+            IoUtil.deleteRecursive(tempDir);
+        }
     }
 }

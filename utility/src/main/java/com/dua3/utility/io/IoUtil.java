@@ -315,6 +315,31 @@ public final class IoUtil {
     }
 
     /**
+     * Creates and returns a BufferedReader for reading from the resource
+     * identified by the specified URI.
+     *
+     * @param uri the URI of the resource to be read; must not be null
+     * @return a BufferedReader for reading the content of the resource
+     * @throws IOException if an I/O error occurs while opening the resource
+     */
+    public static BufferedReader newBufferedReader(URI uri) throws IOException {
+        if (uri.isAbsolute()) {
+            InputStream in = null;
+            try {
+                in = openInputStream(uri);
+                return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                if (in != null) {
+                    try { in.close(); } catch (IOException suppressed) { e.addSuppressed(suppressed); }
+                }
+                throw e;
+            }
+        } else {
+            return Files.newBufferedReader(Paths.get(uri));
+        }
+    }
+
+    /**
      * Get stream of lines from InputStream instance.
      *
      * @param in the stream to read from
