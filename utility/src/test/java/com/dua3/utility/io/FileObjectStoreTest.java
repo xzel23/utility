@@ -8,6 +8,6 @@ import java.nio.file.Path;
 class FileObjectStoreTest extends AbstractObjectStoreTest {
     @Override
     protected ObjectStore createStore(Path root) throws IOException {
-        return new FileObjectStore(root);
+        return FileObjectStore.newObjectStore(root);
     }
 }

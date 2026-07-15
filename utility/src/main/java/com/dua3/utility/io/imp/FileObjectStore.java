@@ -8,6 +8,8 @@ import com.dua3.utility.io.NotAFolderException;
 import com.dua3.utility.io.ObjectExistsException;
 import com.dua3.utility.io.ObjectNotFoundException;
 import com.dua3.utility.io.ObjectStore;
+import com.dua3.utility.io.ReadableObjectStore;
+import com.dua3.utility.io.WritableObjectStore;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,17 +44,53 @@ public final class FileObjectStore implements ObjectStore {
 
     private final Path root;
     private final URI rootUri;
+    private final AccessMode accessMode;
 
     /**
      * Constructs a {@code FileObjectStore} with the specified root directory.
      * It normalizes and ensures the creation of the root directory as a valid absolute path.
      *
-     * @param root the path to the root directory of the file object store; must not be {@code null}
+     * @param root the path to the root directory of the file object store
+     * @param accessMode the access level for the file object store
      * @throws IOException if an I/O error occurs while creating or accessing the directory
      */
-    public FileObjectStore(Path root) throws IOException {
+    private FileObjectStore(Path root, AccessMode accessMode) throws IOException {
         this.root = Files.createDirectories(root).toAbsolutePath().normalize();
         this.rootUri = this.root.toUri();
+        this.accessMode = accessMode;
+    }
+
+    /**
+     * Creates a new instance of a readable object store using the specified root directory.
+     *
+     * @param root the path to the root directory for the readable object store; must not be {@code null}
+     * @return a new instance of {@code ReadableObjectStore} initialized with the given root directory
+     * @throws IOException if an I/O error occurs during the initialization of the store
+     */
+    public static ReadableObjectStore newReadableObjectStore(Path root) throws IOException {
+        return new FileObjectStore(root, AccessMode.READ);
+    }
+
+    /**
+     * Creates a new instance of a writable object store using the specified root directory.
+     *
+     * @param root the path to the root directory for the writable object store; must not be {@code null}
+     * @return a new instance of {@code WritableObjectStore} initialized with the given root directory
+     * @throws IOException if an I/O error occurs during the initialization of the store
+     */
+    public static WritableObjectStore newWritableObjectStore(Path root) throws IOException {
+        return new FileObjectStore(root, AccessMode.WRITE);
+    }
+
+    /**
+     * Creates a new instance of a file object store using the specified root directory.
+     *
+     * @param root the path to the root directory for the object store; must not be {@code null}
+     * @return a new instance of {@code FileObjectStore} initialized with the given root directory
+     * @throws IOException if an I/O error occurs during the initialization of the store
+     */
+    public static FileObjectStore newObjectStore(Path root) throws IOException {
+        return new FileObjectStore(root, AccessMode.READ_AND_WRITE);
     }
 
     @Override
@@ -63,6 +101,8 @@ public final class FileObjectStore implements ObjectStore {
     @Override
     @SuppressWarnings({"java:S2095", "resource"}) // caller closes the stream
     public Stream<ObjectInfo> list(URI path) throws IOException {
+        assertReadable();
+
         Path resolved = resolve(path);
 
         if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
@@ -83,6 +123,8 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public long write(URI path, InputStream in, OutputOption... options) throws IOException {
+        assertWritable();
+
         Path resolved = resolve(path);
         OutputOption effectiveOption = ensureCanWrite(resolved, options);
         Path parent = resolved.getParent();
@@ -97,6 +139,8 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public long write(URI path, byte[] data, int from, int to, OutputOption... options) throws IOException {
+        assertWritable();
+
         int length = to - from;
         if (from < 0 || to < from || to > data.length) {
             throw new IndexOutOfBoundsException("invalid bounds: from=" + from + ", to=" + to + ", length=" + data.length);
@@ -109,6 +153,8 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public InputStream openInputStream(URI path) throws IOException {
+        assertReadable();
+
         Path resolved = resolve(path);
         if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
             throw new ObjectNotFoundException(String.valueOf(path));
@@ -121,6 +167,8 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public OutputStream openOutputStream(URI path, OutputOption... options) throws IOException {
+        assertWritable();
+
         Path resolved = resolve(path);
         OutputOption effectiveOption = ensureCanWrite(resolved, options);
         Path parent = resolved.getParent();
@@ -135,6 +183,8 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public void createFolder(URI path) throws IOException {
+        assertWritable();
+
         Path resolved = resolve(path);
         if (Files.exists(resolved, LinkOption.NOFOLLOW_LINKS) && !Files.isDirectory(resolved, LinkOption.NOFOLLOW_LINKS)) {
             throw new NotAFolderException(String.valueOf(path));
@@ -144,6 +194,8 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public void removeFolder(URI path) throws IOException {
+        assertWritable();
+
         Path resolved = resolve(path);
         if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
             throw new ObjectNotFoundException(String.valueOf(path));
@@ -160,6 +212,8 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public Optional<ObjectInfo> getInfo(URI path) throws IOException {
+        assertReadable();
+
         Path resolved = resolve(path);
         if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
             return Optional.empty();
@@ -169,6 +223,8 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public void delete(URI path) throws IOException {
+        assertWritable();
+
         Path resolved = resolve(path);
         if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
             throw new ObjectNotFoundException(String.valueOf(path));
@@ -182,6 +238,8 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public void deleteRecursively(URI path) throws IOException {
+        assertWritable();
+
         Path resolved = resolve(path);
 
         if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
@@ -200,6 +258,11 @@ public final class FileObjectStore implements ObjectStore {
         } catch (UncheckedIOException e) {
             throw e.getCause();
         }
+    }
+
+    @Override
+    public AccessMode getAccessMode() {
+        return accessMode;
     }
 
     @Override
