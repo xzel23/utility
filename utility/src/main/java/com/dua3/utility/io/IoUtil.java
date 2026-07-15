@@ -33,13 +33,13 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
 import java.util.Collection;
@@ -86,6 +86,7 @@ public final class IoUtil {
      * The property holding the path to the user home.
      */
     private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
+    public static final FileAttribute[] EMPTY_FILE_ATTRIBUTES = new FileAttribute[0];
 
     static {
         // setup list of charsets; use a set to avoid duplicate entries
@@ -324,16 +325,7 @@ public final class IoUtil {
      */
     public static BufferedReader newBufferedReader(URI uri) throws IOException {
         if (uri.isAbsolute()) {
-            InputStream in = null;
-            try {
-                in = openInputStream(uri);
-                return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            } catch (IOException e) {
-                if (in != null) {
-                    try { in.close(); } catch (IOException suppressed) { e.addSuppressed(suppressed); }
-                }
-                throw e;
-            }
+            return new BufferedReader(new InputStreamReader(openInputStream(uri), StandardCharsets.UTF_8));
         } else {
             return Files.newBufferedReader(Paths.get(uri));
         }
@@ -722,7 +714,11 @@ public final class IoUtil {
      */
     @SuppressWarnings("RedundantThrows")
     public static void closeAll(@Nullable AutoCloseable... closeables) throws IOException {
-        doCloseAll(LangUtil.asUnmodifiableList(closeables));
+        try {
+            doCloseAll(LangUtil.asUnmodifiableList(closeables));
+        } catch (UncheckedIOException e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -733,7 +729,11 @@ public final class IoUtil {
      */
     @SuppressWarnings("RedundantThrows")
     public static void closeAll(Collection<? extends @Nullable AutoCloseable> closeables) throws IOException {
-        doCloseAll(closeables);
+        try {
+            doCloseAll(closeables);
+        } catch (UncheckedIOException e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -1328,30 +1328,26 @@ public final class IoUtil {
     /**
      * Creates a secure temporary directory with the given prefix.
      * <p>
-     * <strong>On non-POSIX systems like WINDOWS, no exception is thrown if permissions can not be set!</strong>
+     * On file systems that support POSIX file attributes, the directory is created with owner-only
+     * permissions (rwx------). On other file systems, no explicit permissions are specified, and the
+     * file system's default security settings are used.
      *
      * @param prefix the prefix for the name of the temporary directory
      * @return the path to the newly created temporary directory
      * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
      */
     public static Path createSecureTempDirectory(String prefix) throws IOException {
-        Path tempDir;
-        switch (Platform.currentPlatform()) {
-            case LINUX, MACOS -> {
-                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
-                tempDir = Files.createTempDirectory(prefix, attr);
-            }
-            default -> {
-                tempDir = Files.createTempDirectory(prefix);
-                setTempPermissionsNonPosix(tempDir, true);
-            }
-        }
-        LOG.trace("created temp directory {}", tempDir);
-        return tempDir;
+        Path tempDirectory = Files.createTempDirectory(prefix, getFileAttributesForTempDir(null));
+        LOG.trace("created temp directory in default location {}", tempDirectory);
+        return tempDirectory;
     }
 
     /**
      * Creates a secure temporary directory with specified permissions depending on the operating system.
+     * <p>
+     * On file systems that support POSIX file attributes, the directory is created with owner-only
+     * permissions (rwx------). On other file systems, no explicit permissions are specified, and the
+     * file system's default security settings are used.
      *
      * @param dir the path to the parent directory, may be {@code null} in which case the default temporary-file directory is used.
      * @param prefix the prefix string to be used in generating the directory's name; may be a {@code null} string.
@@ -1359,19 +1355,9 @@ public final class IoUtil {
      * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
      */
     public static Path createSecureTempDirectory(Path dir, String prefix) throws IOException {
-        Path tempDir;
-        switch (Platform.currentPlatform()) {
-            case LINUX, MACOS -> {
-                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
-                tempDir = Files.createTempDirectory(dir, prefix, attr);
-            }
-            default -> {
-                tempDir = Files.createTempDirectory(dir, prefix);
-                setTempPermissionsNonPosix(tempDir, true);
-            }
-        }
-        LOG.trace("created secure temp directory {}", tempDir);
-        return tempDir;
+        Path tempDirectory = Files.createTempDirectory(dir, prefix, getFileAttributesForTempDir(dir));
+        LOG.trace("created temp directory {}", tempDirectory);
+        return tempDirectory;
     }
 
     /**
@@ -1402,29 +1388,24 @@ public final class IoUtil {
     }
 
     /**
-     * Sets the permissions for a temporary file or directory in a non-POSIX compliant file system.
-     * This method ensures that the directory is readable, writable, and executable by owner only.
+     * Generates an array of file attributes suitable for creating a temporary directory.
+     * This method checks the file system of the provided directory path to determine the appropriate
+     * file attributes. If the file system supports POSIX file attribute views, it assigns permissions
+     * for read, write, and execute access only to the owner. Otherwise, it returns an empty array of
+     * file attributes.
      *
-     * @param tempDir the path to the temporary directory whose permissions are to be set
-     * @param isDirectory true indicates permissions should be set for a directory, not a file
+     * @param dir the directory path for which to get the file attributes, can be null.
+     *            If null, the default file system is used.
+     * @return an array of file attributes, configured based on whether the specified file system
+     *         supports POSIX file attribute views. If POSIX is supported, returns attributes
+     *         granting owner-only permissions. Otherwise, returns an empty array.
      */
-    private static void setTempPermissionsNonPosix(Path tempDir, boolean isDirectory) {
-        File asFile = tempDir.toFile();
-        String type = isDirectory ? "directory" : "file";
-        if (!asFile.setReadable(true, true)) {
-            LOG.warn("Failed to set the temp {} as readable for the owner only: {}", type, tempDir);
-        }
-        if (!asFile.setWritable(true, true)) {
-            LOG.warn("Failed to set the temp {} as writable for the owner only: {}", type, tempDir);
-        }
-        if (isDirectory) {
-            if (!asFile.setExecutable(true, true)) {
-                LOG.warn("Failed to set the temp {} as executable for the owner only: {}", type, tempDir);
-            }
+    private static FileAttribute<?>[] getFileAttributesForTempDir(@Nullable Path dir) {
+        FileSystem fs = dir == null ? FileSystems.getDefault() : dir.getFileSystem();
+        if (fs.supportedFileAttributeViews().contains("posix")) {
+            return new FileAttribute[]{PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"))};
         } else {
-            if (!asFile.setExecutable(false)) {
-                LOG.warn("Failed to set the temp {} as not executable: {}", type, tempDir);
-            }
+            return EMPTY_FILE_ATTRIBUTES;
         }
     }
 
