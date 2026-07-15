@@ -86,7 +86,8 @@ public final class IoUtil {
      * The property holding the path to the user home.
      */
     private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
-    public static final FileAttribute[] EMPTY_FILE_ATTRIBUTES = new FileAttribute[0];
+
+    private static final FileAttribute<?>[] EMPTY_FILE_ATTRIBUTES = new FileAttribute[0];
 
     static {
         // setup list of charsets; use a set to avoid duplicate entries

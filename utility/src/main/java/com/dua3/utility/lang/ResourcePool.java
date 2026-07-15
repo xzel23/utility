@@ -412,7 +412,7 @@ final class ListBackedResourcePool<T> implements ResourcePool<T> {
                             dispose();
                             destructor.accept(resource);
                         } catch (RuntimeException e) {
-                            LOG.warn(LeaseImpl.EXCEPTION_WHEN_DESTRUCTING_RESOURCE_IGNORED, e.getMessage(), e);
+                            LOG.warn(EXCEPTION_WHEN_DESTRUCTING_RESOURCE_IGNORED, e.getMessage(), e);
                         }
                         if (resourceCount == 0) {
                             assert closeLock != null : "internal error: close() - closeLock is null";

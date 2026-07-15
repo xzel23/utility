@@ -66,7 +66,7 @@ public final class FxLauncherSample {
             root.setPadding(new Insets(24));
 
             Scene scene = new Scene(root, 420, 140);
-            primaryStage.setTitle(FxLauncherSample.APP_NAME);
+            primaryStage.setTitle(APP_NAME);
             primaryStage.setScene(scene);
             primaryStage.show();
         }
