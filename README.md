@@ -236,6 +236,12 @@ could not be loaded.
 
 ## Changes
 
+### 23.0.3 (in progress)
+
+- add IoUtil.newBufferedReader()
+- update plugins
+- small fixes and improvements
+
 ### 23.0.2
 
 - fix and optimize append(Run) ignoring run styles
