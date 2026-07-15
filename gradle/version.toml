@@ -16,8 +16,8 @@ slf4j = "2.0.18"
 spotbugs = "4.10.3"
 
 # Plugins
-cabe-plugin = "4.4.0"
-jdkprovider-plugin = "0.8.0"
+cabe-plugin = "4.5.0"
+jdkprovider-plugin = "0.10.0"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.23.0"
 native-plugin = "1.0.0"
