@@ -236,8 +236,9 @@ could not be loaded.
 
 ## Changes
 
-### 23.0.3 (in progress)
+### 23.0.3
 
+- add AccessMode enum to ObjectStore interface and methods to query it; add factory methods to FileObjectStore
 - add IoUtil.newBufferedReader()
 - update plugins
 - small fixes and improvements
