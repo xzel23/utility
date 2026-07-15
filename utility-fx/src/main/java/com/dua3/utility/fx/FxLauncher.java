@@ -131,12 +131,6 @@ public final class FxLauncher {
                     Thread.currentThread().interrupt(); // Restore the interrupt status
                 }
             }
-
-            // add shutdown hook
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                LOG.debug("shutdown hook: shutting down JavaFX platform");
-                shutdown(30, TimeUnit.SECONDS);
-            }, "JavaFX-Shutdown-Hook"));
         }
 
         public static void shutdown(long timeout, TimeUnit unit) {
