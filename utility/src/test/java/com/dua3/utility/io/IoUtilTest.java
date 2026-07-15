@@ -529,7 +529,7 @@ class IoUtilTest {
      * @param dir the path of the folder to create hashes from
      * @throws IOException if an I/O error occurs during the hash creation process
      */
-    private Map<String, String> createHashes(Path dir) throws IOException {
+    private static Map<String, String> createHashes(Path dir) throws IOException {
         Map<String, String> m = new HashMap<>();
         Path parent = LangUtil.orElse(dir.getParent(), dir.getFileSystem().getPath("."));
         try (Stream<Path> paths = Files.walk(dir)) {
