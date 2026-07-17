@@ -286,6 +286,7 @@ This release introduces some major changes, both to existing interfaces and also
 
 - Added equivalent swing classes for the JavaFX `TextPane` and `TextEditorPane` classes and refactored the JavaFX 
   implementation so that both Swing and JavaFX classes share the same code.
+- Added `equalsIgnoreAccents()` and `equalsIgnoreAccentsAndCase()` methods and tests.
 - Changed `TaskProcessorAsync` to use the ClassLoader of the calling thread for the processing tasks. This should 
   fix some Spring Boot classpath issues.
 - Replaced `FxUtil.copyToClibboard(String)` and `FxUtil.copyToClibboard(RichText)` by

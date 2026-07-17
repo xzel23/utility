@@ -1086,6 +1086,48 @@ public final class TextUtil {
     }
 
     /**
+     * Compares two strings for equality, ignoring case and Latin diacritical marks/ligatures.
+     *
+     * <p>Both strings are processed using {@link #transliterateLatin(String)} before comparison,
+     * allowing strings like {@code "sí"} and {@code "SI"}, or {@code "Müller"} and {@code "MUELLER"}
+     * to be evaluated as equal.</p>
+     *
+     * <p><strong>Non-Latin Script Limitation:</strong> This method does not perform cross-script
+     * translation (e.g., it will not match Cyrillic or Hanzi characters to their Latin phonetic
+     * equivalents). Non-Latin characters are compared in their original forms.</p>
+     *
+     * @param s1 the first string to be compared
+     * @param s2 the second string to be compared
+     * @return {@code true} if the accent-stripped, case-insulated forms of both strings
+     *         are equal; {@code false} otherwise
+     */
+    @SuppressWarnings({"java:S4973", "StringEquality"}) // string equality is intentional
+    public static boolean equalsIgnoreAccents(String s1, String s2) {
+        return s1 == s2 || transliterateLatin(s1).equals(transliterateLatin(s2));
+    }
+
+    /**
+     * Compares two strings for equality, ignoring case and Latin diacritical marks/ligatures.
+     *
+     * <p>Both strings are processed using {@link #transliterateLatin(String)} before comparison,
+     * allowing strings like {@code "sí"} and {@code "SI"}, or {@code "Müller"} and {@code "MUELLER"}
+     * to be evaluated as equal.</p>
+     *
+     * <p><strong>Non-Latin Script Limitation:</strong> This method does not perform cross-script
+     * translation (e.g., it will not match Cyrillic or Hanzi characters to their Latin phonetic
+     * equivalents). Non-Latin characters are compared in their original forms.</p>
+     *
+     * @param s1 the first string to be compared
+     * @param s2 the second string to be compared
+     * @return {@code true} if the accent-stripped, case-insulated forms of both strings
+     *         are equal; {@code false} otherwise
+     */
+    @SuppressWarnings({"java:S4973", "StringEquality"}) // string equality is intentional
+    public static boolean equalsIgnoreAccentsAndCase(String s1, String s2) {
+        return s1 == s2 || transliterateLatin(s1).equalsIgnoreCase(transliterateLatin(s2));
+    }
+
+    /**
      * Pad String to width with alignment.
      *
      * @param s     the string

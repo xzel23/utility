@@ -1198,6 +1198,69 @@ class TextUtilTest {
         Assertions.assertEquals(expected, TextUtil.transliterateLatin(mixedInput));
     }
 
+    @ParameterizedTest
+    @MethodSource("toEqualsIgnoreAccentsAndCaseArguments")
+    void testEqualsIgnoreAccentsAndCase(String s1, String s2, boolean expected) {
+        Assertions.assertEquals(expected, TextUtil.equalsIgnoreAccentsAndCase(s1, s2));
+    }
+
+    static Stream<Arguments> toEqualsIgnoreAccentsAndCaseArguments() {
+        return Stream.of(
+                // Accent and case flattening
+                Arguments.of("sí", "SI", true),
+                Arguments.of("Müller", "mueLLer", true),
+                Arguments.of("groß", "GROSS", true),
+
+                // Mismatches
+                Arguments.of("si", "no", false),
+                Arguments.of("ö", "o", false), // 'ö' maps to 'oe', so 'oe' != 'o'
+
+                // empty strings
+                Arguments.of("", "", true),
+
+                // Non-Latin script retention parity
+                Arguments.of("こんにちは", "こんにちは", true),
+                Arguments.of("日本 の カメラ (Níhón nò kámérá)", "日本 の カメラ (nihon no kamera)", true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("toEqualsIgnoreAccentsArguments")
+    void testEqualsIgnoreAccents(String s1, String s2, boolean expected) {
+        Assertions.assertEquals(expected, TextUtil.equalsIgnoreAccents(s1, s2));
+    }
+
+    static Stream<Arguments> toEqualsIgnoreAccentsArguments() {
+        return Stream.of(
+                // Accent stripping with matching case
+                Arguments.of("sí", "si", true),
+                Arguments.of("Müller", "Mueller", true),
+                Arguments.of("groß", "gross", true),
+                Arguments.of("crème brûlée", "creme brulee", true),
+
+                // Exact identical inputs
+                Arguments.of("pure ascii", "pure ascii", true),
+                Arguments.of("", "", true),
+
+                // Accents match, but case mismatches (Must fail)
+                Arguments.of("sí", "SI", false),
+                Arguments.of("Müller", "mueller", false),
+                Arguments.of("groß", "Gross", false),
+                Arguments.of("Crème", "crème", false),
+
+                // Functional mismatches
+                Arguments.of("si", "no", false),
+                Arguments.of("ö", "o", false), // 'ö' maps to 'oe', so 'oe' != 'o'
+
+                // Non-Latin script retention parity (Case-sensitive identical matches)
+                Arguments.of("こんにちは", "こんにちは", true),
+                Arguments.of("日本 の カメラ (Níhón nò kámérá)", "日本 の カメラ (Nihon no kamera)", true),
+
+                // Non-Latin script with case mismatches in the Romaji part (Must fail)
+                Arguments.of("日本 の カメラ (Níhón nò kámérá)", "日本 の カメラ (nihon no kamera)", false)
+        );
+    }
+
     @Test
     @DisplayName("Test HTML escaping/unescaping roundtrip")
     void testHtmlRoundtrip() {
