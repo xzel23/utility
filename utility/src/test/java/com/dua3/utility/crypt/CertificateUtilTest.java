@@ -184,7 +184,7 @@ class CertificateUtilTest {
 
         // Test with invalid PEM data
         String invalidPem = "-----BEGIN CERTIFICATE-----\nInvalid PEM Data\n-----END CERTIFICATE-----";
-        assertThrows(IllegalStateException.class, () -> PemData.parse(invalidPem).asCertificate());
+        assertThrows(PemData.PemException.class, () -> PemData.parse(invalidPem).asCertificate());
     }
 
     @Test
