@@ -1257,7 +1257,10 @@ class TextUtilTest {
                 Arguments.of("日本 の カメラ (Níhón nò kámérá)", "日本 の カメラ (Nihon no kamera)", true),
 
                 // Non-Latin script with case mismatches in the Romaji part (Must fail)
-                Arguments.of("日本 の カメラ (Níhón nò kámérá)", "日本 の カメラ (nihon no kamera)", false)
+                Arguments.of("日本 の カメラ (Níhón nò kámérá)", "日本 の カメラ (nihon no kamera)", false),
+
+                // All chars with replacements
+                Arguments.of("ÄÖÜäöüẞßÆæŒœØøÐðÞþŁłĐđ", "AeOeUeaeoeueSSssAEaeOEoeOoDdTHthLlDd", true)
         );
     }
 
