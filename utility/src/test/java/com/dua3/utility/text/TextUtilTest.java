@@ -1120,6 +1120,84 @@ class TextUtilTest {
         Assertions.assertEquals("", result.toString(), "Expected empty string as result for empty input.");
     }
 
+    @ParameterizedTest
+    @MethodSource("stripAccentsArguments")
+    void testStripAccents(String input, String expected) {
+        Assertions.assertEquals(expected, TextUtil.stripAccents(input));
+    }
+
+    static Stream<Arguments> stripAccentsArguments() {
+        return Stream.of(
+                Arguments.of("", ""),
+                Arguments.of("ASCII text 123 !?", "ASCII text 123 !?"),
+                Arguments.of("Crème brûlée déjà vu", "Creme brulee deja vu"),
+                Arguments.of("Übermäßige Äpfel", "Ubermaßige Apfel"),
+                Arguments.of("mañana, São Tomé and Príncipe", "manana, Sao Tome and Principe"),
+                Arguments.of("façade coöperate rôle", "facade cooperate role"),
+                Arguments.of("e\u0301", "e"),
+                Arguments.of("Ångström", "Angstrom"),
+                Arguments.of("ᾍδης", "Αδης"),
+                Arguments.of("Μῆνιν ἄειδε", "Μηνιν αειδε"),
+                Arguments.of(
+                        "\u05E2\u05D1\u05E8\u05B4\u05D9\u05EA", // עברִית
+                        "\u05E2\u05D1\u05E8\u05D9\u05EA"        // עברית
+                )
+        );
+    }
+
+    @Test
+    void testStripAccentsWithCombiningMarksOnly() {
+        String combiningMarks = "\u0301\u0308\u0327";
+        Assertions.assertEquals("", TextUtil.stripAccents(combiningMarks));
+    }
+
+    @Test
+    void testStripAccentsWithCharSequenceInput() {
+        CharSequence input = new StringBuilder("piñata");
+        Assertions.assertEquals("pinata", TextUtil.stripAccents(input));
+    }
+
+    @ParameterizedTest
+    @MethodSource("toTransliterateLatinArguments")
+    void testTransliterateLatin(String input, String expected) {
+        Assertions.assertEquals(expected, TextUtil.transliterateLatin(input));
+    }
+
+    static Stream<Arguments> toTransliterateLatinArguments() {
+        return Stream.of(
+                Arguments.of("Müller", "Mueller"),
+                Arguments.of("groß", "gross"),
+                Arguments.of("GROẞ", "GROSS"),
+                Arguments.of("Æon Flux", "AEon Flux"),
+                Arguments.of("øxen", "oxen"),
+                Arguments.of("Łódź", "Lodz"), // Test mixing mapped characters (Ł) with standard accents (ó, ź)
+                Arguments.of("Þór", "THor"),
+                Arguments.of("Pure ASCII", "Pure ASCII") // Verify fast-path short circuit
+        );
+    }
+
+    @Test
+    void testTransliterateLatinWithNonLatinScripts() {
+        // CJK characters should pass through completely unaffected
+        String cjkInput = "こんにちは (Konnichiwa) & 𠜎";
+        String expected = "こんにちは (Konnichiwa) & 𠜎";
+
+        Assertions.assertEquals(expected, TextUtil.transliterateLatin(cjkInput));
+    }
+
+    @Test
+    void testTransliterateLatinWithMixedJapaneseScripts() {
+        // Contains Kanji (日本), Hiragana (の), Katakana (カメラ),
+        // and Romaji with accents (Níhón nò kámérá)
+        String mixedInput = "日本 の カメラ (Níhón nò kámérá)";
+
+        // The Japanese characters should remain completely untouched.
+        // The Romaji Latin characters should have their accents cleanly stripped.
+        String expected = "日本 の カメラ (Nihon no kamera)";
+
+        Assertions.assertEquals(expected, TextUtil.transliterateLatin(mixedInput));
+    }
+
     @Test
     @DisplayName("Test HTML escaping/unescaping roundtrip")
     void testHtmlRoundtrip() {

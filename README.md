@@ -35,8 +35,7 @@ Source code is available at https://github.com/xzel23/utility.
   already require at least Java 21).
 - The project uses Gradle toolchains to automatically download the required JDKs.
 - JavaFX dependencies are managed by the JavaFX plugin.
-- Building on Windows ARM is not supported because of missing support in Gradle and the toolchain resolver and
-  JavaFX plugins.
+- Building on Windows ARM is not supported because of missing support in Gradle and the toolchain resolver and JavaFX plugins.
 
 ## Gradle Tasks
 
@@ -236,16 +235,22 @@ could not be loaded.
 
 ## Changes
 
+### 23.0.4 (in development)
+
+- add `stripAccents()` and `transliterateLatin()` methods to `TextUtil` with comprehensive test coverage.
+- fix delayed shutdown in FxLauncher; add test
+- code cleanup
+
 ### 23.0.3
 
 - add AccessMode enum to ObjectStore interface and methods to query it; add factory methods to FileObjectStore
-- add IoUtil.newBufferedReader()
+- add `IoUtil.newBufferedReader()`
 - update plugins
 - small fixes and improvements
 
 ### 23.0.2
 
-- fix and optimize append(Run) ignoring run styles
+- fix and optimize `append(Run)` ignoring run styles
 - optimize ImmutableSortedMap
 - fix possible NullPointerException in FxDbUtil
 - cleanup build script

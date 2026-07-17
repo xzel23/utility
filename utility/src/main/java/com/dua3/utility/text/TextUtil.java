@@ -983,6 +983,109 @@ public final class TextUtil {
     }
 
     /**
+     * Returns {@code input} after canonical decomposition and removal of all
+     * Unicode characters in the Mark general category ({@code \p{M}}).
+     *
+     * <p>This removes accents, vowel points, and other combining marks across
+     * scripts; it may change the linguistic meaning of text.</p>
+     *
+     * @param input the character sequence from which to remove accents
+     * @return a new string with accents removed
+     */
+    public static String stripAccents(CharSequence input) {
+        // Decomposes the input, i.e., "sí" into "si" + "◌́"
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        // Strips out the accents
+        return DIACRITICS_PATTERN.matcher(normalized).replaceAll("");
+    }
+
+    // Matches all Unicode characters in the General Mark category (\p{M})
+    private static final Pattern DIACRITICS_PATTERN = Pattern.compile("\\p{M}+");
+
+    /**
+     * Performs a best-effort transliteration of Latin-based scripts into plain ASCII
+     * equivalents by expanding ligatures, substituting localized characters, and
+     * stripping diacritics.
+     *
+     * <p><strong>Non-Latin Script Behavior:</strong> This method operates primarily on
+     * characters that can be decomposed or mapped into the Latin alphabet. Characters from
+     * non-Latin scripts that do not feature combining marks or explicit mappings (such as
+     * Cyrillic, Hanzi, Kanji, or Arabic) will be retained in their original form. If you
+     * require a strict ASCII-only output, you must sanitize the result of this method
+     * separately.</p>
+     *
+     * @param input the input string which may contain non-ASCII Latin characters
+     * @return a string with special Latin characters mapped or stripped to their ASCII
+     *         equivalents, while unmappable non-Latin characters are left intact.
+     */
+    @SuppressWarnings("java:S127") // accepted
+    public static String transliterateLatin(String input) {
+        // handle special characters first and detect ASCII-only input
+        StringBuilder mapped = null;
+        boolean isAscii = true;
+        for (int i = 0; i < input.length();/*ignore*/) {
+            int cp = input.codePointAt(i);
+            int j = i;
+            i += Character.charCount(cp);
+
+            isAscii = isAscii && cp < 128;
+
+            String replacement = replacementFor(cp);
+            if (replacement == null) {
+                if (mapped != null) {
+                    mapped.appendCodePoint(cp);
+                }
+            } else {
+                if (mapped == null) {
+                    mapped = new StringBuilder(input.length());
+                    mapped.append(input.subSequence(0, j));
+                }
+                mapped.append(replacement);
+            }
+        }
+
+        assert !(isAscii && mapped != null) : "internal error: no buffer should be allocated for ASCII only input";
+
+        // fast path for ASCII only input
+        if (isAscii) {
+            return input;
+        }
+
+        return stripAccents(mapped == null ? input : mapped.toString());
+    }
+
+    private static @Nullable String replacementFor(int cp) {
+        return switch (cp) {
+            // German mappings: must precede normalization
+            case 'Ä' -> "Ae";
+            case 'Ö' -> "Oe";
+            case 'Ü' -> "Ue";
+            case 'ä' -> "ae";
+            case 'ö' -> "oe";
+            case 'ü' -> "ue";
+            case 'ẞ' -> "SS";
+            case 'ß' -> "ss";
+
+            // Other Latin letters that do not decompose as desired
+            case 'Æ' -> "AE";
+            case 'æ' -> "ae";
+            case 'Œ' -> "OE";
+            case 'œ' -> "oe";
+            case 'Ø' -> "O";
+            case 'ø' -> "o";
+            case 'Ð' -> "D";
+            case 'ð' -> "d";
+            case 'Þ' -> "TH";
+            case 'þ' -> "th";
+            case 'Ł' -> "L";
+            case 'ł' -> "l";
+            case 'Đ' -> "D";
+            case 'đ' -> "d";
+            default -> null;
+        };
+    }
+
+    /**
      * Pad String to width with alignment.
      *
      * @param s     the string
@@ -1478,6 +1581,7 @@ public final class TextUtil {
      * @param locale the locale used for parsing
      * @return parsed value, or empty if parsing fails
      */
+    @SuppressWarnings("java:S2259") // false positive, null is handled explicitly
     public static OptionalDouble tryParseDouble(@Nullable String text, Locale locale) {
         return switch (text) {
             case null -> OptionalDouble.empty();
