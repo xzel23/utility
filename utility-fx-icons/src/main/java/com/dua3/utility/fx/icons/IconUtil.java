@@ -38,7 +38,6 @@ public final class IconUtil {
         return Stream.of(Thread.currentThread().getContextClassLoader(), IconUtil.class.getClassLoader(), ClassLoader.getSystemClassLoader())
                 .distinct()
                 .flatMap(cl -> ServiceLoader.load(cls, cl).stream())
-                .peek(provider -> LOG.trace("found {} implementation: {}", cls.getName(), provider.getClass().getName()))
                 .map(provider -> provider.get().forName(name).orElse(null))
                 .filter(Objects::nonNull)
                 .findFirst();

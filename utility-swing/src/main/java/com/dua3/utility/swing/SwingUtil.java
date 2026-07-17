@@ -418,14 +418,6 @@ public final class SwingUtil {
         return result;
     }
 
-    private static DataFlavor createTextFlavor(String mimeType) {
-        try {
-            return new DataFlavor(mimeType);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("failed to initialize clipboard data flavor: " + mimeType, e);
-        }
-    }
-
     /**
      * Set the Swing Look&amp;Feel to the native Look&amp;Feel.
      * On macOS, the global menubar is also enabled.

@@ -1,7 +1,6 @@
 package com.dua3.utility.awt;
 
 import com.dua3.utility.data.MutableImage;
-import org.jspecify.annotations.Nullable;
 
 import java.awt.Rectangle;
 import java.awt.image.ColorModel;

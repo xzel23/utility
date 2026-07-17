@@ -1,6 +1,5 @@
 package com.dua3.utility.awt;
 
-import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.io.Payload;
 
@@ -81,6 +80,7 @@ public final class AwtImageUtil implements ImageUtil<AwtImage, AwtMutableImage> 
      * @param img the {@code Image} to be converted
      * @return the converted {@code AwtImage} instance
      */
+    @Override
     public AwtMutableImage toImage(com.dua3.utility.data.Image img) {
         if (img instanceof AwtMutableImage awtImage) {
             return awtImage;

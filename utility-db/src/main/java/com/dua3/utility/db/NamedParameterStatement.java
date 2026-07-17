@@ -85,7 +85,7 @@ import java.util.TimeZone;
  * @author adam_crume
  * @author Axel Howind
  */
-@SuppressWarnings("MagicCharacter")
+@SuppressWarnings({"MagicCharacter", "java:S2143"})
 public class NamedParameterStatement implements AutoCloseable {
     /**
      * Logger instance.

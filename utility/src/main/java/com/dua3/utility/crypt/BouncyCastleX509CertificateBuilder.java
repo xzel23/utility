@@ -105,7 +105,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
         return this;
     }
 
-    @SuppressWarnings("UseOfObsoleteDateTimeApi")
+    @SuppressWarnings({"UseOfObsoleteDateTimeApi", "java:S2143"})
     @Override
     public X509Certificate[] build(KeyPair keyPair) throws GeneralSecurityException {
         if (subject == null) {

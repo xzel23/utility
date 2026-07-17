@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -369,7 +370,7 @@ class NamedParameterStatementTest {
     @Test
     void testSetLocalDate() throws SQLException {
         String sql = "INSERT INTO test_table (id, date_val) VALUES (:id, :dateVal)";
-        LocalDate date = LocalDate.of(2023, 1, 15);
+        LocalDate date = LocalDate.of(2023, Month.JANUARY, 15);
 
         try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
             stmt.setInt("id", 11);
@@ -441,7 +442,7 @@ class NamedParameterStatementTest {
     @Test
     void testSetLocalDateTime() throws SQLException {
         String sql = "INSERT INTO test_table (id, timestamp_val) VALUES (:id, :timestampVal)";
-        LocalDateTime dateTime = LocalDateTime.of(2023, 1, 15, 14, 30, 15);
+        LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 15, 14, 30, 15);
 
         try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
             stmt.setInt("id", 13);

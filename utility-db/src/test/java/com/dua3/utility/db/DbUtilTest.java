@@ -24,6 +24,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -126,7 +127,7 @@ class DbUtilTest {
         assertNull(DbUtil.toLocalDate(null));
 
         // Test with LocalDate
-        LocalDate date = LocalDate.of(2023, 1, 15);
+        LocalDate date = LocalDate.of(2023, Month.JANUARY, 15);
         assertEquals(date, DbUtil.toLocalDate(date));
 
         // Test with java.sql.Date
@@ -144,7 +145,7 @@ class DbUtilTest {
         assertNull(DbUtil.toLocalDateTime(null));
 
         // Test with LocalDateTime
-        LocalDateTime dateTime = LocalDateTime.of(2023, 1, 15, 14, 30, 15);
+        LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 15, 14, 30, 15);
         assertEquals(dateTime, DbUtil.toLocalDateTime(dateTime));
 
         // Test with java.sql.Timestamp

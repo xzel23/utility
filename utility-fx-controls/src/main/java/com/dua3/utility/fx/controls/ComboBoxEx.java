@@ -45,7 +45,6 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
     private final @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
     private final Supplier<? extends @Nullable T> dflt;
     private final Function<? super @Nullable T, @Nullable String> format;
-    private final Function<? super @Nullable T, ? extends @Nullable Node> graphic;
     private final ObservableList<T> items;
     private final ComboBox<@Nullable T> comboBox;
 
@@ -98,7 +97,6 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
         getStyleClass().setAll("comboboxex");
 
         this.format = format;
-        this.graphic = graphic;
         this.items = FXCollections.observableArrayList(List.copyOf(items));
         this.dflt = dflt;
         container.setFillHeight(false);

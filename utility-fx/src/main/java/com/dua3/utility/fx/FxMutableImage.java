@@ -1,6 +1,5 @@
 package com.dua3.utility.fx;
 
-import com.dua3.utility.awt.AwtMutableImage;
 import com.dua3.utility.data.MutableImage;
 import com.dua3.utility.io.Payload;
 import javafx.scene.image.PixelBuffer;
