@@ -60,7 +60,7 @@ public final class Controls {
      */
     public static void useSystemMenuBar(MenuBar menuBar, boolean useSystemMenuBar) {
         menuBar.setUseSystemMenuBar(useSystemMenuBar);
-        menuBar.managedProperty().bind(menuBar.visibleProperty().not());
+        menuBar.managedProperty().bind(menuBar.visibleProperty());
     }
 
     /**

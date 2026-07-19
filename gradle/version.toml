@@ -1,5 +1,5 @@
 [versions]
-projectVersion = "23.0.5-SNAPSHOT"
+projectVersion = "23.0.5"
 jdkVersion = "21"
 javafxJdkVersion = "25"
 atlantafx = "2.1.0"

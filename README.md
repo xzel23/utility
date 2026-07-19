@@ -235,7 +235,11 @@ could not be loaded.
 
 ## Changes
 
-### 23.0.4 (in development)
+### 23.0.5
+
+- fix `Controls.useSystemMenuBar()` hiding the menubar on linux and windows
+
+### 23.0.4
 
 - add `stripAccents()` and `transliterateLatin()` methods to `TextUtil` with comprehensive test coverage.
 - fix delayed shutdown in FxLauncher; add test
