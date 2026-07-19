@@ -256,7 +256,6 @@ class ArgumentsDialogTest {
      * This test is disabled because it requires a real GUI environment.
      */
     @Test
-    @Disabled("Requires real GUI environment - disabled for headless testing")
     void testShowDialog() {
         // Skip this test in headless mode
         if (GraphicsEnvironment.isHeadless()) {

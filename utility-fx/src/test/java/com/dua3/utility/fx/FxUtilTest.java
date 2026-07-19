@@ -305,7 +305,6 @@ class FxUtilTest extends FxTestBase {
     }
 
     @Test
-    @Disabled
     void testClipboardRichTextRtfRoundTrip() throws Throwable {
         runOnFxThreadAndWait(() -> {
             RichTextBuilder builder = new RichTextBuilder();
