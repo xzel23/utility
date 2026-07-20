@@ -105,6 +105,7 @@ public final class TableViews {
         boolean multiSelection = options.isEnabled(TableViewOptions.MULTIPLE_ROWS_SELECTABLE_OPTION);
         boolean allowDeletingRows = options.isEnabled(TableViewOptions.ALLOW_DELETING_ROWS_OPTION);
         boolean allowInsertingRows = options.isEnabled(TableViewOptions.ALLOW_INSERTING_ROWS_OPTION);
+        Supplier<S> itemFactory = (Supplier<S>) options.getParams(TableViewOptions.ALLOW_INSERTING_ROWS_OPTION).get(TableViewOptions.ITEM_FACTORY);
 
         ObservableList<S> items = FXCollections.observableArrayList(initialItems);
         TableView<S> tv = new TableView<>(items);
@@ -141,14 +142,13 @@ public final class TableViews {
         FlexibleColumnCoordinator.apply(tv, configMap);
 
         if (reorderableRows || allowDeletingRows || allowInsertingRows) {
-            Supplier<S> itemFactory = (Supplier<S>) options.getParams(TableViewOptions.ALLOW_INSERTING_ROWS_OPTION).get(TableViewOptions.ITEM_FACTORY);
             tv.setRowFactory(new CustomRowFactory<>(reorderableRows, allowDeletingRows, allowInsertingRows, itemFactory));
         }
 
         if (allowInsertingRows) {
             ContextMenu tableMenu = new ContextMenu();
             MenuItem insertItem = new MenuItem("Insert row");
-            insertItem.setOnAction(evt -> tv.getItems().add(null));
+            insertItem.setOnAction(evt -> tv.getItems().add(itemFactory.get()));
             tableMenu.getItems().add(insertItem);
             tv.setContextMenu(tableMenu);
         }
