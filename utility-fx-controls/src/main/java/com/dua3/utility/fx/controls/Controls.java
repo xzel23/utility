@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.lang.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckMenuItem;
@@ -59,8 +60,10 @@ public final class Controls {
      * @param useSystemMenuBar a boolean specifying whether to use the system menu bar
      */
     public static void useSystemMenuBar(MenuBar menuBar, boolean useSystemMenuBar) {
-        menuBar.setUseSystemMenuBar(useSystemMenuBar);
-        menuBar.managedProperty().bind(menuBar.heightProperty().isEqualTo(0));
+        if (Platform.isMacOS()) {
+            menuBar.setUseSystemMenuBar(useSystemMenuBar);
+            menuBar.setManaged(!useSystemMenuBar);
+        }
     }
 
     /**
