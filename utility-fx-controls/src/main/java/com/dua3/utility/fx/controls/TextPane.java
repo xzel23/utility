@@ -331,7 +331,9 @@ public class TextPane extends Control implements RichTextPane {
                 ? Math.max(1.0, (width - snappedLeftInset() - snappedRightInset()) / scale)
                 : Math.ceil(getFont().getFontData().spaceWidth() * 40.0f);
         RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = createLayout(contentWidth);
-        double pref = snappedTopInset() + Math.ceil(layout.height() * scale) + snappedBottomInset();
+        double scaledLayoutHeight = Math.ceil(layout.height()) * scale;
+        double pref = snappedTopInset() + scaledLayoutHeight + snappedBottomInset();
+        pref = Math.max(pref, super.computePrefHeight(width));
         return clampToMaxHeight(pref);
     }
 
@@ -345,6 +347,7 @@ public class TextPane extends Control implements RichTextPane {
     protected double computeMinHeight(double width) {
         Font font = getFont();
         double min = snappedTopInset() + Math.ceil(font.getFontData().height() * getDisplayScale()) + snappedBottomInset();
+        min = Math.max(min, super.computeMinHeight(width));
         return clampToMaxHeight(min);
     }
 
@@ -1502,6 +1505,35 @@ public class TextPane extends Control implements RichTextPane {
             refreshIfNeeded();
         }
 
+        @Override
+        protected double computePrefHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
+            prepareContentForPreferredHeight(width, rightInset, leftInset);
+            return super.computePrefHeight(width, topInset, rightInset, bottomInset, leftInset);
+        }
+
+        private void prepareContentForPreferredHeight(double width, double rightInset, double leftInset) {
+            TextPane control = getSkinnable();
+            double scale = control.getDisplayScale();
+            double visualWidth = width > 0.0
+                    ? Math.max(1.0, width - leftInset - rightInset)
+                    : Math.max(1.0, control.computePrefWidth(-1));
+            double availableWidth = control.isWrapText() ? visualWidth / scale : 1.0;
+            RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = control.createLayout(availableWidth);
+            double contentWidth = Math.max(1.0, Math.ceil(layout.width()));
+            double contentHeight = Math.max(1.0, Math.ceil(layout.height()));
+
+            if (Math.abs(contentPane.getWidth() - contentWidth) > 0.5
+                    || Math.abs(contentPane.getHeight() - contentHeight) > 0.5
+                    || Math.abs(contentScaleTransform.getX() - scale) > 1.0e-6) {
+                contentScaleTransform.setX(scale);
+                contentScaleTransform.setY(scale);
+                contentPane.setMinSize(contentWidth, contentHeight);
+                contentPane.setPrefSize(contentWidth, contentHeight);
+                contentPane.resize(contentWidth, contentHeight);
+                dirty = true;
+            }
+        }
+
         private void refreshIfNeeded() {
             TextPane control = getSkinnable();
             double availableWidth = getAvailableWidth();
@@ -1542,7 +1574,7 @@ public class TextPane extends Control implements RichTextPane {
             double scale = control.getDisplayScale();
             double availableWidth = control.isWrapText()
                     ? Math.max(1.0, vp.getWidth() / scale)
-                    : Math.max(1.0, control.getWidth());
+                    : 1.0;
             if (!Double.isFinite(availableWidth) || availableWidth <= 0.0) {
                 availableWidth = Math.max(1.0, control.computePrefWidth(-1));
             }
