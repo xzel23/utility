@@ -1546,7 +1546,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
         ScrollPane sp = getScrollPane();
         if (sp != null && sp.getContent() != null) {
             Point2D scenePoint = new Point2D(evt.getSceneX(), evt.getSceneY());
-            return sp.getContent().sceneToLocal(scenePoint);
+            // The ScrollPane content is the unscaled parent of the pane that
+            // renders the text. Convert its visual coordinates back to the
+            // logical coordinates used by visual-line hit testing.
+            return sp.getContent().sceneToLocal(scenePoint).multiply(1.0 / getDisplayScale());
         }
         return new Point2D(evt.getX() - snappedLeftInset(), evt.getY() - snappedTopInset());
     }
@@ -1691,11 +1694,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
         if (sp != null) {
             double w = sp.getViewportBounds().getWidth();
             if (Double.isFinite(w) && w > 1.0) {
-                return w;
+                return w / getDisplayScale();
             }
         }
 
-        double fallback = getWidth() - snappedLeftInset() - snappedRightInset();
+        double fallback = (getWidth() - snappedLeftInset() - snappedRightInset()) / getDisplayScale();
         return Double.isFinite(fallback) && fallback > 1.0 ? fallback : 1.0;
     }
 
