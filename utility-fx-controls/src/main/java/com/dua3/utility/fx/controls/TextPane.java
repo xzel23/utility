@@ -878,7 +878,7 @@ public class TextPane extends Control implements RichTextPane {
         private final Group scrollContent = new Group(contentPane);
         private final ScrollPane scrollPane = new ScrollPane(scrollContent);
         private final VBox editorRoot = new VBox();
-        private boolean dirty = true;
+        private volatile boolean dirty = true;
         private double lastAvailableWidth = Double.NaN;
         private double lastDisplayScale = Double.NaN;
         private RichText lastText = RichText.emptyText();
