@@ -1337,6 +1337,7 @@ public final class LangUtil {
      * @return a list containing the matched items along with the surrounding items and optional
      *         placeholders for omitted sections
      */
+    @SuppressWarnings("java:S127") // accepted
     private static <T extends @Nullable Object> List<T> surroundingItemsInternal(List<? extends T> list, Predicate<? super T> test, int before, int after, @Nullable BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;
