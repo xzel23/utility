@@ -235,6 +235,14 @@ could not be loaded.
 
 ## Changes
 
+### 23.1.0
+
+- refatcor the FileType class (possibly breaking change)
+
+### 23.0.6+
+
+- fixes
+
 ### 23.0.5
 
 - fix `Controls.useSystemMenuBar()` hiding the menubar on linux and windows
