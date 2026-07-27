@@ -20,7 +20,10 @@ import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -362,6 +365,30 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     /**
+     * Read data. This method determines the file type according to URI and class and then reads an object from
+     * the given URI.
+     *
+     * @param objectStroe   the {@link ObjectStore} to read from
+     * @param relativeUri   the relative URI to to the data in the {@code ObjectStore}
+     * @param cls  the class
+     * @param options the options to use
+     * @param <T>  the generic class parameter
+     * @return an {@link Optional} holding the data read or an empty {@code Optional} if the file type could not be
+     * determined
+     * @throws IOException if the file type could be determined but an error occurred while reading
+     */
+    public static <T> Optional<T> read(ReadableObjectStore objectStroe, URI relativeUri, Class<T> cls, Function<FileType<? extends T>, Arguments> options) throws IOException {
+        Optional<com.dua3.utility.io.FileType<T>> type = forUri(relativeUri, cls);
+        if (type.isPresent()) {
+            FileType<T> fileType = type.get();
+            try (InputStream in = objectStroe.openInputStream(relativeUri)) {
+                return Optional.of(fileType.read(relativeUri, in, options));
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Get file types supporting mode.
      *
      * @param mode the mode
@@ -477,18 +504,18 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     /**
-     * Read document from file.
+     * Read a document from a {@link URI}.
      *
      * @param uri the URI to read from
      * @return the document
      * @throws IOException if an error occurs
      */
-    public T read(URI uri) throws IOException {
+    public final T read(URI uri) throws IOException {
         return read(uri, t -> Arguments.empty());
     }
 
     /**
-     * Read document from file.
+     * Read a document from a {@link URI}.
      *
      * @param uri     the URI to read from
      * @param options the options to use
@@ -496,75 +523,81 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     @SuppressWarnings("RedundantThrows")
-    public abstract T read(URI uri, Function<FileType<? extends T>, Arguments> options) throws IOException;
+    public final T read(URI uri, Function<FileType<? extends T>, Arguments> options) throws IOException {
+        try (InputStream in = IoUtil.getInputStream(uri)) {
+            return read(uri, in, options);
+        }
+    }
 
     /**
-     * Read document from file.
+     * Read a document from a file.
      *
      * @param path the Path to read from
      * @return the document
      * @throws IOException if an error occurs
      */
-    public T read(Path path) throws IOException {
+    public final T read(Path path) throws IOException {
         return read(path, t -> Arguments.empty());
     }
 
     /**
-     * Read document from file.
+     * Read a document from a file.
      *
      * @param path    the Path to read from
      * @param options the options to use
      * @return the document
      * @throws IOException if an error occurs
      */
-    public T read(Path path, Function<FileType<? extends T>, Arguments> options) throws IOException {
-        return read(path.toUri(), options);
+    public final T read(Path path, Function<FileType<? extends T>, Arguments> options) throws IOException {
+        try (InputStream in = Files.newInputStream(path)) {
+            return read(path.toUri(), in, options);
+        }
     }
 
     /**
-     * Write document to file.
+     * Read a document from an input stream.
      *
-     * @param uri      the URI to write to
-     * @param document the document to write
+     * @param uri     the URI to read from
+     * @param in      the input stream to read from
+     * @param options the options to use
+     * @return the document
      * @throws IOException if an error occurs
      */
-    public void write(URI uri, T document) throws IOException {
-        write(uri, document, t -> Arguments.empty());
+    public abstract T read(URI uri, InputStream in, Function<FileType<? extends T>, Arguments> options) throws IOException;
+
+    /**
+     * Write a document to a file.
+     *
+     * @param path     the Path to write to
+     * @throws IOException if an error occurs
+     */
+    public void write(Path path) throws IOException {
+        write(path, t -> Arguments.empty());
     }
 
     /**
-     * Write document to file.
+     * Write a document to a file.
      *
-     * @param uri      the URI to write to
-     * @param document the document to write
+     * @param path     the Path to write to
      * @param options  the options to use
      * @throws IOException if an error occurs
      */
-    @SuppressWarnings("RedundantThrows")
-    public abstract void write(URI uri, T document, Function<FileType<? super T>, Arguments> options) throws IOException;
-
-    /**
-     * Write document to file.
-     *
-     * @param path     the Path to write to
-     * @param document the document to write
-     * @throws IOException if an error occurs
-     */
-    public void write(Path path, T document) throws IOException {
-        write(path, document, t -> Arguments.empty());
+    public final void write(Path path, Function<FileType<? super T>, Arguments> options) throws IOException {
+        try (OutputStream out = Files.newOutputStream(path)) {
+            write(path.toUri(), out, options);
+        }
     }
 
     /**
-     * Write document to file.
+     * Write a document to an output stream.
      *
-     * @param path     the Path to write to
-     * @param document the document to write
-     * @param options  the options to use
+     * @param uri     the URI to (if the document stores the URI of the last save)
+     * @param out     the output stream to write to
+     * @param options the options to use
+     * @return the document
      * @throws IOException if an error occurs
      */
-    public void write(Path path, T document, Function<FileType<? super T>, Arguments> options) throws IOException {
-        write(path.toUri(), document, options);
-    }
+    public abstract T write(URI uri, OutputStream out, Function<FileType<? super T>, Arguments> options) throws IOException;
 
     /**
      * Whether this is a compound file type (a wrapper for different filetypes having common properties).
