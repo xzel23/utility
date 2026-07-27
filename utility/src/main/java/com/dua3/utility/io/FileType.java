@@ -36,7 +36,6 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -220,8 +219,8 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     public static <T> List<FileType<? extends T>> allReadersForType(Class<T> cls) {
         return FILE_TYPES.stream()
                 .filter(t -> t.isSupported(OpenMode.READ) && cls.isAssignableFrom(t.getDocumentClass()))
-                .map(t -> (FileType<? extends T>) t)
-                .collect(Collectors.toUnmodifiableList());
+                .<FileType<? extends T>>map(t -> (FileType<? extends T>) t)
+                .toList();
     }
 
     /**
@@ -249,8 +248,8 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     public static <T> List<FileType<? super T>> allWritersForType(Class<T> cls) {
         return FILE_TYPES.stream()
                 .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getWriteableClass().isAssignableFrom(cls))
-                .map(t -> (FileType<? super T>) t)
-                .collect(Collectors.toUnmodifiableList());
+                .<FileType<? super T>>map(t -> (FileType<? super T>) t)
+                .toList();
     }
 
     /**
