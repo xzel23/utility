@@ -441,7 +441,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @return the document type
      */
-    public Class<? extends T> getDocumentClass() {
+    public final Class<? extends T> getDocumentClass() {
         return cls;
     }
 
@@ -450,7 +450,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @return the document type
      */
-    public Class<? super T> getWriteableClass() {
+    public final Class<? super T> getWriteableClass() {
         return clsWriteable;
     }
 
@@ -463,7 +463,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @return the list of file extensions for this file type
      */
-    public List<String> getExtensions() {
+    public final List<String> getExtensions() {
         return extensions;
     }
 
@@ -484,7 +484,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param mode the mode to test
      * @return true, if mode is supported by this file type
      */
-    public boolean isSupported(OpenMode mode) {
+    public final boolean isSupported(OpenMode mode) {
         // Special case for NONE: always return false
         if (mode == OpenMode.NONE) {
             return false;
@@ -568,36 +568,53 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Write a document to a file.
      *
+     * @param document the document to write
      * @param path     the Path to write to
      * @throws IOException if an error occurs
      */
-    public void write(Path path) throws IOException {
-        write(path, t -> Arguments.empty());
+    public final void write(T document, Path path) throws IOException {
+        write(document, path, t -> Arguments.empty());
     }
 
     /**
      * Write a document to a file.
      *
+     * @param document the document to write
      * @param path     the Path to write to
      * @param options  the options to use
      * @throws IOException if an error occurs
      */
-    public final void write(Path path, Function<FileType<? super T>, Arguments> options) throws IOException {
+    public final void write(T document, Path path, Function<FileType<? super T>, Arguments> options) throws IOException {
         try (OutputStream out = Files.newOutputStream(path)) {
-            write(path.toUri(), out, options);
+            write(document, path.toUri(), out, options);
         }
     }
 
     /**
      * Write a document to an output stream.
      *
+     * @param document the document to write
+     * @param objectStore the {@link WritableObjectStore} to write to
+     * @param relativeUri the URI to (if the document stores the URI of the last save)
+     * @param options the options to use
+     * @throws IOException if an error occurs
+     */
+    public final void write(T document, WritableObjectStore objectStore, URI relativeUri, Function<FileType<? super T>, Arguments> options) throws IOException {
+        try (OutputStream out = objectStore.openOutputStream(relativeUri)) {
+            write(document, relativeUri, out, options);
+        }
+    }
+
+    /**
+     * Write a document to an output stream.
+     *
+     * @param document the document to write
      * @param uri     the URI to (if the document stores the URI of the last save)
      * @param out     the output stream to write to
      * @param options the options to use
-     * @return the document
      * @throws IOException if an error occurs
      */
-    public abstract T write(URI uri, OutputStream out, Function<FileType<? super T>, Arguments> options) throws IOException;
+    public abstract void write(T document, URI uri, OutputStream out, Function<FileType<? super T>, Arguments> options) throws IOException;
 
     /**
      * Whether this is a compound file type (a wrapper for different filetypes having common properties).

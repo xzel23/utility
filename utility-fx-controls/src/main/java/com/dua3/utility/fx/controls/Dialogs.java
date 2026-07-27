@@ -478,7 +478,7 @@ public final class Dialogs {
             throw new UnsupportedFileTypeException(I18NInstance.get().get("dua3.utility.fx.controls.dialogs.unsupported.file.type"));
         }
 
-        fileType.orElseThrow().write(selectedFile.toPath(), object);
+        fileType.orElseThrow().write(object, selectedFile.toPath());
 
         return true;
     }

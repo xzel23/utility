@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.function.Function;
@@ -39,14 +41,13 @@ class SwingFileFilterTest {
         }
 
         @Override
-        public T read(URI uri, Function<FileType<? extends T>, Arguments> options) throws IOException {
+        public T read(URI uri, InputStream in, Function<FileType<? extends T>, Arguments> options) throws IOException {
             return testContent;
         }
 
         @Override
-        public void write(URI uri, T document, Function<FileType<? super T>, Arguments> options) throws IOException {
-            // Mock implementation - just store the document
-            this.testContent = document;
+        public void write(T document, URI uri, OutputStream out, Function<FileType<? super T>, Arguments> options) throws IOException {
+            // Mock implementation; filtering tests do not write documents.
         }
     }
 

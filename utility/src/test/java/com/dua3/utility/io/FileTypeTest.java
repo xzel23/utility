@@ -82,7 +82,6 @@ class FileTypeTest {
     @BeforeEach
     void resetTextFileType() {
         textFileType.reset();
-        textFileType.setContent("initial content");
     }
 
     @Test
@@ -248,26 +247,44 @@ class FileTypeTest {
         }));
         assertSame(input, textFileType.lastReadStream);
 
-        textFileType.setContent("written content");
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        assertEquals("written content", textFileType.write(uri, output, type -> {
+        textFileType.write("written content", uri, output, type -> {
             assertSame(textFileType, type);
             return Arguments.empty();
-        }));
+        });
         assertEquals("written content", output.toString(StandardCharsets.UTF_8));
         assertSame(output, textFileType.lastWriteStream);
+        assertEquals(uri, textFileType.lastWriteUri);
 
         Path path = tempDir.resolve("written." + TEXT_EXTENSION);
-        textFileType.write(path);
+        textFileType.write("written content", path);
         assertEquals("written content", Files.readString(path));
 
-        textFileType.setContent("written with options");
-        textFileType.write(path, type -> {
+        textFileType.write("written with options", path, type -> {
             assertSame(textFileType, type);
             return Arguments.empty();
         });
         assertEquals("written with options", Files.readString(path));
         assertEquals(3, textFileType.writeOptionCalls);
+    }
+
+    @Test
+    void writesToObjectStoreAndClosesItsStream() throws IOException {
+        URI relativeUri = URI.create("stored." + TEXT_EXTENSION);
+        TestWritableObjectStore objectStore = new TestWritableObjectStore(relativeUri);
+
+        textFileType.write("stored content", objectStore, relativeUri, type -> {
+            assertSame(textFileType, type);
+            return Arguments.empty();
+        });
+
+        assertEquals(relativeUri, objectStore.openedUri);
+        assertEquals(1, objectStore.openCalls);
+        assertEquals("stored content", objectStore.outputStream.toString(StandardCharsets.UTF_8));
+        assertTrue(objectStore.outputStream.closed);
+        assertEquals(relativeUri, textFileType.lastWriteUri);
+        assertSame(objectStore.outputStream, textFileType.lastWriteStream);
+        assertEquals(1, textFileType.writeOptionCalls);
     }
 
     @Test
@@ -328,12 +345,12 @@ class FileTypeTest {
         TestFileType<String> earlierType = new TestFileType<>("A FileType test", OpenMode.READ, String.class, "earlier");
 
         assertEquals(textFileType, textFileType);
-        assertEquals(textFileType, equalType);
-        assertEquals(textFileType.hashCode(), equalType.hashCode());
-        assertNotEquals(textFileType, differentWriteableType);
-        assertNotEquals(textFileType, documentFileType);
-        assertNotEquals(textFileType, null);
-        assertNotEquals(textFileType, "not a file type");
+        assertEquals(equalType, textFileType);
+        assertEquals(equalType.hashCode(), textFileType.hashCode());
+        assertNotEquals(differentWriteableType, textFileType);
+        assertNotEquals(documentFileType, textFileType);
+        assertNotEquals(null, textFileType);
+        assertNotEquals("not a file type", textFileType);
         assertTrue(textFileType.compareTo(earlierType) > 0);
         assertTrue(earlierType.compareTo(textFileType) < 0);
         assertEquals(0, textFileType.compareTo(textFileType));
@@ -346,9 +363,9 @@ class FileTypeTest {
     }
 
     private static class TestFileType<T> extends FileType<T> {
-        private T content;
         private URI lastReadUri;
         private InputStream lastReadStream;
+        private URI lastWriteUri;
         private OutputStream lastWriteStream;
         private int readOptionCalls;
         private int writeOptionCalls;
@@ -361,13 +378,10 @@ class FileTypeTest {
             super(name, mode, documentClass, writeableClass, extensions);
         }
 
-        void setContent(T content) {
-            this.content = content;
-        }
-
         void reset() {
             lastReadUri = null;
             lastReadStream = null;
+            lastWriteUri = null;
             lastWriteStream = null;
             readOptionCalls = 0;
             writeOptionCalls = 0;
@@ -384,12 +398,12 @@ class FileTypeTest {
         }
 
         @Override
-        public T write(URI uri, OutputStream out, java.util.function.Function<FileType<? super T>, Arguments> options) throws IOException {
+        public void write(T document, URI uri, OutputStream out, java.util.function.Function<FileType<? super T>, Arguments> options) throws IOException {
+            lastWriteUri = uri;
             lastWriteStream = out;
             writeOptionCalls++;
             options.apply(this);
-            out.write(String.valueOf(content).getBytes(StandardCharsets.UTF_8));
-            return content;
+            out.write(String.valueOf(document).getBytes(StandardCharsets.UTF_8));
         }
     }
 
@@ -459,12 +473,67 @@ class FileTypeTest {
         }
     }
 
+    private static final class TestWritableObjectStore implements WritableObjectStore {
+        private final URI expectedUri;
+        private URI openedUri;
+        private int openCalls;
+        private CloseTrackingOutputStream outputStream;
+
+        TestWritableObjectStore(URI expectedUri) {
+            this.expectedUri = expectedUri;
+        }
+
+        @Override
+        public URI getRoot() {
+            return URI.create("memory:/");
+        }
+
+        @Override
+        public long write(URI path, InputStream in, ObjectStore.OutputOption... options) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public long write(URI path, byte[] data, int from, int to, ObjectStore.OutputOption... options) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public OutputStream openOutputStream(URI path, ObjectStore.OutputOption... options) {
+            assertEquals(expectedUri, path);
+            openedUri = path;
+            openCalls++;
+            outputStream = new CloseTrackingOutputStream();
+            return outputStream;
+        }
+
+        @Override
+        public void createFolder(URI path) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void close() {
+            // Nothing to close.
+        }
+    }
+
     private static final class CloseTrackingInputStream extends ByteArrayInputStream {
         private boolean closed;
 
         CloseTrackingInputStream(byte[] content) {
             super(content);
         }
+
+        @Override
+        public void close() throws IOException {
+            closed = true;
+            super.close();
+        }
+    }
+
+    private static final class CloseTrackingOutputStream extends ByteArrayOutputStream {
+        private boolean closed;
 
         @Override
         public void close() throws IOException {
