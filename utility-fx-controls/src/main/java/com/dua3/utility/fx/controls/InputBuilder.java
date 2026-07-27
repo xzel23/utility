@@ -1024,6 +1024,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param validate a function to validate the items in the combo box and return an optional error message
      * @return {@code this}
      */
+    @SuppressWarnings("java:S4276") // false positive, generic arguments have different nullability
     <T> B inputComboBoxEx(String id, MessageFormatter.MessageFormatterArgs label, @Nullable Function<T, @Nullable T> edit, @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<? super @Nullable T, @Nullable String> format, Function<? super @Nullable T, ? extends @Nullable Node> graphic, Supplier<? extends @Nullable T> dflt, Collection<T> items, Function<@Nullable T, Optional<String>> validate);
 
     /**
