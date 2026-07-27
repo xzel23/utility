@@ -368,7 +368,23 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * Read data. This method determines the file type according to URI and class and then reads an object from
      * the given URI.
      *
-     * @param objectStroe   the {@link ObjectStore} to read from
+     * @param objectSrore   the {@link ObjectStore} to read from
+     * @param relativeUri   the relative URI to to the data in the {@code ObjectStore}
+     * @param cls  the class
+     * @param <T>  the generic class parameter
+     * @return an {@link Optional} holding the data read or an empty {@code Optional} if the file type could not be
+     * determined
+     * @throws IOException if the file type could be determined but an error occurred while reading
+     */
+    public static <T> Optional<T> read(ReadableObjectStore objectSrore, URI relativeUri, Class<T> cls) throws IOException {
+        return read(objectSrore, relativeUri, cls, ft -> Arguments.empty());
+    }
+
+    /**
+     * Read data. This method determines the file type according to URI and class and then reads an object from
+     * the given URI.
+     *
+     * @param objectSrore   the {@link ObjectStore} to read from
      * @param relativeUri   the relative URI to to the data in the {@code ObjectStore}
      * @param cls  the class
      * @param options the options to use
@@ -377,11 +393,11 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
-    public static <T> Optional<T> read(ReadableObjectStore objectStroe, URI relativeUri, Class<T> cls, Function<FileType<? extends T>, Arguments> options) throws IOException {
+    public static <T> Optional<T> read(ReadableObjectStore objectSrore, URI relativeUri, Class<T> cls, Function<FileType<? extends T>, Arguments> options) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forUri(relativeUri, cls);
         if (type.isPresent()) {
             FileType<T> fileType = type.get();
-            try (InputStream in = objectStroe.openInputStream(relativeUri)) {
+            try (InputStream in = objectSrore.openInputStream(relativeUri)) {
                 return Optional.of(fileType.read(relativeUri, in, options));
             }
         }
@@ -588,6 +604,18 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         try (OutputStream out = Files.newOutputStream(path)) {
             write(document, path.toUri(), out, options);
         }
+    }
+
+    /**
+     * Write a document to an output stream.
+     *
+     * @param document the document to write
+     * @param objectStore the {@link WritableObjectStore} to write to
+     * @param relativeUri the URI to (if the document stores the URI of the last save)
+     * @throws IOException if an error occurs
+     */
+    public final void write(T document, WritableObjectStore objectStore, URI relativeUri) throws IOException {
+        write(document, objectStore, relativeUri, ft -> Arguments.empty());
     }
 
     /**
