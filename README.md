@@ -238,6 +238,8 @@ could not be loaded.
 ### 23.1.0
 
 - refatcor the FileType class (possibly breaking change)
+- refactor ObjectStore, introduce `prefixed(URI)` method that returns n instance for a subtree.
+- improve compatibility od `Loader` and `Payload` classes with ObjectStore.
 
 ### 23.0.6+
 
