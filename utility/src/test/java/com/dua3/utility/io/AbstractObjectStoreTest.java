@@ -140,6 +140,18 @@ abstract class AbstractObjectStoreTest {
     }
 
     @Test
+    void list_encodesReservedCharactersInObjectUris() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("folder/data%20file.txt");
+            store.write(path, "data".getBytes(StandardCharsets.UTF_8));
+
+            try (var entries = store.list(URI.create("folder"))) {
+                assertEquals(List.of(path), entries.map(ObjectStore.ObjectInfo::uri).toList());
+            }
+        }
+    }
+
+    @Test
     void delete_andRemoveFolder() throws Exception {
         try (ObjectStore store = createStore(tempDir.resolve("store"))) {
             store.createFolder(URI.create("f"));

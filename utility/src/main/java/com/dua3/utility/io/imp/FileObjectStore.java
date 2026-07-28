@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -346,7 +347,12 @@ public final class FileObjectStore implements ObjectStore {
         if (attributes.isDirectory() && !normalized.isEmpty() && !normalized.endsWith("/")) {
             normalized += "/";
         }
-        URI uri = URI.create(normalized);
+        URI uri;
+        try {
+            uri = new URI(null, null, normalized, null);
+        } catch (URISyntaxException e) {
+            throw new IOException("could not create URI for path: " + normalized, e);
+        }
         return new ObjectInfo(
                 uri,
                 attributes.isDirectory() ? ObjectType.FOLDER : ObjectType.DATA,

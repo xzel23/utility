@@ -24,6 +24,14 @@ import java.util.stream.StreamSupport;
 public interface ReadableObjectStore extends AutoCloseable {
 
     /**
+     * Closes this store and releases its resources.
+     *
+     * @throws IOException if the store cannot be closed
+     */
+    @Override
+    void close() throws IOException;
+
+    /**
      * Retrieve the root {@link URI} that serves as the base location for objects managed by this storage.
      * The {@code URI} returned will always be an {@link URI#isAbsolute() absolute} URI.
      *
