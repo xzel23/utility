@@ -367,7 +367,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * Read data. This method determines the file type according to URI and class and then reads an object from
      * the given URI.
      *
-     * @param objectSrore   the {@link ObjectStore} to read from
+     * @param objectStore   the {@link ObjectStore} to read from
      * @param relativeUri   the relative URI to to the data in the {@code ObjectStore}
      * @param cls  the class
      * @param <T>  the generic class parameter
@@ -375,15 +375,15 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
-    public static <T> Optional<T> read(ReadableObjectStore objectSrore, URI relativeUri, Class<T> cls) throws IOException {
-        return read(objectSrore, relativeUri, cls, ft -> Arguments.empty());
+    public static <T> Optional<T> read(ReadableObjectStore objectStore, URI relativeUri, Class<T> cls) throws IOException {
+        return read(objectStore, relativeUri, cls, ft -> Arguments.empty());
     }
 
     /**
      * Read data. This method determines the file type according to URI and class and then reads an object from
      * the given URI.
      *
-     * @param objectSrore   the {@link ObjectStore} to read from
+     * @param objectStore   the {@link ObjectStore} to read from
      * @param relativeUri   the relative URI to to the data in the {@code ObjectStore}
      * @param cls  the class
      * @param options the options to use
@@ -392,11 +392,11 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
-    public static <T> Optional<T> read(ReadableObjectStore objectSrore, URI relativeUri, Class<T> cls, Function<FileType<? extends T>, Arguments> options) throws IOException {
+    public static <T> Optional<T> read(ReadableObjectStore objectStore, URI relativeUri, Class<T> cls, Function<FileType<? extends T>, Arguments> options) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forUri(relativeUri, cls);
         if (type.isPresent()) {
             FileType<T> fileType = type.get();
-            try (InputStream in = objectSrore.openInputStream(relativeUri)) {
+            try (InputStream in = objectStore.openInputStream(relativeUri)) {
                 return Optional.of(fileType.read(relativeUri, in, options));
             }
         }
