@@ -54,7 +54,7 @@ public interface WritableObjectStore extends AutoCloseable {
      * @throws IOException if an I/O error occurs during the write operation
      */
     default long write(URI path, byte[] data, ObjectStore.OutputOption... options) throws IOException {
-        return write(path, data, 0, data.length);
+        return write(path, data, 0, data.length, options);
     }
 
     /**

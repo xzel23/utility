@@ -3,6 +3,7 @@ package com.dua3.utility.io;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -14,12 +15,14 @@ public class LoaderTestSecondProvider implements Loader<String> {
 
     static long lastMagic;
     static Object[] lastOptions;
+    static URI lastUri;
     static int isSupportedCalls;
     static int loadCalls;
 
     public static void reset() {
         lastMagic = 0L;
         lastOptions = null;
+        lastUri = null;
         isSupportedCalls = 0;
         loadCalls = 0;
     }
@@ -43,6 +46,7 @@ public class LoaderTestSecondProvider implements Loader<String> {
     @Override
     public String load(Payload payload, Object[] options) throws IOException {
         loadCalls++;
+        lastUri = payload.uri().orElse(null);
         return "second-loader-result";
     }
 }

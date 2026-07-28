@@ -37,6 +37,24 @@ public interface Loader<T> {
     }
 
     /**
+     * Loads an object from a caller-supplied payload.
+     * <p>
+     * The caller retains ownership of {@code payload} and must close it. This
+     * overload is intended for callers that obtain data through an abstraction
+     * other than a URI handler, such as an object store.
+     *
+     * @param <T> the type of object to be loaded
+     * @param cls the class of the object to be loaded
+     * @param payload the payload containing the object data
+     * @param options options for configuring the load operation
+     * @return an instance of type T loaded from the payload
+     * @throws IOException if no suitable loader implementation is found or an I/O error occurs
+     */
+    static <T> T load(Class<? extends T> cls, Payload payload, Object... options) throws IOException {
+        return tryLoad(cls, payload, options).orElseThrow(() -> new IOException("no Loader implementation supports " + cls.getName()));
+    }
+
+    /**
      * Attempts to load an object of the specified type using a {@link Loader} implementation
      * that supports the provided class, URI, and options. Unlike {@link #load(Class, URI, Object...)},
      * this method does not throw an exception if no suitable {@link Loader} is found.
@@ -51,41 +69,58 @@ public interface Loader<T> {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     static <T> Optional<T> tryLoad(Class<? extends T> cls, URI uri, Object... options) throws IOException {
-        List[] ex = {null};
         try (Payload payload = Payload.fromUri(uri)) {
-            Optional<T> loaded = Stream.of(Thread.currentThread().getContextClassLoader(), Loader.class.getClassLoader(), ClassLoader.getSystemClassLoader())
-                    .distinct()
-                    .flatMap(cl -> ServiceLoader.load(Loader.class, cl).stream())
-                    .map(ServiceLoader.Provider::get)
-                    .filter(current -> current.isSupported(cls, payload.magic8Bytes(), options))
-                    .map(loader -> {
-                        try {
-                            return (T) loader.load(payload, options);
-                        } catch (IOException e) {
-                            if (ex[0] == null) {
-                                ex[0] = new ArrayList<IOException>();
-                            }
-                            ex[0].add(e);
-                            LogManager.getLogger(Loader.class).warn("Loader {} failed to load {}", loader, uri, e);
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .findFirst();
-
-            // only throw an exception if all loaders failed
-            if (loaded.isEmpty() && ex[0] != null) {
-                List<IOException> exceptions = ex[0];
-                assert !exceptions.isEmpty();
-                IOException ioe = new IOException("failed to load " + uri, exceptions.getFirst());
-                for (int i = 1; i < exceptions.size(); i++) {
-                    ioe.addSuppressed(exceptions.get(i));
-                }
-                throw ioe;
-            }
-
-            return loaded;
+            return tryLoad(cls, payload, options);
         }
+    }
+
+    /**
+     * Attempts to load an object from a caller-supplied payload.
+     * <p>
+     * The caller retains ownership of {@code payload} and must close it.
+     *
+     * @param <T> the type of object to be loaded
+     * @param cls the class of the object to be loaded
+     * @param payload the payload containing the object data
+     * @param options options for configuring the load operation
+     * @return a loaded object, or an empty optional when no loader supports it
+     * @throws IOException if all suitable loaders fail with an I/O error
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    static <T> Optional<T> tryLoad(Class<? extends T> cls, Payload payload, Object... options) throws IOException {
+        List[] ex = {null};
+        Optional<T> loaded = Stream.of(Thread.currentThread().getContextClassLoader(), Loader.class.getClassLoader(), ClassLoader.getSystemClassLoader())
+                .distinct()
+                .flatMap(cl -> ServiceLoader.load(Loader.class, cl).stream())
+                .map(ServiceLoader.Provider::get)
+                .filter(current -> current.isSupported(cls, payload.magic8Bytes(), options))
+                .map(loader -> {
+                    try {
+                        return (T) loader.load(payload, options);
+                    } catch (IOException e) {
+                        if (ex[0] == null) {
+                            ex[0] = new ArrayList<IOException>();
+                        }
+                        ex[0].add(e);
+                        LogManager.getLogger(Loader.class).warn("Loader {} failed to load {}", loader, payload.uri().orElse(null), e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .findFirst();
+
+        // only throw an exception if all loaders failed
+        if (loaded.isEmpty() && ex[0] != null) {
+            List<IOException> exceptions = ex[0];
+            assert !exceptions.isEmpty();
+            IOException ioe = new IOException("failed to load " + payload.uri().map(Object::toString).orElse("payload"), exceptions.getFirst());
+            for (int i = 1; i < exceptions.size(); i++) {
+                ioe.addSuppressed(exceptions.get(i));
+            }
+            throw ioe;
+        }
+
+        return loaded;
     }
 
     /**

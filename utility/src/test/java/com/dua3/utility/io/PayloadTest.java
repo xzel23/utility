@@ -2,10 +2,12 @@ package com.dua3.utility.io;
 
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -153,6 +155,18 @@ class PayloadTest {
         try (OpenedPayload opened = openPayload(resourceKind, content)) {
             assertEquals(expectedMagic8Bytes(content), opened.payload().magic8Bytes());
             assertEquals(opened.resource().uri(), opened.payload().uri().orElse(null));
+        }
+    }
+
+    @Test
+    void fromInputStreamWithUri_preservesUriAndContent() throws Exception {
+        URI uri = URI.create("https://objects.example.test/documents/example.pdf");
+        byte[] content = "streamed payload".getBytes(StandardCharsets.UTF_8);
+
+        try (Payload payload = Payload.fromInputStream(uri, new ByteArrayInputStream(content))) {
+            assertEquals(uri, payload.uri().orElseThrow());
+            assertEquals(expectedMagic8Bytes(content), payload.magic8Bytes());
+            assertArrayEquals(content, payload.stream().readAllBytes());
         }
     }
 

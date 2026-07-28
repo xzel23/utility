@@ -129,6 +129,22 @@ public final class Payload implements AutoCloseable {
     }
 
     /**
+     * Creates a {@code Payload} from an input stream while retaining the URI
+     * that identifies the streamed object.
+     * <p>
+     * This is useful for storage implementations that provide their own input
+     * streams. The URI is metadata only; this method never opens it.
+     *
+     * @param uri the absolute URI identifying the streamed object
+     * @param in  the input stream to consume
+     * @return a payload for the supplied stream
+     * @throws IOException if the stream cannot be read
+     */
+    public static Payload fromInputStream(URI uri, InputStream in) throws IOException {
+        return fromStream(uri, in);
+    }
+
+    /**
      * Factory method for local files. Zero-copy friendly.
      */
     @SuppressWarnings("java:S2093") // suppress warning about resource leak, the channel should only be closed in case of an exception
@@ -230,10 +246,9 @@ public final class Payload implements AutoCloseable {
      * will result in an exception.
      *
      * @return a {@link ReadableByteChannel} instance for reading the payload content.
-     * @throws IOException if an I/O error occurs during channel creation or access.
      * @throws IllegalStateException if the payload has already been consumed.
      */
-    public ReadableByteChannel channel() throws IOException {
+    public ReadableByteChannel channel() {
         consume();
         if (channel == null) {
             assert protectedStream != null : "protectedStream must be initialized if channel is null";

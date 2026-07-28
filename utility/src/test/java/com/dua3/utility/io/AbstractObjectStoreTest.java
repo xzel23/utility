@@ -107,6 +107,20 @@ abstract class AbstractObjectStoreTest {
     }
 
     @Test
+    void writeByteArray_forwardsOutputOptions() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("exists.txt");
+            store.write(path, "old".getBytes(StandardCharsets.UTF_8));
+
+            store.write(path, "new".getBytes(StandardCharsets.UTF_8), ObjectStore.OutputOption.CREATE_OR_REPLACE);
+
+            try (InputStream in = store.openInputStream(path)) {
+                assertArrayEquals("new".getBytes(StandardCharsets.UTF_8), in.readAllBytes());
+            }
+        }
+    }
+
+    @Test
     void getInfo_returnsMetadataForDataAndFolder() throws Exception {
         try (ObjectStore store = createStore(tempDir.resolve("store"))) {
             store.createFolder(URI.create("folder"));

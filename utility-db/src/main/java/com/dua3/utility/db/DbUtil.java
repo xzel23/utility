@@ -67,7 +67,7 @@ public final class DbUtil {
             Map<Object, Object> p;
             String resource = "jdbc_drivers.properties";
             try (InputStream in = DbUtil.class.getResourceAsStream(resource)) {
-                p = LangUtil.loadProperties(Objects.requireNonNull(in, "resource nott found: " + resource));
+                p = LangUtil.loadProperties(Objects.requireNonNull(in, "resource not found: " + resource));
             }
 
             // parse entries
