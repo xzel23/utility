@@ -519,7 +519,7 @@ public final class FxLauncher {
         assert loggingConfiguration != null : "internal error: Logging configuration not initialized";
 
         SLB4J.setConfiguration(loggingConfiguration);
-        LOG.debug("SLF4J configuration updated: {}", loggingConfiguration);
+        LOG.debug("SLB4J configuration updated: {}", loggingConfiguration);
 
         if (showLogWindow || isDebug() && HAS_SLB4J_EXT_FX) {
             logBuffer.updateAndGet( buffer -> {
