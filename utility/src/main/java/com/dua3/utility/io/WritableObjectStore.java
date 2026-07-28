@@ -30,6 +30,20 @@ public interface WritableObjectStore extends AutoCloseable {
     URI getRoot();
 
     /**
+     * Returns a writable view rooted at a folder in this store.
+     * <p>
+     * Paths passed to the returned store are resolved relative to {@code prefix}.
+     * Closing the view does not close this store.
+     *
+     * @param prefix the relative folder used as the root of the returned view
+     * @return a writable store view rooted at {@code prefix}
+     * @throws IllegalArgumentException if {@code prefix} is not a valid relative folder path
+     */
+    default WritableObjectStore prefixed(URI prefix) {
+        return PrefixedObjectStores.writable(this, prefix);
+    }
+
+    /**
      * Writes data from the specified {@link InputStream} to an object located at the specified URI path
      * within the object store. If the object already exists, its contents may be overwritten.
      *

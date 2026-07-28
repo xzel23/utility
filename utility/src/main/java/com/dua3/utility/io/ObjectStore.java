@@ -13,6 +13,22 @@ import java.util.stream.Stream;
  * storage operations.
  */
 public interface ObjectStore extends ReadableObjectStore, WritableObjectStore {
+
+    /**
+     * Returns a read-write view rooted at a folder in this store.
+     * <p>
+     * Paths passed to, and returned by, the view are relative to {@code prefix}.
+     * Closing the view does not close this store.
+     *
+     * @param prefix the relative folder used as the root of the returned view
+     * @return a read-write store view rooted at {@code prefix}
+     * @throws IllegalArgumentException if {@code prefix} is not a valid relative folder path
+     */
+    @Override
+    default ObjectStore prefixed(URI prefix) {
+        return PrefixedObjectStores.object(this, prefix);
+    }
+
     /**
      * Enumeration representing the type of objects.
      */

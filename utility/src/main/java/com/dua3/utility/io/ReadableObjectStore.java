@@ -40,6 +40,21 @@ public interface ReadableObjectStore extends AutoCloseable {
     URI getRoot();
 
     /**
+     * Returns a readable view rooted at a folder in this store.
+     * <p>
+     * Paths passed to the returned store are resolved relative to {@code prefix};
+     * paths returned by the view are relative to that same folder. Closing the
+     * view does not close this store.
+     *
+     * @param prefix the relative folder used as the root of the returned view
+     * @return a readable store view rooted at {@code prefix}
+     * @throws IllegalArgumentException if {@code prefix} is not a valid relative folder path
+     */
+    default ReadableObjectStore prefixed(URI prefix) {
+        return PrefixedObjectStores.readable(this, prefix);
+    }
+
+    /**
      * Lists the objects located at the specified path within the storage.
      * If the path corresponds to a folder, the method will provide a stream
      * of {@link ObjectStore.ObjectInfo} objects representing the metadata of the folder's contents.
