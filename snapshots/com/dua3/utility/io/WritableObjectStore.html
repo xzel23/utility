@@ -173,6 +173,23 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="block">Writes data from the specified <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link"><code>InputStream</code></a> to an object located at the specified URI path
  within the object store.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default long</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#writeString(java.net.URI,java.lang.CharSequence,com.dua3.utility.io.ObjectStore.OutputOption...)" class="member-name-link">writeString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&nbsp;path,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s,
+ <a href="ObjectStore.OutputOption.html" title="enum class in com.dua3.utility.io">ObjectStore.OutputOption</a>...&nbsp;options)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Writes the specified <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link"><code>CharSequence</code></a> to a file located at the given URI path within the object store
+ using UTF-8 encoding.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default long</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#writeString(java.net.URI,java.lang.CharSequence,java.nio.charset.Charset,com.dua3.utility.io.ObjectStore.OutputOption...)" class="member-name-link">writeString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&nbsp;path,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;cs,
+ <a href="ObjectStore.OutputOption.html" title="enum class in com.dua3.utility.io">ObjectStore.OutputOption</a>...&nbsp;options)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Writes a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link"><code>CharSequence</code></a> to an object located at the specified URI path within the object store
+ using the given character set.</div>
+</div>
 </div>
 </div>
 </div>
@@ -354,6 +371,53 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <dd><code><a href="IllegalPathException.html" title="class in com.dua3.utility.io">IllegalPathException</a></code> - if the path points outside the root of the storage</dd>
 <dd><code><a href="NotAFolderException.html" title="class in com.dua3.utility.io">NotAFolderException</a></code> - if the path or any missing parent points to an existing non-folder object</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if an I/O error occurs while creating the folder</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="writeString(java.net.URI,java.lang.CharSequence,com.dua3.utility.io.ObjectStore.OutputOption...)">
+<h3>writeString</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">writeString</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&nbsp;path,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s,
+ <a href="ObjectStore.OutputOption.html" title="enum class in com.dua3.utility.io">ObjectStore.OutputOption</a>...&nbsp;options)</span>
+                  throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
+<div class="block">Writes the specified <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link"><code>CharSequence</code></a> to a file located at the given URI path within the object store
+ using UTF-8 encoding. If the file already exists, its contents may be overwritten.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>path</code> - the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link"><code>URI</code></a> specifying the location where the string should be written</dd>
+<dd><code>s</code> - the <code>CharSequence</code> to be written to the file</dd>
+<dd><code>options</code> - the <a href="ObjectStore.OutputOption.html" title="enum class in com.dua3.utility.io"><code>ObjectStore.OutputOption</code></a> options specifying how to handle
+                existing objects at the output location; when none are present,
+                <a href="ObjectStore.OutputOption.html#CREATE_NEW"><code>ObjectStore.OutputOption.CREATE_NEW</code></a> is used.</dd>
+<dt>Returns:</dt>
+<dd>the number of bytes successfully written to the file</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if an I/O error occurs during the write operation</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="writeString(java.net.URI,java.lang.CharSequence,java.nio.charset.Charset,com.dua3.utility.io.ObjectStore.OutputOption...)">
+<h3>writeString</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">writeString</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&nbsp;path,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;cs,
+ <a href="ObjectStore.OutputOption.html" title="enum class in com.dua3.utility.io">ObjectStore.OutputOption</a>...&nbsp;options)</span>
+                  throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
+<div class="block">Writes a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link"><code>CharSequence</code></a> to an object located at the specified URI path within the object store
+ using the given character set. If the object already exists, its contents may be overwritten.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>path</code> - the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link"><code>URI</code></a> specifying the location where the string should be written</dd>
+<dd><code>s</code> - the <code>CharSequence</code> to be written to the object store</dd>
+<dd><code>cs</code> - the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link"><code>Charset</code></a> used to convert the string into bytes</dd>
+<dd><code>options</code> - the <a href="ObjectStore.OutputOption.html" title="enum class in com.dua3.utility.io"><code>ObjectStore.OutputOption</code></a> specifying how to handle existing objects
+                at the output location; when none are present, <a href="ObjectStore.OutputOption.html#CREATE_NEW"><code>ObjectStore.OutputOption.CREATE_NEW</code></a> is used.</dd>
+<dt>Returns:</dt>
+<dd>the number of bytes successfully written to the object</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if an I/O error occurs during the write operation</dd>
 </dl>
 </section>
 </li>

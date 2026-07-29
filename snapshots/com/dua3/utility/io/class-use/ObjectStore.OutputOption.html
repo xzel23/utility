@@ -122,6 +122,23 @@ the order they are declared.</div>
 <div class="block">Writes data from the specified <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link"><code>InputStream</code></a> to an object located at the specified URI path
  within the object store.</div>
 </div>
+<div class="col-first even-row-color"><code>default long</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">WritableObjectStore.</span><code><a href="../WritableObjectStore.html#writeString(java.net.URI,java.lang.CharSequence,com.dua3.utility.io.ObjectStore.OutputOption...)" class="member-name-link">writeString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&nbsp;path,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s,
+ <a href="../ObjectStore.OutputOption.html" title="enum class in com.dua3.utility.io">ObjectStore.OutputOption</a>...&nbsp;options)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Writes the specified <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link"><code>CharSequence</code></a> to a file located at the given URI path within the object store
+ using UTF-8 encoding.</div>
+</div>
+<div class="col-first odd-row-color"><code>default long</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">WritableObjectStore.</span><code><a href="../WritableObjectStore.html#writeString(java.net.URI,java.lang.CharSequence,java.nio.charset.Charset,com.dua3.utility.io.ObjectStore.OutputOption...)" class="member-name-link">writeString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&nbsp;path,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;s,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;cs,
+ <a href="../ObjectStore.OutputOption.html" title="enum class in com.dua3.utility.io">ObjectStore.OutputOption</a>...&nbsp;options)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Writes a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link"><code>CharSequence</code></a> to an object located at the specified URI path within the object store
+ using the given character set.</div>
+</div>
 </div>
 </section>
 </li>
