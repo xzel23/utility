@@ -207,6 +207,8 @@ public interface ReadableObjectStore extends AutoCloseable {
      * The method opens an input stream to the file, utilizes a BufferedReader to read the lines,
      * and returns them as a Stream of Strings.
      *
+     * <p><strong>Note:</strong> The caller must close the stream!
+     *
      * @param path the URI of the file to be read
      * @param cs the Charset to use for decoding the file
      * @return a Stream of Strings, each representing a line in the file
@@ -217,7 +219,7 @@ public interface ReadableObjectStore extends AutoCloseable {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, cs));
         return reader.lines().onClose(() -> {
             try {
-                reader.close();
+                IoUtil.closeAll(reader, in);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }

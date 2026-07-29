@@ -327,6 +327,11 @@
     </Match>
 
     <Match>
+        <Class name="com.dua3.utility.io.ReadableObjectStore" method="com.dua3.utility.io.ReadableObjectStore.lines"/>
+        <Bug pattern="OS_OPEN_STREAM"/>
+    </Match>
+
+    <Match>
         <!-- equality is safe here -->
         <Class name="com.dua3.utility.data.HSLColor" method="com.dua3.utility.data.HSLColor.valueOf"/>
         <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
