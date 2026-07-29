@@ -4,10 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
@@ -69,6 +71,107 @@ abstract class AbstractObjectStoreTest {
             }
 
             assertArrayEquals(data, actual);
+        }
+    }
+
+    @Test
+    void writeString_usesUtf8AndReturnsByteCount() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("text.txt");
+            String text = "Grüße 🌍\n第二行";
+
+            assertEquals(text.getBytes(StandardCharsets.UTF_8).length, store.writeString(path, text));
+            assertEquals(text, store.readString(path));
+            assertArrayEquals(text.getBytes(StandardCharsets.UTF_8), store.readAllBytes(path));
+        }
+    }
+
+    @Test
+    void writeString_usesRequestedCharsetAndAcceptsAnyCharSequence() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("text.txt");
+            Charset charset = StandardCharsets.UTF_16LE;
+            CharSequence text = new StringBuilder("äöü");
+
+            assertEquals(text.toString().getBytes(charset).length,
+                    store.writeString(path, text, charset));
+            assertEquals(text.toString(), store.readString(path, charset));
+        }
+    }
+
+    @Test
+    void writeString_nullWritesStringNull() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("null.txt");
+
+            assertEquals(4, store.writeString(path, null));
+            assertEquals("null", store.readString(path));
+        }
+    }
+
+    @Test
+    void writeString_defaultsToCreateNewAndSupportsReplace() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("text.txt");
+            store.writeString(path, "old");
+
+            assertThrows(ObjectExistsException.class, () -> store.writeString(path, "new"));
+            assertEquals(3, store.writeString(path, "new", ObjectStore.OutputOption.CREATE_OR_REPLACE));
+            assertEquals("new", store.readString(path));
+        }
+    }
+
+    @Test
+    void lines_readsAllLinesWithDefaultAndRequestedCharset() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI utf8Path = URI.create("lines.txt");
+            store.writeString(utf8Path, "one\r\ntwo\nthree\r\nfour");
+            try (var lines = store.lines(utf8Path)) {
+                assertEquals(List.of("one", "two", "three", "four"), lines.toList());
+            }
+
+            URI utf16Path = URI.create("lines-utf16.txt");
+            store.writeString(utf16Path, "erste\nzweite\n第三", StandardCharsets.UTF_16);
+            try (var lines = store.lines(utf16Path, StandardCharsets.UTF_16)) {
+                assertEquals(List.of("erste", "zweite", "第三"), lines.toList());
+            }
+        }
+    }
+
+    @Test
+    void lines_emptyFileReturnsEmptyStream() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("empty.txt");
+            store.writeString(path, "");
+
+            try (var lines = store.lines(path)) {
+                assertTrue(lines.toList().isEmpty());
+            }
+        }
+    }
+
+    @Test
+    void transferToCopiesBytesAndReturnsByteCount() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("data.bin");
+            byte[] expected = {0, 1, 2, 127, -1};
+            store.write(path, expected);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            assertEquals(expected.length, store.transferTo(path, out));
+            assertArrayEquals(expected, out.toByteArray());
+        }
+    }
+
+    @Test
+    void readConvenienceMethods_propagateMissingObject() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI missing = URI.create("missing");
+
+            assertThrows(IOException.class, () -> store.readAllBytes(missing));
+            assertThrows(IOException.class, () -> store.readString(missing));
+            assertThrows(IOException.class, () -> store.transferTo(missing, new ByteArrayOutputStream()));
+            assertThrows(IOException.class, () -> store.lines(missing));
         }
     }
 

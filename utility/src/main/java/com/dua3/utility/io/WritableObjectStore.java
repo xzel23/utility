@@ -1,9 +1,13 @@
 package com.dua3.utility.io;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Represents a generic object storage interface for managing and interacting
@@ -132,4 +136,41 @@ public interface WritableObjectStore extends AutoCloseable {
      * @throws IOException if an I/O error occurs while creating the folder
      */
     void createFolder(URI path) throws IOException;
+
+    /**
+     * Writes the specified {@link CharSequence} to a file located at the given URI path within the object store
+     * using UTF-8 encoding. If the file already exists, its contents may be overwritten.
+     *
+     * @param path    the {@link URI} specifying the location where the string should be written
+     * @param s      the {@code CharSequence} to be written to the file
+     * @param options the {@link ObjectStore.OutputOption} options specifying how to handle
+     *                existing objects at the output location; when none are present,
+     *                {@link ObjectStore.OutputOption#CREATE_NEW} is used.
+     * @return the number of bytes successfully written to the file
+     * @throws IOException if an I/O error occurs during the write operation
+     */
+    default long writeString(URI path, @Nullable CharSequence s, ObjectStore.OutputOption... options) throws IOException {
+        return writeString(path, s, StandardCharsets.UTF_8, options);
+    }
+
+    /**
+     * Writes a {@link CharSequence} to an object located at the specified URI path within the object store
+     * using the given character set. If the object already exists, its contents may be overwritten.
+     *
+     * @param path    the {@link URI} specifying the location where the string should be written
+     * @param s       the {@code CharSequence} to be written to the object store
+     * @param cs      the {@link Charset} used to convert the string into bytes
+     * @param options the {@link ObjectStore.OutputOption} specifying how to handle existing objects
+     *                at the output location; when none are present, {@link ObjectStore.OutputOption#CREATE_NEW} is used.
+     *
+     * @return the number of bytes successfully written to the object
+     *
+     * @throws IOException if an I/O error occurs during the write operation
+     */
+    default long writeString(URI path, @Nullable CharSequence s, Charset cs, ObjectStore.OutputOption... options) throws IOException {
+        return switch (s) {
+            case String str -> write(path, str.getBytes(cs), options);
+            case null, default -> write(path, String.valueOf(s).getBytes(cs), options);
+        };
+    }
 }

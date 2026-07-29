@@ -1,9 +1,14 @@
 package com.dua3.utility.io;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -184,5 +189,90 @@ public interface ReadableObjectStore extends AutoCloseable {
                 Spliterators.spliteratorUnknownSize(iterator, Spliterator.NONNULL),
                 false
         );
+    }
+
+    /**
+     * Reads all lines from a file at the specified path using UTF-8 encoding.
+     *
+     * @param path the URI of the file to read
+     * @return a Stream of lines from the file
+     * @throws IOException if an I/O error occurs opening the file
+     */
+    default Stream<String> lines(URI path) throws IOException {
+        return lines(path, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Reads all lines from a file at the given URI using the specified character set.
+     * The method opens an input stream to the file, utilizes a BufferedReader to read the lines,
+     * and returns them as a Stream of Strings.
+     *
+     * @param path the URI of the file to be read
+     * @param cs the Charset to use for decoding the file
+     * @return a Stream of Strings, each representing a line in the file
+     * @throws IOException if an I/O error occurs while opening the input stream or reading the file
+     */
+    default Stream<String> lines(URI path, Charset cs) throws IOException {
+        InputStream in = openInputStream(path);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in, cs));
+        return reader.lines().onClose(() -> {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
+    }
+
+    /**
+     * Transfers data from the specified URI to the given {@link OutputStream}.
+     * This method opens an input stream to read from the URI and transfers
+     * the data to the provided output stream.
+     *
+     * @param path the {@link URI} of the object to be transferred
+     * @param out the {@link OutputStream} to which data should be written
+     * @return the number of bytes transferred
+     * @throws IOException if an I/O error occurs while reading from the URI or writing to the output stream
+     */
+    default long transferTo(URI path, OutputStream out) throws IOException {
+        try (InputStream in = openInputStream(path)) {
+            return in.transferTo(out);
+        }
+    }
+
+    /**
+     * Reads all bytes from a URI and returns them in a byte array.
+     *
+     * @param path the URI of the object to be read
+     * @return a byte array containing all the bytes from the specified URI
+     * @throws IOException if an I/O error occurs while reading from the URI
+     */
+    default byte[] readAllBytes(URI path) throws IOException {
+        try (InputStream in = openInputStream(path)) {
+            return in.readAllBytes();
+        }
+    }
+
+    /**
+     * Reads the content of a file located at the specified URI into a String using UTF-8 encoding.
+     *
+     * @param path the URI of the file to be read
+     * @return the content of the file as a String
+     * @throws IOException if an I/O error occurs while reading the file
+     */
+    default String readString(URI path) throws IOException {
+        return readString(path, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Reads the content of the specified URI as a string using the given character set.
+     *
+     * @param path the URI of the data object to be read
+     * @param cs the character set to be used for decoding the bytes into characters
+     * @return a String representing the content of the specified URI
+     * @throws IOException if an I/O error occurs while reading from the URI
+     */
+    default String readString(URI path, Charset cs) throws IOException {
+        return new String(readAllBytes(path), cs);
     }
 }
