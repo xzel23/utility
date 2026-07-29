@@ -128,13 +128,11 @@ public final class FileObjectStore implements ObjectStore {
 
         Path resolved = resolve(path);
         OutputOption effectiveOption = ensureCanWrite(resolved, options);
-        Path parent = resolved.getParent();
-        if (parent != null) {
-            Files.createDirectories(parent);
-        }
         StandardCopyOption[] copyOptions = effectiveOption == OutputOption.CREATE_OR_REPLACE
                 ? new StandardCopyOption[]{StandardCopyOption.REPLACE_EXISTING}
                 : new StandardCopyOption[]{};
+
+        createParent(resolved);
         return Files.copy(in, resolved, copyOptions);
     }
 
@@ -172,13 +170,11 @@ public final class FileObjectStore implements ObjectStore {
 
         Path resolved = resolve(path);
         OutputOption effectiveOption = ensureCanWrite(resolved, options);
-        Path parent = resolved.getParent();
-        if (parent != null) {
-            Files.createDirectories(parent);
-        }
         OpenOption[] soo = effectiveOption == OutputOption.CREATE_OR_REPLACE
                 ? new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING}
                 : new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW};
+
+        createParent(resolved);
         return Files.newOutputStream(resolved, soo);
     }
 
@@ -376,6 +372,22 @@ public final class FileObjectStore implements ObjectStore {
             return toObjectInfo(path);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Ensures that the parent directory of the specified path exists by creating
+     * all nonexistent parent directories. If the parent directory already exists,
+     * no changes are made.
+     *
+     * @param resolved the path for which the parent directory will be created;
+     *                 must not be null
+     * @throws IOException if an I/O error occurs while creating the directories
+     */
+    private static void createParent(Path resolved) throws IOException {
+        Path parent = resolved.getParent();
+        if (parent != null) {
+            Files.createDirectories(parent);
         }
     }
 }
