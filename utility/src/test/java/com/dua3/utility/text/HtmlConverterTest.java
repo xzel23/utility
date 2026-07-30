@@ -5,6 +5,9 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Image;
+import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.ui.InlineNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -91,6 +95,25 @@ class HtmlConverterTest {
     }
 
     @Test
+    void testLegacyFontTagsProvideFontFamilyFallback() {
+        Style courier = Style.create("courier", FontDef.family("Courier New"));
+        RichText text = RichText.valueOf("code", courier);
+
+        String html = HtmlConverter.create(HtmlConverter.useLegacyFontTags(true)).convert(text);
+
+        assertEquals("<font face='Courier New'>code</font>", html);
+    }
+
+    @Test
+    void testDirectFontFamilyAttributeIsConverted() {
+        RichText text = RichText.valueOf("code", Map.of(Style.FONT_FAMILIES, List.of("Courier New")));
+
+        String html = HtmlConverter.create(HtmlConverter.useLegacyFontTags(true)).convert(text);
+
+        assertEquals("<font face='Courier New'>code</font>", html);
+    }
+
+    @Test
     void testFont() {
         Font arial = FontUtil.getInstance().getFont("arial-16-bold");
         Font courier = FontUtil.getInstance().getFont("courier-12");
@@ -134,6 +157,51 @@ class HtmlConverterTest {
         String actual = HtmlConverter.create(HtmlConverter.useCss(true)).convert(rt);
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void testInlineNodesUseStandardHtmlElements() {
+        InlineNode<String> hyperlink = new InlineNode<>(
+                "Example",
+                RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK,
+                RichTextBuilderExtBase.encodeInlineHyperlinkData("https://example.test/path?x=1&y=2", "Example")
+        );
+        Function<String, InlineNode<String>> hyperlinkFactory = ignored -> hyperlink;
+        Style hyperlinkStyle = Style.create(
+                "hyperlink-inline",
+                Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, hyperlinkFactory)
+        );
+
+        Image image = ImageUtil.getInstance().createImage(4, 2, new int[]{
+                0xffff0000, 0xff00ff00, 0xff0000ff, 0xffffffff,
+                0xff000000, 0xffffff00, 0xffff00ff, 0xff00ffff
+        });
+        InlineNode<Image> imageNode = new InlineNode<>(
+                image,
+                ImageUtil.MIME_TYPE_PNG,
+                InlineNode.encodeArgbImageData(image)
+        );
+        Function<String, InlineNode<Image>> imageFactory = ignored -> imageNode;
+        Style imageStyle = Style.create(
+                "image-inline",
+                Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, imageFactory),
+                Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH, 2.0),
+                Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT, 1.0)
+        );
+
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Open ");
+        builder.push(hyperlinkStyle).append(RichTextBuilderExtBase.INLINE_NODE_MARKER).pop(hyperlinkStyle);
+        builder.append(" beside ");
+        builder.push(imageStyle).append(RichTextBuilderExtBase.INLINE_NODE_MARKER).pop(imageStyle);
+        builder.append(".");
+
+        String html = HtmlConverter.create().convert(builder.toRichText());
+
+        assertTrue(html.contains("<a href='https://example.test/path?x=1&amp;y=2'>Example</a>"));
+        assertTrue(html.contains("<img src='data:image/png;base64,"));
+        assertTrue(html.contains("width='2' height='1' alt=''>"));
+        assertFalse(html.contains(String.valueOf(RichTextBuilderExtBase.INLINE_NODE_MARKER)));
     }
 
     @Test

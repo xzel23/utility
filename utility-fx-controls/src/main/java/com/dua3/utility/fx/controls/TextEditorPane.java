@@ -1357,7 +1357,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      * Copies selection to clipboard.
      */
     public void copy() {
-        FxUtil.copyToClipboard(getSelectedText());
+        RichText selection = getSelectedText().apply(Style.create(getFont()));
+        FxUtil.copyToClipboard(selection);
     }
 
     /**

@@ -113,6 +113,16 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
         protected abstract void appendChars(CharSequence s);
 
         /**
+         * Appends a run's content. Subclasses can override this to render
+         * run-specific content such as inline nodes.
+         *
+         * @param run the run to append
+         */
+        protected void appendRun(Run run) {
+            appendChars(run);
+        }
+
+        /**
          * Retrieves the current result of the conversion process or related operation.
          *
          * @return the result of type T produced by the implementation
@@ -214,7 +224,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 currentStyles.addAll(openingStyles);
 
                 // add text
-                appendChars(run);
+                appendRun(run);
 
                 // update open styles
                 openStyles.removeAll(stylesToClose);

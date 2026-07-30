@@ -1,15 +1,22 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
+import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.ui.InlineNode;
 import org.jspecify.annotations.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SequencedMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -81,6 +88,12 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     private boolean useCss = false;
 
     /**
+     * Whether legacy {@code <font>} tags should supplement CSS font declarations.
+     * This is useful for clipboard consumers that do not honor nested CSS font styles.
+     */
+    private boolean useLegacyFontTags = false;
+
+    /**
      * The line end replacement string used for line/paragraph breaks.
      */
     private String lineEndReplacement = "\n";
@@ -101,6 +114,19 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      */
     public static HtmlConversionOption useCss(boolean flag) {
         return new HtmlConversionOption(c -> c.setUseCss(flag));
+    }
+
+    /**
+     * Use legacy HTML font tags as a fallback for CSS font declarations.
+     * <p>
+     * This option is intended for interoperability with HTML clipboard consumers
+     * that do not apply nested {@code font-family} CSS declarations.
+     *
+     * @param flag set to true to generate legacy font tags
+     * @return the option to use
+     */
+    public static HtmlConversionOption useLegacyFontTags(boolean flag) {
+        return new HtmlConversionOption(c -> c.setUseLegacyFontTags(flag));
     }
 
     /**
@@ -261,7 +287,40 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     public String convert(ToRichText text) {
         FontDef defaultHeaderFontDef = getHeaderStyle.apply(0).text().getFontDef();
         currentDefaultFontDef = defaultHeaderFontDef.isEmpty() ? baseFont.toFontDef() : defaultHeaderFontDef;
-        return super.convert(text);
+        return super.convert(materializeDirectFontAttributes(text));
+    }
+
+    private static RichText materializeDirectFontAttributes(ToRichText text) {
+        RichText richText = text.toRichText();
+        List<Run> runs = new ArrayList<>();
+        boolean changed = false;
+
+        for (Run run : richText) {
+            Style directFontStyle = directFontStyle(run.attributes());
+            if (directFontStyle == null) {
+                runs.add(run);
+                continue;
+            }
+
+            Map<String, @Nullable Object> attributes = new HashMap<>(run.attributes());
+            List<Style> styles = new ArrayList<>(run.getStyles());
+            styles.add(directFontStyle);
+            attributes.put(RichText.ATTRIBUTE_NAME_STYLE_LIST, styles);
+            runs.add(new Run(run.base(), run.getStart(), run.length(), TextAttributes.of(attributes)));
+            changed = true;
+        }
+
+        return changed ? new RichText(runs.toArray(Run[]::new)) : richText;
+    }
+
+    private static @Nullable Style directFontStyle(TextAttributes attributes) {
+        Map<String, @Nullable Object> properties = new HashMap<>();
+        attributes.forEach((key, value) -> {
+            if (isFontRelated(key)) {
+                properties.put(key, value);
+            }
+        });
+        return properties.isEmpty() ? null : Style.create("direct-font", properties);
     }
 
     private void setRefineStyleProperties(UnaryOperator<Map<String, Object>> refineStyleProperties) {
@@ -380,6 +439,15 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
+     * En-/disable legacy HTML font tags as fallbacks for CSS font declarations.
+     *
+     * @param flag true to generate legacy font tags
+     */
+    void setUseLegacyFontTags(boolean flag) {
+        this.useLegacyFontTags = flag;
+    }
+
+    /**
      * Retrieves the string used as a replacement for line breaks during HTML conversion.
      *
      * @return the line break replacement string
@@ -399,6 +467,22 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
     private static String getCssClassForFontDef(FontDef fontDef) {
         return fontDef.fontspec().replace("*", CSS_CLASS_WILDCARD_PLACEHOLDER);
+    }
+
+    private static boolean isFontRelated(String key) {
+        return switch (key) {
+            case Style.FONT_CLASS,
+                 Style.FONT_FAMILIES,
+                 Style.FONT_SIZE,
+                 Style.FONT_WEIGHT,
+                 Style.FONT_STYLE,
+                 Style.TEXT_DECORATION_UNDERLINE,
+                 Style.TEXT_DECORATION_LINE_THROUGH,
+                 Style.FONT_VARIANT,
+                 Style.COLOR,
+                 Style.BACKGROUND_COLOR -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -601,22 +685,6 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             return primaryTag;
         }
 
-        private static boolean isFontRelated(String key) {
-            return switch (key) {
-                case Style.FONT_CLASS,
-                     Style.FONT_FAMILIES,
-                     Style.FONT_SIZE,
-                     Style.FONT_WEIGHT,
-                     Style.FONT_STYLE,
-                     Style.TEXT_DECORATION_UNDERLINE,
-                     Style.TEXT_DECORATION_LINE_THROUGH,
-                     Style.FONT_VARIANT,
-                     Style.COLOR,
-                     Style.BACKGROUND_COLOR -> true;
-                default -> false;
-            };
-        }
-
         private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
             Map<String, @Nullable Object> properties = new LinkedHashMap<>();
@@ -638,7 +706,18 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
                     FontDef fd = style.getFontDef();
                     if (isFontChange(fd)) {
-                        tags.add(HtmlTag.tag("<span style='" + fd.getCssStyle() + "'>", SPAN_CLOSE));
+                        Optional<HtmlTag> legacyFontTag = legacyFontTag(fd);
+                        legacyFontTag.ifPresent(tags::add);
+
+                        FontDef cssFontDef = fd;
+                        if (legacyFontTag.isPresent()) {
+                            cssFontDef = fd.copy();
+                            cssFontDef.setFamilies(null);
+                        }
+                        String cssStyle = cssFontDef.getCssStyle();
+                        if (!cssStyle.isEmpty()) {
+                            tags.add(HtmlTag.tag("<span style='" + cssStyle + "'>", SPAN_CLOSE));
+                        }
                         filterAttributes = entry -> !isFontRelated(entry.getKey());
                     }
 
@@ -651,6 +730,18 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
             refineStyleProperties.apply(properties).entrySet().stream().map(e -> HtmlConverter.this.get(e.getKey(), e.getValue())).forEach(tags::add);
             return tags;
+        }
+
+        private Optional<HtmlTag> legacyFontTag(FontDef fontDef) {
+            String family = fontDef.getFamily();
+            if (!useLegacyFontTags || family == null || family.isBlank()) {
+                return Optional.empty();
+            }
+
+            StringBuilder tag = new StringBuilder("<font face='");
+            TextUtil.appendHtmlEscapedCharacters(tag, family);
+            tag.append("'>");
+            return Optional.of(HtmlTag.tag(tag.toString(), "</font>"));
         }
 
         private boolean isFontChange(FontDef fd) {
@@ -667,6 +758,155 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         private static @Nullable Color normalizeBackgroundColor(@Nullable Color color) {
             return color != null && color.isTransparent() ? null : color;
+        }
+
+        @Override
+        protected void appendRun(Run run) {
+            InlineNode<?> inlineNode = findInlineNode(run);
+            if (inlineNode == null) {
+                appendChars(run);
+                return;
+            }
+
+            int segmentStart = 0;
+            for (int i = 0; i < run.length(); i++) {
+                if (run.charAt(i) != RichTextBuilderExtBase.INLINE_NODE_MARKER) {
+                    continue;
+                }
+
+                if (segmentStart < i) {
+                    appendChars(run.subSequence(segmentStart, i));
+                }
+                appendInlineNode(run, inlineNode);
+                segmentStart = i + 1;
+            }
+
+            if (segmentStart < run.length()) {
+                appendChars(run.subSequence(segmentStart, run.length()));
+            }
+        }
+
+        private boolean appendInlineNode(Run run, InlineNode<?> inlineNode) {
+            String mimeType = inlineNode.getMimeType();
+            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK.equals(mimeType)) {
+                RichTextBuilderExtBase.HyperlinkData data = RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData());
+                appendHyperlink(data.target(), data.text());
+                return true;
+            }
+            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(mimeType)) {
+                RichTextBuilderExtBase.ButtonData data = RichTextBuilderExtBase.decodeInlineButtonData(inlineNode.getData());
+                appendHyperlink(data.target(), data.text());
+                return true;
+            }
+
+            Image image = toImage(inlineNode);
+            return image != null && appendImage(run, image);
+        }
+
+        private void appendHyperlink(String target, String text) {
+            String label = text.isEmpty() ? target : text;
+            if (target.isEmpty()) {
+                TextUtil.appendHtmlEscapedCharacters(buffer, label);
+                return;
+            }
+
+            buffer.append("<a href='");
+            TextUtil.appendHtmlEscapedCharacters(buffer, target);
+            buffer.append("'>");
+            TextUtil.appendHtmlEscapedCharacters(buffer, label);
+            buffer.append("</a>");
+        }
+
+        private boolean appendImage(Run run, Image image) {
+            String imageData = encodeImageAsPng(image);
+            if (imageData == null) {
+                return false;
+            }
+
+            ImageDimensions dimensions = imageDimensions(run, image);
+            buffer.append("<img src='data:image/png;base64,")
+                    .append(imageData)
+                    .append("' width='")
+                    .append(dimensions.width())
+                    .append("' height='")
+                    .append(dimensions.height())
+                    .append("' alt=''>");
+            return true;
+        }
+
+        private static @Nullable InlineNode<?> findInlineNode(Run run) {
+            List<Style> styles = run.getStyles();
+            for (int i = styles.size() - 1; i >= 0; i--) {
+                Style style = styles.get(i);
+                Object factory = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY);
+                if (factory instanceof Function<?, ?> function) {
+                    try {
+                        @SuppressWarnings("unchecked")
+                        Function<String, ?> nodeFactory = (Function<String, ?>) function;
+                        Object node = nodeFactory.apply(run.toString());
+                        if (node instanceof InlineNode<?> inlineNode) {
+                            return inlineNode;
+                        }
+                    } catch (RuntimeException ignored) {
+                        // Try the static inline-node value or a less-specific style.
+                    }
+                }
+
+                Object node = style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE);
+                if (node instanceof InlineNode<?> inlineNode) {
+                    return inlineNode;
+                }
+            }
+            return null;
+        }
+
+        private static @Nullable Image toImage(InlineNode<?> inlineNode) {
+            try {
+                return InlineNode.decodeArgbImageData(inlineNode.getData());
+            } catch (IllegalArgumentException ignored) {
+                Object wrapped = inlineNode.getWrapped();
+                return wrapped instanceof Image image ? image : null;
+            }
+        }
+
+        private static @Nullable String encodeImageAsPng(Image image) {
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                ImageUtil.getInstance().write(image, out, ImageUtil.MIME_TYPE_PNG);
+                return Base64.getEncoder().encodeToString(out.toByteArray());
+            } catch (IOException | RuntimeException ignored) {
+                return null;
+            }
+        }
+
+        private static ImageDimensions imageDimensions(Run run, Image image) {
+            double width = image.width();
+            double height = image.height();
+            double maxWidth = findPositiveNumericStyleValue(run, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH);
+            double maxHeight = findPositiveNumericStyleValue(run, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT);
+            if (maxWidth > 0.0 || maxHeight > 0.0) {
+                double scaleX = maxWidth > 0.0 ? maxWidth / width : Double.POSITIVE_INFINITY;
+                double scaleY = maxHeight > 0.0 ? maxHeight / height : Double.POSITIVE_INFINITY;
+                double scale = Math.min(scaleX, scaleY);
+                if (Double.isFinite(scale) && scale > 0.0) {
+                    width *= scale;
+                    height *= scale;
+                }
+            }
+            return new ImageDimensions(
+                    Math.max(1, (int) Math.round(width)),
+                    Math.max(1, (int) Math.round(height))
+            );
+        }
+
+        private static double findPositiveNumericStyleValue(Run run, String attribute) {
+            List<Style> styles = run.getStyles();
+            for (int i = styles.size() - 1; i >= 0; i--) {
+                Object value = styles.get(i).get(attribute);
+                if (value instanceof Number number && number.doubleValue() > 0.0) {
+                    return number.doubleValue();
+                }
+            }
+            return 0.0;
         }
 
         @Override
@@ -701,6 +941,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         protected String get() {
             return buffer.toString();
         }
+
+        private record ImageDimensions(int width, int height) {}
     }
 
 }

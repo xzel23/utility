@@ -11,6 +11,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.Clipboard;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -242,6 +243,42 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
             editor.cut();
             assertEquals(" worldhello", editor.getText().toString());
             assertEquals("hello", FxUtil.getTextFromClipboard().orElseThrow().toString());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testCopyIncludesTheEditorDefaultFontInHtml() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("hello");
+            editor.setFont(FontUtil.getInstance().getFont("Arial-13"));
+            editor.selectAll();
+
+            editor.copy();
+
+            String html = Clipboard.getSystemClipboard().getHtml();
+            assertNotNull(html);
+            assertTrue(html.contains("<font face='Arial'"));
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testCopyUsesLegacyFontTagForInlineFontFamily() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("before InputControl after");
+            editor.setFont(FontUtil.getInstance().getFont("Verdana-13"));
+            editor.selectRange(7, 19);
+            editor.setFontFamily("Courier New");
+            assertEquals(List.of("Courier New"), editor.getText().attributesAt(7).get(Style.FONT_FAMILIES));
+            editor.selectAll();
+
+            editor.copy();
+
+            String html = Clipboard.getSystemClipboard().getHtml();
+            assertNotNull(html);
+            assertTrue(html.contains("<font face='Courier New'>InputControl</font>"), html);
+            assertFalse(html.contains("font-family: \"Courier New\""));
         });
     }
 
