@@ -235,6 +235,13 @@ could not be loaded.
 
 ## Changes
 
+### 23.1.2
+
+- FxUtil: improve compatibility of exported RTF and HTML with other software 
+- TextPane/TextEditorPane: fix blurred text when scaling
+- ObjectStore: add globbing support
+- minor improvements
+
 ### 23.1.1
 
 - add writeString(), readString(), readBytes(), transferTo() methods to ObjectStore classes.
