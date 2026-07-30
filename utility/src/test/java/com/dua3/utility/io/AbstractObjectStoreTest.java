@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -311,6 +312,55 @@ abstract class AbstractObjectStoreTest {
 
             assertFalse(depth1.contains(URI.create("a/b/c.txt")));
             assertTrue(depth1.contains(URI.create("a/d.txt")));
+        }
+    }
+
+    @Test
+    void glob_findsDataAndFoldersRelativeToTheStoreRoot() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            store.write(URI.create("reports/current/result.txt"), "current".getBytes(StandardCharsets.UTF_8));
+            store.write(URI.create("reports/current/result.json"), "current".getBytes(StandardCharsets.UTF_8));
+            store.write(URI.create("reports/archive/result.txt"), "archive".getBytes(StandardCharsets.UTF_8));
+            store.write(URI.create("reports/data%20file.txt"), "space".getBytes(StandardCharsets.UTF_8));
+
+            try (Stream<URI> matches = store.glob("reports/*")) {
+                assertEquals(
+                        List.of(URI.create("reports/archive/"), URI.create("reports/current/"), URI.create("reports/data%20file.txt")),
+                        matches.toList()
+                );
+            }
+
+            try (Stream<URI> matches = store.glob(URI.create("reports/current"), "*.txt")) {
+                assertEquals(List.of(URI.create("reports/current/result.txt")), matches.toList());
+            }
+
+            try (Stream<URI> matches = store.glob("reports/**/result.txt")) {
+                assertEquals(
+                        List.of(URI.create("reports/archive/result.txt"), URI.create("reports/current/result.txt")),
+                        matches.sorted().toList()
+                );
+            }
+
+            try (Stream<URI> matches = store.glob("reports/data%20*.txt")) {
+                assertEquals(List.of(URI.create("reports/data%20file.txt")), matches.toList());
+            }
+
+            try (Stream<URI> matches = store.glob("reports/current/result.json")) {
+                assertEquals(List.of(URI.create("reports/current/result.json")), matches.toList());
+            }
+
+            try (Stream<URI> matches = store.glob("reports/*.bin")) {
+                assertTrue(matches.toList().isEmpty());
+            }
+        }
+    }
+
+    @Test
+    void glob_rejectsPathsOutsideTheStore() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            assertThrows(IllegalPathException.class, () -> store.glob("/reports/*.txt"));
+            assertThrows(AbsolutePathException.class, () -> store.glob(URI.create("file:///tmp"), "*.txt"));
+            assertThrows(IllegalPathException.class, () -> store.glob(URI.create("../../outside"), "*.txt"));
         }
     }
 

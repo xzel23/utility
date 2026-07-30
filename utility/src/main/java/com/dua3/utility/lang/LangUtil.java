@@ -1564,6 +1564,25 @@ public final class LangUtil {
     }
 
     /**
+     * Interface similar to {@link java.util.function.Function} that declares thrown
+     * exceptions on its {@code apply()} method.
+     *
+     * @param <T> the argument type
+     * @param <E> the exception type
+     */
+    @FunctionalInterface
+    public interface PredicateThrows<T extends @Nullable Object, E extends Exception> {
+        /**
+         * Applies this function to the given argument.
+         *
+         * @param t the function argument
+         * @return the function result
+         * @throws E depending on implementation
+         */
+        boolean apply(T t) throws E;
+    }
+
+    /**
      * Represents a function that accepts two arguments and produces a result,
      * while allowing for a checked exception to be thrown.
      * This is a functional interface whose functional method is {@link #apply(Object, Object)}.

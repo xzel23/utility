@@ -1212,6 +1212,7 @@ public final class IoUtil {
         private final PrintStream sOut;
         private final PrintStream sErr;
 
+        @SuppressWarnings({"UseOfSystemOutOrSystemErr", "java:S106"})
         CleanupSystemStreams() {
             this.sOut = System.out;
             this.sErr = System.err;
@@ -1240,47 +1241,24 @@ public final class IoUtil {
      */
     public static Stream<Path> glob(Path base, String pattern) throws IOException {
         FileSystem fs = base.getFileSystem();
-
-        // Find the last path separator before the first glob character
-        int firstGlobCharIndex;
-        int lastDirSeparatorIndex;
-        if (fs.getSeparator().equals("\\")) {
-            // glob characters can't be escaped in this case
-            firstGlobCharIndex = findFirstGlobChar(pattern);
-            lastDirSeparatorIndex = pattern.lastIndexOf('/', firstGlobCharIndex);
-        } else {
-            // this should work for all path separators that aren't backslashes
-            firstGlobCharIndex = findFirstUnescapedGlobChar(pattern);
-            lastDirSeparatorIndex = pattern.lastIndexOf(fs.getSeparator(), firstGlobCharIndex);
-        }
-
-        // Find fixed part prefix of glob pattern
-        String fixedPart = (lastDirSeparatorIndex == -1)
-                ? ""
-                : pattern.substring(0, lastDirSeparatorIndex);
-
-        Path fixedPath = fs.getPath(fixedPart).normalize();
-        if (!fixedPath.isAbsolute()) {
-            fixedPath = base.resolve(fixedPath).toAbsolutePath().normalize();
-        }
-
-        String globPart = (lastDirSeparatorIndex == -1)
-                ? "/" + pattern
-                : pattern.substring(lastDirSeparatorIndex);
-
-        String globPattern = (fixedPath + globPart).replace(fs.getSeparator(), "/");
-
-        if (firstGlobCharIndex == pattern.length()) {
-            // fastpath: pattern does not contain glob characters
-            Path path = fs.getPath(globPattern);
-            return Files.exists(path) ? Stream.of(path).map(p -> normalizePath(base, p)) : Stream.empty();
-        }
-
-        PathMatcher pathMatcher = fs.getPathMatcher("glob:" + globPattern);
-        //noinspection resource: caller should clean up
-        return Files.walk(fixedPath)
-                .filter(pathMatcher::matches)
-                .map(p -> normalizePath(base, p));
+        GlobAdapter<Path> adapter = new GlobAdapter<>(
+                fs.getSeparator(),
+                (globBase, path) -> {
+                    Path resolved = fs.getPath(path).normalize();
+                    return resolved.isAbsolute()
+                            ? resolved
+                            : globBase.resolve(resolved).toAbsolutePath().normalize();
+                },
+                Files::exists,
+                Files::walk,
+                (fixedBase, globPart) -> {
+                    String globPattern = (fixedBase + globPart).replace(fs.getSeparator(), "/");
+                    PathMatcher pathMatcher = fs.getPathMatcher("glob:" + globPattern);
+                    return pathMatcher::matches;
+                },
+                IoUtil::normalizePath
+        );
+        return new Glob<>(adapter).glob(base, pattern);
     }
 
     /**
@@ -1294,22 +1272,6 @@ public final class IoUtil {
         // and relativize will throw an exception. To make sure all paths share a common root,
         // call relativize with absolute paths.
         return base.resolve(base.toAbsolutePath().relativize(p.toAbsolutePath())).normalize();
-    }
-
-    private static int findFirstGlobChar(String pattern) {
-        int idx = TextUtil.indexOfFirst(pattern, "*?[{");
-        return idx >= 0 ? idx : pattern.length();
-    }
-
-    private static int findFirstUnescapedGlobChar(String pattern) {
-        for (int i = 0; i < pattern.length(); i++) {
-            switch (pattern.charAt(i)) {
-                case '*', '?', '[', '{' -> {return i;}
-                case '\\' -> i++; // Skip over the escaped character
-                default -> { /* nothing to do */ }
-            }
-        }
-        return pattern.length();
     }
 
     /**

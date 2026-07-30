@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,26 @@ class PrefixedObjectStoreTest {
             }
             try (var objects = prefixed.list(URI.create(""))) {
                 assertEquals(List.of(URI.create("result.txt")), objects.map(ObjectStore.ObjectInfo::uri).toList());
+            }
+        }
+    }
+
+    @Test
+    void readableStoreGlobsRelativeToPrefix() throws Exception {
+        Path root = tempDir.resolve("readable-glob");
+        try (ObjectStore seed = ObjectStores.fileStore(root);
+             ReadableObjectStore delegate = ObjectStores.readableFileStore(root)) {
+            seed.write(URI.create("reports/current/result.txt"), "result".getBytes(StandardCharsets.UTF_8));
+            seed.write(URI.create("reports/current/archive/old.txt"), "old".getBytes(StandardCharsets.UTF_8));
+            seed.write(URI.create("reports/other/result.txt"), "other".getBytes(StandardCharsets.UTF_8));
+
+            ReadableObjectStore prefixed = delegate.prefixed(URI.create("reports/current"));
+
+            try (Stream<URI> matches = prefixed.glob("*.txt")) {
+                assertEquals(List.of(URI.create("result.txt")), matches.toList());
+            }
+            try (Stream<URI> matches = prefixed.glob(URI.create("archive"), "*.txt")) {
+                assertEquals(List.of(URI.create("archive/old.txt")), matches.toList());
             }
         }
     }

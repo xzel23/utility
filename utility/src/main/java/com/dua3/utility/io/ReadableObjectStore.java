@@ -9,6 +9,9 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -17,6 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -57,6 +61,102 @@ public interface ReadableObjectStore extends AutoCloseable {
      */
     default ReadableObjectStore prefixed(URI prefix) {
         return PrefixedObjectStores.readable(this, prefix);
+    }
+
+    /**
+     * Returns the objects matching a glob pattern relative to this store's root.
+     * <p>
+     * Pattern matching uses the {@code glob:} syntax defined by {@link PathMatcher}. The pattern is
+     * matched against each object's serialized relative URI. Therefore, reserved characters and literal
+     * glob characters in object names must be percent-encoded.
+     * <p>
+     * The returned stream can contain both folders and data objects. The caller must close it after use.
+     *
+     * @param pattern the relative glob pattern
+     * @return a stream of root-relative URIs matching {@code pattern}
+     * @throws IllegalPathException if the pattern is not a valid relative path in this store
+     * @throws IOException if an I/O error occurs while accessing the store
+     */
+    default Stream<URI> glob(String pattern) throws IOException {
+        return glob(URI.create(""), pattern);
+    }
+
+    /**
+     * Returns the objects matching a glob pattern relative to a path in this store.
+     * <p>
+     * Pattern matching uses the {@code glob:} syntax defined by {@link PathMatcher}. The pattern is
+     * matched against each object's serialized relative URI. Therefore, reserved characters and literal
+     * glob characters in object names must be percent-encoded.
+     * <p>
+     * The returned URIs remain relative to this store's root, rather than to {@code relativeUri}. The
+     * returned stream can contain both folders and data objects. The caller must close it after use.
+     *
+     * @param relativeUri the relative path used as the search base
+     * @param pattern the glob pattern relative to {@code relativeUri}
+     * @return a stream of root-relative URIs matching {@code pattern}
+     * @throws AbsolutePathException if {@code relativeUri} is absolute
+     * @throws IllegalPathException if {@code relativeUri} or {@code pattern} does not identify a path within this store
+     * @throws IOException if an I/O error occurs while accessing the store
+     */
+    default Stream<URI> glob(URI relativeUri, String pattern) throws IOException {
+        GlobAdapter<URI> adapter = new GlobAdapter<>(
+                "/",
+                ReadableObjectStore::resolveGlobPath,
+                uri -> getInfo(uri).isPresent(),
+                uri -> walk(uri).map(ObjectStore.ObjectInfo::uri),
+                ReadableObjectStore::uriGlobMatcher,
+                (ignored, uri) -> uri
+        );
+        return new Glob<>(adapter).glob(relativeUri, pattern);
+    }
+
+    private static URI resolveGlobPath(URI base, String path) throws IOException {
+        URI normalizedBase = validateRelativeGlobUri(base, "glob base");
+        if (path.startsWith("/")) {
+            throw new IllegalPathException("glob pattern must be relative: " + path);
+        }
+
+        URI relative;
+        try {
+            relative = URI.create(path);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalPathException("invalid glob pattern: " + path, e);
+        }
+        if (relative.isAbsolute() || relative.getRawAuthority() != null || relative.getQuery() != null
+                || relative.getFragment() != null || relative.getPath() == null || relative.getPath().startsWith("/")) {
+            throw new IllegalPathException("glob pattern must be a relative URI path: " + path);
+        }
+
+        if (path.isEmpty()) {
+            return normalizedBase;
+        }
+
+        String baseText = normalizedBase.toString();
+        URI folderBase = baseText.isEmpty() || baseText.endsWith("/") ? normalizedBase : URI.create(baseText + "/");
+        return validateRelativeGlobUri(folderBase.resolve(relative), "glob pattern");
+    }
+
+    private static URI validateRelativeGlobUri(URI uri, String description) throws IllegalPathException {
+        if (uri.isAbsolute()) {
+            throw new AbsolutePathException("absolute path not allowed: " + uri);
+        }
+
+        URI normalized = uri.normalize();
+        String path = normalized.getPath();
+        if (normalized.getRawAuthority() != null || normalized.getQuery() != null || normalized.getFragment() != null
+                || path == null || path.startsWith("/") || path.equals("..") || path.startsWith("../")) {
+            throw new IllegalPathException(description + " must identify a path within the object store: " + uri);
+        }
+        return normalized;
+    }
+
+    private static Predicate<URI> uriGlobMatcher(URI fixedBase, String globPart) {
+        String fixedPath = fixedBase.toString();
+        String globPattern = fixedPath.isEmpty() ? globPart.substring(1) : fixedPath + globPart;
+
+        String separator = FileSystems.getDefault().getSeparator();
+        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern.replace("/", separator));
+        return uri -> matcher.matches(Path.of(uri.toString().replace("/", separator)));
     }
 
     /**
