@@ -63,11 +63,13 @@ public class TextEditorPaneSample extends Application {
         editor.setToolbarLocation(DetachableNode.Location.EMBEDDED);
         editor.setPrefWidth(600);
         editor.setMaxHeight(1000);
+        editor.setMinHeight(100);
 
         TextPane liveDocumentPane = new TextPane();
         liveDocumentPane.setWrapText(true);
         liveDocumentPane.setPrefWidth(600);
         liveDocumentPane.setMaxHeight(1000);
+        liveDocumentPane.setMinHeight(100);
         ObjectBinding<RichText> liveDocumentBinding = Bindings.createObjectBinding(
                 editor::getDocumentText,
                 editor.documentVersionProperty()
@@ -79,6 +81,7 @@ public class TextEditorPaneSample extends Application {
         committedValuePane.setWrapText(true);
         committedValuePane.setPrefWidth(600);
         committedValuePane.setMaxHeight(1000);
+        committedValuePane.setMinHeight(100);
         committedValuePane.textProperty().bind(editor.valueProperty());
         committedValuePane.wrapTextProperty().bind(editor.wrapTextProperty());
         editor.setHyperlinkHandler(uri -> handleSampleUri(status, uri));
