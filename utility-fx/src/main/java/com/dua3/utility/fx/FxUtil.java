@@ -452,11 +452,14 @@ public final class FxUtil {
             RtfConverter.get().ifPresent(rtfConverter -> content.putRtf(rtfConverter.convert(text)));
 
             // HTML
+            /*
             HtmlConverter converter = HtmlConverter.create(
                     HtmlConverter.useCss(false),
                     HtmlConverter.convertLineBreaksTo("<br>\n")
             );
             content.putHtml(converter.convert(text));
+
+             */
         }
 
         // plain text

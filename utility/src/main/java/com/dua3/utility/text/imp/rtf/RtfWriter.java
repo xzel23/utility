@@ -34,7 +34,11 @@ import java.util.function.Function;
  */
 public final class RtfWriter extends AttributeBasedConverter<String> {
     private static final char[] HEX = "0123456789abcdef".toCharArray();
-    private static final String STYLE_NAME_METADATA_COMMAND = "userprops";
+    /*
+     * RTF control words may only contain letters. This deliberately uses a
+     * private, unknown destination so compliant readers ignore the metadata.
+     */
+    private static final String STYLE_NAME_METADATA_COMMAND = "duastyles";
     private static final String STYLE_NAME_METADATA_PREFIX = "DUA3STYLES:";
     private static final double TWIPS_PER_PIXEL = 15.0;
     private static final double POINTS_PER_TWIP = 1.0 / 20.0;

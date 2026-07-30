@@ -18,6 +18,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -384,7 +385,8 @@ class RtfConverterTest {
         String rtf = converter.fromRichText(expected);
         RichText actual = converter.toRichText(rtf);
 
-        assertTrue(rtf.contains("{\\*\\userprops DUA3STYLES:"), "missing style metadata group");
+        assertTrue(rtf.contains("{\\*\\duastyles DUA3STYLES:"), "missing style metadata group");
+        assertFalse(rtf.contains("\\userprops"), "style metadata must not use the standard userprops destination");
         assertTrue(actual.stylesAt(actual.indexOf("Bold")).stream().anyMatch(s -> "my-custom-bold".equals(s.name())));
     }
 

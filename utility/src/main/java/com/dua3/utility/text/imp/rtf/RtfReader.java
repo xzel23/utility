@@ -47,7 +47,8 @@ public final class RtfReader {
     private static final double DEFAULT_ASCENT_RATIO = 0.8;
     private static final double DEFAULT_DESCENT_RATIO = 0.2;
     private static final Pattern HYPERLINK_INSTRUCTION_PATTERN = Pattern.compile("(?i)\\bHYPERLINK\\b\\s+(?:\"((?>[^\"\\\\]|\\\\.)*)\"|(\\S+))");
-    private static final String METADATA_COMMAND = "userprops";
+    private static final String STYLE_NAME_METADATA_COMMAND = "duastyles";
+    private static final String LEGACY_STYLE_NAME_METADATA_COMMAND = "userprops";
     private static final String METADATA_PREFIX = "DUA3STYLES:";
     private static final String METADATA_INFO = "info";
     private static final String METADATA_LISTOVERRIDETABLE = "listoverridetable";
@@ -74,6 +75,14 @@ public final class RtfReader {
         StyledRtfParser parser = new StyledRtfParser();
         parser.parse(rtf);
         return parser.toRichText();
+    }
+
+    /**
+     * Makes the writer's private style-metadata destination visible to
+     * rtfparserkit, which silently discards unknown control words.
+     */
+    private static String normalizePrivateStyleNameMetadataDestination(String rtf) {
+        return rtf.replace("{\\*\\duastyles ", "{\\*\\userprops ");
     }
 
     @NullUnmarked
@@ -149,7 +158,8 @@ public final class RtfReader {
                 Object parser = parserClass.getDeclaredConstructor().newInstance();
 
                 Class<?> sourceClass = Class.forName(RTF_SOURCE_CLASS);
-                Object source = sourceClass.getDeclaredConstructor(String.class).newInstance(rtf);
+                String normalizedRtf = normalizePrivateStyleNameMetadataDestination(rtf);
+                Object source = sourceClass.getDeclaredConstructor(String.class).newInstance(normalizedRtf);
 
                 Class<?> sourceInterface = Class.forName(RTF_SOURCE_INTERFACE);
                 Class<?> listenerInterface = Class.forName(RTF_LISTENER_INTERFACE);
@@ -358,7 +368,7 @@ public final class RtfReader {
                 }
             }
 
-            if (METADATA_COMMAND.equals(command)) {
+            if (isStyleNameMetadataCommand(command)) {
                 inStyleNameMetadata = true;
                 styleNameMetadataDepth = groupDepth;
                 styleNameMetadataText.setLength(0);
@@ -1015,9 +1025,14 @@ public final class RtfReader {
                      METADATA_LISTTABLE,
                      METADATA_LISTOVERRIDETABLE,
                      METADATA_INFO,
-                     METADATA_COMMAND -> true;
+                     LEGACY_STYLE_NAME_METADATA_COMMAND -> true;
                 default -> false;
             };
+        }
+
+        private static boolean isStyleNameMetadataCommand(String command) {
+            return STYLE_NAME_METADATA_COMMAND.equals(command)
+                    || LEGACY_STYLE_NAME_METADATA_COMMAND.equals(command);
         }
 
         private static final class FieldState {
