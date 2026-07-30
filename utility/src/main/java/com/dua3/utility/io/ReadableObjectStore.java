@@ -154,9 +154,8 @@ public interface ReadableObjectStore extends AutoCloseable {
         String fixedPath = fixedBase.toString();
         String globPattern = fixedPath.isEmpty() ? globPart.substring(1) : fixedPath + globPart;
 
-        String separator = FileSystems.getDefault().getSeparator();
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern.replace("/", separator));
-        return uri -> matcher.matches(Path.of(uri.toString().replace("/", separator)));
+        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
+        return uri -> matcher.matches(Path.of(uri.toString()));
     }
 
     /**
