@@ -46,6 +46,7 @@ class TextPaneScaledPreferredHeightTest extends FxTestBase {
                     .orElseThrow();
             Node content = findDescendantWithStyleClass(scrollPane.getContent(), "content");
 
+            assertTrue(content.getTransforms().isEmpty(), "content must be laid out at display scale instead of transformed");
             assertTrue(
                     scrollPane.getViewportBounds().getHeight() >= content.getBoundsInParent().getHeight(),
                     () -> "viewport=" + scrollPane.getViewportBounds().getHeight()

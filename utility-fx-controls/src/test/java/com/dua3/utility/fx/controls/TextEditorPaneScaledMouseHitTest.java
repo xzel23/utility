@@ -23,7 +23,7 @@ class TextEditorPaneScaledMouseHitTest extends FxTestBase {
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
-    void hitTestUsesLogicalCoordinatesWhenDisplayIsScaled() throws Exception {
+    void hitTestUsesRenderedCoordinatesWhenDisplayIsScaled() throws Exception {
         runOnFxThreadAndWait(() -> {
             String text = "xxxAxxxBxxx " + "scaled hit testing ".repeat(80);
             TextEditorPane editor = new TextEditorPane(text);
@@ -38,8 +38,8 @@ class TextEditorPaneScaledMouseHitTest extends FxTestBase {
             editor.layout();
 
             Node content = findScaledContent(editor);
-            double logicalViewportWidth = findEditorScrollPane(editor).getViewportBounds().getWidth() / editor.getDisplayScale();
-            List<VisualLine> lines = editor.buildVisualLines(logicalViewportWidth);
+            double viewportWidth = findEditorScrollPane(editor).getViewportBounds().getWidth();
+            List<VisualLine> lines = editor.buildVisualLines(viewportWidth);
 
             VisualLine firstLine = lineForPosition(lines, text.indexOf('A'));
             double x = (RichTextVisualLayoutHelper.xForIndex(firstLine, 3)

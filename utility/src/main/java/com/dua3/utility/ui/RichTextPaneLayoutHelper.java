@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.ToDoubleFunction;
+import java.util.function.UnaryOperator;
 
 /**
  * A utility class for handling layouts related to rich text panes. Provides methods and data structures
@@ -176,6 +177,43 @@ public final class RichTextPaneLayoutHelper {
             BiFunction<? super Run, ? super Font, @Nullable I> inlineFactory,
             ToDoubleFunction<? super I> inlineWidthFunction
     ) {
+        return prepareLayout(
+                source,
+                font,
+                wrapText,
+                availableWidth,
+                inlineLeadingWidthStyleAttribute,
+                inlineFactory,
+                inlineWidthFunction,
+                UnaryOperator.identity()
+        );
+    }
+
+    /**
+     * Prepares a rich-text layout, applying a transformation to each resolved run font before
+     * it is measured or passed to the inline-node factory.
+     *
+     * @param <I>                            the type of inline objects created for processing run elements
+     * @param source                         the source rich text
+     * @param font                           the base font
+     * @param wrapText                       whether text should wrap
+     * @param availableWidth                 the available layout width
+     * @param inlineLeadingWidthStyleAttribute style attribute used for inline leading width
+     * @param inlineFactory                  factory for inline objects
+     * @param inlineWidthFunction            function measuring inline-object width
+     * @param fontTransform                  transformation applied after each run font is resolved
+     * @return the prepared layout
+     */
+    public static <I> LayoutPreparation prepareLayout(
+            RichText source,
+            Font font,
+            boolean wrapText,
+            double availableWidth,
+            String inlineLeadingWidthStyleAttribute,
+            BiFunction<? super Run, ? super Font, @Nullable I> inlineFactory,
+            ToDoubleFunction<? super I> inlineWidthFunction,
+            UnaryOperator<Font> fontTransform
+    ) {
         FontUtil fontUtil = FontUtil.getInstance();
         LayoutTextData layoutTextData = createLayoutTextData(
                 source,
@@ -183,14 +221,15 @@ public final class RichTextPaneLayoutHelper {
                 fontUtil,
                 inlineLeadingWidthStyleAttribute,
                 inlineFactory,
-                inlineWidthFunction
+                inlineWidthFunction,
+                fontTransform
         );
         float width = (float) Math.max(1.0, availableWidth);
         float wrapWidth = wrapText ? width : FragmentedText.NO_WRAP;
 
         RichText layoutText = layoutTextData.text();
-        FragmentedText layoutFragments = generateFragments(layoutText, fontUtil, font, width, wrapWidth);
-        FragmentedText renderFragments = generateFragments(createRenderedText(layoutText), fontUtil, font, width, wrapWidth);
+        FragmentedText layoutFragments = generateFragments(layoutText, fontUtil, font, width, wrapWidth, fontTransform);
+        FragmentedText renderFragments = generateFragments(createRenderedText(layoutText), fontUtil, font, width, wrapWidth, fontTransform);
         float renderWidth = wrapText ? width : Math.max(width, renderFragments.actualWidth());
 
         return new LayoutPreparation(layoutTextData, layoutFragments, renderFragments, renderWidth);
@@ -238,7 +277,8 @@ public final class RichTextPaneLayoutHelper {
             FontUtil fontUtil,
             String inlineLeadingWidthStyleAttribute,
             BiFunction<? super Run, ? super Font, @Nullable I> inlineFactory,
-            ToDoubleFunction<? super I> inlineWidthFunction
+            ToDoubleFunction<? super I> inlineWidthFunction,
+            UnaryOperator<Font> fontTransform
     ) {
         RichTextBuilder builder = new RichTextBuilder(source.length());
         List<Integer> layoutToSourceBoundaries = new ArrayList<>(source.length() + 1);
@@ -252,7 +292,7 @@ public final class RichTextPaneLayoutHelper {
 
             String text = run.toString();
             if (hasInlineNode(run)) {
-                Font runFont = fontUtil.deriveFont(baseFont, run.getFontDef());
+                Font runFont = fontTransform.apply(fontUtil.deriveFont(baseFont, run.getFontDef()));
                 I inline = inlineFactory.apply(run, runFont);
                 if (inline != null) {
                     Style leadingWidthStyle = null;
@@ -431,7 +471,8 @@ public final class RichTextPaneLayoutHelper {
             FontUtil fontUtil,
             Font font,
             float width,
-            float wrapWidth
+            float wrapWidth,
+            UnaryOperator<Font> fontTransform
     ) {
         return FragmentedText.generateFragments(
                 text,
@@ -443,7 +484,8 @@ public final class RichTextPaneLayoutHelper {
                 VerticalAlignment.TOP,
                 HAnchor.LEFT,
                 VAnchor.TOP,
-                wrapWidth
+                wrapWidth,
+                fontTransform
         );
     }
 }

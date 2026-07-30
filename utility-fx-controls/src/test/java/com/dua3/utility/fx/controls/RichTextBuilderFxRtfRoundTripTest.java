@@ -194,7 +194,7 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
                     .filter(s -> s.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE) != null)
                     .findFirst()
                     .orElseThrow();
-            inlineNodeHolder[0] = createInlineNode(run);
+            inlineNodeHolder[0] = createInlineNode(run, 1.0);
         });
 
         assertTrue(inlinePos >= 0, "missing inline node marker after RTF round trip");
@@ -298,11 +298,11 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
         return pattern.matcher(rtf).find();
     }
 
-    private static Node createInlineNode(Run run) {
+    private static Node createInlineNode(Run run, double scale) {
         try {
-            Method method = TextPane.class.getDeclaredMethod("createInlineNode", Run.class);
+            Method method = TextPane.class.getDeclaredMethod("createInlineNode", Run.class, double.class);
             method.setAccessible(true);
-            Object value = method.invoke(null, run);
+            Object value = method.invoke(null, run, scale);
             if (value == null) {
                 throw new IllegalStateException("createInlineNode returned null");
             }

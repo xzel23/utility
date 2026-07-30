@@ -130,6 +130,53 @@ public record FragmentedText(
             HAnchor hAnchor,
             VAnchor vAnchor,
             float wrapWidth) {
+        return generateFragments(
+                text,
+                fontUtil,
+                font,
+                width,
+                height,
+                hAlign,
+                vAlign,
+                hAnchor,
+                vAnchor,
+                wrapWidth,
+                UnaryOperator.identity()
+        );
+    }
+
+    /**
+     * Split text into fragments and layout according to alignment settings, transforming each
+     * resolved run font before measuring it.
+     *
+     * <p>The font transform is applied after a run's own style has been resolved. This permits a
+     * caller to apply a view-specific font scale without changing the document's font sizes.
+     *
+     * @param text          the text
+     * @param fontUtil      the {@link FontUtil} to use for generating fonts
+     * @param font          the default {@link Font}
+     * @param width         the height of the output area; used for horizontal alignment
+     * @param height        the height of the output area; used for vertical alignment
+     * @param hAlign        the horizontal alignment setting
+     * @param vAlign        the vertical alignment setting
+     * @param hAnchor       the horizontal anchor setting
+     * @param vAnchor       the vertical anchor setting
+     * @param wrapWidth     the width at which to apply wrapping; pass NO_WRAP to disable wrapping
+     * @param fontTransform transformation applied to each resolved run font
+     * @return the fragmented text as a {@code FragmentedText} instance
+     */
+    public static FragmentedText generateFragments(
+            RichText text,
+            FontUtil fontUtil,
+            Font font,
+            float width,
+            float height,
+            Alignment hAlign,
+            VerticalAlignment vAlign,
+            HAnchor hAnchor,
+            VAnchor vAnchor,
+            float wrapWidth,
+            UnaryOperator<Font> fontTransform) {
         boolean wrap = wrapWidth != Float.MAX_VALUE;
 
         UnaryOperator<RichText> trimLine = switch (hAlign) {
@@ -161,7 +208,7 @@ public record FragmentedText(
             for (int j = 0; j < parts.size(); j++) {
                 var run = parts.get(j);
 
-                Font f = fontUtil.deriveFont(font, run.getFontDef());
+                Font f = fontTransform.apply(fontUtil.deriveFont(font, run.getFontDef()));
                 Rectangle2f tr = fontUtil.getTextDimension(run, f);
                 if (wrapAllowed && xAct + tr.width() > wrapWidth) {
                     if (!fragments.isEmpty() && TextUtil.isBlank(fragments.getLast().text())) {
