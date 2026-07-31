@@ -267,6 +267,11 @@ public final class FileObjectStore implements ObjectStore {
         // nothing to close
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(root=" + rootUri + ", accessMode=" + accessMode + ")";
+    }
+
     /**
      * Resolves the given URI to a {@code Path} object relative to the root directory of the file object store.
      * This method ensures that the resolved path is within the bounds of the root directory and does not allow
