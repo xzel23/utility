@@ -108,6 +108,7 @@ public final class RtfReader {
 
         private static final Map<String, String> FONT_CLASS_BY_FAMILY = createFontClassByFamilyMap();
         private static final Base64.Decoder STYLE_NAMES_DECODER = Base64.getUrlDecoder();
+        private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
         private final RichTextBuilder builder = new RichTextBuilder();
         private final ArrayDeque<CharacterStyle> styleStack = new ArrayDeque<>();
@@ -485,7 +486,7 @@ public final class RtfReader {
                 }
                 case "fs" -> {
                     if (hasParameter && parameter > 0) {
-                        style.fontSize = parameter / 2f;
+                        style.fontSize = parameter / 2.0f;
                     }
                 }
                 case "up" -> style.baselineShiftHalfPoints = hasParameter ? Math.max(0, parameter) : 0;
@@ -570,7 +571,7 @@ public final class RtfReader {
                 int heightTwips = resolveDisplayDimensionTwips(pictureHeightGoalTwips, pictureNativeHeight, pictureScaleYPercent, image.height());
                 double widthPx = Math.max(1.0, widthTwips / TWIPS_PER_PIXEL);
                 double heightPx = Math.max(1.0, heightTwips / TWIPS_PER_PIXEL);
-                boolean scaled = Math.abs(widthPx - image.width()) > 1e-6 || Math.abs(heightPx - image.height()) > 1e-6;
+                boolean scaled = Math.abs(widthPx - image.width()) > 1.0e-6 || Math.abs(heightPx - image.height()) > 1e-6;
 
                 VAnchor vAnchor = deriveVAnchor(style.baselineShiftHalfPoints, heightTwips, style.fontSize);
                 appendInlineNodeMarker(inlineNode, vAnchor, scaled ? widthPx : null, scaled ? heightPx : null);
@@ -697,6 +698,7 @@ public final class RtfReader {
             return result.toString();
         }
 
+        @SuppressWarnings("NumericCastThatLosesPrecision")
         private static int resolveDisplayDimensionTwips(int goalTwips, int nativeUnits, int scalePercent, int fallbackPixels) {
             int safeScalePercent = Math.max(1, scalePercent);
             if (goalTwips > 0) {
@@ -704,20 +706,17 @@ public final class RtfReader {
                     return goalTwips;
                 }
 
-                int goalScaledTwips = Math.max(1, (int) Math.round(goalTwips * (safeScalePercent / 100.0)));
+                long goalScaledTwips = Math.max(1, Math.round(goalTwips * (safeScalePercent / 100.0)));
                 if (nativeUnits > 0) {
-                    int nativeGoalTwips = Math.max(1, (int) Math.round(nativeUnits * TWIPS_PER_PIXEL));
-                    int nativeScaledGoalTwips = Math.max(1, (int) Math.round(nativeGoalTwips * (safeScalePercent / 100.0)));
+                    long nativeGoalTwips = Math.max(1, Math.round(nativeUnits * TWIPS_PER_PIXEL));
+                    long nativeScaledGoalTwips = Math.max(1, Math.round(nativeGoalTwips * (safeScalePercent / 100.0)));
 
                     // Compatibility with RTF that already stores the scaled size in \pic*goal and also sets \picscale*.
                     if (Math.abs(goalTwips - nativeScaledGoalTwips) <= 1) {
                         return goalTwips;
                     }
-                    if (Math.abs(goalTwips - nativeGoalTwips) <= 1) {
-                        return goalScaledTwips;
-                    }
                 }
-                return goalScaledTwips;
+                return (int) goalScaledTwips;
             }
 
             int nativeValue = nativeUnits > 0 ? nativeUnits : Math.max(1, fallbackPixels);
@@ -991,10 +990,11 @@ public final class RtfReader {
             }
         }
 
+        @SuppressWarnings("NumericCastThatLosesPrecision")
         private static byte[] decodeHex(CharSequence hex) {
             int length = hex.length();
             if (length < 2) {
-                return new byte[0];
+                return EMPTY_BYTE_ARRAY;
             }
 
             int evenLength = length & ~1;
@@ -1003,7 +1003,7 @@ public final class RtfReader {
                 int high = Character.digit(hex.charAt(i), 16);
                 int low = Character.digit(hex.charAt(i + 1), 16);
                 if (high < 0 || low < 0) {
-                    return new byte[0];
+                    return EMPTY_BYTE_ARRAY;
                 }
                 result[i / 2] = (byte) ((high << 4) | low);
             }
@@ -1196,7 +1196,7 @@ public final class RtfReader {
             this.colorIndex = 0;
             this.backgroundColorIndex = 0;
             this.fontIndex = defaultFontIndex;
-            this.fontSize = -1f;
+            this.fontSize = -1.0f;
             this.baselineShiftHalfPoints = 0;
         }
 

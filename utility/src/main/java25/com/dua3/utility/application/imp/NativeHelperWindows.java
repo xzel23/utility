@@ -88,6 +88,11 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
         private static final NativeHelperWindows INSTANCE = new NativeHelperWindows();
     }
 
+    /**
+     * Get the singleton instance of NativeHelperWindows.
+     *
+     * @return the singleton instance
+     */
     public static NativeHelperWindows getInstance() {
         return Holder.INSTANCE;
     }

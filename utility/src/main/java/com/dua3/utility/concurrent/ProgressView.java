@@ -136,6 +136,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
         LOG.trace("task {} updated: {}/{}", task, done, total);
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Override
     public void update(T task, double percentDone) {
         boolean indeterminate = isIndeterminate(percentDone);

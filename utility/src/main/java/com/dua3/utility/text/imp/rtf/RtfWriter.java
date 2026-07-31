@@ -47,6 +47,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
     private static final double DEFAULT_ASCENT_RATIO = 0.8;
     private static final double DEFAULT_DESCENT_RATIO = 0.2;
     private static final Base64.Encoder STYLE_NAMES_ENCODER = Base64.getUrlEncoder().withoutPadding();
+    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
     private final Map<String, Integer> fontIndexByName;
     private final Map<Color, Integer> colorIndexByColor;
 
@@ -167,8 +168,8 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             }
 
             Float size = fontDef.getSize();
-            if (size != null && size > 0f) {
-                appendControlWord("fs", Math.max(1, Math.round(size * 2f)));
+            if (size != null && size > 0.0f) {
+                appendControlWord("fs", Math.max(1, Math.round(size * 2.0f)));
             }
 
             Color color = fontDef.getColor();
@@ -524,7 +525,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                 ImageUtil.getInstance().write(image, out, ImageUtil.MIME_TYPE_PNG);
                 return out.toByteArray();
             } catch (IOException | RuntimeException ex) {
-                return new byte[0];
+                return EMPTY_BYTE_ARRAY;
             }
         }
 
@@ -557,7 +558,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
 
             int scaleXPercent = Math.max(1, (int) Math.round(width * 100.0 / nativeWidth));
             int scaleYPercent = Math.max(1, (int) Math.round(height * 100.0 / nativeHeight));
-            boolean scaled = Math.abs(width - nativeWidth) > 1e-6 || Math.abs(height - nativeHeight) > 1e-6;
+            boolean scaled = Math.abs(width - nativeWidth) > 1.0e-6 || Math.abs(height - nativeHeight) > 1.0e-6;
             return new PictureTarget(widthGoalTwips, heightGoalTwips, displayWidthTwips, displayHeightTwips, scaleXPercent, scaleYPercent, scaled);
         }
 

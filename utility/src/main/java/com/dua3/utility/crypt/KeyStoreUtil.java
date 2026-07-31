@@ -38,6 +38,8 @@ import java.util.Set;
 public final class KeyStoreUtil {
     private static final Logger LOG = LogManager.getLogger(KeyStoreUtil.class);
 
+    private static final Certificate[] EMPTY_CERTIFICATE_ARRAY = new Certificate[0];
+
     static {
         // make sure BouncyCastle is loaded
         try {
@@ -220,7 +222,7 @@ public final class KeyStoreUtil {
                 lastCert = parent;
             }
 
-            return extendedChain.toArray(new Certificate[0]);
+            return extendedChain.toArray(EMPTY_CERTIFICATE_ARRAY);
         } catch (KeyStoreException e) {
             throw new GeneralSecurityException("Failed to reconstruct certificate chain", e);
         }

@@ -72,6 +72,11 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
         }
     }
 
+    /**
+     * Get the singleton instance of DarkModeDetectorWindows.
+     *
+     * @return the singleton instance
+     */
     public static DarkModeDetector getInstance() {
         return Holder.INSTANCE;
     }

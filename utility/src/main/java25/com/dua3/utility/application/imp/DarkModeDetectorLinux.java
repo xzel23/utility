@@ -66,6 +66,11 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
         }
     }
 
+    /**
+     * Get the singleton instance of DarkModeDetectorLinux.
+     *
+     * @return the singleton instance
+     */
     public static DarkModeDetector getInstance() {
         return Holder.INSTANCE;
     }
