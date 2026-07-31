@@ -10,6 +10,8 @@ import com.dua3.utility.io.ObjectNotFoundException;
 import com.dua3.utility.io.ObjectStore;
 import com.dua3.utility.io.ReadableObjectStore;
 import com.dua3.utility.io.WritableObjectStore;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +44,9 @@ import java.util.stream.Stream;
  * by multiple threads concurrently.
  */
 public final class FileObjectStore implements ObjectStore {
+    private static final Logger LOG = LogManager.getLogger(FileObjectStore.class);
+
+    private static final StandardCopyOption[] EMPTY_STANDARD_COPY_OPTIONS = {};
 
     private final Path root;
     private final URI rootUri;
@@ -59,6 +64,7 @@ public final class FileObjectStore implements ObjectStore {
         this.root = Files.createDirectories(root).toAbsolutePath().normalize();
         this.rootUri = this.root.toUri();
         this.accessMode = accessMode;
+        LOG.debug("Created FileObjectStore with root {}", root);
     }
 
     /**
@@ -94,13 +100,14 @@ public final class FileObjectStore implements ObjectStore {
         return new FileObjectStore(root, AccessMode.READ_AND_WRITE);
     }
 
+    @SuppressWarnings("SuspiciousGetterSetter")
     @Override
     public URI getRoot() {
         return rootUri;
     }
 
     @Override
-    @SuppressWarnings({"java:S2095", "resource"}) // caller closes the stream
+    @SuppressWarnings({"java:S2095", "resource", "OverlyBroadThrowsClause"}) // caller closes the stream
     public Stream<ObjectInfo> list(URI path) throws IOException {
         assertReadable();
 
@@ -122,6 +129,7 @@ public final class FileObjectStore implements ObjectStore {
         }
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public long write(URI path, InputStream in, OutputOption... options) throws IOException {
         assertWritable();
@@ -130,7 +138,7 @@ public final class FileObjectStore implements ObjectStore {
         OutputOption effectiveOption = ensureCanWrite(resolved, options);
         StandardCopyOption[] copyOptions = effectiveOption == OutputOption.CREATE_OR_REPLACE
                 ? new StandardCopyOption[]{StandardCopyOption.REPLACE_EXISTING}
-                : new StandardCopyOption[]{};
+                : EMPTY_STANDARD_COPY_OPTIONS;
 
         createParent(resolved);
         return Files.copy(in, resolved, copyOptions);
@@ -150,6 +158,7 @@ public final class FileObjectStore implements ObjectStore {
         return length;
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public InputStream openInputStream(URI path) throws IOException {
         assertReadable();
@@ -164,6 +173,7 @@ public final class FileObjectStore implements ObjectStore {
         return Files.newInputStream(resolved, StandardOpenOption.READ);
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public OutputStream openOutputStream(URI path, OutputOption... options) throws IOException {
         assertWritable();
@@ -178,6 +188,7 @@ public final class FileObjectStore implements ObjectStore {
         return Files.newOutputStream(resolved, soo);
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public void createFolder(URI path) throws IOException {
         assertWritable();
@@ -189,6 +200,7 @@ public final class FileObjectStore implements ObjectStore {
         Files.createDirectories(resolved);
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public void removeFolder(URI path) throws IOException {
         assertWritable();
@@ -207,6 +219,7 @@ public final class FileObjectStore implements ObjectStore {
         }
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public Optional<ObjectInfo> getInfo(URI path) throws IOException {
         assertReadable();
@@ -218,6 +231,7 @@ public final class FileObjectStore implements ObjectStore {
         return Optional.of(toObjectInfo(resolved));
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public void delete(URI path) throws IOException {
         assertWritable();
@@ -233,6 +247,7 @@ public final class FileObjectStore implements ObjectStore {
         }
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public void deleteRecursively(URI path) throws IOException {
         assertWritable();
@@ -264,6 +279,7 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public void close() {
+        LOG.debug("Closing FileObjectStore with root {}", root);
         // nothing to close
     }
 
@@ -282,6 +298,7 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IllegalPathException if the provided URI is invalid, absolute, or resolves to a path outside the root
      * @throws AbsolutePathException if the provided URI is absolute
      */
+    @SuppressWarnings("OverlyBroadThrowsClause")
     private Path resolve(URI path) throws IllegalPathException {
         if (path.isAbsolute()) {
             throw new AbsolutePathException("absolute path not allowed: " + path);
@@ -315,7 +332,8 @@ public final class FileObjectStore implements ObjectStore {
      * @throws ObjectExistsException if the specified path exists and the output option is {@code OutputOption.CREATE_NEW}
      *
      */
-    private OutputOption ensureCanWrite(Path path, OutputOption... options) throws IOException {
+    @SuppressWarnings("OverlyBroadThrowsClause")
+    private static OutputOption ensureCanWrite(Path path, OutputOption... options) throws IOException {
         Set<OutputOption> optionSet = Set.of(options);
         OutputOption outputOption = switch (optionSet.size()) {
             case 0 -> OutputOption.CREATE_NEW;
