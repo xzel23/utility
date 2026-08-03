@@ -235,6 +235,10 @@ could not be loaded.
 
 ## Changes
 
+### 23.1.3
+
+- workaround for Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS) problem with File deduplication on SMB shares
+
 ### 23.1.2
 
 - FxUtil: improve compatibility of exported RTF and HTML with other software 

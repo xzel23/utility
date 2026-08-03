@@ -21,7 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
@@ -42,6 +41,8 @@ import java.util.stream.Stream;
  * <p>
  * This class is immutable and thread-safe, meaning its methods can be called safely
  * by multiple threads concurrently.
+ * <p>
+ * <strong>Note:</strong> This implementation does not support symbolic links.
  */
 public final class FileObjectStore implements ObjectStore {
     private static final Logger LOG = LogManager.getLogger(FileObjectStore.class);
@@ -113,11 +114,14 @@ public final class FileObjectStore implements ObjectStore {
 
         Path resolved = resolve(path);
 
-        if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (Files.notExists(resolved)) {
             throw new ObjectNotFoundException(String.valueOf(path));
         }
-        if (!Files.isDirectory(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (!Files.isDirectory(resolved)) {
             throw new NotAFolderException(String.valueOf(path));
+        }
+        if (Files.isSymbolicLink(resolved)) {
+            throw new IOException("Directory is a symbolic link: " + path);
         }
 
         try {
@@ -164,11 +168,14 @@ public final class FileObjectStore implements ObjectStore {
         assertReadable();
 
         Path resolved = resolve(path);
-        if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (Files.notExists(resolved)) {
             throw new ObjectNotFoundException(String.valueOf(path));
         }
-        if (!Files.isRegularFile(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (!Files.isRegularFile(resolved)) {
             throw new IOException("not a data object: " + path);
+        }
+        if (Files.isSymbolicLink(resolved)) {
+            throw new IOException("File is a symbolic link: " + path);
         }
         return Files.newInputStream(resolved, StandardOpenOption.READ);
     }
@@ -194,7 +201,7 @@ public final class FileObjectStore implements ObjectStore {
         assertWritable();
 
         Path resolved = resolve(path);
-        if (Files.exists(resolved, LinkOption.NOFOLLOW_LINKS) && !Files.isDirectory(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (Files.exists(resolved) && !Files.isDirectory(resolved)) {
             throw new NotAFolderException(String.valueOf(path));
         }
         Files.createDirectories(resolved);
@@ -206,10 +213,10 @@ public final class FileObjectStore implements ObjectStore {
         assertWritable();
 
         Path resolved = resolve(path);
-        if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (Files.notExists(resolved)) {
             throw new ObjectNotFoundException(String.valueOf(path));
         }
-        if (!Files.isDirectory(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (!Files.isDirectory(resolved)) {
             throw new NotAFolderException(String.valueOf(path));
         }
         try {
@@ -225,8 +232,11 @@ public final class FileObjectStore implements ObjectStore {
         assertReadable();
 
         Path resolved = resolve(path);
-        if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (Files.notExists(resolved)) {
             return Optional.empty();
+        }
+        if (Files.isSymbolicLink(resolved)) {
+            throw new IOException("URI points to a symbolic link: " + path);
         }
         return Optional.of(toObjectInfo(resolved));
     }
@@ -237,7 +247,7 @@ public final class FileObjectStore implements ObjectStore {
         assertWritable();
 
         Path resolved = resolve(path);
-        if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (Files.notExists(resolved)) {
             throw new ObjectNotFoundException(String.valueOf(path));
         }
         try {
@@ -254,7 +264,7 @@ public final class FileObjectStore implements ObjectStore {
 
         Path resolved = resolve(path);
 
-        if (Files.notExists(resolved, LinkOption.NOFOLLOW_LINKS)) {
+        if (Files.notExists(resolved)) {
             throw new ObjectNotFoundException(String.valueOf(path));
         }
 
@@ -341,11 +351,14 @@ public final class FileObjectStore implements ObjectStore {
             default -> throw new IllegalArgumentException("multiple incompatible output options specified: " + Arrays.toString(options));
         };
 
-        if (Files.exists(path, LinkOption.NOFOLLOW_LINKS) && outputOption == OutputOption.CREATE_NEW) {
+        if (Files.exists(path) && outputOption == OutputOption.CREATE_NEW) {
             throw new ObjectExistsException(path.toString());
         }
-        if (Files.exists(path, LinkOption.NOFOLLOW_LINKS) && Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+        if (Files.exists(path) && Files.isDirectory(path)) {
             throw new IOException("cannot write to folder: " + path);
+        }
+        if (Files.isSymbolicLink(path)) {
+            throw new IOException("Path is a symbolic link: " + path);
         }
 
         return outputOption;
@@ -360,7 +373,7 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException if an I/O error occurs while reading file attributes
      */
     private ObjectInfo toObjectInfo(Path path) throws IOException {
-        BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+        BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
         Path relativePath = root.relativize(path);
         String normalized = IoUtil.toUnixPath(relativePath);
         if (attributes.isDirectory() && !normalized.isEmpty() && !normalized.endsWith("/")) {
