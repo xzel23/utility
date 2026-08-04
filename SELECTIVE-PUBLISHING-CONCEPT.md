@@ -253,8 +253,9 @@ After Maven Central publication succeeds:
 1. Verify that every expected BOM and module artifact is available in the target repository.
 2. Promote the prepared plan to `gradle/release-state.toml`, updating the BOM and selected modules' published
    versions and source revisions, and remove the prepared plan.
-3. Commit the published state, then create and push a Git tag for the BOM/release version.
-4. Optionally record publication timestamps and repository URLs in a separate immutable release history file.
+3. Advance the development `projectVersion` to the next patch snapshot.
+4. Commit the published state, then create and push a Git tag for the BOM/release version.
+5. Optionally record publication timestamps and repository URLs in a separate immutable release history file.
 
 The release tag therefore always means that the named artifacts are published and available. A transport failure with
 an unambiguous staging/deployment outcome may retry the exact prepared plan. If any Maven Central coordinate was

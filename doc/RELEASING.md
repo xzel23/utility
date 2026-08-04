@@ -1,154 +1,94 @@
 # Releasing
 
-This document describes the process for releasing new versions of the utility libraries.
+The utility build publishes a coherent BOM on every release. Major and minor releases publish every library module;
+patch releases publish only changed modules and the BOM. The BOM constrains each module to the version that actually
+exists in Maven Central.
+
+`gradle/release-state.toml` records the last successfully published version and source revision of every library
+module. `gradle/prepared-release.toml` is a short-lived, committed candidate plan. It is the only source of truth for
+staging and publishing a prepared release.
 
 ## Prerequisites
 
-Before you can release a new version, you need to have the following:
+- A clean checkout on the release branch, with the required source revisions available locally.
+- Maven Central and signing credentials available only in the protected release environment. The build reads
+  `SONATYPE_USERNAME`, `SONATYPE_PASSWORD`, `SIGNING_PUBLIC_KEY`, `SIGNING_SECRET_KEY`, and `SIGNING_PASSWORD`.
+- A complete Gradle test environment, including the configured JDK toolchains.
 
-1. A GPG key for signing the artifacts
-2. Access to the Sonatype Central Publisher Portal
-3. The following variables set in your `~/.gradle/gradle.properties` file:
-    - `sonatypeUsername`: Your Sonatype Central Publisher Portal username
-    - `sonatypePassword`: Your Sonatype Central Publisher Portal password
-    - `signing.keyId`: Your GPG key ID (last 8 characters of the key ID)
-    - `signing.password`: Your GPG key passphrase
-    - `signing.secretKeyRingFile`: Path to your GPG secret key ring file
+## Prepare a release
 
-## Release Process
-
-The release process uses [JReleaser](https://jreleaser.org/) to automate the release process. JReleaser handles the
-following tasks:
-
-1. Signing the artifacts
-2. Uploading the artifacts to Maven Central
-3. Closing and releasing the staging repository
-
-### Steps to Release
-
-1. **Prepare the Release**
-
-   Update the `projectVersion` version in `gradle/version.toml` to a non-SNAPSHOT version:
-
-   ```toml
-   projectVersion = "X.Y.Z" # Replace X.Y.Z with the version you want to release
-   ```
-
-2. **Commit and Tag the Release**
-
-   ```bash
-   git add gradle/version.toml
-   git commit -m "Release version X.Y.Z"
-   git tag -a vX.Y.Z -m "Release version X.Y.Z"
-   ```
-
-3. **Build the Project**
-
-   ```bash
-   ./gradlew clean build
-   ```
-
-4. **Publish to Maven Central**
-
-   ```bash
-   ./gradlew jreleaserDeploy
-   ```
-
-   This command will:
-    - Build the project
-    - Sign the artifacts
-    - Upload the artifacts to Maven Central
-    - Close and release the staging repository
-
-5. **Verify the Release**
-
-   Check that the artifacts are available on Maven Central:
-   https://repo1.maven.org/maven2/com/dua3/utility/
-
-6. **Prepare for Next Development Iteration**
-
-   Update the `projectVersion` version in `gradle/version.toml` to the next SNAPSHOT version:
-
-   ```toml
-   projectVersion = "X.Y.Z-SNAPSHOT" # Replace X.Y.Z with the next version
-   ```
-
-7. **Commit the Changes**
-
-   ```bash
-   git add gradle/version.toml
-   git commit -m "Prepare for next development iteration"
-   git push
-   git push --tags
-   ```
-
-## Publishing Snapshots
-
-Snapshots are development versions that can be published to the Sonatype Snapshots repository for testing before an
-official release.
-
-### Prerequisites
-
-The prerequisites for publishing snapshots are the same as for releasing:
-
-1. A GPG key for signing the artifacts (optional for snapshots)
-2. Access to the Sonatype Central Publisher Portal
-3. The following variables set in your `~/.gradle/gradle.properties` file:
-    - `sonatypeUsername`: Your Sonatype Central Publisher Portal username
-    - `sonatypePassword`: Your Sonatype Central Publisher Portal password
-    - `signing.keyId`: Your GPG key ID (last 8 characters of the key ID)
-    - `signing.password`: Your GPG key passphrase
-    - `signing.secretKeyRingFile`: Path to your GPG secret key ring file
-
-### Steps to Publish Snapshots
-
-1. **Ensure the Version is a SNAPSHOT Version**
-
-   Make sure the `projectVersion` version in `gradle/version.toml` is a SNAPSHOT version:
-
-   ```toml
-   projectVersion = "X.Y.Z-SNAPSHOT" # Replace X.Y.Z with the version you want to publish
-   ```
-
-2. **Build the Project**
-
-   ```bash
-   ./gradlew clean build
-   ```
-
-3. **Publish to Sonatype Snapshots Repository**
-
-   ```bash
-   ./gradlew publish
-   ```
-
-   This command will:
-    - Build the project
-    - Sign the artifacts (if configured)
-    - Upload the artifacts to the Sonatype Snapshots repository
-
-4. **Verify the Snapshot**
-
-   Check that the artifacts are available on the Sonatype Snapshots repository:
-   https://central.sonatype.com/repository/maven-snapshots/com/dua3/utility/
-
-## Advanced Configuration
-
-### Generating JReleaser Configuration
-
-You can generate a JReleaser configuration file for reference by running:
+First review a dry-run plan. The release type is required; `releaseVersion` is optional when the conventional next
+version is wanted.
 
 ```bash
-./gradlew generateJReleaserConfig
+./gradlew prepareRelease -PreleaseType=patch
+./gradlew prepareRelease -PreleaseType=minor
+./gradlew prepareRelease -PreleaseType=major -PreleaseVersion=24.0.0
 ```
 
-This will create a `jreleaser-config.yml` file in the project root directory that contains the complete JReleaser
-configuration. You can use this file as a reference to understand the JReleaser configuration or to customize it
-further.
+The task validates the Git history, scoped changes, release-line version, and Maven Central coordinate availability.
+For a patch release it fails when no library changed; it will not create a BOM-only release. Use
+`-PadditionalReleaseModules=module-a,module-b` only when an unchanged dependent must publish a new minimum internal
+dependency version.
 
-## Troubleshooting
+After reviewing the output, persist the exact candidate plan:
 
-If you encounter issues during the release process, you can check the JReleaser logs in the `build/jreleaser` directory.
+```bash
+./gradlew prepareRelease -PreleaseType=patch -PconfirmRelease=true
+git add gradle/prepared-release.toml
+git commit -m "Prepare release X.Y.Z"
+```
 
-For more detailed information about JReleaser, see
-the [JReleaser documentation](https://jreleaser.org/guide/latest/index.html).
+Run subsequent release commands in a new Gradle invocation so the committed plan is used to configure the BOM and
+every module version.
+
+## Verify, stage, and publish
+
+```bash
+./gradlew verifyPreparedRelease checkReleaseCompatibility
+./gradlew stagePreparedRelease
+./gradlew publishPreparedRelease
+```
+
+`checkReleaseCompatibility` is mandatory for a patch release. It compares each selected module's public/protected
+binary API and module descriptor with its own last Maven Central artifact. `stagePreparedRelease` runs the full
+library test suite, clears stale staging output, and stages only the selected libraries plus the BOM.
+`publishPreparedRelease` then invokes JReleaser to deploy that staged set to Maven Central.
+
+Do not create the final release tag at preparation time.
+
+## Finalize
+
+After Maven Central exposes every expected BOM and module artifact, finalize the release:
+
+```bash
+./gradlew finalizeRelease -PconfirmFinalize=true
+```
+
+This updates `gradle/release-state.toml`, advances `projectVersion` in `gradle/version.toml` to the next patch
+snapshot, removes the prepared plan, commits the published state, and creates the annotated `vX.Y.Z` tag. To push
+the new commit and tag from a protected environment, add
+`-PpushReleaseTag=true -PreleaseBranch=main` (substitute the protected release branch).
+
+If Maven Central deployment succeeds but finalization fails, rerun `finalizeRelease`; it can create a missing final
+tag without republishing artifacts. If deployment is interrupted, first determine whether any target coordinate was
+accepted. Retry the same prepared plan only when the Central outcome clearly permits it. Once any coordinate has been
+accepted, it is immutable: prepare a corrected release with a new patch version.
+
+## Snapshot development
+
+Snapshots are intentionally not uploaded to Maven Central. All library modules and the BOM can be published to the
+local Maven repository with:
+
+```bash
+./gradlew publishSnapshotsToMavenLocal
+```
+
+Normal development continues to use the `projectVersion` snapshot in `gradle/version.toml`. A prepared release plan
+overrides that development version only for the release build.
+
+## Release CI
+
+`.github/workflows/release.yml` is the only workflow that receives Maven Central and signing credentials. Dispatch it
+for the protected branch that contains the committed prepared plan. It publishes the plan and then finalizes the
+published state and tag; ordinary CI never receives release credentials or modifies release files.

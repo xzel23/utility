@@ -1,0 +1,57 @@
+name: Publish prepared release
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Protected branch containing the committed prepared-release plan'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish prepared release
+    runs-on: ubuntu-latest
+    environment: maven-central-release
+    steps:
+      - name: Check out prepared release
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+
+      - name: Set up JDKs
+        uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: |
+            21
+            25
+          java-package: jdk+fx
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Configure Git identity for finalization
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Publish prepared release
+        run: ./gradlew --no-daemon --build-cache publishPreparedRelease
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SIGNING_PUBLIC_KEY: ${{ secrets.SIGNING_PUBLIC_KEY }}
+          SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+
+      - name: Finalize published release
+        run: >
+          ./gradlew --no-daemon finalizeRelease
+          -PconfirmFinalize=true
+          -PpushReleaseTag=true
+          -PreleaseBranch=${{ inputs.branch }}

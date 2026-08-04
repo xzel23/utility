@@ -1,5 +1,12 @@
 project.description = "Bill of Materials (BOM) for utility libraries"
 
+@Suppress("UNCHECKED_CAST")
+val releaseModuleVersions = gradle.extra["releaseModuleVersions"] as Map<String, String>
+
+fun releaseModuleVersion(moduleName: String): String =
+    releaseModuleVersions[moduleName]
+        ?: throw GradleException("no release version configured for module '$moduleName'")
+
 plugins {
     id("java-platform")
     id("maven-publish")
@@ -8,15 +15,15 @@ plugins {
 dependencies {
     constraints {
         // Define constraints for all utility modules
-        api("com.dua3.utility:utility:${project.version}")
-        api("com.dua3.utility:utility-db:${project.version}")
-        api("com.dua3.utility:utility-swing:${project.version}")
-        api("com.dua3.utility:utility-fx:${project.version}")
-        api("com.dua3.utility:utility-fx-icons:${project.version}")
-        api("com.dua3.utility:utility-fx-icons-ikonli:${project.version}")
-        api("com.dua3.utility:utility-fx-controls:${project.version}")
-        api("com.dua3.utility:utility-fx-db:${project.version}")
-        api("com.dua3.utility:utility-fx-web:${project.version}")
+        api("com.dua3.utility:utility:${releaseModuleVersion("utility")}")
+        api("com.dua3.utility:utility-db:${releaseModuleVersion("utility-db")}")
+        api("com.dua3.utility:utility-swing:${releaseModuleVersion("utility-swing")}")
+        api("com.dua3.utility:utility-fx:${releaseModuleVersion("utility-fx")}")
+        api("com.dua3.utility:utility-fx-icons:${releaseModuleVersion("utility-fx-icons")}")
+        api("com.dua3.utility:utility-fx-icons-ikonli:${releaseModuleVersion("utility-fx-icons-ikonli")}")
+        api("com.dua3.utility:utility-fx-controls:${releaseModuleVersion("utility-fx-controls")}")
+        api("com.dua3.utility:utility-fx-db:${releaseModuleVersion("utility-fx-db")}")
+        api("com.dua3.utility:utility-fx-web:${releaseModuleVersion("utility-fx-web")}")
 
         // Common dependencies
         api(rootProject.libs.jspecify)

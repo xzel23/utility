@@ -1,5 +1,8 @@
 /bin
 **/.*
+!.github/
+!.github/workflows/
+!.github/workflows/release.yml
 **/build
 **/bin
 **/out
