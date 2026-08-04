@@ -12,6 +12,7 @@ import com.dua3.utility.io.ReadableObjectStore;
 import com.dua3.utility.io.WritableObjectStore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
@@ -108,24 +110,11 @@ public final class FileObjectStore implements ObjectStore {
     }
 
     @Override
-    @SuppressWarnings({"java:S2095", "resource", "OverlyBroadThrowsClause"}) // caller closes the stream
+    @SuppressWarnings({"java:S2095", "resource"}) // caller closes the stream
     public Stream<ObjectInfo> list(URI path) throws IOException {
         assertReadable();
-
-        Path resolved = resolve(path);
-
-        if (Files.notExists(resolved)) {
-            throw new ObjectNotFoundException(String.valueOf(path));
-        }
-        if (!Files.isDirectory(resolved)) {
-            throw new NotAFolderException(String.valueOf(path));
-        }
-        if (Files.isSymbolicLink(resolved)) {
-            throw new IOException("Directory is a symbolic link: " + path);
-        }
-
         try {
-            return Files.list(resolved)
+            return Files.list(resolveRegularFolder(path))
                     .sorted(Comparator.comparing(Path::getFileName, Comparator.comparing(Path::toString)))
                     .map(this::toObjectInfoUnchecked);
         } catch (UncheckedIOException e) {
@@ -162,22 +151,60 @@ public final class FileObjectStore implements ObjectStore {
         return length;
     }
 
-    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public InputStream openInputStream(URI path) throws IOException {
         assertReadable();
+        return Files.newInputStream(resolveRegularData(path), StandardOpenOption.READ);
+    }
 
+    /**
+     * Resolves the given URI to a {@code Path} and ensures it corresponds to a regular data object.
+     *
+     * @param path the URI to be resolved; must not refer to a symbolic link or be non-existent
+     * @return the resolved {@code Path} that validates as a regular file
+     * @throws IOException if an I/O error occurs during resolution or validation
+     */
+    private Path resolveRegularData(URI path) throws IOException {
         Path resolved = resolve(path);
-        if (Files.notExists(resolved)) {
-            throw new ObjectNotFoundException(String.valueOf(path));
+
+        try {
+            BasicFileAttributes attrs = Files.readAttributes(resolved, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+            if (attrs.isSymbolicLink()) {
+                throw new IOException("File is a symbolic link: " + path);
+            }
+            if (!attrs.isRegularFile()) {
+                throw new IOException("Not a data object: " + path);
+            }
+        } catch (NoSuchFileException e) {
+            throw new ObjectNotFoundException(path.toString());
         }
-        if (!Files.isRegularFile(resolved)) {
-            throw new IOException("not a data object: " + path);
+
+        return resolved;
+    }
+
+    /**
+     * Resolves the given URI to a {@code Path} and ensures it corresponds to a folder object.
+     *
+     * @param path the URI to be resolved; must not refer to a symbolic link or be non-existent
+     * @return the resolved {@code Path} that validates as a regular folder
+     * @throws IOException if an I/O error occurs during resolution or validation
+     */
+    private Path resolveRegularFolder(URI path) throws IOException {
+        Path resolved = resolve(path);
+
+        try {
+            BasicFileAttributes attrs = Files.readAttributes(resolved, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+            if (attrs.isSymbolicLink()) {
+                throw new IOException("File is a symbolic link: " + path);
+            }
+            if (!attrs.isDirectory()) {
+                throw new IOException("Not a folder object: " + path);
+            }
+        } catch (NoSuchFileException e) {
+            throw new ObjectNotFoundException(path.toString());
         }
-        if (Files.isSymbolicLink(resolved)) {
-            throw new IOException("File is a symbolic link: " + path);
-        }
-        return Files.newInputStream(resolved, StandardOpenOption.READ);
+
+        return resolved;
     }
 
     @SuppressWarnings("OverlyBroadThrowsClause")
@@ -201,8 +228,9 @@ public final class FileObjectStore implements ObjectStore {
         assertWritable();
 
         Path resolved = resolve(path);
-        if (Files.exists(resolved) && !Files.isDirectory(resolved)) {
-            throw new NotAFolderException(String.valueOf(path));
+        ObjectInfo oi = toObjectInfo(resolved);
+        if (oi != null && oi.type() != ObjectType.FOLDER) {
+            throw new NotAFolderException(path.toString());
         }
         Files.createDirectories(resolved);
     }
@@ -211,18 +239,10 @@ public final class FileObjectStore implements ObjectStore {
     @Override
     public void removeFolder(URI path) throws IOException {
         assertWritable();
-
-        Path resolved = resolve(path);
-        if (Files.notExists(resolved)) {
-            throw new ObjectNotFoundException(String.valueOf(path));
-        }
-        if (!Files.isDirectory(resolved)) {
-            throw new NotAFolderException(String.valueOf(path));
-        }
         try {
-            Files.delete(resolved);
+            Files.delete(resolveRegularFolder(path));
         } catch (DirectoryNotEmptyException e) {
-            throw new FolderNotEmptyException(String.valueOf(path), e);
+            throw new FolderNotEmptyException(path.toString(), e);
         }
     }
 
@@ -230,15 +250,7 @@ public final class FileObjectStore implements ObjectStore {
     @Override
     public Optional<ObjectInfo> getInfo(URI path) throws IOException {
         assertReadable();
-
-        Path resolved = resolve(path);
-        if (Files.notExists(resolved)) {
-            return Optional.empty();
-        }
-        if (Files.isSymbolicLink(resolved)) {
-            throw new IOException("URI points to a symbolic link: " + path);
-        }
-        return Optional.of(toObjectInfo(resolved));
+        return Optional.ofNullable(toObjectInfo(resolve(path)));
     }
 
     @SuppressWarnings("OverlyBroadThrowsClause")
@@ -246,14 +258,14 @@ public final class FileObjectStore implements ObjectStore {
     public void delete(URI path) throws IOException {
         assertWritable();
 
-        Path resolved = resolve(path);
-        if (Files.notExists(resolved)) {
-            throw new ObjectNotFoundException(String.valueOf(path));
+        ObjectInfo oi = toObjectInfo(resolve(path));
+        if (oi == null) {
+            throw new ObjectNotFoundException(path.toString());
         }
         try {
-            Files.delete(resolved);
+            Files.delete(resolve(path));
         } catch (NoSuchFileException e) {
-            throw new ObjectNotFoundException(String.valueOf(path), e);
+            throw new ObjectNotFoundException(path.toString(), e);
         }
     }
 
@@ -263,9 +275,9 @@ public final class FileObjectStore implements ObjectStore {
         assertWritable();
 
         Path resolved = resolve(path);
-
-        if (Files.notExists(resolved)) {
-            throw new ObjectNotFoundException(String.valueOf(path));
+        ObjectInfo oi = toObjectInfo(resolved);
+        if (oi == null) {
+            throw new ObjectNotFoundException(path.toString());
         }
 
         try (Stream<Path> stream = Files.walk(resolved)) {
@@ -343,22 +355,22 @@ public final class FileObjectStore implements ObjectStore {
      *
      */
     @SuppressWarnings("OverlyBroadThrowsClause")
-    private static OutputOption ensureCanWrite(Path path, OutputOption... options) throws IOException {
+    private OutputOption ensureCanWrite(Path path, OutputOption... options) throws IOException {
         Set<OutputOption> optionSet = Set.of(options);
         OutputOption outputOption = switch (optionSet.size()) {
             case 0 -> OutputOption.CREATE_NEW;
             case 1 -> optionSet.iterator().next();
-            default -> throw new IllegalArgumentException("multiple incompatible output options specified: " + Arrays.toString(options));
+            default -> throw new IllegalArgumentException("Multiple incompatible output options specified: " + Arrays.toString(options));
         };
 
-        if (Files.exists(path) && outputOption == OutputOption.CREATE_NEW) {
-            throw new ObjectExistsException(path.toString());
-        }
-        if (Files.exists(path) && Files.isDirectory(path)) {
-            throw new IOException("cannot write to folder: " + path);
-        }
-        if (Files.isSymbolicLink(path)) {
-            throw new IOException("Path is a symbolic link: " + path);
+        ObjectInfo oi = toObjectInfo(path);
+        if (oi != null) {
+            if (outputOption == OutputOption.CREATE_NEW) {
+                throw new ObjectExistsException(path.toString());
+            }
+            if (oi.type() == ObjectType.FOLDER) {
+                throw new IOException("Cannot write data directly to folder: " + path);
+            }
         }
 
         return outputOption;
@@ -369,11 +381,22 @@ public final class FileObjectStore implements ObjectStore {
      * such as creation time, last modified time, size, type, and relative URI.
      *
      * @param path the {@link Path} representing the file or directory; must not be null
-     * @return an {@link ObjectInfo} containing the metadata of the specified path
-     * @throws IOException if an I/O error occurs while reading file attributes
+     * @return an {@link ObjectInfo} containing the metadata of the specified path,
+     *         or {@code null}, if the object does not exist
+     * @throws IOException if an I/O error occurs while reading file attributes or the file is a symbolic link
      */
-    private ObjectInfo toObjectInfo(Path path) throws IOException {
-        BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+    private @Nullable ObjectInfo toObjectInfo(Path path) throws IOException {
+        BasicFileAttributes attributes;
+        try {
+            attributes = Files.readAttributes(path, BasicFileAttributes.class);
+        } catch (NoSuchFileException e) {
+            return null;
+        }
+
+        if (attributes.isSymbolicLink()) {
+            throw new IOException("Path points to a symbolic link: " + path);
+        }
+
         Path relativePath = root.relativize(path);
         String normalized = IoUtil.toUnixPath(relativePath);
         if (attributes.isDirectory() && !normalized.isEmpty() && !normalized.endsWith("/")) {
@@ -405,7 +428,11 @@ public final class FileObjectStore implements ObjectStore {
      */
     private ObjectInfo toObjectInfoUnchecked(Path path) throws UncheckedIOException {
         try {
-            return toObjectInfo(path);
+            ObjectInfo objectInfo = toObjectInfo(path);
+            if (objectInfo == null) {
+                throw new UncheckedIOException(new ObjectNotFoundException(path.toString()));
+            }
+            return objectInfo;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
