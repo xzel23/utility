@@ -6,6 +6,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
+import com.dua3.utility.release.PrepareReleaseTask
 import com.dua3.cabe.processor.Configuration
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import java.io.ByteArrayOutputStream
@@ -14,7 +15,6 @@ import java.net.HttpURLConnection
 import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -391,131 +391,24 @@ private fun renderReleasePlan(plan: PreparedReleasePlan) = buildString {
     }
 }
 
-tasks.register("prepareRelease") {
+tasks.register<PrepareReleaseTask>("prepareRelease") {
     group = "release"
     description = "Plans a selective release; add -PconfirmRelease=true to write gradle/prepared-release.toml."
-
-    doLast {
-        check(!preparedReleasePlanFile.exists()) {
-            "a prepared release plan already exists at ${preparedReleasePlanFile.path}; publish, finalize, or resolve it first"
-        }
-        check(runGit("status", "--porcelain").output.isBlank()) {
-            "the Git working tree must be clean before preparing a release"
-        }
-
-        val releaseType = providers.gradleProperty("releaseType").orNull?.lowercase()
-            ?: throw GradleException("supply -PreleaseType=patch, -PreleaseType=minor, or -PreleaseType=major")
-        check(releaseType in setOf("patch", "minor", "major")) {
-            "unsupported release type: $releaseType"
-        }
-
-        val state = readPublishedReleaseState(releaseStateFile)
-        val previousBomVersion = parseSemanticVersion(state.bomVersion)
-        val requestedVersion = providers.gradleProperty("releaseVersion").orNull
-        val targetVersion = requestedVersion?.let(::parseSemanticVersion) ?: when (releaseType) {
-            "patch" -> SemanticVersion(previousBomVersion.major, previousBomVersion.minor, previousBomVersion.patch + 1)
-            "minor" -> SemanticVersion(previousBomVersion.major, previousBomVersion.minor + 1, 0)
-            "major" -> SemanticVersion(previousBomVersion.major + 1, 0, 0)
-            else -> error("validated above")
-        }
-
-        when (releaseType) {
-            "patch" -> check(targetVersion.major == previousBomVersion.major &&
-                targetVersion.minor == previousBomVersion.minor && targetVersion.patch > previousBomVersion.patch) {
-                "a patch release must remain on ${previousBomVersion.major}.${previousBomVersion.minor} and increase its patch"
-            }
-            "minor" -> check(targetVersion.major == previousBomVersion.major &&
-                targetVersion.minor > previousBomVersion.minor && targetVersion.patch == 0) {
-                "a minor release must be ${previousBomVersion.major}.Y.0 with Y greater than ${previousBomVersion.minor}"
-            }
-            "major" -> check(targetVersion.major > previousBomVersion.major && targetVersion.minor == 0 && targetVersion.patch == 0) {
-                "a major release must be X.0.0 with X greater than ${previousBomVersion.major}"
-            }
-        }
-
-        val releaseRevision = requireGitSuccess("resolving release revision", "rev-parse", "HEAD")
-        state.modules.forEach { (moduleName, module) ->
-            requireGitSuccess("checking published revision for $moduleName", "cat-file", "-e", "${module.publishedRevision}^{commit}")
-            check(runGit("merge-base", "--is-ancestor", module.publishedRevision, releaseRevision).exitValue == 0) {
-                "published revision for $moduleName is not an ancestor of $releaseRevision"
-            }
-        }
-
-        val additionalModules = providers.gradleProperty("additionalReleaseModules").orNull
-            ?.split(',')
-            ?.map(String::trim)
-            ?.filter(String::isNotEmpty)
-            ?.toSet()
-            ?: emptySet()
-        check(additionalModules.all { it in publishableModuleNames }) {
-            "additionalReleaseModules contains an unknown publishable module"
-        }
-
-        val selectedReasons = mutableMapOf<String, String>()
-        if (releaseType == "patch") {
-            state.modules.forEach { (moduleName, module) ->
-                val sourceChanged = gitHasChanges(module.publishedRevision, releaseRevision, module.paths)
-                val sharedInputChanged = gitHasChanges(
-                    module.publishedRevision,
-                    releaseRevision,
-                    sharedReleaseInputPathspecs
-                )
-                when {
-                    sourceChanged && sharedInputChanged -> selectedReasons[moduleName] = "direct source and shared build input change"
-                    sourceChanged -> selectedReasons[moduleName] = "direct source change"
-                    sharedInputChanged -> selectedReasons[moduleName] = "shared build or dependency input change"
-                }
-            }
-            additionalModules.forEach { moduleName ->
-                selectedReasons.putIfAbsent(moduleName, "explicit minimum internal dependency update")
-            }
-            check(selectedReasons.isNotEmpty()) {
-                "no publishable module changed; a BOM-only patch release is not allowed"
-            }
-        } else {
-            publishableModuleNames.forEach { moduleName -> selectedReasons[moduleName] = "$releaseType release" }
-        }
-
-        val targetVersionString = targetVersion.toString()
-        val plan = PreparedReleasePlan(
-            releaseType = releaseType,
-            bomVersion = targetVersionString,
-            sourceRevision = releaseRevision,
-            modules = publishableModuleNames.associateWith { moduleName ->
-                val oldModule = state.modules.getValue(moduleName)
-                val selected = moduleName in selectedReasons
-                PreparedReleaseModule(
-                    version = if (selected) targetVersionString else oldModule.version,
-                    sourceRevision = if (selected) releaseRevision else oldModule.publishedRevision,
-                    selected = selected,
-                    reason = selectedReasons[moduleName] ?: "retained published module"
-                )
-            }
-        )
-
-        val candidateCoordinates = buildList {
-            add("utility-bom" to plan.bomVersion)
-            plan.modules.filterValues { it.selected }.forEach { (moduleName, module) -> add(moduleName to module.version) }
-        }
-        candidateCoordinates.forEach { (artifactId, version) ->
-            check(!isMavenCentralCoordinatePublished(artifactId, version)) {
-                "Maven Central already contains $artifactId:$version; release coordinates are immutable"
-            }
-        }
-
-        logger.lifecycle(renderReleasePlan(plan))
-        if (providers.gradleProperty("confirmRelease").orNull == "true") {
-            writePreparedReleasePlan(plan)
-            logger.lifecycle("Wrote ${preparedReleasePlanFile.path}. Commit it, then run release verification in a new Gradle invocation.")
-        } else {
-            logger.lifecycle("Dry run only. Re-run with -PconfirmRelease=true to write the prepared release plan.")
-        }
-    }
+    repositoryDirectory.set(layout.projectDirectory)
+    this.releaseStateFile.set(layout.projectDirectory.file("gradle/release-state.toml"))
+    this.preparedReleasePlanPath.set(layout.projectDirectory.file("gradle/prepared-release.toml").asFile.absolutePath)
+    releaseType.convention(providers.gradleProperty("releaseType").orElse(""))
+    requestedReleaseVersion.convention(providers.gradleProperty("releaseVersion").orElse(""))
+    additionalReleaseModules.convention(providers.gradleProperty("additionalReleaseModules").orElse(""))
+    confirmRelease.convention(providers.gradleProperty("confirmRelease").map { it == "true" }.orElse(false))
 }
 
 tasks.register("verifyPreparedRelease") {
     group = "release"
     description = "Validates the persisted prepared release plan and configured module versions."
+    notCompatibleWithConfigurationCache(
+        "Release-plan validation reads Git state and the configured multi-project build at task execution time."
+    )
 
     doLast {
         check(releasePlanPresent) {
@@ -529,6 +422,7 @@ tasks.register("verifyPreparedRelease") {
 tasks.register("printPreparedReleasePlan") {
     group = "release"
     description = "Prints the persisted prepared release plan."
+    notCompatibleWithConfigurationCache("The task reads the persisted release plan at execution time.")
 
     doLast {
         check(releasePlanPresent) { "no prepared release plan exists at ${preparedReleasePlanFile.path}" }
@@ -552,6 +446,9 @@ private fun downloadPublishedModuleJar(moduleName: String, version: String): Fil
 tasks.register("checkReleaseCompatibility") {
     group = "verification"
     description = "Checks selected patch-release modules against their last published binary API."
+    notCompatibleWithConfigurationCache(
+        "Compatibility verification resolves published artifacts and invokes the external japicmp process."
+    )
     if (releasePlanPresent) {
         dependsOn(configuredSelectedReleaseModules.map { moduleName -> ":$moduleName:jar" })
     }
@@ -1084,6 +981,9 @@ gradle.projectsEvaluated {
 tasks.register("finalizeRelease") {
     group = "release"
     description = "Records a successfully deployed prepared release and creates its local Git tag."
+    notCompatibleWithConfigurationCache(
+        "Finalization verifies Maven Central, modifies release files, and creates Git commits and tags."
+    )
 
     doLast {
         check(providers.gradleProperty("confirmFinalize").orNull == "true") {
