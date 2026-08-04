@@ -45,10 +45,13 @@ every module version.
 ## Verify, stage, and publish
 
 ```bash
-./gradlew verifyPreparedRelease checkReleaseCompatibility
-./gradlew stagePreparedRelease
-./gradlew publishPreparedRelease
+./gradlew --no-configuration-cache verifyPreparedRelease checkReleaseCompatibility
+./gradlew --no-configuration-cache stagePreparedRelease
+./gradlew --no-configuration-cache publishPreparedRelease
 ```
+
+These release-only tasks operate on live Git, Maven Central, signing, and staging state, so they intentionally run
+without the configuration cache. Normal development and test tasks continue to use the configured cache.
 
 `checkReleaseCompatibility` is mandatory for a patch release. It compares each selected module's public/protected
 binary API and module descriptor with its own last Maven Central artifact. `stagePreparedRelease` runs the full
@@ -62,7 +65,7 @@ Do not create the final release tag at preparation time.
 After Maven Central exposes every expected BOM and module artifact, finalize the release:
 
 ```bash
-./gradlew finalizeRelease -PconfirmFinalize=true
+./gradlew --no-configuration-cache finalizeRelease -PconfirmFinalize=true
 ```
 
 This updates `gradle/release-state.toml`, advances `projectVersion` in `gradle/version.toml` to the next patch

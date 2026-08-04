@@ -41,7 +41,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Publish prepared release
-        run: ./gradlew --no-daemon --build-cache publishPreparedRelease
+        run: ./gradlew --no-daemon --build-cache --no-configuration-cache publishPreparedRelease
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
@@ -51,7 +51,7 @@ jobs:
 
       - name: Finalize published release
         run: >
-          ./gradlew --no-daemon finalizeRelease
+          ./gradlew --no-daemon --no-configuration-cache finalizeRelease
           -PconfirmFinalize=true
           -PpushReleaseTag=true
           -PreleaseBranch=${{ inputs.branch }}

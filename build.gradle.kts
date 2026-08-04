@@ -872,10 +872,13 @@ subprojects {
     }
 
     // A prepared release must not accidentally stage unchanged modules through a direct project task invocation.
-    tasks.withType<PublishToMavenRepository>().configureEach {
-        onlyIf {
-            !releasePlanPresent || repository.name != "stagingDirectory" ||
-                project.name == "utility-bom" || project.name in configuredSelectedReleaseModules
+    // Decide this while configuring the task: an onlyIf predicate runs during task execution, where Task.project
+    // cannot be accessed when the configuration cache is enabled.
+    if (releasePlanPresent && name != "utility-bom" && name !in configuredSelectedReleaseModules) {
+        tasks.withType<PublishToMavenRepository>().configureEach {
+            if (repository.name == "stagingDirectory") {
+                onlyIf("module is not selected by the prepared release plan") { false }
+            }
         }
     }
 

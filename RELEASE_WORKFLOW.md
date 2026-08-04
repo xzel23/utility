@@ -75,11 +75,15 @@ not make further source, build, dependency, or version changes on the branch bef
 Optionally perform the release-specific local checks:
 
 ```bash
-./gradlew verifyPreparedRelease checkReleaseCompatibility
+./gradlew --no-configuration-cache verifyPreparedRelease checkReleaseCompatibility
 ```
 
 For patch releases, `checkReleaseCompatibility` compares each selected library with its own previously published
 artifact and rejects binary/API-incompatible changes.
+
+Release validation, staging, publishing, and finalization operate on live Git, Maven Central, signing, and staging
+state. Run those release-only tasks with `--no-configuration-cache`; normal development and test tasks continue to
+use the project's configured configuration cache.
 
 ## 4. Start the protected GitHub Actions release workflow
 
