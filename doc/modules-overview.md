@@ -2,6 +2,39 @@
 
 This document provides an overview of all modules in the utility library.
 
+## Version management
+
+Import `utility-bom` and declare the version only for the BOM. Do **not** declare versions on individual utility
+module dependencies: patch releases can publish a changed module at a newer version while the BOM retains the
+previous version for unchanged modules. The BOM selects the compatible, actually published version of every module.
+
+For Maven, import the BOM through `dependencyManagement`:
+
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.dua3.utility</groupId>
+            <artifactId>utility-bom</artifactId>
+            <version>${utility_bom_version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+
+For Gradle, add the BOM as a platform dependency:
+
+```kotlin
+dependencies {
+    implementation(platform("com.dua3.utility:utility-bom:$utilityBomVersion"))
+    implementation("com.dua3.utility:utility")
+}
+```
+
+All module examples below therefore intentionally omit `<version>`.
+
 ## Core Modules
 
 ### utility
@@ -12,7 +45,6 @@ This document provides an overview of all modules in the utility library.
 <dependency>
     <groupId>com.dua3.utility</groupId>
     <artifactId>utility</artifactId>
-    <version>${utility_version}</version>
 </dependency>
 ```
 
@@ -39,7 +71,6 @@ The core utility module provides utility classes for various purposes, including
 <dependency>
     <groupId>com.dua3.utility</groupId>
     <artifactId>utility-db</artifactId>
-    <version>${utility_version}</version>
 </dependency>
 ```
 
@@ -54,7 +85,6 @@ This module provides database utilities in the com.dua3.utility.db package.
 <dependency>
     <groupId>com.dua3.utility</groupId>
     <artifactId>utility-swing</artifactId>
-    <version>${utility_version}</version>
 </dependency>
 ```
 
@@ -71,7 +101,6 @@ This module provides Swing-related utilities.
 <dependency>
     <groupId>com.dua3.utility</groupId>
     <artifactId>utility-fx</artifactId>
-    <version>${utility_version}</version>
 </dependency>
 ```
 
@@ -86,7 +115,6 @@ This module provides JavaFX utilities.
 <dependency>
     <groupId>com.dua3.utility</groupId>
     <artifactId>utility-fx-icons</artifactId>
-    <version>${utility_version}</version>
 </dependency>
 ```
 
@@ -101,7 +129,6 @@ This module provides icon utilities for JavaFX.
 <dependency>
     <groupId>com.dua3.utility</groupId>
     <artifactId>utility-fx-icons-ikonli</artifactId>
-    <version>${utility_version}</version>
 </dependency>
 ```
 
@@ -116,7 +143,6 @@ This module provides Ikonli icon integration for JavaFX.
 <dependency>
     <groupId>com.dua3.utility</groupId>
     <artifactId>utility-fx-controls</artifactId>
-    <version>${utility_version}</version>
 </dependency>
 ```
 
@@ -131,7 +157,6 @@ This module provides custom controls for JavaFX.
 <dependency>
     <groupId>com.dua3.utility</groupId>
     <artifactId>utility-fx-db</artifactId>
-    <version>${utility_version}</version>
 </dependency>
 ```
 
@@ -146,118 +171,13 @@ This module provides database utilities for JavaFX.
 <dependency>
     <groupId>com.dua3.utility</groupId>
     <artifactId>utility-fx-web</artifactId>
-    <version>${utility_version}</version>
 </dependency>
 ```
 
 **Description:**
 This module provides web-related utilities for JavaFX.
 
-## Logging Modules
+## Samples and benchmarks
 
-### utility-logging
-
-**Maven Coordinates:**
-
-```xml
-<dependency>
-    <groupId>com.dua3.utility</groupId>
-    <artifactId>utility-logging</artifactId>
-    <version>${utility_version}</version>
-</dependency>
-```
-
-**Description:**
-This module provides utilities related to logging in the com.dua3.utility.logging package.
-
-### utility-logging-slf4j
-
-**Maven Coordinates:**
-
-```xml
-<dependency>
-    <groupId>com.dua3.utility</groupId>
-    <artifactId>utility-logging-slf4j</artifactId>
-    <version>${utility_version}</version>
-</dependency>
-```
-
-**Description:**
-This module provides SLF4J integration for the logging utilities.
-
-### utility-logging-log4j
-
-**Maven Coordinates:**
-
-```xml
-<dependency>
-    <groupId>com.dua3.utility</groupId>
-    <artifactId>utility-logging-log4j</artifactId>
-    <version>${utility_version}</version>
-</dependency>
-```
-
-**Description:**
-This module provides Log4j integration for the logging utilities.
-
-## Sample Modules
-
-### utility-samples-slf4j
-
-**Maven Coordinates:**
-
-```xml
-<dependency>
-    <groupId>com.dua3.utility</groupId>
-    <artifactId>utility-samples-slf4j</artifactId>
-    <version>${utility_version}</version>
-</dependency>
-```
-
-**Description:**
-This module provides samples for using the SLF4J logging integration.
-
-### utility-samples-log4j
-
-**Maven Coordinates:**
-
-```xml
-<dependency>
-    <groupId>com.dua3.utility</groupId>
-    <artifactId>utility-samples-log4j</artifactId>
-    <version>${utility_version}</version>
-</dependency>
-```
-
-**Description:**
-This module provides samples for using the Log4j logging integration.
-
-### utility-samples-graphics
-
-**Maven Coordinates:**
-
-```xml
-<dependency>
-    <groupId>com.dua3.utility</groupId>
-    <artifactId>utility-samples-graphics</artifactId>
-    <version>${utility_version}</version>
-</dependency>
-```
-
-**Description:**
-This module provides graphics-related samples.
-
-### utility-samples-fx
-
-**Maven Coordinates:**
-
-```xml
-<dependency>
-    <groupId>com.dua3.utility</groupId>
-    <artifactId>utility-samples-fx</artifactId>
-    <version>${utility_version}</version>
-</dependency>
-```
-
-**Description:**
-This module provides JavaFX-related samples.
+Sample and benchmark projects are not published library artifacts and are not managed by `utility-bom`. Use the
+published library modules above in applications and other consumers.
