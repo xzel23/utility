@@ -397,5 +397,3 @@ Credentials for signing and Maven Central deployment must remain available only 
   Keep the published release state at `gradle/release-state.toml`, next to the other root build inputs. It governs the
   entire multi-project build; the BOM consumes it but does not own it. Keep the candidate plan separately at
   `gradle/prepared-release.toml`.
-
-## Ongoing

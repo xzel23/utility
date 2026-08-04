@@ -235,6 +235,19 @@ could not be loaded.
 
 ## Changes
 
+### 24.0.0
+
+**IMPORTANT**
+
+Starting with 24.0.0, the utility project will use selective publishing as described in
+[SELECTIVE-PUBLISHING-CONCEPT.md](doc/SELECTIVE-PUBLISHING-CONCEPT.md). That means that consuming projects need to
+include the library BOM file and omit version information for the different modules. This reduces the amount of 
+artifacts published to Maven Central and also reduces download when updating this library.
+
+- Introduce selective publishing to Maven Central.
+- Update plugins and dependencies.
+- Reduce the number of filesystem accesses in the FileObjectStore implementation.
+
 ### 23.1.3
 
 - workaround for Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS) problem with File deduplication on SMB shares
