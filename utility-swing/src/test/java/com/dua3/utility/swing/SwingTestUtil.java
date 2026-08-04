@@ -16,11 +16,52 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public final class SwingTestUtil {
 
     private SwingTestUtil() {
         // utility class
+    }
+
+    /**
+     * Runs an action on the Swing event-dispatch thread and waits until it has completed.
+     *
+     * @param action the action to run
+     */
+    public static void runOnEdt(Runnable action) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            action.run();
+            return;
+        }
+
+        try {
+            SwingUtilities.invokeAndWait(action);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new AssertionError("Interrupted while waiting for the Swing event-dispatch thread", e);
+        } catch (InvocationTargetException e) {
+            throw new AssertionError("Action on the Swing event-dispatch thread failed", e.getCause());
+        }
+    }
+
+    /**
+     * Gets a value from the Swing event-dispatch thread after all previously queued UI work.
+     *
+     * @param action the action to run
+     * @param <T> the result type
+     * @return the value returned by {@code action}
+     */
+    public static <T> T getOnEdt(Supplier<T> action) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            return action.get();
+        }
+
+        final Object[] result = new Object[1];
+        runOnEdt(() -> result[0] = action.get());
+        @SuppressWarnings("unchecked")
+        T value = (T) result[0];
+        return value;
     }
 
     /**
@@ -36,15 +77,11 @@ public final class SwingTestUtil {
 
         // In non-headless mode, create a real frame
         final JFrame[] frame = new JFrame[1];
-        try {
-            SwingUtilities.invokeAndWait(() -> {
-                frame[0] = new JFrame("Test Frame");
-                frame[0].setSize(800, 600);
-                frame[0].setVisible(true);
-            });
-        } catch (InterruptedException | InvocationTargetException e) {
-            throw new RuntimeException("Error creating test frame", e);
-        }
+        runOnEdt(() -> {
+            frame[0] = new JFrame("Test Frame");
+            frame[0].setSize(800, 600);
+            frame[0].setVisible(true);
+        });
         return frame[0];
     }
 

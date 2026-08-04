@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Timeout;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -19,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Tests for the SwingGraphics class.
@@ -26,6 +28,7 @@ import java.util.Objects;
  * These tests run in headless mode and use software rendering to draw into a BufferedImage.
  * The generated image is compared to a reference image stored as a test resource.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class SwingGraphicsTest extends AbstractGraphicsTest {
     private static final Logger LOG = LogManager.getLogger(SwingGraphicsTest.class);
 
@@ -58,9 +61,6 @@ class SwingGraphicsTest extends AbstractGraphicsTest {
     @BeforeEach
     @Override
     public void setUp() {
-        // Ensure we're in headless mode
-        System.setProperty("java.awt.headless", "true");
-
         // Create a BufferedImage with software rendering
         image = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
@@ -79,6 +79,7 @@ class SwingGraphicsTest extends AbstractGraphicsTest {
     @AfterEach
     public void tearDown() {
         super.tearDown();
+        image = null;
     }
 
     @Override

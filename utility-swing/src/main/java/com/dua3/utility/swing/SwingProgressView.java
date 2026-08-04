@@ -10,7 +10,6 @@ import javax.swing.SwingUtilities;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Label;
 
 /**
  * A {@link ProgressTracker} implementation for use in Swing applications.
@@ -49,7 +48,7 @@ public final class SwingProgressView<T> extends JPanel implements ProgressTracke
             constraints.ipadx = 8;
             constraints.gridx = 0;
             constraints.gridy = row;
-            add(new Label(t.toString()), constraints);
+            add(new JLabel(t.toString()), constraints);
             constraints.gridx = 1;
             constraints.gridy = row;
             add(pi.pb, constraints);
