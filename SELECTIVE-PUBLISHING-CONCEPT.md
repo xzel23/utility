@@ -29,13 +29,14 @@ For example, starting from a full `23.2.0` release:
 
 The `23.2.1` BOM must constrain each module to its actual published version, rather than assigning the BOM version to every module.
 
-## Release state
+## Published release state and prepared release plan
 
-Introduce a version-controlled release-state file at the repository level, for example:
+Keep the version-controlled published release state at the repository level:
 
-    text gradle/release-state.toml
+    gradle/release-state.toml
 
-The state belongs to the BOM/release definition, not to individual modules. It contains:
+The state belongs to the release definition, not to an individual module. It records only releases that have been
+successfully published to Maven Central. It contains:
 
 - The current BOM version.
 - Each publishable module's current published version.
@@ -45,16 +46,35 @@ The state belongs to the BOM/release definition, not to individual modules. It c
 Example structure:
 
 ```toml
-    [release] bomVersion = "23.2.1"
-    [modules.utility] version = "23.2.1" publishedRevision = "a1b2c3d4e5f6" paths = ["utility"]
-    [modules.utility-db] version = "23.2.0" publishedRevision = "0123456789ab" paths = ["utility-db"]
-    [modules.utility-fx] version = "23.2.1" publishedRevision = "fedcba987654" paths = ["utility-fx"]
+[release]
+schemaVersion = 1
+bomVersion = "23.2.1"
+
+[modules.utility]
+version = "23.2.1"
+publishedRevision = "a1b2c3d4e5f6"
+paths = ["utility"]
+
+[modules.utility-db]
+version = "23.2.0"
+publishedRevision = "0123456789ab"
+paths = ["utility-db"]
+
+[modules.utility-fx]
+version = "23.2.1"
+publishedRevision = "fedcba987654"
+paths = ["utility-fx"]
 ```
+
+A distinct, version-controlled prepared release plan, for example `gradle/prepared-release.toml`, records a candidate
+release before publication. It contains the source revision, exact BOM and module coordinates, selected modules and
+their selection reasons, and the expected artifact set. The plan is the sole input to publication and makes retrying
+the same prepared release reproducible.
 
 The BOM module is special:
 
 - Its version is `release.bomVersion`.
-- It is always included in a patch release because the BOM's constraints and release-state metadata change.
+- It is always included in a patch release because its constraints change.
 - Its `publishedRevision` is useful for auditability but is not required to decide whether to publish it.
 
 ## Change detection
@@ -78,46 +98,33 @@ This allows a repository commit affecting only `utility/` to leave `utility-db`,
 
 Changes outside a module directory may still affect its published artifact. Therefore, change detection must incorporate shared ownership rules.
 
-Initially, the following files should be evaluated explicitly:
+Use a declarative mapping from paths to affected modules. This makes the policy auditable and avoids hidden release
+behavior. Initially use the following conservative rules:
 
-- Root build configuration.
-- Gradle settings.
-- Version catalog and dependency locks.
-- Shared publishing/signing configuration.
-- The release-state file itself.
-
-Recommended policy:
-
-1. **Changes to build logic that affect artifact contents, publication metadata, compilation, or dependencies** mark all affected modules as changed.
-2. **Changes to release-state metadata made solely to record a successful release** must not cause another release.
-3. **Documentation, CI-only, and repository-administration changes** do not mark library modules as changed unless deliberately configured to do so.
-4. **Dependency changes** mark every module whose resolved published metadata or artifact can change.
-
-The implementation should use a declarative mapping from shared paths to affected modules. This makes the policy auditable and avoids hidden release behavior.
+1. A module owns its directory, including production sources and resources, its build script, and module-specific
+   generated-input configuration.
+2. The root build configuration, Gradle settings, wrapper/toolchain configuration, and shared build or
+   publishing/signing logic select all publishable library modules unless a narrower mapping is proven safe.
+3. A version-catalog or dependency-lock change selects every module whose resolved compile/runtime dependency graph
+   or published dependency metadata uses the changed entry. Until those relationships are mapped, select all
+   publishable library modules.
+4. The BOM build directory, the published release state, and the prepared release plan select only the BOM. A
+   release-state or plan update alone must never select a library module.
+5. Repository documentation, CI-only configuration, and repository-administration changes select no library modules.
+   Documentation in a module's production source files does select that module because published sources and Javadoc
+   artifacts change.
 
 ## Dependency propagation
 
-Directly changed modules are not always the only modules that must be republished.
+An unchanged dependent module is not republished merely because an internal dependency has received a compatible
+patch. Its existing POM and Gradle module metadata correctly describe the version against which it was published;
+the new BOM deliberately aligns consumers to the patched dependency.
 
-If module `A` changes and module `B` exposes or embeds `A` in its published API or dependency metadata, `B` may also need a new publication. The release-preparation task must therefore:
-
-1. Detect directly changed modules.
-2. Build the graph of internal project dependencies.
-3. Add dependent modules when their published POM, module metadata, or runtime artifact would reference a new version of a dependency.
-4. Repeat until no additional module is added.
-
-For example:
-
-```text
-    utility changes from 23.2.0 to 23.2.1 utility-fx depends on utility and publishes that dependency
-    Result: utility -> 23.2.1 utility-fx -> 23.2.1
-```
-
-The exact propagation policy must distinguish between:
-
-- `api` dependencies, which generally require propagation.
-- `implementation` dependencies, which may still require propagation because Maven metadata exposes runtime dependencies.
-- Dependencies that are shaded or otherwise not represented in published metadata.
+The release-preparation task must build the internal project-dependency graph and select a dependent module only
+when it changed itself or must publish a new minimum dependency version. This applies equally to `api`,
+`implementation`, and optional dependencies. Shaded or embedded dependencies require selection only if the dependent
+artifact itself changes. Required patch compatibility checks and the full candidate-BOM test suite validate that
+leaving an unchanged dependent at its existing version is safe.
 
 ## Gradle model changes
 
@@ -125,11 +132,12 @@ The current build assigns one version to every project. This must be replaced wi
 
 At configuration time, Gradle should:
 
-1. Read the release-state file.
+1. Read the published release state and, when present, use the prepared release plan as the candidate-version
+   override.
 2. Assign the BOM project the current BOM version.
 3. Assign each publishable module its version from the matching module entry.
 4. Configure BOM constraints using the stored version of each module, not `project.version`.
-5. Configure publication tasks only for modules selected for the prepared release.
+5. Configure publication tasks only for modules selected in the prepared release plan.
 
 The resulting BOM constraints must conceptually be equivalent to:
 
@@ -165,15 +173,17 @@ Validation:
 - No module version would overwrite an existing Maven Central artifact.
 - The selected version is a non-snapshot release version.
 - For patch releases, the major/minor version matches the existing release line.
+- A patch release selects at least one library module; otherwise no release is prepared.
+- Required binary/API compatibility checks pass for every selected library module.
 
 Behavior for a patch release:
 
 1. Determine directly changed modules using path-scoped Git diffs.
-2. Apply dependency propagation.
+2. Select dependents only when they changed themselves or must publish a new minimum internal dependency version.
 3. Increment the patch component for the BOM and selected modules.
 4. Retain versions for unselected modules.
 5. Generate and display a release plan.
-6. Require an explicit confirmation flag before modifying release state.
+6. Require an explicit confirmation flag before creating the prepared release plan.
 
 Behavior for major or minor releases:
 
@@ -188,28 +198,34 @@ The generated plan should list:
 - Unchanged modules and retained versions.
 - The Git revision being released.
 - Reasons a module was selected, such as direct change or dependency propagation.
+- Expected published coordinates and artifacts.
 
-### 2. Commit release state
+### 2. Commit prepared release plan
 
-After an approved release plan, update `gradle/release-state.toml` with:
+After an approved release plan, create `gradle/prepared-release.toml` with:
 
-- The new BOM version.
-- Each selected module's new version.
-- The release source revision as `publishedRevision` for each selected module.
+- The new BOM version and every selected module's new version.
+- The release source revision represented by each selected module.
+- The expected artifact coordinates and selected-module reasons.
 
-Commit the state update as a release-preparation commit.
+Commit the plan as a release-preparation commit. The build uses this plan to assign candidate versions and to create
+the BOM constraints. It is not yet published release state.
 
-The recorded `publishedRevision` must identify the source revision from which artifacts are built, not necessarily the commit that contains the updated state file. This avoids the self-referential commit-ID problem.
+The recorded source revision must identify the source from which module artifacts are built, not necessarily the
+commit that contains the prepared plan. This avoids the self-referential commit-ID problem.
 
 Recommended sequence:
 
 ```text
-    R = clean source commit selected for release prepareRelease records R in release state commit release-state update 
-  publish artifacts built from the release-preparation commit tag the release-preparation commit
+    R = clean source commit selected for release
+    prepareRelease records R in a prepared release plan
+    commit the prepared plan
+    publish artifacts built from the prepared-release commit
+    finalize the release state and tag the finalized commit after successful deployment
 ```
 
-
-On the next patch release, module comparisons use the saved source revision `R` and scoped module paths. The release-state-only commit does not make unrelated modules appear changed.
+On the next patch release, module comparisons use the published source revision `R` and scoped module paths. A
+prepared-plan or release-state-only commit does not make unrelated modules appear changed.
 
 ### 3. Publish
 
@@ -226,7 +242,7 @@ This task must:
 2. Run validation and tests.
 3. Publish only the selected library modules plus the BOM to the staging repository.
 4. Invoke the existing Maven Central release process for the staged artifacts.
-5. Fail without modifying release state if staging or deployment fails.
+5. Fail without promoting the prepared plan to published release state if staging or deployment fails.
 
 Publishing must not derive its selected modules from an ad-hoc local Git state. It must use the persisted prepared plan to make CI execution reproducible.
 
@@ -235,10 +251,18 @@ Publishing must not derive its selected modules from an ad-hoc local Git state. 
 After Maven Central publication succeeds:
 
 1. Verify that every expected BOM and module artifact is available in the target repository.
-2. Create and push a Git tag for the BOM/release version.
-3. Optionally record publication timestamps and repository URLs in a separate immutable release history file.
+2. Promote the prepared plan to `gradle/release-state.toml`, updating the BOM and selected modules' published
+   versions and source revisions, and remove the prepared plan.
+3. Commit the published state, then create and push a Git tag for the BOM/release version.
+4. Optionally record publication timestamps and repository URLs in a separate immutable release history file.
 
-The release-state update should occur before publishing so that the build is reproducible. A failed publication is handled by correcting the problem and producing a new patch version; Maven Central versions must never be reused.
+The release tag therefore always means that the named artifacts are published and available. A transport failure with
+an unambiguous staging/deployment outcome may retry the exact prepared plan. If any Maven Central coordinate was
+accepted, that coordinate is permanently consumed; resolve the failure with a new patch version and plan. Maven
+Central versions must never be reused.
+
+If deployment succeeded but committing the published state or creating the tag fails, resume finalization without
+republishing artifacts. Finalization must be idempotent.
 
 ## CI integration
 
@@ -252,12 +276,12 @@ Normal CI:
 
 Release CI:
 
-1. Is manually dispatched or triggered by a protected release tag/branch.
+1. Is manually dispatched or triggered by a protected release branch or prepared-release commit.
 2. Checks out the exact prepared release commit.
 3. Verifies the release plan.
 4. Runs the selected publication tasks.
 5. Deploys only the generated staging artifacts.
-6. Tags the commit only after successful deployment, if tagging is not performed earlier.
+6. Finalizes the release state and tags the finalized commit only after successful deployment.
 
 Credentials for signing and Maven Central deployment must remain available only to the protected release workflow.
 
@@ -266,6 +290,7 @@ Credentials for signing and Maven Central deployment must remain available only 
 ### Phase 1: Version model and BOM
 
 - Add the release-state file.
+- Add the prepared-release plan schema.
 - Replace global subproject version assignment with per-module versions.
 - Generate BOM constraints from release state.
 - Retain existing behavior by initializing every module to the same version.
@@ -280,13 +305,13 @@ Credentials for signing and Maven Central deployment must remain available only 
 ### Phase 3: Dependency propagation
 
 - Obtain the internal Gradle project dependency graph.
-- Implement propagation rules.
-- Add tests for direct, transitive, `api`, and runtime dependency changes.
+- Implement the minimum-version dependency-selection rule.
+- Add tests for direct, transitive, `api`, implementation, and shaded dependency changes.
 
 ### Phase 4: Controlled publishing
 
 - Limit staging publication to selected projects and the BOM.
-- Persist the selected plan.
+- Persist the selected plan and promote it to published state only after deployment.
 - Add a release CI workflow with protected credentials.
 - Verify staged and deployed artifact sets.
 
@@ -299,16 +324,16 @@ Credentials for signing and Maven Central deployment must remain available only 
 ## Todos / decisions required
 
 - [x] Define the authoritative list of publishable modules. Should sample modules be excluded permanently?
-- [ ] Define module ownership paths, especially for shared build logic and dependency-lock files.
+- [x] Define module ownership paths, especially for shared build logic and dependency-lock files.
 - [x] Decide whether documentation-only changes should cause a module republish.
-- [x] Define dependency propagation rules for `api`, `implementation`, optional dependencies, and shaded dependencies.
+- [x] Define dependency propagation rules for internal dependencies.
 - [x] Decide whether a patch release must increment from the highest existing patch across all modules, or whether 
   only changed modules advance independently within a release line.
 - [x] Decide whether snapshots use the same selective-publication model or continue publishing all modules.
 - [x] Decide the exact Git-tagging point: before deployment, after deployment, or via a separate finalization workflow.
 - [x] Define recovery behavior when Maven Central deployment partially succeeds or is rejected.
-- [ ] Confirm whether artifact compatibility checks are required before a module is selected for publication.
-- [ ] Confirm whether the release-state file should remain in `gradle/` or be located under the BOM module directory while still governing the entire multi-project build.
+- [x] Confirm whether artifact compatibility checks are required before a module is selected for publication.
+- [x] Confirm whether the release-state file should remain in `gradle/` or be located under the BOM module directory while still governing the entire multi-project build.
 
 ## Decisions
 
@@ -318,23 +343,28 @@ Credentials for signing and Maven Central deployment must remain available only 
 
 - **Define module ownership paths, especially for shared build logic and dependency-lock files.**
 
+  Use the conservative declarative mapping defined under **Shared build and release inputs**. Each module owns its
+  directory; shared build, toolchain, publishing, settings, version-catalog, and dependency-lock inputs select all
+  affected modules (all library modules until a narrower mapping is proven safe). The BOM build directory and release
+  metadata select only the BOM.
+
 - **Decide whether documentation-only changes should cause a module republish.**
 
-  No.
+  Repository documentation, CI documentation, and release notes do not. Documentation in a module's production
+  source files does, because it changes the published sources and Javadoc artifacts.
 
-- **Define dependency propagation rules for `api`, `implementation`, optional dependencies, and shaded dependencies.**
+- **Define dependency propagation rules for internal dependencies.**
 
-  For implementation: no change. If a change would be be required, that means there would have to be changes to the 
-  module anyway and it would automatically be included in the release.
-
-  For api: propagate only x and y changes. z level changes should not change the public interface, so no update is 
-  needed.
+  Do not republish an unchanged dependent only because an internal dependency received a compatible patch. Select it
+  only when it changed itself or must publish a new minimum internal dependency version. This applies to `api`,
+  `implementation`, and optional dependencies; shaded or embedded dependencies require selection only when the
+  dependent artifact changes.
 
 - **Decide whether a patch release must increment from the highest existing patch across all modules, or whether only 
   changed modules advance independently within a release line.**
 
-  We use the same version as the BOM, so it will be easier to track which release introduced a change. This should 
-  not be a problem for consumers as long as they rely on the BOM.
+  A selected module uses the same version as the BOM. The BOM patch number is globally monotonic within its release
+  line; an unchanged module retains its last published version. Do not prepare a BOM-only patch release.
 
 - **Decide whether snapshots use the same selective-publication model or continue publishing all modules.**
 
@@ -343,17 +373,28 @@ Credentials for signing and Maven Central deployment must remain available only 
 
 - **Decide the exact Git-tagging point: before deployment, after deployment, or via a separate finalization workflow.**
 
-  Git tagging should take place when the new BOM is created. We should have a prepareRelease task that updates versions,
-  prepares the BOM, and tags the release.
+  Commit a prepared release plan before publication, but create the final release tag only after Maven Central
+  deployment succeeds and the published state is finalized. A temporary, clearly named prepared-release tag may be
+  used if CI requires one.
 
 - **Define recovery behavior when Maven Central deployment partially succeeds or is rejected.**
 
-  As tags are set in prepareRelease, it should be possible to simply resubmit the publishing task should it fail
-  due to network problems, timeouts etc.
+  Retry the exact prepared plan only after confirming that no Maven Central coordinate was accepted, or when the
+  staging/deployment outcome unambiguously supports resumption. If any coordinate was accepted, it is permanently
+  consumed; create a corrected plan with a new patch version. Do not create the final release tag until deployment
+  succeeds.
 
 - **Confirm whether artifact compatibility checks are required before a module is selected for publication.**
 
+  Yes, for patch releases. Compare every selected module with its own last published artifact and fail on binary/API
+  incompatible public or protected API and module-descriptor changes. Also run the full build and test suite against
+  the candidate BOM. An intentional incompatible change requires a minor or major release.
+
 - **Confirm whether the release-state file should remain in `gradle/` or be located under the BOM module directory 
   while still governing the entire multi-project build.**
+
+  Keep the published release state at `gradle/release-state.toml`, next to the other root build inputs. It governs the
+  entire multi-project build; the BOM consumes it but does not own it. Keep the candidate plan separately at
+  `gradle/prepared-release.toml`.
 
 ## Ongoing
