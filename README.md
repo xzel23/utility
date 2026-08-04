@@ -235,6 +235,19 @@ could not be loaded.
 
 ## Changes
 
+### 24.0.0
+
+**IMPORTANT**
+
+Starting with 24.0.0, the utility project will use selective publishing as described in
+[SELECTIVE-PUBLISHING-CONCEPT.md](doc/SELECTIVE-PUBLISHING-CONCEPT.md). That means that consuming projects need to
+include the library BOM file and omit version information for the different modules. This reduces the amount of 
+artifacts published to Maven Central and also reduces download when updating this library.
+
+- Introduce selective publishing to Maven Central.
+- Update plugins and dependencies.
+- Reduce the number of filesystem accesses in the FileObjectStore implementation.
+
 ### 23.1.3
 
 - workaround for Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS) problem with File deduplication on SMB shares
@@ -484,7 +497,7 @@ This release introduces some major changes, both to existing interfaces and also
 
 ### 22.0.3 (not released)
 
-- update `submitFuture`, remove `? extends` that actually makes usaing the method more complicted (non-matching 
+- update `submitFuture`, remove `? extends` that actually makes using the method more complicated (non-matching 
   generic types)
 - make parent `ThreadFactory` field final in `NamedThreadFactory`
 - remove unused `javafx` module dependencies
@@ -701,7 +714,7 @@ Translations have been added for the following languages:
 - **JavaFX overhaul:** Much of the code has been rewritten or undergone major refactorings to make the interface
   more consistent and easier to use. 
 
-- **New package `com.dua3.utility.application`:** adds utilities and classes to support application dvelopment:
+- **New package `com.dua3.utility.application`:** adds utilities and classes to support application development:
     - A standard way to access the application Preferences. 
     - Managing the applications user interface mode (light/dark/system default) and track the system setting.
       Look at the `FxLogPaneSample` or `DarkModeSample` to see how to use this in JavaFX or Swing applications.
@@ -742,7 +755,7 @@ Translations have been added for the following languages:
         - Argon2 hash support (depends on BouncyCastle being present)
 
 - Package `utility.data`
-    - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
+    - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive argument constructors.
     - `DataUtil.convert()` now supports converting between array types.
     - Added `Color.luminance()`.
 
@@ -812,7 +825,7 @@ Translations have been added for the following languages:
 - Package `utility.text`
     - `TextUtil`
         - Added `TextUtil.toCharArray()|charsToBytes()|bytesToChars()`.
-        - Added `removeLeading|Trailing|LeadingAndTrailing()` to efficently strip elements from the start or end of a
+        - Added `removeLeading|Trailing|LeadingAndTrailing()` to efficiently strip elements from the start or end of a
           list.
         - Removed the MD5-methods. MD5 can still be used by passing "MD5" as algorithm name. Reason: MD5 is considered
           cryptographically weak and insecure, and the API should not make using an unsecure algorithm easier to use
@@ -949,7 +962,7 @@ different attributes), memory usage went down by 50% without noticeable impact o
   BREAKING CHANGES
     - The pixel format has been changed from INT_ARGB to INT_ARGB_PRE. This was
       necessary to be able to share the image data between JavaFX and AWT implementations.
-    - AwtImage.bufferedImage() was removed as AwtImage is now derived from BufferedImae.
+    - AwtImage.bufferedImage() was removed as AwtImage is now derived from BufferedImage.
       Pass the AwtImage instance directly whenever a BufferedImage is needed.
 
   DESCRIPTION OF THE CHANGES
@@ -1007,7 +1020,7 @@ not released
 
 ### 18.1.0
 
-- Chnages to the HtmlConverter class to track the current font; needed for eliding unnecessary font definitions
+- Changes to the HtmlConverter class to track the current font; needed for eliding unnecessary font definitions
 - code refactored to use Java 21 features
 - code cleanups
 - Javadoc additions and corrections
@@ -1066,7 +1079,7 @@ it is now provided directly by JDK classes:
 - BREAKING Font(FontData, Color) has been declared protected; it was not intended to be called directly from user code
 - cache Font instances
 - improve performance
-- fix title not displayed centered in AbdoutDialog
+- fix title not displayed centered in AboutDialog
 
 ### 16.1.6
 
@@ -1149,7 +1162,7 @@ it is now provided directly by JDK classes:
 - Graphics: many fixes, drawing arcs, circles, ellipses
 - PinBoardSkin add more scroll related methods and fix bugs
 - fix race condition in LogEntriesObservableList
-- bugfixes, code clean-ups, JavaDoc additions
+- bugfixes, code cleanups, JavaDoc additions
 
 ### 15.0.2
 
@@ -1294,7 +1307,7 @@ Changes:
 - support for options that prevent validation when present, i.e., to pass a help flag without the parser throwing
   an exception when there are problems with other options
 - moved to Arguments and made public argument validation methods
-- add separate desciption for arguments
+- add separate description for arguments
 - added LangUtil.require...() methods to check integer arguments
 - added LangUtil.formatLazy()
 - fix: LoggerFactorySlf4j should not dispose the default handler
@@ -1647,7 +1660,7 @@ Changes:
 - fix typo: ProgressTracker.State.SCHEDULED (low possibility of breaking client code)
 - (Swing): remove MigLayout from runtime dependencies
 - (Swing): make SwingProgressView horizontally resizable
-- (Swing): fix resize behaviour of SwingLogPane
+- (Swing): fix resize behavior of SwingLogPane
 
 ### Version 8.1.6
 
