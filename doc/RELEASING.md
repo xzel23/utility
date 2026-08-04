@@ -11,36 +11,34 @@ staging and publishing a prepared release.
 ## Prerequisites
 
 - A clean checkout on the release branch, with the required source revisions available locally.
+- A GitHub-protected release branch. Only a prepared plan pushed to such a branch can start publication automatically.
 - Maven Central and signing credentials available only in the protected release environment. The build reads
   `SONATYPE_USERNAME`, `SONATYPE_PASSWORD`, `SIGNING_PUBLIC_KEY`, `SIGNING_SECRET_KEY`, and `SIGNING_PASSWORD`.
 - A complete Gradle test environment, including the configured JDK toolchains.
 
 ## Prepare a release
 
-First review a dry-run plan. The release type is required; `releaseVersion` is optional when the conventional next
-version is wanted.
+Use the interactive preparation script. The release type is required; `--version` is optional when the conventional
+next version is wanted.
 
 ```bash
-./gradlew prepareRelease -PreleaseType=patch
-./gradlew prepareRelease -PreleaseType=minor
-./gradlew prepareRelease -PreleaseType=major -PreleaseVersion=24.0.0
+./scripts/prepare-release.sh --type patch
+./scripts/prepare-release.sh --type minor
+./scripts/prepare-release.sh --type major --version 24.0.0
 ```
 
-The task validates the Git history, scoped changes, release-line version, and Maven Central coordinate availability.
-For a patch release it fails when no library changed; it will not create a BOM-only release. Use
-`-PadditionalReleaseModules=module-a,module-b` only when an unchanged dependent must publish a new minimum internal
-dependency version.
+The script requires a clean branch that matches its upstream. It displays the same dry-run plan and validates Git
+history, scoped changes, release-line version, and Maven Central coordinate availability. For a patch release it fails
+when no library changed; it will not create a BOM-only release. Use `--additional-modules module-a,module-b` only when
+an unchanged dependent must publish a new minimum internal dependency version.
 
-After reviewing the output, persist the exact candidate plan:
+After the dry run, the script asks whether to create and commit `gradle/prepared-release.toml`. It then asks a second
+time before pushing that commit. Answering yes to the second prompt is the explicit authorization to start the release:
+the push to the protected release branch triggers the protected GitHub Actions workflow. Answering no leaves the
+prepared plan committed locally, with no release started.
 
-```bash
-./gradlew prepareRelease -PreleaseType=patch -PconfirmRelease=true
-git add gradle/prepared-release.toml
-git commit -m "Prepare release X.Y.Z"
-```
-
-Run subsequent release commands in a new Gradle invocation so the committed plan is used to configure the BOM and
-every module version.
+The prepared-plan commit must remain the tip of the release branch. The workflow rejects a candidate if another
+commit is pushed before it begins publication.
 
 ## Verify, stage, and publish
 
@@ -52,6 +50,9 @@ every module version.
 
 These release-only tasks operate on live Git, Maven Central, signing, and staging state, so they intentionally run
 without the configuration cache. Normal development and test tasks continue to use the configured cache.
+
+The protected workflow normally performs these commands after the prepared-plan push. Run them locally only for
+diagnosis or when following an approved recovery procedure.
 
 `checkReleaseCompatibility` is mandatory for a patch release. It compares each selected module's public/protected
 binary API and module descriptor with its own last Maven Central artifact. `stagePreparedRelease` runs the full
@@ -73,6 +74,9 @@ snapshot, removes the prepared plan, commits the published state, and creates th
 the new commit and tag from a protected environment, add
 `-PpushReleaseTag=true -PreleaseBranch=main` (substitute the protected release branch).
 
+The protected workflow normally finalizes the release and pushes this commit and tag automatically. Invoke
+`finalizeRelease` manually only for recovery after confirming the Maven Central outcome.
+
 If Maven Central deployment succeeds but finalization fails, rerun `finalizeRelease`; it can create a missing final
 tag without republishing artifacts. If deployment is interrupted, first determine whether any target coordinate was
 accepted. Retry the same prepared plan only when the Central outcome clearly permits it. Once any coordinate has been
@@ -92,6 +96,7 @@ overrides that development version only for the release build.
 
 ## Release CI
 
-`.github/workflows/release.yml` is the only workflow that receives Maven Central and signing credentials. Dispatch it
-for the protected branch that contains the committed prepared plan. It publishes the plan and then finalizes the
-published state and tag; ordinary CI never receives release credentials or modifies release files.
+`.github/workflows/release.yml` is the only workflow that receives Maven Central and signing credentials. A push of a
+committed prepared plan to a protected release branch starts publication automatically. The workflow verifies the
+plan, publishes it, then finalizes the published state and tag. It also retains manual dispatch to retry a committed
+prepared plan; ordinary CI never receives release credentials or modifies release files.

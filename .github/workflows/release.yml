@@ -1,6 +1,9 @@
 name: Publish prepared release
 
 on:
+  push:
+    paths:
+      - gradle/prepared-release.toml
   workflow_dispatch:
     inputs:
       branch:
@@ -9,18 +12,61 @@ on:
         type: string
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: prepared-release-${{ inputs.branch || github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
+  detect-prepared-release:
+    name: Detect committed prepared release
+    if: github.event_name == 'workflow_dispatch' || github.ref_protected
+    runs-on: ubuntu-latest
+    outputs:
+      prepared: ${{ steps.plan.outputs.prepared }}
+      revision: ${{ steps.plan.outputs.revision }}
+      branch: ${{ steps.plan.outputs.branch }}
+    steps:
+      - name: Check out candidate revision
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.branch || github.sha }}
+          fetch-depth: 0
+
+      - name: Detect prepared plan
+        id: plan
+        env:
+          RELEASE_BRANCH: ${{ inputs.branch || github.ref_name }}
+        run: |
+          git check-ref-format --branch "$RELEASE_BRANCH" >/dev/null
+          git fetch --no-tags origin "refs/heads/$RELEASE_BRANCH:refs/remotes/origin/$RELEASE_BRANCH"
+          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse "origin/$RELEASE_BRANCH")" ]]; then
+            echo "The prepared release must be the current tip of '$RELEASE_BRANCH'." >&2
+            exit 1
+          fi
+          echo "branch=$RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
+          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          if [[ -f gradle/prepared-release.toml ]]; then
+            echo "prepared=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prepared=false" >> "$GITHUB_OUTPUT"
+            echo "No prepared release plan is present; nothing will be published."
+          fi
+
   publish:
     name: Publish prepared release
+    needs: detect-prepared-release
+    if: needs.detect-prepared-release.outputs.prepared == 'true'
     runs-on: ubuntu-latest
     environment: maven-central-release
+    permissions:
+      contents: write
     steps:
       - name: Check out prepared release
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ needs.detect-prepared-release.outputs.revision }}
           fetch-depth: 0
 
       - name: Set up JDKs
@@ -50,8 +96,10 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Finalize published release
-        run: >
-          ./gradlew --no-daemon --no-configuration-cache finalizeRelease
-          -PconfirmFinalize=true
-          -PpushReleaseTag=true
-          -PreleaseBranch=${{ inputs.branch }}
+        env:
+          RELEASE_BRANCH: ${{ needs.detect-prepared-release.outputs.branch }}
+        run: |
+          ./gradlew --no-daemon --no-configuration-cache finalizeRelease \
+            -PconfirmFinalize=true \
+            -PpushReleaseTag=true \
+            -PreleaseBranch="$RELEASE_BRANCH"

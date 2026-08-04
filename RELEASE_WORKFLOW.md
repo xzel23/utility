@@ -1,7 +1,7 @@
 # Release Workflow
 
 This is the operator runbook for publishing a new utility release. It implements the selective-publishing model in
-[SELECTIVE-PUBLISHING-CONCEPT.md](SELECTIVE-PUBLISHING-CONCEPT.md): a patch release publishes the changed libraries
+[SELECTIVE-PUBLISHING-CONCEPT.md](doc/SELECTIVE-PUBLISHING-CONCEPT.md): a patch release publishes the changed libraries
 and a new BOM; a major or minor release publishes every library and the BOM.
 
 Do not edit `gradle/release-state.toml` by hand and do not create a release tag before publication. The Gradle tasks
@@ -9,7 +9,7 @@ and the protected GitHub Actions workflow manage both.
 
 ## 1. Choose the release version
 
-Work on the protected release branch (normally `main`) and start with a clean, up-to-date checkout:
+Work on a GitHub-protected release branch (normally `main`) and start with a clean, up-to-date checkout:
 
 ```bash
 git switch main
@@ -27,13 +27,14 @@ Choose one release type:
 | Minor        | Next `X.Y.0`                                 | Every library and BOM     |
 | Major        | Next `X.0.0`                                 | Every library and BOM     |
 
-Generate a dry-run plan. Supply `releaseVersion` only when the default next version is not the intended version.
+The preparation script generates the dry-run plan first. Supply `--version` only when the default next version is not
+the intended version.
 
 ```bash
-./gradlew prepareRelease -PreleaseType=patch
-./gradlew prepareRelease -PreleaseType=patch -PreleaseVersion=23.1.4
-./gradlew prepareRelease -PreleaseType=minor
-./gradlew prepareRelease -PreleaseType=major -PreleaseVersion=24.0.0
+./scripts/prepare-release.sh --type patch
+./scripts/prepare-release.sh --type patch --version 23.1.4
+./scripts/prepare-release.sh --type minor
+./scripts/prepare-release.sh --type major --version 24.0.0
 ```
 
 Review the printed BOM version, selected modules, retained module versions, source revision, and selection reasons.
@@ -53,24 +54,15 @@ Run the normal verification suite locally:
 Resolve all failures before continuing. The protected release workflow runs these checks again while staging the
 candidate, so the local run is an early safety check rather than the sole release validation.
 
-## 3. Persist and review the prepared plan
+## 3. Persist, confirm, and push the prepared plan
 
-Once the dry-run plan is correct, write the candidate plan:
+The script first asks whether it should write and commit `gradle/prepared-release.toml`. It then asks a second time
+before pushing the prepared-plan commit to the current branch's upstream. Answer yes to that second prompt only when
+you authorize Maven Central publication. Answer no to keep the committed candidate local for later review.
 
-```bash
-./gradlew prepareRelease -PreleaseType=patch -PconfirmRelease=true
-```
-
-This creates `gradle/prepared-release.toml`. Commit and push that exact plan:
-
-```bash
-git add gradle/prepared-release.toml
-git commit -m "Prepare release X.Y.Z"
-git push origin main
-```
-
-Use the actual version shown by `prepareRelease` in the commit message. The prepared plan is the release input: do
-not make further source, build, dependency, or version changes on the branch before publishing it.
+The script commits the plan as `Prepare release X.Y.Z`, using the version recorded in the plan. The prepared plan is
+the release input: do not make further source, build, dependency, or version changes on the branch before pushing it.
+The workflow also requires that this commit remains the branch tip when publication begins.
 
 Optionally perform the release-specific local checks:
 
@@ -85,16 +77,17 @@ Release validation, staging, publishing, and finalization operate on live Git, M
 state. Run those release-only tasks with `--no-configuration-cache`; normal development and test tasks continue to
 use the project's configured configuration cache.
 
-## 4. Start the protected GitHub Actions release workflow
+## 4. Monitor the protected GitHub Actions release workflow
 
-Only the `Publish prepared release` GitHub Actions workflow has Maven Central and signing credentials.
+Only the `Publish prepared release` GitHub Actions workflow has Maven Central and signing credentials. Pushing a
+prepared plan to a protected release branch starts it automatically.
 
 1. Open the repository on GitHub and select **Actions**.
 2. Select **Publish prepared release**.
-3. Click **Run workflow**.
-4. In the workflow-branch selector, choose the protected branch containing the committed prepared plan.
-5. Set the required `branch` input to that same branch (normally `main`).
-6. Click **Run workflow** and monitor the job to completion.
+3. Monitor the run for the prepared-plan push until it completes.
+
+The workflow can still be started manually to retry a committed prepared plan. Select the protected branch that
+contains the plan and provide the same branch in its required `branch` input.
 
 The workflow runs `publishPreparedRelease`, which verifies the plan, executes the library checks and patch
 compatibility checks, stages only the selected libraries plus the BOM, signs the artifacts, and deploys them to Maven
