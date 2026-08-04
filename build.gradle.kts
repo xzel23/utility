@@ -888,6 +888,13 @@ subprojects {
             val shouldSign = !project.version.toString().lowercase().contains("snapshot")
             isRequired = shouldSign
 
+            // The release workflow supplies the armored private key and passphrase as GitHub secrets. JReleaser
+            // configures its own PGP signer below; Gradle's publication signing tasks need this signatory separately.
+            val signingSecretKey = System.getenv("SIGNING_SECRET_KEY")
+            if (!signingSecretKey.isNullOrBlank()) {
+                useInMemoryPgpKeys(signingSecretKey, System.getenv("SIGNING_PASSWORD"))
+            }
+
             val publishing = project.extensions.getByType<PublishingExtension>()
 
             if (project.name.endsWith("-bom")) {

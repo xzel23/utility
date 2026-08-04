@@ -86,6 +86,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Verify release credentials
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SIGNING_PUBLIC_KEY: ${{ secrets.SIGNING_PUBLIC_KEY }}
+          SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          for credential in SONATYPE_USERNAME SONATYPE_PASSWORD SIGNING_PUBLIC_KEY SIGNING_SECRET_KEY SIGNING_PASSWORD; do
+            if [[ -z "${!credential}" ]]; then
+              echo "Required release credential is unavailable: $credential" >&2
+              exit 1
+            fi
+          done
+
       - name: Publish prepared release
         run: ./gradlew --no-daemon --build-cache --no-configuration-cache publishPreparedRelease
         env:
