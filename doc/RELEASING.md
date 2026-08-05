@@ -13,7 +13,7 @@ staging and publishing a prepared release.
 - A clean checkout on the release branch, with the required source revisions available locally.
 - A GitHub-protected release branch. Only a prepared plan pushed to such a branch can start publication automatically.
 - Maven Central and signing credentials available only in the protected release environment. The build reads
-  `SONATYPE_USERNAME`, `SONATYPE_PASSWORD`, `SIGNING_SECRET_KEY`, and `SIGNING_PASSWORD`.
+  `SONATYPE_USERNAME`, `SONATYPE_TOKEN`, `SIGNING_SECRET_KEY`, and `SIGNING_PASSWORD`.
 - A complete Gradle test environment, including the configured JDK toolchains.
 
 ## Prepare a release

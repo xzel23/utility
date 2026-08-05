@@ -168,11 +168,11 @@ jobs:
       - name: Verify release credentials
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
           SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
-          for credential in SONATYPE_USERNAME SONATYPE_PASSWORD SIGNING_SECRET_KEY SIGNING_PASSWORD; do
+          for credential in SONATYPE_USERNAME SONATYPE_TOKEN SIGNING_SECRET_KEY SIGNING_PASSWORD; do
             if [[ -z "${!credential}" ]]; then
               echo "Required release credential is unavailable: $credential" >&2
               exit 1
@@ -187,7 +187,7 @@ jobs:
             -PprebuiltReleaseBundle=true publishPreparedReleaseFromCi 2>&1 | tee build/jreleaser/gradle-publish.log
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
           SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
