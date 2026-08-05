@@ -1,58 +1,119 @@
 name: Publish prepared release
 
 on:
-  push:
-    paths:
-      - gradle/prepared-release.toml
+  workflow_run:
+    workflows: [ "CI" ]
+    types: [ completed ]
   workflow_dispatch:
     inputs:
       branch:
         description: 'Protected branch containing the committed prepared-release plan'
         required: true
         type: string
+      ci_run_id:
+        description: 'Successful CI workflow run containing the tested release bundle'
+        required: true
+        type: string
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
-  group: prepared-release-${{ inputs.branch || github.ref_name }}
+  group: prepared-release-${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || inputs.branch || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
   detect-prepared-release:
     name: Detect committed prepared release
-    if: github.event_name == 'workflow_dispatch' || github.ref_protected
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
     outputs:
       prepared: ${{ steps.plan.outputs.prepared }}
-      revision: ${{ steps.plan.outputs.revision }}
-      branch: ${{ steps.plan.outputs.branch }}
+      revision: ${{ steps.ci-run.outputs.revision }}
+      branch: ${{ steps.ci-run.outputs.branch }}
+      ci_run_id: ${{ steps.ci-run.outputs.run_id }}
     steps:
+      - name: Resolve successful CI run
+        id: ci-run
+        env:
+          CI_RUN_ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || inputs.ci_run_id }}
+          EXPECTED_BRANCH: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.event.workflow_run.head_branch }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$CI_RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "CI run ID must be numeric: $CI_RUN_ID" >&2
+            exit 1
+          fi
+
+          run_json=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$CI_RUN_ID")
+          workflow_path=$(jq -r '.path // empty' <<< "$run_json")
+          conclusion=$(jq -r '.conclusion // empty' <<< "$run_json")
+          event=$(jq -r '.event // empty' <<< "$run_json")
+          branch=$(jq -r '.head_branch // empty' <<< "$run_json")
+          revision=$(jq -r '.head_sha // empty' <<< "$run_json")
+          head_repository=$(jq -r '.head_repository.full_name // empty' <<< "$run_json")
+
+          [[ "$workflow_path" == ".github/workflows/CI.yml" ]] || {
+            echo "Run $CI_RUN_ID is not a CI.yml run." >&2
+            exit 1
+          }
+          [[ "$conclusion" == "success" ]] || {
+            echo "CI run $CI_RUN_ID did not succeed: $conclusion" >&2
+            exit 1
+          }
+          [[ "$event" == "push" ]] || {
+            echo "The release can only promote artifacts from a push CI run: $event" >&2
+            exit 1
+          }
+          [[ "$head_repository" == "$GITHUB_REPOSITORY" ]] || {
+            echo "The CI run must come from this repository: $head_repository" >&2
+            exit 1
+          }
+          [[ "$branch" == "$EXPECTED_BRANCH" ]] || {
+            echo "CI run branch $branch does not match requested branch $EXPECTED_BRANCH." >&2
+            exit 1
+          }
+          branch_json=$(gh api "repos/$GITHUB_REPOSITORY/branches/$branch")
+          [[ "$(jq -r '.protected' <<< "$branch_json")" == "true" ]] || {
+            echo "Release branch is not protected: $branch" >&2
+            exit 1
+          }
+
+          echo "run_id=$CI_RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+
       - name: Check out candidate revision
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.branch || github.sha }}
+          ref: ${{ steps.ci-run.outputs.revision }}
           fetch-depth: 0
 
       - name: Detect prepared plan
         id: plan
         env:
-          RELEASE_BRANCH: ${{ inputs.branch || github.ref_name }}
+          RELEASE_BRANCH: ${{ steps.ci-run.outputs.branch }}
         run: |
+          set -euo pipefail
           git check-ref-format --branch "$RELEASE_BRANCH" >/dev/null
+          if [[ ! -f gradle/prepared-release.toml ]]; then
+            echo "prepared=false" >> "$GITHUB_OUTPUT"
+            echo "No prepared release plan is present; nothing will be published."
+            exit 0
+          fi
           git fetch --no-tags origin "refs/heads/$RELEASE_BRANCH:refs/remotes/origin/$RELEASE_BRANCH"
           if [[ "$(git rev-parse HEAD)" != "$(git rev-parse "origin/$RELEASE_BRANCH")" ]]; then
             echo "The prepared release must be the current tip of '$RELEASE_BRANCH'." >&2
             exit 1
           fi
-          echo "branch=$RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
-          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          if [[ -f gradle/prepared-release.toml ]]; then
-            echo "prepared=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "prepared=false" >> "$GITHUB_OUTPUT"
-            echo "No prepared release plan is present; nothing will be published."
-          fi
+          echo "prepared=true" >> "$GITHUB_OUTPUT"
 
   publish:
     name: Publish prepared release
@@ -61,6 +122,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: maven-central-release
     permissions:
+      actions: read
       contents: write
     steps:
       - name: Check out prepared release
@@ -68,6 +130,23 @@ jobs:
         with:
           ref: ${{ needs.detect-prepared-release.outputs.revision }}
           fetch-depth: 0
+
+      - name: Download tested release bundle
+        uses: actions/download-artifact@v5
+        with:
+          name: release-bundle
+          # upload-artifact uses build/ as the common root for the bundle paths.
+          # Download into build/ so the Gradle release tasks see build/staging-deploy.
+          path: ${{ github.workspace }}/build
+          run-id: ${{ needs.detect-prepared-release.outputs.ci_run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Verify release bundle checksum
+        run: |
+          set -euo pipefail
+          test -f build/release-bundle/manifest.sha256
+          test -f build/release-bundle/metadata.properties
+          (cd build && sha256sum --check --strict release-bundle/manifest.sha256)
 
       - name: Set up JDKs
         uses: actions/setup-java@v5
@@ -101,8 +180,8 @@ jobs:
             fi
           done
 
-      - name: Publish prepared release
-        run: ./gradlew --no-daemon --build-cache --no-configuration-cache publishPreparedRelease
+      - name: Publish tested release bundle
+        run: ./gradlew --no-daemon --no-configuration-cache -PprebuiltReleaseBundle=true publishPreparedReleaseFromCi
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}

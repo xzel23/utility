@@ -46,9 +46,22 @@ jobs:
             wrapper
             toolchains
 
+      - name: Detect prepared release
+        id: prepared-release
+        run: |
+          if [[ -f gradle/prepared-release.toml ]]; then
+            echo "prepared=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prepared=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: 'Execute Gradle build'
         run: gradle --no-daemon --build-cache assemble testClasses
         id: compile
+
+      - name: Prepare tested release bundle
+        if: github.event_name == 'push' && github.ref_protected && steps.prepared-release.outputs.prepared == 'true'
+        run: gradle --no-daemon --build-cache --no-configuration-cache -PciReleaseBundle=true prepareCiReleaseBundle
 
       # Upload artifacts
       - name: Upload build artifacts
@@ -60,7 +73,17 @@ jobs:
             **/build/classes/
             **/build/classes-cabe/
             build/gradle-version/version.txt
-          path-root: ${{ github.workspace }}
+          if-no-files-found: error
+
+      - name: Upload tested release bundle
+        if: github.event_name == 'push' && github.ref_protected && steps.prepared-release.outputs.prepared == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-bundle
+          path: |
+            build/staging-deploy
+            build/release-bundle/manifest.sha256
+            build/release-bundle/metadata.properties
           if-no-files-found: error
 
   test-linux:

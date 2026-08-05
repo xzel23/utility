@@ -229,20 +229,22 @@ prepared-plan or release-state-only commit does not make unrelated modules appea
 
 ### 3. Publish
 
-Provide a root task, for example:
+Provide root tasks for bundle preparation and promotion, for example:
 
 ```text
-    publishPreparedRelease
+    prepareCiReleaseBundle
+    publishPreparedReleaseFromCi
 ```
 
 
 This task must:
 
 1. Verify that the selected modules match the persisted release plan.
-2. Run validation and tests.
-3. Publish only the selected library modules plus the BOM to the staging repository.
-4. Invoke the existing Maven Central release process for the staged artifacts.
-5. Fail without promoting the prepared plan to published release state if staging or deployment fails.
+2. Have normal CI build and test the candidate, including the Linux/Xvfb test job.
+3. Package only the selected library modules plus the BOM into an unsigned, checksummed staging bundle.
+4. Verify and promote that exact bundle from the protected release workflow; signing and Maven Central deployment happen
+   only there.
+5. Fail without promoting the prepared plan to published release state if bundle verification or deployment fails.
 
 Publishing must not derive its selected modules from an ad-hoc local Git state. It must use the persisted prepared plan to make CI execution reproducible.
 
@@ -272,17 +274,18 @@ The release workflow should be separate from ordinary CI.
 Normal CI:
 
 - Builds and tests all affected projects as currently required.
+- When a prepared plan is present on a protected branch, uploads the complete unsigned publication bundle and its
+  checksum manifest after the build; the test jobs consume the same build outputs.
 - Does not modify release state.
-- Does not publish releases.
+- Does not receive release credentials or publish externally.
 
 Release CI:
 
-1. Is manually dispatched or triggered by a protected release branch or prepared-release commit.
-2. Checks out the exact prepared release commit.
-3. Verifies the release plan.
-4. Runs the selected publication tasks.
-5. Deploys only the generated staging artifacts.
-6. Finalizes the release state and tags the finalized commit only after successful deployment.
+1. Is triggered only by a successful CI push run on a protected release branch, or manually with that CI run ID.
+2. Checks out the exact commit associated with the CI run and downloads its bundle.
+3. Verifies the release plan, manifest, artifact set, and patch compatibility.
+4. Signs and deploys only the downloaded staging artifacts; it does not rebuild or run tests.
+5. Finalizes the release state and tags the finalized commit only after successful deployment.
 
 Credentials for signing and Maven Central deployment must remain available only to the protected release workflow.
 

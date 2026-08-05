@@ -51,8 +51,9 @@ Run the normal verification suite locally:
 ./gradlew clean check
 ```
 
-Resolve all failures before continuing. The protected release workflow runs these checks again while staging the
-candidate, so the local run is an early safety check rather than the sole release validation.
+Resolve all failures before continuing. Normal CI builds the candidate and runs the Linux and Windows test jobs. The
+release workflow promotes the publication bundle produced by that CI run; it does not rebuild or run the test suite
+again.
 
 ## 3. Persist, confirm, and push the prepared plan
 
@@ -80,20 +81,22 @@ use the project's configured configuration cache.
 ## 4. Monitor the protected GitHub Actions release workflow
 
 Only the `Publish prepared release` GitHub Actions workflow has Maven Central and signing credentials. Pushing a
-prepared plan to a protected release branch starts it automatically.
+prepared plan to a protected release branch starts normal CI first. A successful CI run then starts the release
+workflow automatically.
 
 1. Open the repository on GitHub and select **Actions**.
 2. Select **Publish prepared release**.
 3. Monitor the run for the prepared-plan push until it completes.
 
 The workflow can still be started manually to retry a committed prepared plan. Select the protected branch that
-contains the plan and provide the same branch in its required `branch` input.
+contains the plan and provide the same branch plus the successful CI run ID containing its release bundle.
 
-The workflow runs `publishPreparedRelease`, which verifies the plan, executes the library checks and patch
-compatibility checks, stages only the selected libraries plus the BOM, signs the artifacts, and deploys them to Maven
-Central. It then runs `finalizeRelease`, which verifies Central availability, updates `gradle/release-state.toml`,
-sets the next development snapshot in `gradle/version.toml`, removes the prepared plan, commits those changes, and
-pushes the final `vX.Y.Z` tag.
+The workflow downloads and verifies the checksummed bundle from the successful CI run. It then runs
+`publishPreparedReleaseFromCi`, which verifies the plan and patch compatibility against those staged artifacts, lets
+JReleaser sign the exact bundle, and deploys it to Maven Central without rebuilding or testing. It then runs
+`finalizeRelease`, which verifies Central availability, updates `gradle/release-state.toml`, sets the next development
+snapshot in `gradle/version.toml`, removes the prepared plan, commits those changes, and pushes the final `vX.Y.Z`
+tag.
 
 ## 5. Verify completion
 

@@ -51,13 +51,15 @@ commit is pushed before it begins publication.
 These release-only tasks operate on live Git, Maven Central, signing, and staging state, so they intentionally run
 without the configuration cache. Normal development and test tasks continue to use the configured cache.
 
-The protected workflow normally performs these commands after the prepared-plan push. Run them locally only for
-diagnosis or when following an approved recovery procedure.
+The protected workflow normally performs the plan and compatibility checks after normal CI has built and tested the
+candidate. It promotes the exact CI publication bundle, so it does not run the library test suite again. Run these
+commands locally only for diagnosis or when following an approved recovery procedure.
 
 `checkReleaseCompatibility` is mandatory for a patch release. It compares each selected module's public/protected
 binary API and module descriptor with its own last Maven Central artifact. `stagePreparedRelease` runs the full
-library test suite, clears stale staging output, and stages only the selected libraries plus the BOM.
-`publishPreparedRelease` then invokes JReleaser to deploy that staged set to Maven Central.
+library test suite, clears stale staging output, and stages only the selected libraries plus the BOM. The protected
+workflow uses `publishPreparedReleaseFromCi` instead: normal CI creates and tests an unsigned bundle, and the release
+workflow verifies and signs that exact bundle before invoking JReleaser.
 
 Do not create the final release tag at preparation time.
 
@@ -97,6 +99,8 @@ overrides that development version only for the release build.
 ## Release CI
 
 `.github/workflows/release.yml` is the only workflow that receives Maven Central and signing credentials. A push of a
-committed prepared plan to a protected release branch starts publication automatically. The workflow verifies the
-plan, publishes it, then finalizes the published state and tag. It also retains manual dispatch to retry a committed
-prepared plan; ordinary CI never receives release credentials or modifies release files.
+committed prepared plan to a protected release branch starts normal CI; only a successful CI run starts publication.
+The release workflow downloads the checksummed bundle from that exact run, verifies the plan and artifacts, publishes
+without rebuilding or testing, then finalizes the published state and tag. It retains manual dispatch to retry a
+committed prepared plan by supplying the successful CI run ID; ordinary CI never receives release credentials or
+modifies release files.

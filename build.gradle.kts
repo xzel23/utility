@@ -15,6 +15,8 @@ import java.net.HttpURLConnection
 import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.security.MessageDigest
+import java.util.Properties
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -22,6 +24,7 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
+import org.gradle.plugins.signing.Sign
 
 plugins {
     id("java-library")
@@ -443,13 +446,29 @@ private fun downloadPublishedModuleJar(moduleName: String, version: String): Fil
     return target
 }
 
+private fun stagedReleaseArtifact(moduleName: String, version: String, classifier: String = ""): File {
+    val filename = buildString {
+        append(moduleName)
+        append('-')
+        append(version)
+        if (classifier.isNotEmpty()) {
+            append('-')
+            append(classifier)
+        }
+        append(".jar")
+    }
+    return layout.buildDirectory.file(
+        "staging-deploy/${Meta.GROUP.replace('.', '/')}/$moduleName/$version/$filename"
+    ).get().asFile
+}
+
 tasks.register("checkReleaseCompatibility") {
     group = "verification"
     description = "Checks selected patch-release modules against their last published binary API."
     notCompatibleWithConfigurationCache(
         "Compatibility verification resolves published artifacts and invokes the external japicmp process."
     )
-    if (releasePlanPresent) {
+    if (releasePlanPresent && !prebuiltReleaseBundleMode) {
         dependsOn(configuredSelectedReleaseModules.map { moduleName -> ":$moduleName:jar" })
     }
 
@@ -468,8 +487,12 @@ tasks.register("checkReleaseCompatibility") {
         plan.modules.filterValues { it.selected }.forEach { (moduleName, module) ->
             val oldVersion = state.modules.getValue(moduleName).version
             val oldJar = downloadPublishedModuleJar(moduleName, oldVersion)
-            val newJar = project(":$moduleName").layout.buildDirectory
-                .file("libs/$moduleName-${module.version}.jar").get().asFile
+            val newJar = if (prebuiltReleaseBundleMode) {
+                stagedReleaseArtifact(moduleName, module.version)
+            } else {
+                project(":$moduleName").layout.buildDirectory
+                    .file("libs/$moduleName-${module.version}.jar").get().asFile
+            }
             check(newJar.isFile) { "candidate artifact was not built: ${newJar.path}" }
 
             logger.lifecycle("Checking binary compatibility: $moduleName $oldVersion -> ${module.version}")
@@ -568,6 +591,8 @@ fun isDevelopmentVersion(versionString: String): Boolean {
 
 val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
 val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snapshot")
+val ciReleaseBundleMode = providers.gradleProperty("ciReleaseBundle").map(String::toBoolean).orElse(false).get()
+val prebuiltReleaseBundleMode = providers.gradleProperty("prebuiltReleaseBundle").map(String::toBoolean).orElse(false).get()
 
 /////////////////////////////////////////////////////////////////////////////
 // Subprojects configuration
@@ -882,11 +907,19 @@ subprojects {
         }
     }
 
+    // CI creates an unsigned, immutable publication bundle. The protected release workflow lets JReleaser
+    // sign that exact bundle after it has been verified against the successful CI run.
+    if (ciReleaseBundleMode) {
+        tasks.withType<Sign>().configureEach {
+            onlyIf("signing is deferred to the protected release workflow") { false }
+        }
+    }
+
     // Signing configuration deferred until after evaluation
     afterEvaluate {
         configure<SigningExtension> {
             val shouldSign = !project.version.toString().lowercase().contains("snapshot")
-            isRequired = shouldSign
+            isRequired = shouldSign && !ciReleaseBundleMode
 
             // The release workflow supplies the armored private key and passphrase as GitHub secrets. JReleaser
             // configures its own PGP signer below; Gradle's publication signing tasks need this signatory separately.
@@ -939,6 +972,183 @@ tasks.register("publishToStagingDirectory") {
     )
 }
 
+val cleanPreparedReleaseStaging = tasks.register<Delete>("cleanPreparedReleaseStaging") {
+    group = "release"
+    description = "Removes stale staging artifacts before a prepared release is staged."
+    delete(layout.buildDirectory.dir("staging-deploy"))
+}
+
+private val releaseBundleStagingDirectory = layout.buildDirectory.dir("staging-deploy").get().asFile
+private val releaseBundleDirectory = layout.buildDirectory.dir("release-bundle").get().asFile
+private val releaseBundleManifest = releaseBundleDirectory.resolve("manifest.sha256")
+private val releaseBundleMetadata = releaseBundleDirectory.resolve("metadata.properties")
+private val releaseBundleGroupPath = Meta.GROUP.replace('.', '/')
+
+private fun releaseBundleRelativePath(root: File, file: File): String =
+    root.toPath().relativize(file.toPath()).toString().replace(File.separatorChar, '/')
+
+private fun releaseBundleFiles(root: File): List<File> =
+    if (root.isDirectory) {
+        root.walkTopDown().filter(File::isFile).sortedBy { releaseBundleRelativePath(root, it) }.toList()
+    } else {
+        emptyList()
+    }
+
+private fun sha256(file: File): String {
+    val digest = MessageDigest.getInstance("SHA-256")
+    file.inputStream().use { input ->
+        val buffer = ByteArray(64 * 1024)
+        while (true) {
+            val count = input.read(buffer)
+            if (count < 0) break
+            digest.update(buffer, 0, count)
+        }
+    }
+    return digest.digest().joinToString("") { byte -> "%02x".format(byte.toInt() and 0xff) }
+}
+
+private fun stagedReleaseFile(moduleName: String, version: String, filename: String): File =
+    releaseBundleStagingDirectory.resolve("$releaseBundleGroupPath/$moduleName/$version/$filename")
+
+private fun writeReleaseBundleMetadata(plan: PreparedReleasePlan) {
+    releaseBundleDirectory.mkdirs()
+    val metadata = buildString {
+        appendLine("commit=${requireGitSuccess("resolving CI release bundle commit", "rev-parse", "HEAD")}")
+        appendLine("planSourceRevision=${plan.sourceRevision}")
+        appendLine("bomVersion=${plan.bomVersion}")
+        appendLine("selectedModules=${configuredSelectedReleaseModules.sorted().joinToString(",")}")
+    }
+    Files.writeString(releaseBundleMetadata.toPath(), metadata, StandardCharsets.UTF_8)
+}
+
+private fun writeReleaseBundleManifest() {
+    val manifest = buildString {
+        releaseBundleFiles(releaseBundleStagingDirectory).forEach { file ->
+            append(sha256(file))
+            append("  ")
+            appendLine("staging-deploy/${releaseBundleRelativePath(releaseBundleStagingDirectory, file)}")
+        }
+    }
+    Files.writeString(releaseBundleManifest.toPath(), manifest, StandardCharsets.UTF_8)
+}
+
+private fun readReleaseBundleManifest(): Map<String, String> {
+    check(releaseBundleManifest.isFile) { "release bundle manifest is missing: ${releaseBundleManifest.path}" }
+    val entries = linkedMapOf<String, String>()
+    releaseBundleManifest.readLines(StandardCharsets.UTF_8).forEachIndexed { index, line ->
+        if (line.isBlank()) return@forEachIndexed
+        val separator = line.indexOf("  ")
+        check(separator == 64) { "invalid release bundle manifest line ${index + 1}" }
+        val digest = line.substring(0, separator)
+        val path = line.substring(separator + 2)
+        val stagingPath = path.removePrefix("staging-deploy/")
+        check(stagingPath != path) { "release bundle manifest path is outside staging-deploy: $path" }
+        check(digest.matches(Regex("[0-9a-f]{64}"))) { "invalid digest in release bundle manifest line ${index + 1}" }
+        val candidate = releaseBundleStagingDirectory.toPath().resolve(stagingPath).normalize()
+        check(candidate.startsWith(releaseBundleStagingDirectory.toPath())) {
+            "release bundle manifest contains a path outside the staging directory: $path"
+        }
+        check(entries.put(stagingPath, digest) == null) { "duplicate release bundle manifest path: $path" }
+    }
+    return entries
+}
+
+private fun validateReleaseBundleContents(plan: PreparedReleasePlan) {
+    check(releaseBundleStagingDirectory.isDirectory) {
+        "release bundle staging directory is missing: ${releaseBundleStagingDirectory.path}"
+    }
+    check(releaseBundleMetadata.isFile) { "release bundle metadata is missing: ${releaseBundleMetadata.path}" }
+
+    val metadata = Properties().apply {
+        releaseBundleMetadata.inputStream().use { load(it) }
+    }
+    val currentCommit = requireGitSuccess("resolving release bundle commit", "rev-parse", "HEAD")
+    check(metadata.getProperty("commit") == currentCommit) {
+        "release bundle was built from ${metadata.getProperty("commit")}, but the current revision is $currentCommit"
+    }
+    check(metadata.getProperty("planSourceRevision") == plan.sourceRevision) {
+        "release bundle plan source revision does not match the prepared release plan"
+    }
+    check(metadata.getProperty("bomVersion") == plan.bomVersion) {
+        "release bundle BOM version does not match the prepared release plan"
+    }
+    check(metadata.getProperty("selectedModules") == configuredSelectedReleaseModules.sorted().joinToString(",")) {
+        "release bundle module selection does not match the prepared release plan"
+    }
+
+    val files = releaseBundleFiles(releaseBundleStagingDirectory)
+    check(files.none { it.name.endsWith(".asc") }) {
+        "CI release bundles must be unsigned; signatures are added only by the protected release workflow"
+    }
+    val actualPaths = files.map { releaseBundleRelativePath(releaseBundleStagingDirectory, it) }.toSet()
+    val manifest = readReleaseBundleManifest()
+    check(manifest.keys == actualPaths) {
+        "release bundle manifest does not match the staging directory contents"
+    }
+    manifest.forEach { (path, digest) ->
+        val file = releaseBundleStagingDirectory.resolve(path)
+        check(sha256(file) == digest) { "release bundle checksum mismatch: $path" }
+    }
+
+    fun requireFile(moduleName: String, version: String, filename: String) {
+        val file = stagedReleaseFile(moduleName, version, filename)
+        check(file.isFile) { "release bundle is missing ${file.relativeToOrNull(releaseBundleStagingDirectory)}" }
+    }
+
+    val bom = "utility-bom-${plan.bomVersion}"
+    requireFile("utility-bom", plan.bomVersion, "$bom.pom")
+    requireFile("utility-bom", plan.bomVersion, "$bom.module")
+    plan.modules.filterValues { it.selected }.forEach { (moduleName, module) ->
+        val artifact = "$moduleName-${module.version}"
+        requireFile(moduleName, module.version, "$artifact.jar")
+        requireFile(moduleName, module.version, "$artifact-sources.jar")
+        requireFile(moduleName, module.version, "$artifact-javadoc.jar")
+        requireFile(moduleName, module.version, "$artifact.pom")
+        requireFile(moduleName, module.version, "$artifact.module")
+    }
+}
+
+val prepareCiReleaseBundle = tasks.register("prepareCiReleaseBundle") {
+    group = "release"
+    description = "Creates an unsigned, checksummed Maven bundle from the CI build outputs."
+    notCompatibleWithConfigurationCache(
+        "The CI release bundle records the current Git revision and writes a promotion manifest."
+    )
+    dependsOn("verifyPreparedRelease", cleanPreparedReleaseStaging, "publishToStagingDirectory")
+
+    doLast {
+        check(ciReleaseBundleMode) {
+            "prepareCiReleaseBundle requires -PciReleaseBundle=true"
+        }
+        check(releasePlanPresent) {
+            "prepareCiReleaseBundle requires gradle/prepared-release.toml"
+        }
+        releaseBundleDirectory.deleteRecursively()
+        writeReleaseBundleMetadata(readPreparedReleasePlan(preparedReleasePlanFile))
+        writeReleaseBundleManifest()
+        validateReleaseBundleContents(readPreparedReleasePlan(preparedReleasePlanFile))
+        logger.lifecycle("Prepared unsigned CI release bundle at ${releaseBundleStagingDirectory.path}")
+    }
+}
+
+val verifyCiReleaseBundle = tasks.register("verifyCiReleaseBundle") {
+    group = "release"
+    description = "Verifies the checksummed Maven bundle produced by a successful CI run."
+    notCompatibleWithConfigurationCache(
+        "The CI release bundle and Git revision are external promotion inputs."
+    )
+    doLast {
+        check(prebuiltReleaseBundleMode) {
+            "verifyCiReleaseBundle requires -PprebuiltReleaseBundle=true"
+        }
+        check(releasePlanPresent) {
+            "verifyCiReleaseBundle requires gradle/prepared-release.toml"
+        }
+        validateReleaseBundleContents(readPreparedReleasePlan(preparedReleasePlanFile))
+        logger.lifecycle("Verified CI release bundle for ${requireGitSuccess("resolving verified revision", "rev-parse", "HEAD")}")
+    }
+}
+
 tasks.register("publishSnapshotsToMavenLocal") {
     group = "publishing"
     description = "Publishes every library module and the BOM to the local Maven repository for snapshot development."
@@ -947,12 +1157,6 @@ tasks.register("publishSnapshotsToMavenLocal") {
         publishableModuleNames.map { moduleName -> ":$moduleName:publishToMavenLocal" } +
             ":utility-bom:publishToMavenLocal"
     )
-}
-
-val cleanPreparedReleaseStaging = tasks.register<Delete>("cleanPreparedReleaseStaging") {
-    group = "release"
-    description = "Removes stale staging artifacts before a prepared release is staged."
-    delete(layout.buildDirectory.dir("staging-deploy"))
 }
 
 val stagePreparedRelease = tasks.register("stagePreparedRelease") {
@@ -974,8 +1178,23 @@ tasks.register("publishPreparedRelease") {
     dependsOn(stagePreparedRelease, jreleaserDeploy)
 }
 
+val publishPreparedReleaseFromCi = tasks.register("publishPreparedReleaseFromCi") {
+    group = "release"
+    description = "Signs and deploys the exact publication bundle verified by CI."
+    dependsOn("verifyPreparedRelease", verifyCiReleaseBundle, "checkReleaseCompatibility", jreleaserDeploy)
+}
+
+tasks.named("checkReleaseCompatibility") {
+    mustRunAfter(verifyCiReleaseBundle)
+}
+
 jreleaserDeploy.configure {
-    mustRunAfter(stagePreparedRelease)
+    mustRunAfter(
+        stagePreparedRelease,
+        verifyCiReleaseBundle,
+        "verifyPreparedRelease",
+        "checkReleaseCompatibility"
+    )
 }
 
 gradle.projectsEvaluated {
