@@ -1376,7 +1376,7 @@ jreleaser {
                         url.set("https://central.sonatype.com/api/v1/publisher")
                         stagingRepositories.add("build/staging-deploy")
                         username.set(System.getenv("SONATYPE_USERNAME"))
-                        password.set(System.getenv("SONATYPE_TOKEN"))
+                        password.set(System.getenv("SONATYPE_PASSWORD"))
                     }
                 }
             }
