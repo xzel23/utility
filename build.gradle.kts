@@ -1341,10 +1341,12 @@ tasks.register<Javadoc>("aggregateJavadoc") {
     }
 }
 
+val jreleaserProjectVersion = rootProject.version.toString()
+
 jreleaser {
     project {
         name.set(rootProject.name)
-        version.set(project.version.toString())
+        version.set(jreleaserProjectVersion)
         group = Meta.GROUP
         authors.set(listOf(Meta.DEVELOPER_NAME))
         license.set(Meta.LICENSE_NAME)
