@@ -1,0 +1,59 @@
+[release]
+schemaVersion = 1
+releaseType = "major"
+bomVersion = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+
+[modules.utility]
+version = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+selected = true
+reason = "major release"
+
+[modules.utility-db]
+version = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+selected = true
+reason = "major release"
+
+[modules.utility-swing]
+version = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+selected = true
+reason = "major release"
+
+[modules.utility-fx]
+version = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+selected = true
+reason = "major release"
+
+[modules.utility-fx-icons]
+version = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+selected = true
+reason = "major release"
+
+[modules.utility-fx-icons-ikonli]
+version = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+selected = true
+reason = "major release"
+
+[modules.utility-fx-controls]
+version = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+selected = true
+reason = "major release"
+
+[modules.utility-fx-db]
+version = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+selected = true
+reason = "major release"
+
+[modules.utility-fx-web]
+version = "24.0.0"
+sourceRevision = "bc7c5194b6906ef3d3fc5922de617a6c0eefe1e9"
+selected = true
+reason = "major release"
