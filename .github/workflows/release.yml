@@ -189,6 +189,15 @@ jobs:
           SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
+      - name: Upload JReleaser diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: jreleaser-diagnostics
+          path: build/jreleaser/trace.log
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Finalize published release
         env:
           RELEASE_BRANCH: ${{ needs.detect-prepared-release.outputs.branch }}
