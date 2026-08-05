@@ -47,7 +47,7 @@ jobs:
             toolchains
 
       - name: 'Execute Gradle build'
-        run: gradle --no-daemon --build-cache assemble testClasses aggregateJavadoc publishToStagingDirectory
+        run: gradle --no-daemon --build-cache assemble testClasses
         id: compile
 
       # Upload artifacts
@@ -61,20 +61,6 @@ jobs:
             **/build/classes-cabe/
             build/gradle-version/version.txt
           path-root: ${{ github.workspace }}
-          if-no-files-found: error
-
-      - name: 'Upload staging directory'
-        uses: actions/upload-artifact@v7
-        with:
-          name: staging-deploy
-          path: build/staging-deploy
-          if-no-files-found: error
-
-      - name: 'Upload Javadoc'
-        uses: actions/upload-artifact@v7
-        with:
-          name: javadoc
-          path: build/docs/javadoc
           if-no-files-found: error
 
   test-linux:
@@ -295,98 +281,3 @@ jobs:
 #          args: --property,idea.kotlin.plugin.use.k2=false,--baseline,qodana-baseline.sarif.json
 #        env:
 #          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
-
-  publish:
-    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
-    needs: [ test-linux, test-windows ]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: 'Set up JDK'
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: |
-            21
-            25
-          java-package: 'jdk+fx'
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v5
-        with:
-          name: build-artifacts
-          path: ${{ github.workspace }}
-
-      - name: 'Read Gradle Version'
-        id: gradle-version
-        run: |
-          GRADLE_VERSION=$(cat build/gradle-version/version.txt)
-          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: 'Setup Gradle'
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          gradle-version: ${{ steps.gradle-version.outputs.gradle_version }}
-          gradle-home-cache-includes: |
-            caches
-            notifications
-            jdks
-            wrapper
-            toolchains
-
-      - name: Download staging directory
-        uses: actions/download-artifact@v5
-        with:
-          name: staging-deploy
-          path: build/staging-deploy
-
-      - name: Download Javadoc
-        uses: actions/download-artifact@v5
-        with:
-          name: javadoc
-          path: build/docs/javadoc
-
-      # Only deploy/upload binaries if we explicitly triggered on a release version tag
-      - name: 'publish build'
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: gradle --no-daemon --build-cache --no-configuration-cache jreleaserDeploy jreleaserUpload
-        env:
-          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
-          JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
-          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-
-      - name: 'Get project version'
-        id: version
-        run: |
-          VERSION=$(gradle --no-daemon --build-cache -q printVersion | tail -n 1)
-          echo "Detected version: $VERSION"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: 'Determine Javadoc folder'
-        env:
-          VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          echo "Evaluating DOC_PATH for version: $VERSION"
-          if [[ "$VERSION" == *"-SNAPSHOT" ]]; then
-            echo "DOC_PATH=snapshots" >> "$GITHUB_ENV"
-          elif [[ "$VERSION" == v* ]]; then
-            echo "DOC_PATH=$VERSION" >> "$GITHUB_ENV"
-          else
-            echo "DOC_PATH=latest" >> "$GITHUB_ENV"
-          fi
-
-      - name: 'Deploy versioned Javadoc'
-        if: github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: build/docs/javadoc
-          destination_dir: ${{ env.DOC_PATH }}
-          keep_files: true
