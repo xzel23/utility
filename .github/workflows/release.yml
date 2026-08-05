@@ -169,11 +169,10 @@ jobs:
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SIGNING_PUBLIC_KEY: ${{ secrets.SIGNING_PUBLIC_KEY }}
           SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
-          for credential in SONATYPE_USERNAME SONATYPE_PASSWORD SIGNING_PUBLIC_KEY SIGNING_SECRET_KEY SIGNING_PASSWORD; do
+          for credential in SONATYPE_USERNAME SONATYPE_PASSWORD SIGNING_SECRET_KEY SIGNING_PASSWORD; do
             if [[ -z "${!credential}" ]]; then
               echo "Required release credential is unavailable: $credential" >&2
               exit 1
@@ -181,11 +180,14 @@ jobs:
           done
 
       - name: Publish tested release bundle
-        run: ./gradlew --no-daemon --no-configuration-cache -PprebuiltReleaseBundle=true publishPreparedReleaseFromCi
+        run: |
+          set -o pipefail
+          mkdir -p build/jreleaser
+          ./gradlew --no-daemon --no-configuration-cache --stacktrace \
+            -PprebuiltReleaseBundle=true publishPreparedReleaseFromCi 2>&1 | tee build/jreleaser/gradle-publish.log
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SIGNING_PUBLIC_KEY: ${{ secrets.SIGNING_PUBLIC_KEY }}
           SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
@@ -193,8 +195,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: jreleaser-diagnostics
-          path: build/jreleaser/trace.log
+          name: jreleaser-diagnostics-${{ github.run_attempt }}
+          path: |
+            build/jreleaser
+            build/reports/problems/problems-report.html
           if-no-files-found: warn
           retention-days: 14
 
