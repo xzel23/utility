@@ -19,12 +19,12 @@ spotbugs = "4.10.3"
 cabe-plugin = "4.5.0"
 jdkprovider-plugin = "0.11.0"
 jmh-plugin = "0.7.3"
-jreleaser-plugin = "1.23.0"
+jreleaser-plugin = "1.25.0"
 native-plugin = "1.0.0"
 sonar-plugin = "7.3.1.8318"
-spotbugs-plugin = "6.5.9"
+spotbugs-plugin = "6.5.10"
 test-logger-plugin = "4.0.0"
-versions-plugin = "0.57.0"
+versions-plugin = "0.59.0"
 
 [libraries]
 atlantafx = { group = "io.github.mkpaz", name = "atlantafx-base", version.ref = "atlantafx" }
