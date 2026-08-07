@@ -1,9 +1,9 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxRefresh;
-import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
+import javafx.animation.AnimationTimer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ListChangeListener;
@@ -30,6 +30,9 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     private final AnchorPane pane = new AnchorPane();
     private final Group group = new Group(pane);
     private final ScrollPane scrollPane = new ScrollPane(group);
+    private final AnimationTimer displayScaleUpdater = new DisplayScaleUpdater();
+
+    private double pendingDisplayScale = 1.0;
 
     PinBoardSkin(PinBoard pinBoard) {
         super(pinBoard);
@@ -127,6 +130,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     @Override
     public void dispose() {
+        displayScaleUpdater.stop();
         refresher.stop();
         super.dispose();
     }
@@ -398,7 +402,33 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      *              where values greater than 1 represent zooming in, and values less than 1 represent zooming out.
      */
     private void setDisplayScale(double scale) {
-        FxUtil.runOnNextFrame(() -> {
+        pendingDisplayScale = scale;
+        displayScaleUpdater.start();
+    }
+
+    /**
+     * Get the current display scale.
+     *
+     * @return the current display scale
+     */
+    private double getDisplayScale() {
+        return pane.getScaleX();
+    }
+
+    /**
+     * The DisplayScaleUpdater class is responsible for handling the update of the display scale
+     * in a PinBoard application by extending the AnimationTimer. This involves recalculating
+     * the viewport dimensions and adjusting the scroll positions to maintain the current view
+     * relative to the content when the display scale changes.
+     */
+    private final class DisplayScaleUpdater extends AnimationTimer {
+        @Override
+        public void handle(long now) {
+            stop();
+            applyDisplayScale(pendingDisplayScale);
+        }
+
+        private void applyDisplayScale(double scale) {
             ScrollPosition oldPos = getScrollPosition();
             Rectangle2D boardArea = getSkinnable().getArea();
             Rectangle2D viewportBefore = getViewPortInBoardCoordinates();
@@ -414,24 +444,17 @@ class PinBoardSkin extends SkinBase<PinBoard> {
                     vp.getHeight() / scale
             );
 
-            double hValue = (oldX - boardArea.getMinX()) / (boardArea.getWidth() - viewportAfter.getWidth());
-            double vValue = (oldY - boardArea.getMinY()) / (boardArea.getHeight() - viewportAfter.getHeight());
-
             pane.setScaleX(scale);
             pane.setScaleY(scale);
 
-            setScrollPosition(hValue, vValue);
+            setScrollPosition(
+                    (oldX - boardArea.getMinX()) / (boardArea.getWidth() - viewportAfter.getWidth()),
+                    (oldY - boardArea.getMinY()) / (boardArea.getHeight() - viewportAfter.getHeight())
+            );
 
-            refresh();
-        });
-    }
-
-    /**
-     * Get the current display scale.
-     *
-     * @return the current display scale
-     */
-    private double getDisplayScale() {
-        return pane.getScaleX();
+            // Scaling changes the bitmap transform immediately. Update the visible
+            // nodes in the same frame so their translations cannot lag one pulse.
+            updateNodes();
+        }
     }
 }
