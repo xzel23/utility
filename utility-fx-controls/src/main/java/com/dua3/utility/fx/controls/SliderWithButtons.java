@@ -69,7 +69,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
 
         this.state = new ObjectInputControlState<>(
                 PropertyConverter.convert(slider.valueProperty()),
-                () -> Math.clamp(0.0, getMin(), getMax()),
+                () -> Math.clamp(0.0, slider.getMin(), slider.getMax()),
                 v -> v != null && isValueValid(v) ? Optional.empty() : Optional.of(I18NInstance.get().get("dua3.utility.fx.controls.slider.with.buttons.out.of.range"))
         );
 
