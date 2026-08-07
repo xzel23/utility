@@ -11,6 +11,10 @@ import com.dua3.utility.ui.VAnchor;
  */
 public class LineDashes implements IGraphicsSample.Slide {
 
+    public LineDashes() {
+        // nothing to do
+    }
+
     @Override
     public String title() {
         return "line dashes";
