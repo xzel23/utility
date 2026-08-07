@@ -24,7 +24,7 @@ native-plugin = "1.0.0"
 sonar-plugin = "7.4.0.8496"
 spotbugs-plugin = "6.5.10"
 test-logger-plugin = "4.0.0"
-versions-plugin = "0.59.0"
+versions-plugin = "0.60.0"
 
 [libraries]
 atlantafx = { group = "io.github.mkpaz", name = "atlantafx-base", version.ref = "atlantafx" }
