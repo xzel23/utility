@@ -530,6 +530,7 @@ public final class FxLauncher {
                 return buffer;
             });
 
+            showLogWindow(null);
             ApplicationUtil.addDarkModeListener(dark -> getLogWindow().ifPresent(window -> window.setDarkMode(dark)));
         }
     }

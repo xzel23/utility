@@ -729,6 +729,7 @@ subprojects {
                 getByName<JvmTestSuite>("test") {
                     useJUnitJupiter()
                     dependencies {
+                        implementation(platform(rootProject.libs.slb4j.bom))
                         implementation(rootProject.libs.slb4j)
                         implementation(rootProject.libs.jimfs)
                     }

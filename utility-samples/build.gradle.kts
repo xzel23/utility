@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":utility-swing"))
     implementation(rootProject.libs.log4j.api)
     implementation(rootProject.libs.slf4j.api)
+    implementation(platform(rootProject.libs.slb4j.bom))
     implementation(rootProject.libs.slb4j)
 }
 

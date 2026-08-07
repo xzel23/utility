@@ -24,6 +24,7 @@ dependencies {
     implementation(rootProject.libs.slf4j.api)
     implementation(platform(rootProject.libs.ikonli.bom))
     implementation(rootProject.libs.ikonli.fontawesome6)
+    runtimeOnly(platform(rootProject.libs.slb4j.bom))
     runtimeOnly(rootProject.libs.slb4j)
     runtimeOnly(rootProject.libs.ikonli.javafx)
 }

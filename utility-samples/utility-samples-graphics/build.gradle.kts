@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":utility-fx"))
     implementation(project(":utility-fx-controls"))
     implementation(project(":utility-swing"))
+    implementation(platform(rootProject.libs.slb4j.bom))
     implementation(rootProject.libs.slb4j)
 }
 

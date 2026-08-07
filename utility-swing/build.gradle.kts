@@ -1,6 +1,7 @@
 dependencies {
     implementation(project(":utility"))
 
+    testImplementation(platform(rootProject.libs.slb4j.bom))
     testImplementation(rootProject.libs.slb4j)
     testImplementation(rootProject.libs.jimfs)
 
