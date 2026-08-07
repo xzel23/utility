@@ -11,6 +11,9 @@ import com.dua3.utility.ui.VAnchor;
  */
 public class LineDashes implements IGraphicsSample.Slide {
 
+    /**
+     * Default constructor.
+     */
     public LineDashes() {
         // nothing to do
     }
