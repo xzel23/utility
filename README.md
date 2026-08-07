@@ -238,6 +238,7 @@ could not be loaded.
 ### 24.0.1 (in progress)
 
 - fix PinBoard flickering when scaling
+- fix a suppressed NPE in SliderWithButtons constructor
 - reduce layout complexity in TextPane/TextEditorPane
 - support dashed lines in Graphics
 - optimize `TextUtil.quoteIfNeeded()`
