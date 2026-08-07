@@ -29,6 +29,11 @@ import java.util.function.DoubleBinaryOperator;
 public interface Graphics extends AutoCloseable {
 
     /**
+     * A constant representing the absence of a line dash pattern.
+     */
+    float[] EMPTY_DASHES = new float[0];
+
+    /**
      * Get the width of this {@code Graphics} instance.
      *
      * @return the width as a float value
@@ -315,6 +320,53 @@ public interface Graphics extends AutoCloseable {
      * @return the width of the stroke as a floating-point value
      */
     float getStrokeWidth();
+
+    /**
+     * Sets the pattern for dashed lines using the specified array of dash lengths.
+     * The line dash pattern is an array of numbers that specify the lengths of
+     * alternating dashes and spaces. The lengths are specified in user coordinates.
+     *
+     * @param lineDash an array of floats representing the dash pattern.
+     *                 Each value in the array specifies a dash length followed by
+     *                 a space length in between dashes. If the array length is zero,
+     *                 solid lines will be used.
+     */
+    void setLineDashes(float[] lineDash);
+
+    /**
+     * Retrieves the pattern of dashes and gaps used when stroking
+     * lines in the current graphical context. The dash array is used
+     * to create dashed lines where values at even indices specify
+     * the lengths of visible segments and values at odd indices
+     * specify the lengths of gaps.
+     * <p>
+     * The method returns an array of floats where each pair of
+     * consecutive elements represents the length of a dash followed
+     * by the length of a gap. A null or empty array denotes solid
+     * lines with no dashes.
+     *
+     * @return an array of floats representing the lengths of dashes
+     *         and gaps. An empty array represents a solid line.
+     *         Returns null if dashing is not enabled.
+     */
+    float[] getLineDashes();
+
+    /**
+     * Sets the offset for the start of the line dashes when stroking paths.
+     *
+     * @param lineDashOffset The offset to start the dashes in the stroked path.
+     */
+    void setLineDashOffset(float lineDashOffset);
+
+    /**
+     * Retrieves the current line dash offset value. The dash offset specifies the starting point
+     * for the beginning of the dash pattern in a line, thereby allowing customization
+     * of how dashed lines are rendered in a graphic representation.
+     *
+     * @return the line dash offset as a float, indicating the position in the dash pattern where
+     *         the rendering should begin.
+     */
+    float getLineDashOffset();
 
     /**
      * Sets the fill color for drawing operations.

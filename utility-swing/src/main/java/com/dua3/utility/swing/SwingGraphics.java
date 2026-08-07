@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.AttributedString;
+import java.util.Arrays;
 
 /**
  * The SwingGraphics class implements the {@link Graphics} interface for rendering graphics in swing based applications.
@@ -76,6 +77,8 @@ public class SwingGraphics implements Graphics {
         private Color strokeColor = Color.BLACK;
         private java.awt.Color awtStrokeColor = java.awt.Color.BLACK;
         private float strokeWidth = 1.0f;
+        private float[] lineDashes = EMPTY_DASHES;
+        private float lineDashOffset = 0;
         private Color fillColor = Color.BLACK;
         private java.awt.Color awtFillColor = java.awt.Color.BLACK;
         private Font font = DEFAULT_FONT;
@@ -237,10 +240,11 @@ public class SwingGraphics implements Graphics {
     public void setStroke(Color c, float width) {
         assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
+        BasicStroke stroke = createStroke(width, state.lineDashes, state.lineDashOffset);
         state.strokeWidth = width;
         state.strokeColor = c;
         state.awtStrokeColor = SwingUtil.convert(state.strokeColor);
-        g2d.setStroke(new BasicStroke(state.strokeWidth));
+        g2d.setStroke(stroke);
     }
 
     @Override
@@ -255,8 +259,9 @@ public class SwingGraphics implements Graphics {
     public void setStrokeWidth(float width) {
         assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
+        BasicStroke stroke = createStroke(width, state.lineDashes, state.lineDashOffset);
         state.strokeWidth = width;
-        g2d.setStroke(new BasicStroke(state.strokeWidth));
+        g2d.setStroke(stroke);
     }
 
     @Override
@@ -267,6 +272,54 @@ public class SwingGraphics implements Graphics {
     @Override
     public float getStrokeWidth() {
         return state.strokeWidth;
+    }
+
+    @Override
+    public void setLineDashes(float[] lineDash) {
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
+
+        float[] dashes = copyDashes(lineDash);
+        BasicStroke stroke = createStroke(state.strokeWidth, dashes, state.lineDashOffset);
+        state.lineDashes = dashes;
+        g2d.setStroke(stroke);
+    }
+
+    @Override
+    public float[] getLineDashes() {
+        return copyDashes(state.lineDashes);
+    }
+
+    @Override
+    public void setLineDashOffset(float lineDashOffset) {
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
+
+        BasicStroke stroke = createStroke(state.strokeWidth, state.lineDashes, lineDashOffset);
+        state.lineDashOffset = lineDashOffset;
+        g2d.setStroke(stroke);
+    }
+
+    @Override
+    public float getLineDashOffset() {
+        return state.lineDashOffset;
+    }
+
+    private static float[] copyDashes(float[] lineDash) {
+        return Arrays.copyOf(lineDash, lineDash.length);
+    }
+
+    private static BasicStroke createStroke(float width, float[] lineDashes, float lineDashOffset) {
+        if (lineDashes.length == 0) {
+            return new BasicStroke(width);
+        }
+
+        return new BasicStroke(
+                width,
+                BasicStroke.CAP_SQUARE,
+                BasicStroke.JOIN_MITER,
+                10.0f,
+                lineDashes,
+                lineDashOffset
+        );
     }
 
     @Override

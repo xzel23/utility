@@ -19,6 +19,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Text;
 
+import java.util.Arrays;
+
 /**
  * The FxGraphics class implements the {@link Graphics} interface for rendering graphics in JavaFX based applications.
  */
@@ -53,6 +55,8 @@ public class FxGraphics implements Graphics {
         Color strokeColor = Color.BLACK;
         javafx.scene.paint.Paint fxStrokeColor = javafx.scene.paint.Color.BLACK;
         float strokeWidth = 1.0f;
+        float[] lineDashes = EMPTY_DASHES;
+        float lineDashOffset = 0;
 
         Color fillColor = Color.BLACK;
         javafx.scene.paint.Color fxFillColor = javafx.scene.paint.Color.BLACK;
@@ -66,6 +70,7 @@ public class FxGraphics implements Graphics {
         gc.setFill(state.fxFillColor);
         gc.setStroke(state.fxStrokeColor);
         gc.setLineWidth(state.strokeWidth);
+        applyLineDashes();
     }
 
     /**
@@ -313,6 +318,49 @@ public class FxGraphics implements Graphics {
     @Override
     public float getStrokeWidth() {
         return state.strokeWidth;
+    }
+
+    @Override
+    public void setLineDashes(float[] lineDash) {
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
+
+        state.lineDashes = copyDashes(lineDash);
+        applyLineDashes();
+    }
+
+    @Override
+    public float[] getLineDashes() {
+        return copyDashes(state.lineDashes);
+    }
+
+    @Override
+    public void setLineDashOffset(float lineDashOffset) {
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
+
+        state.lineDashOffset = lineDashOffset;
+        gc.setLineDashOffset(lineDashOffset);
+    }
+
+    @Override
+    public float getLineDashOffset() {
+        return state.lineDashOffset;
+    }
+
+    private void applyLineDashes() {
+        if (state.lineDashes == null || state.lineDashes.length == 0) {
+            gc.setLineDashes();
+        } else {
+            double[] dashes = new double[state.lineDashes.length];
+            for (int i = 0; i < dashes.length; i++) {
+                dashes[i] = state.lineDashes[i];
+            }
+            gc.setLineDashes(dashes);
+        }
+        gc.setLineDashOffset(state.lineDashOffset);
+    }
+
+    private static float[] copyDashes(float[] lineDash) {
+        return Arrays.copyOf(lineDash, lineDash.length);
     }
 
     @Override

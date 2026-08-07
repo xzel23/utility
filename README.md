@@ -235,6 +235,10 @@ could not be loaded.
 
 ## Changes
 
+### 24.0.1 (in progress)
+
+- support dashed lines in Graphics
+
 ### 24.0.0
 
 **IMPORTANT**

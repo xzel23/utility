@@ -1,6 +1,7 @@
 package com.dua3.utility.samples.graphics;
 
 import com.dua3.utility.fx.FxGraphics;
+import com.dua3.utility.samples.graphics.slides.LineDashes;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -8,6 +9,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -43,6 +45,13 @@ public class FxGraphicsSample extends Application implements IGraphicsSample<Tab
     }
 
     @Override
+    public List<Tab> createSlides(float w, float h) {
+        List<Tab> tabs = IGraphicsSample.super.createSlides(w, h);
+        tabs.add(createSlide(LineDashes::new, w, h));
+        return tabs;
+    }
+
+    @Override
     public Tab createSlide(Supplier<Slide> factory, float w, float h) {
         Slide slide = factory.get();
         Canvas canvas = new Canvas(w, h);
@@ -52,4 +61,3 @@ public class FxGraphicsSample extends Application implements IGraphicsSample<Tab
     }
 
 }
-

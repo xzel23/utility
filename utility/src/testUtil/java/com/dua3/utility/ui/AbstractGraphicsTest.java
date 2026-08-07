@@ -14,6 +14,7 @@ import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.VerticalAlignment;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,7 +44,9 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * the specific Graphics implementation to test.
  */
 public abstract class AbstractGraphicsTest {
-    private Graphics graphics;
+    private static final Logger LOG = LogManager.getLogManager().getLogger(AbstractGraphicsTest.class.getName());
+
+    private @Nullable Graphics graphics;
 
     protected static final int IMAGE_WIDTH = 1000;
     protected static final int IMAGE_HEIGHT = 800;
@@ -166,6 +171,19 @@ public abstract class AbstractGraphicsTest {
         // Test setStrokeWidth
         graphics.setStrokeWidth(2.0f);
         assertEquals(2.0f, graphics.getStrokeWidth(), "Stroke width should be 2.0");
+
+        // Test line dash pattern and offset
+        float[] lineDashes = {8.0f, 4.0f, 2.0f, 4.0f};
+        graphics.setLineDashes(lineDashes);
+        assertArrayEquals(lineDashes, graphics.getLineDashes(), "Line dash pattern should match");
+        lineDashes[0] = 16.0f;
+        assertEquals(8.0f, graphics.getLineDashes()[0], "Line dash pattern should be copied");
+
+        graphics.setLineDashOffset(3.0f);
+        assertEquals(3.0f, graphics.getLineDashOffset(), "Line dash offset should be 3.0");
+
+        graphics.setLineDashes(new float[0]);
+        assertArrayEquals(new float[0], graphics.getLineDashes(), "Empty line dash pattern should be preserved");
 
         // Test setFont and getFont
         Font font = graphics.getDefaultFont().withSize(16).withColor(Color.BLACK);
@@ -500,7 +518,7 @@ public abstract class AbstractGraphicsTest {
         if (!referenceFile.exists()) {
             // Save the current image as the reference image
             ImageIO.write(image, "png", referenceFile);
-            System.out.println("Created reference image: " + referenceFile.getAbsolutePath());
+            LOG.fine("Created reference image: " + referenceFile.getAbsolutePath());
             return; // Skip comparison on first run
         } else {
             // Load the reference image

@@ -2,6 +2,7 @@ package com.dua3.utility.samples.graphics;
 
 import com.dua3.utility.swing.SwingGraphics;
 import com.dua3.utility.swing.SwingUtil;
+import com.dua3.utility.samples.graphics.slides.LineDashes;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -9,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -68,6 +70,13 @@ public class SwingGraphicsSample extends JFrame implements IGraphicsSample<JComp
         JTabbedPane tabbedPane = new JTabbedPane();
         createSlides(w, h).forEach(tabbedPane::add);
         setContentPane(tabbedPane);
+    }
+
+    @Override
+    public List<JComponent> createSlides(float w, float h) {
+        List<JComponent> tabs = IGraphicsSample.super.createSlides(w, h);
+        tabs.add(createSlide(LineDashes::new, w, h));
+        return tabs;
     }
 
     @Override
