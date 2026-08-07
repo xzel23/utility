@@ -237,7 +237,11 @@ could not be loaded.
 
 ### 24.0.1 (in progress)
 
+- fix PinBoard flickering when scaling
+- reduce layout complexity in TextPane/TextEditorPane
 - support dashed lines in Graphics
+- optimize `TextUtil.quoteIfNeeded()`
+- cache CSS and fontspec in FontDef
 
 ### 24.0.0
 
