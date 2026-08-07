@@ -32,9 +32,11 @@ dependencies {
         api("org.apache.logging.log4j:log4j-api:${rootProject.libs.versions.log4j.bom.get()}")
 
         // JavaFX and UI dependencies
+        api(platform(rootProject.libs.ikonli.bom))
         api(rootProject.libs.ikonli.javafx)
 
         // Security dependencies
+        api(platform(rootProject.libs.bouncycastle.bom))
         api(rootProject.libs.bouncycastle.provider)
         api(rootProject.libs.bouncycastle.pkix)
     }

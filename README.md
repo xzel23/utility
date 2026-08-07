@@ -237,8 +237,11 @@ could not be loaded.
 
 ### 24.0.1 (in progress)
 
+- fix CVE: update bouncycastle
 - fix PinBoard flickering when scaling
 - fix a suppressed NPE in SliderWithButtons constructor
+- update Gradle
+- use BOM for bouncycastle and ikonli
 - reduce layout complexity in TextPane/TextEditorPane
 - support dashed lines in Graphics
 - optimize `TextUtil.quoteIfNeeded()`

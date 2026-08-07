@@ -31,9 +31,13 @@ sourceSets {
 }
 
 dependencies {
+    compileOnly(platform(rootProject.libs.bouncycastle.bom))
     compileOnly(rootProject.libs.bouncycastle.provider)
     compileOnly(rootProject.libs.bouncycastle.pkix)
+
     implementation(rootProject.libs.rtfparserkit)
+
+    testImplementation(platform(rootProject.libs.bouncycastle.bom))
     testImplementation(rootProject.libs.bouncycastle.provider)
     testImplementation(rootProject.libs.bouncycastle.pkix)
 }

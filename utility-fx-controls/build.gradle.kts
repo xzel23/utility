@@ -5,6 +5,7 @@ dependencies {
     implementation(project(":utility-fx"))
     implementation(project(":utility-fx-icons"))
 
+    implementation(platform(libs.ikonli.bom))
     implementation(libs.ikonli.feather)
 
     // Add dependency on javaTestUtil for tests
