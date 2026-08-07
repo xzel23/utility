@@ -4,13 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Locale;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 final class InternalUtil {
     private static final Logger LOG = LogManager.getLogger(InternalUtil.class);
-
-    static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]*").asMatchPredicate().negate();
 
     private InternalUtil() { /* utility class */ }
 
@@ -26,7 +22,20 @@ final class InternalUtil {
     }
 
     static String quoteIfNeeded(String text) {
-        return IS_QUOTING_NEEDED.test(text) ? quote(text) : text;
+        for (int i = 0; i < text.length(); ) {
+            int codePoint = text.codePointAt(i);
+            if (!Character.isLetter(codePoint)
+                    && (codePoint < '0' || codePoint > '9')
+                    && codePoint != ','
+                    && codePoint != '.'
+                    && codePoint != ';'
+                    && codePoint != '+'
+                    && codePoint != '-') {
+                return quote(text);
+            }
+            i += Character.charCount(codePoint);
+        }
+        return text;
     }
 
     static float decodeFontSize(String s) {

@@ -786,9 +786,15 @@ class TextUtilTest {
 
         // Test with string that doesn't need quoting
         Assertions.assertEquals("Hello", TextUtil.quoteIfNeeded("Hello"));
+        Assertions.assertEquals("é", TextUtil.quoteIfNeeded("é"));
+        Assertions.assertEquals("𐐀", TextUtil.quoteIfNeeded("𐐀"));
+        Assertions.assertEquals("A-1,+.;", TextUtil.quoteIfNeeded("A-1,+.;"));
 
         // Test with empty string
         Assertions.assertEquals("", TextUtil.quoteIfNeeded(""));
+
+        // Java regex \d is ASCII-only unless Unicode character classes are enabled
+        Assertions.assertEquals("\"١\"", TextUtil.quoteIfNeeded("١"));
     }
 
     @Test
