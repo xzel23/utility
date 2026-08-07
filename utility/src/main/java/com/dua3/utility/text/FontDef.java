@@ -53,6 +53,9 @@ public final class FontDef {
     private @Nullable Boolean strikeThrough;
     private @Nullable FontType type;
 
+    private @Nullable String fontspec = null;
+    private @Nullable String cssStyle = null;
+
     /**
      * Default constructor that creates a {FontDe} instance without any properties set.
      */
@@ -61,7 +64,7 @@ public final class FontDef {
     }
 
     /**
-     * Create FontDef instance with only the color attribute set.
+     * Create a {@code FontDef} instance with only the color attribute set.
      *
      * @param col the color
      * @return new FontDef instance
@@ -73,7 +76,7 @@ public final class FontDef {
     }
 
     /**
-     * Create FontDef instance with only the background color attribute set.
+     * Create a {@code FontDef} instance with only the background color attribute set.
      *
      * @param col the background color
      * @return new FontDef instance
@@ -97,7 +100,7 @@ public final class FontDef {
     }
 
     /**
-     * Create FontDef instance with only the font family attribute set.
+     * Create a {@code FontDef} instance with only the font family attribute set.
      *
      * @param family the font family
      * @return new FontDef instance
@@ -107,7 +110,7 @@ public final class FontDef {
     }
 
     /**
-     * Create a FontDef instance with only the font size set.
+     * Create a {@code FontDef} instance with only the font size set.
      *
      * @param size the font size in points
      * @return new FontDef instance
@@ -119,7 +122,7 @@ public final class FontDef {
     }
 
     /**
-     * Create FontDef instance with only the bold field set.
+     * Create a {@code FontDef} instance with only the bold field set.
      *
      * @param flag the value to set
      * @return new FontDef instance
@@ -131,7 +134,7 @@ public final class FontDef {
     }
 
     /**
-     * Create FontDef instance with only the italic field set.
+     * Create a {@code FontDef} instance with only the italic field set.
      *
      * @param flag the value to set
      * @return new FontDef instance
@@ -143,7 +146,7 @@ public final class FontDef {
     }
 
     /**
-     * Create FontDef instance with only the underline field set.
+     * Create a {@code FontDef} instance with only the underline field set.
      *
      * @param flag the value to set
      * @return new FontDef instance
@@ -155,7 +158,7 @@ public final class FontDef {
     }
 
     /**
-     * Create FontDef instance with only the strikethrough field set.
+     * Create a {@code FontDef} instance with only the strikethrough field set.
      *
      * @param flag the value to set
      * @return new FontDef instance
@@ -472,14 +475,17 @@ public final class FontDef {
      * @return String representation of this instance
      */
     public String fontspec() {
-        return Objects.requireNonNullElse(getFamily(), "*") +
-                LangUtil.triStateSelect(bold, "-bold", "-regular", "-*") +
-                LangUtil.triStateSelect(italic, "-italic", "-normal", "-*") +
-                LangUtil.triStateSelect(underline, "-underline", "-none", "-*") +
-                LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "-*") +
-                '-' + (size != null ? size : "*") +
-                '-' + (color != null ? color.toCss() : "*") +
-                '-' + (backgroundColor != null ? backgroundColor.toCss() : "*");
+        if (fontspec == null) {
+            fontspec = Objects.requireNonNullElse(getFamily(), "*") +
+                    LangUtil.triStateSelect(bold, "-bold", "-regular", "-*") +
+                    LangUtil.triStateSelect(italic, "-italic", "-normal", "-*") +
+                    LangUtil.triStateSelect(underline, "-underline", "-none", "-*") +
+                    LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "-*") +
+                    '-' + (size != null ? size : "*") +
+                    '-' + (color != null ? color.toCss() : "*") +
+                    '-' + (backgroundColor != null ? backgroundColor.toCss() : "*");
+        }
+        return fontspec;
     }
 
     /**
@@ -500,6 +506,8 @@ public final class FontDef {
      *             bold, non-bold, or unspecified respectively.
      */
     public void setBold(@Nullable Boolean bold) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.bold = bold;
     }
 
@@ -518,6 +526,8 @@ public final class FontDef {
      * @param color the color to set, which can be null
      */
     public void setColor(@Nullable Color color) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.color = color;
     }
 
@@ -536,6 +546,8 @@ public final class FontDef {
      * @param backgroundColor the background color to set, which can be null
      */
     public void setBackgroundColor(@Nullable Color backgroundColor) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.backgroundColor = backgroundColor;
     }
 
@@ -563,6 +575,8 @@ public final class FontDef {
      * @param families the font family names to set. Can be null if no font family is specified.
      */
     public void setFamilies(@Nullable SequencedCollection<String> families) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.families = families == null || families.isEmpty() ? null : List.copyOf(families);
     }
 
@@ -572,6 +586,8 @@ public final class FontDef {
      * @param family the font family names to set. Can be null if no font family is specified.
      */
     public void setFamily(@Nullable String family) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.families = family == null ? null : parseFontFamilies(family, false);
     }
 
@@ -591,6 +607,8 @@ public final class FontDef {
      * @param italic the value to set for the italic property. It can be null to indicate that the property is undefined.
      */
     public void setItalic(@Nullable Boolean italic) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.italic = italic;
     }
 
@@ -609,6 +627,8 @@ public final class FontDef {
      * @param size the font size in points. Can be null if the size is not defined.
      */
     public void setSize(@Nullable Float size) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.size = size;
     }
 
@@ -630,6 +650,8 @@ public final class FontDef {
      *                       will not be explicitly set.
      */
     public void setStrikeThrough(@Nullable Boolean strikeThrough) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.strikeThrough = strikeThrough;
     }
 
@@ -648,6 +670,8 @@ public final class FontDef {
      * @param underline the underline attribute to set, or null to unset it
      */
     public void setUnderline(@Nullable Boolean underline) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.underline = underline;
     }
 
@@ -666,6 +690,8 @@ public final class FontDef {
      * @param type the type attribute to set, or null to unset it
      */
     public void setType(@Nullable FontType type) {
+        this.fontspec = null;
+        this.cssStyle = null;
         this.type = type;
     }
 
@@ -703,36 +729,39 @@ public final class FontDef {
      * @return fontstyle definition
      */
     public String getCssStyle() {
-        boolean isUnderline = underline == Boolean.TRUE;
-        boolean isStrikeThrough = strikeThrough == Boolean.TRUE;
+        if (cssStyle == null) {
+            boolean isUnderline = underline == Boolean.TRUE;
+            boolean isStrikeThrough = strikeThrough == Boolean.TRUE;
 
-        StringBuilder css = new StringBuilder(100);
-        // Appends font families to CSS string
-        if (families != null) {
-            css.append(FONT_FAMILY);
-            String sep = "";
-            for (String family : families) {
-                css.append(sep).append(InternalUtil.quoteIfNeeded(family));
-                sep = ", ";
+            StringBuilder css = new StringBuilder(100);
+            // Appends font families to CSS string
+            if (families != null) {
+                css.append(FONT_FAMILY);
+                String sep = "";
+                for (String family : families) {
+                    css.append(sep).append(InternalUtil.quoteIfNeeded(family));
+                    sep = ", ";
+                }
+                css.append("; ");
             }
-            css.append("; ");
+            appendIfNonNull(css, size, FONT_SIZE, size, "pt; ");
+            appendIfNonNull(css, bold, FONT_WEIGHT, bold == Boolean.TRUE ? BOLD : NORMAL, "; ");
+            appendIfNonNull(css, italic, FONT_STYLE, italic == Boolean.TRUE ? ITALIC : NORMAL, "; ");
+
+            // Appends underline/strike‑through styles when specified
+            if (isStrikeThrough || isUnderline) {
+                css.append(TEXT_DECORATION)
+                        .append(isUnderline ? " " + UNDERLINE : "")
+                        .append(isStrikeThrough ? " " + LINE_THROUGH : "")
+                        .append("; ");
+            }
+
+            appendIfNonNull(css, color, "color: ", color, ";");
+            appendIfNonNull(css, backgroundColor, BACKGROUND_COLOR, backgroundColor, ";");
+
+            cssStyle = TextUtil.stripTrailing(css).toString();
         }
-        appendIfNonNull(css, size, FONT_SIZE, size, "pt; ");
-        appendIfNonNull(css, bold, FONT_WEIGHT, bold == Boolean.TRUE ? BOLD : NORMAL, "; ");
-        appendIfNonNull(css, italic, FONT_STYLE, italic == Boolean.TRUE ? ITALIC : NORMAL, "; ");
-
-        // Appends underline/strike‑through styles when specified
-        if (isStrikeThrough || isUnderline) {
-            css.append(TEXT_DECORATION)
-                    .append(isUnderline ? " " + UNDERLINE : "")
-                    .append(isStrikeThrough ? " " + LINE_THROUGH : "")
-                    .append("; ");
-        }
-
-        appendIfNonNull(css, color, "color: ", color, ";");
-        appendIfNonNull(css, backgroundColor, BACKGROUND_COLOR, backgroundColor, ";");
-
-        return css.toString().stripTrailing();
+        return cssStyle;
     }
 
     private static void appendIfNonNull(StringBuilder sb, @Nullable Object obj, String attribute, @Nullable Object value, String delimiter) {
@@ -784,6 +813,8 @@ public final class FontDef {
      * @param delta the FontDef containing the values to apply
      */
     public void merge(FontDef delta) {
+        this.fontspec = null;
+        this.cssStyle = null;
         if (delta.color != null) this.color = delta.color;
         if (delta.backgroundColor != null) this.backgroundColor = delta.backgroundColor;
         if (delta.size != null) this.size = delta.size;
