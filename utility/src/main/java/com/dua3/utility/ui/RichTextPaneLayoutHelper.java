@@ -135,16 +135,14 @@ public final class RichTextPaneLayoutHelper {
      * @param layoutTextData      Contains the mapping between the layout text and its source text.
      *                            This data supports conversion between layout and source text
      *                            positions for accurate text rendering and manipulation.
-     * @param layoutFragments     Represents the fragmented structure for layout purposes.
-     *                            These fragments help in segmenting the text for layout processing.
-     * @param renderFragments     Represents the fragmented structure used for rendering.
-     *                            These fragments are tailored for improved rendering performance.
+     * @param renderFragments     Represents the fragmented structure used for both inline placement
+     *                            and rendering. Inline-node marker text is made invisible while its
+     *                            width remains part of the layout.
      * @param renderWidth         The width of the layout for rendering purposes. It specifies
      *                            the available width for the text to be rendered within the layout.
      */
     public record LayoutPreparation(
             LayoutTextData layoutTextData,
-            FragmentedText layoutFragments,
             FragmentedText renderFragments,
             float renderWidth
     ) {}
@@ -165,8 +163,8 @@ public final class RichTextPaneLayoutHelper {
      * @param inlineWidthFunction            A {@code ToDoubleFunction} that computes the width of the inline objects
      *                                       created by the {@code inlineFactory}.
      * @return                               A {@code LayoutPreparation} object containing the processed layout text data,
-     *                                       fragmented structures for layout and rendering, and the calculated rendering
-     *                                       width.
+     *                                       the fragments used for placement and rendering, and the calculated
+     *                                       rendering width.
      */
     public static <I> LayoutPreparation prepareLayout(
             RichText source,
@@ -228,11 +226,10 @@ public final class RichTextPaneLayoutHelper {
         float wrapWidth = wrapText ? width : FragmentedText.NO_WRAP;
 
         RichText layoutText = layoutTextData.text();
-        FragmentedText layoutFragments = generateFragments(layoutText, fontUtil, font, width, wrapWidth, fontTransform);
         FragmentedText renderFragments = generateFragments(createRenderedText(layoutText), fontUtil, font, width, wrapWidth, fontTransform);
         float renderWidth = wrapText ? width : Math.max(width, renderFragments.actualWidth());
 
-        return new LayoutPreparation(layoutTextData, layoutFragments, renderFragments, renderWidth);
+        return new LayoutPreparation(layoutTextData, renderFragments, renderWidth);
     }
 
     /**

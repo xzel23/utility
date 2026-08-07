@@ -401,11 +401,10 @@ public class TextPane extends Control implements RichTextPane {
                 resolvedFont -> resolvedFont.scaled((float) displayScale)
         );
 
-        FragmentedText layoutFragments = prepared.layoutFragments();
         FragmentedText renderFragments = prepared.renderFragments();
 
         List<InlineControlPlacement> placements = new ArrayList<>();
-        for (List<FragmentedText.Fragment> line : layoutFragments.lines()) {
+        for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
             if (line.isEmpty()) {
                 continue;
             }

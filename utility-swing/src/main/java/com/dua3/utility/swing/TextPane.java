@@ -341,10 +341,9 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 TextPane::measureComponentWidth
         );
 
-        FragmentedText layoutFragments = prepared.layoutFragments();
         FragmentedText renderFragments = prepared.renderFragments();
 
-        List<InlineComponentPlacement> placements = collectInlinePlacements(layoutFragments);
+        List<InlineComponentPlacement> placements = collectInlinePlacements(renderFragments);
         LineShiftData lineShiftData = computeLineShifts(renderFragments, placements);
         Map<Float, Float> lineShiftByY = lineShiftData.lineShiftByY();
         List<InlineComponentPlacement> shiftedPlacements = shiftPlacements(placements, lineShiftByY);
@@ -390,9 +389,8 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 TextPane::measureComponentWidth
         );
 
-        FragmentedText blockLayoutFragments = prepared.layoutFragments();
         FragmentedText blockRenderFragments = prepared.renderFragments();
-        List<InlineComponentPlacement> blockPlacements = collectInlinePlacements(blockLayoutFragments);
+        List<InlineComponentPlacement> blockPlacements = collectInlinePlacements(blockRenderFragments);
 
         LineShiftData lineShiftData = computeLineShifts(blockRenderFragments, blockPlacements);
         List<List<FragmentedText.Fragment>> shiftedLines = shiftRenderLines(blockRenderFragments, lineShiftData.lineShiftByY());
@@ -405,10 +403,10 @@ public class TextPane extends JScrollPane implements RichTextPane {
         );
     }
 
-    private List<InlineComponentPlacement> collectInlinePlacements(FragmentedText layoutFragments) {
+    private List<InlineComponentPlacement> collectInlinePlacements(FragmentedText renderFragments) {
         List<InlineComponentPlacement> placements = new ArrayList<>();
 
-        for (List<FragmentedText.Fragment> line : layoutFragments.lines()) {
+        for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
             if (line.isEmpty()) {
                 continue;
             }
