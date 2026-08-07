@@ -733,7 +733,7 @@ public final class FontDef {
             boolean isUnderline = underline == Boolean.TRUE;
             boolean isStrikeThrough = strikeThrough == Boolean.TRUE;
 
-            StringBuilder css = new StringBuilder(100);
+            StringBuilder css = new StringBuilder(128);
             // Appends font families to CSS string
             if (families != null) {
                 css.append(FONT_FAMILY);
