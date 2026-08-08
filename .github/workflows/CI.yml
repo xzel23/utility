@@ -96,7 +96,7 @@ jobs:
       - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
+          distribution: 'liberica'
           java-version: |
             21
             25
@@ -152,7 +152,7 @@ jobs:
       - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
+          distribution: 'liberica'
           java-version: |
             21
             25
@@ -197,7 +197,7 @@ jobs:
       - name: 'Set up JDK'
         uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
+          distribution: 'liberica'
           java-version: |
             21
             25
@@ -270,7 +270,7 @@ jobs:
 #      - name: 'Set up JDK'
 #        uses: actions/setup-java@v5
 #        with:
-#          distribution: 'zulu'
+#          distribution: 'liberica'
 #          java-version: |
 #            21
 #            25
