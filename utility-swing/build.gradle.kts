@@ -14,7 +14,10 @@ tasks.withType<Test> {
     // starting X11-backed AWT resources on CI, even when a virtual display is available.
     systemProperty("java.awt.headless", "true")
 
-    // AWT/Swing has JVM-wide state. Isolate each test class so a stalled toolkit cannot block
-    // unrelated tests or Gradle's test worker.
+    // AWT/Swing has JVM-wide state and must not be driven from concurrent test threads.
+    maxParallelForks = 1
+
+    // Isolate each test class so a stalled toolkit cannot block unrelated tests or Gradle's
+    // test worker.
     forkEvery = 1
 }
