@@ -43,21 +43,23 @@ public abstract class PrepareReleaseTask extends DefaultTask {
             "utility-fx-db",
             "utility-fx-web"
     );
-    private static final List<String> SHARED_INPUT_PATHS = List.of(
+    private static final List<String> SHARED_BUILD_INPUT_PATHS = List.of(
             "build.gradle.kts",
             "settings.gradle.kts",
             "gradle.properties",
-            "gradle/version.toml",
             "gradle/wrapper",
-            ":(glob)gradle/*.gradle.kts",
-            "gradle.lockfile",
-            "settings-gradle.lockfile",
-            ":(glob)**/gradle.lockfile"
+            ":(glob)gradle/*.gradle.kts"
     );
+    private static final List<String> DEPENDENCY_LOCKFILE_EXCLUSIONS = List.of(
+            ":(exclude,glob)**/gradle.lockfile",
+            ":(exclude)settings-gradle.lockfile"
+    );
+    private static final String VERSION_CATALOG_PATH = "gradle/version.toml";
     private static final Pattern TABLE = Pattern.compile("^\\[([A-Za-z0-9_.-]+)]$");
     private static final Pattern VALUE = Pattern.compile("^([A-Za-z][A-Za-z0-9_-]*)\\s*=\\s*(.+)$");
     private static final Pattern QUOTED_STRING = Pattern.compile("\\\"((?:\\\\.|[^\\\"\\\\])*)\\\"");
     private static final Pattern VERSION = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$");
+    private static final Pattern VERSION_CATALOG_ENTRY = Pattern.compile("^([A-Za-z][A-Za-z0-9_-]*)\\s*=");
 
     @InputDirectory
     public abstract DirectoryProperty getRepositoryDirectory();
@@ -108,6 +110,11 @@ public abstract class PrepareReleaseTask extends DefaultTask {
         validateTargetVersion(releaseType, previousBomVersion, targetVersion);
 
         String releaseRevision = requireGitSuccess(repositoryDirectory, "resolving release revision", "rev-parse", "HEAD");
+        String bomRevision = state.bomPublishedRevision();
+        requireGitSuccess(repositoryDirectory, "checking published BOM revision", "cat-file", "-e", bomRevision + "^{commit}");
+        if (runGit(repositoryDirectory, "merge-base", "--is-ancestor", bomRevision, releaseRevision).exitValue() != 0) {
+            throw new GradleException("published BOM revision is not an ancestor of " + releaseRevision);
+        }
         for (Map.Entry<String, ModuleState> entry : state.modules().entrySet()) {
             String moduleName = entry.getKey();
             String revision = entry.getValue().publishedRevision();
@@ -125,24 +132,39 @@ public abstract class PrepareReleaseTask extends DefaultTask {
 
         Map<String, String> selectedReasons = new LinkedHashMap<>();
         if (releaseType.equals("patch")) {
+            VersionCatalogChange versionCatalogChange = versionCatalogChange(
+                    repositoryDirectory,
+                    state.bomPublishedRevision(),
+                    releaseRevision
+            );
             for (Map.Entry<String, ModuleState> entry : state.modules().entrySet()) {
                 String moduleName = entry.getKey();
                 ModuleState module = entry.getValue();
-                boolean sourceChanged = gitHasChanges(repositoryDirectory, module.publishedRevision(), releaseRevision, module.paths());
-                boolean sharedInputChanged = gitHasChanges(repositoryDirectory, module.publishedRevision(), releaseRevision, SHARED_INPUT_PATHS);
+                boolean sourceChanged = gitHasChangesExcludingDependencyLockfiles(
+                        repositoryDirectory,
+                        module.publishedRevision(),
+                        releaseRevision,
+                        module.paths()
+                );
+                boolean sharedInputChanged = gitHasChanges(
+                        repositoryDirectory,
+                        module.publishedRevision(),
+                        releaseRevision,
+                        SHARED_BUILD_INPUT_PATHS
+                ) || versionCatalogChange == VersionCatalogChange.SHARED_BUILD;
                 if (sourceChanged && sharedInputChanged) {
                     selectedReasons.put(moduleName, "direct source and shared build input change");
                 } else if (sourceChanged) {
                     selectedReasons.put(moduleName, "direct source change");
                 } else if (sharedInputChanged) {
-                    selectedReasons.put(moduleName, "shared build or dependency input change");
+                    selectedReasons.put(moduleName, "shared build input change");
                 }
             }
             for (String moduleName : additionalModules) {
                 selectedReasons.putIfAbsent(moduleName, "explicit minimum internal dependency update");
             }
-            if (selectedReasons.isEmpty()) {
-                throw new GradleException("no publishable module changed; a BOM-only patch release is not allowed");
+            if (selectedReasons.isEmpty() && versionCatalogChange == VersionCatalogChange.NONE) {
+                throw new GradleException("no publishable module or publication-relevant dependency catalog entry changed");
             }
         } else {
             for (String moduleName : MODULES) {
@@ -230,7 +252,11 @@ public abstract class PrepareReleaseTask extends DefaultTask {
                     parseTomlArray(requireValue(module, "paths", "modules." + moduleName, file))
             ));
         }
-        return new ReleaseState(bomVersion, modules);
+        return new ReleaseState(
+                bomVersion,
+                requireValue(release, "publishedRevision", "release", file),
+                modules
+        );
     }
 
     private static Map<String, Map<String, String>> parseToml(File file) {
@@ -333,6 +359,66 @@ public abstract class PrepareReleaseTask extends DefaultTask {
         };
     }
 
+    private static boolean gitHasChangesExcludingDependencyLockfiles(
+            File directory,
+            String fromRevision,
+            String toRevision,
+            List<String> pathspecs
+    ) {
+        List<String> filteredPathspecs = new ArrayList<>(pathspecs);
+        filteredPathspecs.addAll(DEPENDENCY_LOCKFILE_EXCLUSIONS);
+        return gitHasChanges(directory, fromRevision, toRevision, filteredPathspecs);
+    }
+
+    /**
+     * Dependency catalog changes are published through the BOM, whereas toolchain and plugin changes affect every
+     * module build. The catalog's project version is deliberately ignored: finalization changes it to the next
+     * snapshot after the BOM has already been published.
+     */
+    private static VersionCatalogChange versionCatalogChange(
+            File directory,
+            String fromRevision,
+            String toRevision
+    ) {
+        CommandResult result = runGit(
+                directory,
+                "diff",
+                "--unified=0",
+                fromRevision,
+                toRevision,
+                "--",
+                VERSION_CATALOG_PATH
+        );
+        if (result.exitValue() != 0) {
+            throw new GradleException("could not compare version catalog revisions: " + result.output());
+        }
+
+        VersionCatalogChange change = VersionCatalogChange.NONE;
+        for (String line : result.output().split("\\R")) {
+            if (!(line.startsWith("+") || line.startsWith("-")) || line.startsWith("+++") || line.startsWith("---")) {
+                continue;
+            }
+            String changedLine = line.substring(1).trim();
+            if (changedLine.isEmpty() || changedLine.startsWith("#")) {
+                continue;
+            }
+            Matcher entry = VERSION_CATALOG_ENTRY.matcher(changedLine);
+            boolean versionEntry = entry.find();
+            if (versionEntry && entry.group(1).equals("projectVersion")) {
+                continue;
+            }
+            if (versionEntry && isSharedBuildVersion(entry.group(1))) {
+                return VersionCatalogChange.SHARED_BUILD;
+            }
+            change = VersionCatalogChange.BOM_ONLY;
+        }
+        return change;
+    }
+
+    private static boolean isSharedBuildVersion(String alias) {
+        return alias.equals("jdkVersion") || alias.equals("javafxJdkVersion") || alias.endsWith("-plugin");
+    }
+
     private static boolean isMavenCentralCoordinatePublished(String artifactId, String version) {
         String path = GROUP.replace('.', '/') + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + ".pom";
         HttpURLConnection connection = null;
@@ -393,6 +479,9 @@ public abstract class PrepareReleaseTask extends DefaultTask {
                         .append(" (").append(entry.getValue().reason()).append(")\n");
             }
         }
+        if (plan.modules().values().stream().noneMatch(PlannedModule::selected)) {
+            text.append("    (none; BOM-only dependency catalog release)\n");
+        }
         text.append("  retained modules:\n");
         for (Map.Entry<String, PlannedModule> entry : plan.modules().entrySet()) {
             if (!entry.getValue().selected()) {
@@ -409,7 +498,7 @@ public abstract class PrepareReleaseTask extends DefaultTask {
     private record ModuleState(String version, String publishedRevision, List<String> paths) {
     }
 
-    private record ReleaseState(String bomVersion, Map<String, ModuleState> modules) {
+    private record ReleaseState(String bomVersion, String bomPublishedRevision, Map<String, ModuleState> modules) {
     }
 
     private record PlannedModule(String version, String sourceRevision, boolean selected, String reason) {
@@ -423,6 +512,12 @@ public abstract class PrepareReleaseTask extends DefaultTask {
     }
 
     private record CommandResult(int exitValue, String output) {
+    }
+
+    private enum VersionCatalogChange {
+        NONE,
+        BOM_ONLY,
+        SHARED_BUILD
     }
 
     private record SemanticVersion(int major, int minor, int patch) {

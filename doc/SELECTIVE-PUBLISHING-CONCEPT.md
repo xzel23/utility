@@ -14,7 +14,7 @@ Versions use `major.minor.patch`.
 |---------------|------------:|---------------------------------------------------------------------------------|-------------------------|
 | Major release |     `X.0.0` | Every module becomes `X.0.0`                                                    | BOM and all modules     |
 | Minor release |     `X.Y.0` | Every module becomes `X.Y.0`                                                    | BOM and all modules     |
-| Patch release |     `X.Y.Z` | Changed modules become `X.Y.Z`; unchanged modules retain their previous version | BOM and changed modules |
+| Patch release |     `X.Y.Z` | Changed modules become `X.Y.Z`; unchanged modules retain their previous version | BOM and changed modules, or BOM alone for a dependency-catalog-only change |
 
 For example, starting from a full `23.2.0` release:
 
@@ -39,6 +39,7 @@ The state belongs to the release definition, not to an individual module. It rec
 successfully published to Maven Central. It contains:
 
 - The current BOM version.
+- The source revision represented by the current BOM, so catalog changes can be compared with the last BOM release.
 - Each publishable module's current published version.
 - The source revision represented by the last publication of each module.
 - Optional module ownership paths used to determine whether a module changed.
@@ -47,8 +48,9 @@ Example structure:
 
 ```toml
 [release]
-schemaVersion = 1
+schemaVersion = 2
 bomVersion = "23.2.1"
+publishedRevision = "b2c3d4e5f6a7"
 
 [modules.utility]
 version = "23.2.1"
@@ -105,9 +107,10 @@ behavior. Initially use the following conservative rules:
    generated-input configuration.
 2. The root build configuration, Gradle settings, wrapper/toolchain configuration, and shared build or
    publishing/signing logic select all publishable library modules unless a narrower mapping is proven safe.
-3. A version-catalog or dependency-lock change selects every module whose resolved compile/runtime dependency graph
-   or published dependency metadata uses the changed entry. Until those relationships are mapped, select all
-   publishable library modules.
+3. Dependency lockfiles are reproducibility inputs and never select a library module. A publication-relevant version
+   catalog change is published by the BOM, whose constraints carry dependency updates to consumers; it may therefore
+   create a BOM-only patch release. A build-logic, toolchain, or instrumentation change remains a shared build input
+   and selects all publishable library modules.
 4. The BOM build directory, the published release state, and the prepared release plan select only the BOM. A
    release-state or plan update alone must never select a library module.
 5. Repository documentation, CI-only configuration, and repository-administration changes select no library modules.
@@ -173,7 +176,8 @@ Validation:
 - No module version would overwrite an existing Maven Central artifact.
 - The selected version is a non-snapshot release version.
 - For patch releases, the major/minor version matches the existing release line.
-- A patch release selects at least one library module; otherwise no release is prepared.
+- A patch release selects at least one library module, unless a publication-relevant dependency catalog change
+  requires a BOM-only patch release.
 - Required binary/API compatibility checks pass for every selected library module.
 
 Behavior for a patch release:
@@ -182,7 +186,8 @@ Behavior for a patch release:
 2. Select dependents only when they changed themselves or must publish a new minimum internal dependency version.
 3. Increment the patch component for the BOM and selected modules.
 4. Retain versions for unselected modules.
-5. Generate and display a release plan.
+5. Generate and display a release plan. When only the dependency catalog changed, select no library modules and
+   publish the BOM alone.
 6. Require an explicit confirmation flag before creating the prepared release plan.
 
 Behavior for major or minor releases:
@@ -202,7 +207,8 @@ The generated plan should list:
 
 ### 2. Commit prepared release plan
 
-After an approved release plan, create `gradle/prepared-release.toml` with:
+After an approved release plan, create `gradle/prepared-release.toml` and set `projectVersion` in
+`gradle/version.toml` to the stable release version with:
 
 - The new BOM version and every selected module's new version.
 - The release source revision represented by each selected module.
@@ -347,10 +353,10 @@ Credentials for signing and Maven Central deployment must remain available only 
 
 - **Define module ownership paths, especially for shared build logic and dependency-lock files.**
 
-  Use the conservative declarative mapping defined under **Shared build and release inputs**. Each module owns its
-  directory; shared build, toolchain, publishing, settings, version-catalog, and dependency-lock inputs select all
-  affected modules (all library modules until a narrower mapping is proven safe). The BOM build directory and release
-  metadata select only the BOM.
+  Each module owns its directory except its Gradle dependency lockfile, which is ignored for release selection.
+  Dependency catalog changes are carried by the BOM and can therefore create a BOM-only patch release. Shared build,
+  toolchain, publishing, settings, and instrumentation inputs select all library modules. The BOM build directory and
+  release metadata select only the BOM.
 
 - **Decide whether documentation-only changes should cause a module republish.**
 

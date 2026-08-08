@@ -83,6 +83,7 @@ private data class ModuleReleaseState(
 
 private data class PublishedReleaseState(
     val bomVersion: String,
+    val bomPublishedRevision: String,
     val modules: Map<String, ModuleReleaseState>
 )
 
@@ -152,6 +153,8 @@ private fun readPublishedReleaseState(file: File): PublishedReleaseState {
     val values = parseToml(file)
     val release = values["release"] ?: throw GradleException("[release] table missing from ${file.path}")
     val bomVersion = release["bomVersion"] ?: throw GradleException("release.bomVersion missing from ${file.path}")
+    val bomPublishedRevision = release["publishedRevision"]
+        ?: throw GradleException("release.publishedRevision missing from ${file.path}")
     val modules = publishableModuleNames.associateWith { moduleName ->
         val module = values["modules.$moduleName"]
             ?: throw GradleException("[modules.$moduleName] table missing from ${file.path}")
@@ -164,7 +167,7 @@ private fun readPublishedReleaseState(file: File): PublishedReleaseState {
                 ?: throw GradleException("modules.$moduleName.paths missing from ${file.path}"))
         )
     }
-    return PublishedReleaseState(bomVersion, modules)
+    return PublishedReleaseState(bomVersion, bomPublishedRevision, modules)
 }
 
 private fun readPreparedReleasePlan(file: File): PreparedReleasePlan {
@@ -271,8 +274,9 @@ private fun writePreparedReleasePlan(plan: PreparedReleasePlan) {
 private fun writePublishedReleaseState(plan: PreparedReleasePlan, previousState: PublishedReleaseState) {
     val content = buildString {
         appendLine("[release]")
-        appendLine("schemaVersion = 1")
+        appendLine("schemaVersion = 2")
         appendLine("bomVersion = \"${tomlString(plan.bomVersion)}\"")
+        appendLine("publishedRevision = \"${tomlString(plan.sourceRevision)}\"")
         publishableModuleNames.forEach { moduleName ->
             val oldModule = previousState.modules.getValue(moduleName)
             val plannedModule = plan.modules.getValue(moduleName)
@@ -330,18 +334,6 @@ tasks.register("printVersion") {
     doLast { println(version) }
 }
 
-private val sharedReleaseInputPathspecs = listOf(
-    "build.gradle.kts",
-    "settings.gradle.kts",
-    "gradle.properties",
-    "gradle/version.toml",
-    "gradle/wrapper",
-    ":(glob)gradle/*.gradle.kts",
-    "gradle.lockfile",
-    "settings-gradle.lockfile",
-    ":(glob)**/gradle.lockfile"
-)
-
 private fun validatePreparedReleasePlan(plan: PreparedReleasePlan) {
     check(plan.releaseType in setOf("patch", "minor", "major")) {
         "unsupported prepared release type: ${plan.releaseType}"
@@ -351,7 +343,6 @@ private fun validatePreparedReleasePlan(plan: PreparedReleasePlan) {
         "prepared release source revision is not available as an ancestor of HEAD: ${plan.sourceRevision}"
     }
     val selectedModules = plan.modules.filterValues { it.selected }.keys
-    check(selectedModules.isNotEmpty()) { "prepared release plan does not select any library modules" }
     check(selectedModules == configuredSelectedReleaseModules) {
         "prepared release plan does not match the modules selected during Gradle configuration"
     }
@@ -387,6 +378,9 @@ private fun renderReleasePlan(plan: PreparedReleasePlan) = buildString {
     appendLine("  modules to publish:")
     plan.modules.filterValues { it.selected }.forEach { (moduleName, module) ->
         appendLine("    $moduleName:${module.version} (${module.reason})")
+    }
+    if (plan.modules.values.none { it.selected }) {
+        appendLine("    (none; BOM-only dependency catalog release)")
     }
     appendLine("  retained modules:")
     plan.modules.filterValues { !it.selected }.forEach { (moduleName, module) ->

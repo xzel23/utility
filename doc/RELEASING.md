@@ -1,8 +1,8 @@
 # Releasing
 
 The utility build publishes a coherent BOM on every release. Major and minor releases publish every library module;
-patch releases publish only changed modules and the BOM. The BOM constrains each module to the version that actually
-exists in Maven Central.
+patch releases publish changed modules and the BOM. A patch containing only a publication-relevant dependency-catalog
+change publishes the BOM alone. The BOM constrains each module to the version that actually exists in Maven Central.
 
 `gradle/release-state.toml` records the last successfully published version and source revision of every library
 module. `gradle/prepared-release.toml` is a short-lived, committed candidate plan. It is the only source of truth for
@@ -28,14 +28,17 @@ next version is wanted.
 ```
 
 The script requires a clean branch that matches its upstream. It displays the same dry-run plan and validates Git
-history, scoped changes, release-line version, and Maven Central coordinate availability. For a patch release it fails
-when no library changed; it will not create a BOM-only release. Use `--additional-modules module-a,module-b` only when
-an unchanged dependent must publish a new minimum internal dependency version.
+history, scoped changes, release-line version, and Maven Central coordinate availability. Gradle lockfile-only changes
+do not select a module: they make dependency resolution reproducible but are not published module metadata. A
+publication-relevant `gradle/version.toml` change can create a BOM-only patch release; use
+`--additional-modules module-a,module-b` only when an unchanged dependent must publish a new minimum internal
+dependency version.
 
-After the dry run, the script asks whether to create and commit `gradle/prepared-release.toml`. It then asks a second
-time before pushing that commit. Answering yes to the second prompt is the explicit authorization to start the release:
-the push to the protected release branch triggers the protected GitHub Actions workflow. Answering no leaves the
-prepared plan committed locally, with no release started.
+After the dry run, the script asks whether to create and commit `gradle/prepared-release.toml`. It writes the target
+release version to `gradle/version.toml` in the same commit, so CI compiles with release instrumentation rather than
+snapshot instrumentation. It then asks a second time before pushing that commit. Answering yes to the second prompt
+is the explicit authorization to start the release: the push to the protected release branch triggers the protected
+GitHub Actions workflow. Answering no leaves the prepared plan committed locally, with no release started.
 
 The prepared-plan commit must remain the tip of the release branch. The workflow rejects a candidate if another
 commit is pushed before it begins publication.
@@ -93,8 +96,8 @@ local Maven repository with:
 ./gradlew publishSnapshotsToMavenLocal
 ```
 
-Normal development continues to use the `projectVersion` snapshot in `gradle/version.toml`. A prepared release plan
-overrides that development version only for the release build.
+Normal development continues to use the `projectVersion` snapshot in `gradle/version.toml`. Preparing a release
+temporarily replaces it with the stable release version; finalization advances it to the next patch snapshot.
 
 ## Release CI
 
