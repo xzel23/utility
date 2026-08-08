@@ -5,6 +5,7 @@ import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.OptionException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,14 @@ class ArgumentsDialogTest {
         // Create a mock window for tests that need a parent component
         // In headless mode, this will be null, which is fine for panel testing
         mockWindow = SwingTestUtil.createMockWindow();
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (mockWindow != null) {
+            SwingTestUtil.runOnEdt(mockWindow::dispose);
+            mockWindow = null;
+        }
     }
 
     /**

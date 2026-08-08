@@ -13,6 +13,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.WritableImage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,6 +51,17 @@ class FxGraphicsTest extends AbstractGraphicsTest {
             latch.countDown();
         }
         await(latch);
+    }
+
+    /**
+     * Stop JavaFX before the forked Gradle test worker exits. JavaFX keeps native
+     * threads alive on some platforms, notably Windows.
+     */
+    @AfterAll
+    static void shutdownPlatform() {
+        if (!PlatformHelper.shutdown(30, TimeUnit.SECONDS)) {
+            throw new IllegalStateException("JavaFX platform did not shut down");
+        }
     }
 
     /**
@@ -90,6 +103,7 @@ class FxGraphicsTest extends AbstractGraphicsTest {
     public void setUp() {
         // JavaFX operations must be performed on the JavaFX Application Thread
         CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<Throwable> exception = new AtomicReference<>();
 
         PlatformHelper.runLater(() -> {
             try {
@@ -102,6 +116,8 @@ class FxGraphicsTest extends AbstractGraphicsTest {
                 setGraphics(graphics);
 
                 LangUtil.unchecked(super::setUp).run();
+            } catch (Throwable t) {
+                exception.set(t);
             } finally {
                 latch.countDown();
             }
@@ -111,14 +127,21 @@ class FxGraphicsTest extends AbstractGraphicsTest {
         try {
             assertTrue(latch.await(30, TimeUnit.SECONDS), "JavaFX initialization timed out");
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new IllegalStateException(e);
+        }
+
+        if (exception.get() != null) {
+            LangUtil.throwAsRuntimeException(exception.get());
         }
     }
 
     @AfterEach
     @Override
     public void tearDown() {
-        graphics.close();
+        if (graphics != null) {
+            graphics.close();
+        }
     }
 
     @Override
@@ -146,12 +169,15 @@ class FxGraphicsTest extends AbstractGraphicsTest {
     @Override
     protected BufferedImage getRenderedImage() {
         CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<Throwable> exception = new AtomicReference<>();
 
         PlatformHelper.runLater(() -> {
             try {
                 // Capture the rendered image
                 writableImage = new WritableImage(IMAGE_WIDTH, IMAGE_HEIGHT);
                 canvas.snapshot(null, writableImage);
+            } catch (Throwable t) {
+                exception.set(t);
             } finally {
                 latch.countDown();
             }
@@ -160,6 +186,10 @@ class FxGraphicsTest extends AbstractGraphicsTest {
         try {
             // Wait for rendering to complete
             assertTrue(latch.await(30, TimeUnit.SECONDS), "Rendering timed out");
+
+            if (exception.get() != null) {
+                LangUtil.throwAsRuntimeException(exception.get());
+            }
 
             // Convert WritableImage to BufferedImage for comparison
             return AwtImageUtil.getInstance().toImage(new FxWrappedImage(writableImage));
