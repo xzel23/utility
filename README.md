@@ -235,7 +235,7 @@ could not be loaded.
 
 ## Changes
 
-### 24.0.1 (in progress)
+### 24.1.0
 
 - fix CVE: update bouncycastle
 - fix PinBoard flickering when scaling
