@@ -151,7 +151,7 @@ jobs:
       - name: Set up JDKs
         uses: actions/setup-java@v5
         with:
-          distribution: zulu
+          distribution: liberica
           java-version: |
             21
             25
