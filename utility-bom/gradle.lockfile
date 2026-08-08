@@ -1,4 +1,7 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
-empty=classpath
+# To regenerate this file, run: ./gradlew :utility-bom:dependencies --write-locks
+org.bouncycastle:bc-jdk18on-bom:1.85.2=classpath
+org.kordamp.ikonli:ikonli-bom:12.4.0=classpath
+empty=
