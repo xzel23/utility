@@ -235,6 +235,11 @@ could not be loaded.
 
 ## Changes
 
+### 24.2.0
+
+- fix selective publishing workflow
+- update SLB4J
+
 ### 24.1.0
 
 - fix CVE: update bouncycastle
