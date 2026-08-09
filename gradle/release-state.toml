@@ -1,6 +1,7 @@
 [release]
-schemaVersion = 1
+schemaVersion = 2
 bomVersion = "24.1.0"
+publishedRevision = "f205cb2e79c87ef6c285adbd36c6818317a4f0e7"
 
 [modules.utility]
 version = "24.1.0"
