@@ -106,6 +106,7 @@ public final class FxLauncher {
     static final BooleanProperty debugProperty = new SimpleBooleanProperty(false);
     static boolean enableAssertions = false;
 
+    static int logBufferSize = 10_000;
     static AtomicReference<@Nullable LogBuffer> logBuffer = new AtomicReference<>();
     static final AtomicReference<@Nullable FxLogWindow> logWindow = new AtomicReference<>();
     static final AtomicReference<@Nullable FxLogPane> logPane = new AtomicReference<>();
@@ -488,7 +489,9 @@ public final class FxLauncher {
             @SuppressWarnings("unchecked")
             Class<? extends Application> applicationClass = (Class<? extends Application>) loader.loadClass(applicationClassName);
             log.info("starting application: {}", applicationClass.getName());
-            showLogWindow(null, appName + " - " + I18NInstance.get().get(I18N_KEY_LOG_MESSAGES));
+            if (showLogWindow) {
+                showLogWindow(null, appName + " - " + I18NInstance.get().get(I18N_KEY_LOG_MESSAGES));
+            }
             launch(applicationClass, arguments.positionalArgs().toArray(String[]::new));
             rc = RC_SUCCESS;
         } catch (Exception e) {
@@ -521,17 +524,19 @@ public final class FxLauncher {
         SLB4J.setConfiguration(loggingConfiguration);
         LOG.debug("SLB4J configuration updated: {}", loggingConfiguration);
 
-        if (showLogWindow || isDebug() && HAS_SLB4J_EXT_FX) {
-            logBuffer.updateAndGet( buffer -> {
-                if (buffer == null) {
-                    buffer = new LogBuffer();
-                }
-                SLB4J.getDispatcher().addLogHandler(buffer);
-                return buffer;
-            });
-
-            ApplicationUtil.addDarkModeListener(dark -> getLogWindow().ifPresent(window -> window.setDarkMode(dark)));
+        if (HAS_SLB4J_EXT_FX && (showLogWindow || isDebug())) {
+            initLogBuffer();
         }
+    }
+
+    private static void initLogBuffer() {
+        logBuffer.updateAndGet( buffer -> {
+            if (buffer == null) {
+                buffer = new LogBuffer("Application Log", logBufferSize);
+            }
+            SLB4J.getDispatcher().addLogHandler(buffer);
+            return buffer;
+        });
     }
 
     /**
@@ -583,7 +588,7 @@ public final class FxLauncher {
                     I18NInstance.get().get("dua3.utility.fx.launcher.arg.log_buffer_size.description"),
                     Repetitions.ZERO_OR_ONE,
                     "size",
-                    size -> logBuffer.set(new LogBuffer("Application Log Buffer", size)),
+                    size -> logBufferSize = LangUtil.requireInInterval(size, 1, Integer.MAX_VALUE),
                     "--log-buffer-size", "-ls"
             );
         }
@@ -652,8 +657,12 @@ public final class FxLauncher {
      *         or an empty {@link Optional} if the log window is not configured to be displayed.
      */
     public static Optional<FxLogWindow> showLogWindow(@Nullable Window owner, String title) {
+        if (!HAS_SLB4J_EXT) {
+            return Optional.empty();
+        }
+
         LogBuffer buffer = logBuffer.get();
-        if (!HAS_SLB4J_EXT || buffer == null) {
+        if (buffer == null) {
             return Optional.empty();
         }
 
@@ -663,6 +672,7 @@ public final class FxLauncher {
                         PlatformGuard.run(() -> PlatformHelper.runAndWait(() -> {
                             FxLogWindow window = new FxLogWindow(title, buffer);
                             window.initOwner(owner);
+                            ApplicationUtil.addDarkModeListener(window::setDarkMode);
                             window.show();
                             return window;
                         }))
