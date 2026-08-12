@@ -138,25 +138,51 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public void copy(URI source, URI target, OutputOption... options) throws IOException {
+        copyTo(this, source, target, options);
+    }
+
+    @Override
+    public void move(URI source, URI target, OutputOption... options) throws IOException {
+        moveTo(this, source, target, options);
+    }
+
+    /**
+     * Performs a file-system copy to another file-backed store.
+     *
+     * @param targetStore The target FileObjectStore where the data will be copied to.
+     * @param source The URI of the source file within the current store.
+     * @param target The URI of the destination file within the target store.
+     * @param options Additional options specifying how the copy should be done.
+     * @throws IOException If an I/O error occurs during the copy operation.
+     */
+    public void copyTo(FileObjectStore targetStore, URI source, URI target, OutputOption... options) throws IOException {
         assertReadable();
         Path sourcePath = resolveRegularData(source);
 
-        assertWritable();
-        Path targetPath = resolve(target);
-        StandardCopyOption[] copyOptions = getCopyOptions(options, targetPath);
+        targetStore.assertWritable();
+        Path targetPath = targetStore.resolve(target);
+        StandardCopyOption[] copyOptions = targetStore.getCopyOptions(options, targetPath);
 
         createParent(targetPath);
         Files.copy(sourcePath, targetPath, copyOptions);
     }
 
-    @Override
-    public void move(URI source, URI target, OutputOption... options) throws IOException {
+    /**
+     * Performs a file-system move to another file-backed store.
+     *
+     * @param targetStore The target FileObjectStore where the file will be moved.
+     * @param source The URI of the source file to be moved.
+     * @param target The URI of the target location where the file will be moved.
+     * @param options An array of OutputOption that defines how the move operation should be performed.
+     * @throws IOException If an I/O error occurs during the move operation.
+     */
+    public void moveTo(FileObjectStore targetStore, URI source, URI target, OutputOption... options) throws IOException {
         assertReadable();
         Path sourcePath = resolveRegularData(source);
 
-        assertWritable();
-        Path targetPath = resolve(target);
-        StandardCopyOption[] copyOptions = getCopyOptions(options, targetPath);
+        targetStore.assertWritable();
+        Path targetPath = targetStore.resolve(target);
+        StandardCopyOption[] copyOptions = targetStore.getCopyOptions(options, targetPath);
 
         createParent(targetPath);
         Files.move(sourcePath, targetPath, copyOptions);
