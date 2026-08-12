@@ -56,6 +56,8 @@ public final class Grid extends GridPane {
     private static final FxFontUtil FU = FxFontUtil.getInstance();
     private final Font defaultFont;
 
+    private List<InputControl<?>> controls = Collections.emptyList();
+
     private final MarkerSymbols markerSymbols;
     private final Function<Map<String, Object>, Map<String, Optional<String>>> validate;
 
@@ -257,7 +259,7 @@ public final class Grid extends GridPane {
         getChildren().clear();
         getRowConstraints().clear();
 
-        List<InputControl<?>> controls = new ArrayList<>();
+        List<InputControl<?>> ctrls = new ArrayList<>();
 
         // create grid with input controls
         Insets insets = new Insets(2);
@@ -285,7 +287,7 @@ public final class Grid extends GridPane {
         for (int i = 0; i < dataList.size(); i++) {
             var entry = dataList.get(i);
             updateMarker(entry, false);
-            controls.add(entry.control);
+            ctrls.add(entry.control);
 
             if (!entry.visible || entry.inline) {
                 // do not add controls for non-visible (hidden) fields
@@ -425,6 +427,8 @@ public final class Grid extends GridPane {
             }
         }
 
+        this.controls = Collections.unmodifiableList(ctrls);
+
         if (c != 0) {
             // we were in the middle of a row, check if it needed a label row
             boolean needsLabelRow = false;
@@ -451,6 +455,16 @@ public final class Grid extends GridPane {
         }
 
         // the valid state is true if all inputs are valid
+        bindValidProperty();
+
+        // request focus for the first control
+        if (!data.isEmpty()) {
+            data.getFirst().control.node().requestFocus();
+        }
+    }
+
+    private void bindValidProperty() {
+        valid.unbind();
         valid.bind(Bindings.createBooleanBinding(
                 () -> {
                     boolean fieldsValid = controls.stream().allMatch(control -> {
@@ -463,11 +477,6 @@ public final class Grid extends GridPane {
                 },
                 controls.stream().flatMap(control -> Stream.of(control.valueProperty(), control.validProperty())).toArray(ObservableValue[]::new)
         ));
-
-        // request focus for the first control
-        if (!data.isEmpty()) {
-            data.getFirst().control.node().requestFocus();
-        }
     }
 
     /**
@@ -519,6 +528,9 @@ public final class Grid extends GridPane {
      */
     public void reset() {
         data.forEach(entry -> entry.control.reset());
+
+        // rebind the valid property to force update of valid state
+        bindValidProperty();
     }
 
     /**
