@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -463,6 +466,11 @@ class FileTypeTest {
         }
 
         @Override
+        public ReadableByteChannel openReadableByteChannel(URI path) {
+            return Channels.newChannel(openInputStream(path));
+        }
+
+        @Override
         public Optional<ObjectStore.ObjectInfo> getInfo(URI path) {
             return Optional.empty();
         }
@@ -505,6 +513,11 @@ class FileTypeTest {
             openCalls++;
             outputStream = new CloseTrackingOutputStream();
             return outputStream;
+        }
+
+        @Override
+        public WritableByteChannel openWritableByteChannel(URI path, ObjectStore.OutputOption... options) {
+            return Channels.newChannel(openOutputStream(path, options));
         }
 
         @Override

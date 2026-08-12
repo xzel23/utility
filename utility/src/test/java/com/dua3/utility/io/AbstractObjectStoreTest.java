@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
@@ -199,6 +202,54 @@ abstract class AbstractObjectStoreTest {
             try (InputStream in = store.openInputStream(URI.create("x/y.txt"))) {
                 assertArrayEquals("data".getBytes(StandardCharsets.UTF_8), in.readAllBytes());
             }
+        }
+    }
+
+    @Test
+    void byteChannels_readAndWriteData() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("channel/data.bin");
+            byte[] expected = "channel data".getBytes(StandardCharsets.UTF_8);
+
+            try (WritableByteChannel out = store.openWritableByteChannel(path, ObjectStore.OutputOption.CREATE_NEW)) {
+                out.write(ByteBuffer.wrap(expected));
+            }
+
+            ByteBuffer actual = ByteBuffer.allocate(expected.length);
+            try (ReadableByteChannel in = store.openReadableByteChannel(path)) {
+                while (actual.hasRemaining()) {
+                    assertTrue(in.read(actual) >= 0);
+                }
+            }
+            assertArrayEquals(expected, actual.array());
+        }
+    }
+
+    @Test
+    void copy_copiesDataAndKeepsSource() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI source = URI.create("source.bin");
+            URI target = URI.create("folder/target.bin");
+            store.write(source, "copied".getBytes(StandardCharsets.UTF_8));
+
+            store.copy(source, target, ObjectStore.OutputOption.CREATE_NEW);
+
+            assertEquals("copied", store.readString(source));
+            assertEquals("copied", store.readString(target));
+        }
+    }
+
+    @Test
+    void move_copiesDataAndDeletesSource() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI source = URI.create("source.bin");
+            URI target = URI.create("folder/target.bin");
+            store.write(source, "moved".getBytes(StandardCharsets.UTF_8));
+
+            store.move(source, target, ObjectStore.OutputOption.CREATE_NEW);
+
+            assertTrue(store.getInfo(source).isEmpty());
+            assertEquals("moved", store.readString(target));
         }
     }
 

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -173,4 +174,16 @@ public interface WritableObjectStore extends AutoCloseable {
             case null, default -> write(path, String.valueOf(s).getBytes(cs), options);
         };
     }
+
+    /**
+     * Opens a writable byte channel to the specified URI, allowing for data to be written to
+     * the underlying object store. The method provides control over how the channel is opened
+     * with various options that can influence the behavior of the operation.
+     *
+     * @param path the URI of the object store resource to which the byte channel will be opened for writing
+     * @param options an array of OutputOption that specify how the write operation should be handled
+     * @return a WritableByteChannel that can be used to write bytes to the specified object store resource
+     * @throws IOException if an I/O error occurs while opening the writable byte channel
+     */
+    WritableByteChannel openWritableByteChannel(URI path, ObjectStore.OutputOption... options) throws IOException;
 }

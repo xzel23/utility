@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -61,6 +63,11 @@ final class PrefixedObjectStores {
         }
 
         @Override
+        public ReadableByteChannel openReadableByteChannel(URI path) throws IOException {
+            return delegate.openReadableByteChannel(prefix.resolve(path));
+        }
+
+        @Override
         public void close() {
             // This view does not own the delegate.
         }
@@ -101,6 +108,11 @@ final class PrefixedObjectStores {
         }
 
         @Override
+        public WritableByteChannel openWritableByteChannel(URI path, ObjectStore.OutputOption... options) throws IOException {
+            return delegate.openWritableByteChannel(prefix.resolve(path), options);
+        }
+
+        @Override
         public void close() {
             // This view does not own the delegate.
         }
@@ -136,6 +148,11 @@ final class PrefixedObjectStores {
         }
 
         @Override
+        public ReadableByteChannel openReadableByteChannel(URI path) throws IOException {
+            return delegate.openReadableByteChannel(prefix.resolve(path));
+        }
+
+        @Override
         public long write(URI path, InputStream in, OutputOption... options) throws IOException {
             return delegate.write(prefix.resolve(path), in, options);
         }
@@ -153,6 +170,11 @@ final class PrefixedObjectStores {
         @Override
         public void createFolder(URI path) throws IOException {
             delegate.createFolder(prefix.resolve(path));
+        }
+
+        @Override
+        public WritableByteChannel openWritableByteChannel(URI path, ObjectStore.OutputOption... options) throws IOException {
+            return delegate.openWritableByteChannel(prefix.resolve(path), options);
         }
 
         @Override

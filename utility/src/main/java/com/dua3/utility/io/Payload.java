@@ -145,21 +145,58 @@ public final class Payload implements AutoCloseable {
     }
 
     /**
+     * Creates a Payload instance from the provided SeekableByteChannel.
+     * <p>
+     * This method reads data from the specified SeekableByteChannel and constructs
+     * a Payload object, which can be used for further processing.
+     *
+     * @param in the SeekableByteChannel from which the Payload is to be constructed.
+     *           It must be open and readable.
+     * @return a Payload instance created from the data read from the SeekableByteChannel.
+     * @throws IOException if an I/O error occurs while accessing the ByteChannel.
+     */
+    public static Payload fromByteChannel(SeekableByteChannel in) throws IOException {
+        return getPayload(null, in);
+    }
+
+    /**
+     * Creates a {@code Payload} from a seekable byte channel while retaining
+     * the URI that identifies the object.
+     * <p>
+     * The URI is metadata only; this method never opens it.
+     *
+     * @param uri the URI identifying the object
+     * @param in  the seekable byte channel to consume
+     * @return a payload for the supplied channel
+     * @throws IOException if the channel cannot be read
+     */
+    public static Payload fromByteChannel(URI uri, SeekableByteChannel in) throws IOException {
+        return getPayload(uri, in);
+    }
+
+    private static Payload getPayload(@Nullable URI uri, SeekableByteChannel in) throws IOException {
+        // Read up to 8 bytes efficiently using NIO channel.
+        ByteBuffer buffer = ByteBuffer.allocate(8);
+        int bytesRead;
+        do {
+            bytesRead = in.read(buffer);
+        } while (buffer.hasRemaining() && bytesRead > 0);
+        buffer.flip();
+        long magic = buffer.remaining() >= 8 ? buffer.getLong() : bytesToLong(buffer);
+        in.position(0);
+        return new Payload(uri, in, null, magic);
+    }
+
+    /**
      * Factory method for local files. Zero-copy friendly.
      */
     @SuppressWarnings("java:S2093") // suppress warning about resource leak, the channel should only be closed in case of an exception
     private static Payload fromPath(@Nullable URI uri, Path path) throws IOException {
         // Read 8 bytes efficiently using NIO channel
-        long magic;
         SeekableByteChannel chnl = null;
         try {
             chnl = Files.newByteChannel(path, StandardOpenOption.READ);
-            ByteBuffer buffer = ByteBuffer.allocate(8);
-            chnl.read(buffer);
-            buffer.flip();
-            magic = buffer.remaining() >= 8 ? buffer.getLong() : bytesToLong(buffer);
-            chnl.position(0);
-            Payload payload = new Payload(uri, chnl, null, magic);
+            Payload payload = getPayload(uri, chnl);
             chnl = null;
             return payload;
         } finally {
@@ -265,15 +302,15 @@ public final class Payload implements AutoCloseable {
      * <p>
      * Bytes are read from the array in big-endian order.
      *
-     * @param b the array of bytes to be converted.
+     * @param bytes the array of bytes to be converted.
      * @param bytesRead the number of bytes to read from the array. This value should
      *                  be between 0 and 8, inclusive.
      * @return the long value obtained by combining the specified bytes.
      */
-    private static long bytesToLong(byte[] b, int bytesRead) {
+    private static long bytesToLong(byte[] bytes, int bytesRead) {
         long value = 0;
         for (int i = 0; i < Math.min(bytesRead, 8); i++) {
-            value = (value << 8) | (b[i] & 0xFF);
+            value = (value << 8) | (bytes[i] & 0xFF);
         }
         if (bytesRead < 8) value <<= (8 - bytesRead) * 8;
         return value;

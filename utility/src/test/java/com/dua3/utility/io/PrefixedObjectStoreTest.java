@@ -10,6 +10,9 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +22,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PrefixedObjectStoreTest {
 
@@ -37,6 +41,13 @@ class PrefixedObjectStoreTest {
             assertEquals(root.resolve("reports/current/").toUri(), prefixed.getRoot());
             try (InputStream in = prefixed.openInputStream(URI.create("result.txt"))) {
                 assertArrayEquals("result".getBytes(StandardCharsets.UTF_8), in.readAllBytes());
+            }
+            try (ReadableByteChannel in = prefixed.openReadableByteChannel(URI.create("result.txt"))) {
+                ByteBuffer bytes = ByteBuffer.allocate("result".length());
+                while (bytes.hasRemaining()) {
+                    assertTrue(in.read(bytes) >= 0);
+                }
+                assertArrayEquals("result".getBytes(StandardCharsets.UTF_8), bytes.array());
             }
             try (var objects = prefixed.list(URI.create(""))) {
                 assertEquals(List.of(URI.create("result.txt")), objects.map(ObjectStore.ObjectInfo::uri).toList());
@@ -78,6 +89,11 @@ class PrefixedObjectStoreTest {
 
             assertEquals(root.resolve("reports/current/").toUri(), prefixed.getRoot());
             assertEquals("result", Files.readString(root.resolve("reports/current/details/result.html")));
+            try (WritableByteChannel out = prefixed.openWritableByteChannel(
+                    URI.create("details/channel.bin"), ObjectStore.OutputOption.CREATE_NEW)) {
+                out.write(ByteBuffer.wrap("channel".getBytes(StandardCharsets.UTF_8)));
+            }
+            assertEquals("channel", Files.readString(root.resolve("reports/current/details/channel.bin")));
             assertThrows(IllegalPathException.class, () -> prefixed.write(
                     URI.create("../outside.txt"),
                     "outside".getBytes(StandardCharsets.UTF_8)
@@ -99,8 +115,20 @@ class PrefixedObjectStoreTest {
             try (InputStream in = prefixed.openInputStream(URI.create("settings.dcompare"))) {
                 assertArrayEquals("settings".getBytes(StandardCharsets.UTF_8), in.readAllBytes());
             }
+            try (WritableByteChannel out = prefixed.openWritableByteChannel(
+                    URI.create("channel.bin"), ObjectStore.OutputOption.CREATE_NEW)) {
+                out.write(ByteBuffer.wrap("channel".getBytes(StandardCharsets.UTF_8)));
+            }
+            try (ReadableByteChannel in = prefixed.openReadableByteChannel(URI.create("channel.bin"))) {
+                ByteBuffer bytes = ByteBuffer.allocate("channel".length());
+                while (bytes.hasRemaining()) {
+                    assertTrue(in.read(bytes) >= 0);
+                }
+                assertArrayEquals("channel".getBytes(StandardCharsets.UTF_8), bytes.array());
+            }
 
             prefixed.delete(URI.create("settings.dcompare"));
+            prefixed.delete(URI.create("channel.bin"));
             try (var files = Files.list(root.resolve("reports/current"))) {
                 assertEquals(List.of(), files.toList());
             }

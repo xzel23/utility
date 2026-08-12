@@ -18,6 +18,7 @@ import java.net.SocketException;
 import java.net.URI;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +29,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PayloadTest {
 
@@ -167,6 +169,33 @@ class PayloadTest {
             assertEquals(uri, payload.uri().orElseThrow());
             assertEquals(expectedMagic8Bytes(content), payload.magic8Bytes());
             assertArrayEquals(content, payload.stream().readAllBytes());
+        }
+    }
+
+    @Test
+    void fromByteChannel_preservesContentAndOptionalUri() throws Exception {
+        byte[] content = "channel payload".getBytes(StandardCharsets.UTF_8);
+        Path path = Files.createTempFile(tempDir, "payload-channel-", ".bin");
+        Files.write(path, content);
+
+        try (SeekableByteChannel channel = Files.newByteChannel(path);
+             Payload payload = Payload.fromByteChannel(channel)) {
+            assertTrue(payload.uri().isEmpty());
+            assertEquals(expectedMagic8Bytes(content), payload.magic8Bytes());
+            assertArrayEquals(content, payload.stream().readAllBytes());
+        }
+
+        URI uri = URI.create("memory:/objects/channel.bin");
+        byte[] shortContent = "short".getBytes(StandardCharsets.UTF_8);
+        Files.write(path, shortContent);
+        try (SeekableByteChannel channel = Files.newByteChannel(path);
+             Payload payload = Payload.fromByteChannel(uri, channel)) {
+            assertEquals(uri, payload.uri().orElseThrow());
+            assertEquals(expectedMagic8Bytes(shortContent), payload.magic8Bytes());
+            try (ReadableByteChannel payloadChannel = payload.channel();
+                 InputStream in = Channels.newInputStream(payloadChannel)) {
+                assertArrayEquals(shortContent, in.readAllBytes());
+            }
         }
     }
 

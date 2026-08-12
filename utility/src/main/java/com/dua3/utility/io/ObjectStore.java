@@ -1,6 +1,8 @@
 package com.dua3.utility.io;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.time.Instant;
@@ -217,4 +219,38 @@ public interface ObjectStore extends ReadableObjectStore, WritableObjectStore {
         if (!isWritable()) throw new IllegalStateException("object store is not writable");
     }
 
+    /**
+     * Copies data from a source URI to a target URI within the object store.
+     * The operation opens an input stream for the source URI and an output stream
+     * for the target URI, transferring the data directly between streams.
+     *
+     * @param source the URI of the source object to be copied
+     * @param target the URI of the target location where the data will be copied to
+     * @param options optional settings for the output stream that specify how to handle existing objects at the target location
+     * @throws IOException if an I/O error occurs during reading from the source or writing to the target
+     */
+    default void copy(URI source, URI target, ObjectStore.OutputOption... options) throws IOException {
+        try (InputStream in = openInputStream(source);
+             OutputStream out = openOutputStream(target, options)) {
+            in.transferTo(out);
+        }
+    }
+
+    /**
+     * Moves an object from a source URI to a target URI within the object store.
+     * The operation transfers data by reading from the source URI and writing to the target URI.
+     * After the transfer, the source object is deleted.
+     *
+     * @param source the URI of the source object to be moved
+     * @param target the URI of the target location where the object will be moved to
+     * @param options optional settings for the output stream that specify how to handle existing objects at the target location
+     * @throws IOException if an I/O error occurs during reading from the source, writing to the target, or deleting the source
+     */
+    default void move(URI source, URI target, ObjectStore.OutputOption... options) throws IOException {
+        try (InputStream in = openInputStream(source);
+             OutputStream out = openOutputStream(target, options)) {
+            in.transferTo(out);
+        }
+        delete(source);
+    }
 }

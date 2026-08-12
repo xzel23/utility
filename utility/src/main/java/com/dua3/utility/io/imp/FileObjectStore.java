@@ -20,6 +20,8 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -213,13 +215,27 @@ public final class FileObjectStore implements ObjectStore {
         assertWritable();
 
         Path resolved = resolve(path);
-        OutputOption effectiveOption = ensureCanWrite(resolved, options);
-        OpenOption[] soo = effectiveOption == OutputOption.CREATE_OR_REPLACE
-                ? new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING}
-                : new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW};
+        OpenOption[] soo = getOpenOptions(options, resolved);
 
         createParent(resolved);
         return Files.newOutputStream(resolved, soo);
+    }
+
+    /**
+     * Constructs and returns an array of OpenOption elements based on the provided OutputOption array
+     * and the resolved file path. This method first determines the effective output option that ensures
+     * the resolved file path is writable and then sets the required open options accordingly.
+     *
+     * @param options an array of OutputOption that specifies the desired file write behavior
+     * @param resolved the Path of the file for which the open options are being determined
+     * @return an array of OpenOption elements that specify how the file should be opened
+     * @throws IOException if an I/O error occurs or if the file cannot be written to
+     */
+    private OpenOption[] getOpenOptions(OutputOption[] options, Path resolved) throws IOException {
+        OutputOption effectiveOption = ensureCanWrite(resolved, options);
+        return effectiveOption == OutputOption.CREATE_OR_REPLACE
+                ? new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING}
+                : new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW};
     }
 
     @SuppressWarnings("OverlyBroadThrowsClause")
@@ -233,6 +249,18 @@ public final class FileObjectStore implements ObjectStore {
             throw new NotAFolderException(path.toString());
         }
         Files.createDirectories(resolved);
+    }
+
+    @Override
+    public WritableByteChannel openWritableByteChannel(URI path, OutputOption... options) throws IOException {
+        assertWritable();
+
+        Path resolved = resolve(path);
+        OpenOption[] soo = getOpenOptions(options, resolved);
+
+        createParent(resolved);
+
+        return Files.newByteChannel(resolved, soo);
     }
 
     @SuppressWarnings("OverlyBroadThrowsClause")
@@ -251,6 +279,12 @@ public final class FileObjectStore implements ObjectStore {
     public Optional<ObjectInfo> getInfo(URI path) throws IOException {
         assertReadable();
         return Optional.ofNullable(toObjectInfo(resolve(path)));
+    }
+
+    @Override
+    public SeekableByteChannel openReadableByteChannel(URI path) throws IOException {
+        assertReadable();
+        return Files.newByteChannel(resolveRegularData(path), StandardOpenOption.READ);
     }
 
     @SuppressWarnings("OverlyBroadThrowsClause")

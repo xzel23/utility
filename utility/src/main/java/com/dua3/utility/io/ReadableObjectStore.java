@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -376,4 +377,13 @@ public interface ReadableObjectStore extends AutoCloseable {
     default String readString(URI path, Charset cs) throws IOException {
         return new String(readAllBytes(path), cs);
     }
+
+    /**
+     * Opens a readable byte channel to the specified URI.
+     *
+     * @param path the URI of the file to be opened as a readable byte channel
+     * @return a ReadableByteChannel connected to the specified URI
+     * @throws IOException if an I/O error occurs while opening the channel
+     */
+    ReadableByteChannel openReadableByteChannel(URI path) throws IOException;
 }
