@@ -16,7 +16,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +30,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -110,6 +113,61 @@ class PayloadTest {
         }
     }
 
+    private static final class TrackingReadableByteChannel implements ReadableByteChannel {
+        private final InputStream source;
+        private boolean open = true;
+
+        private TrackingReadableByteChannel(byte[] content) {
+            source = new ByteArrayInputStream(content);
+        }
+
+        @Override
+        public int read(ByteBuffer destination) throws IOException {
+            if (!open) {
+                throw new ClosedChannelException();
+            }
+            if (!destination.hasRemaining()) {
+                return 0;
+            }
+
+            byte[] buffer = new byte[Math.min(destination.remaining(), 8192)];
+            int bytesRead = source.read(buffer);
+            if (bytesRead > 0) {
+                destination.put(buffer, 0, bytesRead);
+            }
+            return bytesRead;
+        }
+
+        @Override
+        public boolean isOpen() {
+            return open;
+        }
+
+        @Override
+        public void close() {
+            open = false;
+        }
+    }
+
+    private static final class FailingInputStream extends InputStream {
+        private boolean closed;
+
+        @Override
+        public int read() throws IOException {
+            throw new IOException("probe failed");
+        }
+
+        @Override
+        public int read(byte[] bytes, int offset, int length) throws IOException {
+            throw new IOException("probe failed");
+        }
+
+        @Override
+        public void close() {
+            closed = true;
+        }
+    }
+
     private static Stream<Arguments> resourceAndAccessKinds() {
         return Stream.of(ResourceKind.values())
                 .flatMap(resourceKind -> Stream.of(AccessKind.values())
@@ -170,6 +228,72 @@ class PayloadTest {
             assertEquals(expectedMagic8Bytes(content), payload.magic8Bytes());
             assertArrayEquals(content, payload.stream().readAllBytes());
         }
+    }
+
+    @Test
+    void fromUriWithoutScheme_treatsUriAsPath() throws Exception {
+        byte[] content = "path URI payload".getBytes(StandardCharsets.UTF_8);
+        Path path = tempDir.resolve("payload-without-scheme.bin");
+        Files.write(path, content);
+        URI uri = new URI(null, null, path.toString(), null);
+
+        try (Payload payload = Payload.fromUri(uri)) {
+            assertEquals(uri, payload.uri().orElseThrow());
+            assertArrayEquals(content, payload.stream().readAllBytes());
+        }
+    }
+
+    @Test
+    void fromNonSeekableByteChannel_preservesUriMagicAndContent() throws Exception {
+        URI uri = URI.create("memory:/objects/non-seekable.bin");
+        byte[] content = "non-seekable channel payload".getBytes(StandardCharsets.UTF_8);
+        TrackingReadableByteChannel source = new TrackingReadableByteChannel(content);
+
+        try (Payload payload = Payload.fromByteChannel(uri, source)) {
+            assertEquals(uri, payload.uri().orElseThrow());
+            assertEquals(expectedMagic8Bytes(content), payload.magic8Bytes());
+            assertArrayEquals(content, payload.stream().readAllBytes());
+        }
+
+        assertFalse(source.isOpen());
+    }
+
+    @Test
+    void seekableByteChannel_restoresInitialPosition() throws Exception {
+        byte[] content = "0123456789abcdef".getBytes(StandardCharsets.UTF_8);
+        Path path = Files.createTempFile(tempDir, "payload-position-", ".bin");
+        Files.write(path, content);
+
+        try (SeekableByteChannel source = Files.newByteChannel(path)) {
+            source.position(3);
+            byte[] remaining = Arrays.copyOfRange(content, 3, content.length);
+
+            try (Payload payload = Payload.fromByteChannel(source)) {
+                assertEquals(3, source.position());
+                assertEquals(expectedMagic8Bytes(remaining), payload.magic8Bytes());
+                assertArrayEquals(remaining, payload.stream().readAllBytes());
+            }
+        }
+    }
+
+    @Test
+    void headerProbeFailure_closesInputStream() {
+        try (FailingInputStream source = new FailingInputStream()) {
+            assertThrows(IOException.class, () -> Payload.fromInputStream(source));
+            assertTrue(source.closed);
+        }
+    }
+
+    @Test
+    void closeIsIdempotentAndPreventsConsumption() throws Exception {
+        TrackingReadableByteChannel source = new TrackingReadableByteChannel(new byte[]{1, 2, 3});
+        Payload payload = Payload.fromByteChannel(source);
+
+        payload.close();
+        payload.close();
+
+        assertFalse(source.isOpen());
+        assertThrows(IllegalStateException.class, payload::stream);
     }
 
     @Test

@@ -25,8 +25,8 @@ import java.util.Optional;
  * This class supports both file-based and stream-based resources, providing
  * high-performance zero-copy optimizations for files and fallback mechanisms
  * for streams. It also extracts "magic bytes" to identify the type or format
- * of the payload content. The class is immutable and supports lazy initialization
- * for its resource handling components.
+ * of the payload content. The class supports lazy initialization for its resource
+ * handling components. Instances are stateful, single-use, and not thread-safe.
  * <p>
  * The {@code Payload} instances can be created via a factory method:
  * - {@link #fromUri(URI)}: Determines the resource type based on the URI scheme and creates the payload.
@@ -41,6 +41,9 @@ public final class Payload implements AutoCloseable {
 
     /** A flag tracking state to enforce single-use consumption. */
     private boolean consumed = false;
+
+    /** A flag tracking whether this payload has been closed. */
+    private boolean closed = false;
 
     // We maintain either the underlying path or the protected stream pipeline
     private @Nullable InputStream protectedStream;
@@ -61,7 +64,7 @@ public final class Payload implements AutoCloseable {
     public static Payload fromUri(URI uri) throws IOException {
         return switch (uri.getScheme()) {
             case "file" -> fromPath(uri, Path.of(uri));
-            case null -> fromPath(uri, Path.of(uri));
+            case null -> fromPath(uri, Path.of(uri.getPath()));
             default -> fromStream(uri, IoUtil.openInputStream(uri));
         };
     }
@@ -145,46 +148,51 @@ public final class Payload implements AutoCloseable {
     }
 
     /**
-     * Creates a Payload instance from the provided SeekableByteChannel.
+     * Creates a Payload instance from the provided ReadableByteChannel.
      * <p>
-     * This method reads data from the specified SeekableByteChannel and constructs
+     * This method reads data from the specified ReadableByteChannel and constructs
      * a Payload object, which can be used for further processing.
      *
-     * @param in the SeekableByteChannel from which the Payload is to be constructed.
+     * @param in the ReadableByteChannel from which the Payload is to be constructed.
      *           It must be open and readable.
-     * @return a Payload instance created from the data read from the SeekableByteChannel.
+     * @return a Payload instance created from the data read from the ReadableByteChannel.
      * @throws IOException if an I/O error occurs while accessing the ByteChannel.
      */
-    public static Payload fromByteChannel(SeekableByteChannel in) throws IOException {
+    public static Payload fromByteChannel(ReadableByteChannel in) throws IOException {
         return getPayload(null, in);
     }
 
     /**
-     * Creates a {@code Payload} from a seekable byte channel while retaining
+     * Creates a {@code Payload} from a readable byte channel while retaining
      * the URI that identifies the object.
      * <p>
      * The URI is metadata only; this method never opens it.
      *
      * @param uri the URI identifying the object
-     * @param in  the seekable byte channel to consume
+     * @param in  the readable byte channel to consume
      * @return a payload for the supplied channel
      * @throws IOException if the channel cannot be read
      */
-    public static Payload fromByteChannel(URI uri, SeekableByteChannel in) throws IOException {
+    public static Payload fromByteChannel(URI uri, ReadableByteChannel in) throws IOException {
         return getPayload(uri, in);
     }
 
-    private static Payload getPayload(@Nullable URI uri, SeekableByteChannel in) throws IOException {
-        // Read up to 8 bytes efficiently using NIO channel.
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        int bytesRead;
-        do {
-            bytesRead = in.read(buffer);
-        } while (buffer.hasRemaining() && bytesRead > 0);
-        buffer.flip();
-        long magic = buffer.remaining() >= 8 ? buffer.getLong() : bytesToLong(buffer);
-        in.position(0);
-        return new Payload(uri, in, null, magic);
+    private static Payload getPayload(@Nullable URI uri, ReadableByteChannel in) throws IOException {
+        if (in instanceof SeekableByteChannel sbc) {
+            // Read up to 8 bytes efficiently using NIO channel.
+            long position = sbc.position();
+            ByteBuffer buffer = ByteBuffer.allocate(8);
+            int bytesRead;
+            do {
+                bytesRead = sbc.read(buffer);
+            } while (buffer.hasRemaining() && bytesRead > 0);
+            buffer.flip();
+            long magic = buffer.remaining() >= 8 ? buffer.getLong() : bytesToLong(buffer);
+            sbc.position(position);
+            return new Payload(uri, sbc, null, magic);
+        }
+
+        return fromStream(uri, Channels.newInputStream(in));
     }
 
     /**
@@ -210,15 +218,24 @@ public final class Payload implements AutoCloseable {
      * Factory method for streaming data (Network, Sockets).
      */
     private static Payload fromStream(@Nullable URI uri, InputStream originalStream) throws IOException {
-        byte[] header = new byte[8];
-        int bytesRead = originalStream.readNBytes(header, 0, 8);
-        long magic = bytesToLong(header, bytesRead);
+        try {
+            byte[] header = new byte[8];
+            int bytesRead = originalStream.readNBytes(header, 0, 8);
+            long magic = bytesToLong(header, bytesRead);
 
-        InputStream stitchedStream = bytesRead > 0
-                ? new SequenceInputStream(new ByteArrayInputStream(header, 0, bytesRead), originalStream)
-                : originalStream;
+            InputStream stitchedStream = bytesRead > 0
+                    ? new SequenceInputStream(new ByteArrayInputStream(header, 0, bytesRead), originalStream)
+                    : originalStream;
 
-        return new Payload(uri, null, stitchedStream, magic);
+            return new Payload(uri, null, stitchedStream, magic);
+        } catch (IOException | RuntimeException e) {
+            try {
+                originalStream.close();
+            } catch (IOException closeException) {
+                e.addSuppressed(closeException);
+            }
+            throw e;
+        }
     }
 
     /**
@@ -263,14 +280,13 @@ public final class Payload implements AutoCloseable {
      * will result in an exception.
      *
      * @return an {@code InputStream} representing the resource associated with this payload.
-     * @throws IOException if an I/O error occurs while creating or retrieving the stream.
      * @throws IllegalStateException if the payload has already been consumed.
      */
-    public InputStream stream() throws IOException {
+    public InputStream stream() {
         consume();
         if (protectedStream == null) {
             assert channel != null : "channel must be initialized if protectedStream is null";
-            protectedStream = IoUtil.getInputStream(channel);
+            protectedStream = Channels.newInputStream(channel);
             channel = null; // prevent double close
         }
         return protectedStream;
@@ -298,7 +314,7 @@ public final class Payload implements AutoCloseable {
     /**
      * Converts an array of bytes into a long value. The number of bytes to consider
      * for the conversion is specified by the {@code bytesRead} parameter. If fewer than
-     * 8 bytes are read, the result is left-padded with zeros.
+     * 8 bytes are read, the result is right-padded with zeros.
      * <p>
      * Bytes are read from the array in big-endian order.
      *
@@ -346,7 +362,12 @@ public final class Payload implements AutoCloseable {
      */
     @Override
     public void close() throws IOException {
-        IoUtil.closeAll(channel, protectedStream);
+        ReadableByteChannel channelToClose = channel;
+        InputStream streamToClose = protectedStream;
+        channel = null;
+        protectedStream = null;
+        closed = true;
+        IoUtil.closeAll(channelToClose, streamToClose);
     }
 
     /**
@@ -357,6 +378,9 @@ public final class Payload implements AutoCloseable {
      * @throws IllegalStateException if the payload has already been marked as consumed.
      */
     private void consume() {
+        if (closed) {
+            throw new IllegalStateException("Payload has already been closed.");
+        }
         if (consumed) {
             throw new IllegalStateException("Payload content has already been consumed via stream() or channel().");
         }
