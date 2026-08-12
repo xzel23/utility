@@ -314,14 +314,16 @@ class LangUtilTest {
 
     @Test
     void uncheckedSupplier() {
-        WrappedException trhown = assertThrows(WrappedException.class, () -> LangUtil.unchecked(() -> Class.forName("")).get(), "test");
+        WrappedException trhown = assertThrows(WrappedException.class,
+                () -> LangUtil.unchecked(() -> Class.forName("com.dua3.utility.lang.DoesNotExist")).get(), "test");
         assertInstanceOf(ClassNotFoundException.class, trhown.getCause());
     }
 
     @Test
     void uncheckedFunction() {
         // make sure IOException is converted
-        WrappedException thrown = assertThrows(WrappedException.class, () -> LangUtil.unchecked((String n) -> Class.forName(n)).apply(""), "");
+        WrappedException thrown = assertThrows(WrappedException.class,
+                () -> LangUtil.unchecked((String n) -> Class.forName(n)).apply("com.dua3.utility.lang.DoesNotExist"), "");
         assertInstanceOf(ClassNotFoundException.class, thrown.getCause());
     }
 
