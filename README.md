@@ -235,6 +235,11 @@ could not be loaded.
 
 ## Changes
 
+### 24.3.0
+
+- add ByteChannel support to ObjectStore and Payload
+- fix Grid.reset() not revalidating inputs
+
 ### 24.2.0
 
 - fix selective publishing workflow
