@@ -130,13 +130,36 @@ public final class FileObjectStore implements ObjectStore {
         assertWritable();
 
         Path resolved = resolve(path);
-        OutputOption effectiveOption = ensureCanWrite(resolved, options);
-        StandardCopyOption[] copyOptions = effectiveOption == OutputOption.CREATE_OR_REPLACE
-                ? new StandardCopyOption[]{StandardCopyOption.REPLACE_EXISTING}
-                : EMPTY_STANDARD_COPY_OPTIONS;
+        StandardCopyOption[] copyOptions = getCopyOptions(options, resolved);
 
         createParent(resolved);
         return Files.copy(in, resolved, copyOptions);
+    }
+
+    @Override
+    public void copy(URI source, URI target, OutputOption... options) throws IOException {
+        assertReadable();
+        Path sourcePath = resolveRegularData(source);
+
+        assertWritable();
+        Path targetPath = resolve(target);
+        StandardCopyOption[] copyOptions = getCopyOptions(options, targetPath);
+
+        createParent(targetPath);
+        Files.copy(sourcePath, targetPath, copyOptions);
+    }
+
+    @Override
+    public void move(URI source, URI target, OutputOption... options) throws IOException {
+        assertReadable();
+        Path sourcePath = resolveRegularData(source);
+
+        assertWritable();
+        Path targetPath = resolve(target);
+        StandardCopyOption[] copyOptions = getCopyOptions(options, targetPath);
+
+        createParent(targetPath);
+        Files.move(sourcePath, targetPath, copyOptions);
     }
 
     @Override
@@ -236,6 +259,13 @@ public final class FileObjectStore implements ObjectStore {
         return effectiveOption == OutputOption.CREATE_OR_REPLACE
                 ? new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING}
                 : new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW};
+    }
+
+    private StandardCopyOption[] getCopyOptions(OutputOption[] options, Path resolved) throws IOException {
+        OutputOption effectiveOption = ensureCanWrite(resolved, options);
+        return effectiveOption == OutputOption.CREATE_OR_REPLACE
+                ? new StandardCopyOption[]{StandardCopyOption.REPLACE_EXISTING}
+                : EMPTY_STANDARD_COPY_OPTIONS;
     }
 
     @SuppressWarnings("OverlyBroadThrowsClause")

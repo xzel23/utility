@@ -236,6 +236,10 @@ abstract class AbstractObjectStoreTest {
 
             assertEquals("copied", store.readString(source));
             assertEquals("copied", store.readString(target));
+
+            store.write(source, "updated".getBytes(StandardCharsets.UTF_8), ObjectStore.OutputOption.CREATE_OR_REPLACE);
+            store.copy(source, target, ObjectStore.OutputOption.CREATE_OR_REPLACE);
+            assertEquals("updated", store.readString(target));
         }
     }
 
@@ -245,8 +249,9 @@ abstract class AbstractObjectStoreTest {
             URI source = URI.create("source.bin");
             URI target = URI.create("folder/target.bin");
             store.write(source, "moved".getBytes(StandardCharsets.UTF_8));
+            store.write(target, "old target".getBytes(StandardCharsets.UTF_8));
 
-            store.move(source, target, ObjectStore.OutputOption.CREATE_NEW);
+            store.move(source, target, ObjectStore.OutputOption.CREATE_OR_REPLACE);
 
             assertTrue(store.getInfo(source).isEmpty());
             assertEquals("moved", store.readString(target));
