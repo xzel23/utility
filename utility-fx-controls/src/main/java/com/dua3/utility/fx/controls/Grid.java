@@ -297,14 +297,7 @@ public final class Grid extends GridPane {
             // decide if label row is needed for the current logical row
             boolean needsLabelRow = false;
             if (placement == LabelPlacement.ABOVE) {
-                int rowStart = i - c;
-                for (int j = rowStart; j < Math.min(rowStart + columns, dataList.size()); j++) {
-                    var rowEntry = dataList.get(j);
-                    if (rowEntry.visible && rowEntry.label != null) {
-                        needsLabelRow = true;
-                        break;
-                    }
-                }
+                needsLabelRow = isLabelNeededForRow(i - c, dataList);
             }
 
             // apply vertical space
@@ -320,15 +313,7 @@ public final class Grid extends GridPane {
                     c = 0;
                     // re-calculate needsLabelRow for the new logical row
                     if (placement == LabelPlacement.ABOVE) {
-                        needsLabelRow = false;
-                        int rowStart = i;
-                        for (int j = rowStart; j < Math.min(rowStart + columns, dataList.size()); j++) {
-                            var rowEntry = dataList.get(j);
-                            if (rowEntry.visible && rowEntry.label != null) {
-                                needsLabelRow = true;
-                                break;
-                            }
-                        }
+                        needsLabelRow = isLabelNeededForRow(i, dataList);
                     }
                 }
 
@@ -433,14 +418,7 @@ public final class Grid extends GridPane {
             // we were in the middle of a row, check if it needed a label row
             boolean needsLabelRow = false;
             if (placement == LabelPlacement.ABOVE) {
-                int rowStart = dataList.size() - c;
-                for (int j = rowStart; j < dataList.size(); j++) {
-                    var rowEntry = dataList.get(j);
-                    if (rowEntry.visible && rowEntry.label != null) {
-                        needsLabelRow = true;
-                        break;
-                    }
-                }
+                needsLabelRow = isLabelNeededForRow(dataList.size() - c, dataList);
             }
             y += (placement == LabelPlacement.BEFORE || !needsLabelRow ? 1 : 2);
         }
@@ -461,6 +439,16 @@ public final class Grid extends GridPane {
         if (!data.isEmpty()) {
             data.getFirst().control.node().requestFocus();
         }
+    }
+
+    private boolean isLabelNeededForRow(int rowStart, List<Meta<?>> dataList) {
+        for (int j = rowStart; j < Math.min(rowStart + columns, dataList.size()); j++) {
+            var rowEntry = dataList.get(j);
+            if (rowEntry.visible && rowEntry.label != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void bindValidProperty() {
