@@ -36,13 +36,13 @@ public final class FxImageUtil implements ImageUtil<FxImage, FxMutableImage> {
             String mime = MAGIC.getMimeType(payload.magic8Bytes());
             LoadOption activeLoadOption = loadOption != LoadOption.AUTOMATIC
                     ? loadOption
-                    : (mime.equals(ImageUtil.MIME_TYPE_JPEG) ? LoadOption.RETAIN_DATA : LoadOption.DONT_RETAIN_DATA);
+                    : (mime.equals(MIME_TYPE_JPEG) ? LoadOption.RETAIN_DATA : LoadOption.DONT_RETAIN_DATA);
 
             return switch (activeLoadOption) {
                 case RETAIN_DATA -> {
                     // for jpeg, we want to keep the original data in order not to introduce new artifacts
                     try (var imageIn = IoUtil.getInputStream(payload.stream().readAllBytes())) {
-                        yield new FxDataRetainingImage(new Image(imageIn), ImageUtil.MIME_TYPE_JPEG, "jpg", payload.stream().readAllBytes());
+                        yield new FxDataRetainingImage(new Image(imageIn), MIME_TYPE_JPEG, "jpg", payload.stream().readAllBytes());
                     }
                 }
                 default -> new FxWrappedImage(new Image(payload.stream()));

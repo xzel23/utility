@@ -107,7 +107,7 @@ public final class FxLauncher {
     static boolean enableAssertions = false;
 
     static int logBufferSize = 10_000;
-    static AtomicReference<@Nullable LogBuffer> logBuffer = new AtomicReference<>();
+    static final AtomicReference<@Nullable LogBuffer> logBuffer = new AtomicReference<>();
     static final AtomicReference<@Nullable FxLogWindow> logWindow = new AtomicReference<>();
     static final AtomicReference<@Nullable FxLogPane> logPane = new AtomicReference<>();
 

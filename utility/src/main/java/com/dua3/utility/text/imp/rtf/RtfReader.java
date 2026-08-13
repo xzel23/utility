@@ -657,8 +657,7 @@ public final class RtfReader {
         private static boolean isInlineButtonFallbackTarget(String target) {
             try {
                 URI uri = new URI(target);
-                String scheme = uri.getScheme();
-                return scheme != null && RichTextBuilderExtBase.INLINE_BUTTON_FALLBACK_URI_SCHEME.equalsIgnoreCase(scheme);
+                return RichTextBuilderExtBase.INLINE_BUTTON_FALLBACK_URI_SCHEME.equalsIgnoreCase(uri.getScheme());
             } catch (URISyntaxException ex) {
                 return false;
             }
