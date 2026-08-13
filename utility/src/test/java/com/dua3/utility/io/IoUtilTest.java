@@ -45,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -675,6 +676,23 @@ class IoUtilTest {
     }
 
     @Test
+    void testCheckAbsoluteReturnsTheSameUri() {
+        URI uri = URI.create("https://example.com/resource");
+
+        assertSame(uri, IoUtil.checkAbsolute(uri));
+    }
+
+    @Test
+    void testCheckAbsoluteRejectsRelativeUri() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> IoUtil.checkAbsolute(URI.create("resource"))
+        );
+
+        assertEquals("URI must be absolute", exception.getMessage());
+    }
+
+    @Test
     void testToPathFromURI() throws Exception {
         Path tempFile = Files.createTempFile("test", ".txt");
         try {
@@ -683,6 +701,39 @@ class IoUtilTest {
             assertEquals(tempFile.toAbsolutePath(), path.toAbsolutePath());
         } finally {
             Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testToPathFromAbsolutePathUriWithoutScheme() {
+        URI uri = URI.create("/tmp/test&amp;file.txt");
+
+        assertEquals(Paths.get("/tmp/test&file.txt"), IoUtil.toPath(uri));
+    }
+
+    @Test
+    void testToPathFromRelativeUriRejectsRelativePath() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> IoUtil.toPath(URI.create("test/file.txt"))
+        );
+
+        assertEquals("URI is not absolute", exception.getMessage());
+    }
+
+    @Test
+    void testToPathWithParentResolvesRelativeAndAbsoluteUris() throws IOException {
+        Path parent = Files.createTempDirectory("io-util-parent");
+        try {
+            assertEquals(
+                    parent.resolve("child file.txt"),
+                    IoUtil.toPath(parent, URI.create("child%20file.txt"))
+            );
+
+            Path absolutePath = parent.resolve("absolute.txt");
+            assertEquals(absolutePath, IoUtil.toPath(parent, absolutePath.toUri()));
+        } finally {
+            Files.deleteIfExists(parent);
         }
     }
 
@@ -1023,6 +1074,7 @@ class IoUtilTest {
     }
 
     @Test
+    @SuppressWarnings("java:S3415") // false positive
     void testRedirectStandardStreams() throws Exception {
         // Create a temporary file for redirection
         Path tempFile = Files.createTempFile("redirect-test", ".txt");

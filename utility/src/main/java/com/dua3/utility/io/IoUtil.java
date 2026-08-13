@@ -309,11 +309,7 @@ public final class IoUtil {
      * @throws IOException on error
      */
     public static InputStream openInputStream(URI uri) throws IOException {
-        if (uri.isAbsolute()) {
-            return uri.toURL().openStream();
-        } else {
-            return Files.newInputStream(Paths.get(uri));
-        }
+        return checkAbsolute(uri).toURL().openStream();
     }
 
     /**
@@ -325,11 +321,21 @@ public final class IoUtil {
      * @throws IOException if an I/O error occurs while opening the resource
      */
     public static BufferedReader newBufferedReader(URI uri) throws IOException {
-        if (uri.isAbsolute()) {
-            return new BufferedReader(new InputStreamReader(openInputStream(uri), StandardCharsets.UTF_8));
-        } else {
-            return Files.newBufferedReader(Paths.get(uri));
+        return new BufferedReader(new InputStreamReader(openInputStream(uri), StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Check if {@link URI} is absolute and return it.
+     *
+     * @param uri tje URI to check
+     * @return the unchange URI
+     * @throws IllegalArgumentException if URI is not absolute
+     */
+    public static URI checkAbsolute(URI uri) throws IllegalArgumentException {
+        if (!uri.isAbsolute()) {
+            throw new IllegalArgumentException("URI must be absolute");
         }
+        return uri;
     }
 
     /**
@@ -407,9 +413,32 @@ public final class IoUtil {
      *
      * @param uri the URI
      * @return the Path
+     * @throws IllegalArgumentException if uri cannot be converted to a path.
      */
     public static Path toPath(URI uri) {
-        return Paths.get(uri);
+        if (uri.isAbsolute()) {
+            return Paths.get(uri);
+        } else if (Objects.requireNonNullElse(uri.getScheme(), "").isEmpty()) {
+            Path p = Paths.get(TextUtil.unescapeHtml(uri.toString()));
+            if (!p.isAbsolute()) {
+                throw new IllegalArgumentException("URI is not absolute");
+            }
+            return p;
+        } else {
+            throw new IllegalArgumentException("Unsupported scheme: " + uri.getScheme());
+        }
+    }
+
+    /**
+     * Convert {@link URI} to {@link Path}.
+     *
+     * @param parent the parent path to resolve relative URIs.
+     * @param uri the URI
+     * @return the Path
+     * @throws IllegalArgumentException if uri cannot be converted to a path.
+     */
+    public static Path toPath(Path parent, URI uri) {
+        return Paths.get(parent.toUri().resolve(uri));
     }
 
     /**
