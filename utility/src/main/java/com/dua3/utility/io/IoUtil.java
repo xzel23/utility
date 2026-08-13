@@ -419,7 +419,13 @@ public final class IoUtil {
         if (uri.isAbsolute()) {
             return Paths.get(uri);
         } else if (Objects.requireNonNullElse(uri.getScheme(), "").isEmpty()) {
-            Path p = Paths.get(TextUtil.unescapeHtml(uri.toString()));
+            LangUtil.check(uri.getHost() == null, "host must be null for relative URI");
+            LangUtil.check(uri.getAuthority() == null, "authority must be null for relative URI");
+            LangUtil.check(uri.getFragment() == null, "fragment must be null for relative URI");
+            LangUtil.check(uri.getPort() == -1, "port must be -1 for relative URI");
+            LangUtil.check(uri.getQuery() == null, "query must be null for relative URI");
+            LangUtil.check(uri.getUserInfo() == null, "userinfo must be null for relative URI");
+            Path p = toPath(TextUtil.unescapeHtml(uri.toString()));
             if (!p.isAbsolute()) {
                 throw new IllegalArgumentException("URI is not absolute");
             }
@@ -543,6 +549,10 @@ public final class IoUtil {
         if (isURI(s)) {
             return Paths.get(URI.create(s));
         } else {
+            if (s.length() > 4 && s.charAt(0) == '/' && Character.isLetter(s.charAt(1)) && s.charAt(2) == ':' && s.charAt(3) == '/') {
+                // special case: unix-style windows path ('/C:/')
+                s = s.substring(1);
+            }
             return Paths.get(s);
         }
     }
