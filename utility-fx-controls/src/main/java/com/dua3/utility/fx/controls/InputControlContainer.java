@@ -81,7 +81,18 @@ public class InputControlContainer implements InputControl<Void> {
     public void add(InputControl<?> ic) {
         add(ic.node());
         controls.add(ic);
-        ic.valueProperty().addListener((v, o, n) -> state.reset());
+        ic.valueProperty().addListener((v, o, n) -> {
+            // Validators may depend on a sibling's value. Once the changed control itself is valid,
+            // revalidate its siblings so that their states reflect the current values. A failing
+            // control already carries the dependency error, so revalidating its siblings would only
+            // duplicate that error in the shared decorator.
+            if (ic.state().validate()) {
+                controls.stream()
+                        .filter(control -> control != ic)
+                        .forEach(control -> control.state().validate());
+            }
+            state.reset();
+        });
         state.reset();
     }
 
