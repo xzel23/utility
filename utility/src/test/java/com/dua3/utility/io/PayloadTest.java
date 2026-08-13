@@ -1,7 +1,5 @@
 package com.dua3.utility.io;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +21,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.file.FileSystem;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -181,10 +178,6 @@ class PayloadTest {
         return Stream.of(ResourceKind.values())
                 .flatMap(resourceKind -> Stream.of(0, 1, 7, 8, 9, 16)
                         .map(size -> Arguments.of(resourceKind, size)));
-    }
-
-    private static Stream<Configuration> jimFsConfigurations() {
-        return Stream.of(Configuration.unix(), Configuration.osX(), Configuration.windows());
     }
 
     @DisplayName("Reads identical bytes from payload stream/channel for file and network URIs")
