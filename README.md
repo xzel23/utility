@@ -235,7 +235,7 @@ could not be loaded.
 
 ## Changes
 
-### 24.2.2
+### 24.3.0
 
 - ObjectStore: support ByteChannel; optimized copy and move operations for DileObjectStore
 - ObjectStores: add move and copy methods that use optimized implementations when source and target stores are
