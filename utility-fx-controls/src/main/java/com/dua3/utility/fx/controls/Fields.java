@@ -1,5 +1,7 @@
 package com.dua3.utility.fx.controls;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ import java.util.function.Supplier;
  * re-validated whenever any of their dependencies change.
  */
 public final class Fields {
+    private static final Logger LOG = LogManager.getLogger(Fields.class);
+
     /**
      * Provides a validation function that always considers the input as valid.
      * <p>
@@ -117,6 +121,7 @@ public final class Fields {
         public Optional<String> updateAndValidate(Fields fields, @Nullable T newValue) {
             Optional<String> error = validateField.apply(newValue, fields);
             if (error.isEmpty()) {
+                LOG.debug("Setting value of field {} to {}", id, newValue);
                 value.set(newValue);
                 error = validateDependents(fields);
             }
