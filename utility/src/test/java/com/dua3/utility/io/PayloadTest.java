@@ -235,7 +235,7 @@ class PayloadTest {
         byte[] content = "path URI payload".getBytes(StandardCharsets.UTF_8);
         Path path = tempDir.resolve("payload-without-scheme.bin");
         Files.write(path, content);
-        URI uri = new URI(null, null, path.toString(), null);
+        URI uri = IoUtil.toURI(path);
 
         try (Payload payload = Payload.fromUri(uri)) {
             assertEquals(uri, payload.uri().orElseThrow());
