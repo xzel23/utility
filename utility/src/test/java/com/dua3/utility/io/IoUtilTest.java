@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -705,10 +706,17 @@ class IoUtilTest {
     }
 
     @Test
-    void testToPathFromAbsolutePathUriWithoutScheme() {
-        URI uri = URI.create("/tmp/test&amp;file.txt");
+    void testToPathFromAbsolutePathUriWithoutScheme() throws URISyntaxException {
+        Path path;
+        if (com.dua3.utility.lang.Platform.isWindows()) {
+            path = Paths.get("C:\\tmp\\test&file.txt");
+        } else {
+            path = Paths.get("/tmp/test&file.txt");
+        }
+        URI absoluteUri = IoUtil.toURI(path);
+        URI uri = new URI(null, absoluteUri.getUserInfo(), absoluteUri.getHost(), absoluteUri.getPort(), absoluteUri.getPath(), absoluteUri.getQuery(), absoluteUri.getFragment());
 
-        assertEquals(Paths.get("/tmp/test&file.txt"), IoUtil.toPath(uri));
+        assertEquals(path, IoUtil.toPath(uri));
     }
 
     @Test
