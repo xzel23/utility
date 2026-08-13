@@ -1,5 +1,7 @@
 package com.dua3.utility.io;
 
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.file.FileSystem;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -180,6 +183,10 @@ class PayloadTest {
                         .map(size -> Arguments.of(resourceKind, size)));
     }
 
+    private static Stream<Configuration> jimFsConfigurations() {
+        return Stream.of(Configuration.unix(), Configuration.osX(), Configuration.windows());
+    }
+
     @DisplayName("Reads identical bytes from payload stream/channel for file and network URIs")
     @ParameterizedTest(name = "[{index}] resource={0}, access={1}")
     @MethodSource("resourceAndAccessKinds")
@@ -240,6 +247,20 @@ class PayloadTest {
         try (Payload payload = Payload.fromUri(uri)) {
             assertEquals(uri, payload.uri().orElseThrow());
             assertArrayEquals(content, payload.stream().readAllBytes());
+        }
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("jimFsConfigurations")
+    void pathFromUri_handlesJimFsPathSyntax(Configuration configuration) throws Exception {
+        try (FileSystem fileSystem = Jimfs.newFileSystem(configuration)) {
+            String pathString = configuration.equals(Configuration.windows())
+                    ? "C:\\tmp\\payload-without-scheme.bin"
+                    : "/tmp/payload-without-scheme.bin";
+            Path path = fileSystem.getPath(pathString);
+            URI uri = new URI(null, null, path.toString(), null);
+
+            assertEquals(path, Payload.pathFromUri(uri, fileSystem));
         }
     }
 
