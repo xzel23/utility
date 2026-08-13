@@ -235,10 +235,20 @@ could not be loaded.
 
 ## Changes
 
-### 24.3.0
+### 24.2.2
 
-- add ByteChannel support to ObjectStore and Payload
-- fix Grid.reset() not revalidating inputs
+- ObjectStore: support ByteChannel; optimized copy and move operations for DileObjectStore
+- ObjectStores: add move and copy methods that use optimized implementations when source and target stores are
+  FileObjectStore instances
+- Payload: support ByteChannel
+- Grid: reset() should validate
+- InputControlContainer: enhance validation 
+- fix build warnings
+- small fixes and improvements
+
+### 24.2.1
+
+- avoid initialization of LogBuffer instance if not necessary
 
 ### 24.2.0
 
