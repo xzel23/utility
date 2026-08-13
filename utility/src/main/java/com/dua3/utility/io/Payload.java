@@ -16,6 +16,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
@@ -64,7 +65,7 @@ public final class Payload implements AutoCloseable {
     public static Payload fromUri(URI uri) throws IOException {
         return switch (uri.getScheme()) {
             case "file" -> fromPath(uri, Path.of(uri));
-            case null -> fromPath(uri, Path.of(uri.getPath()));
+            case null -> fromPath(uri, Paths.get(uri.toString()));
             default -> fromStream(uri, IoUtil.openInputStream(uri));
         };
     }

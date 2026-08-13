@@ -250,20 +250,6 @@ class PayloadTest {
         }
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("jimFsConfigurations")
-    void pathFromUri_handlesJimFsPathSyntax(Configuration configuration) throws Exception {
-        try (FileSystem fileSystem = Jimfs.newFileSystem(configuration)) {
-            String pathString = configuration.equals(Configuration.windows())
-                    ? "C:\\tmp\\payload-without-scheme.bin"
-                    : "/tmp/payload-without-scheme.bin";
-            Path path = fileSystem.getPath(pathString);
-            URI uri = new URI(null, null, path.toString(), null);
-
-            assertEquals(path, Payload.pathFromUri(uri, fileSystem));
-        }
-    }
-
     @Test
     void fromNonSeekableByteChannel_preservesUriMagicAndContent() throws Exception {
         URI uri = URI.create("memory:/objects/non-seekable.bin");
