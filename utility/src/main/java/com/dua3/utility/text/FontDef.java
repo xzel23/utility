@@ -25,7 +25,7 @@ public final class FontDef {
 
     private static final Logger LOG = LogManager.getLogger(FontDef.class);
 
-    private static final Predicate<String> IS_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?").asMatchPredicate();
+    private static final Predicate<String> IS_FONT_SIZE = Pattern.compile("\\d+(?:\\.\\d*)?").asMatchPredicate();
     private static final String INHERIT = "inherit";
     private static final String BOLD = "bold";
     private static final String REGULAR = "regular";

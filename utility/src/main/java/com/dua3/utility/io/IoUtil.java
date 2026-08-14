@@ -1484,6 +1484,8 @@ public final class IoUtil {
         return USER_HOME;
     }
 
+    private static final Pattern PATTERN_FORBIDDEN_NAMES_WINDOWS = Pattern.compile("con|prn|aux|nul|(?:com|lpt)[1-9]");
+
     /**
      * Represents a set of rules governing valid file names depending on the platform.
      * Each rule defines a condition to test the validity of a file name and specifies
@@ -1525,8 +1527,7 @@ public final class IoUtil {
          * Forbidden filenames in Windows; these are reserved by the system.
          */
         FORBIDDEN_NAMES_WINDOWS(s ->
-                !stripExtension(s).toLowerCase(Locale.ROOT)
-                        .matches("con|prn|aux|nul|(com|lpt)[1-9]"),
+                !PATTERN_FORBIDDEN_NAMES_WINDOWS.matcher(stripExtension(s).toLowerCase(Locale.ROOT)).matches(),
                 Platform.WINDOWS
         );
 

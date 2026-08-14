@@ -99,7 +99,7 @@ public final class FxLauncher {
 
     private static final String I18N_KEY_LOG_MESSAGES = "dua3.utility.fx.launcher.log.messages";
 
-    private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(--|[a-zA-Z]:[/\\\\]).*");
+    private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(?:--|[a-zA-Z]:[/\\\\]).*");
 
     static @Nullable LoggingConfiguration loggingConfiguration = null;
     static boolean showLogWindow = false;
