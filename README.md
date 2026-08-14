@@ -235,6 +235,10 @@ could not be loaded.
 
 ## Changes
 
+### 24.3.1
+
+- fix FileObjectstore issues with deduplicated files on windows
+
 ### 24.3.0
 
 - ObjectStore: support ByteChannel; optimized copy and move operations for DileObjectStore
