@@ -219,7 +219,7 @@ public final class FileObjectStore implements ObjectStore {
         Path resolved = resolve(path);
 
         try {
-            BasicFileAttributes attrs = Files.readAttributes(resolved, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+            BasicFileAttributes attrs = Files.readAttributes(resolved, BasicFileAttributes.class);
             if (attrs.isSymbolicLink()) {
                 throw new IOException("File is a symbolic link: " + path);
             }
@@ -244,7 +244,7 @@ public final class FileObjectStore implements ObjectStore {
         Path resolved = resolve(path);
 
         try {
-            BasicFileAttributes attrs = Files.readAttributes(resolved, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+            BasicFileAttributes attrs = Files.readAttributes(resolved, BasicFileAttributes.class);
             if (attrs.isSymbolicLink()) {
                 throw new IOException("File is a symbolic link: " + path);
             }
