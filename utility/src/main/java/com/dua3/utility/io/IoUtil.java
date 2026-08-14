@@ -36,12 +36,9 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
@@ -1116,7 +1113,7 @@ public final class IoUtil {
      *         and individual path segments, using the provided locale for ordering.
      */
     public static Comparator<@Nullable Path> lexicalPathComparator(Locale locale) {
-        Comparator<String> comparator = TextUtil.lexicographicComparator(locale);
+        Comparator<@Nullable String> comparator = TextUtil.lexicographicComparator(locale);
 
         return (p1, p2) -> {
             if (Objects.equals(p1, p2)) {
