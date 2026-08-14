@@ -98,7 +98,7 @@ public final class XmlUtil {
             
             </xsl:stylesheet>
             """;
-    private static final Pattern PATTERN_BLANK_LINE = Pattern.compile("^\\s*\\R");
+    private static final Pattern PATTERN_BLANK_LINE = Pattern.compile("^\\h*\\R");
     private static final Pattern PATTERN_END_OF_LINE = Pattern.compile("\\R$");
     private static final String XMLNS = "xmlns";
     private static final String XMLNS_SCHEME = "xmlns:";

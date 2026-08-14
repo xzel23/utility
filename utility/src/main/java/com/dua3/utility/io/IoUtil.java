@@ -69,7 +69,7 @@ public final class IoUtil {
 
     private static final Logger LOG = LogManager.getLogger(IoUtil.class);
 
-    private static final Predicate<String> IS_URI = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]+:.*").asMatchPredicate();
+    private static final Predicate<String> IS_URI = Pattern.compile("[a-zA-Z][a-zA-Z0-9+.-]+:.*").asMatchPredicate();
     /**
      * The default character encoding.
      */

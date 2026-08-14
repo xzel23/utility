@@ -138,13 +138,15 @@ public final class FileSystemView implements AutoCloseable {
                 case "jar" -> {
                     String jarUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
                     String jar = PATTERN_JAR.matcher(jarUriStr).replaceAll("$1");
-                    String jarPath = jarUriStr.replaceAll("^jar:file:.*!(.*)" + classFile + "$", "$1");
+                    String classFileRegex = Pattern.quote(classFile);
+                    String jarPath = jarUriStr.replaceFirst("^jar:file:[^!]*!([^!]*)" + classFileRegex + "$", "$1");
                     URI jarUri = new URI("jar", jar, null);
                     yield createFileSystemView(FileSystems.newFileSystem(jarUri, Collections.emptyMap()), jarPath);
                 }
                 case "jrt" -> {
                     String jrtUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
-                    String jrtPath = jrtUriStr.replaceAll("^jrt:/(.*)" + classFile + "$", "$1");
+                    String classFileRegex = Pattern.quote(classFile);
+                    String jrtPath = jrtUriStr.replaceFirst("^jrt:/([^!]*)" + classFileRegex + "$", "$1");
                     URI jrtUri = URI.create("jrt:/");
                     yield createFileSystemView(FileSystems.newFileSystem(jrtUri, Collections.emptyMap()), jrtPath);
                 }

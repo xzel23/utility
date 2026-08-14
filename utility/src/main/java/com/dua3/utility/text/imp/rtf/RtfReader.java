@@ -46,7 +46,7 @@ public final class RtfReader {
     private static final double DEFAULT_FONT_SIZE_PT = 12.0;
     private static final double DEFAULT_ASCENT_RATIO = 0.8;
     private static final double DEFAULT_DESCENT_RATIO = 0.2;
-    private static final Pattern HYPERLINK_INSTRUCTION_PATTERN = Pattern.compile("(?i)\\bHYPERLINK\\b\\s+(?:\"((?>[^\"\\\\]|\\\\.)*)\"|(\\S+))");
+    private static final Pattern HYPERLINK_INSTRUCTION_PATTERN = Pattern.compile("(?i)\\bHYPERLINK\\b\\s+(?:\"((?:[^\"\\\\]|\\\\.)*)\"|(\\S+))");
     private static final String STYLE_NAME_METADATA_COMMAND = "duastyles";
     private static final String LEGACY_STYLE_NAME_METADATA_COMMAND = "userprops";
     private static final String METADATA_PREFIX = "DUA3STYLES:";
