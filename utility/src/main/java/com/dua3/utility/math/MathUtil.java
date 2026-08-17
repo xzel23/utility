@@ -244,7 +244,8 @@ public final class MathUtil {
     }
 
     /**
-     * Rounds a double value to the nearest integer and returns the result as an int.
+     * Rounds a double value to the nearest integer using the same tie-breaking behavior as {@link Math#round(double)}
+     * and returns the result as an int.
      *
      * @param x the double value to be rounded
      * @return the rounded value as an int
@@ -259,15 +260,37 @@ public final class MathUtil {
     }
 
     /**
+     * Rounds a double value to an integer according to the supplied {@link RoundingMode} and returns the result as an
+     * int.
+     *
+     * @param x the double value to be rounded
+     * @param mode the {@link RoundingMode} to use
+     * @return the rounded value as an int
+     * @throws ArithmeticException if the rounded value is not representable as an int, or if {@link
+     *                             RoundingMode#UNNECESSARY} is used and rounding is required
+     */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    public static int roundToInt(double x, RoundingMode mode) {
+        Objects.requireNonNull(mode, "mode");
+
+        double rounded = round(x, mode);
+        if (rounded >= Integer.MIN_VALUE && rounded <= Integer.MAX_VALUE && isIntegral(rounded)) {
+            return (int) rounded;
+        }
+        throw new ArithmeticException("Invalid or out-of-bounds value: " + x);
+    }
+
+    /**
      * Rounds a double value to the nearest integral number representable as a long value and returns the result.
      * <p>
-     * <strong>Note:</strong> This method only accepts values in the range of -(2^53 - 1)to 2^53 - 1. While many values
-     * outside this range can be represented exactly as a long, the validation would dramatically increase the
-     * computational cost and is therefore not performed.
+     * <strong>Note:</strong> This method only accepts values in the range of {@code -(2^53 - 1)} to {@code 2^53 - 1}.
+     * While many values outside this range can be represented exactly as a long, the validation would dramatically
+     * increase the computational cost and is therefore not performed.
      *
      * @param x the double value to be rounded
      * @return the rounded value as a long
-     * @throws ArithmeticException if the result is outside the range -(2^53 - 1) to 2^53 - 1
+     * @throws ArithmeticException if {@code x} is outside the accepted range {@code -(2^53 - 1)} to
+     *                             {@code 2^53 - 1}
      */
     public static long roundToLong(double x) {
         if (x >= MIN_DOUBLE_ROUNDABLE_TO_LONG && x <= MAX_DOUBLE_ROUNDABLE_TO_LONG) {
@@ -277,23 +300,58 @@ public final class MathUtil {
     }
 
     /**
-     * Round to decimal places.
+     * Rounds a double value to an integral number according to the supplied {@link RoundingMode} and returns the
+     * result as a long.
+     * <p>
+     * <strong>Note:</strong> This method only accepts values in the range of {@code -(2^53 - 1)} to {@code 2^53 - 1}.
+     * While many values outside this range can be represented exactly as a long, the validation would dramatically
+     * increase the computational cost and is therefore not performed.
+     *
+     * @param x the double value to be rounded
+     * @param mode the {@link RoundingMode} to use
+     * @return the rounded value as a long
+     * @throws ArithmeticException if {@code x} is outside the accepted range, or if {@link
+     *                             RoundingMode#UNNECESSARY} is used and rounding is required
+     */
+    public static long roundToLong(double x, RoundingMode mode) {
+        Objects.requireNonNull(mode, "mode");
+        if (x >= MIN_DOUBLE_ROUNDABLE_TO_LONG && x <= MAX_DOUBLE_ROUNDABLE_TO_LONG) {
+            return (long) round(x, mode);
+        }
+        throw new ArithmeticException("Invalid or out-of-bounds value: " + x);
+    }
+
+    /**
+     * Rounds the specified finite double value to an integer according to the provided rounding mode. NaN and infinity
+     * are returned unchanged.
+     *
+     * @param x the double value to be rounded
+     * @param mode the rounding mode to be applied, which determines the behavior of the rounding operation
+     * @return the rounded double value as per the specified rounding mode
+     * @throws ArithmeticException if {@link RoundingMode#UNNECESSARY} is used and rounding is required
+     */
+    public static double round(double x, RoundingMode mode) {
+        return getRoundingOperation(mode).applyAsDouble(x);
+    }
+
+    /**
+     * Round to decimal places using the same tie-breaking behavior as {@link Math#round(double)}. Ties are rounded
+     * towards positive infinity.
      * <p><strong>Note:</strong> If this is a bulk operation, consider using {@link #roundingOperation(int, RoundingMode)}
      * instead as the scale calculation will take place only once per instance.
      * <p>
-     * Round {@code x} to {@code n} decimal places according to {@link java.math.RoundingMode#HALF_UP},
-     * i.e., 1.5 will be rounded to 2 and -1.5 will be rounded to -1.
+     * For example, 1.5 is rounded to 2 and -1.5 is rounded to -1.
      * <p>
      * The number of places {@code n} may be negative, resulting in rounding taking place before the decimal point,
      * i.e. {@code round(125, -1)=130}.
      * <p>
-     * Examples rounding to two digits precision:
+     * Examples rounding to two decimal places:
      * <ul>
      *     <li>0.123 -&gt; 0.12
      *     <li>12.3 -&gt; 12.3
      *     <li>123 -&gt; 123
      *     <li>0.125 -&gt; 0.13
-     *     <li>-0.125 -&gt; -0.12
+     *     <li>-0.125 -&gt; -0.13
      * </ul>
      *
      * @param x value to round
@@ -310,9 +368,45 @@ public final class MathUtil {
     }
 
     /**
-     * Round to precision.
+     * Round to decimal places according to the supplied {@link RoundingMode}.
+     * <p><strong>Note:</strong> If this is a bulk operation, consider using {@link #roundingOperation(int, RoundingMode)}
+     * instead as the scale calculation will take place only once per instance.
      * <p>
-     * Round {@code x} to {@code p} digits of precision according to {@link java.math.RoundingMode#HALF_UP}.
+     * For example, with {@link RoundingMode#HALF_UP}, 1.5 is rounded to 2 and -1.5 is rounded to -2.
+     * <p>
+     * The number of places {@code n} may be negative, resulting in rounding taking place before the decimal point,
+     * i.e. {@code round(125, -1)=130}.
+     * <p>
+     * Examples rounding to two decimal places when using {@link RoundingMode#HALF_UP}:
+     * <ul>
+     *     <li>0.123 -&gt; 0.12
+     *     <li>12.3 -&gt; 12.3
+     *     <li>123 -&gt; 123
+     *     <li>0.125 -&gt; 0.13
+     *     <li>-0.125 -&gt; -0.12
+     * </ul>
+     *
+     * @param x value to round
+     * @param n number of decimal places
+     * @param mode rounding mode
+     * @return x rounded to n decimal places
+     * @throws ArithmeticException if {@link RoundingMode#UNNECESSARY} is used and rounding is required
+     */
+    public static double round(double x, int n, RoundingMode mode) {
+        Objects.requireNonNull(mode, "mode");
+        if (x == 0 || Double.isNaN(x) || Double.isInfinite(x)) {
+            return x;
+        }
+
+        double scale = pow10(n);
+        return round(x * scale, mode) / scale;
+    }
+
+    /**
+     * Round to precision using the same tie-breaking behavior as {@link Math#round(double)}. Ties are rounded towards
+     * positive infinity.
+     * <p>
+     * For example, 1.25 rounded to two digits is 1.3, while -1.25 is -1.2.
      * <p>
      * Examples rounding to two digits precision:
      * <ul>
@@ -337,23 +431,51 @@ public final class MathUtil {
     }
 
     /**
+     * Round to precision according to the supplied {@link RoundingMode}.
+     * <p>
+     * For example, with {@link RoundingMode#HALF_UP}, 1.25 rounded to two digits is 1.3, while -1.25 is -1.3.
+     * <p>
+     * Examples rounding to two digits precision:
+     * <ul>
+     *     <li>0.123 -&gt; 0.12
+     *     <li>12.3 -&gt; 12
+     *     <li>123 -&gt; 120
+     * </ul>
+     *
+     * @param x value to round
+     * @param p number of digits (p must be positive)
+     * @param mode rounding mode
+     * @return x rounded to p digits precision
+     * @throws ArithmeticException if {@link RoundingMode#UNNECESSARY} is used and rounding is required
+     */
+    public static double roundToPrecision(double x, int p, RoundingMode mode) {
+        LangUtil.checkArg(p > 0, "p must be positive: %d", p);
+        Objects.requireNonNull(mode, "mode");
+
+        if (x == 0 || Double.isNaN(x) || Double.isInfinite(x)) {
+            return x;
+        }
+
+        int n = p - ilog10(Math.abs(x)) - 1;
+        return round(x, n, mode);
+    }
+
+    /**
      * Get the operation that performs rounding to a fixed number of decimal places.
      * <p>
      * Round {@code x} to {@code n} decimal places according to the supplied {@link java.math.RoundingMode}.
      * <p>
-     * If {@link RoundingMode#UNNECESSARY} is used, {@code x} is returned unchanged.
+     * If {@link RoundingMode#UNNECESSARY} is used, an {@link ArithmeticException} is thrown when rounding is required.
      * <p>
      * The number of places {@code n} may be negative, resulting in rounding taking place before the decimal point.
      *
      * @param n    number of decimal places
      * @param mode the {@link RoundingMode} to use
      * @return operation that performs the requested rounding
+     * @throws NullPointerException if {@code mode} is {@code null}
      */
     public static DoubleUnaryOperator roundingOperation(int n, RoundingMode mode) {
-        // special case: no rounding
-        if (mode == java.math.RoundingMode.UNNECESSARY) {
-            return x -> x;
-        }
+        Objects.requireNonNull(mode, "mode");
 
         // determine rounding operation to use
         DoubleUnaryOperator roundingOperation = getRoundingOperation(mode);
@@ -365,16 +487,26 @@ public final class MathUtil {
 
         // otherwise precalculate and use scale
         double scale = pow10(n);
-        return x -> roundingOperation.applyAsDouble(x * scale) / scale;
+        return x -> {
+            if (x == 0 || Double.isNaN(x) || Double.isInfinite(x)) {
+                return x;
+            }
+            return roundingOperation.applyAsDouble(x * scale) / scale;
+        };
     }
 
     /**
-     * Get a DoubleUnaryOperator that implements rounding according to the requested mode.
+     * Gets a {@link DoubleUnaryOperator} that rounds finite values to an integer according to the requested mode.
+     * NaN and infinity are returned unchanged.
      *
      * @param mode the {@link RoundingMode}
      * @return rounding operation
+     * @throws NullPointerException if {@code mode} is {@code null}
+     * @throws ArithmeticException if the returned operation is applied to a non-integral value with {@link
+     *                             RoundingMode#UNNECESSARY}
      */
     public static DoubleUnaryOperator getRoundingOperation(RoundingMode mode) {
+        Objects.requireNonNull(mode, "mode");
         return switch (mode) {
             case HALF_UP -> x -> x >= 0 ? Math.floor(x + 0.5) : Math.ceil(x - 0.5);
             case HALF_DOWN -> x -> x >= 0 ? Math.ceil(x - 0.5) : Math.floor(x + 0.5);
@@ -383,7 +515,12 @@ public final class MathUtil {
             case DOWN -> x -> x >= 0 ? Math.floor(x) : Math.ceil(x);
             case FLOOR -> Math::floor;
             case CEILING -> Math::ceil;
-            case UNNECESSARY -> x -> x;
+            case UNNECESSARY -> x -> {
+                if (Double.isFinite(x) && !isIntegral(x)) {
+                    throw new ArithmeticException("Rounding necessary: " + x);
+                }
+                return x;
+            };
         };
     }
 
