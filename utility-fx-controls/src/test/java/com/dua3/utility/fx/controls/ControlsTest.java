@@ -18,6 +18,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -106,6 +107,53 @@ class ControlsTest extends FxTestBase {
                     .formatter(v -> String.format("%.1f", v))
                     .build();
             assertNotNull(formattedSlider);
+        });
+    }
+
+    /**
+     * Test that total slider modes display the current value and the maximum value separately.
+     */
+    @Test
+    @Timeout(value = 10, unit = java.util.concurrent.TimeUnit.SECONDS)
+    void testSliderTotalDisplay() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            SliderWithButtons totalSlider = Controls.slider()
+                    .mode(SliderWithButtons.Mode.SLIDER_VALUE_TOTAL)
+                    .min(10.0)
+                    .max(100.0)
+                    .value(40.0)
+                    .formatter(v -> String.format(Locale.ROOT, "%.1f", v))
+                    .build();
+            addToScene(totalSlider);
+
+            HBox totalBox = assertInstanceOf(HBox.class, totalSlider.getChildrenUnmodifiable().get(0));
+            Label totalLabel = assertInstanceOf(Label.class, totalBox.getChildren().get(3));
+            assertEquals("40.0/100.0", totalLabel.getText());
+
+            totalSlider.set(60.0);
+            assertEquals("60.0/100.0", totalLabel.getText());
+
+            totalSlider.setMax(200.0);
+            assertEquals("60.0/200.0", totalLabel.getText());
+
+            SliderWithButtons inputTotalSlider = Controls.slider()
+                    .mode(SliderWithButtons.Mode.SLIDER_VALUE_INPUT_TOTAL)
+                    .min(10.0)
+                    .max(100.0)
+                    .value(40.0)
+                    .formatter(v -> String.format(Locale.ROOT, "%.1f", v))
+                    .build();
+            addToScene(inputTotalSlider);
+
+            HBox inputTotalBox = assertInstanceOf(HBox.class, inputTotalSlider.getChildrenUnmodifiable().get(0));
+            TextField input = assertInstanceOf(TextField.class, inputTotalBox.getChildren().get(3));
+            Label inputTotalLabel = assertInstanceOf(Label.class, inputTotalBox.getChildren().get(4));
+            assertEquals("40.0", input.getText());
+            assertEquals("40.0/100.0", inputTotalLabel.getText());
+
+            inputTotalSlider.set(70.0);
+            assertEquals("70.0", input.getText());
+            assertEquals("70.0/100.0", inputTotalLabel.getText());
         });
     }
 

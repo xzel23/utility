@@ -133,13 +133,23 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     }
 
     private void valueChanged(@Nullable Double n) {
-        String text = n == null ? "" : formatter.apply(n);
+        String valueText = n == null ? "" : formatter.apply(n);
         if (label != null) {
-            label.setText(text);
+            label.setText(isTotalMode() ? formatValueWithTotal(n) : valueText);
         }
         if (tfValue != null) {
-            tfValue.setText(text);
+            tfValue.setText(valueText);
         }
+    }
+
+    private boolean isTotalMode() {
+        return mode == Mode.SLIDER_VALUE_TOTAL || mode == Mode.SLIDER_VALUE_INPUT_TOTAL;
+    }
+
+    private String formatValueWithTotal(@Nullable Double value) {
+        String valueText = value == null ? "" : formatter.apply(value);
+        String totalText = formatter.apply(getMax());
+        return valueText.isEmpty() && totalText.isEmpty() ? "" : valueText + "/" + totalText;
     }
 
     private void updateTextControlDimensions() {
@@ -157,13 +167,22 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         double wMaxValue = text.getBoundsInLocal().getWidth();
         text.setText(PATTERN_DIGIT.matcher(formatter.apply(getMin())).replaceAll("0"));
         double wMinValue = text.getBoundsInLocal().getWidth();
-        double w = Math.max(wMaxValue, wMinValue);
+        double wValue = Math.max(wMaxValue, wMinValue);
+
+        double wLabel = wValue;
+        if (isTotalMode()) {
+            text.setText(PATTERN_DIGIT.matcher(formatValueWithTotal(getMax())).replaceAll("0"));
+            double wMaxTotal = text.getBoundsInLocal().getWidth();
+            text.setText(PATTERN_DIGIT.matcher(formatValueWithTotal(getMin())).replaceAll("0"));
+            double wMinTotal = text.getBoundsInLocal().getWidth();
+            wLabel = Math.max(wMaxTotal, wMinTotal);
+        }
 
         // set label min width
         if (label != null) {
             int paddingLeft = 2;
             int paddingRight = 4;
-            double width = w + paddingLeft + paddingRight;
+            double width = wLabel + paddingLeft + paddingRight;
             label.setMinWidth(width);
             label.setMaxWidth(width);
             label.setPadding(new Insets(0, paddingRight, 0, paddingLeft));
@@ -173,7 +192,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         if (tfValue != null) {
             int paddingLeft = 2;
             int paddingRight = 4;
-            double width = w + paddingLeft + paddingRight + 8;
+            double width = wValue + paddingLeft + paddingRight + 8;
             tfValue.setAlignment(Pos.CENTER_RIGHT);
             tfValue.setMinWidth(width);
             tfValue.setMaxWidth(width);
@@ -504,11 +523,11 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
          */
         SLIDER_VALUE_INPUT,
         /**
-         * Mode where the slider displays its current value along with the total possible value.
+         * Mode where the slider displays its current value and maximum as {@code value/total}.
          */
         SLIDER_VALUE_TOTAL,
         /**
-         * Mode where the slider, its current value, and the total input value are used.
+         * Mode where the current value is editable and the label displays {@code value/total}.
          */
         SLIDER_VALUE_INPUT_TOTAL,
     }

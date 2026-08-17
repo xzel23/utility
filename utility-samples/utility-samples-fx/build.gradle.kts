@@ -73,4 +73,9 @@ createJavaFxRunTask(
     "com.dua3.utility.samples.fx.ProgressViewSample",
     "Run the ProgressViewSample application."
 )
+createJavaFxRunTask(
+    "runSliderWithButtonsSample",
+    "com.dua3.utility.samples.fx.SliderWithButtonsSample",
+    "Run the SliderWithButtons sample application."
+)
 createJavaFxRunTask("runShapeFx", "com.dua3.utility.samples.fx.ShapeFx", "Run the ShapeFx application.")
