@@ -23,6 +23,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
     private boolean showTickLabels = false;
 
     private DoubleFunction<String> formatter = null;
+    private double offset = 0.0;
     private @Nullable Orientation orientation;
     private @Nullable Double min = null;
     private @Nullable Double max = null;
@@ -63,6 +64,21 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      */
     public SliderBuilder formatter(DoubleFunction<String> formatter) {
         this.formatter = formatter;
+        return self();
+    }
+
+    /**
+     * Sets the offset used to translate between the slider's internal value and its displayed value.
+     * The displayed value is calculated as {@code internal value + offset}; consequently, a displayed
+     * input value is converted back to an internal value by subtracting the offset. For example, an
+     * offset of {@code 1.0} displays internal value {@code 0.0} as {@code 1.0} and parses displayed
+     * value {@code 1.0} as internal value {@code 0.0}.
+     *
+     * @param value the value added to internal values for display and subtracted from displayed input values
+     * @return this instance of {@code SliderBuilder} for method chaining.
+     */
+    public SliderBuilder offset(double value) {
+        this.offset = value;
         return self();
     }
 
@@ -253,7 +269,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
     public SliderWithButtons build() {
         DoubleFunction<String> fmtr = LangUtil.orElse(formatter, v -> "");
 
-        SliderWithButtons slider = new SliderWithButtons(mode, fmtr);
+        SliderWithButtons slider = new SliderWithButtons(mode, fmtr, offset);
         applyTo(slider);
 
         LangUtil.applyIfNonNull(orientation, slider::setOrientation);

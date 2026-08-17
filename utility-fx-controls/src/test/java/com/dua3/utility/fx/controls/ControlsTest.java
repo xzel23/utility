@@ -17,6 +17,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -93,6 +95,7 @@ class ControlsTest extends FxTestBase {
             assertEquals(0.0, slider.getMin());
             assertEquals(100.0, slider.getMax());
             assertEquals(0.0, slider.get());
+            assertEquals(0.0, slider.getOffset());
 
             // Test slider with custom min, max, value
             SliderWithButtons customSlider = Controls.slider().min(10.0).max(50.0).value(25.0).build();
@@ -154,6 +157,40 @@ class ControlsTest extends FxTestBase {
             inputTotalSlider.set(70.0);
             assertEquals("70.0", input.getText());
             assertEquals("/100.0", inputTotalLabel.getText());
+        });
+    }
+
+    /**
+     * Test that an offset is applied to displayed and entered values while the slider value remains unchanged.
+     */
+    @Test
+    @Timeout(value = 10, unit = java.util.concurrent.TimeUnit.SECONDS)
+    void testSliderOffset() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            SliderWithButtons slider = Controls.slider()
+                    .mode(SliderWithButtons.Mode.SLIDER_VALUE_INPUT_TOTAL)
+                    .min(0.0)
+                    .max(2.0)
+                    .value(0.0)
+                    .offset(1.0)
+                    .formatter(SliderWithButtons.formatInteger(1))
+                    .build();
+            addToScene(slider);
+
+            HBox box = assertInstanceOf(HBox.class, slider.getChildrenUnmodifiable().get(0));
+            TextField input = assertInstanceOf(TextField.class, box.getChildren().get(3));
+            Label total = assertInstanceOf(Label.class, box.getChildren().get(4));
+
+            assertEquals(1.0, slider.getOffset());
+            assertEquals("1", input.getText());
+            assertEquals("/3", total.getText());
+
+            input.setText("2");
+            input.fireEvent(new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.ENTER,
+                    false, false, false, false));
+
+            assertEquals(1.0, slider.get());
+            assertEquals("2", input.getText());
         });
     }
 

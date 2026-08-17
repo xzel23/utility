@@ -45,6 +45,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     private final Mode mode;
     private final InputControlState<Double> state;
     private final DoubleFunction<String> formatter;
+    private final double offset;
     private final Slider slider;
     private final Button btnIncrement;
     private final Button btnDecrement;
@@ -145,10 +146,14 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
      *             the presence of buttons, labels, or text fields.
      * @param formatter A formatter function to format the display values
      *                  of the slider.
+     * @param offset the value added to internal values before formatting and subtracted from displayed
+     *               values after parsing; for example, an offset of {@code 1.0} displays internal
+     *               value {@code 0.0} as {@code 1.0}
      */
-    SliderWithButtons(Mode mode, DoubleFunction<String> formatter) {
+    SliderWithButtons(Mode mode, DoubleFunction<String> formatter, double offset) {
         this.mode = mode;
         this.formatter = formatter;
+        this.offset = offset;
 
         this.slider = new Slider();
         this.btnDecrement = new Button(I18NInstance.get().get("dua3.utility.fx.controls.slider.with.buttons.decrement"));
@@ -220,7 +225,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     }
 
     private void valueChanged(@Nullable Double n) {
-        String valueText = n == null ? "" : formatter.apply(n);
+        String valueText = formatValue(n);
         if (label != null) {
             label.setText(isTotalMode() ? formatValueWithTotal(n) : valueText);
         }
@@ -234,9 +239,13 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     }
 
     private String formatValueWithTotal(@Nullable Double value) {
-        String valueText = mode == Mode.SLIDER_VALUE_INPUT_TOTAL || value == null ? "" : formatter.apply(value);
-        String totalText = formatter.apply(getMax());
+        String valueText = mode == Mode.SLIDER_VALUE_INPUT_TOTAL || value == null ? "" : formatValue(value);
+        String totalText = formatValue(getMax());
         return valueText.isEmpty() && totalText.isEmpty() ? "" : valueText + "/" + totalText;
+    }
+
+    private String formatValue(@Nullable Double value) {
+        return value == null ? "" : formatter.apply(value + offset);
     }
 
     private void updateTextControlDimensions() {
@@ -250,9 +259,9 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         // we use both the min and max values for cases like (-100, 0)
         Text text = new Text();
         text.setFont(font);
-        text.setText(PATTERN_DIGIT.matcher(formatter.apply(getMax())).replaceAll("0"));
+        text.setText(PATTERN_DIGIT.matcher(formatValue(getMax())).replaceAll("0"));
         double wMaxValue = text.getBoundsInLocal().getWidth();
-        text.setText(PATTERN_DIGIT.matcher(formatter.apply(getMin())).replaceAll("0"));
+        text.setText(PATTERN_DIGIT.matcher(formatValue(getMin())).replaceAll("0"));
         double wMinValue = text.getBoundsInLocal().getWidth();
         double wValue = Math.max(wMaxValue, wMinValue);
 
@@ -296,7 +305,8 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
             return;
         }
 
-        TextUtil.tryParseDouble(tfValue.getText(), I18NInstance.get().getLocale()).ifPresent(slider::setValue);
+        TextUtil.tryParseDouble(tfValue.getText(), I18NInstance.get().getLocale())
+                .ifPresent(value -> slider.setValue(value - offset));
     }
 
     private void initPane() {
@@ -313,6 +323,17 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
      */
     public double getMax() {
         return slider.getMax();
+    }
+
+    /**
+     * Returns the offset used to translate between internal and displayed values. The displayed value
+     * is {@code internal value + offset}; therefore, an offset of {@code 1.0} displays internal value
+     * {@code 0.0} as {@code 1.0}.
+     *
+     * @return the value added to internal values for display and subtracted from displayed input values
+     */
+    public double getOffset() {
+        return offset;
     }
 
     /**
