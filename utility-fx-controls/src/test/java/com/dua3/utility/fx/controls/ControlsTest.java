@@ -149,12 +149,22 @@ class ControlsTest extends FxTestBase {
             TextField input = assertInstanceOf(TextField.class, inputTotalBox.getChildren().get(3));
             Label inputTotalLabel = assertInstanceOf(Label.class, inputTotalBox.getChildren().get(4));
             assertEquals("40.0", input.getText());
-            assertEquals("40.0/100.0", inputTotalLabel.getText());
+            assertEquals("/100.0", inputTotalLabel.getText());
 
             inputTotalSlider.set(70.0);
             assertEquals("70.0", input.getText());
-            assertEquals("70.0/100.0", inputTotalLabel.getText());
+            assertEquals("/100.0", inputTotalLabel.getText());
         });
+    }
+
+    /**
+     * Test that percent formatting uses normalized values in the range 0..1.
+     */
+    @Test
+    void testPercentFormatting() {
+        assertEquals("  0%", SliderWithButtons.formatPercent().apply(0.0));
+        assertEquals(" 40%", SliderWithButtons.formatPercent().apply(0.4));
+        assertEquals("100.0%", SliderWithButtons.formatPercent(1).apply(1.0));
     }
 
     /**

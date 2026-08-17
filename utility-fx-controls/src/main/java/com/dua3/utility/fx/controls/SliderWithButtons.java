@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.PropertyConverter;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.TextUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -25,8 +26,10 @@ import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.DoubleFunction;
@@ -48,6 +51,90 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     private final List<Node> children = new ArrayList<>();
     private @Nullable TextField tfValue;
     private @Nullable Label label;
+
+    /**
+     * Provides a DoubleFunction to use as the formatter argument that formats a normalized value as a percent string.
+     * A value of {@code 0} is formatted as {@code 0%}, and a value of {@code 1} as {@code 100%}.
+     *
+     * @return a DoubleFunction that converts a double to a formatted percent string.
+     */
+    public static DoubleFunction<String> formatPercent() {
+        return formatPercent(0, Locale.getDefault());
+    }
+
+    /**
+     * Provides a DoubleFunction to use as the formatter argument that formats a normalized value to a percentage
+     * string with the specified number of decimal places using the default locale.
+     * <p>
+     * The decimalPlaces parameter is clamped between 0 and 3.
+     *
+     * @param decimalPlaces the number of decimal places to include in the formatted percentage
+     * @return a function that takes a double value and returns its formatted percentage string
+     */
+    public static DoubleFunction<String> formatPercent(int decimalPlaces) {
+        return formatPercent(decimalPlaces, Locale.getDefault());
+    }
+
+    /**
+     * Provides a DoubleFunction to use as the formatter argument that formats a normalized value to a percentage
+     * string with the specified number of decimal places using the provided locale.
+     * <p>
+     * The decimalPlaces parameter is clamped between 0 and 3.
+     *
+     * @param decimalPlaces the number of decimal places to include in the formatted percentage,
+     *        clamped between 0 and 3
+     * @param locale the locale to use for formatting the percentage
+     * @return a DoubleFunction that formats a double value as a percentage string with the specified
+     *         decimal places and locale
+     */
+    public static DoubleFunction<String> formatPercent(int decimalPlaces, Locale locale) {
+        return switch (Math.clamp(decimalPlaces, 0, 3)) {
+            case 0 -> value -> String.format(locale, "%3.0f%%", value * 100.0);
+            case 1 -> value -> String.format(locale, "%3.1f%%", value * 100.0);
+            case 2 -> value -> String.format(locale, "%3.2f%%", value * 100.0);
+            default -> value -> String.format(locale, "%3.3f%%", value * 100.0);
+        };
+    }
+
+    /**
+     * Provides a DoubleFunction to use as the formatter argument that formats a double value as an integral value
+     * using the provided {@link RoundingMode} and the specified minimum length.
+     *
+     * @param length the minimum length of the formatted integer output. Padding is added as necessary.
+     * @param roundingMode the rounding mode to apply when converting the double value to a long.
+     * @return a DoubleFunction that converts a double to a formatted String according to the specified parameters.
+     */
+    public static DoubleFunction<String> formatInteger(int length, RoundingMode roundingMode) {
+        String fmt = "%%%dd".formatted(length);
+        return value -> String.format(Locale.ROOT, fmt, MathUtil.roundToLong(value, roundingMode));
+    }
+
+    /**
+     * Provides a DoubleFunction to use as the formatter argument that formats a double value as an integral value
+     * using standard rounding and the specified minimum length.
+     *
+     * @param length the length of the integer to format the output string to, which specifies
+     *               the width of the returned string, including leading spaces if necessary
+     * @return a DoubleFunction that converts a rounded double value into a formatted string
+     */
+    public static DoubleFunction<String> formatInteger(int length) {
+        String fmt = "%%%dd".formatted(length);
+        return value -> String.format(Locale.ROOT, fmt, Math.round(value));
+    }
+
+    /**
+     * Provides a DoubleFunction to use as the formatter argument that formats a double value to a strin
+     * with specified total length and number of decimal places.
+     *
+     * @param length The total length of the formatted output string, including decimal places.
+     * @param decimalPlaces The number of decimal places to include in the formatted output.
+     * @return A DoubleFunction that accepts a double value and returns a string formatted according
+     *         to the specified length and decimal places.
+     */
+    public static DoubleFunction<String> formatDouble(int length, int decimalPlaces) {
+        String fmt = "%%%d.%df".formatted(length, decimalPlaces);
+        return value -> String.format(Locale.ROOT, fmt, value);
+    }
 
     /**
      * Constructor for SliderWithButtons. This class creates a slider
@@ -147,7 +234,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     }
 
     private String formatValueWithTotal(@Nullable Double value) {
-        String valueText = value == null ? "" : formatter.apply(value);
+        String valueText = mode == Mode.SLIDER_VALUE_INPUT_TOTAL || value == null ? "" : formatter.apply(value);
         String totalText = formatter.apply(getMax());
         return valueText.isEmpty() && totalText.isEmpty() ? "" : valueText + "/" + totalText;
     }

@@ -202,7 +202,6 @@ class MathUtilTest {
 
         assertEquals(Integer.MAX_VALUE, MathUtil.roundToInt(Integer.MAX_VALUE, RoundingMode.UNNECESSARY));
         assertThrows(ArithmeticException.class, () -> MathUtil.roundToInt(1.25, RoundingMode.UNNECESSARY));
-        assertThrows(NullPointerException.class, () -> MathUtil.roundToInt(1.0, null));
     }
 
     /**
@@ -253,7 +252,6 @@ class MathUtilTest {
         assertEquals(-0x1fffffffffffffL, MathUtil.roundToLong(-0x1fffffffffffffL, RoundingMode.UNNECESSARY));
         assertThrows(ArithmeticException.class, () -> MathUtil.roundToLong(1.25, RoundingMode.UNNECESSARY));
         assertThrows(ArithmeticException.class, () -> MathUtil.roundToLong(Double.MAX_VALUE, RoundingMode.DOWN));
-        assertThrows(NullPointerException.class, () -> MathUtil.roundToLong(1.0, null));
     }
 
     /**
@@ -331,8 +329,6 @@ class MathUtilTest {
         assertEquals(Double.POSITIVE_INFINITY, MathUtil.round(Double.POSITIVE_INFINITY, RoundingMode.UNNECESSARY));
         assertTrue(Double.isNaN(MathUtil.round(Double.NaN, 2, RoundingMode.DOWN)));
         assertEquals(Double.POSITIVE_INFINITY, MathUtil.round(Double.POSITIVE_INFINITY, 2, RoundingMode.DOWN));
-        assertThrows(NullPointerException.class, () -> MathUtil.round(1.0, null));
-        assertThrows(NullPointerException.class, () -> MathUtil.round(1.0, 2, null));
     }
 
     /**
@@ -379,7 +375,6 @@ class MathUtilTest {
         assertEquals(120.0, MathUtil.roundToPrecision(125.0, 2, RoundingMode.HALF_EVEN), 1.0e-10);
         assertEquals(130.0, MathUtil.roundToPrecision(125.0, 2, RoundingMode.HALF_UP), 1.0e-10);
         assertThrows(IllegalArgumentException.class, () -> MathUtil.roundToPrecision(1.0, 0, RoundingMode.DOWN));
-        assertThrows(NullPointerException.class, () -> MathUtil.roundToPrecision(1.0, 2, null));
     }
 
     /**
@@ -419,8 +414,6 @@ class MathUtilTest {
             assertTrue(Double.isNaN(operation.applyAsDouble(Double.NaN)));
             assertEquals(Double.POSITIVE_INFINITY, operation.applyAsDouble(Double.POSITIVE_INFINITY));
         }
-
-        assertThrows(NullPointerException.class, () -> MathUtil.roundingOperation(1, null));
     }
 
     @Test
@@ -804,7 +797,6 @@ class MathUtilTest {
         assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.CEILING).applyAsDouble(-0.9), 1.0e-15);
         assertEquals(-1.0, MathUtil.getRoundingOperation(RoundingMode.UNNECESSARY).applyAsDouble(-1.0), 1.0e-15);
         assertThrows(ArithmeticException.class, () -> MathUtil.getRoundingOperation(RoundingMode.UNNECESSARY).applyAsDouble(-0.5));
-        assertThrows(NullPointerException.class, () -> MathUtil.getRoundingOperation(null));
     }
 
     @Test

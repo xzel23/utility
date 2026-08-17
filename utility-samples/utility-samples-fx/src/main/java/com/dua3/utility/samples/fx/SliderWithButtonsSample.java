@@ -5,14 +5,18 @@ import com.dua3.utility.fx.controls.SliderWithButtons;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.Locale;
+import java.util.function.DoubleFunction;
 
 /**
  * Demonstrates all display modes of {@link SliderWithButtons}.
@@ -48,14 +52,20 @@ public class SliderWithButtonsSample extends Application {
         sliders.setVgap(8);
         sliders.setPadding(new Insets(12));
 
-        addHeader(sliders);
+        ComboBox<FormatterOption> formatter = new ComboBox<>();
+        formatter.getItems().addAll(FormatterOption.values());
+        formatter.getSelectionModel().select(FormatterOption.DEFAULT);
+        formatter.setPrefWidth(120);
 
-        SliderWithButtons.Mode[] modes = SliderWithButtons.Mode.values();
-        for (int row = 0; row < modes.length; row++) {
-            addSliderRow(sliders, row + 1, modes[row]);
-        }
+        HBox options = new HBox(8, new Label("Formatter:"), formatter);
+        options.setAlignment(Pos.CENTER_LEFT);
 
-        VBox root = new VBox(8, sliders);
+        formatter.valueProperty().addListener((obs, oldValue, newValue) ->
+                populateSliders(sliders, newValue == null ? FormatterOption.DEFAULT : newValue)
+        );
+        populateSliders(sliders, formatter.getValue());
+
+        VBox root = new VBox(8, options, sliders);
         VBox.setVgrow(sliders, Priority.ALWAYS);
         root.setPadding(new Insets(12));
 
@@ -63,6 +73,16 @@ public class SliderWithButtonsSample extends Application {
         stage.setTitle("SliderWithButtons Sample");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private static void populateSliders(GridPane grid, FormatterOption formatterOption) {
+        grid.getChildren().clear();
+        addHeader(grid);
+
+        SliderWithButtons.Mode[] modes = SliderWithButtons.Mode.values();
+        for (int row = 0; row < modes.length; row++) {
+            addSliderRow(grid, row + 1, modes[row], formatterOption);
+        }
     }
 
     private static void addHeader(GridPane grid) {
@@ -73,14 +93,14 @@ public class SliderWithButtonsSample extends Application {
         grid.add(new Label("Value"), 4, 0);
     }
 
-    private static void addSliderRow(GridPane grid, int row, SliderWithButtons.Mode mode) {
+    private static void addSliderRow(GridPane grid, int row, SliderWithButtons.Mode mode, FormatterOption formatterOption) {
         SliderWithButtons slider = Controls.slider()
                 .mode(mode)
-                .min(MIN)
-                .max(MAX)
-                .value(VALUE)
-                .blockIncrement(5.0)
-                .formatter(SliderWithButtonsSample::format)
+                .min(formatterOption.min())
+                .max(formatterOption.max())
+                .value(formatterOption.value())
+                .blockIncrement(formatterOption.blockIncrement())
+                .formatter(formatterOption.formatter())
                 .build();
 
         Label modeLabel = new Label(mode.name());
@@ -108,5 +128,57 @@ public class SliderWithButtonsSample extends Application {
 
     private static String format(double value) {
         return String.format(Locale.ROOT, "%.1f", value);
+    }
+
+    private enum FormatterOption {
+        DEFAULT("default", SliderWithButtons.formatDouble(3,1)),
+        INTEGER("Integer", SliderWithButtons.formatInteger(3)),
+        PERCENT("Percent", SliderWithButtons.formatPercent(), 0.0, 1.0, 0.4, 0.05),
+        PERCENT_WITH_FRACTIONAL("Percent with frational", SliderWithButtons.formatPercent(1), 0.0, 1.0, 0.4, 0.05);
+
+        private final String displayName;
+        private final DoubleFunction<String> formatter;
+        private final double min;
+        private final double max;
+        private final double value;
+        private final double blockIncrement;
+
+        FormatterOption(String displayName, DoubleFunction<String> formatter) {
+            this(displayName, formatter, MIN, MAX, VALUE, 5.0);
+        }
+
+        FormatterOption(String displayName, DoubleFunction<String> formatter, double min, double max, double value, double blockIncrement) {
+            this.displayName = displayName;
+            this.formatter = formatter;
+            this.min = min;
+            this.max = max;
+            this.value = value;
+            this.blockIncrement = blockIncrement;
+        }
+
+        private DoubleFunction<String> formatter() {
+            return formatter;
+        }
+
+        private double min() {
+            return min;
+        }
+
+        private double max() {
+            return max;
+        }
+
+        private double value() {
+            return value;
+        }
+
+        private double blockIncrement() {
+            return blockIncrement;
+        }
+
+        @Override
+        public String toString() {
+            return displayName;
+        }
     }
 }
