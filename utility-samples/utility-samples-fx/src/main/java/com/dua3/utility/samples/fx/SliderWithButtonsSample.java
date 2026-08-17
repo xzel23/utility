@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.DoubleFunction;
 
 /**
@@ -114,7 +115,7 @@ public class SliderWithButtonsSample extends Application {
 
         Label valueLabel = new Label();
         valueLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> format(slider.get()),
+                () -> format(Objects.requireNonNull(slider.get())),
                 slider.valueProperty()
         ));
 
