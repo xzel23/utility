@@ -235,6 +235,13 @@ could not be loaded.
 
 ## Changes
 
+### 24.3.2
+
+- `SliderWithButtons`: fix display of total value; add percentage and integer formatting options; add offset 
+  functionality
+- `MathUtil`: add new rounding methods that support passing `RoundingMode`; add `roundtoInt()`, `roundtoLong()`;
+  fix incorrect Javadoc; add unit tests
+
 ### 24.3.1
 
 - fix FileObjectstore issues with deduplicated files on windows
