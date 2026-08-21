@@ -37,9 +37,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.SequencedCollection;
 import java.util.function.Supplier;
 
@@ -109,7 +107,6 @@ public final class TableViews {
 
         ObservableList<S> items = FXCollections.observableArrayList(initialItems);
         TableView<S> tv = new TableView<>(items);
-        Map<TableColumn<?, ?>, ColumnDef<?, ?>> configMap = new HashMap<>();
         tv.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tv.getColumns().setAll(
                 columns.stream().map(cd -> {
@@ -130,16 +127,12 @@ public final class TableViews {
                     tc.setMaxWidth(cd.maxWidth());
                     tc.setResizable(cd.resizable());
 
-                    configMap.put(tc, cd);
-
                     return tc;
                 }).toList()
         );
 
         tv.setEditable(editable);
         tv.getSelectionModel().setSelectionMode(multiSelection ? SelectionMode.MULTIPLE : SelectionMode.SINGLE);
-
-        FlexibleColumnCoordinator.apply(tv, configMap);
 
         if (reorderableRows || allowDeletingRows || allowInsertingRows) {
             tv.setRowFactory(new CustomRowFactory<>(reorderableRows, allowDeletingRows, allowInsertingRows, itemFactory));
@@ -270,113 +263,6 @@ public final class TableViews {
                 deleteItem.setText(count > 1 ? "Delete rows" : "Delete row");
             });
             rowMenu.getItems().add(deleteItem);
-        }
-    }
-
-    /**
-     * Manages a {@link TableView} to ensure column widths respect predefined constraints
-     * and dynamically adjust based on the table's width and column weights.
-     * <p>
-     * This utility allows the distribution of column widths in a way that accounts
-     * for both fixed-width columns and resizable columns with weight-based proportions.
-     */
-    private static final class FlexibleColumnCoordinator {
-        private final TableView<?> table;
-        private final Map<TableColumn<?, ?>, ColumnDef<?, ?>> configMap;
-        private boolean isInternalAdjusting = false;
-
-        /**
-         * Applies the configuration map to the specified {@link TableView} by instantiating
-         * a {@link FlexibleColumnCoordinator}, which is responsible for managing the
-         * behavior and layout of the table's columns based on the provided configuration.
-         *
-         * @param table The {@link TableView} to which the column configurations will be applied.
-         *              This parameter must not be {@code null} and should contain all the columns
-         *              listed in the configuration map.
-         * @param configMap A map of {@link TableColumn} to {@link ColumnDef}, where each entry
-         *                  defines the behavior and properties of a specific column in the {@link TableView}.
-         *                  The key represents a table column, and the value contains its corresponding
-         *                  configuration details. This parameter must not be {@code null}.
-         */
-        public static void apply(TableView<?> table, Map<TableColumn<?, ?>, ColumnDef<?, ?>> configMap) {
-            new FlexibleColumnCoordinator(table, configMap);
-        }
-
-        private FlexibleColumnCoordinator(TableView<?> table, Map<TableColumn<?, ?>, ColumnDef<?, ?>> configMap) {
-            this.table = table;
-            this.configMap = configMap;
-
-            // Initial setup for each column
-            configMap.forEach((column, constraints) -> {
-                column.setResizable(constraints.resizable());
-                column.setMinWidth(constraints.minWidth());
-                column.setMaxWidth(constraints.maxWidth());
-
-                // Listen for manual resizing to update weights dynamically
-                column.widthProperty().addListener((obs, oldW, newW) -> {
-                    if (!isInternalAdjusting && constraints.resizable()) {
-                        recalculateWeights();
-                    }
-                });
-            });
-
-            // Listen for table width changes
-            table.widthProperty().addListener((obs, oldW, newW) -> adjustAll());
-        }
-
-        private void recalculateWeights() {
-            double resizableSpace = 0;
-
-            // 1. Find the new total space occupied by all resizable columns
-            for (var entry : configMap.entrySet()) {
-                if (entry.getValue().resizable()) {
-                    resizableSpace += entry.getKey().getWidth();
-                }
-            }
-
-            // 2. Redistribute weights based on the new actual pixel widths
-            if (resizableSpace > 0) {
-                for (var entry : configMap.entrySet()) {
-                    if (entry.getValue().resizable()) {
-                        // Update weight to reflect the current percentage of the resizable area
-                        entry.getValue().setWeight(entry.getKey().getWidth() / resizableSpace);
-                    }
-                }
-            }
-        }
-
-        private void adjustAll() {
-            if (isInternalAdjusting || table.getWidth() <= 0) return;
-            isInternalAdjusting = true;
-
-            double totalWidth = table.getWidth() - 2.0; // Buffer for borders
-            double fixedSpace = 0;
-            double totalWeight = 0;
-
-            // First pass: Calculate space occupied by non-resizable columns
-            for (var entry : configMap.entrySet()) {
-                if (!entry.getValue().resizable()) {
-                    fixedSpace += entry.getKey().getWidth();
-                } else {
-                    totalWeight += entry.getValue().weight();
-                }
-            }
-
-            double availableSpace = totalWidth - fixedSpace;
-
-            // Second pass: Distribute remaining space by weight
-            if (availableSpace > 0 && totalWeight > 0) {
-                for (var entry : configMap.entrySet()) {
-                    if (entry.getValue().resizable()) {
-                        double share = (entry.getValue().weight() / totalWeight) * availableSpace;
-                        // Clamp between min and max
-                        double finalWidth = Math.clamp(share, entry.getValue().minWidth(), entry.getValue().maxWidth());
-                        entry.getKey().setPrefWidth(finalWidth);
-                    }
-                }
-            }
-
-            isInternalAdjusting = false;
         }
     }
 
