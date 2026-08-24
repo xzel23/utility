@@ -915,6 +915,35 @@ public class RichTextEditorModel {
         return applyFormattingChange(updated);
     }
 
+    /** Adjusts left indentation for the paragraph(s) intersecting the selection. */
+    public boolean adjustIndentation(double deltaPoints) {
+        if (!Double.isFinite(deltaPoints) || deltaPoints == 0.0 || text.isEmpty()) {
+            return false;
+        }
+        IndexRange selection = getSelection();
+        int start = lineRangeAt(selection.start()).start();
+        int end = lineRangeAt(selection.length() == 0 ? selection.start() : selection.end() - 1).end();
+        RichText updated = text;
+        boolean changed = false;
+        int pos = start;
+        while (pos <= end && pos < text.length()) {
+            IndexRange line = lineRangeAt(pos);
+            if (line.length() > 0) {
+                Object value = updated.attributesAt(line.start()).get(Style.TEXT_INDENT_LEFT);
+                double current = value instanceof Number n ? n.doubleValue() : 0.0;
+                double next = Math.max(0.0, current + deltaPoints);
+                if (Math.abs(next - current) > 1e-6) {
+                    // Paragraph indentation belongs only to the first character of the line.
+                    updated = updated.apply(Map.of(Style.TEXT_INDENT_LEFT, (float) next), line.start(), line.start() + 1);
+                    changed = true;
+                }
+            }
+            if (line.end() >= end || line.end() >= updated.length()) break;
+            pos = line.end() + 1;
+        }
+        return changed && applyFormattingChange(updated);
+    }
+
     /**
      * Applies a style to current selection and stores history.
      *
@@ -1400,6 +1429,7 @@ public class RichTextEditorModel {
         int s = Math.clamp(Math.min(start, end), 0, max);
         int e = Math.clamp(Math.max(start, end), 0, max);
         RichText removed = detach(text.subSequence(s, e));
+        Object inheritedIndent = s > 0 ? text.attributesAt(s - 1).get(Style.TEXT_INDENT_LEFT) : null;
 
         if (removed.equals(inserted)) {
             int newCaret = s + inserted.length();
@@ -1411,6 +1441,12 @@ public class RichTextEditorModel {
         int beforeCaret = caret;
 
         text = detach(text.replace(s, e, inserted));
+        // A newly created paragraph inherits the indentation of the paragraph it was split from.
+        if (inserted.toString().indexOf('\n') >= 0 && s < text.length() && s > 0) {
+            if (inheritedIndent instanceof Number) {
+                text = text.apply(Map.of(Style.TEXT_INDENT_LEFT, inheritedIndent), s, s + 1);
+            }
+        }
         invalidateVisualLineCache();
         int newCaret = s + inserted.length();
         selectRange(newCaret, newCaret);

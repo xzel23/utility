@@ -115,6 +115,8 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     private final JToggleButton italicButton;
     private final JToggleButton underlineButton;
     private final JToggleButton strikeButton;
+    private final JButton increaseIndentButton;
+    private final JButton decreaseIndentButton;
     private @Nullable JDialog toolbarFloatingDialog;
     private @Nullable Container toolbarApplicationParent;
     private DetachableNode.Location toolbarLocation = DetachableNode.Location.EMBEDDED;
@@ -155,6 +157,8 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         italicButton = fontStyleButton("I", DEFAULT_FONT.withItalic(true), this::markItalic);
         underlineButton = fontStyleButton("U", DEFAULT_FONT.withUnderline(true), this::markUnderline);
         strikeButton = fontStyleButton("S", DEFAULT_FONT.withStrikeThrough(true), this::markStrikeThrough);
+        increaseIndentButton = editButton("⇥", this::increaseIndentation);
+        decreaseIndentButton = editButton("⇤", this::decreaseIndentation);
         fontList = new JComboBox<>(FONT_UTIL.getFamilies(FontUtil.FontTypes.ALL).toArray(new String[0]));
         sizeList = new JComboBox<>(DEFAULT_FONT_SIZES);
         textColorList = new JComboBox<>(DEFAULT_TEXT_COLORS);
@@ -170,6 +174,8 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         configureToolbarControl(italicButton);
         configureToolbarControl(underlineButton);
         configureToolbarControl(strikeButton);
+        configureToolbarControl(increaseIndentButton);
+        configureToolbarControl(decreaseIndentButton);
         configureToolbarControl(fontList);
         configureToolbarControl(sizeList);
         configureToolbarControl(textColorList);
@@ -188,6 +194,8 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         toolbar.add(italicButton);
         toolbar.add(underlineButton);
         toolbar.add(strikeButton);
+        toolbar.add(increaseIndentButton);
+        toolbar.add(decreaseIndentButton);
         toolbar.add(Box.createHorizontalStrut(4));
         toolbar.add(textColorList);
         toolbar.add(backgroundColorList);
@@ -430,6 +438,9 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
             typingBold = value;
         }
     }
+
+    public void increaseIndentation() { if (model.adjustIndentation(40.0)) onModelChanged(); }
+    public void decreaseIndentation() { if (model.adjustIndentation(-40.0)) onModelChanged(); }
 
     /**
      * Toggles bold style.

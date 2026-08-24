@@ -401,7 +401,7 @@ public class TextPane extends Control implements RichTextPane {
                 resolvedFont -> resolvedFont.scaled((float) displayScale)
         );
 
-        FragmentedText renderFragments = prepared.renderFragments();
+        FragmentedText renderFragments = applyParagraphIndentation(prepared.renderFragments(), richText, displayScale);
 
         List<InlineControlPlacement> placements = new ArrayList<>();
         for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
@@ -470,6 +470,22 @@ public class TextPane extends Control implements RichTextPane {
                 renderHeight,
                 prepared.layoutTextData()
         );
+    }
+
+    private static FragmentedText applyParagraphIndentation(FragmentedText fragments, RichText source, double scale) {
+        List<List<FragmentedText.Fragment>> lines = new ArrayList<>();
+        if (source.isEmpty()) return fragments;
+        for (List<FragmentedText.Fragment> line : fragments.lines()) {
+            int index = line.stream().map(f -> f.text() instanceof Run r ? r.getStart() : -1).filter(i -> i >= 0).findFirst().orElse(0);
+            int probe = Math.clamp(index, 0, Math.max(0, source.length() - 1));
+            while (probe > 0 && source.charAt(probe - 1) != '\n') probe--;
+            Object value = source.attributesAt(probe).get(Style.TEXT_INDENT_LEFT);
+            if (value == null) for (Style s : source.stylesAt(probe)) if (s.get(Style.TEXT_INDENT_LEFT) != null) { value = s.get(Style.TEXT_INDENT_LEFT); break; }
+            double indent = value instanceof Number n ? n.doubleValue() : value == null ? 0.0 : Double.parseDouble(value.toString());
+            float dx = (float) (indent * scale);
+            lines.add(line.stream().map(f -> new FragmentedText.Fragment(f.x() + dx, f.y(), f.w(), f.h(), f.baseLine(), f.font(), f.text())).toList());
+        }
+        return new FragmentedText(lines, fragments.width() + (float) (40 * scale), fragments.height(), fragments.baseLine(), fragments.actualWidth() + (float) (40 * scale), fragments.actualHeight());
     }
 
     private static double measureNodeWidth(Node node) {
@@ -1000,6 +1016,8 @@ public class TextPane extends Control implements RichTextPane {
 
                 Button undoButton = createButton("Undo", Controls.graphic(Feather.ROTATE_CCW.getDescription()), editor, TextEditorPane::undo);
                 Button redoButton = createButton("Redo", Controls.graphic(Feather.ROTATE_CW.getDescription()), editor, TextEditorPane::redo);
+                Button decreaseIndentButton = createButton("Decrease indentation", Controls.graphic(Feather.ARROW_LEFT.getDescription()), editor, TextEditorPane::decreaseIndentation);
+                Button increaseIndentButton = createButton("Increase indentation", Controls.graphic(Feather.ARROW_RIGHT.getDescription()), editor, TextEditorPane::increaseIndentation);
 
                 ToggleButton boldButton = createToggleButton("Bold", Controls.graphic(Feather.BOLD.getDescription()), editor, TextEditorPane::markBold);
                 ToggleButton italicsButton = createToggleButton("Italic", Controls.graphic(Feather.ITALIC.getDescription()), editor, TextEditorPane::markItalic);
@@ -1049,6 +1067,9 @@ public class TextPane extends Control implements RichTextPane {
                                 new Separator(),
                                 undoButton,
                                 redoButton,
+                                new Separator(),
+                                decreaseIndentButton,
+                                increaseIndentButton,
                                 new Separator(),
                                 fontList,
                                 sizeList,
@@ -1121,7 +1142,7 @@ public class TextPane extends Control implements RichTextPane {
         }
 
         private static Button createButton(String text, Node graphic, TextEditorPane editor, Consumer<TextEditorPane> action) {
-            return Controls.button()
+            Button button = Controls.button()
                     .tooltip(text)
                     .graphic(graphic)
                     .action(e -> {
@@ -1129,6 +1150,8 @@ public class TextPane extends Control implements RichTextPane {
                         editor.requestFocus();
                     })
                     .build();
+            button.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> editor.requestFocus());
+            return button;
         }
 
         private static ToggleButton createToggleButton(String text, Node graphic, TextEditorPane editor, BiConsumer<TextEditorPane, Boolean> action) {

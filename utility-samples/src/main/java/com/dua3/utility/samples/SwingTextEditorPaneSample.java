@@ -185,6 +185,7 @@ public final class SwingTextEditorPaneSample {
         builder.append("Edit in the upper pane and press Apply to update committed value.\n");
         builder.append("Reset restores both editor and committed value to this default text.\n\n");
         builder.append("Formatting: select text and use B/I/U/S buttons, then Undo/Redo.\n\n");
+        builder.push(Style.TEXT_INDENT_LEFT, 40.0f).append("This paragraph starts indented.\n").pop(Style.TEXT_INDENT_LEFT);
         builder.push(Style.ITALIC).append("Long paragraph: ").pop(Style.ITALIC);
         builder.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ");
         builder.append("ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ");

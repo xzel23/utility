@@ -42,6 +42,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
     private static final String STYLE_NAME_METADATA_PREFIX = "DUA3STYLES:";
     private static final double TWIPS_PER_PIXEL = 15.0;
     private static final double POINTS_PER_TWIP = 1.0 / 20.0;
+    private static final double TWIPS_PER_POINT = 20.0;
     private static final double POINTS_PER_PIXEL = 0.75;
     private static final double DEFAULT_FONT_SIZE_PT = 12.0;
     private static final double DEFAULT_ASCENT_RATIO = 0.8;
@@ -159,6 +160,11 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             buffer.append('{');
             appendStyleNameMetadata(run);
 
+            int indentationTwips = indentationTwips(run);
+            // Emit the paragraph property for every run so a following unindented
+            // paragraph resets the indentation inherited from the previous one.
+            appendControlWord("li", indentationTwips);
+
             FontDef fontDef = run.getFontDef();
 
             String family = fontDef.getFamily();
@@ -198,6 +204,15 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
 
             appendRunContent(run, fontDef);
             buffer.append('}');
+        }
+
+        private int indentationTwips(Run run) {
+            return run.getStyles().stream()
+                    .map(style -> style.get(Style.TEXT_INDENT_LEFT))
+                    .filter(Number.class::isInstance)
+                    .mapToInt(value -> Math.max(0, (int) Math.round(((Number) value).doubleValue() * TWIPS_PER_POINT)))
+                    .max()
+                    .orElse(0);
         }
 
         private void appendStyleNameMetadata(Run run) {

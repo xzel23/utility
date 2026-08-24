@@ -29,6 +29,20 @@ import static org.junit.jupiter.api.Assertions.fail;
 class RtfConverterTest {
 
     @Test
+    void writesLeftIndentationAsRtfParagraphIndent() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        RichTextBuilder builder = new RichTextBuilder();
+        Style indentation = Style.create("indentation", Map.entry(Style.TEXT_INDENT_LEFT, 36.0f));
+        builder.push(indentation);
+        builder.append("Indented");
+        builder.pop(indentation);
+
+        String rtf = converter.fromRichText(builder.toRichText());
+
+        assertTrue(rtf.contains("\\li720"));
+    }
+
+    @Test
     void testRoundTripRichText() {
         RtfConverter converter = RtfConverter.get().orElseThrow();
 
