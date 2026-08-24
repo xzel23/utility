@@ -207,12 +207,22 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
         }
 
         private int indentationTwips(Run run) {
-            return run.getStyles().stream()
+            int directIndentation = run.getAttributes().containsKey(Style.TEXT_INDENT_LEFT)
+                    ? indentationTwips(run.getAttributes().get(Style.TEXT_INDENT_LEFT))
+                    : 0;
+            int styledIndentation = run.getStyles().stream()
+                    .filter(style -> style.containsKey(Style.TEXT_INDENT_LEFT))
                     .map(style -> style.get(Style.TEXT_INDENT_LEFT))
-                    .filter(Number.class::isInstance)
-                    .mapToInt(value -> Math.max(0, (int) Math.round(((Number) value).doubleValue() * TWIPS_PER_POINT)))
+                    .mapToInt(this::indentationTwips)
                     .max()
                     .orElse(0);
+            return Math.max(directIndentation, styledIndentation);
+        }
+
+        private int indentationTwips(Object value) {
+            return value instanceof Number number
+                    ? Math.max(0, (int) Math.round(number.doubleValue() * TWIPS_PER_POINT))
+                    : 0;
         }
 
         private void appendStyleNameMetadata(Run run) {

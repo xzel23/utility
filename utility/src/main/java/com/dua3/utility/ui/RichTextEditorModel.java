@@ -1455,7 +1455,7 @@ public class RichTextEditorModel {
         text = normalizeParagraphIndentation(detach(text.replace(s, e, inserted)));
         if (!contentChanged) {
             // Formatting changes already contain the intended paragraph indentation.
-        } else if (inserted.toString().indexOf('\n') >= 0) {
+        } else if (inserted.toString().indexOf('\n') >= 0 && inheritedIndent != null) {
             int insertedOffset = inserted.toString().indexOf('\n');
             int nextParagraphStart = s + insertedOffset + 1;
             text = setParagraphIndentation(text, nextParagraphStart, inheritedIndent);

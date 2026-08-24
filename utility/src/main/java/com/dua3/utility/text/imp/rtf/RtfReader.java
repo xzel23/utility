@@ -489,6 +489,7 @@ public final class RtfReader {
                         style.fontSize = parameter / 2.0f;
                     }
                 }
+                case "li" -> style.indentLeftPoints = hasParameter ? Math.max(0.0f, parameter * (float) POINTS_PER_TWIP) : 0.0f;
                 case "up" -> style.baselineShiftHalfPoints = hasParameter ? Math.max(0, parameter) : 0;
                 case "dn" -> style.baselineShiftHalfPoints = hasParameter ? -Math.max(0, parameter) : 0;
                 case "par", "line" -> appendStyledText("\n");
@@ -805,7 +806,8 @@ public final class RtfReader {
             }
 
             ResolvedStyle resolvedStyle = resolveStyle(consumePendingStyleNames());
-            if (resolvedStyle.isEmpty() && extraStyle == null) {
+            boolean hasIndentation = style.indentLeftPoints > 0.0f;
+            if (resolvedStyle.isEmpty() && extraStyle == null && !hasIndentation) {
                 builder.append(text);
             } else {
                 for (Style styleForText : resolvedStyle.styles()) {
@@ -813,6 +815,9 @@ public final class RtfReader {
                 }
                 for (Map.Entry<String, Object> attribute : resolvedStyle.attributes()) {
                     builder.push(attribute.getKey(), attribute.getValue());
+                }
+                if (hasIndentation) {
+                    builder.push(Style.TEXT_INDENT_LEFT, style.indentLeftPoints);
                 }
                 if (extraStyle != null) {
                     builder.push(extraStyle);
@@ -822,6 +827,9 @@ public final class RtfReader {
                     builder.pop(extraStyle);
                 }
                 List<Map.Entry<String, Object>> attributes = resolvedStyle.attributes();
+                if (hasIndentation) {
+                    builder.pop(Style.TEXT_INDENT_LEFT);
+                }
                 for (int i = attributes.size() - 1; i >= 0; i--) {
                     builder.pop(attributes.get(i).getKey());
                 }
@@ -1182,6 +1190,7 @@ public final class RtfReader {
         private int fontIndex;
         private float fontSize;
         private int baselineShiftHalfPoints;
+        private float indentLeftPoints;
 
         private CharacterStyle() {
             this(-1);
@@ -1197,6 +1206,7 @@ public final class RtfReader {
             this.fontIndex = defaultFontIndex;
             this.fontSize = -1.0f;
             this.baselineShiftHalfPoints = 0;
+            this.indentLeftPoints = 0.0f;
         }
 
         private CharacterStyle copy() {
@@ -1210,6 +1220,7 @@ public final class RtfReader {
             copy.fontIndex = this.fontIndex;
             copy.fontSize = this.fontSize;
             copy.baselineShiftHalfPoints = this.baselineShiftHalfPoints;
+            copy.indentLeftPoints = this.indentLeftPoints;
             return copy;
         }
     }

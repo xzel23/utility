@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Timeout;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -243,6 +244,26 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
             editor.cut();
             assertEquals(" worldhello", editor.getText().toString());
             assertEquals("hello", FxUtil.getTextFromClipboard().orElseThrow().toString());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testSelectAllCutPastePreservesParagraphIndentation() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            RichText source = RichText.valueOf("first\nsecond")
+                    .apply(Map.of(Style.TEXT_INDENT_LEFT, 40.0f), 6, 7);
+            TextEditorPane editor = new TextEditorPane(source);
+
+            editor.selectAll();
+            editor.cut();
+            assertEquals("", editor.getText().toString());
+
+            editor.paste();
+
+            assertEquals(source.toString(), editor.getText().toString());
+            assertEquals(40.0f, editor.getText().attributesAt(6).get(Style.TEXT_INDENT_LEFT));
+            assertFalse(editor.getText().attributesAt(7).containsKey(Style.TEXT_INDENT_LEFT));
         });
     }
 

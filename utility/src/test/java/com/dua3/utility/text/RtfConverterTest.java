@@ -43,6 +43,15 @@ class RtfConverterTest {
     }
 
     @Test
+    void roundTripsDirectLeftIndentationAttribute() {
+        RtfConverter converter = RtfConverter.get().orElseThrow();
+        RichText source = RichText.valueOf("first\nsecond")
+                .apply(Map.of(Style.TEXT_INDENT_LEFT, 40.0f), 6, 7);
+        RichText actual = converter.toRichText(converter.fromRichText(source));
+        assertEquals(40.0f, actual.attributesAt(6).get(Style.TEXT_INDENT_LEFT));
+    }
+
+    @Test
     void testRoundTripRichText() {
         RtfConverter converter = RtfConverter.get().orElseThrow();
 
