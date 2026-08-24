@@ -71,16 +71,8 @@ private fun readReleaseVersions(file: File, requireSelection: Boolean): ReleaseV
     return ReleaseVersions(bomVersion, moduleVersions, selectedModules)
 }
 
-pluginManagement {
-    val versionsPluginVersion = Regex("""(?m)^\s*versions-plugin\s*=\s*"([^"]+)"""")
-        .find(file("gradle/version.toml").readText())!!.groupValues[1]
-    plugins {
-        id("io.github.ben-manes.versions.settings") version versionsPluginVersion
-    }
-}
-
 plugins {
-    id("io.github.ben-manes.versions.settings")
+    id("io.github.ben-manes.versions.settings") version "0.61.0"
 }
 
 // define project name
