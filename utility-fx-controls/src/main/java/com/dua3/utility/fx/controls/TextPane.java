@@ -494,7 +494,7 @@ public class TextPane extends Control implements RichTextPane {
     private static FragmentedText applyParagraphIndentation(FragmentedText fragments, double scale) {
         List<List<FragmentedText.Fragment>> lines = new ArrayList<>();
         float maximumIndent = 0.0f;
-        List<Number> indents = fragments.lines().stream()
+        List<@Nullable Number> indents = fragments.lines().stream()
                 .map(TextPane::findFragmentLineIndent)
                 .toList();
         for (int i = 0; i < fragments.lines().size(); i++) {
@@ -503,10 +503,10 @@ public class TextPane extends Control implements RichTextPane {
             if (value == null) {
                 value = nextIndent(indents, i + 1);
             }
-            double indent = value instanceof Number n ? n.doubleValue() : 0.0;
+            double indent = value.doubleValue();
             float dx = (float) (indent * scale);
             maximumIndent = Math.max(maximumIndent, dx);
-            lines.add(line.stream().map(f -> new FragmentedText.Fragment(f.x() + dx, f.y(), f.w(), f.h(), f.baseLine(), f.font(), f.text())).toList());
+            lines.add(line.stream().map(frgmnt -> new FragmentedText.Fragment(frgmnt.x() + dx, frgmnt.y(), frgmnt.w(), frgmnt.h(), frgmnt.baseLine(), frgmnt.font(), frgmnt.text())).toList());
         }
         return new FragmentedText(lines, fragments.width() + maximumIndent, fragments.height(), fragments.baseLine(), fragments.actualWidth() + maximumIndent, fragments.actualHeight());
     }
@@ -524,14 +524,14 @@ public class TextPane extends Control implements RichTextPane {
                 .orElse(null);
     }
 
-    private static @Nullable Number nextIndent(List<Number> indents, int start) {
+    private static double nextIndent(List<@Nullable Number> indents, int start) {
         for (int i = start; i < indents.size(); i++) {
             Number indent = indents.get(i);
             if (indent != null) {
-                return indent;
+                return indent.doubleValue();
             }
         }
-        return null;
+        return 0.0;
     }
 
     private static double measureNodeWidth(Node node) {

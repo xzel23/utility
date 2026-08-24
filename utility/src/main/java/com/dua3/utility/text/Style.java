@@ -155,16 +155,6 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      * text indentation
      */
     public static final String TEXT_INDENT_LEFT = "indent-left";
-    /**
-     * Represents the left text indentation value of 0.
-     * <p>This constant can be used to specify no indentation
-     * for a text element in a styling context.
-     */
-    public static final String TEXT_INDENT_LEFT_VALUE_0 = "0";
-    /**
-     * Represents the left text indentation value of 40 points.
-     */
-    public static final String TEXT_INDENT_LEFT_VALUE_1 = "40";
 
     /**
      * foreground color
