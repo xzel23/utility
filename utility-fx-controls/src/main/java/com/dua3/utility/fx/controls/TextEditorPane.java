@@ -219,10 +219,12 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     private void onModelTextMutated(boolean syncTextProperty) {
         document.set(sharedModel.getText());
         length.set(sharedModel.length());
-        markDocumentChanged();
         if (syncTextProperty) {
             syncTextPropertyWithDocumentSnapshot();
         }
+        // TextPaneSkin listens to documentVersion. Publish the new text before it is
+        // invalidated, otherwise it may repaint the previous unindented snapshot.
+        markDocumentChanged();
         updateHistoryState();
         syncSelectionFromModel();
     }
@@ -985,10 +987,11 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     }
 
     private void syncTextPropertyWithDocumentSnapshot() {
-        ToRichText snapshot = sharedModel.createLazySnapshot();
         syncingTextPropertyFromDocument = true;
         try {
-            textProperty().set(snapshot);
+            // Keep the renderer on the exact model instance. Rebuilding a lazy line snapshot
+            // loses paragraph-marker attributes needed for indentation of newly created lines.
+            textProperty().set(sharedModel.getText());
         } finally {
             syncingTextPropertyFromDocument = false;
         }

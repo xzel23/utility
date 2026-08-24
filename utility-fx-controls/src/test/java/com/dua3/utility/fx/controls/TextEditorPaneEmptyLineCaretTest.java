@@ -9,9 +9,12 @@ import com.dua3.utility.text.Run;
 import com.dua3.utility.ui.RichTextPaneLayoutHelper;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Rectangle;
@@ -89,6 +92,75 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             assertEquals(lines.size() - 1, lineIndex);
             assertEquals(caret, lines.get(lineIndex).start());
             assertEquals(caret, lines.get(lineIndex).end());
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testCaretIsIndentedAfterEnterBeforeLeadingSpace() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("text more");
+            editor.setWrapText(true);
+            addToScene(editor);
+            editor.selectRange(0, 1);
+            editor.increaseIndentation();
+            editor.positionCaret(4);
+
+            editor.processKeyTyped(keyTyped("\r"));
+
+            assertEquals("text\n more", editor.getText().toString());
+            assertCaretIsIndented(editor, 80.0);
+            assertRenderedParagraphIsIndented(editor, 80.0);
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testRenderedParagraphStaysIndentedAfterInsertingLeadingSpace() throws Exception {
+        AtomicReference<TextEditorPane> editorReference = new AtomicReference<>();
+        runOnFxThreadAndWait(() -> {
+            // The sample paragraph follows preceding lines; its nonzero source offset is
+            // essential because the renderer must not treat it as the first paragraph.
+            TextEditorPane editor = new TextEditorPane("\ntext more");
+            editor.setWrapText(true);
+            addToScene(editor);
+            editor.selectRange(1, 2);
+            editor.increaseIndentation();
+            editor.positionCaret(1);
+
+            editor.processKeyTyped(keyTyped(" "));
+
+            assertEquals("\n text more", editor.getText().toString());
+            assertEquals(40.0f, editor.getText().attributesAt(1).get(com.dua3.utility.text.Style.TEXT_INDENT_LEFT));
+            assertCaretIsIndented(editor, 80.0);
+            assertRenderedParagraphIsIndented(editor, 80.0);
+            editorReference.set(editor);
+            Platform.requestNextPulse();
+        });
+        Thread.sleep(100);
+        runOnFxThreadAndWait(() -> assertPaintedTextStartsIndented(editorReference.get()));
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testCaretIsIndentedAfterEnterAtLineEnd() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextEditorPane editor = new TextEditorPane("text");
+            editor.setWrapText(false);
+            addToScene(editor);
+            editor.selectRange(0, 1);
+            editor.increaseIndentation();
+            editor.positionCaret(editor.getLength());
+
+            editor.processKeyTyped(keyTyped("\r"));
+
+            assertEquals("text\n", editor.getText().toString());
+            assertCaretIsIndented(editor, 400.0);
+
+            editor.processKeyTyped(keyTyped("X"));
+            assertEquals("text\nX", editor.getText().toString());
+            assertCaretIsIndented(editor, 400.0);
+            assertRenderedParagraphIsIndented(editor, 400.0);
         });
     }
 
@@ -549,5 +621,66 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
             }
         }
         return -1;
+    }
+
+    private static void assertCaretIsIndented(TextEditorPane editor, double width) {
+        List<VisualLine> lines = editor.buildVisualLines(width);
+        int caret = editor.getCaretPosition();
+        VisualLine line = lines.get(RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret));
+        assertTrue(RichTextVisualLayoutHelper.xForIndex(line, caret) >= 39.0,
+                "caret in the new paragraph must start at its 40pt indentation");
+    }
+
+    private static void assertRenderedParagraphIsIndented(TextEditorPane editor, double width) {
+        RichTextPaneLayoutHelper.Layout<?> layout = editor.createLayout(width);
+        List<List<FragmentedText.Fragment>> nonEmptyLines = layout.renderLines().stream()
+                .filter(line -> !line.isEmpty())
+                .toList();
+        assertTrue(!nonEmptyLines.isEmpty());
+        for (List<FragmentedText.Fragment> line : nonEmptyLines) {
+            double x = line.stream().mapToDouble(FragmentedText.Fragment::x).min().orElseThrow();
+            assertTrue(x >= 39.0, "every wrapped line of the rendered paragraph must be indented");
+        }
+    }
+
+    private static void assertPaintedTextStartsIndented(TextEditorPane editor) {
+        Canvas canvas = findCanvas(editor.getSkin().getNode());
+        assertNotNull(canvas, "expected text-rendering canvas");
+        int width = Math.max(1, (int) Math.ceil(canvas.getWidth()));
+        int height = Math.max(1, (int) Math.ceil(canvas.getHeight()));
+        WritableImage image = canvas.snapshot(null, new WritableImage(width, height));
+
+        int leftmostPaintedPixel = width;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                javafx.scene.paint.Color color = image.getPixelReader().getColor(x, y);
+                if (color.getOpacity() > 0.01
+                        && (color.getRed() < 0.95 || color.getGreen() < 0.95 || color.getBlue() < 0.95)) {
+                    leftmostPaintedPixel = x;
+                    break;
+                }
+            }
+            if (leftmostPaintedPixel != width) {
+                break;
+            }
+        }
+        assertTrue(leftmostPaintedPixel >= 43,
+                "the canvas must paint the text after its 40pt indentation and leading space (leftmost="
+                        + leftmostPaintedPixel + ", canvasWidth=" + width + ")");
+    }
+
+    private static Canvas findCanvas(Node node) {
+        if (node instanceof Canvas canvas) {
+            return canvas;
+        }
+        if (node instanceof Parent parent) {
+            for (Node child : parent.getChildrenUnmodifiable()) {
+                Canvas canvas = findCanvas(child);
+                if (canvas != null) {
+                    return canvas;
+                }
+            }
+        }
+        return null;
     }
 }

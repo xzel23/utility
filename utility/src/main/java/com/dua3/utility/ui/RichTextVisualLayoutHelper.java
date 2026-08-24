@@ -4,6 +4,7 @@ import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
+import com.dua3.utility.text.Style;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -25,7 +26,11 @@ public final class RichTextVisualLayoutHelper {
      * @param end end offset in source text
      * @param text detached block text
      */
-    public record LogicalBlock(int start, int end, RichText text) {}
+    public record LogicalBlock(int start, int end, RichText text, double indent) {
+        public LogicalBlock(int start, int end, RichText text) {
+            this(start, end, text, 0.0);
+        }
+    }
 
     /**
      * Mapping function from layout positions back to source positions.
@@ -87,11 +92,11 @@ public final class RichTextVisualLayoutHelper {
         int length = text.length();
         for (int i = 0; i < length; i++) {
             if (text.charAt(i) == '\n') {
-                logicalBlocks.add(new LogicalBlock(lineStart, i, RichTextEditUtil.detachedSubSequence(text, lineStart, i)));
+                logicalBlocks.add(new LogicalBlock(lineStart, i, RichTextEditUtil.detachedSubSequence(text, lineStart, i), paragraphIndent(text, lineStart, i)));
                 lineStart = i + 1;
             }
         }
-        logicalBlocks.add(new LogicalBlock(lineStart, length, RichTextEditUtil.detachedSubSequence(text, lineStart, length)));
+        logicalBlocks.add(new LogicalBlock(lineStart, length, RichTextEditUtil.detachedSubSequence(text, lineStart, length), paragraphIndent(text, lineStart, length)));
         return List.copyOf(logicalBlocks);
     }
 
@@ -135,7 +140,7 @@ public final class RichTextVisualLayoutHelper {
         double yOffset = 0.0;
         for (LogicalBlock block : logicalBlocks) {
             if (block.start() == block.end()) {
-                lines.add(new VisualLine(block.start(), block.start(), yOffset, lineHeight, new double[]{0.0}));
+                lines.add(new VisualLine(block.start(), block.start(), yOffset, lineHeight, new double[]{block.indent()}));
                 yOffset += lineHeight;
                 continue;
             }
@@ -171,6 +176,13 @@ public final class RichTextVisualLayoutHelper {
             lines.add(new VisualLine(0, 0, 0.0, lineHeight, new double[]{0.0}));
         }
         return List.copyOf(lines);
+    }
+
+    private static double paragraphIndent(RichText text, int start, int end) {
+        int index = start < end ? start : start - 1;
+        if (index < 0 || index >= text.length()) return 0.0;
+        Object value = text.attributesAt(index).get(Style.TEXT_INDENT_LEFT);
+        return value instanceof Number number ? number.doubleValue() : 0.0;
     }
 
     private static void extendLastLineToBlockEnd(List<VisualLine> blockLines, LogicalBlock block, FontUtil fontUtil) {

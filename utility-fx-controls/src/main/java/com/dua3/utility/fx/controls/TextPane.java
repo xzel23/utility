@@ -386,8 +386,9 @@ public class TextPane extends Control implements RichTextPane {
             double availableWidth,
             double displayScale
     ) {
+        RichText renderText = inheritParagraphIndentationForRendering(richText);
         RichTextPaneLayoutHelper.LayoutPreparation prepared = RichTextPaneLayoutHelper.prepareLayout(
-                richText,
+                renderText,
                 font,
                 wrapText,
                 availableWidth,
@@ -401,7 +402,7 @@ public class TextPane extends Control implements RichTextPane {
                 resolvedFont -> resolvedFont.scaled((float) displayScale)
         );
 
-        FragmentedText renderFragments = applyParagraphIndentation(prepared.renderFragments(), richText, displayScale);
+        FragmentedText renderFragments = applyParagraphIndentation(prepared.renderFragments(), displayScale);
 
         List<InlineControlPlacement> placements = new ArrayList<>();
         for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
@@ -472,21 +473,65 @@ public class TextPane extends Control implements RichTextPane {
         );
     }
 
-    private static FragmentedText applyParagraphIndentation(FragmentedText fragments, RichText source, double scale) {
+    private static RichText inheritParagraphIndentationForRendering(RichText source) {
+        RichText rendered = source;
+        int start = 0;
+        while (start < source.length()) {
+            int end = start;
+            while (end < source.length() && source.charAt(end) != '\n') {
+                end++;
+            }
+            if (start < end) {
+                Object indent = source.attributesAt(start).get(Style.TEXT_INDENT_LEFT);
+                Number effectiveIndent = indent instanceof Number number ? number : 0.0f;
+                rendered = rendered.apply(Map.of(Style.TEXT_INDENT_LEFT, effectiveIndent), start, end);
+            }
+            start = end + 1;
+        }
+        return rendered;
+    }
+
+    private static FragmentedText applyParagraphIndentation(FragmentedText fragments, double scale) {
         List<List<FragmentedText.Fragment>> lines = new ArrayList<>();
-        if (source.isEmpty()) return fragments;
         float maximumIndent = 0.0f;
-        for (List<FragmentedText.Fragment> line : fragments.lines()) {
-            int index = line.stream().map(f -> f.text() instanceof Run r ? r.getStart() : -1).filter(i -> i >= 0).findFirst().orElse(0);
-            int probe = Math.clamp(index, 0, Math.max(0, source.length() - 1));
-            while (probe > 0 && source.charAt(probe - 1) != '\n') probe--;
-            Object value = source.attributesAt(probe).get(Style.TEXT_INDENT_LEFT);
+        List<Number> indents = fragments.lines().stream()
+                .map(TextPane::findFragmentLineIndent)
+                .toList();
+        for (int i = 0; i < fragments.lines().size(); i++) {
+            List<FragmentedText.Fragment> line = fragments.lines().get(i);
+            Number value = indents.get(i);
+            if (value == null) {
+                value = nextIndent(indents, i + 1);
+            }
             double indent = value instanceof Number n ? n.doubleValue() : 0.0;
             float dx = (float) (indent * scale);
             maximumIndent = Math.max(maximumIndent, dx);
             lines.add(line.stream().map(f -> new FragmentedText.Fragment(f.x() + dx, f.y(), f.w(), f.h(), f.baseLine(), f.font(), f.text())).toList());
         }
         return new FragmentedText(lines, fragments.width() + maximumIndent, fragments.height(), fragments.baseLine(), fragments.actualWidth() + maximumIndent, fragments.actualHeight());
+    }
+
+    private static @Nullable Number findFragmentLineIndent(List<FragmentedText.Fragment> line) {
+        return line.stream()
+                .map(FragmentedText.Fragment::text)
+                .filter(Run.class::isInstance)
+                .map(Run.class::cast)
+                .map(Run::getAttributes)
+                .map(attributes -> attributes.get(Style.TEXT_INDENT_LEFT))
+                .filter(Number.class::isInstance)
+                .map(Number.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static @Nullable Number nextIndent(List<Number> indents, int start) {
+        for (int i = start; i < indents.size(); i++) {
+            Number indent = indents.get(i);
+            if (indent != null) {
+                return indent;
+            }
+        }
+        return null;
     }
 
     private static double measureNodeWidth(Node node) {
@@ -1093,10 +1138,11 @@ public class TextPane extends Control implements RichTextPane {
                 getChildren().setAll(scrollPane);
             }
 
+            control.textProperty().addListener((obs, oldVal, newVal) -> invalidate());
             if (editor != null) {
+                // Some editor changes update textProperty after the model version. Listen to
+                // both signals so a repaint always observes the current RichText snapshot.
                 editor.documentVersionProperty().addListener((obs, oldVal, newVal) -> invalidate());
-            } else {
-                control.textProperty().addListener((obs, oldVal, newVal) -> invalidate());
             }
             control.wrapTextProperty().addListener((obs, oldVal, newVal) -> {
                 scrollPane.setFitToWidth(newVal);
@@ -1825,19 +1871,23 @@ public class TextPane extends Control implements RichTextPane {
             }
 
             if (editor.isEditable() && hasEditorFocus(control) && !blink) {
-                int layoutCaretPosition = layout.layoutTextData().sourceToLayoutPosition(editor.getCaretPosition());
-                CaretInfo caretInfo = findCaret(layout.renderLines(), layoutCaretPosition);
-                if (caretInfo == null) {
-                    List<VisualLine> lines = editor.buildVisualLines(availableWidth);
-                    if (!lines.isEmpty()) {
-                        int caretPosition = editor.getCaretPosition();
-                        int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caretPosition);
-                        if (lineIndex >= 0 && lineIndex < lines.size()) {
-                            VisualLine line = lines.get(lineIndex);
-                            double x = RichTextVisualLayoutHelper.xForIndex(line, caretPosition);
-                            caretInfo = new CaretInfo(x, line.top(), line.height());
-                        }
+                CaretInfo caretInfo = null;
+                List<VisualLine> lines = editor.buildVisualLines(availableWidth);
+                if (!lines.isEmpty()) {
+                    int caretPosition = editor.getCaretPosition();
+                    int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caretPosition);
+                    if (lineIndex >= 0 && lineIndex < lines.size()) {
+                        VisualLine line = lines.get(lineIndex);
+                        caretInfo = new CaretInfo(
+                                RichTextVisualLayoutHelper.xForIndex(line, caretPosition),
+                                line.top(),
+                                line.height()
+                        );
                     }
+                }
+                if (caretInfo == null) {
+                    int layoutCaretPosition = layout.layoutTextData().sourceToLayoutPosition(editor.getCaretPosition());
+                    caretInfo = findCaret(layout.renderLines(), layoutCaretPosition);
                 }
                 if (caretInfo != null) {
                     caretLayer.getChildren().add(createCaretNode(caretInfo.x(), caretInfo.y(), caretInfo.height()));

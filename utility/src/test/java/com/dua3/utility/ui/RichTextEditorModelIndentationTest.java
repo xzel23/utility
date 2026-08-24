@@ -69,6 +69,18 @@ class RichTextEditorModelIndentationTest {
     }
 
     @Test
+    void splitBeforeLeadingSpaceIndentsNewParagraph() {
+        RichTextEditorModel model = indentedModel("text more");
+
+        model.replaceText(4, 4, "\n");
+
+        RichText text = model.getText();
+        assertEquals("text\n more", text.toString());
+        assertEquals(40.0f, indentAt(text, 5));
+        assertNull(text.attributesAt(6).get(Style.TEXT_INDENT_LEFT));
+    }
+
+    @Test
     void joiningParagraphsUsesFirstParagraphIndentation() {
         RichTextEditorModel model = new RichTextEditorModel(RichText.valueOf("first\nsecond"), 10, com.dua3.utility.text.FontUtil.getInstance());
         model.selectRange(0, 1);
