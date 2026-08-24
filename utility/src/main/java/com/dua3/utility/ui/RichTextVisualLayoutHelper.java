@@ -25,8 +25,16 @@ public final class RichTextVisualLayoutHelper {
      * @param start start offset in source text
      * @param end end offset in source text
      * @param text detached block text
+     * @param indent indentation of block
      */
     public record LogicalBlock(int start, int end, RichText text, double indent) {
+        /**
+         * Constructs a LogicalBlock representing a segment of text without trailing newline.
+         *
+         * @param start the start offset in the source text
+         * @param end the end offset in the source text
+         * @param text the detached block of text
+         */
         public LogicalBlock(int start, int end, RichText text) {
             this(start, end, text, 0.0);
         }

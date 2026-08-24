@@ -915,7 +915,16 @@ public class RichTextEditorModel {
         return applyFormattingChange(updated);
     }
 
-    /** Adjusts left indentation for the paragraph(s) intersecting the selection. */
+    /**
+     * Adjusts the indentation of lines within the selected text range by a specified amount of points.
+     * This method modifies the indentation of each line by applying the given delta to the current indentation level.
+     * If the indentation level changes, the method updates the text with the new formatting.
+     *
+     * @param deltaPoints the amount of points to adjust the indentation for each line. A positive value increases
+     *                    the indentation, while a negative value decreases it. If the value is zero or not finite,
+     *                    no adjustment is made.
+     * @return true if the text was modified as a result of the indentation adjustment; false otherwise.
+     */
     public boolean adjustIndentation(double deltaPoints) {
         if (!Double.isFinite(deltaPoints) || deltaPoints == 0.0 || text.isEmpty()) {
             return false;
