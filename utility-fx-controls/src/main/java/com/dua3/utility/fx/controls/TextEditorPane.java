@@ -41,7 +41,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -1673,7 +1672,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     }
 
     private RichText toRichTextWithCurrentProperties(@Nullable CharSequence text) {
-        RichText result = RichTextEditorModel.toRichText(
+        return RichTextEditorModel.toRichText(
                 text,
                 isBold(),
                 isItalic(),
@@ -1684,21 +1683,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
                 getFontFamily(),
                 getFontSize()
         );
-        if (text != null && text.toString().contains("\n") && !result.isEmpty()) {
-            int probe = Math.min(sharedModel.getCaretPosition(), Math.max(0, sharedModel.length() - 1));
-            if (sharedModel.length() > 0) {
-                int lineStart = sharedModel.lineRangeAt(probe).start();
-                Object indent = sharedModel.getText().attributesAt(lineStart).get(Style.TEXT_INDENT_LEFT);
-                if (indent == null) {
-                    for (Style style : sharedModel.getText().stylesAt(lineStart)) {
-                        indent = style.get(Style.TEXT_INDENT_LEFT);
-                        if (indent != null) break;
-                    }
-                }
-                if (indent != null) result = result.apply(Map.of(Style.TEXT_INDENT_LEFT, indent));
-            }
-        }
-        return result;
     }
 
     private RichText normalizeIncomingText(@Nullable ToRichText text) {

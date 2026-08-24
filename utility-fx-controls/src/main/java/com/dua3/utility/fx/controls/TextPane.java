@@ -475,17 +475,18 @@ public class TextPane extends Control implements RichTextPane {
     private static FragmentedText applyParagraphIndentation(FragmentedText fragments, RichText source, double scale) {
         List<List<FragmentedText.Fragment>> lines = new ArrayList<>();
         if (source.isEmpty()) return fragments;
+        float maximumIndent = 0.0f;
         for (List<FragmentedText.Fragment> line : fragments.lines()) {
             int index = line.stream().map(f -> f.text() instanceof Run r ? r.getStart() : -1).filter(i -> i >= 0).findFirst().orElse(0);
             int probe = Math.clamp(index, 0, Math.max(0, source.length() - 1));
             while (probe > 0 && source.charAt(probe - 1) != '\n') probe--;
             Object value = source.attributesAt(probe).get(Style.TEXT_INDENT_LEFT);
-            if (value == null) for (Style s : source.stylesAt(probe)) if (s.get(Style.TEXT_INDENT_LEFT) != null) { value = s.get(Style.TEXT_INDENT_LEFT); break; }
-            double indent = value instanceof Number n ? n.doubleValue() : value == null ? 0.0 : Double.parseDouble(value.toString());
+            double indent = value instanceof Number n ? n.doubleValue() : 0.0;
             float dx = (float) (indent * scale);
+            maximumIndent = Math.max(maximumIndent, dx);
             lines.add(line.stream().map(f -> new FragmentedText.Fragment(f.x() + dx, f.y(), f.w(), f.h(), f.baseLine(), f.font(), f.text())).toList());
         }
-        return new FragmentedText(lines, fragments.width() + (float) (40 * scale), fragments.height(), fragments.baseLine(), fragments.actualWidth() + (float) (40 * scale), fragments.actualHeight());
+        return new FragmentedText(lines, fragments.width() + maximumIndent, fragments.height(), fragments.baseLine(), fragments.actualWidth() + maximumIndent, fragments.actualHeight());
     }
 
     private static double measureNodeWidth(Node node) {

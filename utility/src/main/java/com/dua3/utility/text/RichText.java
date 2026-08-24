@@ -1194,6 +1194,47 @@ public final class RichText
     }
 
     /**
+     * Returns a copy with an explicit attribute removed from the given range.
+     *
+     * @param attribute attribute name
+     * @param from start index (inclusive)
+     * @param to end index (exclusive)
+     * @return text without the attribute in the requested range
+     */
+    public RichText removeAttribute(String attribute, int from, int to) {
+        Objects.checkFromToIndex(from, to, length);
+        if (from == to) {
+            return this;
+        }
+
+        String base = toString();
+        List<Run> updatedRuns = new ArrayList<>();
+        boolean changed = false;
+        for (Run run : runs()) {
+            int runStart = run.getStart() - start;
+            int runEnd = runStart + run.length();
+            int overlapStart = Math.max(from, runStart);
+            int overlapEnd = Math.min(to, runEnd);
+            if (overlapStart >= overlapEnd || !run.attributes().containsKey(attribute)) {
+                updatedRuns.add(new Run(base, runStart, run.length(), run.attributes()));
+                continue;
+            }
+
+            if (runStart < overlapStart) {
+                updatedRuns.add(new Run(base, runStart, overlapStart - runStart, run.attributes()));
+            }
+            Map<String, @Nullable Object> attributes = new HashMap<>(run.attributes());
+            attributes.remove(attribute);
+            updatedRuns.add(new Run(base, overlapStart, overlapEnd - overlapStart, TextAttributes.of(attributes)));
+            if (overlapEnd < runEnd) {
+                updatedRuns.add(new Run(base, overlapEnd, runEnd - overlapEnd, run.attributes()));
+            }
+            changed = true;
+        }
+        return changed ? new RichText(updatedRuns.toArray(Run[]::new)) : this;
+    }
+
+    /**
      * Returns a copy of this text with the specified style removed from a subrange.
      * Other attributes are preserved.
      *

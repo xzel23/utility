@@ -204,7 +204,8 @@ public class TextEditorPaneSample extends Application {
         b.push(Style.BOLD).append("Combined TextEditorPane/TextPane demo").pop(Style.BOLD).append('\n');
         b.append("Edit in the upper pane, then press Apply to commit to InputControl state.\n");
         b.append("Reset restores the default InputControl value.\n\n");
-        b.push(Style.TEXT_INDENT_LEFT, 40.0f).append("This paragraph starts indented.\n").pop(Style.TEXT_INDENT_LEFT);
+        b.push(Style.TEXT_INDENT_LEFT, 40.0f).append('T').pop(Style.TEXT_INDENT_LEFT);
+        b.append("his paragraph starts indented.\n");
 
         b.append("Inline controls: ");
         b.appendHyperlink("Hyperlink with space", statusUri("Hyperlink clicked"));

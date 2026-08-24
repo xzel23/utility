@@ -934,7 +934,9 @@ public class RichTextEditorModel {
                 double next = Math.max(0.0, current + deltaPoints);
                 if (Math.abs(next - current) > 1e-6) {
                     // Paragraph indentation belongs only to the first character of the line.
-                    updated = updated.apply(Map.of(Style.TEXT_INDENT_LEFT, (float) next), line.start(), line.start() + 1);
+                    updated = next == 0.0
+                            ? updated.removeAttribute(Style.TEXT_INDENT_LEFT, line.start(), line.start() + 1)
+                            : updated.apply(Map.of(Style.TEXT_INDENT_LEFT, (float) next), line.start(), line.start() + 1);
                     changed = true;
                 }
             }
@@ -1429,7 +1431,8 @@ public class RichTextEditorModel {
         int s = Math.clamp(Math.min(start, end), 0, max);
         int e = Math.clamp(Math.max(start, end), 0, max);
         RichText removed = detach(text.subSequence(s, e));
-        Object inheritedIndent = s > 0 ? text.attributesAt(s - 1).get(Style.TEXT_INDENT_LEFT) : null;
+        Number inheritedIndent = paragraphIndentAt(text, s);
+        boolean contentChanged = !removed.toString().contentEquals(inserted);
 
         if (removed.equals(inserted)) {
             int newCaret = s + inserted.length();
@@ -1440,12 +1443,17 @@ public class RichTextEditorModel {
         int beforeAnchor = anchor;
         int beforeCaret = caret;
 
-        text = detach(text.replace(s, e, inserted));
-        // A newly created paragraph inherits the indentation of the paragraph it was split from.
-        if (inserted.toString().indexOf('\n') >= 0 && s < text.length() && s > 0) {
-            if (inheritedIndent instanceof Number) {
-                text = text.apply(Map.of(Style.TEXT_INDENT_LEFT, inheritedIndent), s, s + 1);
-            }
+        text = normalizeParagraphIndentation(detach(text.replace(s, e, inserted)));
+        if (!contentChanged) {
+            // Formatting changes already contain the intended paragraph indentation.
+        } else if (inserted.toString().indexOf('\n') >= 0) {
+            int insertedOffset = inserted.toString().indexOf('\n');
+            int nextParagraphStart = s + insertedOffset + 1;
+            text = setParagraphIndentation(text, nextParagraphStart, inheritedIndent);
+        } else if (removed.toString().indexOf('\n') >= 0) {
+            text = setParagraphIndentation(text, s, inheritedIndent);
+        } else if (inheritedIndent != null) {
+            text = setParagraphIndentation(text, s, inheritedIndent);
         }
         invalidateVisualLineCache();
         int newCaret = s + inserted.length();
@@ -1460,6 +1468,59 @@ public class RichTextEditorModel {
 
     private void pushHistory(RichTextEditHistory.TextReplaceHistoryEntry entry) {
         history.push(entry);
+    }
+
+    private static @Nullable Number paragraphIndentAt(RichText value, int position) {
+        if (value.isEmpty()) return null;
+        int probe = Math.clamp(position, 0, value.length());
+        if (probe == value.length() && probe > 0 && value.charAt(probe - 1) == '\n') {
+            Object marker = value.attributesAt(probe - 1).get(Style.TEXT_INDENT_LEFT);
+            return marker instanceof Number n ? n : null;
+        }
+        if (probe == value.length()) probe--;
+        int start = probe;
+        while (start > 0 && value.charAt(start - 1) != '\n') start--;
+        int end = start;
+        while (end < value.length() && value.charAt(end) != '\n') end++;
+        for (int i = start; i < end; i++) {
+            Object indent = value.attributesAt(i).get(Style.TEXT_INDENT_LEFT);
+            if (indent instanceof Number n) return n;
+        }
+        return null;
+    }
+
+    private static RichText normalizeParagraphIndentation(RichText value) {
+        RichText normalized = value;
+        int start = 0;
+        while (start < normalized.length()) {
+            int end = start;
+            while (end < normalized.length() && normalized.charAt(end) != '\n') end++;
+            Number indent = paragraphIndentAt(normalized, start);
+            if (end > start) {
+                normalized = normalized.removeAttribute(Style.TEXT_INDENT_LEFT, start, end);
+                if (indent != null) normalized = normalized.apply(Map.of(Style.TEXT_INDENT_LEFT, indent), start, start + 1);
+            }
+            start = end + 1;
+        }
+        return normalized;
+    }
+
+    private static RichText setParagraphIndentation(RichText value, int position, @Nullable Number indent) {
+        if (value.isEmpty()) return value;
+        if (position >= value.length() && value.charAt(value.length() - 1) == '\n') {
+            return indent == null
+                    ? value.removeAttribute(Style.TEXT_INDENT_LEFT, value.length() - 1, value.length())
+                    : value.apply(Map.of(Style.TEXT_INDENT_LEFT, indent), value.length() - 1, value.length());
+        }
+        int start = Math.clamp(position, 0, value.length() - 1);
+        while (start > 0 && value.charAt(start - 1) != '\n') start--;
+        int end = start;
+        while (end < value.length() && value.charAt(end) != '\n') end++;
+        if (end == start) {
+            return indent == null ? value : value.apply(Map.of(Style.TEXT_INDENT_LEFT, indent), start, start + 1);
+        }
+        RichText updated = value.removeAttribute(Style.TEXT_INDENT_LEFT, start, end);
+        return indent == null ? updated : updated.apply(Map.of(Style.TEXT_INDENT_LEFT, indent), start, start + 1);
     }
 
     private static RichText detach(RichText value) {
