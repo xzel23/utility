@@ -650,12 +650,14 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                 case '{' -> buffer.append("\\{");
                 case '}' -> buffer.append("\\}");
                 case '\t' -> buffer.append("\\tab ");
-                case '\n' -> buffer.append("\\line ");
+                // Use a paragraph break so paragraph properties such as \li
+                // are applied by word processors to the following paragraph.
+                case '\n' -> buffer.append("\\par ");
                 case '\r' -> {
                     if (i < length && text.charAt(i) == '\n') {
                         i++;
                     }
-                    buffer.append("\\line ");
+                    buffer.append("\\par ");
                 }
                 default -> appendEscapedCodePoint(buffer, codePoint);
             }
