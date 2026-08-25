@@ -73,9 +73,9 @@ public abstract class FxTestBase {
     }
 
     /**
-     * This method intentionally does not call Platform.exit().
-     * The platform will be shut down when the JVM exits.
-     * This allows multiple JavaFX test classes to run in sequence.
+     * Releases JavaFX after this test class. Tests run in one JVM per class,
+     * so retaining the JavaFX application thread would prevent that JVM from
+     * terminating.
      */
     @AfterAll
     public static void cleanupPlatform() {
@@ -85,6 +85,7 @@ public abstract class FxTestBase {
                 sharedStage.setScene(null);
             }
         });
+        Platform.exit();
     }
 
     /**
