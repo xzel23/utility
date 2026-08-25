@@ -1,5 +1,6 @@
 package com.dua3.utility.io;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -207,7 +208,7 @@ class PayloadTest {
         }
 
         @Override
-        public int read(byte[] bytes, int offset, int length) throws IOException {
+        public int read(byte @Nullable [] bytes, int offset, int length) throws IOException {
             throw new IOException("probe failed");
         }
 
