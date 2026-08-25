@@ -11,6 +11,7 @@ import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.VAnchor;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullUnmarked;
 
@@ -75,14 +76,6 @@ public final class RtfReader {
         StyledRtfParser parser = new StyledRtfParser();
         parser.parse(rtf);
         return parser.toRichText();
-    }
-
-    /**
-     * Makes the writer's private style-metadata destination visible to
-     * rtfparserkit, which silently discards unknown control words.
-     */
-    private static String normalizePrivateStyleNameMetadataDestination(String rtf) {
-        return rtf.replace("{\\*\\duastyles ", "{\\*\\userprops ");
     }
 
     @NullUnmarked
@@ -152,6 +145,15 @@ public final class RtfReader {
         private @Nullable List<String> pendingStyleNames = null;
         private int inlineStyleId = 0;
         private int syntheticStyleId = 0;
+
+        /**
+         * Makes the writer's private style-metadata destination visible to
+         * rtfparserkit, which silently discards unknown control words.
+         */
+        @NullMarked
+        private static String normalizePrivateStyleNameMetadataDestination(String rtf) {
+            return rtf.replace("{\\*\\duastyles ", "{\\*\\userprops ");
+        }
 
         private void parse(String rtf) {
             try {
@@ -427,31 +429,24 @@ public final class RtfReader {
                 return;
             }
 
-            if (inColorTable) {
+            if (inColorTable && hasParameter) {
                 switch (command) {
                     case "red" -> {
-                        if (hasParameter) {
-                            currentRed = Math.clamp(parameter, 0, 255);
-                            hasColorComponent = true;
-                        }
+                        currentRed = Math.clamp(parameter, 0, 255);
+                        hasColorComponent = true;
                     }
                     case "green" -> {
-                        if (hasParameter) {
-                            currentGreen = Math.clamp(parameter, 0, 255);
-                            hasColorComponent = true;
-                        }
+                        currentGreen = Math.clamp(parameter, 0, 255);
+                        hasColorComponent = true;
                     }
                     case "blue" -> {
-                        if (hasParameter) {
-                            currentBlue = Math.clamp(parameter, 0, 255);
-                            hasColorComponent = true;
-                        }
+                        currentBlue = Math.clamp(parameter, 0, 255);
+                        hasColorComponent = true;
                     }
                     default -> {
                         // ignore other commands in color table
                     }
                 }
-                return;
             }
 
             switch (command) {
@@ -504,38 +499,18 @@ public final class RtfReader {
             switch (command) {
                 case "jpegblip" -> pictureMimeType = ImageUtil.MIME_TYPE_JPEG;
                 case "pngblip" -> pictureMimeType = ImageUtil.MIME_TYPE_PNG;
-                case "picw" -> {
-                    if (hasParameter) {
-                        pictureNativeWidth = Math.max(0, parameter);
-                    }
-                }
-                case "pich" -> {
-                    if (hasParameter) {
-                        pictureNativeHeight = Math.max(0, parameter);
-                    }
-                }
-                case "picwgoal" -> {
-                    if (hasParameter) {
-                        pictureWidthGoalTwips = Math.max(0, parameter);
-                    }
-                }
-                case "pichgoal" -> {
-                    if (hasParameter) {
-                        pictureHeightGoalTwips = Math.max(0, parameter);
-                    }
-                }
-                case "picscalex" -> {
-                    if (hasParameter) {
-                        pictureScaleXPercent = Math.max(1, parameter);
-                    }
-                }
-                case "picscaley" -> {
-                    if (hasParameter) {
-                        pictureScaleYPercent = Math.max(1, parameter);
-                    }
-                }
                 default -> {
-                    // ignore other picture properties (e.g., dimensions, scaling)
+                    if (hasParameter) {
+                        switch (command) {
+                            case "picw" -> pictureNativeWidth = Math.max(0, parameter);
+                            case "pich" -> pictureNativeHeight = Math.max(0, parameter);
+                            case "picwgoal" -> pictureWidthGoalTwips = Math.max(0, parameter);
+                            case "pichgoal" -> pictureHeightGoalTwips = Math.max(0, parameter);
+                            case "picscalex" -> pictureScaleXPercent = Math.max(1, parameter);
+                            case "picscaley" -> pictureScaleYPercent = Math.max(1, parameter);
+                            default -> {/* ignore other picture properties (e.g., dimensions, scaling) */}
+                        }
+                    }
                 }
             }
         }
