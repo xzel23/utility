@@ -1006,6 +1006,7 @@ public class TextPane extends Control implements RichTextPane {
         private Font lastFont = FontUtil.getInstance().getDefaultFont();
         private boolean lastWrapText;
         private boolean blink = true;
+        private @Nullable Rectangle caretNode;
         private final @Nullable TextEditorPane editor;
         private final Timeline caretTimeline;
         private final Timeline dragAutoscrollTimeline;
@@ -1589,7 +1590,12 @@ public class TextPane extends Control implements RichTextPane {
         private void setBlink(boolean value) {
             if (blink != value) {
                 blink = value;
-                invalidate();
+                // Blinking only changes the overlay's paint state. Opacity (rather than
+                // visibility) keeps the caret in the parent's bounds, so ScrollPane does
+                // not recompute its content bounds on every blink.
+                if (caretNode != null) {
+                    caretNode.setOpacity(blink ? 0.0 : 1.0);
+                }
             }
         }
 
@@ -1808,6 +1814,7 @@ public class TextPane extends Control implements RichTextPane {
         ) {
             selectionLayer.getChildren().clear();
             caretLayer.getChildren().clear();
+            caretNode = null;
 
             if (!(control instanceof TextEditorPane tep)) {
                 return;
@@ -1870,7 +1877,7 @@ public class TextPane extends Control implements RichTextPane {
                 }
             }
 
-            if (tep.isEditable() && hasEditorFocus(control) && !blink) {
+            if (tep.isEditable() && hasEditorFocus(control)) {
                 CaretInfo caretInfo = null;
                 List<VisualLine> lines = tep.buildVisualLines(availableWidth);
                 if (!lines.isEmpty()) {
@@ -1890,7 +1897,9 @@ public class TextPane extends Control implements RichTextPane {
                     caretInfo = findCaret(layout.renderLines(), layoutCaretPosition);
                 }
                 if (caretInfo != null) {
-                    caretLayer.getChildren().add(createCaretNode(caretInfo.x(), caretInfo.y(), caretInfo.height()));
+                    caretNode = createCaretNode(caretInfo.x(), caretInfo.y(), caretInfo.height());
+                    caretNode.setOpacity(blink ? 0.0 : 1.0);
+                    caretLayer.getChildren().add(caretNode);
                 }
             }
         }
