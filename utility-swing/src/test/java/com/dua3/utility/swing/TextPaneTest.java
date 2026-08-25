@@ -3,9 +3,11 @@ package com.dua3.utility.swing;
 import com.dua3.utility.lang.WrappedException;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.RichTextBuilderExtBase;
+import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.InlineNode;
 import org.junit.jupiter.api.Test;
@@ -123,6 +125,7 @@ class TextPaneTest {
         TextPane.RenderLayout layout = onEdtGet(pane::renderLayoutForTest);
         assertEquals(1, layout.placements().size());
         assertInstanceOf(AbstractButton.class, layout.placements().getFirst().component());
+        assertEquals(inlinePlaceholderX(layout), layout.placements().getFirst().x(), 0.01);
 
         onEdtRun(((AbstractButton) layout.placements().getFirst().component())::doClick);
         assertEquals(target, clickedUri.get());
@@ -153,6 +156,7 @@ class TextPaneTest {
         TextPane.RenderLayout layout = onEdtGet(pane::renderLayoutForTest);
         assertEquals(1, layout.placements().size());
         assertInstanceOf(AbstractButton.class, layout.placements().getFirst().component());
+        assertEquals(inlinePlaceholderX(layout), layout.placements().getFirst().x(), 0.01);
 
         onEdtRun(((AbstractButton) layout.placements().getFirst().component())::doClick);
         assertEquals(target, clickedUri.get());
@@ -171,6 +175,19 @@ class TextPaneTest {
                 .pop(inlineStyle)
                 .append(" after")
                 .toRichText();
+    }
+
+    private static double inlinePlaceholderX(TextPane.RenderLayout layout) {
+        for (var line : layout.renderLines()) {
+            for (FragmentedText.Fragment fragment : line) {
+                if (fragment.text() instanceof Run run
+                        && run.getStyles().contains(com.dua3.utility.ui.RichTextPaneLayoutHelper.STYLE_INVISIBLE_TEXT)
+                        && !run.isEmpty()) {
+                    return fragment.x();
+                }
+            }
+        }
+        throw new AssertionError("inline placeholder fragment not found");
     }
 
     private static final class TestTextPane extends TextPane {

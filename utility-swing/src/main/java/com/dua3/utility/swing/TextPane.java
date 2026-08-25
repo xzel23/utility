@@ -512,10 +512,9 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
                 VAnchor vAnchor = getInlineNodeVAnchor(run);
                 double descent = getInlineNodeDescent(run);
-                double leadingWidth = getInlineLeadingWidth(run);
                 placements.add(new InlineComponentPlacement(
                         component,
-                        (float) (fragment.x() - leadingWidth),
+                        fragment.x(),
                         lineTop,
                         fragment.w(),
                         lineHeight,
@@ -771,10 +770,6 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
     private static double getInlineNodeDescent(Run run) {
         return getInlineReferenceValue(run, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT, () -> Double.NaN);
-    }
-
-    private static double getInlineLeadingWidth(Run run) {
-        return getInlineReferenceValue(run, STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH, () -> 0.0);
     }
 
     private static double computeInlineDescent(InlineComponentPlacement placement, double prefH, int baselineOffset) {
