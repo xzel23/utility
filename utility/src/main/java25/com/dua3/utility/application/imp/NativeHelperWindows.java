@@ -40,6 +40,7 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
     private static final int EVENT_OBJECT_CREATE = 0x8000;
     private static final int EVENT_OBJECT_NAMECHANGE = 0x800C;
 
+    private final Object autoThemeLock = new Object();
     private MemorySegment hookHandle = MemorySegment.NULL;
     private boolean isAutoThemeEnabled = false;
     private volatile int currentDarkMode = 0;
@@ -146,34 +147,37 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
         }
     }
 
-    private synchronized void ensureAutoThemeEnabled() {
-        if (isAutoThemeEnabled) return;
+    @SuppressWarnings("java:S125") // that comment is not commented out code
+    private void ensureAutoThemeEnabled() {
+        synchronized (autoThemeLock) {
+            if (isAutoThemeEnabled) return;
 
-        try {
-            int currentPid = (int) getCurrentProcessId.invokeExact();
+            try {
+                int currentPid = (int) getCurrentProcessId.invokeExact();
 
-            // MethodHandle for: void onWindowEvent(MemorySegment, int, MemorySegment, int, int, int, int)
-            MethodHandle onWindowEventHandle = MethodHandles.lookup().findVirtual(NativeHelperWindows.class, "onWindowEvent",
-                    MethodType.methodType(void.class, MemorySegment.class, int.class, MemorySegment.class, int.class, int.class, int.class, int.class));
+                // MethodHandle for void onWindowEvent(MemorySegment, int, MemorySegment, int, int, int, int)
+                MethodHandle onWindowEventHandle = MethodHandles.lookup().findVirtual(NativeHelperWindows.class, "onWindowEvent",
+                        MethodType.methodType(void.class, MemorySegment.class, int.class, MemorySegment.class, int.class, int.class, int.class, int.class));
 
-            MemorySegment hookStub = linker.upcallStub(
-                    onWindowEventHandle.bindTo(this),
-                    FunctionDescriptor.ofVoid(ADDRESS, JAVA_INT, ADDRESS, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT),
-                    Arena.global()
-            );
+                MemorySegment hookStub = linker.upcallStub(
+                        onWindowEventHandle.bindTo(this),
+                        FunctionDescriptor.ofVoid(ADDRESS, JAVA_INT, ADDRESS, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT),
+                        Arena.global()
+                );
 
-            this.hookHandle = (MemorySegment) setWinEventHook.invokeExact(
-                    EVENT_OBJECT_CREATE, EVENT_OBJECT_NAMECHANGE,
-                    MemorySegment.NULL, hookStub,
-                    currentPid, 0, WINEVENT_OUTOFCONTEXT
-            );
+                this.hookHandle = (MemorySegment) setWinEventHook.invokeExact(
+                        EVENT_OBJECT_CREATE, EVENT_OBJECT_NAMECHANGE,
+                        MemorySegment.NULL, hookStub,
+                        currentPid, 0, WINEVENT_OUTOFCONTEXT
+                );
 
-            if (!this.hookHandle.equals(MemorySegment.NULL)) {
-                isAutoThemeEnabled = true;
-                LOG.info("Agnostic window hook installed for PID {}", currentPid);
+                if (!this.hookHandle.equals(MemorySegment.NULL)) {
+                    isAutoThemeEnabled = true;
+                    LOG.info("Agnostic window hook installed for PID {}", currentPid);
+                }
+            } catch (Throwable t) {
+                LOG.error("Failed to install native auto-theme hook", t);
             }
-        } catch (Throwable t) {
-            LOG.error("Failed to install native auto-theme hook", t);
         }
     }
 
@@ -182,27 +186,30 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
      * window decoration updates are requested again.
      */
     @Override
-    public synchronized void close() {
-        if (!isAutoThemeEnabled || hookHandle.equals(MemorySegment.NULL)) {
-            return;
-        }
-
-        MemorySegment handle = hookHandle;
-        hookHandle = MemorySegment.NULL;
-        isAutoThemeEnabled = false;
-        try {
-            int result = (int) unhookWinEvent.invokeExact(handle);
-            if (result == 0) {
-                LOG.warn("Failed to remove native window hook");
+    public void close() {
+        synchronized (autoThemeLock) {
+            if (!isAutoThemeEnabled || hookHandle.equals(MemorySegment.NULL)) {
+                return;
             }
-        } catch (Throwable t) {
-            LOG.warn("Failed to remove native window hook", t);
+
+            MemorySegment handle = hookHandle;
+            hookHandle = MemorySegment.NULL;
+            isAutoThemeEnabled = false;
+            try {
+                int result = (int) unhookWinEvent.invokeExact(handle);
+                if (result == 0) {
+                    LOG.warn("Failed to remove native window hook");
+                }
+            } catch (Throwable t) {
+                LOG.warn("Failed to remove native window hook", t);
+            }
         }
     }
 
     /**
      * Native callback for WinEventHook.
      */
+    @SuppressWarnings({"unused", "java:S1144"})
     private void onWindowEvent(MemorySegment hWinEventHook, int event, MemorySegment hwnd,
                                int idObject, int idChild, int dwEventThread, int dwmsEventTime) {
         // idObject == 0 means the event is for a Window object (OBJID_WINDOW)
@@ -225,6 +232,7 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
         }
     }
 
+    @SuppressWarnings({"unused", "java:S1144"})
     private int processWindow(List<MemorySegment> list, int targetPid, MemorySegment hwnd, long lParam) {
         try (Arena localArena = Arena.ofConfined()) {
             MemorySegment pPid = localArena.allocate(JAVA_INT);
