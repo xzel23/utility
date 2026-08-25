@@ -879,8 +879,7 @@ public final class IoUtil {
                         String zipName = toZipName(zipRoot, p);
                         try {
                             if (Files.isDirectory(realPath)) {
-                                zip.putNextEntry(new ZipEntry(zipName + "/"));
-                                zip.closeEntry();
+                                addDirectoryEntry(zip, zipName);
                             } else {
                                 ZipEntry entry = new ZipEntry(zipName);
                                 entry.setTime(Files.getLastModifiedTime(realPath).toMillis());
@@ -897,6 +896,19 @@ public final class IoUtil {
         } catch (UncheckedIOException e) {
             throw e.getCause();
         }
+    }
+
+    /**
+     * Adds a ZIP directory entry. Directory entries intentionally have no content.
+     *
+     * @param zip the ZIP output stream
+     * @param zipName the directory name without its trailing slash
+     * @throws IOException if writing the entry fails
+     */
+    @SuppressWarnings("java:S9342") // ZIP directory entries are intentionally empty.
+    private static void addDirectoryEntry(ZipOutputStream zip, String zipName) throws IOException {
+        zip.putNextEntry(new ZipEntry(zipName + "/"));
+        zip.closeEntry();
     }
 
     /** Default maximum number of files to extract from a zip archive */

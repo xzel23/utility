@@ -100,12 +100,22 @@ public final class Zip implements AutoCloseable, Flushable {
             dirname = path + dirname;
         }
 
-        // write directory entry
-        zout.putNextEntry(new ZipEntry(dirname));
-        zout.closeEntry();
+        addDirectoryEntry(dirname);
 
         // update path
         path = dirname;
+    }
+
+    /**
+     * Adds a ZIP directory entry. Directory entries intentionally have no content.
+     *
+     * @param dirname the directory name, including its trailing slash
+     * @throws IOException if writing the entry fails
+     */
+    @SuppressWarnings("java:S9342") // ZIP directory entries are intentionally empty.
+    private void addDirectoryEntry(String dirname) throws IOException {
+        zout.putNextEntry(new ZipEntry(dirname));
+        zout.closeEntry();
     }
 
     @Override
