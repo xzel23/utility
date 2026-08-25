@@ -5,6 +5,7 @@ import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.RichText;
@@ -219,9 +220,9 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             return Math.max(directIndentation, styledIndentation);
         }
 
-        private int indentationTwips(Object value) {
+        private int indentationTwips(@Nullable Object value) {
             return value instanceof Number number
-                    ? Math.max(0, (int) Math.round(number.doubleValue() * TWIPS_PER_POINT))
+                    ? Math.max(0, MathUtil.roundToInt(number.doubleValue() * TWIPS_PER_POINT))
                     : 0;
         }
 
