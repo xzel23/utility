@@ -1284,7 +1284,7 @@ public final class RichText
 
     private static Run withAppliedAttributes(Run run, Map<String, @Nullable Object> attributes) {
         Map<String, @Nullable Object> merged = new HashMap<>(run.attributes());
-        attributes.forEach(merged::put);
+        merged.putAll(attributes);
         return new Run(run.base(), run.getStart(), run.length(), TextAttributes.of(merged));
     }
 
