@@ -269,6 +269,11 @@ jobs:
           java-package: 'jdk+fx'
           cache: 'gradle'
 
+      - name: Expose JavaFX JDK to Qodana
+        id: javafx-jdk
+        shell: bash
+        run: echo "path=$JAVA_HOME" >> "$GITHUB_OUTPUT"
+
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -299,6 +304,9 @@ jobs:
         run: |
           cat > qodana.yaml << 'EOF'
           version: "1.0"
+          # The JDK is mounted into the Qodana container below. Qodana can use
+          # its JavaFX modules instead of its default non-JavaFX JBR.
+          projectJDK: 25
           profile:
             name: qodana.starter
           exclude:
@@ -310,6 +318,8 @@ jobs:
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@b588768b6e7e6da579e518bc584f79de0d243692 # v2026.2.0
         with:
-          args: --property idea.kotlin.plugin.use.k2=false
+          args: >-
+            --volume ${{ steps.javafx-jdk.outputs.path }}:/root/.jdks/liberica-25-fx:ro
+            --property idea.kotlin.plugin.use.k2=false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
