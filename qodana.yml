@@ -1,2 +1,11 @@
-version: 1.0
-projectJDK: liberica-full-21
+version: "1.0"
+linter: qodana-jvm-community
+withinDocker: false
+
+profile:
+  name: qodana.starter
+
+exclude:
+  - name: All
+    paths:
+      - "**/jmh/**"
