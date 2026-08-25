@@ -29,11 +29,30 @@ public class Magic {
      * numeric signatures. Each magic number includes a MIME type, the
      * expected magic number value, and a bitmask for matching.
      */
-    interface MagicNumber{
+    public interface MagicNumber{
+        /**
+         * Creates and returns a new instance of a MagicNumber using the specified MIME type,
+         * magic number value, and bitmask.
+         *
+         * @param mimeType the MIME type associated with the file signature
+         * @param magicNumber the numeric signature used to identify the file type
+         * @param mask the bitmask applied to the magic number for pattern matching
+         * @return a new MagicNumber instance with the provided MIME type, magic number, and mask
+         */
         static MagicNumber of(String mimeType, long magicNumber, long mask) {
             return new SimpleMagicNumber(mimeType, magicNumber, mask);
         }
 
+        /**
+         * Creates and returns a new instance of a MagicNumber using the specified MIME type
+         * and pattern string. The pattern string is converted into a numeric signature
+         * that is used to identify the file type.
+         *
+         * @param mimeType the MIME type associated with the file signature
+         * @param pattern an ASCII string with a maximum length of 8 characters, used as the magic number pattern
+         * @return a new MagicNumber instance with the provided MIME type and the pattern-derived magic number and mask
+         * @throws IllegalArgumentException if the pattern exceeds 8 characters or contains non-ASCII characters
+         */
         static MagicNumber of(String mimeType, String pattern) {
             LangUtil.checkArg(pattern.length() <= 8, "pattern must be at most 8 characters long");
 
@@ -56,8 +75,22 @@ public class Magic {
             return new SimpleMagicNumber(mimeType, magicNumber, mask);
         }
 
+        /**
+         * Determines if the given magic number matches the pattern defined
+         * by this MagicNumber instance. The comparison uses the magic number
+         * value and bitmask associated with this instance to determine if
+         * the input matches the expected file signature.
+         *
+         * @param magicNumber the numeric signature to be compared against the pattern of this MagicNumber instance
+         * @return true if the provided magic number matches the pattern; false otherwise
+         */
         boolean matches(long magicNumber);
 
+        /**
+         * Retrieves the MIME type associated with this MagicNumber instance.
+         *
+         * @return the MIME type as a String
+         */
         String mimeType();
     }
 
