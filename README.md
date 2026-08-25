@@ -237,10 +237,11 @@ could not be loaded.
 
 ### 24.4.0
 
+- feature: add indentation support to TextPane/TextEditorPane classes
 - fix column resizing feedback loop in JavaFX when TableViews is used with flexible column constraints
+- fix resource leaks in Windows-only code
 - update plugins and dependencies
 - pin GitHub Actions dependencies by SHA hash
-- add indentation support to TextPane/TextEditorPane classes
 - code cleanup; minor fixes
 
 ### 24.3.2
