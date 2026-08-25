@@ -364,7 +364,7 @@ public final class RichTextVisualLayoutHelper {
             }
         }
 
-        if (lineStart == Integer.MAX_VALUE || lineEnd < lineStart) {
+        if (lineStart == Integer.MAX_VALUE) {
             return new VisualLine(0, 0, lineTop, Math.max(1.0, lineHeight), new double[]{0.0});
         }
 
