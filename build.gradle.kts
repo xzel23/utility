@@ -1355,9 +1355,16 @@ jreleaser {
     signing {
         active.set(org.jreleaser.model.Active.ALWAYS)
         pgp {
+            mode.set(org.jreleaser.model.Signing.Mode.COMMAND)
             armored.set(true)
-            secretKey.set(System.getenv("SIGNING_SECRET_KEY"))
             passphrase.set(System.getenv("SIGNING_PASSWORD"))
+            verify.set(true)
+            command {
+                executable.set("gpg")
+                homeDir.set(System.getenv("JRELEASER_GPG_HOME"))
+                keyName.set(System.getenv("SIGNING_KEY_ID"))
+                defaultKeyring.set(true)
+            }
         }
     }
 

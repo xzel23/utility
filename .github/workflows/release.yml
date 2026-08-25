@@ -179,16 +179,31 @@ jobs:
             fi
           done
 
+      - name: Import signing key
+        env:
+          SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
+        run: |
+          set -euo pipefail
+          export GNUPGHOME="$RUNNER_TEMP/jreleaser-gnupg"
+          install -d -m 700 "$GNUPGHOME"
+          gpg --batch --import <<< "$SIGNING_SECRET_KEY"
+          signing_key_id=$(gpg --batch --with-colons --list-secret-keys | awk -F: '$1 == "fpr" { print $10; exit }')
+          if [[ -z "$signing_key_id" ]]; then
+            echo "No signing key was imported." >&2
+            exit 1
+          fi
+          echo "JRELEASER_GPG_HOME=$GNUPGHOME" >> "$GITHUB_ENV"
+          echo "SIGNING_KEY_ID=$signing_key_id" >> "$GITHUB_ENV"
+
       - name: Publish tested release bundle
         run: |
           set -o pipefail
           mkdir -p build/jreleaser
-          ./gradlew --no-daemon --no-configuration-cache --stacktrace \
+          ./gradlew --no-daemon --no-configuration-cache --warning-mode=summary --stacktrace \
             -PprebuiltReleaseBundle=true publishPreparedReleaseFromCi 2>&1 | tee build/jreleaser/gradle-publish.log
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Upload JReleaser diagnostics
