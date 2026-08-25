@@ -1340,7 +1340,7 @@ public final class IoUtil {
      */
     public static Path createSecureTempDirectory(String prefix) throws IOException {
         Path tempDirectory = Files.createTempDirectory(prefix, getFileAttributesForTempDir(null));
-        LOG.trace("created temp directory in default location {}", tempDirectory);
+        LOG.trace("created temp directory with prefix {} in default location: {}", prefix, tempDirectory);
         return tempDirectory;
     }
 
@@ -1358,7 +1358,7 @@ public final class IoUtil {
      */
     public static Path createSecureTempDirectory(Path dir, String prefix) throws IOException {
         Path tempDirectory = Files.createTempDirectory(dir, prefix, getFileAttributesForTempDir(dir));
-        LOG.trace("created temp directory {}", tempDirectory);
+        LOG.trace("created temp directory in {} with prefix {}: {}", dir, prefix, tempDirectory);
         return tempDirectory;
     }
 

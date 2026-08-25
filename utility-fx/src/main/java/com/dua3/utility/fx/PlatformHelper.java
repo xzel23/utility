@@ -213,7 +213,7 @@ public final class PlatformHelper {
             });
         } catch (IllegalStateException e) {
             // platform already shut down or not started
-            LOG.debug("Platform already shut down or not started");
+            LOG.debug("Platform has already shut down");
             return true;
         }
 

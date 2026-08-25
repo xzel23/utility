@@ -305,7 +305,7 @@ private fun writeDevelopmentVersion(version: String) {
     check(projectVersionPattern.containsMatchIn(previous)) {
         "projectVersion declaration not found in ${catalog.path}"
     }
-    val updated = previous.replace(projectVersionPattern, "${'$'}1$version${'$'}2")
+    val updated = previous.replace(projectVersionPattern, $$"$1$$version$2")
     Files.writeString(catalog.toPath(), updated, StandardCharsets.UTF_8)
 }
 
