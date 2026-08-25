@@ -21,7 +21,7 @@ import static java.lang.foreign.ValueLayout.*;
  * Implementation of NativeHelper for Windows using FFM API.
  * Automatically themes current and future windows in the process.
  */
-public final class NativeHelperWindows implements com.dua3.utility.application.NativeHelper {
+public final class NativeHelperWindows implements com.dua3.utility.application.NativeHelper, AutoCloseable {
 
     private static final Logger LOG = LogManager.getLogger(NativeHelperWindows.class);
 
@@ -33,6 +33,7 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
     private final MethodHandle isWindowVisible;
     private final MethodHandle rtlGetVersion;
     private final MethodHandle setWinEventHook;
+    private final MethodHandle unhookWinEvent;
 
     private static final int WINEVENT_OUTOFCONTEXT = 0x0000;
     // Event range for object creation and showing
@@ -82,6 +83,12 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
                 user32.findOrThrow("SetWinEventHook"),
                 FunctionDescriptor.of(ADDRESS, JAVA_INT, JAVA_INT, ADDRESS, ADDRESS, JAVA_INT, JAVA_INT, JAVA_INT)
         );
+        this.unhookWinEvent = linker.downcallHandle(
+                user32.findOrThrow("UnhookWinEvent"),
+                FunctionDescriptor.of(JAVA_INT, ADDRESS)
+        );
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close, "NativeHelperWindows-Shutdown"));
     }
 
     private static final class Holder {
@@ -139,7 +146,7 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
         }
     }
 
-    private void ensureAutoThemeEnabled() {
+    private synchronized void ensureAutoThemeEnabled() {
         if (isAutoThemeEnabled) return;
 
         try {
@@ -167,6 +174,29 @@ public final class NativeHelperWindows implements com.dua3.utility.application.N
             }
         } catch (Throwable t) {
             LOG.error("Failed to install native auto-theme hook", t);
+        }
+    }
+
+    /**
+     * Releases the native window-event hook. The singleton re-creates it if
+     * window decoration updates are requested again.
+     */
+    @Override
+    public synchronized void close() {
+        if (!isAutoThemeEnabled || hookHandle.equals(MemorySegment.NULL)) {
+            return;
+        }
+
+        MemorySegment handle = hookHandle;
+        hookHandle = MemorySegment.NULL;
+        isAutoThemeEnabled = false;
+        try {
+            int result = (int) unhookWinEvent.invokeExact(handle);
+            if (result == 0) {
+                LOG.warn("Failed to remove native window hook");
+            }
+        } catch (Throwable t) {
+            LOG.warn("Failed to remove native window hook", t);
         }
     }
 
