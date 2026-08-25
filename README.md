@@ -235,6 +235,14 @@ could not be loaded.
 
 ## Changes
 
+### 24.3.3
+
+- fix column resizing feedback loop in JavaFX when TableViews is used with flexible column constraints
+- update plugins and dependencies
+- pin GitHub Actions dependencies by SHA hash
+- add indentation support to TExtPane/TextEditorPane classes
+- code cleanup; minor fixes
+
 ### 24.3.2
 
 - `SliderWithButtons`: fix display of total value; add percentage and integer formatting options; add offset 
