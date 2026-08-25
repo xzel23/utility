@@ -5,6 +5,7 @@ import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>
  * These tests verify that the filter correctly accepts or rejects files based on the FileType.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class SwingFileFilterTest {
 
     private static class TestFileType<T> extends FileType<T> {

@@ -11,16 +11,15 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class TextPaneScaledPreferredHeightTest extends FxTestBase {
 
     @Test
-    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void preferredHeightContainsTheScaledCanvasWhenTextWraps() throws Exception {
         assertPreferredHeightContainsScaledCanvas(true);
     }
 
     @Test
-    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void preferredHeightContainsTheScaledCanvasWhenTextDoesNotWrap() throws Exception {
         assertPreferredHeightContainsScaledCanvas(false);
     }

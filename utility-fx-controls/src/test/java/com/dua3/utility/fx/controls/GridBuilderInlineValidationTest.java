@@ -2,11 +2,14 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.text.MessageFormatter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class GridBuilderInlineValidationTest extends FxTestBase {
 
     @SuppressWarnings("unchecked")

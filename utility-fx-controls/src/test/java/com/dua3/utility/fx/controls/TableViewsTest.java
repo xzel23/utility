@@ -4,12 +4,15 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.util.converter.DefaultStringConverter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class TableViewsTest extends FxTestBase {
 
     @Test

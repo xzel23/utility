@@ -6,10 +6,12 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * <p>
  * These tests verify the functionality of converting RichText to StyledDocument.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class StyledDocumentConverterTest {
 
     /**

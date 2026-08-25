@@ -11,17 +11,20 @@ import javafx.scene.text.FontWeight;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.SequencedCollection;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the FxFontUtil class.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class FxFontUtilTest extends FxTestBase {
 
     private FxFontUtil fontUtil;

@@ -9,6 +9,7 @@ import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.InlineNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import javax.swing.AbstractButton;
 import javax.swing.ScrollPaneConstants;
@@ -16,6 +17,7 @@ import javax.swing.SwingUtilities;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class TextPaneTest {
 
     @Test

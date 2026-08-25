@@ -29,6 +29,7 @@ import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests for the Controls utility class.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class ControlsTest extends FxTestBase {
 
     /**

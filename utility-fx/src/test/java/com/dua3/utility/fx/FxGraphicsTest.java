@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Timeout;
 
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * These tests run in headless mode and use software rendering to draw into a WritableImage.
  * The generated image is compared to a reference image stored as a test resource.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class FxGraphicsTest extends AbstractGraphicsTest {
 
     /**

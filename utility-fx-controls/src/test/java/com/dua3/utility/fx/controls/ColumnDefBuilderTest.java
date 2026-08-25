@@ -4,10 +4,13 @@ import javafx.scene.control.Label;
 import javafx.util.converter.DefaultStringConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class ColumnDefBuilderTest {
 
     @Test

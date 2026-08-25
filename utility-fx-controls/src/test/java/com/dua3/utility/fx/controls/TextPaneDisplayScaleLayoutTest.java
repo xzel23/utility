@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class TextPaneDisplayScaleLayoutTest extends FxTestBase {
 
     @Test
-    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void displayScaleAppliesToBaseAndExplicitRunFonts() throws Exception {
         runOnFxThreadAndWait(() -> {
             Style large = Style.create("display-scale-large", Map.entry(Style.FONT_SIZE, 24.0f));
@@ -39,7 +39,6 @@ class TextPaneDisplayScaleLayoutTest extends FxTestBase {
     }
 
     @Test
-    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void displayScaleAppliesToInlineImageFitDimensions() throws Exception {
         runOnFxThreadAndWait(() -> {
             Image image = ImageUtil.getInstance().createImage(

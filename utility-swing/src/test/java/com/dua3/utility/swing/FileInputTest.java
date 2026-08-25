@@ -3,12 +3,14 @@ package com.dua3.utility.swing;
 import com.dua3.utility.lang.Platform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import javax.swing.JTextField;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * These tests focus on the component logic without requiring a full GUI setup.
  * They run in headless mode and test the core functionality of the FileInput component.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class FileInputTest {
 
     private FileInput fileInput;

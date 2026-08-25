@@ -1,12 +1,14 @@
 package com.dua3.utility.swing;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * <p>
  * These tests verify that the filter correctly processes text input using the provided function.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class SwingDocumentFilterTest {
 
     /**

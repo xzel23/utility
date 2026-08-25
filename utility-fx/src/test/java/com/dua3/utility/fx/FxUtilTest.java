@@ -25,13 +25,14 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.stage.FileChooser;
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * <p>
  * These tests run in headless mode and test the utility methods in FxUtil.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class FxUtilTest extends FxTestBase {
 
     @Test

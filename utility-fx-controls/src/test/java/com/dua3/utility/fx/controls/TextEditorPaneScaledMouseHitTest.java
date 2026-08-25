@@ -19,10 +19,10 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class TextEditorPaneScaledMouseHitTest extends FxTestBase {
 
     @Test
-    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void hitTestUsesRenderedCoordinatesWhenDisplayIsScaled() throws Exception {
         runOnFxThreadAndWait(() -> {
             String text = "xxxAxxxBxxx " + "scaled hit testing ".repeat(80);

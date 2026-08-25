@@ -9,11 +9,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import javax.swing.JTextField;
 import java.awt.GraphicsEnvironment;
 import java.awt.Window;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * These tests focus on the component logic without requiring a full GUI setup.
  * They run in headless mode and test the core functionality of the ArgumentsDialog panel.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class ArgumentsDialogTest {
 
     private Window mockWindow;

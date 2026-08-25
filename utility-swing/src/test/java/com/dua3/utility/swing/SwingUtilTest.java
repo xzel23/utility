@@ -5,6 +5,7 @@ import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.math.geometry.Path2f;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -16,6 +17,7 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * These tests focus on the utility methods without requiring a full GUI setup.
  * They run in headless mode and test the core functionality of the SwingUtil class.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class SwingUtilTest {
 
     private JComponent testComponent;

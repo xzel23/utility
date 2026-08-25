@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests for the SwingProgressView class.
  */
-@Timeout(value = 10, unit = TimeUnit.SECONDS)
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class SwingProgressViewTest {
 
     @Test

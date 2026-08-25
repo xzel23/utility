@@ -2,6 +2,7 @@ package com.dua3.utility.swing;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -10,6 +11,7 @@ import java.awt.event.ItemListener;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * These tests focus on the component logic without requiring a full GUI setup.
  * They run in headless mode and test the core functionality of the ComboBoxEx component.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class ComboBoxExTest {
 
     private ComboBoxEx<String> comboBox;

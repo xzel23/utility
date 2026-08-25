@@ -1,12 +1,14 @@
 package com.dua3.utility.swing;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * These tests verify that the update method is called when any of the three
  * DocumentListener methods are called.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class SwingDocumentListenerTest {
 
     /**

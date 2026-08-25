@@ -3,6 +3,7 @@ package com.dua3.utility.fx;
 import javafx.scene.layout.Pane;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Tests for the FxRefresh class.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 @Execution(ExecutionMode.SAME_THREAD)
 class FxRefreshTest extends FxTestBase {
 

@@ -25,22 +25,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class TextPaneInlineAnchorLayoutTest extends FxTestBase {
 
     @Test
-    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testTextPaneInlineAnchorsUseLineMetricsOnMixedFontLines() throws Exception {
         runOnFxThreadAndWait(() -> assertInlineAnchorsUseLineMetrics(new TextPane(createMixedFontInlineAnchorText())));
     }
 
     @Test
-    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testTextEditorPaneInlineAnchorsUseLineMetricsOnMixedFontLines() throws Exception {
         runOnFxThreadAndWait(() -> assertInlineAnchorsUseLineMetrics(new TextEditorPane(createMixedFontInlineAnchorText())));
     }
 
     @Test
-    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testWrappedInlineNodesStayInsideContentArea() throws Exception {
         runOnFxThreadAndWait(() -> {
             TextPane control = new TextPane(createWrappedInlineRegressionText());

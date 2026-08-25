@@ -3,8 +3,10 @@ package com.dua3.utility.fx;
 import com.dua3.utility.data.ImageBuffer;
 import javafx.scene.image.Image;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -13,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * Test class for {@link FxMutableImage}.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class FxMutableImageTest extends FxTestBase {
 
     /**

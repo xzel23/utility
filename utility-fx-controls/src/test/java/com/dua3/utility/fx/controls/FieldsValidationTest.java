@@ -2,15 +2,18 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.text.MessageFormatter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class FieldsValidationTest extends FxTestBase {
 
     private static final String REPORT_FOLDER = "reportFolder";
