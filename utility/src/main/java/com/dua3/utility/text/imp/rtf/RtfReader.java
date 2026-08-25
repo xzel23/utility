@@ -167,13 +167,14 @@ public final class RtfReader {
                 Class<?> sourceInterface = Class.forName(RTF_SOURCE_INTERFACE);
                 Class<?> listenerInterface = Class.forName(RTF_LISTENER_INTERFACE);
                 Object listener = Proxy.newProxyInstance(
-                        RtfReader.class.getClassLoader(),
+                        listenerInterface.getClassLoader(),
                         new Class<?>[]{listenerInterface},
                         new ParserInvocationHandler(this)
                 );
 
                 Method parse = parserClass.getMethod("parse", sourceInterface, listenerInterface);
-                parse.invoke(parser, source, listener);
+                //noinspection JavaReflectionInvocation
+                parse.invoke(parser, sourceInterface.cast(source), listenerInterface.cast(listener));
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException("rtfparserkit is not available on the classpath", e);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
