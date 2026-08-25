@@ -1,0 +1,59 @@
+[release]
+schemaVersion = 1
+releaseType = "minor"
+bomVersion = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+
+[modules.utility]
+version = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+selected = true
+reason = "minor release"
+
+[modules.utility-db]
+version = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+selected = true
+reason = "minor release"
+
+[modules.utility-swing]
+version = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+selected = true
+reason = "minor release"
+
+[modules.utility-fx]
+version = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+selected = true
+reason = "minor release"
+
+[modules.utility-fx-icons]
+version = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+selected = true
+reason = "minor release"
+
+[modules.utility-fx-icons-ikonli]
+version = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+selected = true
+reason = "minor release"
+
+[modules.utility-fx-controls]
+version = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+selected = true
+reason = "minor release"
+
+[modules.utility-fx-db]
+version = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+selected = true
+reason = "minor release"
+
+[modules.utility-fx-web]
+version = "24.4.0"
+sourceRevision = "46108e87ddc09b87190561b88a96627a9ad0fa78"
+selected = true
+reason = "minor release"
