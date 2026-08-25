@@ -25,9 +25,11 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -302,14 +304,47 @@ public final class IoUtil {
     }
 
     /**
-     * Open InputStream for URI-
+     * Opens an input stream for the specified URI.
      *
-     * @param uri the URI
-     * @return InputStream
-     * @throws IOException on error
+     * <p>This method uses a default timeout of 30 seconds.
+     *
+     * @param uri the URI to open an input stream for; must not be null
+     * @return an InputStream to read data from the specified URI
+     * @throws IOException if an I/O exception occurs
      */
     public static InputStream openInputStream(URI uri) throws IOException {
-        return checkAbsolute(uri).toURL().openStream();
+        return openInputStream(uri, 30_000);
+    }
+
+    /**
+     * Opens an InputStream for the specified URI with a given connection timeout.
+     *
+     * @param uri the URI to be opened as an InputStream
+     * @param timeoutMillis the timeout in milliseconds for both connection and reading
+     * @return an InputStream corresponding to the specified URI
+     * @throws IOException if an I/O exception occurs while opening the InputStream
+     */
+    public static InputStream openInputStream(URI uri, int timeoutMillis) throws IOException {
+        URLConnection connection = checkAbsolute(uri).toURL().openConnection();
+        connection.setConnectTimeout(timeoutMillis);
+        connection.setReadTimeout(timeoutMillis);
+        return connection.getInputStream();
+    }
+
+    /**
+     * Opens an input stream from the specified URI using the given proxy and connection timeout settings.
+     *
+     * @param uri the URI to open the input stream from; must not be null and should be absolute
+     * @param timeoutMillis the timeout value, in milliseconds, to be used when opening the connection
+     * @param proxy the proxy through which the connection should be established; must not be null
+     * @return an InputStream obtained from the URL connection
+     * @throws IOException if an I/O exception occurs while opening the connection
+     */
+    public static InputStream openInputStream(URI uri, int timeoutMillis, Proxy proxy) throws IOException {
+        URLConnection connection = checkAbsolute(uri).toURL().openConnection(proxy);
+        connection.setConnectTimeout(timeoutMillis);
+        connection.setReadTimeout(timeoutMillis);
+        return connection.getInputStream();
     }
 
     /**

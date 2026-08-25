@@ -3,6 +3,7 @@ package com.dua3.utility.io;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class PayloadTest {
 
     @TempDir
@@ -106,6 +109,9 @@ class PayloadTest {
         public void close() throws Exception {
             serverSocket.close();
             serverThread.join(5_000);
+            if (serverThread.isAlive()) {
+                throw new AssertionError("Loopback HTTP server did not stop within five seconds");
+            }
             Throwable error = serverError.get();
             if (error != null) {
                 throw new AssertionError("Network test server failed", error);
