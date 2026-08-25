@@ -67,7 +67,6 @@ public interface Loader<T> {
      * if no suitable loader is found or the loading process fails
      * @throws IOException if <strong>all</strong> suitable loaders throw an I/O exception during the loading process
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     static <T> Optional<T> tryLoad(Class<? extends T> cls, URI uri, Object... options) throws IOException {
         try (Payload payload = Payload.fromUri(uri)) {
             return tryLoad(cls, payload, options);
