@@ -155,6 +155,7 @@ public final class RtfReader {
             return rtf.replace("{\\*\\duastyles ", "{\\*\\userprops ");
         }
 
+        // rtfparserkit is optional and is deliberately loaded from the class path at runtime.
         private void parse(String rtf) {
             try {
                 Class<?> parserClass = Class.forName(STANDARD_RTF_PARSER_CLASS);
