@@ -1453,16 +1453,17 @@ public class RichTextEditorModel {
         int beforeCaret = caret;
 
         text = normalizeParagraphIndentation(detach(text.replace(s, e, inserted)));
-        if (!contentChanged) {
+        if (contentChanged) {
             // Formatting changes already contain the intended paragraph indentation.
-        } else if (inserted.toString().indexOf('\n') >= 0 && inheritedIndent != null) {
-            int insertedOffset = inserted.toString().indexOf('\n');
-            int nextParagraphStart = s + insertedOffset + 1;
-            text = setParagraphIndentation(text, nextParagraphStart, inheritedIndent);
-        } else if (removed.toString().indexOf('\n') >= 0) {
-            text = setParagraphIndentation(text, s, inheritedIndent);
-        } else if (inheritedIndent != null) {
-            text = setParagraphIndentation(text, s, inheritedIndent);
+            if (inserted.toString().indexOf('\n') >= 0 && inheritedIndent != null) {
+                int insertedOffset = inserted.toString().indexOf('\n');
+                int nextParagraphStart = s + insertedOffset + 1;
+                text = setParagraphIndentation(text, nextParagraphStart, inheritedIndent);
+            } else if (removed.toString().indexOf('\n') >= 0) {
+                text = setParagraphIndentation(text, s, inheritedIndent);
+            } else if (inheritedIndent != null) {
+                text = setParagraphIndentation(text, s, inheritedIndent);
+            }
         }
         invalidateVisualLineCache();
         int newCaret = s + inserted.length();
@@ -1544,9 +1545,10 @@ public class RichTextEditorModel {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static ToRichText createLazySnapshot(List<RichText> lines) {
-        List[] snapshot = {lines};
+        @Nullable List[] snapshot = {lines};
         LangUtil.StrongCachingSupplier<RichText> materialized = LangUtil.cache(() -> {
             RichTextBuilder rtb = new RichTextBuilder();
+            assert snapshot[0] != null;
             appendSnapshotToBuilder(snapshot[0], rtb);
             snapshot[0] = null;
             return rtb.toRichText();
