@@ -1055,20 +1055,20 @@ public class TextPane extends Control implements RichTextPane {
 
             editorRoot.setMinSize(0.0, 0.0);
 
-            if (control instanceof TextEditorPane editor) {
-                Button copyButton = createButton("Copy", Controls.graphic(Feather.COPY.getDescription()), editor, TextEditorPane::copy);
-                Button cutButton = createButton("Cut", Controls.graphic(Feather.SCISSORS.getDescription()), editor, TextEditorPane::cut);
-                Button pasteButton = createButton("Paste", Controls.graphic(Feather.CLIPBOARD.getDescription()), editor, TextEditorPane::paste);
+            if (control instanceof TextEditorPane tep) {
+                Button copyButton = createButton("Copy", Controls.graphic(Feather.COPY.getDescription()), tep, TextEditorPane::copy);
+                Button cutButton = createButton("Cut", Controls.graphic(Feather.SCISSORS.getDescription()), tep, TextEditorPane::cut);
+                Button pasteButton = createButton("Paste", Controls.graphic(Feather.CLIPBOARD.getDescription()), tep, TextEditorPane::paste);
 
-                Button undoButton = createButton("Undo", Controls.graphic(Feather.ROTATE_CCW.getDescription()), editor, TextEditorPane::undo);
-                Button redoButton = createButton("Redo", Controls.graphic(Feather.ROTATE_CW.getDescription()), editor, TextEditorPane::redo);
-                Button decreaseIndentButton = createButton("Decrease indentation", Controls.graphic(Feather.ARROW_LEFT.getDescription()), editor, TextEditorPane::decreaseIndentation);
-                Button increaseIndentButton = createButton("Increase indentation", Controls.graphic(Feather.ARROW_RIGHT.getDescription()), editor, TextEditorPane::increaseIndentation);
+                Button undoButton = createButton("Undo", Controls.graphic(Feather.ROTATE_CCW.getDescription()), tep, TextEditorPane::undo);
+                Button redoButton = createButton("Redo", Controls.graphic(Feather.ROTATE_CW.getDescription()), tep, TextEditorPane::redo);
+                Button decreaseIndentButton = createButton("Decrease indentation", Controls.graphic(Feather.ARROW_LEFT.getDescription()), tep, TextEditorPane::decreaseIndentation);
+                Button increaseIndentButton = createButton("Increase indentation", Controls.graphic(Feather.ARROW_RIGHT.getDescription()), tep, TextEditorPane::increaseIndentation);
 
-                ToggleButton boldButton = createToggleButton("Bold", Controls.graphic(Feather.BOLD.getDescription()), editor, TextEditorPane::markBold);
-                ToggleButton italicsButton = createToggleButton("Italic", Controls.graphic(Feather.ITALIC.getDescription()), editor, TextEditorPane::markItalic);
-                ToggleButton underlineButton = createToggleButton("Underline", Controls.graphic(Feather.UNDERLINE.getDescription()), editor, TextEditorPane::markUnderline);
-                ToggleButton strikeThroughButton = createToggleButton("Strike Through", Controls.graphic(Feather.MINUS.getDescription()), editor, TextEditorPane::markStrikeThrough);
+                ToggleButton boldButton = createToggleButton("Bold", Controls.graphic(Feather.BOLD.getDescription()), tep, TextEditorPane::markBold);
+                ToggleButton italicsButton = createToggleButton("Italic", Controls.graphic(Feather.ITALIC.getDescription()), tep, TextEditorPane::markItalic);
+                ToggleButton underlineButton = createToggleButton("Underline", Controls.graphic(Feather.UNDERLINE.getDescription()), tep, TextEditorPane::markUnderline);
+                ToggleButton strikeThroughButton = createToggleButton("Strike Through", Controls.graphic(Feather.MINUS.getDescription()), tep, TextEditorPane::markStrikeThrough);
 
                 ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS).build();
                 ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
@@ -1097,13 +1097,13 @@ public class TextPane extends Control implements RichTextPane {
                 textColorList.setFocusTraversable(false);
                 backgroundColorList.setFocusTraversable(false);
 
-                boldButton.selectedProperty().bindBidirectional(editor.boldProperty());
-                italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
-                underlineButton.selectedProperty().bindBidirectional(editor.underlineProperty());
-                strikeThroughButton.selectedProperty().bindBidirectional(editor.strikeThroughProperty());
-                bindFontLists(editor, fontList, sizeList, textColorList, backgroundColorList);
-                undoButton.disableProperty().bind(editor.undoableProperty().not());
-                redoButton.disableProperty().bind(editor.redoableProperty().not());
+                boldButton.selectedProperty().bindBidirectional(tep.boldProperty());
+                italicsButton.selectedProperty().bindBidirectional(tep.italicProperty());
+                underlineButton.selectedProperty().bindBidirectional(tep.underlineProperty());
+                strikeThroughButton.selectedProperty().bindBidirectional(tep.strikeThroughProperty());
+                bindFontLists(tep, fontList, sizeList, textColorList, backgroundColorList);
+                undoButton.disableProperty().bind(tep.undoableProperty().not());
+                redoButton.disableProperty().bind(tep.redoableProperty().not());
 
                 ToolBarEx toolbar = Controls.toolBar()
                         .items(
@@ -1127,8 +1127,8 @@ public class TextPane extends Control implements RichTextPane {
                                 backgroundColorList
                         )
                         .focusTraversable(false)
-                        .bindLocation(editor.toolbarLocationProperty())
-                        .bindApplicationParent(editor.toolbarApplicationParentProperty())
+                        .bindLocation(tep.toolbarLocationProperty())
+                        .bindApplicationParent(tep.toolbarApplicationParentProperty())
                         .build();
 
                 VBox.setVgrow(scrollPane, Priority.ALWAYS);
@@ -1156,32 +1156,32 @@ public class TextPane extends Control implements RichTextPane {
             control.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
             scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
-            if (control instanceof TextEditorPane editor) {
+            if (control instanceof TextEditorPane tep) {
                 caretVisibilityRequested = true;
-                editor.selectionProperty().addListener((obs, oldVal, newVal) -> {
+                tep.selectionProperty().addListener((obs, oldVal, newVal) -> {
                     restartCaretAnimation();
                     invalidate();
                 });
-                editor.caretPositionProperty().addListener((obs, oldVal, newVal) -> {
+                tep.caretPositionProperty().addListener((obs, oldVal, newVal) -> {
                     restartCaretAnimation();
                     requestCaretVisibility();
                     invalidate();
                 });
-                editor.editableProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
-                editor.toolbarLocationProperty().addListener((obs, oldVal, newVal) -> invalidate());
+                tep.editableProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
+                tep.toolbarLocationProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
                 // Route interaction through the internal ScrollPane so input works regardless of focus owner.
                 scrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, evt -> {
-                    editor.processMousePressed(evt);
+                    tep.processMousePressed(evt);
                     stopSelectionDragAutoscroll();
                 });
                 scrollPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, evt -> {
-                    editor.processMouseDragged(evt);
+                    tep.processMouseDragged(evt);
                     updateSelectionDragAutoscroll(evt);
                 });
                 scrollPane.addEventFilter(MouseEvent.MOUSE_RELEASED, evt -> stopSelectionDragAutoscroll());
-                scrollPane.addEventFilter(KeyEvent.KEY_PRESSED, editor::processKeyPressed);
-                scrollPane.addEventFilter(KeyEvent.KEY_TYPED, editor::processKeyTyped);
+                scrollPane.addEventFilter(KeyEvent.KEY_PRESSED, tep::processKeyPressed);
+                scrollPane.addEventFilter(KeyEvent.KEY_TYPED, tep::processKeyTyped);
                 scrollPane.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
             }
 
@@ -1599,10 +1599,10 @@ public class TextPane extends Control implements RichTextPane {
 
         private boolean shouldAnimateCaret() {
             TextPane control = getSkinnable();
-            if (!(control instanceof TextEditorPane editor)) {
+            if (!(control instanceof TextEditorPane tep)) {
                 return false;
             }
-            return editor.isEditable() && hasEditorFocus(control);
+            return tep.isEditable() && hasEditorFocus(control);
         }
 
         private void restartCaretAnimation() {
@@ -1771,16 +1771,16 @@ public class TextPane extends Control implements RichTextPane {
         }
 
         private void ensureEditorContentHeight(TextPane control, double availableWidth, double previousCanvasHeight) {
-            if (!(control instanceof TextEditorPane editor)) {
+            if (!(control instanceof TextEditorPane tep)) {
                 return;
             }
 
-            List<VisualLine> lines = editor.buildVisualLines(availableWidth);
+            List<VisualLine> lines = tep.buildVisualLines(availableWidth);
             if (lines.isEmpty()) {
                 return;
             }
 
-            int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, editor.getCaretPosition());
+            int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, tep.getCaretPosition());
             if (lineIndex < 0 || lineIndex >= lines.size()) {
                 return;
             }
@@ -1794,7 +1794,7 @@ public class TextPane extends Control implements RichTextPane {
                 contentPane.resize(canvas.getWidth(), requiredHeight);
                 if (requiredHeight > previousCanvasHeight + 0.5) {
                     caretVisibilityRequested = true;
-                    if (lineIndex == lines.size() - 1 && editor.getCaretPosition() == editor.getLength()) {
+                    if (lineIndex == lines.size() - 1 && tep.getCaretPosition() == tep.getLength()) {
                         scrollPane.setVvalue(1.0);
                     }
                 }
@@ -1809,11 +1809,11 @@ public class TextPane extends Control implements RichTextPane {
             selectionLayer.getChildren().clear();
             caretLayer.getChildren().clear();
 
-            if (!(control instanceof TextEditorPane editor)) {
+            if (!(control instanceof TextEditorPane tep)) {
                 return;
             }
 
-            IndexRange selection = editor.getSelection();
+            IndexRange selection = tep.getSelection();
             if (selection.getLength() > 0) {
                 int sourceSelStart = selection.getStart();
                 int sourceSelEnd = selection.getEnd();
@@ -1870,11 +1870,11 @@ public class TextPane extends Control implements RichTextPane {
                 }
             }
 
-            if (editor.isEditable() && hasEditorFocus(control) && !blink) {
+            if (tep.isEditable() && hasEditorFocus(control) && !blink) {
                 CaretInfo caretInfo = null;
-                List<VisualLine> lines = editor.buildVisualLines(availableWidth);
+                List<VisualLine> lines = tep.buildVisualLines(availableWidth);
                 if (!lines.isEmpty()) {
-                    int caretPosition = editor.getCaretPosition();
+                    int caretPosition = tep.getCaretPosition();
                     int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caretPosition);
                     if (lineIndex >= 0 && lineIndex < lines.size()) {
                         VisualLine line = lines.get(lineIndex);
@@ -1886,7 +1886,7 @@ public class TextPane extends Control implements RichTextPane {
                     }
                 }
                 if (caretInfo == null) {
-                    int layoutCaretPosition = layout.layoutTextData().sourceToLayoutPosition(editor.getCaretPosition());
+                    int layoutCaretPosition = layout.layoutTextData().sourceToLayoutPosition(tep.getCaretPosition());
                     caretInfo = findCaret(layout.renderLines(), layoutCaretPosition);
                 }
                 if (caretInfo != null) {
