@@ -331,8 +331,9 @@ public class TextPane extends JScrollPane implements RichTextPane {
     }
 
     private RenderLayout createLayout(RichText richText, double availableWidth) {
+        RichText renderText = inheritParagraphIndentationForRendering(richText);
         RichTextPaneLayoutHelper.LayoutPreparation prepared = RichTextPaneLayoutHelper.prepareLayout(
-                richText,
+                renderText,
                 textFont,
                 wrapText,
                 availableWidth,
@@ -341,7 +342,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 TextPane::measureComponentWidth
         );
 
-        FragmentedText renderFragments = prepared.renderFragments();
+        FragmentedText renderFragments = applyParagraphIndentation(prepared.renderFragments());
 
         List<InlineComponentPlacement> placements = collectInlinePlacements(renderFragments);
         LineShiftData lineShiftData = computeLineShifts(renderFragments, placements);
@@ -379,8 +380,9 @@ public class TextPane extends JScrollPane implements RichTextPane {
             double availableWidth,
             double defaultLineHeight
     ) {
+        RichText renderText = inheritParagraphIndentationForRendering(blockText);
         RichTextPaneLayoutHelper.LayoutPreparation prepared = RichTextPaneLayoutHelper.prepareLayout(
-                blockText,
+                renderText,
                 textFont,
                 wrapText,
                 availableWidth,
@@ -389,7 +391,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 TextPane::measureComponentWidth
         );
 
-        FragmentedText blockRenderFragments = prepared.renderFragments();
+        FragmentedText blockRenderFragments = applyParagraphIndentation(prepared.renderFragments());
         List<InlineComponentPlacement> blockPlacements = collectInlinePlacements(blockRenderFragments);
 
         LineShiftData lineShiftData = computeLineShifts(blockRenderFragments, blockPlacements);
@@ -401,6 +403,76 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 height,
                 prepared.layoutTextData()::layoutToSourcePosition
         );
+    }
+
+    private static RichText inheritParagraphIndentationForRendering(RichText source) {
+        RichText rendered = source;
+        int start = 0;
+        while (start < source.length()) {
+            int end = start;
+            while (end < source.length() && source.charAt(end) != '\n') {
+                end++;
+            }
+            if (start < end) {
+                Object indent = source.attributesAt(start).get(Style.TEXT_INDENT_LEFT);
+                Number effectiveIndent = indent instanceof Number number ? number : 0.0f;
+                rendered = rendered.apply(Map.of(Style.TEXT_INDENT_LEFT, effectiveIndent), start, end);
+            }
+            start = end + 1;
+        }
+        return rendered;
+    }
+
+    private static FragmentedText applyParagraphIndentation(FragmentedText fragments) {
+        List<List<FragmentedText.Fragment>> lines = new ArrayList<>();
+        float maximumIndent = 0.0f;
+        List<@Nullable Number> indents = fragments.lines().stream()
+                .map(TextPane::findFragmentLineIndent)
+                .toList();
+        for (int i = 0; i < fragments.lines().size(); i++) {
+            List<FragmentedText.Fragment> line = fragments.lines().get(i);
+            Number value = indents.get(i);
+            if (value == null) {
+                value = nextIndent(indents, i + 1);
+            }
+            float dx = value.floatValue();
+            maximumIndent = Math.max(maximumIndent, dx);
+            lines.add(line.stream().map(fragment -> new FragmentedText.Fragment(
+                    fragment.x() + dx, fragment.y(), fragment.w(), fragment.h(),
+                    fragment.baseLine(), fragment.font(), fragment.text()
+            )).toList());
+        }
+        return new FragmentedText(
+                lines,
+                fragments.width() + maximumIndent,
+                fragments.height(),
+                fragments.baseLine(),
+                fragments.actualWidth() + maximumIndent,
+                fragments.actualHeight()
+        );
+    }
+
+    private static @Nullable Number findFragmentLineIndent(List<FragmentedText.Fragment> line) {
+        return line.stream()
+                .map(FragmentedText.Fragment::text)
+                .filter(Run.class::isInstance)
+                .map(Run.class::cast)
+                .map(Run::getAttributes)
+                .map(attributes -> attributes.get(Style.TEXT_INDENT_LEFT))
+                .filter(Number.class::isInstance)
+                .map(Number.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static double nextIndent(List<@Nullable Number> indents, int start) {
+        for (int i = start; i < indents.size(); i++) {
+            Number indent = indents.get(i);
+            if (indent != null) {
+                return indent.doubleValue();
+            }
+        }
+        return 0.0;
     }
 
     private List<InlineComponentPlacement> collectInlinePlacements(FragmentedText renderFragments) {

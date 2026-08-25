@@ -79,6 +79,26 @@ class TextPaneTest {
     }
 
     @Test
+    void testParagraphIndentationOffsetsRenderedLine() {
+        RichText text = new RichTextBuilder()
+                .push(Style.TEXT_INDENT_LEFT, 40.0f)
+                .append("indented line")
+                .pop(Style.TEXT_INDENT_LEFT)
+                .toRichText();
+        TestTextPane pane = onEdtGet(TestTextPane::new);
+
+        onEdtRun(() -> {
+            pane.setText(text);
+            pane.setSize(480, 200);
+            pane.getTextComponent().setSize(480, 200);
+        });
+
+        TextPane.RenderLayout layout = onEdtGet(pane::renderLayoutForTest);
+        assertEquals(40.0, layout.renderLines().getFirst().getFirst().x(), 0.01);
+        assertEquals(40.0, layout.visualLines().getFirst().minX(), 0.01);
+    }
+
+    @Test
     void testInlineHyperlinkRendersAndInvokesHandler() {
         URI target = URI.create("testapp://setStatus?text=Hyperlink");
         RichText text = createInlineControlText(
