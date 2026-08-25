@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -71,32 +72,74 @@ class PayloadTest {
         }
     }
 
-    private static final class OneShotHttpResource implements Resource {
+    private static final class LoopbackHttpResource implements Resource {
         private final ServerSocket serverSocket;
         private final Thread serverThread;
+        private final CountDownLatch accepting = new CountDownLatch(1);
         private final AtomicReference<Throwable> serverError = new AtomicReference<>();
         private final URI uri;
 
-        OneShotHttpResource(byte[] body) throws IOException {
+        LoopbackHttpResource(byte[] body) throws IOException {
             serverSocket = new ServerSocket(0, 50, InetAddress.getLoopbackAddress());
-            uri = URI.create("http://127.0.0.1:" + serverSocket.getLocalPort() + "/payload");
+            String host = serverSocket.getInetAddress().getHostAddress();
+            if (host.contains(":")) {
+                host = "[" + host + "]";
+            }
+            uri = URI.create("http://" + host + ":" + serverSocket.getLocalPort() + "/payload");
             serverThread = Thread.ofVirtual().start(() -> serve(body));
+            try {
+                if (!accepting.await(5, TimeUnit.SECONDS)) {
+                    serverSocket.close();
+                    throw new IOException("Loopback HTTP server did not start accepting connections");
+                }
+            } catch (InterruptedException e) {
+                serverSocket.close();
+                Thread.currentThread().interrupt();
+                throw new IOException("Interrupted while starting loopback HTTP server", e);
+            }
         }
 
         private void serve(byte[] body) {
-            try (Socket socket = serverSocket.accept()) {
-                OutputStream out = socket.getOutputStream();
-                out.write(("HTTP/1.1 200 OK\r\n"
-                        + "Content-Type: application/octet-stream\r\n"
-                        + "Content-Length: " + body.length + "\r\n"
-                        + "Connection: close\r\n"
-                        + "\r\n").getBytes(StandardCharsets.US_ASCII));
-                out.write(body);
-                out.flush();
-            } catch (SocketException ignored) {
-                // expected if the server is closed while waiting for a request
-            } catch (Throwable t) {
-                serverError.compareAndSet(null, t);
+            accepting.countDown();
+            while (!serverSocket.isClosed()) {
+                try (Socket socket = serverSocket.accept()) {
+                    readRequestHeaders(socket.getInputStream());
+                    OutputStream out = socket.getOutputStream();
+                    out.write(("HTTP/1.1 200 OK\r\n"
+                            + "Content-Type: application/octet-stream\r\n"
+                            + "Content-Length: " + body.length + "\r\n"
+                            + "Connection: close\r\n"
+                            + "\r\n").getBytes(StandardCharsets.US_ASCII));
+                    out.write(body);
+                    out.flush();
+                } catch (SocketException e) {
+                    if (serverSocket.isClosed()) {
+                        return;
+                    }
+                    // HttpURLConnection may reset an initial connection before
+                    // issuing the request. Keep the test server available for it.
+                } catch (Throwable t) {
+                    serverError.compareAndSet(null, t);
+                    return;
+                }
+            }
+        }
+
+        private static void readRequestHeaders(InputStream in) throws IOException {
+            byte[] terminator = {'\r', '\n', '\r', '\n'};
+            int matched = 0;
+            while (matched < terminator.length) {
+                int value = in.read();
+                if (value < 0) {
+                    return;
+                }
+                if (value == terminator[matched]) {
+                    matched++;
+                } else if (value == terminator[0]) {
+                    matched = 1;
+                } else {
+                    matched = 0;
+                }
             }
         }
 
@@ -346,7 +389,7 @@ class PayloadTest {
                 Files.write(path, content);
                 yield new FileResource(path.toUri());
             }
-            case NETWORK -> new OneShotHttpResource(Arrays.copyOf(content, content.length));
+            case NETWORK -> new LoopbackHttpResource(Arrays.copyOf(content, content.length));
         };
     }
 
