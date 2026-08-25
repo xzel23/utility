@@ -91,7 +91,7 @@ jobs:
           echo "revision=$revision" >> "$GITHUB_OUTPUT"
 
       - name: Check out candidate revision
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ steps.ci-run.outputs.revision }}
           fetch-depth: 0
@@ -126,13 +126,13 @@ jobs:
       contents: write
     steps:
       - name: Check out prepared release
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ needs.detect-prepared-release.outputs.revision }}
           fetch-depth: 0
 
       - name: Download tested release bundle
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@8.0.1
         with:
           name: release-bundle
           # upload-artifact uses build/ as the common root for the bundle paths.
@@ -149,7 +149,7 @@ jobs:
           (cd build && sha256sum --check --strict release-bundle/manifest.sha256)
 
       - name: Set up JDKs
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v.6.0.0
         with:
           distribution: liberica
           java-version: |
@@ -158,7 +158,7 @@ jobs:
           java-package: jdk+fx
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6.3.0
 
       - name: Configure Git identity for finalization
         run: |
@@ -193,7 +193,7 @@ jobs:
 
       - name: Upload JReleaser diagnostics
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: jreleaser-diagnostics-${{ github.run_attempt }}
           path: |
