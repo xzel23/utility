@@ -439,8 +439,23 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         }
     }
 
-    public void increaseIndentation() { if (model.adjustIndentation(40.0)) onModelChanged(); }
-    public void decreaseIndentation() { if (model.adjustIndentation(-40.0)) onModelChanged(); }
+    /**
+     * Increases the indentation level within the internal model by a predefined value.
+     */
+    public void increaseIndentation() {
+        if (model.adjustIndentation(40.0)) {
+            onModelChanged();
+        }
+    }
+
+    /**
+     * Decreases the indentation level of the model by a fixed amount.
+     */
+    public void decreaseIndentation() {
+        if (model.adjustIndentation(-40.0)) {
+            onModelChanged();
+        }
+    }
 
     /**
      * Toggles bold style.
