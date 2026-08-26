@@ -235,6 +235,10 @@ could not be loaded.
 
 ## Changes
 
+### 24.4.1
+
+- fix IconView: prevent child icon CSS/state from overriding the view’s requested color
+
 ### 24.4.0
 
 - feature: add indentation support to TextPane/TextEditorPane classes
