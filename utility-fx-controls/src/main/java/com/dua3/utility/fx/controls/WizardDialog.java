@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.beans.binding.BooleanExpression;
+import javafx.scene.Scene;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -42,6 +43,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
      * Stack of displayed pages (for navigating back).
      */
     private final ObservableList<Pair<String, Page<?, ?>>> pageStack = FXCollections.observableArrayList();
+    private final List<String> ownerStylesheets;
     /**
      * Cancelable flag.
      */
@@ -65,6 +67,8 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         initOwner(parentWindow);
         setResizable(true);
         this.cancelable = cancelable;
+        Scene ownerScene = parentWindow == null ? null : parentWindow.getScene();
+        this.ownerStylesheets = ownerScene == null ? List.of() : List.copyOf(ownerScene.getStylesheets());
 
         setResultConverter(btn -> {
             if (btn != ButtonType.FINISH) {
@@ -258,6 +262,11 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
         }
 
         setDialogPane(pane);
+        pane.getStylesheets().addAll(
+                ownerStylesheets.stream()
+                        .filter(stylesheet -> !pane.getStylesheets().contains(stylesheet))
+                        .toList()
+        );
 
         pane.init();
         pane.layout();

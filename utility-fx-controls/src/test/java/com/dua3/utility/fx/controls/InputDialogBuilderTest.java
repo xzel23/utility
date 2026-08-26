@@ -6,6 +6,10 @@ import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -16,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,6 +65,55 @@ class InputDialogBuilderTest extends FxTestBase {
             // Verify dialog has OK and Cancel buttons
             assertTrue(dialog.getDialogPane().getButtonTypes().contains(ButtonType.OK));
             assertTrue(dialog.getDialogPane().getButtonTypes().contains(ButtonType.CANCEL));
+        });
+    }
+
+    /**
+     * Owner-scene stylesheets must be available to a dialog, which is rendered
+     * in its own scene.
+     */
+    @Test
+    void testBuildDialogCopiesOwnerSceneStylesheets() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            Stage owner = new Stage();
+            Scene ownerScene = new Scene(new StackPane());
+            String stylesheet = InputDialogBuilderTest.class.getResource("dialog-owner.css").toExternalForm();
+            ownerScene.getStylesheets().add(stylesheet);
+            owner.setScene(ownerScene);
+
+            InputDialog dialog = new InputDialogBuilder(owner, MessageFormatter.standard())
+                    .inputString("!required", "Required", () -> "", value -> Optional.empty())
+                    .build();
+
+            assertTrue(dialog.getDialogPane().getStylesheets().contains(stylesheet));
+            dialog.getDialogPane().applyCss();
+            Label marker = (Label) dialog.getDialogPane().lookup(".required-marker");
+            assertEquals(Color.RED, marker.getTextFill());
+        });
+    }
+
+    /**
+     * Wizard dialogs also use a separate scene and must inherit the owner
+     * stylesheet for the input-pane marker colors to be overridden.
+     */
+    @Test
+    void testWizardDialogCopiesOwnerSceneStylesheets() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            Stage owner = new Stage();
+            Scene ownerScene = new Scene(new StackPane());
+            String stylesheet = InputDialogBuilderTest.class.getResource("dialog-owner.css").toExternalForm();
+            ownerScene.getStylesheets().add(stylesheet);
+            owner.setScene(ownerScene);
+
+            WizardDialog dialog = Dialogs.wizard(owner, MessageFormatter.standard())
+                    .page("page", Dialogs.inputDialogPane()
+                            .inputString("!required", "Required", () -> "", value -> Optional.empty()))
+                    .build();
+
+            assertTrue(dialog.getDialogPane().getStylesheets().contains(stylesheet));
+            dialog.getDialogPane().applyCss();
+            Label marker = (Label) dialog.getDialogPane().lookup(".required-marker");
+            assertEquals(Color.RED, marker.getTextFill());
         });
     }
 

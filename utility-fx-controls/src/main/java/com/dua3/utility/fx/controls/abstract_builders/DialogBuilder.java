@@ -126,6 +126,19 @@ public abstract class DialogBuilder<D extends Dialog<R>, B extends DialogBuilder
         if (parentWindow != null) {
             Stage stage = (Stage) scene.getWindow();
             stage.getIcons().addAll(((Stage) parentWindow).getIcons());
+
+            // Dialogs have their own scene, so application stylesheets do not
+            // automatically cross the owner/dialog boundary. Add them after the
+            // dialog's built-in stylesheet so applications can override its
+            // looked-up colors and other dialog defaults.
+            Scene ownerScene = parentWindow.getScene();
+            if (ownerScene != null) {
+                dialogPane.getStylesheets().addAll(
+                        ownerScene.getStylesheets().stream()
+                                .filter(stylesheet -> !dialogPane.getStylesheets().contains(stylesheet))
+                                .toList()
+                );
+            }
         }
 
         // set title
