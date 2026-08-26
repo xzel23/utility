@@ -16,7 +16,7 @@ public class WrappedException extends RuntimeException {
     private static final String MARKER = "[WrappedException] ";
 
     /**
-     * Construct new wrapped exception.
+     * Construct a new {@code WappedException} instance.
      *
      * @param cause the exception to wrap
      */
@@ -24,6 +24,11 @@ public class WrappedException extends RuntimeException {
         super(cause);
     }
 
+    /**
+     * Get the cause of this exception.
+     *
+     * @return the {@link Exception} wrapped by this instance; this method will never return {@code null}
+     */
     @Override
     public synchronized Exception getCause() {
         return (Exception) super.getCause();
