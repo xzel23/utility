@@ -238,7 +238,7 @@ could not be loaded.
 ### 24.4.1
 
 - fix IconView: prevent child icon CSS/state from overriding the view’s requested color
-- utility-fx-controls: inherit the parent scene stylesheet so that it is easier to have a consistent color scheme.
+- utility-fx-controls: inherit the parent scene stylesheet so that it is easier to implement a consistent color scheme.
 
 ### 24.4.0
 

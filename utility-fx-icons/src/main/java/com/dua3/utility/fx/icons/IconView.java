@@ -22,7 +22,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Represents a custom JavaFX control that displays an icon.
@@ -46,6 +45,7 @@ public class IconView extends Control {
     }
 
     private final StackPane pane;
+    private Icon icon = IconUtil.emptyIcon();
 
     private final StyleableStringProperty iconIdentifier = new StyleableStringProperty(DEFAULT_ICON_IDENTIFIER) {
         @Override
@@ -133,25 +133,17 @@ public class IconView extends Control {
     }
 
     private void setIcon(String iconId) {
-        int size = getIconSize();
-        Paint color = getIconColor();
+        Icon newIcon = IconUtil.iconFromName(iconId).orElse(IconUtil.emptyIcon());
 
-        Optional<Icon> icon = IconUtil.iconFromName(iconId);
-        Icon icon1;
-        if (icon.isPresent()) {
-            icon1 = icon.get();
-        } else {
-            LOG.warn("icon not found: {}", iconId);
-            icon1 = IconUtil.emptyIcon();
+        if (newIcon != icon) {
+            Bindings.bindBidirectional(iconSize, newIcon.iconSizeProperty());
+            Bindings.bindBidirectional(iconColor, newIcon.iconColorProperty());
+            newIcon.getStyleClass().setAll(icon.getStyleClass());
+            Bindings.unbindBidirectional(iconSize, icon.iconSizeProperty());
+            Bindings.unbindBidirectional(iconColor, icon.iconColorProperty());
+            icon = newIcon;
+            pane.getChildren().setAll(icon.node());
         }
-
-        iconSize.set(size);
-        iconColor.set(color);
-
-        Bindings.bindBidirectional(iconSize, icon1.iconSizeProperty());
-        Bindings.bindBidirectional(iconColor, icon1.iconColorProperty());
-
-        pane.getChildren().setAll(icon1.node());
     }
 
     @Override
