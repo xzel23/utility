@@ -1,11 +1,11 @@
 [release]
 schemaVersion = 2
-bomVersion = "24.4.0"
-publishedRevision = "0271b428bb4b9651e275b169024f436fc0621151"
+bomVersion = "24.4.1"
+publishedRevision = "4dd5b090a308113f35a7689af423faca324cd526"
 
 [modules.utility]
-version = "24.4.0"
-publishedRevision = "0271b428bb4b9651e275b169024f436fc0621151"
+version = "24.4.1"
+publishedRevision = "4dd5b090a308113f35a7689af423faca324cd526"
 paths = ["utility"]
 
 [modules.utility-db]
@@ -24,8 +24,8 @@ publishedRevision = "0271b428bb4b9651e275b169024f436fc0621151"
 paths = ["utility-fx"]
 
 [modules.utility-fx-icons]
-version = "24.4.0"
-publishedRevision = "0271b428bb4b9651e275b169024f436fc0621151"
+version = "24.4.1"
+publishedRevision = "4dd5b090a308113f35a7689af423faca324cd526"
 paths = ["utility-fx-icons"]
 
 [modules.utility-fx-icons-ikonli]
@@ -34,8 +34,8 @@ publishedRevision = "0271b428bb4b9651e275b169024f436fc0621151"
 paths = ["utility-fx-icons-ikonli"]
 
 [modules.utility-fx-controls]
-version = "24.4.0"
-publishedRevision = "0271b428bb4b9651e275b169024f436fc0621151"
+version = "24.4.1"
+publishedRevision = "4dd5b090a308113f35a7689af423faca324cd526"
 paths = ["utility-fx-controls"]
 
 [modules.utility-fx-db]
