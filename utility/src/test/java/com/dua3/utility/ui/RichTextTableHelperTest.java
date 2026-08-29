@@ -88,6 +88,18 @@ class RichTextTableHelperTest {
         assertEquals(title.bounds().x() + title.bounds().width(), value.bounds().x());
     }
 
+    @Test
+    void replacesCompleteTablesWithOneInlineNode() {
+        RichText table = tableText();
+
+        RichText replacement = RichTextTableHelper.replaceTablesWithInlineNodes(table);
+
+        assertEquals("\uFFFC", replacement.toString());
+        assertTrue(replacement.runStream().findFirst().orElseThrow().getStyles().stream()
+                .anyMatch(style -> style.get(com.dua3.utility.text.RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE)
+                        instanceof RichTextTableHelper.InlineTable));
+    }
+
     private static RichText tableText() {
         RichTextBuilder builder = new RichTextBuilder();
         appendCell(builder, 7, 0, true, 0, "LEFT", "Title");

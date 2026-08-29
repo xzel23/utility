@@ -7,6 +7,8 @@ import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.VerticalAlignment;
@@ -97,6 +99,38 @@ public final class RichTextTableHelper {
                 .flatMap(Optional::stream)
                 .sorted(Comparator.comparingInt(Table::start))
                 .toList();
+    }
+
+    /**
+     * Replaces every complete table with a single inline-node placeholder for visual layout.
+     *
+     * <p>The placeholder retains the full table model, including each cell's original rich text. This conversion is
+     * intended for a view-only render pass; callers that need source-position mapping must retain the original text.
+     *
+     * @param source structurally annotated rich text
+     * @return text in which complete tables are inline placeholders
+     */
+    public static RichText replaceTablesWithInlineNodes(RichText source) {
+        List<Table> tables = tables(source);
+        if (tables.isEmpty()) {
+            return source;
+        }
+
+        RichTextBuilder builder = new RichTextBuilder(source.length() - tables.size());
+        int position = 0;
+        for (Table table : tables) {
+            source.subSequence(position, table.start()).appendTo(builder);
+            Style style = Style.create(
+                    "rich-text-table-inline",
+                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, new InlineTable(table))
+            );
+            builder.push(style);
+            builder.append('\uFFFC');
+            builder.pop(style);
+            position = table.end();
+        }
+        source.subSequence(position, source.length()).appendTo(builder);
+        return builder.toRichText();
     }
 
     /**
@@ -381,6 +415,13 @@ public final class RichTextTableHelper {
     }
 
     /**
+     * An inline-node value carrying a table model for toolkit-specific rendering.
+     *
+     * @param table the table
+     */
+    public record InlineTable(Table table) {}
+
+    /**
      * Renderer-facing visual settings attached to a table's rich-text styles.
      *
      * @param borderColor the border {@link Color}
@@ -392,32 +433,33 @@ public final class RichTextTableHelper {
      * A complete table and the source range it occupies.
      *
      * @param id the table ID
-     * @param start
-     * @param end
-     * @param rows
-     * @param presentation
+     * @param start the start of the table
+     * @param end the end of the table
+     * @param rows the rows of the table
+     * @param presentation the presentation of the table
      */
     public record Table(int id, int start, int end, List<Row> rows, Presentation presentation) {}
 
     /**
      * A complete row and the source range it occupies.
      *
-     * @param index
-     * @param start
-     * @param end
-     * @param header
-     * @param cells
+     * @param index the index of the row
+     * @param start the start of the row
+     * @param end the end of the row
+     * @param header whether the row is a header
+     * @param cells the cells of the row
      */
     public record Row(int index, int start, int end, boolean header, List<Cell> cells) {}
 
     /**
      * A cell's source range excludes its invisible tab delimiter.
      *
-     * @param column
-     * @param start
-     * @param end
-     * @param alignment
-     * @param text
+     * @param column the column of the cell
+     * @param start the start of the cell
+     * @param end the end of the cell
+     * @param alignment the alignment of the cell
+     * @param backgroundColor the background color of the cell
+     * @param text the text of the cell
      */
     public record Cell(
             int column,
@@ -428,13 +470,34 @@ public final class RichTextTableHelper {
             RichText text
     ) {}
 
-    /** A table's positioned geometry and grid segments. */
+    /**
+     * A table's positioned geometry and grid segments.
+     *
+     * @param table the table
+     * @param bounds the bounds of the table
+     * @param rows the rows of the table
+     * @param gridLines the grid lines of the table
+     */
     public record TableLayout(Table table, Rectangle2f bounds, List<RowLayout> rows, List<GridLine> gridLines) {}
 
-    /** A positioned table row. */
+    /**
+     *  A positioned table row.
+     *
+     * @param row the row
+     * @param bounds the bounds of the row
+     * @param cells the cells of the row
+     */
     public record RowLayout(Row row, Rectangle2f bounds, List<CellLayout> cells) {}
 
-    /** A positioned cell with absolute rich-text fragments and its resolved background color. */
+    /**
+     * A positioned cell with absolute rich-text fragments and its resolved background color.
+     *
+     * @param cell the cell
+     * @param bounds the bounds of the cell
+     * @param contentBounds the bounds of the cell's content
+     * @param fragments the fragments of the cell's content
+     * @param backgroundColor the background color of the cell
+     */
     public record CellLayout(
             Cell cell,
             Rectangle2f bounds,
@@ -443,7 +506,14 @@ public final class RichTextTableHelper {
             @Nullable Color backgroundColor
     ) {}
 
-    /** A logical line segment in a table grid. */
+    /**
+     * A logical line segment in a table grid.
+     *
+     * @param x1 the x-coordinate of the first point
+     * @param y1 the y-coordinate of the first point
+     * @param x2 the x-coordinate of the second point
+     * @param y2 the y-coordinate of the second point
+     */
     public record GridLine(float x1, float y1, float x2, float y2) {}
 
     private static final class TableAccumulator {

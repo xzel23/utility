@@ -26,6 +26,8 @@ import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.IndexRange;
 import com.dua3.utility.ui.RichTextPane;
 import com.dua3.utility.ui.RichTextPaneLayoutHelper;
+import com.dua3.utility.ui.RichTextTableHelper;
+import com.dua3.utility.ui.RichTextTableRenderer;
 import com.dua3.utility.ui.RichTextRenderer;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VAnchor;
@@ -60,6 +62,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -386,7 +389,9 @@ public class TextPane extends Control implements RichTextPane {
             double availableWidth,
             double displayScale
     ) {
-        RichText renderText = inheritParagraphIndentationForRendering(richText);
+        RichText renderText = RichTextTableHelper.replaceTablesWithInlineNodes(
+                inheritParagraphIndentationForRendering(richText)
+        );
         RichTextPaneLayoutHelper.LayoutPreparation prepared = RichTextPaneLayoutHelper.prepareLayout(
                 renderText,
                 font,
@@ -552,8 +557,10 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private static void applyInlineNodeFont(@Nullable Node node, Font font) {
-        if (node instanceof Labeled labeled) {
-            labeled.setFont(FxFontUtil.getInstance().convert(font));
+        switch (node) {
+            case TableNode tableNode -> tableNode.setTableFont(font);
+            case Labeled labeled -> labeled.setFont(FxFontUtil.getInstance().convert(font));
+            case null, default -> {/* do nothing */}
         }
     }
 
@@ -601,28 +608,35 @@ public class TextPane extends Control implements RichTextPane {
         double maxHeight = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT);
 
         Object wrapped = value;
-        if (wrapped instanceof InlineNode<?> inlineNode) {
-            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(inlineNode.getMimeType())) {
-                RichTextBuilderExtBase.ButtonData buttonData = RichTextBuilderExtBase.decodeInlineButtonData(inlineNode.getData());
-                String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
-                        ? cs.toString()
-                        : (buttonData.text().isBlank() ? buttonData.target() : buttonData.text());
-                Button button = new Button(text);
-                button.setFocusTraversable(false);
-                toUri(buttonData.target()).ifPresent(button::setUserData);
-                return button;
+        switch (wrapped) {
+            case RichTextTableHelper.InlineTable inlineTable -> {
+                return new TableNode(inlineTable.table());
             }
-            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK.equals(inlineNode.getMimeType())) {
-                RichTextBuilderExtBase.HyperlinkData hyperlinkData = RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData());
-                String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
-                        ? cs.toString()
-                        : (hyperlinkData.text().isBlank() ? hyperlinkData.target() : hyperlinkData.text());
-                Hyperlink hyperlink = new Hyperlink(text);
-                hyperlink.setFocusTraversable(false);
-                toUri(hyperlinkData.target()).ifPresent(hyperlink::setUserData);
-                return hyperlink;
+            case InlineNode<?> inlineNode -> {
+                if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(inlineNode.getMimeType())) {
+                    RichTextBuilderExtBase.ButtonData buttonData = RichTextBuilderExtBase.decodeInlineButtonData(inlineNode.getData());
+                    String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
+                            ? cs.toString()
+                            : (buttonData.text().isBlank() ? buttonData.target() : buttonData.text());
+                    Button button = new Button(text);
+                    button.setFocusTraversable(false);
+                    toUri(buttonData.target()).ifPresent(button::setUserData);
+                    return button;
+                }
+                if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK.equals(inlineNode.getMimeType())) {
+                    RichTextBuilderExtBase.HyperlinkData hyperlinkData = RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData());
+                    String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
+                            ? cs.toString()
+                            : (hyperlinkData.text().isBlank() ? hyperlinkData.target() : hyperlinkData.text());
+                    Hyperlink hyperlink = new Hyperlink(text);
+                    hyperlink.setFocusTraversable(false);
+                    toUri(hyperlinkData.target()).ifPresent(hyperlink::setUserData);
+                    return hyperlink;
+                }
+                wrapped = inlineNode.getWrapped();
             }
-            wrapped = inlineNode.getWrapped();
+            case null, default -> {
+            }
         }
 
         return switch (wrapped) {
@@ -637,6 +651,57 @@ public class TextPane extends Control implements RichTextPane {
             }
             case null, default -> null;
         };
+    }
+
+    private static final class TableNode extends Region {
+        private static final float CELL_PADDING = 4.0f;
+
+        private final RichTextTableHelper.Table table;
+        private final Canvas canvas = new Canvas();
+        private Font tableFont = FONT_UTIL.getDefaultFont();
+
+        private TableNode(RichTextTableHelper.Table table) {
+            this.table = table;
+            getChildren().add(canvas);
+        }
+
+        private void setTableFont(Font font) {
+            tableFont = font;
+            requestLayout();
+        }
+
+        @Override
+        protected double computePrefWidth(double height) {
+            return tableLayout().bounds().width();
+        }
+
+        @Override
+        protected double computePrefHeight(double width) {
+            return tableLayout().bounds().height();
+        }
+
+        @Override
+        protected void layoutChildren() {
+            RichTextTableHelper.TableLayout layout = tableLayout();
+            canvas.setWidth(Math.max(1.0, layout.bounds().width()));
+            canvas.setHeight(Math.max(1.0, layout.bounds().height()));
+            canvas.relocate(0.0, 0.0);
+            try (Graphics graphics = new FxGraphics(canvas)) {
+                graphics.reset();
+                RichTextTableRenderer.render(graphics, layout);
+            }
+        }
+
+        private RichTextTableHelper.TableLayout tableLayout() {
+            return RichTextTableHelper.layout(
+                    table,
+                    FONT_UTIL,
+                    tableFont,
+                    Float.MAX_VALUE,
+                    false,
+                    CELL_PADDING
+            );
+        }
     }
 
     private static double getPositiveStyleValue(Style style, String key) {

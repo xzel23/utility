@@ -15,6 +15,8 @@ import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.RichTextEditorModel;
 import com.dua3.utility.ui.RichTextPane;
 import com.dua3.utility.ui.RichTextPaneLayoutHelper;
+import com.dua3.utility.ui.RichTextTableHelper;
+import com.dua3.utility.ui.RichTextTableRenderer;
 import com.dua3.utility.ui.RichTextRenderer;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VAnchor;
@@ -331,7 +333,9 @@ public class TextPane extends JScrollPane implements RichTextPane {
     }
 
     private RenderLayout createLayout(RichText richText, double availableWidth) {
-        RichText renderText = inheritParagraphIndentationForRendering(richText);
+        RichText renderText = RichTextTableHelper.replaceTablesWithInlineNodes(
+                inheritParagraphIndentationForRendering(richText)
+        );
         RichTextPaneLayoutHelper.LayoutPreparation prepared = RichTextPaneLayoutHelper.prepareLayout(
                 renderText,
                 textFont,
@@ -380,7 +384,9 @@ public class TextPane extends JScrollPane implements RichTextPane {
             double availableWidth,
             double defaultLineHeight
     ) {
-        RichText renderText = inheritParagraphIndentationForRendering(blockText);
+        RichText renderText = RichTextTableHelper.replaceTablesWithInlineNodes(
+                inheritParagraphIndentationForRendering(blockText)
+        );
         RichTextPaneLayoutHelper.LayoutPreparation prepared = RichTextPaneLayoutHelper.prepareLayout(
                 renderText,
                 textFont,
@@ -574,50 +580,111 @@ public class TextPane extends JScrollPane implements RichTextPane {
         double maxHeight = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT);
 
         Object wrapped = value;
-        if (wrapped instanceof InlineNode<?> inlineNode) {
-            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(inlineNode.getMimeType())) {
-                RichTextBuilderExtBase.ButtonData buttonData = RichTextBuilderExtBase.decodeInlineButtonData(inlineNode.getData());
-                String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
-                        ? cs.toString()
-                        : (buttonData.text().isBlank() ? buttonData.target() : buttonData.text());
-                JButton button = new JButton(text);
-                button.setFocusable(false);
-                toUri(buttonData.target()).ifPresent(uri -> button.putClientProperty(CLIENT_PROPERTY_INLINE_TARGET_URI, uri));
-                return button;
+        switch (wrapped) {
+            case RichTextTableHelper.InlineTable inlineTable -> {
+                return new TableComponent(inlineTable.table());
             }
+            case InlineNode<?> inlineNode -> {
+                if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(inlineNode.getMimeType())) {
+                    RichTextBuilderExtBase.ButtonData buttonData = RichTextBuilderExtBase.decodeInlineButtonData(inlineNode.getData());
+                    String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
+                            ? cs.toString()
+                            : (buttonData.text().isBlank() ? buttonData.target() : buttonData.text());
+                    JButton button = new JButton(text);
+                    button.setFocusable(false);
+                    toUri(buttonData.target()).ifPresent(uri -> button.putClientProperty(CLIENT_PROPERTY_INLINE_TARGET_URI, uri));
+                    return button;
+                }
 
-            if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK.equals(inlineNode.getMimeType())) {
-                RichTextBuilderExtBase.HyperlinkData hyperlinkData = RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData());
-                String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
-                        ? cs.toString()
-                        : (hyperlinkData.text().isBlank() ? hyperlinkData.target() : hyperlinkData.text());
-                JButton hyperlink = createHyperlinkButton(text);
-                hyperlink.setFocusable(false);
-                toUri(hyperlinkData.target()).ifPresent(uri -> hyperlink.putClientProperty(CLIENT_PROPERTY_INLINE_TARGET_URI, uri));
-                return hyperlink;
+                if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK.equals(inlineNode.getMimeType())) {
+                    RichTextBuilderExtBase.HyperlinkData hyperlinkData = RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData());
+                    String text = inlineNode.getWrapped() instanceof CharSequence cs && !cs.isEmpty()
+                            ? cs.toString()
+                            : (hyperlinkData.text().isBlank() ? hyperlinkData.target() : hyperlinkData.text());
+                    JButton hyperlink = createHyperlinkButton(text);
+                    hyperlink.setFocusable(false);
+                    toUri(hyperlinkData.target()).ifPresent(uri -> hyperlink.putClientProperty(CLIENT_PROPERTY_INLINE_TARGET_URI, uri));
+                    return hyperlink;
+                }
+
+                Image decodedImage = decodeInlineImage(inlineNode);
+                wrapped = decodedImage != null ? decodedImage : inlineNode.getWrapped();
             }
-
-            Image decodedImage = decodeInlineImage(inlineNode);
-            wrapped = decodedImage != null ? decodedImage : inlineNode.getWrapped();
+            case null, default -> {
+            }
         }
 
-        if (wrapped instanceof JComponent jc) {
-            applyImageScaling(jc, maxWidth, maxHeight);
-            return jc;
-        }
-        if (wrapped instanceof Component component) {
-            return component;
-        }
-        if (wrapped instanceof Image image) {
-            return createImageLabel(new ImageIcon(AwtImageUtil.getInstance().toImage(image)), maxWidth, maxHeight);
-        }
-        if (wrapped instanceof java.awt.Image awtImage) {
-            return createImageLabel(new ImageIcon(awtImage), maxWidth, maxHeight);
-        }
-        if (wrapped instanceof Icon icon) {
-            return createImageLabel(icon, maxWidth, maxHeight);
+        switch (wrapped) {
+            case JComponent jc -> {
+                applyImageScaling(jc, maxWidth, maxHeight);
+                return jc;
+            }
+            case Component component -> {
+                return component;
+            }
+            case Image image -> {
+                return createImageLabel(new ImageIcon(AwtImageUtil.getInstance().toImage(image)), maxWidth, maxHeight);
+            }
+            case java.awt.Image awtImage -> {
+                return createImageLabel(new ImageIcon(awtImage), maxWidth, maxHeight);
+            }
+            case Icon icon -> {
+                return createImageLabel(icon, maxWidth, maxHeight);
+            }
+            case null, default -> {
+            }
         }
         return null;
+    }
+
+    private static final class TableComponent extends JComponent {
+        private static final float CELL_PADDING = 4.0f;
+
+        private final RichTextTableHelper.Table table;
+
+        private TableComponent(RichTextTableHelper.Table table) {
+            this.table = table;
+            setOpaque(false);
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            RichTextTableHelper.TableLayout layout = tableLayout();
+            return new Dimension(
+                    Math.max(1, (int) Math.ceil(layout.bounds().width())),
+                    Math.max(1, (int) Math.ceil(layout.bounds().height()))
+            );
+        }
+
+        @Override
+        protected void paintComponent(Graphics graphics) {
+            super.paintComponent(graphics);
+            Graphics2D graphics2d = (Graphics2D) graphics.create();
+            try (SwingGraphics tableGraphics = new SwingGraphics(
+                    graphics2d,
+                    new Rectangle(0, 0, Math.max(1, getWidth()), Math.max(1, getHeight()))
+            )) {
+                tableGraphics.reset();
+                RichTextTableRenderer.render(tableGraphics, tableLayout());
+            } finally {
+                graphics2d.dispose();
+            }
+        }
+
+        private RichTextTableHelper.TableLayout tableLayout() {
+            java.awt.Font componentFont = getFont();
+            Font font = componentFont == null
+                    ? FontUtil.getInstance().getDefaultFont()
+                    : AwtFontUtil.getInstance().convert(componentFont);
+            return RichTextTableHelper.layout(
+                    table,
+                    AwtFontUtil.getInstance(),
+                    font,
+                    Float.MAX_VALUE,
+                    false,
+                    CELL_PADDING
+            );
+        }
     }
 
     private static JButton createHyperlinkButton(String text) {
@@ -946,6 +1013,23 @@ public class TextPane extends JScrollPane implements RichTextPane {
         }
     }
 
+    /**
+     * Represents the placement and dimensions of an inline component within a rendered text layout.
+     * This record is used to encapsulate the positioning information and styling details specific to
+     * the inline component in a text rendering context.
+     *
+     * @param component the Swing component being placed inline
+     * @param x the x-coordinate for the placement of the component
+     * @param y the y-coordinate for the placement of the component
+     * @param w the width of the component
+     * @param h the height of the component
+     * @param baselineY the y-coordinate for the baseline alignment of the component
+     * @param font the font used for the text surrounding or related to the component
+     * @param vAnchor the vertical anchoring position of the component relative to text
+     * @param referenceAscent the ascent reference value used for positioning relative to font metrics
+     * @param referenceDescent the descent reference value used for positioning relative to font metrics
+     * @param descent the descent of the component, potentially affecting its layout relative to text flow
+     */
     protected record InlineComponentPlacement(
             Component component,
             float x,

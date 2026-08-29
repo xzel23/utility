@@ -4,10 +4,12 @@ import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.RichTextPaneLayoutHelper;
+import com.dua3.utility.ui.RichTextTableHelper;
 import com.dua3.utility.ui.VAnchor;
 import javafx.scene.Node;
 import org.jspecify.annotations.Nullable;
@@ -70,6 +72,23 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
             assertTrue(Double.isFinite(minPlacementX), "expected inline node placements");
             assertTrue(sawWrappedInlinePlacement, "expected inline placement on a wrapped line");
             assertTrue(minPlacementX >= -0.5, "inline placement must stay inside content area (minX=" + minPlacementX + ")");
+        });
+    }
+
+    @Test
+    void testTableTextIsRenderedAsOneInlineGridNode() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextPane control = new TextPane(createTableText());
+            control.setPrefWidth(480);
+            control.setMinWidth(480);
+            control.setMaxWidth(480);
+            addToScene(control);
+
+            RichTextPaneLayoutHelper.Layout<?> layout = control.createLayout(480);
+            assertEquals(1, layout.placements().size());
+            Node node = (Node) placementValue(layout.placements().getFirst(), "node");
+            assertTrue(node.prefWidth(-1) > 0.0);
+            assertTrue(node.prefHeight(-1) > 0.0);
         });
     }
 
@@ -137,6 +156,39 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
         }
 
         return builder.toRichText();
+    }
+
+    private static RichText createTableText() {
+        RichTextBuilder builder = new RichTextBuilder();
+        appendTableCell(builder, 1, 0, true, 0, "Name");
+        appendTableCell(builder, 1, 0, true, 1, "Value");
+        appendTableRowEnd(builder, 1, 0, true);
+        appendTableCell(builder, 1, 1, false, 0, "first");
+        appendTableCell(builder, 1, 1, false, 1, "one");
+        appendTableRowEnd(builder, 1, 1, false);
+        return builder.toRichText();
+    }
+
+    private static void appendTableCell(RichTextBuilder builder, int table, int row, boolean header, int column, String value) {
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ID, table);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ROW, row);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_HEADER, header);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_COLUMN, column);
+        builder.append(value).append('\t');
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_COLUMN);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_HEADER);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_ROW);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_ID);
+    }
+
+    private static void appendTableRowEnd(RichTextBuilder builder, int table, int row, boolean header) {
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ID, table);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ROW, row);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_HEADER, header);
+        builder.append('\n');
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_HEADER);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_ROW);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_ID);
     }
 
     private static RichText createWrappedInlineRegressionText() {

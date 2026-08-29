@@ -10,6 +10,7 @@ import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.InlineNode;
+import com.dua3.utility.ui.RichTextTableHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -162,6 +163,22 @@ class TextPaneTest {
         assertEquals(target, clickedUri.get());
     }
 
+    @Test
+    void testTableTextIsRenderedAsOneInlineGridComponent() {
+        TestTextPane pane = onEdtGet(TestTextPane::new);
+
+        onEdtRun(() -> {
+            pane.setText(createTableText());
+            pane.setSize(480, 200);
+            pane.getTextComponent().setSize(480, 200);
+        });
+
+        TextPane.RenderLayout layout = onEdtGet(pane::renderLayoutForTest);
+        assertEquals(1, layout.placements().size());
+        assertTrue(layout.placements().getFirst().component().getPreferredSize().width > 0);
+        assertTrue(layout.placements().getFirst().component().getPreferredSize().height > 0);
+    }
+
     private static RichText createInlineControlText(InlineNode<?> inlineNode) {
         Style inlineStyle = Style.create(
                 "inline-test",
@@ -175,6 +192,39 @@ class TextPaneTest {
                 .pop(inlineStyle)
                 .append(" after")
                 .toRichText();
+    }
+
+    private static RichText createTableText() {
+        RichTextBuilder builder = new RichTextBuilder();
+        appendTableCell(builder, 1, 0, true, 0, "Name");
+        appendTableCell(builder, 1, 0, true, 1, "Value");
+        appendTableRowEnd(builder, 1, 0, true);
+        appendTableCell(builder, 1, 1, false, 0, "first");
+        appendTableCell(builder, 1, 1, false, 1, "one");
+        appendTableRowEnd(builder, 1, 1, false);
+        return builder.toRichText();
+    }
+
+    private static void appendTableCell(RichTextBuilder builder, int table, int row, boolean header, int column, String value) {
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ID, table);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ROW, row);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_HEADER, header);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_COLUMN, column);
+        builder.append(value).append('\t');
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_COLUMN);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_HEADER);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_ROW);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_ID);
+    }
+
+    private static void appendTableRowEnd(RichTextBuilder builder, int table, int row, boolean header) {
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ID, table);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ROW, row);
+        builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_HEADER, header);
+        builder.append('\n');
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_HEADER);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_ROW);
+        builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_ID);
     }
 
     private static double inlinePlaceholderX(TextPane.RenderLayout layout) {
