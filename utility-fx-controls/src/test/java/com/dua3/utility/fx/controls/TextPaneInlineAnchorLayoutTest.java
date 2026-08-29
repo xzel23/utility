@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
@@ -11,6 +12,8 @@ import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.RichTextPaneLayoutHelper;
 import com.dua3.utility.ui.RichTextTableHelper;
 import com.dua3.utility.ui.VAnchor;
+import com.dua3.utility.ui.VisualLine;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
@@ -89,6 +92,42 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
             Node node = (Node) placementValue(layout.placements().getFirst(), "node");
             assertTrue(node.prefWidth(-1) > 0.0);
             assertTrue(node.prefHeight(-1) > 0.0);
+        });
+    }
+
+    @Test
+    void testTableHitTestingRetainsOriginalCellOffsets() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            RichText text = createTableText();
+            TextPane control = new TextPane(text);
+            control.setPrefWidth(480);
+            control.setMinWidth(480);
+            control.setMaxWidth(480);
+            addToScene(control);
+
+            RichTextPaneLayoutHelper.Layout<?> renderLayout = control.createLayout(480);
+            Object placement = renderLayout.placements().getFirst();
+            Node node = (Node) placementValue(placement, "node");
+            node.applyCss();
+            node.autosize();
+
+            RichTextTableHelper.Table table = RichTextTableHelper.tables(text).getFirst();
+            RichTextTableHelper.TableLayout tableLayout = RichTextTableHelper.layout(
+                    table,
+                    FxFontUtil.getInstance(),
+                    control.getFont().scaled((float) control.getDisplayScale()),
+                    Float.MAX_VALUE,
+                    false,
+                    4.0f
+            );
+            RichTextTableHelper.CellLayout secondCell = tableLayout.rows().getFirst().cells().get(1);
+            double x = asDouble(placementValue(placement, "x")) + secondCell.contentBounds().x();
+            double y = computeInlineNodeY(placement, node.prefHeight(-1), node.getBaselineOffset())
+                    + secondCell.contentBounds().y();
+
+            assertEquals(secondCell.cell().start(), control.sourcePositionForPoint(
+                    new Point2D(x, y), 480, List.of(new VisualLine(0, 0, 0.0, 1.0, new double[]{0.0}))
+            ));
         });
     }
 
