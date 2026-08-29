@@ -1,6 +1,8 @@
 package com.dua3.utility.ui;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
@@ -16,7 +18,8 @@ class RichTextTableHelperTest {
 
     private static final Style TABLE_THEME = Style.create("table-theme", Map.of(
             RichTextTableHelper.STYLE_ATTRIBUTE_BORDER_COLOR, Color.DARKCYAN,
-            RichTextTableHelper.STYLE_ATTRIBUTE_BORDER_WIDTH, 2.5f
+            RichTextTableHelper.STYLE_ATTRIBUTE_BORDER_WIDTH, 2.5f,
+            Style.BACKGROUND_COLOR, Color.YELLOW
     ));
 
     @Test
@@ -53,6 +56,36 @@ class RichTextTableHelperTest {
         appendCell(builder, 9, 0, true, 0, "LEFT", "incomplete");
 
         assertTrue(RichTextTableHelper.tables(builder.toRichText()).isEmpty());
+    }
+
+    @Test
+    void laysOutCellsWithPaddingAndCompleteGrid() {
+        RichTextTableHelper.Table table = RichTextTableHelper.tables(tableText()).getFirst();
+        Font font = FontUtil.getInstance().getDefaultFont();
+
+        RichTextTableHelper.TableLayout layout = RichTextTableHelper.layout(
+                table,
+                FontUtil.getInstance(),
+                font,
+                400.0f,
+                true,
+                3.0f
+        );
+
+        assertEquals(table, layout.table());
+        assertTrue(layout.bounds().width() > 0.0f);
+        assertTrue(layout.bounds().height() > 0.0f);
+        assertEquals(3, layout.rows().size());
+        assertEquals(7, layout.gridLines().size()); // 3 vertical column boundaries plus 4 horizontal row boundaries
+
+        RichTextTableHelper.CellLayout title = layout.rows().getFirst().cells().getFirst();
+        assertEquals(3.0f, title.contentBounds().x());
+        assertEquals(3.0f, title.contentBounds().y());
+        assertEquals(Color.YELLOW, title.backgroundColor());
+        assertTrue(!title.fragments().isEmpty());
+
+        RichTextTableHelper.CellLayout value = layout.rows().getFirst().cells().get(1);
+        assertEquals(title.bounds().x() + title.bounds().width(), value.bounds().x());
     }
 
     private static RichText tableText() {

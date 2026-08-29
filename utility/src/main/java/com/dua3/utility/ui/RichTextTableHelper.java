@@ -1,9 +1,15 @@
 package com.dua3.utility.ui;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.text.Alignment;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.text.VerticalAlignment;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -72,7 +78,13 @@ public final class RichTextTableHelper {
             if (source.charAt(index) == '\t') {
                 Integer columnIndex = integerAttribute(attributes, ATTRIBUTE_TABLE_COLUMN);
                 if (columnIndex != null) {
-                    row.addCell(columnIndex, columnAlignment(attributes.get(ATTRIBUTE_TABLE_COLUMN_ALIGNMENT)), row.nextCellStart, index);
+                    row.addCell(
+                            columnIndex,
+                            columnAlignment(attributes.get(ATTRIBUTE_TABLE_COLUMN_ALIGNMENT)),
+                            row.nextCellStart,
+                            index,
+                            source.runAt(index).getFontDef().getBackgroundColor()
+                    );
                     row.nextCellStart = index + 1;
                 }
             } else if (source.charAt(index) == '\n') {
@@ -85,6 +97,223 @@ public final class RichTextTableHelper {
                 .flatMap(Optional::stream)
                 .sorted(Comparator.comparingInt(Table::start))
                 .toList();
+    }
+
+    /**
+     * Measures and positions every cell in a table.
+     *
+     * <p>When wrapping is enabled, columns are reduced proportionally to fit the available width. Otherwise the
+     * table keeps its natural width and its caller may provide horizontal scrolling. Cell text is returned as
+     * positioned fragments so toolkit renderers can use their normal rich-text paint path.
+     *
+     * @param table the extracted table
+     * @param fontUtil text measurement implementation
+     * @param font default font
+     * @param availableWidth maximum table width when wrapping is enabled
+     * @param wrapText whether cells may wrap to fit the available width
+     * @param cellPadding non-negative padding on each side of a cell's content
+     * @return table geometry and positioned cell fragments
+     */
+    public static TableLayout layout(
+            Table table,
+            FontUtil fontUtil,
+            Font font,
+            float availableWidth,
+            boolean wrapText,
+            float cellPadding
+    ) {
+        if (!Float.isFinite(availableWidth) || availableWidth <= 0.0f) {
+            throw new IllegalArgumentException("available width must be finite and greater than zero: " + availableWidth);
+        }
+        if (!Float.isFinite(cellPadding) || cellPadding < 0.0f) {
+            throw new IllegalArgumentException("cell padding must be finite and non-negative: " + cellPadding);
+        }
+
+        int columnCount = table.rows().stream()
+                .flatMap(row -> row.cells().stream())
+                .mapToInt(Cell::column)
+                .max()
+                .orElse(-1) + 1;
+        if (columnCount == 0) {
+            return new TableLayout(table, new Rectangle2f(0, 0, 0, 0), List.of(), List.of());
+        }
+
+        float[] naturalColumnWidths = naturalColumnWidths(table, columnCount, fontUtil, font);
+        float[] columnWidths = resolveColumnWidths(naturalColumnWidths, availableWidth, wrapText, cellPadding);
+        float defaultContentHeight = defaultContentHeight(fontUtil, font);
+        List<RowLayout> rows = new ArrayList<>(table.rows().size());
+        float y = 0.0f;
+        for (Row row : table.rows()) {
+            List<MeasuredCell> measuredCells = new ArrayList<>(row.cells().size());
+            float rowHeight = defaultContentHeight + 2.0f * cellPadding;
+            for (Cell cell : row.cells()) {
+                float contentWidth = columnWidths[cell.column()];
+                FragmentedText fragments = fragments(cell.text(), fontUtil, font, contentWidth, wrapText, cell.alignment());
+                float contentHeight = Math.max(defaultContentHeight, fragments.actualHeight());
+                measuredCells.add(new MeasuredCell(cell, fragments, contentHeight));
+                rowHeight = Math.max(rowHeight, contentHeight + 2.0f * cellPadding);
+            }
+
+            List<CellLayout> cells = new ArrayList<>(measuredCells.size());
+            for (MeasuredCell measured : measuredCells) {
+                float x = columnStart(columnWidths, measured.cell.column(), cellPadding);
+                float width = columnWidths[measured.cell.column()] + 2.0f * cellPadding;
+                Rectangle2f bounds = new Rectangle2f(x, y, width, rowHeight);
+                Rectangle2f contentBounds = new Rectangle2f(
+                        x + cellPadding,
+                        y + cellPadding,
+                        columnWidths[measured.cell.column()],
+                        Math.max(0.0f, rowHeight - 2.0f * cellPadding)
+                );
+                cells.add(new CellLayout(
+                        measured.cell,
+                        bounds,
+                        contentBounds,
+                        translate(measured.fragments.lines(), contentBounds.x(), contentBounds.y()),
+                        measured.cell.backgroundColor()
+                ));
+            }
+            rows.add(new RowLayout(row, new Rectangle2f(0, y, tableWidth(columnWidths, cellPadding), rowHeight), List.copyOf(cells)));
+            y += rowHeight;
+        }
+
+        float width = tableWidth(columnWidths, cellPadding);
+        Rectangle2f bounds = new Rectangle2f(0, 0, width, y);
+        return new TableLayout(table, bounds, List.copyOf(rows), gridLines(columnWidths, rows, width, y, cellPadding));
+    }
+
+    private static float[] naturalColumnWidths(Table table, int columnCount, FontUtil fontUtil, Font font) {
+        float[] widths = new float[columnCount];
+        for (Row row : table.rows()) {
+            for (Cell cell : row.cells()) {
+                FragmentedText fragments = fragments(cell.text(), fontUtil, font, Float.MAX_VALUE, false, cell.alignment());
+                widths[cell.column()] = Math.max(widths[cell.column()], fragments.actualWidth());
+            }
+        }
+        float minimum = (float) Math.max(1.0f, font.getFontData().spaceWidth() * 2.0f);
+        for (int column = 0; column < widths.length; column++) {
+            widths[column] = Math.max(minimum, widths[column]);
+        }
+        return widths;
+    }
+
+    private static float[] resolveColumnWidths(float[] naturalWidths, float availableWidth, boolean wrapText, float cellPadding) {
+        float[] widths = naturalWidths.clone();
+        if (!wrapText) {
+            return widths;
+        }
+
+        float availableContentWidth = Math.max(widths.length, availableWidth - 2.0f * cellPadding * widths.length);
+        float naturalWidth = 0.0f;
+        for (float width : widths) {
+            naturalWidth += width;
+        }
+        if (naturalWidth <= availableContentWidth) {
+            return widths;
+        }
+
+        float ratio = availableContentWidth / naturalWidth;
+        float assigned = 0.0f;
+        for (int column = 0; column < widths.length - 1; column++) {
+            widths[column] = Math.max(1.0f, widths[column] * ratio);
+            assigned += widths[column];
+        }
+        widths[widths.length - 1] = Math.max(1.0f, availableContentWidth - assigned);
+        return widths;
+    }
+
+    private static FragmentedText fragments(
+            RichText text,
+            FontUtil fontUtil,
+            Font font,
+            float width,
+            boolean wrapText,
+            ColumnAlignment alignment
+    ) {
+        float contentWidth = Math.max(1.0f, width);
+        return FragmentedText.generateFragments(
+                text,
+                fontUtil,
+                font,
+                contentWidth,
+                Float.MAX_VALUE,
+                toTextAlignment(alignment),
+                VerticalAlignment.TOP,
+                HAnchor.LEFT,
+                VAnchor.TOP,
+                wrapText ? contentWidth : FragmentedText.NO_WRAP
+        );
+    }
+
+    private static Alignment toTextAlignment(ColumnAlignment alignment) {
+        return switch (alignment) {
+            case RIGHT -> Alignment.RIGHT;
+            case CENTER -> Alignment.CENTER;
+            case NONE, LEFT -> Alignment.LEFT;
+        };
+    }
+
+    private static float defaultContentHeight(FontUtil fontUtil, Font font) {
+        return Math.max(1.0f, fontUtil.getTextDimension(" ", font).height());
+    }
+
+    private static float columnStart(float[] widths, int column, float padding) {
+        float x = 0.0f;
+        for (int index = 0; index < column; index++) {
+            x += widths[index] + 2.0f * padding;
+        }
+        return x;
+    }
+
+    private static float tableWidth(float[] widths, float padding) {
+        float width = 0.0f;
+        for (float columnWidth : widths) {
+            width += columnWidth + 2.0f * padding;
+        }
+        return width;
+    }
+
+    private static List<List<FragmentedText.Fragment>> translate(
+            List<List<FragmentedText.Fragment>> fragments,
+            float dx,
+            float dy
+    ) {
+        return fragments.stream()
+                .map(line -> line.stream()
+                        .map(fragment -> new FragmentedText.Fragment(
+                                fragment.x() + dx,
+                                fragment.y() + dy,
+                                fragment.w(),
+                                fragment.h(),
+                                fragment.baseLine(),
+                                fragment.font(),
+                                fragment.text()
+                        ))
+                        .toList())
+                .toList();
+    }
+
+    private static List<GridLine> gridLines(
+            float[] columnWidths,
+            List<RowLayout> rows,
+            float width,
+            float height,
+            float cellPadding
+    ) {
+        List<GridLine> lines = new ArrayList<>(columnWidths.length + rows.size() + 2);
+        float x = 0.0f;
+        lines.add(new GridLine(x, 0.0f, x, height));
+        for (float columnWidth : columnWidths) {
+            x += columnWidth + 2.0f * cellPadding;
+            lines.add(new GridLine(x, 0.0f, x, height));
+        }
+        float y = 0.0f;
+        lines.add(new GridLine(0.0f, y, width, y));
+        for (RowLayout row : rows) {
+            y += row.bounds().height();
+            lines.add(new GridLine(0.0f, y, width, y));
+        }
+        return List.copyOf(lines);
     }
 
     private static @Nullable Integer integerAttribute(Map<String, @Nullable Object> attributes, String name) {
@@ -190,7 +419,32 @@ public final class RichTextTableHelper {
      * @param alignment
      * @param text
      */
-    public record Cell(int column, int start, int end, ColumnAlignment alignment, RichText text) {}
+    public record Cell(
+            int column,
+            int start,
+            int end,
+            ColumnAlignment alignment,
+            @Nullable Color backgroundColor,
+            RichText text
+    ) {}
+
+    /** A table's positioned geometry and grid segments. */
+    public record TableLayout(Table table, Rectangle2f bounds, List<RowLayout> rows, List<GridLine> gridLines) {}
+
+    /** A positioned table row. */
+    public record RowLayout(Row row, Rectangle2f bounds, List<CellLayout> cells) {}
+
+    /** A positioned cell with absolute rich-text fragments and its resolved background color. */
+    public record CellLayout(
+            Cell cell,
+            Rectangle2f bounds,
+            Rectangle2f contentBounds,
+            List<List<FragmentedText.Fragment>> fragments,
+            @Nullable Color backgroundColor
+    ) {}
+
+    /** A logical line segment in a table grid. */
+    public record GridLine(float x1, float y1, float x2, float y2) {}
 
     private static final class TableAccumulator {
         private final int id;
@@ -242,8 +496,8 @@ public final class RichTextTableHelper {
             this.header |= header;
         }
 
-        private void addCell(int column, ColumnAlignment alignment, int start, int end) {
-            cells.put(column, new CellAccumulator(column, start, end, alignment));
+        private void addCell(int column, ColumnAlignment alignment, int start, int end, @Nullable Color backgroundColor) {
+            cells.put(column, new CellAccumulator(column, start, end, alignment, backgroundColor));
         }
 
         private void complete(int end) {
@@ -259,7 +513,14 @@ public final class RichTextTableHelper {
                 if (cell.start < 0 || cell.end < cell.start) {
                     return Optional.empty();
                 }
-                completedCells.add(new Cell(cell.column, cell.start, cell.end, cell.alignment, source.subSequence(cell.start, cell.end)));
+                completedCells.add(new Cell(
+                        cell.column,
+                        cell.start,
+                        cell.end,
+                        cell.alignment,
+                        cell.backgroundColor,
+                        source.subSequence(cell.start, cell.end)
+                ));
             }
             return Optional.of(new Row(index, start, end, header, List.copyOf(completedCells)));
         }
@@ -269,5 +530,13 @@ public final class RichTextTableHelper {
         }
     }
 
-    private record CellAccumulator(int column, int start, int end, ColumnAlignment alignment) {}
+    private record CellAccumulator(
+            int column,
+            int start,
+            int end,
+            ColumnAlignment alignment,
+            @Nullable Color backgroundColor
+    ) {}
+
+    private record MeasuredCell(Cell cell, FragmentedText fragments, float contentHeight) {}
 }
