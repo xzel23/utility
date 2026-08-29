@@ -382,6 +382,33 @@ public class TextPane extends Control implements RichTextPane {
         return createLayout(richText, getFont(), isWrapText(), availableWidth, getDisplayScale());
     }
 
+    /**
+     * Resolves a source position for a content-local point, including the original source range hidden by an inline
+     * table placeholder. The fallback lines are used only for ordinary text.
+     */
+    int sourcePositionForPoint(Point2D point, double availableWidth, List<VisualLine> fallbackLines) {
+        RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = createLayout(availableWidth);
+        for (InlineControlPlacement placement : layout.placements()) {
+            if (!(placement.node() instanceof TableNode tableNode)) {
+                continue;
+            }
+            tableNode.applyCss();
+            tableNode.autosize();
+            double prefHeight = tableNode.prefHeight(-1);
+            double tableY = computeInlineNodeY(placement, prefHeight, tableNode.getBaselineOffset());
+            var sourcePosition = RichTextTableHelper.sourcePositionForPoint(
+                    tableNode.tableLayout(),
+                    (float) (point.getX() - placement.x()),
+                    (float) (point.getY() - tableY),
+                    FONT_UTIL
+            );
+            if (sourcePosition.isPresent()) {
+                return sourcePosition.getAsInt();
+            }
+        }
+        return RichTextVisualLayoutHelper.indexForPoint(fallbackLines, point.getX(), point.getY());
+    }
+
     private static RichTextPaneLayoutHelper.Layout<InlineControlPlacement> createLayout(
             RichText richText,
             Font font,
@@ -1517,7 +1544,7 @@ public class TextPane extends Control implements RichTextPane {
             }
 
             Point2D point = contentPane.sceneToLocal(sceneX, dragSceneY);
-            int caret = RichTextVisualLayoutHelper.indexForPoint(lines, point.getX(), point.getY());
+            int caret = getSkinnable().sourcePositionForPoint(point, getAvailableWidth(), lines);
             editor.selectPositionCaret(caret);
         }
 
@@ -1537,12 +1564,31 @@ public class TextPane extends Control implements RichTextPane {
         }
 
         private void ensureCaretVisible(TextEditorPane editor, double availableWidth) {
+            int caret = editor.getCaretPosition();
+            for (Node node : inlineLayer.getChildren()) {
+                if (!(node instanceof TableNode tableNode)) {
+                    continue;
+                }
+                RichTextTableHelper.Table table = tableNode.tableLayout().table();
+                if (caret < table.start() || caret >= table.end()) {
+                    continue;
+                }
+                RichTextTableHelper.caretForSourcePosition(tableNode.tableLayout(), caret, FONT_UTIL)
+                        .ifPresent(tableCaret -> {
+                            Bounds bounds = tableNode.getBoundsInParent();
+                            scrollHorizontallyToInclude(bounds.getMinX() + tableCaret.x(), 1.0);
+                            scrollVerticallyToInclude(
+                                    bounds.getMinY() + tableCaret.y(),
+                                    bounds.getMinY() + tableCaret.y() + tableCaret.height()
+                            );
+                        });
+                return;
+            }
             List<VisualLine> lines = editor.buildVisualLines(availableWidth);
             if (lines.isEmpty()) {
                 return;
             }
 
-            int caret = editor.getCaretPosition();
             int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             if (lineIndex < 0 || lineIndex >= lines.size()) {
                 return;
@@ -1895,6 +1941,22 @@ public class TextPane extends Control implements RichTextPane {
 
                 // Draw full-node selection markers for inline nodes based on source-range overlap.
                 for (InlineControlPlacement placement : layout.placements()) {
+                    if (placement.node() instanceof TableNode tableNode) {
+                        Bounds bounds = tableNode.getBoundsInParent();
+                        for (com.dua3.utility.math.geometry.Rectangle2f cell : RichTextTableHelper.selectionBounds(
+                                tableNode.tableLayout(), sourceSelStart, sourceSelEnd
+                        )) {
+                            Rectangle marker = new Rectangle(
+                                    bounds.getMinX() + cell.x(),
+                                    bounds.getMinY() + cell.y(),
+                                    Math.max(1.0, cell.width()),
+                                    Math.max(1.0, cell.height())
+                            );
+                            marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
+                            selectionLayer.getChildren().add(marker);
+                        }
+                        continue;
+                    }
                     if (!isInlinePlacementSelected(layout.layoutTextData(), placement, sourceSelStart, sourceSelEnd)) {
                         continue;
                     }
@@ -1944,9 +2006,30 @@ public class TextPane extends Control implements RichTextPane {
 
             if (tep.isEditable() && hasEditorFocus(control)) {
                 CaretInfo caretInfo = null;
+                int caretPosition = tep.getCaretPosition();
+                for (InlineControlPlacement placement : layout.placements()) {
+                    if (!(placement.node() instanceof TableNode tableNode)) {
+                        continue;
+                    }
+                    RichTextTableHelper.Table table = tableNode.tableLayout().table();
+                    if (caretPosition < table.start() || caretPosition >= table.end()) {
+                        continue;
+                    }
+                    Bounds bounds = tableNode.getBoundsInParent();
+                    caretInfo = RichTextTableHelper.caretForSourcePosition(
+                                    tableNode.tableLayout(), caretPosition, FONT_UTIL)
+                            .map(caret -> new CaretInfo(
+                                    bounds.getMinX() + caret.x(),
+                                    bounds.getMinY() + caret.y(),
+                                    caret.height()
+                            ))
+                            .orElse(null);
+                    if (caretInfo != null) {
+                        break;
+                    }
+                }
                 List<VisualLine> lines = tep.buildVisualLines(availableWidth);
-                if (!lines.isEmpty()) {
-                    int caretPosition = tep.getCaretPosition();
+                if (caretInfo == null && !lines.isEmpty()) {
                     int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caretPosition);
                     if (lineIndex >= 0 && lineIndex < lines.size()) {
                         VisualLine line = lines.get(lineIndex);

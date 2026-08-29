@@ -9,6 +9,7 @@ import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.DetachableNode;
 import com.dua3.utility.ui.RichTextEditorPane;
 import com.dua3.utility.ui.RichTextEditorModel;
+import com.dua3.utility.ui.RichTextTableHelper;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VisualLine;
 import org.jspecify.annotations.Nullable;
@@ -821,9 +822,13 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         }
 
         var selection = model.getSelection();
+        layout.setTableSelection(selection.start(), selection.end());
         if (selection.length() > 0) {
             g2.setColor(SELECTION_COLOR);
             for (VisualLine line : lines) {
+                if (layout.intersectsTable(line.start(), line.end())) {
+                    continue;
+                }
                 int from = Math.max(selection.start(), line.start());
                 int to = Math.min(selection.end(), line.end());
                 if (from >= to) {
@@ -842,6 +847,12 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
 
         if (shouldPaintCaret() && isCaretVisible()) {
             int caret = model.getCaretPosition();
+            TablePlacement table = layout.tableAtSourcePosition(caret);
+            if (table != null) {
+                layout.setTableCaret(caret);
+                return;
+            }
+            layout.setTableCaret(-1);
             int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             if (lineIndex >= 0 && lineIndex < lines.size()) {
                 VisualLine line = lines.get(lineIndex);
@@ -851,6 +862,8 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 g2.setColor(java.awt.Color.BLACK);
                 g2.drawLine(x, y1, x, y2);
             }
+        } else {
+            layout.setTableCaret(-1);
         }
     }
 
@@ -1167,7 +1180,22 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     }
 
     private void ensureCaretVisible() {
-        List<VisualLine> lines = getRenderLayout().visualLines();
+        RenderLayout layout = getRenderLayout();
+        TablePlacement table = layout.tableAtSourcePosition(model.getCaretPosition());
+        if (table != null) {
+            RichTextTableHelper.caretForSourcePosition(table.layout(), model.getCaretPosition(), AwtFontUtil.getInstance())
+                    .ifPresent(caret -> {
+                        double scale = getDisplayScale();
+                        getTextComponent().scrollRectToVisible(new Rectangle(
+                                (int) Math.floor((table.x() + caret.x()) * scale),
+                                (int) Math.floor((table.y() + caret.y()) * scale),
+                                2,
+                                Math.max(1, (int) Math.ceil(caret.height() * scale))
+                        ));
+                    });
+            return;
+        }
+        List<VisualLine> lines = layout.visualLines();
         if (lines.isEmpty()) {
             return;
         }

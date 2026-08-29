@@ -256,7 +256,17 @@ public class TextPane extends JScrollPane implements RichTextPane {
     protected final int indexForPoint(Point point) {
         RenderLayout layout = getRenderLayout();
         double scale = getDisplayScale();
-        return RichTextVisualLayoutHelper.indexForPoint(layout.visualLines(), point.getX() / scale, point.getY() / scale);
+        float x = (float) (point.getX() / scale);
+        float y = (float) (point.getY() / scale);
+        for (TablePlacement table : layout.tablePlacements()) {
+            var position = RichTextTableHelper.sourcePositionForPoint(
+                    table.layout(), x - table.x(), y - table.y(), AwtFontUtil.getInstance()
+            );
+            if (position.isPresent()) {
+                return position.getAsInt();
+            }
+        }
+        return RichTextVisualLayoutHelper.indexForPoint(layout.visualLines(), x, y);
     }
 
     /**
@@ -376,7 +386,25 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 renderHeight,
                 prepared.layoutTextData()
         );
-        return new RenderLayout(layout, visualLines);
+        return new RenderLayout(layout, visualLines, tablePlacements(shiftedPlacements));
+    }
+
+    private List<TablePlacement> tablePlacements(List<InlineComponentPlacement> placements) {
+        List<TablePlacement> tables = new ArrayList<>();
+        for (InlineComponentPlacement placement : placements) {
+            if (!(placement.component() instanceof TableComponent component)) {
+                continue;
+            }
+            Dimension preferredSize = component.getPreferredSize();
+            int baseline = component.getBaseline(preferredSize.width, preferredSize.height);
+            tables.add(new TablePlacement(
+                    component,
+                    component.tableLayout(),
+                    placement.x(),
+                    (float) computeInlineComponentY(placement, preferredSize.height, baseline)
+            ));
+        }
+        return List.copyOf(tables);
     }
 
     private RichTextVisualLayoutHelper.BlockLayout createVisualBlockLayout(
@@ -637,10 +665,12 @@ public class TextPane extends JScrollPane implements RichTextPane {
         return null;
     }
 
-    private static final class TableComponent extends JComponent {
+    protected static final class TableComponent extends JComponent {
         private static final float CELL_PADDING = 4.0f;
 
         private final RichTextTableHelper.Table table;
+        private List<com.dua3.utility.math.geometry.Rectangle2f> selectionBounds = List.of();
+        private RichTextTableHelper.@Nullable Caret caret;
 
         private TableComponent(RichTextTableHelper.Table table) {
             this.table = table;
@@ -668,6 +698,40 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 RichTextTableRenderer.render(tableGraphics, tableLayout());
             } finally {
                 graphics2d.dispose();
+            }
+            Graphics2D overlay = (Graphics2D) graphics.create();
+            try {
+                overlay.setColor(new java.awt.Color(64, 115, 217, 90));
+                for (com.dua3.utility.math.geometry.Rectangle2f bounds : selectionBounds) {
+                    overlay.fillRect(
+                            (int) Math.floor(bounds.x()),
+                            (int) Math.floor(bounds.y()),
+                            Math.max(1, (int) Math.ceil(bounds.width())),
+                            Math.max(1, (int) Math.ceil(bounds.height()))
+                    );
+                }
+                if (caret != null) {
+                    overlay.setColor(java.awt.Color.BLACK);
+                    int x = (int) Math.round(caret.x());
+                    overlay.drawLine(x, (int) Math.floor(caret.y()), x,
+                            (int) Math.ceil(caret.y() + caret.height()));
+                }
+            } finally {
+                overlay.dispose();
+            }
+        }
+
+        private void setSelection(List<com.dua3.utility.math.geometry.Rectangle2f> value) {
+            if (!selectionBounds.equals(value)) {
+                selectionBounds = value;
+                repaint();
+            }
+        }
+
+        private void setCaret(RichTextTableHelper.@Nullable Caret value) {
+            if (!Objects.equals(caret, value)) {
+                caret = value;
+                repaint();
             }
         }
 
@@ -994,7 +1058,8 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
     protected record RenderLayout(
             RichTextPaneLayoutHelper.Layout<InlineComponentPlacement> layout,
-            List<VisualLine> visualLines
+            List<VisualLine> visualLines,
+            List<TablePlacement> tablePlacements
     ) {
         public List<List<FragmentedText.Fragment>> renderLines() {
             return layout.renderLines();
@@ -1011,7 +1076,44 @@ public class TextPane extends JScrollPane implements RichTextPane {
         public double height() {
             return layout.height();
         }
+
+        protected boolean intersectsTable(int start, int end) {
+            return tablePlacements.stream().anyMatch(table -> start < table.layout().table().end()
+                    && table.layout().table().start() < end);
+        }
+
+        protected @Nullable TablePlacement tableAtSourcePosition(int sourcePosition) {
+            return tablePlacements.stream()
+                    .filter(table -> sourcePosition >= table.layout().table().start()
+                            && sourcePosition <= table.layout().table().end())
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        protected void setTableSelection(int start, int end) {
+            for (TablePlacement table : tablePlacements) {
+                table.component().setSelection(RichTextTableHelper.selectionBounds(table.layout(), start, end));
+            }
+        }
+
+        protected void setTableCaret(int sourcePosition) {
+            for (TablePlacement table : tablePlacements) {
+                table.component().setCaret(RichTextTableHelper.caretForSourcePosition(
+                        table.layout(), sourcePosition, AwtFontUtil.getInstance()
+                ).orElse(null));
+            }
+        }
     }
+
+    /**
+     * Table geometry positioned in canvas coordinates, retaining the original source range.
+     *
+     * @param component the Swing component being placed inline
+     * @param layout the layout of the table
+     * @param x the x-coordinate for the placement of the component
+     * @param y the y-coordinate for the placement of the component
+     */
+    protected record TablePlacement(TableComponent component, RichTextTableHelper.TableLayout layout, float x, float y) {}
 
     /**
      * Represents the placement and dimensions of an inline component within a rendered text layout.

@@ -100,6 +100,41 @@ class RichTextTableHelperTest {
                         instanceof RichTextTableHelper.InlineTable));
     }
 
+    @Test
+    void mapsTablePointsCaretsAndSelectionsToOriginalSourcePositions() {
+        RichText text = tableText();
+        RichTextTableHelper.Table table = RichTextTableHelper.tables(text).getFirst();
+        RichTextTableHelper.TableLayout layout = RichTextTableHelper.layout(
+                table, FontUtil.getInstance(), FontUtil.getInstance().getDefaultFont(), 400.0f, true, 3.0f
+        );
+        RichTextTableHelper.CellLayout title = layout.rows().getFirst().cells().getFirst();
+        RichTextTableHelper.CellLayout value = layout.rows().getFirst().cells().get(1);
+
+        assertEquals(title.cell().start(), RichTextTableHelper.sourcePositionForPoint(
+                layout, title.contentBounds().x(), title.contentBounds().y(), FontUtil.getInstance()
+        ).orElseThrow());
+        assertEquals(value.cell().start(), RichTextTableHelper.sourcePositionForPoint(
+                layout, value.contentBounds().x(), value.contentBounds().y(), FontUtil.getInstance()
+        ).orElseThrow());
+        assertTrue(RichTextTableHelper.sourcePositionForPoint(
+                layout, -1.0f, -1.0f, FontUtil.getInstance()
+        ).isEmpty());
+
+        RichTextTableHelper.Caret caret = RichTextTableHelper.caretForSourcePosition(
+                layout, value.cell().start(), FontUtil.getInstance()
+        ).orElseThrow();
+        assertTrue(caret.x() >= value.contentBounds().x());
+        assertTrue(caret.y() >= value.contentBounds().y());
+
+        assertEquals(List.of(value.bounds()), RichTextTableHelper.selectionBounds(
+                layout, value.cell().start(), value.cell().end() + 1
+        ));
+        // The final row delimiter belongs visually to the row's last cell.
+        RichTextTableHelper.CellLayout last = layout.rows().getLast().cells().getLast();
+        int newline = layout.rows().getLast().row().end() - 1;
+        assertEquals(List.of(last.bounds()), RichTextTableHelper.selectionBounds(layout, newline, newline + 1));
+    }
+
     private static RichText tableText() {
         RichTextBuilder builder = new RichTextBuilder();
         appendCell(builder, 7, 0, true, 0, "LEFT", "Title");

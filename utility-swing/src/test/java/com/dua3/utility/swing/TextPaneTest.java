@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Timeout;
 import javax.swing.AbstractButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Map;
@@ -179,6 +180,26 @@ class TextPaneTest {
         assertTrue(layout.placements().getFirst().component().getPreferredSize().height > 0);
     }
 
+    @Test
+    void testTableHitTestingRetainsOriginalCellOffsets() {
+        TestTextPane pane = onEdtGet(TestTextPane::new);
+        onEdtRun(() -> {
+            pane.setText(createTableText());
+            pane.setSize(480, 200);
+            pane.getTextComponent().setSize(480, 200);
+        });
+
+        TextPane.RenderLayout layout = onEdtGet(pane::renderLayoutForTest);
+        TextPane.TablePlacement table = layout.tablePlacements().getFirst();
+        var secondCell = table.layout().rows().getFirst().cells().get(1);
+        int actual = onEdtGet(() -> pane.indexForTest(new Point(
+                Math.round(table.x() + secondCell.contentBounds().x()),
+                Math.round(table.y() + secondCell.contentBounds().y())
+        )));
+
+        assertEquals(secondCell.cell().start(), actual);
+    }
+
     private static RichText createInlineControlText(InlineNode<?> inlineNode) {
         Style inlineStyle = Style.create(
                 "inline-test",
@@ -243,6 +264,10 @@ class TextPaneTest {
     private static final class TestTextPane extends TextPane {
         TextPane.RenderLayout renderLayoutForTest() {
             return getRenderLayout();
+        }
+
+        int indexForTest(Point point) {
+            return indexForPoint(point);
         }
     }
 

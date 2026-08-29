@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.TreeMap;
 
 /**
@@ -214,6 +215,239 @@ public final class RichTextTableHelper {
         float width = tableWidth(columnWidths, cellPadding);
         Rectangle2f bounds = new Rectangle2f(0, 0, width, y);
         return new TableLayout(table, bounds, List.copyOf(rows), gridLines(columnWidths, rows, width, y, cellPadding));
+    }
+
+    /**
+     * Resolves a source insertion position for a point in table-local coordinates.
+     *
+     * <p>Cell delimiters have no painted glyph. A point in their visual cell resolves to the preceding cell's end,
+     * while a point on a row's unused area resolves to the nearest cell in that row.
+     *
+     * @param layout positioned table geometry
+     * @param x table-local x-coordinate
+     * @param y table-local y-coordinate
+     * @param fontUtil text measurement implementation
+     * @return the nearest source insertion position, or empty when the point is outside the table
+     */
+    public static OptionalInt sourcePositionForPoint(TableLayout layout, float x, float y, FontUtil fontUtil) {
+        if (!contains(layout.bounds(), x, y)) {
+            return OptionalInt.empty();
+        }
+        RowLayout row = nearestRow(layout.rows(), y);
+        if (row == null || row.cells().isEmpty()) {
+            return OptionalInt.of(layout.table().start());
+        }
+        CellLayout cell = nearestCell(row.cells(), x);
+        return OptionalInt.of(sourcePositionInCell(cell, x, y, fontUtil));
+    }
+
+    /**
+     * Resolves the painted caret geometry for an insertion position in a table.
+     *
+     * @param layout positioned table geometry
+     * @param sourcePosition source insertion position
+     * @param fontUtil text measurement implementation
+     * @return table-local caret geometry, or empty when the position is outside the table
+     */
+    public static Optional<Caret> caretForSourcePosition(TableLayout layout, int sourcePosition, FontUtil fontUtil) {
+        if (sourcePosition < layout.table().start() || sourcePosition > layout.table().end()) {
+            return Optional.empty();
+        }
+        CellLayout cell = cellForSourcePosition(layout, sourcePosition);
+        if (cell == null) {
+            return Optional.empty();
+        }
+
+        for (List<FragmentedText.Fragment> line : cell.fragments()) {
+            for (FragmentedText.Fragment fragment : line) {
+                if (!(fragment.text() instanceof Run run)) {
+                    continue;
+                }
+                int runStart = sourceStart(cell.cell(), run);
+                int runEnd = runStart + run.length();
+                if (sourcePosition < runStart || sourcePosition > runEnd) {
+                    continue;
+                }
+                float x = fragment.x() + textWidth(fontUtil, run, sourcePosition - runStart, fragment.font());
+                return Optional.of(new Caret(x, fragment.y(), Math.max(1.0f, fragment.h())));
+            }
+        }
+
+        // Empty cells and invisible delimiters still need a stable caret location.
+        return Optional.of(new Caret(
+                cell.contentBounds().x(),
+                cell.contentBounds().y(),
+                Math.max(1.0f, cell.contentBounds().height())
+        ));
+    }
+
+    /**
+     * Returns whole-cell selection rectangles for a source range in a table.
+     *
+     * <p>Tables are atomic visual structures: selecting any visible text or an invisible tab/newline delimiter
+     * highlights the containing cell. This makes selections unambiguous even when cells contain wrapped text.
+     *
+     * @param layout positioned table geometry
+     * @param sourceStart inclusive selection start
+     * @param sourceEnd exclusive selection end
+     * @return table-local cell rectangles in source order
+     */
+    public static List<Rectangle2f> selectionBounds(TableLayout layout, int sourceStart, int sourceEnd) {
+        if (sourceStart >= sourceEnd || sourceEnd <= layout.table().start() || sourceStart >= layout.table().end()) {
+            return List.of();
+        }
+        List<Rectangle2f> result = new ArrayList<>();
+        for (RowLayout row : layout.rows()) {
+            for (int index = 0; index < row.cells().size(); index++) {
+                CellLayout cell = row.cells().get(index);
+                int cellEnd = cell.cell().end() + 1; // include its invisible tab delimiter
+                if (index == row.cells().size() - 1) {
+                    cellEnd = Math.max(cellEnd, row.row().end()); // include the row newline
+                }
+                if (sourceStart < cellEnd && cell.cell().start() < sourceEnd) {
+                    result.add(cell.bounds());
+                }
+            }
+        }
+        return List.copyOf(result);
+    }
+
+    private static boolean contains(Rectangle2f bounds, float x, float y) {
+        return x >= bounds.xMin() && x <= bounds.xMax() && y >= bounds.yMin() && y <= bounds.yMax();
+    }
+
+    private static @Nullable RowLayout nearestRow(List<RowLayout> rows, float y) {
+        RowLayout nearest = null;
+        float distance = Float.MAX_VALUE;
+        for (RowLayout row : rows) {
+            if (y >= row.bounds().yMin() && y <= row.bounds().yMax()) {
+                return row;
+            }
+            float candidate = Math.abs(y - row.bounds().yCenter());
+            if (candidate < distance) {
+                distance = candidate;
+                nearest = row;
+            }
+        }
+        return nearest;
+    }
+
+    private static CellLayout nearestCell(List<CellLayout> cells, float x) {
+        CellLayout nearest = cells.getFirst();
+        float distance = Float.MAX_VALUE;
+        for (CellLayout cell : cells) {
+            if (x >= cell.bounds().xMin() && x <= cell.bounds().xMax()) {
+                return cell;
+            }
+            float candidate = Math.abs(x - cell.bounds().xCenter());
+            if (candidate < distance) {
+                distance = candidate;
+                nearest = cell;
+            }
+        }
+        return nearest;
+    }
+
+    private static int sourcePositionInCell(CellLayout cell, float x, float y, FontUtil fontUtil) {
+        List<FragmentedText.Fragment> nearestLine = null;
+        float distance = Float.MAX_VALUE;
+        for (List<FragmentedText.Fragment> line : cell.fragments()) {
+            if (line.isEmpty()) {
+                continue;
+            }
+            float top = line.getFirst().y();
+            float height = line.stream().map(FragmentedText.Fragment::h).max(Float::compare).orElse(0.0f);
+            if (y >= top && y <= top + height) {
+                nearestLine = line;
+                break;
+            }
+            float candidate = Math.abs(y - (top + height / 2.0f));
+            if (candidate < distance) {
+                distance = candidate;
+                nearestLine = line;
+            }
+        }
+        if (nearestLine == null) {
+            return cell.cell().start();
+        }
+        FragmentedText.Fragment nearest = nearestLine.getFirst();
+        distance = Float.MAX_VALUE;
+        for (FragmentedText.Fragment fragment : nearestLine) {
+            if (!(fragment.text() instanceof Run)) {
+                continue;
+            }
+            if (x >= fragment.x() && x <= fragment.x() + fragment.w()) {
+                nearest = fragment;
+                break;
+            }
+            float candidate = Math.abs(x - (fragment.x() + fragment.w() / 2.0f));
+            if (candidate < distance) {
+                distance = candidate;
+                nearest = fragment;
+            }
+        }
+        if (!(nearest.text() instanceof Run run)) {
+            return cell.cell().start();
+        }
+        return sourceStart(cell.cell(), run) + indexForX(fontUtil, run, nearest.font(), x - nearest.x());
+    }
+
+    private static @Nullable CellLayout cellForSourcePosition(TableLayout layout, int position) {
+        CellLayout previous = null;
+        for (RowLayout row : layout.rows()) {
+            for (CellLayout cell : row.cells()) {
+                if (position >= cell.cell().start() && position <= cell.cell().end()) {
+                    return cell;
+                }
+                if (position > cell.cell().end()) {
+                    previous = cell;
+                }
+            }
+            if (position < row.row().end()) {
+                return previous;
+            }
+        }
+        return previous;
+    }
+
+    private static int indexForX(FontUtil fontUtil, Run run, Font font, float x) {
+        if (x <= 0.0f) {
+            return 0;
+        }
+        float fullWidth = textWidth(fontUtil, run, run.length(), font);
+        if (x >= fullWidth) {
+            return run.length();
+        }
+        float previous = 0.0f;
+        for (int index = 1; index <= run.length(); index++) {
+            float current = textWidth(fontUtil, run, index, font);
+            if (x < (previous + current) / 2.0f) {
+                return index - 1;
+            }
+            previous = current;
+        }
+        return run.length();
+    }
+
+    /**
+     * RichText subsequences retain run offsets in some implementations and rebase them in others. Accept both so
+     * table extraction remains independent of that storage detail.
+     */
+    private static int sourceStart(Cell cell, Run run) {
+        if (run.getStart() >= cell.start() && run.getEnd() <= cell.end()) {
+            return run.getStart();
+        }
+        return cell.start() + run.getStart();
+    }
+
+    private static float textWidth(FontUtil fontUtil, Run run, int length, Font font) {
+        if (length <= 0) {
+            return 0.0f;
+        }
+        if (length >= run.length()) {
+            return (float) fontUtil.getTextWidth(run, font);
+        }
+        return (float) fontUtil.getTextWidth(run.subSequence(0, length), font);
     }
 
     private static float[] naturalColumnWidths(Table table, int columnCount, FontUtil fontUtil, Font font) {
@@ -505,6 +739,15 @@ public final class RichTextTableHelper {
             List<List<FragmentedText.Fragment>> fragments,
             @Nullable Color backgroundColor
     ) {}
+
+    /**
+     * Table-local caret geometry.
+     *
+     * @param x caret x-coordinate
+     * @param y caret y-coordinate
+     * @param height caret height
+     */
+    public record Caret(float x, float y, float height) {}
 
     /**
      * A logical line segment in a table grid.

@@ -1526,8 +1526,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
 
     private int hitTest(MouseEvent evt) {
         Point2D p = toContentPoint(evt);
-        List<VisualLine> lines = buildVisualLines(currentWrapWidth());
-        return RichTextVisualLayoutHelper.indexForPoint(lines, p.getX(), p.getY());
+        double availableWidth = sharedModel.resolveAvailableWidth(currentWrapWidth());
+        List<VisualLine> lines = buildVisualLines(availableWidth);
+        return sourcePositionForPoint(p, availableWidth, lines);
     }
 
     private void selectWordAt(int pos) {
