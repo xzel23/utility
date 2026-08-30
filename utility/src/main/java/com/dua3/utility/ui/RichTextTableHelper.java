@@ -123,11 +123,17 @@ public final class RichTextTableHelper {
             source.subSequence(position, table.start()).appendTo(builder);
             Style style = Style.create(
                     "rich-text-table-inline",
-                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, new InlineTable(table))
+                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE, new InlineTable(table)),
+                    // Tables are block-like inline nodes. Baseline alignment would position their bottom on the
+                    // source line and let the table cover text that precedes it.
+                    Map.entry(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR, VAnchor.TOP)
             );
             builder.push(style);
             builder.append('\uFFFC');
             builder.pop(style);
+            // A complete structural table includes the newline terminating its final row. The visual placeholder
+            // must restore that block break; otherwise the following paragraph is laid out on the table's line.
+            builder.append('\n');
             position = table.end();
         }
         source.subSequence(position, source.length()).appendTo(builder);

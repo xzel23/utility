@@ -94,10 +94,23 @@ class RichTextTableHelperTest {
 
         RichText replacement = RichTextTableHelper.replaceTablesWithInlineNodes(table);
 
-        assertEquals("\uFFFC", replacement.toString());
-        assertTrue(replacement.runStream().findFirst().orElseThrow().getStyles().stream()
-                .anyMatch(style -> style.get(com.dua3.utility.text.RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE)
-                        instanceof RichTextTableHelper.InlineTable));
+        assertEquals("\uFFFC\n", replacement.toString());
+        var styles = replacement.runStream().findFirst().orElseThrow().getStyles();
+        assertTrue(styles.stream().anyMatch(style -> style.get(com.dua3.utility.text.RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE)
+                instanceof RichTextTableHelper.InlineTable));
+        assertTrue(styles.stream().anyMatch(style -> VAnchor.TOP.equals(
+                style.get(com.dua3.utility.text.RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR)
+        )));
+    }
+
+    @Test
+    void replacementKeepsFollowingTextOnTheLineAfterTheTable() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("before\n");
+        tableText().appendTo(builder);
+        builder.append("after");
+
+        assertEquals("before\n\uFFFC\nafter", RichTextTableHelper.replaceTablesWithInlineNodes(builder.toRichText()).toString());
     }
 
     @Test
