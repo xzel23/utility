@@ -115,6 +115,7 @@ public class TextPane extends Control implements RichTextPane {
     private static final String STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH = TextPane.class.getName() + ".inlineLeadingWidth";
     private static final String IMAGE_VIEW_BASE_SETTINGS = TextPane.class.getName() + ".imageViewBaseSettings";
     private static final String DEFAULT_STYLE_CLASS = "text-pane";
+    private static final String ATTRIBUTE_BLOCK_STACK = "block-stack";
 
     private final ObjectProperty<ToRichText> text = new SimpleObjectProperty<>(this, "text", RichText.emptyText());
     private final BooleanProperty wrapText = new SimpleBooleanProperty(this, "wrapText", false);
@@ -435,9 +436,9 @@ public class TextPane extends Control implements RichTextPane {
         );
 
         FragmentedText renderFragments = applyParagraphIndentation(prepared.renderFragments(), displayScale);
-        BlockPaddingData blockPaddingData = applyBlockVerticalPadding(renderFragments.lines(), displayScale);
+        BlockSpacingData blockSpacingData = applyBlockVerticalSpacing(renderFragments.lines(), displayScale);
         renderFragments = new FragmentedText(
-                blockPaddingData.lines(),
+                blockSpacingData.lines(),
                 renderFragments.width(),
                 renderFragments.height(),
                 renderFragments.baseLine(),
@@ -501,7 +502,7 @@ public class TextPane extends Control implements RichTextPane {
         List<List<FragmentedText.Fragment>> shiftedRenderLines = shiftRenderLines(renderFragments, lineShiftByY);
         float renderHeight = computeRenderedHeight(
                 shiftedRenderLines,
-                lineShiftData.tailOverflowBelow() + blockPaddingData.tailPadding(),
+                lineShiftData.tailOverflowBelow() + blockSpacingData.tailSpacing(),
                 font.scaled((float) displayScale)
         );
 
@@ -552,24 +553,24 @@ public class TextPane extends Control implements RichTextPane {
         return new FragmentedText(lines, fragments.width() + maximumIndent, fragments.height(), fragments.baseLine(), fragments.actualWidth() + maximumIndent, fragments.actualHeight());
     }
 
-    private static BlockPaddingData applyBlockVerticalPadding(
+    private static BlockSpacingData applyBlockVerticalSpacing(
             List<List<FragmentedText.Fragment>> lines,
             double displayScale
     ) {
         List<List<FragmentedText.Fragment>> adjustedLines = new ArrayList<>(lines.size());
-        @Nullable BlockDecoration activeDecoration = null;
+        BlockSpacing activeSpacing = null;
         float yOffset = 0.0f;
 
         for (List<FragmentedText.Fragment> line : lines) {
-            BlockDecoration decoration = TextPaneSkin.blockDecoration(line);
-            if (!Objects.equals(activeDecoration, decoration)) {
-                if (activeDecoration != null) {
-                    yOffset += activeDecoration.padding() * displayScale;
+            BlockSpacing spacing = TextPaneSkin.blockSpacing(line);
+            if (!Objects.equals(activeSpacing, spacing)) {
+                if (activeSpacing != null) {
+                    yOffset += activeSpacing.bottom() * displayScale;
                 }
-                if (decoration != null) {
-                    yOffset += decoration.padding() * displayScale;
+                if (spacing != null) {
+                    yOffset += spacing.top() * displayScale;
                 }
-                activeDecoration = decoration;
+                activeSpacing = spacing;
             }
 
             float offset = yOffset;
@@ -586,8 +587,8 @@ public class TextPane extends Control implements RichTextPane {
                     .toList());
         }
 
-        float tailPadding = activeDecoration == null ? 0.0f : (float) (activeDecoration.padding() * displayScale);
-        return new BlockPaddingData(adjustedLines, tailPadding);
+        float tailSpacing = activeSpacing == null ? 0.0f : (float) (activeSpacing.bottom() * displayScale);
+        return new BlockSpacingData(adjustedLines, tailSpacing);
     }
 
     private static @Nullable Number findFragmentLineIndent(List<FragmentedText.Fragment> line) {
@@ -1118,11 +1119,13 @@ public class TextPane extends Control implements RichTextPane {
 
     private record LineShiftData(Map<Float, Float> lineShiftByY, float tailOverflowBelow) {}
 
-    private record BlockPaddingData(List<List<FragmentedText.Fragment>> lines, float tailPadding) {}
+    private record BlockSpacingData(List<List<FragmentedText.Fragment>> lines, float tailSpacing) {}
 
     private record BlockDecoration(Color backgroundColor, Color borderColor, float borderWidth, float padding) {}
 
     private record BlockDecorationArea(BlockDecoration decoration, float left, float top, float bottom) {}
+
+    private record BlockSpacing(Object blockId, float top, float bottom) {}
 
     private static final class TextPaneSkin extends SkinBase<TextPane> {
         private static final double CARET_AUTOSCROLL_MARGIN = 6.0;
@@ -2015,6 +2018,45 @@ public class TextPane extends Control implements RichTextPane {
                 }
             }
             return null;
+        }
+
+        private static @Nullable BlockSpacing blockSpacing(List<FragmentedText.Fragment> line) {
+            for (FragmentedText.Fragment fragment : line) {
+                if (!(fragment.text() instanceof Run run)) {
+                    continue;
+                }
+                BlockSpacing spacing = blockSpacing(run);
+                if (spacing != null) {
+                    return spacing;
+                }
+            }
+            return null;
+        }
+
+        private static @Nullable BlockSpacing blockSpacing(Run run) {
+            Float marginTop = null;
+            Float marginBottom = null;
+            BlockDecoration decoration = blockDecoration(run);
+            for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+                Style style = run.getStyles().get(i);
+                if (marginTop == null && style.get(Style.BLOCK_MARGIN_TOP) instanceof Number value) {
+                    marginTop = Math.max(0.0f, value.floatValue());
+                }
+                if (marginBottom == null && style.get(Style.BLOCK_MARGIN_BOTTOM) instanceof Number value) {
+                    marginBottom = Math.max(0.0f, value.floatValue());
+                }
+            }
+            float top = marginTop == null ? 0.0f : marginTop;
+            float bottom = marginBottom == null ? 0.0f : marginBottom;
+            if (decoration != null) {
+                top += decoration.padding();
+                bottom += decoration.padding();
+            }
+            if (top == 0.0f && bottom == 0.0f) {
+                return null;
+            }
+            Object blockId = run.getAttributes().get(ATTRIBUTE_BLOCK_STACK);
+            return new BlockSpacing(blockId == null ? run.getAttributes() : blockId, top, bottom);
         }
 
         private static @Nullable BlockDecoration blockDecoration(Run run) {

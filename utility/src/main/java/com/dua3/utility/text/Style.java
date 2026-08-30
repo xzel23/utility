@@ -165,6 +165,31 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      */
     public static final String BACKGROUND_COLOR = "background-color";
 
+    /**
+     * Background color for a decorated text block.
+     */
+    public static final String BLOCK_BACKGROUND_COLOR = "block-background-color";
+    /**
+     * Border color for a decorated text block.
+     */
+    public static final String BLOCK_BORDER_COLOR = "block-border-color";
+    /**
+     * Border width for a decorated text block.
+     */
+    public static final String BLOCK_BORDER_WIDTH = "block-border-width";
+    /**
+     * Padding around the content of a decorated text block.
+     */
+    public static final String BLOCK_PADDING = "block-padding";
+    /**
+     * Margin before a text block.
+     */
+    public static final String BLOCK_MARGIN_TOP = "block-margin-top";
+    /**
+     * Margin after a text block.
+     */
+    public static final String BLOCK_MARGIN_BOTTOM = "block-margin-bottom";
+
     // -- define some default styles
 
     /**
@@ -313,6 +338,9 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
             case TEXT_DECORATION_LINE_THROUGH -> e.getValue() instanceof Boolean;
             case COLOR -> e.getValue() instanceof Color;
             case BACKGROUND_COLOR -> e.getValue() instanceof Color;
+            case BLOCK_BACKGROUND_COLOR -> e.getValue() instanceof Color;
+            case BLOCK_BORDER_COLOR -> e.getValue() instanceof Color;
+            case BLOCK_BORDER_WIDTH, BLOCK_PADDING, BLOCK_MARGIN_TOP, BLOCK_MARGIN_BOTTOM -> e.getValue() instanceof Number;
             default -> true;
         };
 
