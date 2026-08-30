@@ -89,6 +89,33 @@ class RichTextTableHelperTest {
     }
 
     @Test
+    void fitsLongContentToAvailableWidthWithoutInflatingNaturallyNarrowColumns() {
+        RichTextBuilder builder = new RichTextBuilder();
+        appendCell(builder, 8, 0, true, 0, "LEFT", "ID");
+        appendCell(builder, 8, 0, true, 1, "LEFT", "Description");
+        appendRowEnd(builder, 8, 0, true);
+        appendCell(builder, 8, 1, false, 0, "LEFT", "7");
+        appendCell(builder, 8, 1, false, 1, "LEFT", "A description with enough words to require wrapping in a narrow table column.");
+        appendRowEnd(builder, 8, 1, false);
+
+        RichTextTableHelper.TableLayout layout = RichTextTableHelper.layout(
+                RichTextTableHelper.tables(builder.toRichText()).getFirst(),
+                FontUtil.getInstance(),
+                FontUtil.getInstance().getDefaultFont(),
+                280.0f,
+                true,
+                4.0f
+        );
+        RichTextTableHelper.CellLayout id = layout.rows().getFirst().cells().getFirst();
+        RichTextTableHelper.CellLayout description = layout.rows().getFirst().cells().get(1);
+
+        assertTrue(layout.bounds().width() <= 280.01f);
+        assertTrue(id.contentBounds().width() < RichTextTableHelper.DEFAULT_MINIMUM_COLUMN_WIDTH);
+        assertTrue(description.contentBounds().width() >= RichTextTableHelper.DEFAULT_MINIMUM_COLUMN_WIDTH);
+        assertTrue(layout.rows().get(1).bounds().height() > layout.rows().getFirst().bounds().height());
+    }
+
+    @Test
     void replacesCompleteTablesWithOneInlineNode() {
         RichText table = tableText();
 

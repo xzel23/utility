@@ -352,13 +352,13 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 wrapText,
                 availableWidth,
                 STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH,
-                this::createInlineComponent,
+                (run, runFont) -> createInlineComponent(run, runFont, availableWidth),
                 TextPane::measureComponentWidth
         );
 
         FragmentedText renderFragments = applyParagraphIndentation(prepared.renderFragments());
 
-        List<InlineComponentPlacement> placements = collectInlinePlacements(renderFragments);
+        List<InlineComponentPlacement> placements = collectInlinePlacements(renderFragments, availableWidth);
         LineShiftData lineShiftData = computeLineShifts(renderFragments, placements);
         Map<Float, Float> lineShiftByY = lineShiftData.lineShiftByY();
         List<InlineComponentPlacement> shiftedPlacements = shiftPlacements(placements, lineShiftByY);
@@ -421,12 +421,12 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 wrapText,
                 availableWidth,
                 STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH,
-                this::createInlineComponent,
+                (run, runFont) -> createInlineComponent(run, runFont, availableWidth),
                 TextPane::measureComponentWidth
         );
 
         FragmentedText blockRenderFragments = applyParagraphIndentation(prepared.renderFragments());
-        List<InlineComponentPlacement> blockPlacements = collectInlinePlacements(blockRenderFragments);
+        List<InlineComponentPlacement> blockPlacements = collectInlinePlacements(blockRenderFragments, availableWidth);
 
         LineShiftData lineShiftData = computeLineShifts(blockRenderFragments, blockPlacements);
         List<List<FragmentedText.Fragment>> shiftedLines = shiftRenderLines(blockRenderFragments, lineShiftData.lineShiftByY());
@@ -509,7 +509,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
         return 0.0;
     }
 
-    private List<InlineComponentPlacement> collectInlinePlacements(FragmentedText renderFragments) {
+    private List<InlineComponentPlacement> collectInlinePlacements(FragmentedText renderFragments, double availableWidth) {
         List<InlineComponentPlacement> placements = new ArrayList<>();
 
         for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
@@ -539,7 +539,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
                     continue;
                 }
 
-                Component component = createInlineComponent(run, fragment.font());
+                Component component = createInlineComponent(run, fragment.font(), availableWidth);
                 if (component == null) {
                     continue;
                 }
@@ -564,7 +564,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
         return placements;
     }
-    private @Nullable Component createInlineComponent(Run run, Font runFont) {
+    private @Nullable Component createInlineComponent(Run run, Font runFont, double availableWidth) {
         if (TextUtil.isWhitespaceOnly(run)) {
             return null;
         }
@@ -577,14 +577,16 @@ public class TextPane extends JScrollPane implements RichTextPane {
             if (factory instanceof Function<?, ?> f) {
                 @SuppressWarnings("unchecked")
                 Function<String, ?> fn = (Function<String, ?>) f;
-                Component component = toSwingInlineComponent(fn.apply(text), style);
+                Component component = toSwingInlineComponent(fn.apply(text), style, availableWidth);
                 if (component != null) {
                     initializeInlineComponent(component, runFont);
                     return component;
                 }
             }
 
-            Component component = toSwingInlineComponent(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE), style);
+            Component component = toSwingInlineComponent(
+                    style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE), style, availableWidth
+            );
             if (component != null) {
                 initializeInlineComponent(component, runFont);
                 return component;
@@ -603,14 +605,14 @@ public class TextPane extends JScrollPane implements RichTextPane {
         }
     }
 
-    private static @Nullable Component toSwingInlineComponent(@Nullable Object value, Style style) {
+    private static @Nullable Component toSwingInlineComponent(@Nullable Object value, Style style, double availableWidth) {
         double maxWidth = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH);
         double maxHeight = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT);
 
         Object wrapped = value;
         switch (wrapped) {
             case RichTextTableHelper.InlineTable inlineTable -> {
-                return new TableComponent(inlineTable.table());
+                return new TableComponent(inlineTable.table(), tableAvailableWidth(availableWidth));
             }
             case InlineNode<?> inlineNode -> {
                 if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(inlineNode.getMimeType())) {
@@ -659,21 +661,28 @@ public class TextPane extends JScrollPane implements RichTextPane {
             case Icon icon -> {
                 return createImageLabel(icon, maxWidth, maxHeight);
             }
-            case null, default -> {
-            }
+            case null, default -> {/* do nothing */}
         }
         return null;
+    }
+
+    private static float tableAvailableWidth(double availableWidth) {
+        return Double.isFinite(availableWidth) && availableWidth > 0.0
+                ? (float) Math.min(Float.MAX_VALUE, availableWidth)
+                : Float.MAX_VALUE;
     }
 
     protected static final class TableComponent extends JComponent {
         private static final float CELL_PADDING = 4.0f;
 
         private final RichTextTableHelper.Table table;
+        private final float availableWidth;
         private List<com.dua3.utility.math.geometry.Rectangle2f> selectionBounds = List.of();
         private RichTextTableHelper.@Nullable Caret caret;
 
-        private TableComponent(RichTextTableHelper.Table table) {
+        private TableComponent(RichTextTableHelper.Table table, float availableWidth) {
             this.table = table;
+            this.availableWidth = availableWidth;
             setOpaque(false);
         }
 
@@ -712,7 +721,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 }
                 if (caret != null) {
                     overlay.setColor(java.awt.Color.BLACK);
-                    int x = (int) Math.round(caret.x());
+                    int x = Math.round(caret.x());
                     overlay.drawLine(x, (int) Math.floor(caret.y()), x,
                             (int) Math.ceil(caret.y() + caret.height()));
                 }
@@ -744,8 +753,8 @@ public class TextPane extends JScrollPane implements RichTextPane {
                     table,
                     AwtFontUtil.getInstance(),
                     font,
-                    Float.MAX_VALUE,
-                    false,
+                    availableWidth,
+                    availableWidth < Float.MAX_VALUE,
                     CELL_PADDING
             );
         }

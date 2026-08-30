@@ -131,6 +131,22 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
         });
     }
 
+    @Test
+    void testWideTableFitsAvailablePaneWidth() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextPane control = new TextPane(createWideTableText());
+            control.setWrapText(true);
+            control.setPrefWidth(280);
+            control.setMinWidth(280);
+            control.setMaxWidth(280);
+            addToScene(control);
+
+            RichTextPaneLayoutHelper.Layout<?> layout = control.createLayout(280);
+            Node node = (Node) placementValue(layout.placements().getFirst(), "node");
+            assertTrue(node.prefWidth(-1) <= 280.0);
+        });
+    }
+
     private static void assertInlineAnchorsUseLineMetrics(TextPane control) {
         control.setWrapText(false);
         control.setPrefWidth(640);
@@ -204,6 +220,18 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
         appendTableRowEnd(builder, 1, 0, true);
         appendTableCell(builder, 1, 1, false, 0, "first");
         appendTableCell(builder, 1, 1, false, 1, "one");
+        appendTableRowEnd(builder, 1, 1, false);
+        return builder.toRichText();
+    }
+
+    private static RichText createWideTableText() {
+        RichTextBuilder builder = new RichTextBuilder();
+        appendTableCell(builder, 1, 0, true, 0, "ID");
+        appendTableCell(builder, 1, 0, true, 1, "Description");
+        appendTableRowEnd(builder, 1, 0, true);
+        appendTableCell(builder, 1, 1, false, 0, "7");
+        appendTableCell(builder, 1, 1, false, 1,
+                "A long description that must wrap rather than make the table wider than the pane.");
         appendTableRowEnd(builder, 1, 1, false);
         return builder.toRichText();
     }

@@ -426,7 +426,7 @@ public class TextPane extends Control implements RichTextPane {
                 availableWidth,
                 STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH,
                 (run, runFont) -> {
-                    Node node = createInlineNode(run, displayScale);
+                    Node node = createInlineNode(run, displayScale, availableWidth);
                     applyInlineNodeFont(node, runFont);
                     return node;
                 },
@@ -461,7 +461,7 @@ public class TextPane extends Control implements RichTextPane {
 
             for (FragmentedText.Fragment fragment : line) {
                 if (fragment.text() instanceof Run run) {
-                    Node node = createInlineNode(run, displayScale);
+                    Node node = createInlineNode(run, displayScale, availableWidth);
                     if (node != null) {
                         applyInlineNodeFont(node, fragment.font());
                         VAnchor vAnchor = getInlineNodeVAnchor(run);
@@ -591,7 +591,7 @@ public class TextPane extends Control implements RichTextPane {
         }
     }
 
-    private static @Nullable Node createInlineNode(Run run, double displayScale) {
+    private static @Nullable Node createInlineNode(Run run, double displayScale, double availableWidth) {
         if (TextUtil.isWhitespaceOnly(run)) {
             return null;
         }
@@ -603,13 +603,15 @@ public class TextPane extends Control implements RichTextPane {
             if (factory instanceof Function<?, ?> f) {
                 @SuppressWarnings("unchecked")
                 Function<String, ?> fn = (Function<String, ?>) f;
-                Node node = toFxInlineNode(fn.apply(text), style, displayScale);
+                Node node = toFxInlineNode(fn.apply(text), style, displayScale, availableWidth);
                 if (node != null) {
                     return node;
                 }
             }
 
-            Node node = toFxInlineNode(style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE), style, displayScale);
+            Node node = toFxInlineNode(
+                    style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE), style, displayScale, availableWidth
+            );
             if (node != null) {
                 return node;
             }
@@ -630,14 +632,19 @@ public class TextPane extends Control implements RichTextPane {
         return text.substring(index);
     }
 
-    private static @Nullable Node toFxInlineNode(@Nullable Object value, Style style, double displayScale) {
+    private static @Nullable Node toFxInlineNode(
+            @Nullable Object value,
+            Style style,
+            double displayScale,
+            double availableWidth
+    ) {
         double maxWidth = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH);
         double maxHeight = getPositiveStyleValue(style, RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT);
 
         Object wrapped = value;
         switch (wrapped) {
             case RichTextTableHelper.InlineTable inlineTable -> {
-                return new TableNode(inlineTable.table());
+                return new TableNode(inlineTable.table(), tableAvailableWidth(availableWidth));
             }
             case InlineNode<?> inlineNode -> {
                 if (RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON.equals(inlineNode.getMimeType())) {
@@ -662,8 +669,7 @@ public class TextPane extends Control implements RichTextPane {
                 }
                 wrapped = inlineNode.getWrapped();
             }
-            case null, default -> {
-            }
+            case null, default -> {/* do nothing */}
         }
 
         return switch (wrapped) {
@@ -680,15 +686,23 @@ public class TextPane extends Control implements RichTextPane {
         };
     }
 
+    private static float tableAvailableWidth(double availableWidth) {
+        return Double.isFinite(availableWidth) && availableWidth > 0.0
+                ? (float) Math.min(Float.MAX_VALUE, availableWidth)
+                : Float.MAX_VALUE;
+    }
+
     private static final class TableNode extends Region {
         private static final float CELL_PADDING = 4.0f;
 
         private final RichTextTableHelper.Table table;
+        private final float availableWidth;
         private final Canvas canvas = new Canvas();
         private Font tableFont = FONT_UTIL.getDefaultFont();
 
-        private TableNode(RichTextTableHelper.Table table) {
+        private TableNode(RichTextTableHelper.Table table, float availableWidth) {
             this.table = table;
+            this.availableWidth = availableWidth;
             getChildren().add(canvas);
         }
 
@@ -724,8 +738,8 @@ public class TextPane extends Control implements RichTextPane {
                     table,
                     FONT_UTIL,
                     tableFont,
-                    Float.MAX_VALUE,
-                    false,
+                    availableWidth,
+                    availableWidth < Float.MAX_VALUE,
                     CELL_PADDING
             );
         }

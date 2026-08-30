@@ -49,6 +49,8 @@ public final class RichTextTableHelper {
 
     private static final Color DEFAULT_BORDER_COLOR = Color.GRAY;
     private static final float DEFAULT_BORDER_WIDTH = 1.0f;
+    /** Preferred lower bound for a column whose natural content is wider than this value. */
+    public static final float DEFAULT_MINIMUM_COLUMN_WIDTH = 96.0f;
 
     private RichTextTableHelper() {
         // utility class
@@ -143,9 +145,10 @@ public final class RichTextTableHelper {
     /**
      * Measures and positions every cell in a table.
      *
-     * <p>When wrapping is enabled, columns are reduced proportionally to fit the available width. Otherwise the
-     * table keeps its natural width and its caller may provide horizontal scrolling. Cell text is returned as
-     * positioned fragments so toolkit renderers can use their normal rich-text paint path.
+     * <p>When wrapping is enabled, the table fits the available width. Columns first receive their natural width
+     * when possible, otherwise wide columns receive a readable minimum while naturally narrow columns retain their
+     * smaller width. Remaining width is distributed according to each column's unmet natural demand. Cell text is
+     * returned as positioned fragments so toolkit renderers can use their normal rich-text paint path.
      *
      * @param table the extracted table
      * @param fontUtil text measurement implementation
@@ -180,7 +183,7 @@ public final class RichTextTableHelper {
         }
 
         float[] naturalColumnWidths = naturalColumnWidths(table, columnCount, fontUtil, font);
-        float[] columnWidths = resolveColumnWidths(naturalColumnWidths, availableWidth, wrapText, cellPadding);
+        float[] columnWidths = resolveColumnWidths(naturalColumnWidths, availableWidth, wrapText, cellPadding, font);
         float defaultContentHeight = defaultContentHeight(fontUtil, font);
         List<RowLayout> rows = new ArrayList<>(table.rows().size());
         float y = 0.0f;
@@ -471,29 +474,89 @@ public final class RichTextTableHelper {
         return widths;
     }
 
-    private static float[] resolveColumnWidths(float[] naturalWidths, float availableWidth, boolean wrapText, float cellPadding) {
-        float[] widths = naturalWidths.clone();
+    private static float[] resolveColumnWidths(
+            float[] naturalWidths,
+            float availableWidth,
+            boolean wrapText,
+            float cellPadding,
+            Font font
+    ) {
         if (!wrapText) {
-            return widths;
+            return naturalWidths.clone();
         }
 
-        float availableContentWidth = Math.max(widths.length, availableWidth - 2.0f * cellPadding * widths.length);
-        float naturalWidth = 0.0f;
-        for (float width : widths) {
-            naturalWidth += width;
-        }
+        float availableContentWidth = Math.max(1.0f, availableWidth - 2.0f * cellPadding * naturalWidths.length);
+        float naturalWidth = sum(naturalWidths);
         if (naturalWidth <= availableContentWidth) {
+            return naturalWidths.clone();
+        }
+
+        float readableMinimum = (float) Math.max(DEFAULT_MINIMUM_COLUMN_WIDTH, font.getFontData().spaceWidth() * 8.0f);
+        float[] minimumWidths = new float[naturalWidths.length];
+        for (int column = 0; column < naturalWidths.length; column++) {
+            // A short heading or value must not be inflated just because an adjacent column has long prose.
+            minimumWidths[column] = Math.min(naturalWidths[column], readableMinimum);
+        }
+
+        float minimumWidth = sum(minimumWidths);
+        if (minimumWidth <= availableContentWidth) {
+            return distributeAdditionalWidth(minimumWidths, naturalWidths, availableContentWidth - minimumWidth);
+        }
+
+        // Many columns can make even all readable minima wider than the viewport. Keep short columns short and
+        // share the necessary reduction among larger columns before falling back to a one-pixel emergency width.
+        float emergencyWidth = (float) Math.max(1.0f, font.getFontData().spaceWidth() * 2.0f);
+        float[] emergencyMinimums = new float[naturalWidths.length];
+        for (int column = 0; column < naturalWidths.length; column++) {
+            emergencyMinimums[column] = Math.min(naturalWidths[column], emergencyWidth);
+        }
+        float emergencyTotal = sum(emergencyMinimums);
+        if (emergencyTotal >= availableContentWidth) {
+            float ratio = availableContentWidth / emergencyTotal;
+            float[] widths = emergencyMinimums.clone();
+            scaleToTotal(widths, ratio, availableContentWidth);
+            return widths;
+        }
+        return distributeAdditionalWidth(emergencyMinimums, minimumWidths, availableContentWidth - emergencyTotal);
+    }
+
+    private static float[] distributeAdditionalWidth(float[] lowerBounds, float[] upperBounds, float additionalWidth) {
+        float[] widths = lowerBounds.clone();
+        float remainingDemand = 0.0f;
+        for (int column = 0; column < widths.length; column++) {
+            remainingDemand += Math.max(0.0f, upperBounds[column] - widths[column]);
+        }
+        if (remainingDemand <= 0.0f || additionalWidth <= 0.0f) {
             return widths;
         }
 
-        float ratio = availableContentWidth / naturalWidth;
         float assigned = 0.0f;
         for (int column = 0; column < widths.length - 1; column++) {
-            widths[column] = Math.max(1.0f, widths[column] * ratio);
+            float demand = Math.max(0.0f, upperBounds[column] - widths[column]);
+            float extra = Math.min(demand, additionalWidth * demand / remainingDemand);
+            widths[column] += extra;
+            assigned += extra;
+        }
+        int last = widths.length - 1;
+        widths[last] += Math.clamp(upperBounds[last] - widths[last], 0.0f, additionalWidth - assigned);
+        return widths;
+    }
+
+    private static void scaleToTotal(float[] widths, float ratio, float total) {
+        float assigned = 0.0f;
+        for (int column = 0; column < widths.length - 1; column++) {
+            widths[column] *= ratio;
             assigned += widths[column];
         }
-        widths[widths.length - 1] = Math.max(1.0f, availableContentWidth - assigned);
-        return widths;
+        widths[widths.length - 1] = Math.max(0.0f, total - assigned);
+    }
+
+    private static float sum(float[] widths) {
+        float total = 0.0f;
+        for (float width : widths) {
+            total += width;
+        }
+        return total;
     }
 
     private static FragmentedText fragments(

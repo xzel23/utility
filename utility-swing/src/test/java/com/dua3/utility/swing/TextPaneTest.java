@@ -200,6 +200,20 @@ class TextPaneTest {
         assertEquals(secondCell.cell().start(), actual);
     }
 
+    @Test
+    void testWideTableFitsAvailablePaneWidth() {
+        TestTextPane pane = onEdtGet(TestTextPane::new);
+        onEdtRun(() -> {
+            pane.setText(createWideTableText());
+            pane.setWrapText(true);
+            pane.setSize(280, 400);
+            pane.getTextComponent().setSize(280, 400);
+        });
+
+        TextPane.RenderLayout layout = onEdtGet(pane::renderLayoutForTest);
+        assertTrue(layout.placements().getFirst().component().getPreferredSize().width <= 280);
+    }
+
     private static RichText createInlineControlText(InlineNode<?> inlineNode) {
         Style inlineStyle = Style.create(
                 "inline-test",
@@ -222,6 +236,18 @@ class TextPaneTest {
         appendTableRowEnd(builder, 1, 0, true);
         appendTableCell(builder, 1, 1, false, 0, "first");
         appendTableCell(builder, 1, 1, false, 1, "one");
+        appendTableRowEnd(builder, 1, 1, false);
+        return builder.toRichText();
+    }
+
+    private static RichText createWideTableText() {
+        RichTextBuilder builder = new RichTextBuilder();
+        appendTableCell(builder, 1, 0, true, 0, "ID");
+        appendTableCell(builder, 1, 0, true, 1, "Description");
+        appendTableRowEnd(builder, 1, 0, true);
+        appendTableCell(builder, 1, 1, false, 0, "7");
+        appendTableCell(builder, 1, 1, false, 1,
+                "A long description that must wrap rather than make the table wider than the pane.");
         appendTableRowEnd(builder, 1, 1, false);
         return builder.toRichText();
     }
