@@ -2,17 +2,41 @@ package com.dua3.utility.fx.controls;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Region;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Timeout(value = 30, unit = TimeUnit.SECONDS)
 class TextPaneScaledPreferredHeightTest extends FxTestBase {
+
+    @Test
+    void initialWrappingUsesTheLaidOutControlWidthBeforeTheViewportIsAvailable() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            TextPane pane = new TextPane("This text must use the control width during its initial layout.");
+            pane.setWrapText(true);
+            Scene scene = new Scene(pane);
+
+            pane.applyCss();
+            pane.resize(640.0, 886.0);
+            pane.layout();
+
+            Canvas canvas = descendants(pane)
+                    .filter(Canvas.class::isInstance)
+                    .map(Canvas.class::cast)
+                    .findFirst()
+                    .orElseThrow();
+            assertTrue(canvas.getWidth() > 600.0, "initial layout must not wrap text to a one-pixel viewport");
+            scene.setRoot(new Region());
+        });
+    }
 
     @Test
     void preferredHeightContainsTheScaledCanvasWhenTextWraps() throws Exception {
@@ -67,5 +91,15 @@ class TextPaneScaledPreferredHeightTest extends FxTestBase {
             }
         }
         throw new IllegalStateException("unable to find node with style class: " + styleClass);
+    }
+
+    private static Stream<Node> descendants(Node node) {
+        if (node instanceof Parent parent) {
+            return Stream.concat(
+                    Stream.of(node),
+                    parent.getChildrenUnmodifiable().stream().flatMap(TextPaneScaledPreferredHeightTest::descendants)
+            );
+        }
+        return Stream.of(node);
     }
 }

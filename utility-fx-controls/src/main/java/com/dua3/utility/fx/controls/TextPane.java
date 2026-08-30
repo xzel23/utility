@@ -1825,9 +1825,11 @@ public class TextPane extends Control implements RichTextPane {
         private double getAvailableWidth() {
             TextPane control = getSkinnable();
             Bounds vp = scrollPane.getViewportBounds();
-            double availableWidth = control.isWrapText()
-                    ? Math.max(1.0, vp.getWidth())
-                    : 1.0;
+            double availableWidth = control.isWrapText() ? vp.getWidth() : 1.0;
+            boolean viewportWidthUnavailable = !Double.isFinite(availableWidth) || availableWidth <= 0.0;
+            if (control.isWrapText() && viewportWidthUnavailable) {
+                availableWidth = control.getWidth() - control.snappedLeftInset() - control.snappedRightInset();
+            }
             if (!Double.isFinite(availableWidth) || availableWidth <= 0.0) {
                 availableWidth = Math.max(1.0, control.computePrefWidth(-1));
             }
