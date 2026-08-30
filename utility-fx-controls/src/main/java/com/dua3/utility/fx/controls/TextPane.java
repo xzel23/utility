@@ -1892,8 +1892,98 @@ public class TextPane extends Control implements RichTextPane {
             try (Graphics graphics = new FxGraphics(canvas)) {
                 graphics.reset();
                 graphics.setFont(control.getFont().scaled((float) control.getDisplayScale()));
+                renderBlockDecorations(graphics, layout.renderLines(), (float) layout.width());
                 RichTextRenderer.renderFragmentLines(graphics, layout.renderLines(), TextPaneSkin::isInvisibleInlinePlaceholder);
             }
+        }
+
+        private static void renderBlockDecorations(
+                Graphics graphics,
+                List<List<FragmentedText.Fragment>> lines,
+                float contentWidth
+        ) {
+            BlockDecorationArea area = null;
+            for (List<FragmentedText.Fragment> line : lines) {
+                BlockDecoration decoration = blockDecoration(line);
+                if (decoration == null) {
+                    renderBlockDecoration(graphics, area, contentWidth);
+                    area = null;
+                    continue;
+                }
+
+                float lineTop = line.stream().map(FragmentedText.Fragment::y).min(Float::compare).orElse(0.0f);
+                float lineBottom = line.stream()
+                        .map(fragment -> fragment.y() + fragment.h())
+                        .max(Float::compare)
+                        .orElse(lineTop);
+                float lineLeft = line.stream().map(FragmentedText.Fragment::x).min(Float::compare).orElse(0.0f);
+
+                if (area == null || !area.decoration().equals(decoration) || lineTop > area.bottom() + 0.5f) {
+                    renderBlockDecoration(graphics, area, contentWidth);
+                    area = new BlockDecorationArea(decoration, lineLeft, lineTop, lineBottom);
+                } else {
+                    area = new BlockDecorationArea(decoration, Math.min(area.left(), lineLeft), area.top(), lineBottom);
+                }
+            }
+            renderBlockDecoration(graphics, area, contentWidth);
+        }
+
+        private static void renderBlockDecoration(Graphics graphics, @Nullable BlockDecorationArea area, float contentWidth) {
+            if (area == null) {
+                return;
+            }
+            BlockDecoration decoration = area.decoration();
+            float padding = decoration.padding();
+            float x = Math.max(0.0f, area.left() - padding);
+            float y = Math.max(0.0f, area.top() - padding);
+            float width = Math.max(1.0f, contentWidth - x);
+            float height = Math.max(1.0f, area.bottom() - area.top() + 2.0f * padding);
+
+            graphics.setFill(decoration.backgroundColor());
+            graphics.fillRect(x, y, width, height);
+            graphics.setStroke(decoration.borderColor(), decoration.borderWidth());
+            graphics.strokeRect(x, y, width, height);
+        }
+
+        private static @Nullable BlockDecoration blockDecoration(List<FragmentedText.Fragment> line) {
+            for (FragmentedText.Fragment fragment : line) {
+                if (!(fragment.text() instanceof Run run)) {
+                    continue;
+                }
+                BlockDecoration decoration = blockDecoration(run);
+                if (decoration != null) {
+                    return decoration;
+                }
+            }
+            return null;
+        }
+
+        private static @Nullable BlockDecoration blockDecoration(Run run) {
+            Color backgroundColor = null;
+            Color borderColor = null;
+            float borderWidth = 1.0f;
+            float padding = 0.0f;
+            for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+                Style style = run.getStyles().get(i);
+                if (backgroundColor == null && style.get(Style.BLOCK_BACKGROUND_COLOR) instanceof Color color) {
+                    backgroundColor = color;
+                }
+                if (borderColor == null && style.get(Style.BLOCK_BORDER_COLOR) instanceof Color color) {
+                    borderColor = color;
+                }
+                if (style.get(Style.BLOCK_BORDER_WIDTH) instanceof Number value) {
+                    borderWidth = Math.max(0.0f, value.floatValue());
+                }
+                if (style.get(Style.BLOCK_PADDING) instanceof Number value) {
+                    padding = Math.max(0.0f, value.floatValue());
+                }
+            }
+            return backgroundColor == null ? null : new BlockDecoration(
+                    backgroundColor,
+                    borderColor == null ? backgroundColor : borderColor,
+                    borderWidth,
+                    padding
+            );
         }
 
         private static boolean isInvisibleInlinePlaceholder(FragmentedText.Fragment fragment) {
@@ -1902,6 +1992,10 @@ public class TextPane extends Control implements RichTextPane {
             }
             return run.getStyles().contains(RichTextPaneLayoutHelper.STYLE_INVISIBLE_TEXT);
         }
+
+        private record BlockDecoration(Color backgroundColor, Color borderColor, float borderWidth, float padding) {}
+
+        private record BlockDecorationArea(BlockDecoration decoration, float left, float top, float bottom) {}
 
         private void ensureEditorContentHeight(TextPane control, double availableWidth, double previousCanvasHeight) {
             if (!(control instanceof TextEditorPane tep)) {
