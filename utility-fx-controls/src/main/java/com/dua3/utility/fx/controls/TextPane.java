@@ -38,6 +38,7 @@ import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -59,6 +60,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Skin;
 import javafx.scene.control.SkinBase;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -121,12 +123,27 @@ public class TextPane extends Control implements RichTextPane {
     private final ObjectProperty<Font> font = new SimpleObjectProperty<>(this, "font", FONT_UTIL.getDefaultFont());
     private final DoubleProperty displayScale = new SimpleDoubleProperty(this, "displayScale", 1.0);
     private final ObjectProperty<Consumer<URI>> hyperlinkHandler = new SimpleObjectProperty<>(this, "hyperlinkHandler", TextPane::openUriUsingDesktop);
+    private final BooleanProperty selectable = new SimpleBooleanProperty(this, "selectable", false);
+    private final ObjectProperty<IndexRange> selection = new SimpleObjectProperty<>(this, "selection", new IndexRange(0, 0));
+    private int selectionAnchor;
+    private int selectionCaret;
 
     /**
      * Create an empty {@code TextPane}.
      */
     public TextPane() {
         getStyleClass().setAll("text-input", "text-area", DEFAULT_STYLE_CLASS);
+        selectable.addListener((obs, oldValue, newValue) -> {
+            if (newValue == Boolean.TRUE) {
+                setFocusTraversable(true);
+            } else {
+                updateSelection(0, 0);
+            }
+        });
+        text.addListener((obs, oldValue, newValue) -> {
+            int length = text.get().toRichText().length();
+            updateSelection(Math.min(selectionAnchor, length), Math.min(selectionCaret, length));
+        });
     }
 
     /**
@@ -166,6 +183,82 @@ public class TextPane extends Control implements RichTextPane {
     @Override
     public final void setText(@Nullable CharSequence value) {
         text.set(value == null ? RichText.emptyText() : RichText.valueOf(value));
+    }
+
+    /**
+     * Returns the property controlling whether the displayed text can be selected and copied.
+     *
+     * <p>Selection is disabled by default. Enabling it permits mouse selection and the standard
+     * select-all and copy keyboard shortcuts, but does not permit modifying the text.
+     *
+     * @return selectable property
+     */
+    public final BooleanProperty selectableProperty() {
+        return selectable;
+    }
+
+    /**
+     * Returns whether text selection and copying are enabled.
+     *
+     * @return {@code true} if text can be selected and copied
+     */
+    public final boolean isSelectable() {
+        return selectable.get();
+    }
+
+    /**
+     * Enables or disables text selection and copying.
+     *
+     * @param value {@code true} to allow selection and copying
+     */
+    public final void setSelectable(boolean value) {
+        selectable.set(value);
+    }
+
+    /**
+     * Returns the current selected range.
+     *
+     * @return current selection range
+     */
+    public IndexRange getSelection() {
+        return selection.get();
+    }
+
+    /**
+     * Returns the current selection range property.
+     *
+     * @return read-only selection range property
+     */
+    public ReadOnlyObjectProperty<IndexRange> selectionProperty() {
+        return selection;
+    }
+
+    /**
+     * Returns the currently selected text.
+     *
+     * @return current selection text
+     */
+    public RichText getSelectedText() {
+        IndexRange range = getSelection();
+        return getText().subSequence(range.getStart(), range.getEnd());
+    }
+
+    /**
+     * Selects the full text when selection is enabled.
+     */
+    public void selectAll() {
+        if (isSelectable()) {
+            updateSelection(0, getText().length());
+        }
+    }
+
+    /**
+     * Copies the current selection to the system clipboard when selection is enabled.
+     */
+    public void copy() {
+        if (isSelectable() && getSelection().getLength() > 0) {
+            FxUtil.copyToClipboard(getSelectedText().apply(Style.create(getFont())));
+        }
     }
 
     /**
@@ -409,6 +502,223 @@ public class TextPane extends Control implements RichTextPane {
         return RichTextVisualLayoutHelper.indexForPoint(fallbackLines, point.getX(), point.getY());
     }
 
+    void processSelectableMousePressed(MouseEvent event) {
+        if (!isSelectableTextInteractionEvent(event)) {
+            return;
+        }
+
+        requestFocus();
+        int position = selectionHitTest(event);
+        if (event.getClickCount() >= 3) {
+            selectSelectableLineAt(position);
+        } else if (event.getClickCount() == 2) {
+            selectSelectableWordAt(position);
+        } else if (event.isShiftDown()) {
+            updateSelection(selectionAnchor, position);
+        } else {
+            updateSelection(position, position);
+        }
+        event.consume();
+    }
+
+    void processSelectableMouseDragged(MouseEvent event) {
+        if (!isSelectableTextInteractionEvent(event) || !event.isPrimaryButtonDown()) {
+            return;
+        }
+
+        updateSelection(selectionAnchor, selectionHitTest(event));
+        event.consume();
+    }
+
+    void processSelectableKeyPressed(KeyEvent event) {
+        if (!isSelectable()) {
+            return;
+        }
+
+        if (event.isShortcutDown()) {
+            switch (event.getCode()) {
+                case A -> {
+                    selectAll();
+                    event.consume();
+                    return;
+                }
+                case C -> {
+                    copy();
+                    event.consume();
+                    return;
+                }
+                case X, V -> {
+                    // TextPane is read-only: do not cut or paste.
+                    event.consume();
+                    return;
+                }
+                default -> {
+                    // Continue with navigation shortcuts where applicable.
+                }
+            }
+        }
+
+        switch (event.getCode()) {
+            case LEFT -> moveSelectableCaret(-1, event.isShiftDown());
+            case RIGHT -> moveSelectableCaret(1, event.isShiftDown());
+            case HOME -> moveSelectableCaretTo(selectableLineStart(selectionCaret), event.isShiftDown());
+            case END -> moveSelectableCaretTo(selectableLineEnd(selectionCaret), event.isShiftDown());
+            case BACK_SPACE, DELETE, TAB -> {
+                // Explicitly consume editing keys even though this control never changes its text.
+            }
+            default -> {
+                return;
+            }
+        }
+        event.consume();
+    }
+
+    void processSelectableKeyTyped(KeyEvent event) {
+        if (isSelectable()) {
+            // TextPane is read-only: do not let typed text be handled as input.
+            event.consume();
+        }
+    }
+
+    private int selectionHitTest(MouseEvent event) {
+        Point2D point = selectionContentPoint(event);
+        double availableWidth = selectionAvailableWidth();
+        return sourcePositionForPoint(point, availableWidth, selectionVisualLines(availableWidth));
+    }
+
+    private List<VisualLine> selectionVisualLines(double availableWidth) {
+        Font baseFont = getFont().scaled((float) getDisplayScale());
+        return RichTextVisualLayoutHelper.buildVisualLines(
+                RichTextVisualLayoutHelper.splitLogicalBlocks(getText()),
+                Math.max(1.0, baseFont.getFontData().height()),
+                FONT_UTIL,
+                blockText -> {
+                    RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = createLayout(blockText, availableWidth);
+                    return new RichTextVisualLayoutHelper.BlockLayout(
+                            layout.renderLines(),
+                            layout.height(),
+                            layout.layoutTextData()::layoutToSourcePosition
+                    );
+                }
+        );
+    }
+
+    private double selectionAvailableWidth() {
+        ScrollPane scrollPane = getScrollPane();
+        double width = isWrapText() && scrollPane != null ? scrollPane.getViewportBounds().getWidth() : 1.0;
+        if (!Double.isFinite(width) || width <= 0.0) {
+            width = getWidth() - snappedLeftInset() - snappedRightInset();
+        }
+        return Math.max(1.0, width);
+    }
+
+    private Point2D selectionContentPoint(MouseEvent event) {
+        ScrollPane scrollPane = getScrollPane();
+        if (scrollPane != null && scrollPane.getContent() != null) {
+            return scrollPane.getContent().sceneToLocal(event.getSceneX(), event.getSceneY());
+        }
+        return new Point2D(event.getX() - snappedLeftInset(), event.getY() - snappedTopInset());
+    }
+
+    private boolean isSelectableTextInteractionEvent(MouseEvent event) {
+        if (!isSelectable() || (event.getEventType() == MouseEvent.MOUSE_PRESSED && event.getButton() != MouseButton.PRIMARY)) {
+            return false;
+        }
+
+        if (!(event.getTarget() instanceof Node target)) {
+            return false;
+        }
+
+        ScrollPane scrollPane = getScrollPane();
+        return scrollPane == null || (isDescendantOf(target, scrollPane) && !hasStyleClassInAncestry(target, "scroll-bar"));
+    }
+
+    private static boolean isDescendantOf(Node node, Node ancestor) {
+        for (Node current = node; current != null; current = current.getParent()) {
+            if (current == ancestor) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasStyleClassInAncestry(Node node, String styleClass) {
+        for (Node current = node; current != null; current = current.getParent()) {
+            if (current.getStyleClass().contains(styleClass)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private @Nullable ScrollPane getScrollPane() {
+        Node node = lookup(".scroll-pane");
+        if (node instanceof ScrollPane scrollPane) {
+            return scrollPane;
+        }
+        return null;
+    }
+
+    private void selectSelectableWordAt(int position) {
+        String text = getText().toString();
+        if (text.isEmpty()) {
+            return;
+        }
+        int index = Math.clamp(position, 0, text.length() - 1);
+        boolean wordCharacter = Character.isLetterOrDigit(text.charAt(index));
+        int start = index;
+        int end = index + 1;
+        while (start > 0 && Character.isLetterOrDigit(text.charAt(start - 1)) == wordCharacter) {
+            start--;
+        }
+        while (end < text.length() && Character.isLetterOrDigit(text.charAt(end)) == wordCharacter) {
+            end++;
+        }
+        updateSelection(start, end);
+    }
+
+    private void selectSelectableLineAt(int position) {
+        String text = getText().toString();
+        int index = Math.clamp(position, 0, text.length());
+        int start = text.lastIndexOf('\n', Math.max(0, index - 1)) + 1;
+        int end = text.indexOf('\n', index);
+        updateSelection(start, end < 0 ? text.length() : end);
+    }
+
+    private void moveSelectableCaret(int delta, boolean extendSelection) {
+        int position = selectionCaret;
+        if (!extendSelection && selection.get().getLength() > 0) {
+            position = delta < 0 ? selection.get().getStart() : selection.get().getEnd();
+        } else {
+            position = Math.clamp(position + delta, 0, getText().length());
+        }
+        moveSelectableCaretTo(position, extendSelection);
+    }
+
+    private void moveSelectableCaretTo(int position, boolean extendSelection) {
+        updateSelection(extendSelection ? selectionAnchor : position, position);
+    }
+
+    private int selectableLineStart(int position) {
+        String text = getText().toString();
+        int index = Math.clamp(position, 0, text.length());
+        return text.lastIndexOf('\n', Math.max(0, index - 1)) + 1;
+    }
+
+    private int selectableLineEnd(int position) {
+        String text = getText().toString();
+        int index = Math.clamp(position, 0, text.length());
+        int end = text.indexOf('\n', index);
+        return end < 0 ? text.length() : end;
+    }
+
+    private void updateSelection(int anchor, int caret) {
+        int length = text.get().toRichText().length();
+        selectionAnchor = Math.clamp(anchor, 0, length);
+        selectionCaret = Math.clamp(caret, 0, length);
+        selection.set(new IndexRange(Math.min(selectionAnchor, selectionCaret), Math.max(selectionAnchor, selectionCaret)));
+    }
+
     private static RichTextPaneLayoutHelper.Layout<InlineControlPlacement> createLayout(
             RichText richText,
             Font font,
@@ -639,8 +949,22 @@ public class TextPane extends Control implements RichTextPane {
         return null;
     }
 
+    /**
+     * Determines if the entire sequence of characters in the given Run object
+     * consists solely of the structural marker defined by RichText.SPLIT_MARKER.
+     *
+     * @param run the Run object whose characters are to be checked against the structural marker
+     * @return true if all characters in the Run object are the structural marker;
+     *         false otherwise
+     */
     private static boolean isStructuralMarker(Run run) {
-        return TextUtil.indexOf(run, RichText.SPLIT_MARKER) >= 0;
+        final int haystackLength = run.length();
+        for (int i = 0; i < haystackLength; i++) {
+            if (run.charAt(i) != RichText.SPLIT_MARKER) {
+                return false;
+            }
+        }
+        return haystackLength > 0;
     }
 
     private static double nextIndent(List<@Nullable Number> indents, int start) {
@@ -1357,6 +1681,8 @@ public class TextPane extends Control implements RichTextPane {
             control.displayScaleProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.widthProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.heightProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            control.selectableProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            control.selection.addListener((obs, oldVal, newVal) -> invalidate());
             control.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
             scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> invalidate());
 
@@ -1387,6 +1713,13 @@ public class TextPane extends Control implements RichTextPane {
                 scrollPane.addEventFilter(KeyEvent.KEY_PRESSED, tep::processKeyPressed);
                 scrollPane.addEventFilter(KeyEvent.KEY_TYPED, tep::processKeyTyped);
                 scrollPane.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
+            } else {
+                // TextPane is normally display-only. When explicitly made selectable, route only
+                // selection and copy interactions through the ScrollPane; editing remains disabled.
+                scrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, control::processSelectableMousePressed);
+                scrollPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, control::processSelectableMouseDragged);
+                scrollPane.addEventFilter(KeyEvent.KEY_PRESSED, control::processSelectableKeyPressed);
+                scrollPane.addEventFilter(KeyEvent.KEY_TYPED, control::processSelectableKeyTyped);
             }
 
             updateCaretAnimationState();
@@ -2296,11 +2629,12 @@ public class TextPane extends Control implements RichTextPane {
             caretLayer.getChildren().clear();
             caretNode = null;
 
-            if (!(control instanceof TextEditorPane tep)) {
+            boolean editorControl = control instanceof TextEditorPane;
+            if (!editorControl && !control.isSelectable()) {
                 return;
             }
 
-            IndexRange selection = tep.getSelection();
+            IndexRange selection = control.getSelection();
             if (selection.getLength() > 0) {
                 int sourceSelStart = selection.getStart();
                 int sourceSelEnd = selection.getEnd();
@@ -2373,8 +2707,9 @@ public class TextPane extends Control implements RichTextPane {
                 }
             }
 
-            if (tep.isEditable() && hasEditorFocus(control)) {
+            if (editorControl && ((TextEditorPane) control).isEditable() && hasEditorFocus(control)) {
                 CaretInfo caretInfo = null;
+                TextEditorPane tep = (TextEditorPane) control;
                 int caretPosition = tep.getCaretPosition();
                 for (InlineControlPlacement placement : layout.placements()) {
                     if (!(placement.node() instanceof TableNode tableNode)) {
