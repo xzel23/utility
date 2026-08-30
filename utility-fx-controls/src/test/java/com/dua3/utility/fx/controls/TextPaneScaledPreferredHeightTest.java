@@ -1,5 +1,10 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.data.Color;
+import com.dua3.utility.text.FragmentedText;
+import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.Style;
+import com.dua3.utility.ui.RichTextPaneLayoutHelper;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,7 +16,10 @@ import org.junit.jupiter.api.Timeout;
 
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+import java.util.List;
+import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Timeout(value = 30, unit = TimeUnit.SECONDS)
@@ -46,6 +54,40 @@ class TextPaneScaledPreferredHeightTest extends FxTestBase {
     @Test
     void preferredHeightContainsTheScaledCanvasWhenTextDoesNotWrap() throws Exception {
         assertPreferredHeightContainsScaledCanvas(false);
+    }
+
+    @Test
+    void decoratedBlockLinesDoNotReceiveMarginsBetweenTheirChildRuns() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            Style codeBlock = Style.create(
+                    "code-block",
+                    Map.entry(Style.BLOCK_BACKGROUND_COLOR, Color.WHITESMOKE),
+                    Map.entry(Style.BLOCK_PADDING, 8.0f),
+                    Map.entry(Style.BLOCK_MARGIN_TOP, 6.0f),
+                    Map.entry(Style.BLOCK_MARGIN_BOTTOM, 6.0f)
+            );
+            RichTextBuilder builder = new RichTextBuilder();
+            builder.push(codeBlock);
+            builder.push("source-line", 1);
+            builder.append("first line\n");
+            builder.pop("source-line");
+            builder.push("source-line", 2);
+            builder.append("second line");
+            builder.pop("source-line");
+            builder.pop(codeBlock);
+
+            TextPane pane = new TextPane(builder.toRichText());
+            RichTextPaneLayoutHelper.Layout<?> layout = pane.createLayout(480.0);
+            List<FragmentedText.Fragment> fragments = layout.renderLines().stream()
+                    .flatMap(List::stream)
+                    .filter(fragment -> fragment.text().toString().contains("line"))
+                    .toList();
+
+            assertEquals(2, fragments.size());
+            FragmentedText.Fragment first = fragments.getFirst();
+            FragmentedText.Fragment second = fragments.getLast();
+            assertEquals(first.y() + first.h(), second.y(), 0.01f);
+        });
     }
 
     private void assertPreferredHeightContainsScaledCanvas(boolean wrapText) throws Exception {

@@ -189,6 +189,14 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      * Margin after a text block.
      */
     public static final String BLOCK_MARGIN_BOTTOM = "block-margin-bottom";
+    /**
+     * Identifier for one semantic text block.
+     *
+     * <p>Renderers use this direct run attribute to keep the spacing and decoration of a block together
+     * when its content spans several visual lines. Equal identifiers denote the same block; values are
+     * otherwise renderer-neutral.</p>
+     */
+    public static final String BLOCK_ID = "block-id";
 
     // -- define some default styles
 

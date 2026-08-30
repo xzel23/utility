@@ -115,7 +115,6 @@ public class TextPane extends Control implements RichTextPane {
     private static final String STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH = TextPane.class.getName() + ".inlineLeadingWidth";
     private static final String IMAGE_VIEW_BASE_SETTINGS = TextPane.class.getName() + ".imageViewBaseSettings";
     private static final String DEFAULT_STYLE_CLASS = "text-pane";
-    private static final String ATTRIBUTE_BLOCK_STACK = "block-stack";
 
     private final ObjectProperty<ToRichText> text = new SimpleObjectProperty<>(this, "text", RichText.emptyText());
     private final BooleanProperty wrapText = new SimpleBooleanProperty(this, "wrapText", false);
@@ -1123,7 +1122,9 @@ public class TextPane extends Control implements RichTextPane {
 
     private record BlockDecoration(Color backgroundColor, Color borderColor, float borderWidth, float padding) {}
 
-    private record BlockDecorationArea(BlockDecoration decoration, float left, float top, float bottom) {}
+    private record BlockDecorationArea(BlockDecoration decoration, Object blockId, float left, float top, float bottom) {}
+
+    private record BlockDecorationData(BlockDecoration decoration, Object blockId) {}
 
     private record BlockSpacing(Object blockId, float top, float bottom) {}
 
@@ -1961,8 +1962,8 @@ public class TextPane extends Control implements RichTextPane {
         ) {
             BlockDecorationArea area = null;
             for (List<FragmentedText.Fragment> line : lines) {
-                BlockDecoration decoration = blockDecoration(line);
-                if (decoration == null) {
+                BlockDecorationData decorationData = blockDecorationData(line);
+                if (decorationData == null) {
                     renderBlockDecoration(graphics, area, contentWidth, displayScale);
                     area = null;
                     continue;
@@ -1975,11 +1976,13 @@ public class TextPane extends Control implements RichTextPane {
                         .orElse(lineTop);
                 float lineLeft = line.stream().map(FragmentedText.Fragment::x).min(Float::compare).orElse(0.0f);
 
-                if (area == null || !area.decoration().equals(decoration) || lineTop > area.bottom() + 0.5f) {
+                if (area == null
+                        || !area.decoration().equals(decorationData.decoration())
+                        || !Objects.equals(area.blockId(), decorationData.blockId())) {
                     renderBlockDecoration(graphics, area, contentWidth, displayScale);
-                    area = new BlockDecorationArea(decoration, lineLeft, lineTop, lineBottom);
+                    area = new BlockDecorationArea(decorationData.decoration(), decorationData.blockId(), lineLeft, lineTop, lineBottom);
                 } else {
-                    area = new BlockDecorationArea(decoration, Math.min(area.left(), lineLeft), area.top(), lineBottom);
+                    area = new BlockDecorationArea(area.decoration(), area.blockId(), Math.min(area.left(), lineLeft), area.top(), lineBottom);
                 }
             }
             renderBlockDecoration(graphics, area, contentWidth, displayScale);
@@ -2007,14 +2010,14 @@ public class TextPane extends Control implements RichTextPane {
             graphics.strokeRect(x, y, width, height);
         }
 
-        private static @Nullable BlockDecoration blockDecoration(List<FragmentedText.Fragment> line) {
+        private static @Nullable BlockDecorationData blockDecorationData(List<FragmentedText.Fragment> line) {
             for (FragmentedText.Fragment fragment : line) {
                 if (!(fragment.text() instanceof Run run)) {
                     continue;
                 }
                 BlockDecoration decoration = blockDecoration(run);
                 if (decoration != null) {
-                    return decoration;
+                    return new BlockDecorationData(decoration, decoration);
                 }
             }
             return null;
@@ -2055,8 +2058,24 @@ public class TextPane extends Control implements RichTextPane {
             if (top == 0.0f && bottom == 0.0f) {
                 return null;
             }
-            Object blockId = run.getAttributes().get(ATTRIBUTE_BLOCK_STACK);
-            return new BlockSpacing(blockId == null ? run.getAttributes() : blockId, top, bottom);
+            // A decorated block is an atomic visual unit. Its decoration is stable across its
+            // styled child runs (including line-end runs), whereas their structural attributes
+            // need not be. This also keeps wrapped visual lines inside the same block.
+            return new BlockSpacing(decoration == null ? blockId(run) : decoration, top, bottom);
+        }
+
+        private static Object blockId(Run run) {
+            Object id = run.getAttributes().get(Style.BLOCK_ID);
+            if (id != null) {
+                return id;
+            }
+            Object blockStack = run.getAttributes().get("block-stack");
+            if (blockStack instanceof String[] stack) {
+                // Arrays compare by identity. The value is a structural type stack, so normalize it
+                // to its contents before using it as a grouping key.
+                return List.of(stack.clone());
+            }
+            return run.getAttributes();
         }
 
         private static @Nullable BlockDecoration blockDecoration(Run run) {
