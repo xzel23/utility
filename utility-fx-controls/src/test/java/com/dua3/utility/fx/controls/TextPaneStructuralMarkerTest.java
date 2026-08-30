@@ -13,16 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TextPaneStructuralMarkerTest extends FxTestBase {
 
     @Test
-    void identifiesOnlyRunsContainingSplitMarkers() throws Exception {
-        runOnFxThreadAndWait(() -> {
-            Run marker = RichText.valueOf((char) RichText.SPLIT_MARKER).runAt(0);
-            Run text = RichText.valueOf("text").runAt(0);
-            Run empty = text.subSequence(0, 0);
+    void identifiesOnlyRunsContainingSplitMarkers() {
+        Run marker = RichText.valueOf((char) RichText.SPLIT_MARKER).runAt(0);
+        Run text = RichText.valueOf("text").runAt(0);
+        Run empty = text.subSequence(0, 0);
 
-            assertTrue(isStructuralMarker(marker));
-            assertFalse(isStructuralMarker(text));
-            assertFalse(isStructuralMarker(empty));
-        });
+        assertTrue(isStructuralMarker(marker));
+        assertFalse(isStructuralMarker(text));
+        assertFalse(isStructuralMarker(empty));
     }
 
     private static boolean isStructuralMarker(Run run) {
