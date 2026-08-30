@@ -523,13 +523,25 @@ public class TextPane extends Control implements RichTextPane {
                 end++;
             }
             if (start < end) {
-                Object indent = source.attributesAt(start).get(Style.TEXT_INDENT_LEFT);
-                Number effectiveIndent = indent instanceof Number number ? number : 0.0f;
-                rendered = rendered.apply(Map.of(Style.TEXT_INDENT_LEFT, effectiveIndent), start, end);
+                Number indent = findLineDirectIndent(source, start, end);
+                if (indent != null) {
+                    rendered = rendered.apply(Map.of(Style.TEXT_INDENT_LEFT, indent), start, end);
+                }
             }
             start = end + 1;
         }
         return rendered;
+    }
+
+    private static @Nullable Number findLineDirectIndent(RichText text, int start, int end) {
+        for (int index = start; index < end; index++) {
+            if (text.charAt(index) == RichText.SPLIT_MARKER) {
+                continue;
+            }
+            Object indent = text.attributesAt(index).get(Style.TEXT_INDENT_LEFT);
+            return indent instanceof Number number ? number : null;
+        }
+        return null;
     }
 
     private static FragmentedText applyParagraphIndentation(FragmentedText fragments, double scale) {
@@ -541,10 +553,10 @@ public class TextPane extends Control implements RichTextPane {
         for (int i = 0; i < fragments.lines().size(); i++) {
             List<FragmentedText.Fragment> line = fragments.lines().get(i);
             Number value = indents.get(i);
-            if (value == null) {
+            if (value == null && line.isEmpty()) {
                 value = nextIndent(indents, i + 1);
             }
-            double indent = value.doubleValue();
+            double indent = value == null ? 0.0 : value.doubleValue();
             float dx = (float) (indent * scale);
             maximumIndent = Math.max(maximumIndent, dx);
             lines.add(line.stream().map(frgmnt -> new FragmentedText.Fragment(frgmnt.x() + dx, frgmnt.y(), frgmnt.w(), frgmnt.h(), frgmnt.baseLine(), frgmnt.font(), frgmnt.text())).toList());
@@ -591,16 +603,26 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private static @Nullable Number findFragmentLineIndent(List<FragmentedText.Fragment> line) {
-        return line.stream()
-                .map(FragmentedText.Fragment::text)
-                .filter(Run.class::isInstance)
-                .map(Run.class::cast)
-                .map(Run::getAttributes)
-                .map(attributes -> attributes.get(Style.TEXT_INDENT_LEFT))
-                .filter(Number.class::isInstance)
-                .map(Number.class::cast)
-                .findFirst()
-                .orElse(null);
+        for (FragmentedText.Fragment fragment : line) {
+            if (!(fragment.text() instanceof Run run) || isStructuralMarker(run)) {
+                continue;
+            }
+            Object directIndent = run.getAttributes().get(Style.TEXT_INDENT_LEFT);
+            if (directIndent instanceof Number number) {
+                return number;
+            }
+            for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+                Object styleIndent = run.getStyles().get(i).get(Style.TEXT_INDENT_LEFT);
+                if (styleIndent instanceof Number number) {
+                    return number;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean isStructuralMarker(Run run) {
+        return run.length() > 0 && run.toString().codePoints().allMatch(codePoint -> codePoint == RichText.SPLIT_MARKER);
     }
 
     private static double nextIndent(List<@Nullable Number> indents, int start) {
@@ -2026,6 +2048,9 @@ public class TextPane extends Control implements RichTextPane {
         private static @Nullable BlockSpacing blockSpacing(List<FragmentedText.Fragment> line) {
             for (FragmentedText.Fragment fragment : line) {
                 if (!(fragment.text() instanceof Run run)) {
+                    continue;
+                }
+                if (isStructuralMarker(run)) {
                     continue;
                 }
                 BlockSpacing spacing = blockSpacing(run);

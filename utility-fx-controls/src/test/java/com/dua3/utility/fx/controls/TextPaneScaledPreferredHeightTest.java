@@ -90,6 +90,47 @@ class TextPaneScaledPreferredHeightTest extends FxTestBase {
         });
     }
 
+    @Test
+    void decoratedBlockStartsBelowThePrecedingTextByItsConfiguredMargins() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            Style body = Style.create("body", Map.entry(Style.BLOCK_MARGIN_BOTTOM, 6.0f));
+            Style codeBlock = Style.create(
+                    "code-block",
+                    Map.entry(Style.BLOCK_BACKGROUND_COLOR, Color.WHITESMOKE),
+                    Map.entry(Style.BLOCK_PADDING, 8.0f),
+                    Map.entry(Style.BLOCK_MARGIN_TOP, 6.0f),
+                    Map.entry(Style.BLOCK_MARGIN_BOTTOM, 6.0f)
+            );
+            RichTextBuilder builder = new RichTextBuilder();
+            builder.push(body);
+            builder.append("preceding text");
+            builder.appendSplitMarker();
+            builder.append('\n');
+            builder.pop(body);
+            builder.push(body);
+            builder.push(codeBlock);
+            builder.append("code text");
+            builder.pop(codeBlock);
+            builder.pop(body);
+
+            TextPane pane = new TextPane(builder.toRichText());
+            RichTextPaneLayoutHelper.Layout<?> layout = pane.createLayout(480.0);
+            FragmentedText.Fragment normal = fragmentContaining(layout, "preceding text");
+            FragmentedText.Fragment code = fragmentContaining(layout, "code text");
+
+            // The code text has its top margin and padding applied after the body's bottom margin.
+            assertEquals(20.0f, code.y() - (normal.y() + normal.h()), 0.01f);
+        });
+    }
+
+    private static FragmentedText.Fragment fragmentContaining(RichTextPaneLayoutHelper.Layout<?> layout, String text) {
+        return layout.renderLines().stream()
+                .flatMap(List::stream)
+                .filter(fragment -> fragment.text().toString().contains(text))
+                .findFirst()
+                .orElseThrow();
+    }
+
     private void assertPreferredHeightContainsScaledCanvas(boolean wrapText) throws Exception {
         runOnFxThreadAndWait(() -> {
             TextEditorPane pane = new TextEditorPane("final line");
