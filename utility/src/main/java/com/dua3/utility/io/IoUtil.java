@@ -1486,6 +1486,7 @@ public final class IoUtil {
      * @return the platform-specific Path representing the directory where the application's data should be stored.
      *         The returned path will include a subdirectory with the given application name.
      */
+    @SuppressWarnings("CallToSystemGetenv")
     private static Path getApplicationDataDirPath(String appName) {
         return switch (Platform.currentPlatform()) {
             case WINDOWS -> Objects.requireNonNullElse(

@@ -62,7 +62,7 @@ public class FilterIterator<T extends @Nullable Object> implements Iterator<T> {
             throw new NoSuchElementException("there are no elements left");
         }
 
-        T item = (T) current; // use cast to remove the explicit @Nullable
+        T item = current; // use cast to remove the explicit @Nullable
         findNext();
         return item;
     }

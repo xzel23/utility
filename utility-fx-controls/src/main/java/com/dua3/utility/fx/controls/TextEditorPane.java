@@ -259,7 +259,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
             positionCaret(pos);
         }
 
-        if (evt.getClickCount() >= 2) {
+        if (evt.getClickCount() == 2) {
             selectWordAt(pos);
         }
 

@@ -10,10 +10,10 @@ A major or minor release remains a full release of all publishable modules.
 
 Versions use `major.minor.patch`.
 
-| Release type  | BOM version | Module versions                                                                 | Published modules       |
-|---------------|------------:|---------------------------------------------------------------------------------|-------------------------|
-| Major release |     `X.0.0` | Every module becomes `X.0.0`                                                    | BOM and all modules     |
-| Minor release |     `X.Y.0` | Every module becomes `X.Y.0`                                                    | BOM and all modules     |
+| Release type  | BOM version | Module versions                                                                 | Published modules                                                          |
+|---------------|------------:|---------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| Major release |     `X.0.0` | Every module becomes `X.0.0`                                                    | BOM and all modules                                                        |
+| Minor release |     `X.Y.0` | Every module becomes `X.Y.0`                                                    | BOM and all modules                                                        |
 | Patch release |     `X.Y.Z` | Changed modules become `X.Y.Z`; unchanged modules retain their previous version | BOM and changed modules, or BOM alone for a dependency-catalog-only change |
 
 For example, starting from a full `23.2.0` release:

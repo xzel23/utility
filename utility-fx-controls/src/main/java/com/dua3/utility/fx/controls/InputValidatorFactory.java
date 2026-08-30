@@ -255,7 +255,7 @@ public class InputValidatorFactory {
      * message.
      * <p>
      * <strong>Note:</strong> provide the file extensions without a leading dot, i.e.,
-     * to allow text and markdown files, use {@code List.of("txt", "md5")}.
+     * to allow text and markdown files, use {@code List.of("txt", "md")}.
      *
      * @param extensions the collection of allowed file extensions to validate against
      * @param fmt        the format string for the error message to be returned on validation failure

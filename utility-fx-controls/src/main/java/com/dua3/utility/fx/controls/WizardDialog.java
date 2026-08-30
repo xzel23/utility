@@ -17,6 +17,7 @@ import javafx.scene.control.Dialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -305,7 +306,7 @@ public class WizardDialog extends Dialog<Map<String, @Nullable Object>> {
     public static class Page<D extends InputDialogPane<R>, R> {
         private final D pane;
         private final ResultHandler<R> resultHandler;
-        private Map<ButtonType, String> next;
+        private Map<ButtonType, String> next = Collections.emptyMap();
         private @Nullable R result;
 
         Page(D pane, ResultHandler<R> resultHandler) {

@@ -1054,6 +1054,7 @@ public final class TextUtil {
         return stripAccents(mapped == null ? input : mapped.toString());
     }
 
+    @SuppressWarnings("DuplicateBranchesInSwitch")
     private static @Nullable String replacementFor(int cp) {
         return switch (cp) {
             // German mappings: must precede normalization

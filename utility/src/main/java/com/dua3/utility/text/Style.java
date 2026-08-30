@@ -335,6 +335,7 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
         return create(styleName, Map.ofEntries(args));
     }
 
+    @SuppressWarnings("DuplicateBranchesInSwitch")
     static boolean checkTypes(Map.Entry<String, ?> e) {
         boolean result = switch (e.getKey()) {
             case FONT_FAMILIES -> e.getValue() instanceof List;

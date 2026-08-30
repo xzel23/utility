@@ -3,6 +3,7 @@ package com.dua3.utility.application.imp;
 import com.dua3.utility.application.DarkModeDetector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,7 +52,7 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
     private static final Pattern DIGIT_PATTERN = Pattern.compile("(\\d+)");
 
     private final AtomicBoolean watcherRunning = new AtomicBoolean(false);
-    private Thread watcherThread;
+    private @Nullable Thread watcherThread;
 
     private static class Holder {
         private static final DarkModeDetector INSTANCE = create();
@@ -117,7 +118,7 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
     }
 
     private final Object lock = new Object();
-    private volatile Process monitorProcess;
+    private volatile @Nullable Process monitorProcess;
 
     private void startWatcher() {
         synchronized (lock) {

@@ -25,8 +25,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.dua3.utility.lang.LangUtil.NULL_STRING;
-
 /**
  * A class for rich text, i.e., text together with attributes like color, font
  * etc.
@@ -62,7 +60,7 @@ public final class RichText
     private static final RichText SPACE = valueOfInternal(" ");
     private static final RichText TAB = valueOfInternal("\t");
     private static final RichText NEWLINE = valueOfInternal("\n");
-    private static final RichText NULL_TEXT = valueOfInternal(NULL_STRING);
+    private static final RichText NULL_TEXT = valueOfInternal(LangUtil.NULL_STRING);
     /**
      * The underlying CharSequence.
      */

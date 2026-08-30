@@ -18,6 +18,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +127,7 @@ public abstract class PrepareReleaseTask extends DefaultTask {
         }
 
         Set<String> additionalModules = parseModuleList(getAdditionalReleaseModules().get());
-        if (!MODULES.containsAll(additionalModules)) {
+        if (!new HashSet<>(MODULES).containsAll(additionalModules)) {
             throw new GradleException("additionalReleaseModules contains an unknown publishable module");
         }
 

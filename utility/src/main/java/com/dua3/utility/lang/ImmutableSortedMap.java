@@ -282,7 +282,6 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
     @Override
     public boolean equals(@Nullable Object o) {
         return switch (o) {
-            case null -> false;
             case ImmutableSortedMap<?, ?> ism ->
                     Objects.deepEquals(keys, ism.keys) && Objects.deepEquals(values, ism.values);
             case SortedMap<?, ?> sm ->
@@ -298,7 +297,7 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
                 }
                 yield true;
             }
-            default -> false;
+            case null, default -> false;
         };
     }
 
