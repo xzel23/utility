@@ -553,7 +553,10 @@ public class TextPane extends Control implements RichTextPane {
         for (int i = 0; i < fragments.lines().size(); i++) {
             List<FragmentedText.Fragment> line = fragments.lines().get(i);
             Number value = indents.get(i);
-            if (value == null && line.isEmpty()) {
+            // Depending on the text source, an empty source line may be represented by no
+            // fragments or by one zero-length run. In either case it belongs to the following
+            // paragraph for indentation purposes.
+            if (value == null && TextPaneSkin.isBlankVisualLine(line)) {
                 value = nextIndent(indents, i + 1);
             }
             double indent = value == null ? 0.0 : value.doubleValue();
@@ -572,8 +575,22 @@ public class TextPane extends Control implements RichTextPane {
         BlockSpacing activeSpacing = null;
         float yOffset = 0.0f;
 
-        for (List<FragmentedText.Fragment> line : lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            List<FragmentedText.Fragment> line = lines.get(i);
             BlockSpacing spacing = TextPaneSkin.blockSpacing(line);
+            // FragmentedText represents a source-empty line either as an empty fragment list or a
+            // zero-length run. Preserve a blank line *inside* one decorated block: it is content
+            // of the block, not a boundary between two blocks. If it has no font metrics, use the
+            // surrounding decorated line height for its visual height.
+            float additionalBlankLineHeight = 0.0f;
+            if (spacing == null && TextPaneSkin.isBlankVisualLine(line) && activeSpacing != null
+                    && TextPaneSkin.nextNonEmptyLineHasSpacing(lines, i + 1, activeSpacing)) {
+                spacing = activeSpacing;
+                // An empty fragment list has no intrinsic line height. A zero-length run, on the
+                // other hand, already reserves its font height, so only add what is missing.
+                additionalBlankLineHeight = Math.max(0.0f,
+                        TextPaneSkin.emptyLineHeight(lines, i, activeSpacing) - TextPaneSkin.lineHeight(line));
+            }
             if (!Objects.equals(activeSpacing, spacing)) {
                 if (activeSpacing != null) {
                     yOffset += activeSpacing.bottom() * displayScale;
@@ -596,6 +613,7 @@ public class TextPane extends Control implements RichTextPane {
                             fragment.text()
                     ))
                     .toList());
+            yOffset += additionalBlankLineHeight;
         }
 
         float tailSpacing = activeSpacing == null ? 0.0f : (float) (activeSpacing.bottom() * displayScale);
@@ -622,7 +640,7 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private static boolean isStructuralMarker(Run run) {
-        return run.length() > 0 && run.toString().codePoints().allMatch(codePoint -> codePoint == RichText.SPLIT_MARKER);
+        return run.isEmpty() && run.codePoints().allMatch(codePoint -> codePoint == RichText.SPLIT_MARKER);
     }
 
     private static double nextIndent(List<@Nullable Number> indents, int start) {
@@ -1982,12 +2000,31 @@ public class TextPane extends Control implements RichTextPane {
                 float contentWidth,
                 double displayScale
         ) {
+            for (BlockDecorationArea area : blockDecorationAreas(lines)) {
+                renderBlockDecoration(graphics, area, contentWidth, displayScale);
+            }
+        }
+
+        /**
+         * Finds the contiguous painted areas for decorated blocks.
+         *
+         * <p>A blank visual line has no style-bearing content, so bridge it only when the next
+         * actual line belongs to the same semantic block.</p>
+         */
+        private static List<BlockDecorationArea> blockDecorationAreas(List<List<FragmentedText.Fragment>> lines) {
+            List<BlockDecorationArea> areas = new ArrayList<>();
             BlockDecorationArea area = null;
-            for (List<FragmentedText.Fragment> line : lines) {
+            for (int i = 0; i < lines.size(); i++) {
+                List<FragmentedText.Fragment> line = lines.get(i);
                 BlockDecorationData decorationData = blockDecorationData(line);
                 if (decorationData == null) {
-                    renderBlockDecoration(graphics, area, contentWidth, displayScale);
-                    area = null;
+                    if (isBlankVisualLine(line) && area != null && nextNonEmptyLineHasDecoration(lines, i + 1, area)) {
+                        continue;
+                    }
+                    if (area != null) {
+                        areas.add(area);
+                        area = null;
+                    }
                     continue;
                 }
 
@@ -2001,13 +2038,86 @@ public class TextPane extends Control implements RichTextPane {
                 if (area == null
                         || !area.decoration().equals(decorationData.decoration())
                         || !Objects.equals(area.blockId(), decorationData.blockId())) {
-                    renderBlockDecoration(graphics, area, contentWidth, displayScale);
+                    if (area != null) {
+                        areas.add(area);
+                    }
                     area = new BlockDecorationArea(decorationData.decoration(), decorationData.blockId(), lineLeft, lineTop, lineBottom);
                 } else {
                     area = new BlockDecorationArea(area.decoration(), area.blockId(), Math.min(area.left(), lineLeft), area.top(), lineBottom);
                 }
             }
-            renderBlockDecoration(graphics, area, contentWidth, displayScale);
+            if (area != null) {
+                areas.add(area);
+            }
+            return areas;
+        }
+
+        private static boolean nextNonEmptyLineHasDecoration(
+                List<List<FragmentedText.Fragment>> lines,
+                int start,
+                BlockDecorationArea area
+        ) {
+            for (int i = start; i < lines.size(); i++) {
+                List<FragmentedText.Fragment> line = lines.get(i);
+                if (isBlankVisualLine(line)) {
+                    continue;
+                }
+                BlockDecorationData data = blockDecorationData(line);
+                return data != null
+                        && area.decoration().equals(data.decoration())
+                        && Objects.equals(area.blockId(), data.blockId());
+            }
+            return false;
+        }
+
+        private static boolean nextNonEmptyLineHasSpacing(
+                List<List<FragmentedText.Fragment>> lines,
+                int start,
+                BlockSpacing spacing
+        ) {
+            for (int i = start; i < lines.size(); i++) {
+                List<FragmentedText.Fragment> line = lines.get(i);
+                if (isBlankVisualLine(line)) {
+                    continue;
+                }
+                return Objects.equals(spacing, blockSpacing(line));
+            }
+            return false;
+        }
+
+        private static float emptyLineHeight(
+                List<List<FragmentedText.Fragment>> lines,
+                int emptyLineIndex,
+                BlockSpacing activeSpacing
+        ) {
+            for (int i = emptyLineIndex - 1; i >= 0; i--) {
+                List<FragmentedText.Fragment> line = lines.get(i);
+                if (!isBlankVisualLine(line) && Objects.equals(activeSpacing, blockSpacing(line))) {
+                    return lineHeight(line);
+                }
+            }
+            for (int i = emptyLineIndex + 1; i < lines.size(); i++) {
+                List<FragmentedText.Fragment> line = lines.get(i);
+                if (!isBlankVisualLine(line) && Objects.equals(activeSpacing, blockSpacing(line))) {
+                    return lineHeight(line);
+                }
+            }
+            return 0.0f;
+        }
+
+        private static float lineHeight(List<FragmentedText.Fragment> line) {
+            float top = line.stream().map(FragmentedText.Fragment::y).min(Float::compare).orElse(0.0f);
+            float bottom = line.stream().map(fragment -> fragment.y() + fragment.h()).max(Float::compare).orElse(top);
+            return Math.max(0.0f, bottom - top);
+        }
+
+        private static boolean isBlankVisualLine(List<FragmentedText.Fragment> line) {
+            return line.isEmpty() || line.stream().allMatch(fragment -> {
+                if (!(fragment.text() instanceof Run run)) {
+                    return false;
+                }
+                return run.isEmpty();
+            });
         }
 
         private static void renderBlockDecoration(
@@ -2037,9 +2147,12 @@ public class TextPane extends Control implements RichTextPane {
                 if (!(fragment.text() instanceof Run run)) {
                     continue;
                 }
+                if (isStructuralMarker(run)) {
+                    continue;
+                }
                 BlockDecoration decoration = blockDecoration(run);
                 if (decoration != null) {
-                    return new BlockDecorationData(decoration, decoration);
+                    return new BlockDecorationData(decoration, decoratedBlockId(run, decoration));
                 }
             }
             return null;
@@ -2086,7 +2199,12 @@ public class TextPane extends Control implements RichTextPane {
             // A decorated block is an atomic visual unit. Its decoration is stable across its
             // styled child runs (including line-end runs), whereas their structural attributes
             // need not be. This also keeps wrapped visual lines inside the same block.
-            return new BlockSpacing(decoration == null ? blockId(run) : decoration, top, bottom);
+            return new BlockSpacing(decoration == null ? blockId(run) : decoratedBlockId(run, decoration), top, bottom);
+        }
+
+        private static Object decoratedBlockId(Run run, BlockDecoration decoration) {
+            Object id = run.getAttributes().get(Style.BLOCK_ID);
+            return id == null ? decoration : id;
         }
 
         private static Object blockId(Run run) {
