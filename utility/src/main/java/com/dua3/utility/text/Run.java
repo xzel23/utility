@@ -166,7 +166,13 @@ public final class Run implements AttributedCharSequence {
 
     @Override
     public String toString() {
-        return text.subSequence(start, start + length).toString();
+        // Do not delegate to the backing sequence's toString(): this run may cover only a
+        // subsequence of it. The String view must contain exactly this Run's characters.
+        StringBuilder result = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            result.append(charAt(i));
+        }
+        return result.toString();
     }
 
     /**

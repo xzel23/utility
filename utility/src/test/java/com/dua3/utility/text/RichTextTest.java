@@ -51,6 +51,48 @@ class RichTextTest {
     }
 
     @Test
+    void testRunStringAndCodePointViewsPreserveSplitMarkersFromRichTextBacking() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append('a').appendSplitMarker().append('b');
+        RichText backingText = builder.toRichText();
+        Run run = new Run(backingText, 0, backingText.length(), TextAttributes.none());
+
+        assertEquals("a\u0000b", run.toString());
+        assertArrayEquals(run.codePoints().toArray(), run.toString().codePoints().toArray());
+    }
+
+    @Test
+    void testRawAndPlainTextViewsOfSplitMarkers() {
+        RichText empty = RichText.emptyText();
+        RichTextBuilder markerBuilder = new RichTextBuilder();
+        markerBuilder.appendSplitMarker();
+        RichText markerOnly = markerBuilder.toRichText();
+        RichTextBuilder mixedBuilder = new RichTextBuilder();
+        mixedBuilder.append('a').appendSplitMarker().append('b');
+        RichText mixed = mixedBuilder.toRichText();
+
+        assertTrue(empty.isEmpty());
+        assertTrue(empty.isPlainTextEmpty());
+        assertEquals("", empty.toString());
+        assertEquals("", empty.toPlainText());
+
+        assertEquals(1, markerOnly.length());
+        assertFalse(markerOnly.isEmpty());
+        assertTrue(markerOnly.isPlainTextEmpty());
+        assertFalse(markerOnly.isBlank());
+        assertEquals("\u0000", markerOnly.toString());
+        assertEquals("", markerOnly.toPlainText());
+        assertArrayEquals(new int[]{RichText.SPLIT_MARKER}, markerOnly.codePoints().toArray());
+        assertArrayEquals(markerOnly.codePoints().toArray(), markerOnly.toString().codePoints().toArray());
+
+        assertFalse(mixed.isEmpty());
+        assertFalse(mixed.isPlainTextEmpty());
+        assertEquals("a\u0000b", mixed.toString());
+        assertEquals("ab", mixed.toPlainText());
+        assertArrayEquals(mixed.codePoints().toArray(), mixed.toString().codePoints().toArray());
+    }
+
+    @Test
     void testSpaceTabAndNewline() {
         assertSame(RichText.space(), RichText.space());
         assertSame(RichText.tab(), RichText.tab());

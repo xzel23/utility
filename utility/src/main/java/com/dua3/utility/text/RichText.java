@@ -37,7 +37,7 @@ public final class RichText
         implements AttributedCharSequence, ToRichText, RichTextRuns {
 
     /**
-     * A character used as a delimiter or marker to insert where subsequent text segment should not be
+     * A character used as a delimiter or marker to insert where subsequent text segments should not be
      * joined into a single one.
      * <p>
      * When two texts both marked to have italic style are joined, the {@code RichTextBuilder} class
@@ -517,6 +517,23 @@ public final class RichText
         return isEmpty() || TextUtil.isBlank(this);
     }
 
+    /**
+     * Tests whether this text has no user-visible characters.
+     * <p>
+     * Unlike {@link #isEmpty()}, this method disregards {@link #SPLIT_MARKER split markers}.
+     * A split marker is structural data, not plain text.
+     *
+     * @return {@code true} if this text is empty or consists entirely of split markers
+     */
+    public boolean isPlainTextEmpty() {
+        for (int i = 0; i < length; i++) {
+            if (charAt(i) != SPLIT_MARKER) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public Iterator<Run> iterator() {
         return LangUtil.asUnmodifiableList(run).iterator();
@@ -543,10 +560,30 @@ public final class RichText
 
     @Override
     public String toString() {
-        CharSequence sequence = text.subSequence(start, start + length);
-        StringBuilder sb = new StringBuilder(sequence.length());
-        sequence.codePoints().filter(cp -> cp != SPLIT_MARKER).forEach(sb::appendCodePoint);
-        return sb.toString();
+        StringBuilder result = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            result.append(charAt(i));
+        }
+        return result.toString();
+    }
+
+    /**
+     * Returns the plain-text representation of this text.
+     * <p>
+     * The result omits {@link #SPLIT_MARKER split markers}, which are structural data and
+     * are not part of the text intended for display, copying, or export.
+     *
+     * @return this text without split markers
+     */
+    public String toPlainText() {
+        StringBuilder result = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            char c = charAt(i);
+            if (c != SPLIT_MARKER) {
+                result.append(c);
+            }
+        }
+        return result.toString();
     }
 
     @Override

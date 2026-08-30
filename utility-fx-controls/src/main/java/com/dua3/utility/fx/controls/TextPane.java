@@ -640,7 +640,7 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private static boolean isStructuralMarker(Run run) {
-        return !run.isEmpty() && run.toString().codePoints().allMatch(codePoint -> codePoint == RichText.SPLIT_MARKER);
+        return TextUtil.indexOf(run, RichText.SPLIT_MARKER) >= 0;
     }
 
     private static double nextIndent(List<@Nullable Number> indents, int start) {
