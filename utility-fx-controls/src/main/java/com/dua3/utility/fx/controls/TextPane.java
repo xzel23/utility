@@ -435,6 +435,15 @@ public class TextPane extends Control implements RichTextPane {
         );
 
         FragmentedText renderFragments = applyParagraphIndentation(prepared.renderFragments(), displayScale);
+        BlockPaddingData blockPaddingData = applyBlockVerticalPadding(renderFragments.lines(), displayScale);
+        renderFragments = new FragmentedText(
+                blockPaddingData.lines(),
+                renderFragments.width(),
+                renderFragments.height(),
+                renderFragments.baseLine(),
+                renderFragments.actualWidth(),
+                renderFragments.actualHeight()
+        );
 
         List<InlineControlPlacement> placements = new ArrayList<>();
         for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
@@ -492,7 +501,7 @@ public class TextPane extends Control implements RichTextPane {
         List<List<FragmentedText.Fragment>> shiftedRenderLines = shiftRenderLines(renderFragments, lineShiftByY);
         float renderHeight = computeRenderedHeight(
                 shiftedRenderLines,
-                lineShiftData.tailOverflowBelow(),
+                lineShiftData.tailOverflowBelow() + blockPaddingData.tailPadding(),
                 font.scaled((float) displayScale)
         );
 
@@ -541,6 +550,44 @@ public class TextPane extends Control implements RichTextPane {
             lines.add(line.stream().map(frgmnt -> new FragmentedText.Fragment(frgmnt.x() + dx, frgmnt.y(), frgmnt.w(), frgmnt.h(), frgmnt.baseLine(), frgmnt.font(), frgmnt.text())).toList());
         }
         return new FragmentedText(lines, fragments.width() + maximumIndent, fragments.height(), fragments.baseLine(), fragments.actualWidth() + maximumIndent, fragments.actualHeight());
+    }
+
+    private static BlockPaddingData applyBlockVerticalPadding(
+            List<List<FragmentedText.Fragment>> lines,
+            double displayScale
+    ) {
+        List<List<FragmentedText.Fragment>> adjustedLines = new ArrayList<>(lines.size());
+        @Nullable BlockDecoration activeDecoration = null;
+        float yOffset = 0.0f;
+
+        for (List<FragmentedText.Fragment> line : lines) {
+            BlockDecoration decoration = TextPaneSkin.blockDecoration(line);
+            if (!Objects.equals(activeDecoration, decoration)) {
+                if (activeDecoration != null) {
+                    yOffset += activeDecoration.padding() * displayScale;
+                }
+                if (decoration != null) {
+                    yOffset += decoration.padding() * displayScale;
+                }
+                activeDecoration = decoration;
+            }
+
+            float offset = yOffset;
+            adjustedLines.add(line.stream()
+                    .map(fragment -> new FragmentedText.Fragment(
+                            fragment.x(),
+                            fragment.y() + offset,
+                            fragment.w(),
+                            fragment.h(),
+                            fragment.baseLine(),
+                            fragment.font(),
+                            fragment.text()
+                    ))
+                    .toList());
+        }
+
+        float tailPadding = activeDecoration == null ? 0.0f : (float) (activeDecoration.padding() * displayScale);
+        return new BlockPaddingData(adjustedLines, tailPadding);
     }
 
     private static @Nullable Number findFragmentLineIndent(List<FragmentedText.Fragment> line) {
@@ -1070,6 +1117,12 @@ public class TextPane extends Control implements RichTextPane {
     private record ImageViewBaseSettings(double fitWidth, double fitHeight, boolean preserveRatio) {}
 
     private record LineShiftData(Map<Float, Float> lineShiftByY, float tailOverflowBelow) {}
+
+    private record BlockPaddingData(List<List<FragmentedText.Fragment>> lines, float tailPadding) {}
+
+    private record BlockDecoration(Color backgroundColor, Color borderColor, float borderWidth, float padding) {}
+
+    private record BlockDecorationArea(BlockDecoration decoration, float left, float top, float bottom) {}
 
     private static final class TextPaneSkin extends SkinBase<TextPane> {
         private static final double CARET_AUTOSCROLL_MARGIN = 6.0;
@@ -1892,7 +1945,7 @@ public class TextPane extends Control implements RichTextPane {
             try (Graphics graphics = new FxGraphics(canvas)) {
                 graphics.reset();
                 graphics.setFont(control.getFont().scaled((float) control.getDisplayScale()));
-                renderBlockDecorations(graphics, layout.renderLines(), (float) layout.width());
+                renderBlockDecorations(graphics, layout.renderLines(), (float) layout.width(), control.getDisplayScale());
                 RichTextRenderer.renderFragmentLines(graphics, layout.renderLines(), TextPaneSkin::isInvisibleInlinePlaceholder);
             }
         }
@@ -1900,13 +1953,14 @@ public class TextPane extends Control implements RichTextPane {
         private static void renderBlockDecorations(
                 Graphics graphics,
                 List<List<FragmentedText.Fragment>> lines,
-                float contentWidth
+                float contentWidth,
+                double displayScale
         ) {
             BlockDecorationArea area = null;
             for (List<FragmentedText.Fragment> line : lines) {
                 BlockDecoration decoration = blockDecoration(line);
                 if (decoration == null) {
-                    renderBlockDecoration(graphics, area, contentWidth);
+                    renderBlockDecoration(graphics, area, contentWidth, displayScale);
                     area = null;
                     continue;
                 }
@@ -1919,21 +1973,26 @@ public class TextPane extends Control implements RichTextPane {
                 float lineLeft = line.stream().map(FragmentedText.Fragment::x).min(Float::compare).orElse(0.0f);
 
                 if (area == null || !area.decoration().equals(decoration) || lineTop > area.bottom() + 0.5f) {
-                    renderBlockDecoration(graphics, area, contentWidth);
+                    renderBlockDecoration(graphics, area, contentWidth, displayScale);
                     area = new BlockDecorationArea(decoration, lineLeft, lineTop, lineBottom);
                 } else {
                     area = new BlockDecorationArea(decoration, Math.min(area.left(), lineLeft), area.top(), lineBottom);
                 }
             }
-            renderBlockDecoration(graphics, area, contentWidth);
+            renderBlockDecoration(graphics, area, contentWidth, displayScale);
         }
 
-        private static void renderBlockDecoration(Graphics graphics, @Nullable BlockDecorationArea area, float contentWidth) {
+        private static void renderBlockDecoration(
+                Graphics graphics,
+                @Nullable BlockDecorationArea area,
+                float contentWidth,
+                double displayScale
+        ) {
             if (area == null) {
                 return;
             }
             BlockDecoration decoration = area.decoration();
-            float padding = decoration.padding();
+            float padding = (float) (decoration.padding() * displayScale);
             float x = Math.max(0.0f, area.left() - padding);
             float y = Math.max(0.0f, area.top() - padding);
             float width = Math.max(1.0f, contentWidth - x);
@@ -1941,7 +2000,7 @@ public class TextPane extends Control implements RichTextPane {
 
             graphics.setFill(decoration.backgroundColor());
             graphics.fillRect(x, y, width, height);
-            graphics.setStroke(decoration.borderColor(), decoration.borderWidth());
+            graphics.setStroke(decoration.borderColor(), (float) (decoration.borderWidth() * displayScale));
             graphics.strokeRect(x, y, width, height);
         }
 
@@ -1992,10 +2051,6 @@ public class TextPane extends Control implements RichTextPane {
             }
             return run.getStyles().contains(RichTextPaneLayoutHelper.STYLE_INVISIBLE_TEXT);
         }
-
-        private record BlockDecoration(Color backgroundColor, Color borderColor, float borderWidth, float padding) {}
-
-        private record BlockDecorationArea(BlockDecoration decoration, float left, float top, float bottom) {}
 
         private void ensureEditorContentHeight(TextPane control, double availableWidth, double previousCanvasHeight) {
             if (!(control instanceof TextEditorPane tep)) {
