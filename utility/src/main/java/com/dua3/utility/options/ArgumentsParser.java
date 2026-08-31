@@ -1,6 +1,7 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.I18NInstance;
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 
@@ -205,6 +206,7 @@ public class ArgumentsParser {
      */
     public String helpMarkdown() {
         try (Formatter fmt = new Formatter()) {
+            I18N i18N = I18NInstance.get();
 
             if (!name.isEmpty()) {
                 fmt.format("# %s%n%n", name);
@@ -214,9 +216,9 @@ public class ArgumentsParser {
                 fmt.format("%s%n%n", description);
             }
 
-            String cmdText = name.isEmpty() ? I18NInstance.get().get("dua3.utility.options.ArgumentsParser.help.program") : name;
+            String cmdText = name.isEmpty() ? i18N.get("dua3.utility.options.ArgumentsParser.help.program") : name;
             if (hasOptions()) {
-                cmdText += " " + I18NInstance.get().get("dua3.utility.options.ArgumentsParser.help.options");
+                cmdText += " " + i18N.get("dua3.utility.options.ArgumentsParser.help.options");
             }
             cmdText += getArgText(minPositionalArgs, maxPositionalArgs, positionalArgDisplayNames);
             fmt.format("```text%n%s%n```%n%n", cmdText);
@@ -237,7 +239,11 @@ public class ArgumentsParser {
                     );
                 }).toList();
 
-                String[] header = {"Option", "Occurrence", "Description"};
+                String[] header = {
+                        i18N.get("dua3.utility.options.ArgumentsParser.help.markdown.option"),
+                        i18N.get("dua3.utility.options.ArgumentsParser.help.markdown.occurrence"),
+                        i18N.get("dua3.utility.options.ArgumentsParser.help.markdown.description")
+                };
                 int[] widths = {header[0].length(), header[1].length(), header[2].length()};
                 optionData.forEach(item -> {
                     widths[0] = Math.max(widths[0], item.name.length());
@@ -245,7 +251,7 @@ public class ArgumentsParser {
                     widths[2] = Math.max(widths[2], item.description.length());
                 });
 
-                fmt.format("## %s%n%n", I18NInstance.get().get("dua3.utility.options.ArgumentsParser.help.options_header"));
+                fmt.format("## %s%n%n", i18N.get("dua3.utility.options.ArgumentsParser.help.options_header"));
 
                 formatFields(fmt, widths, ' ', header);
                 formatFields(fmt, widths, '-');
@@ -339,6 +345,7 @@ public class ArgumentsParser {
      * @param args the names of the arguments
      * @return the formatted argument text
      */
+    @SuppressWarnings("java:S3457")
     private static String getArgText(int min, int max, String[] args) {
         assert args.length > 0 || max == 0 : "no argument names given";
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;

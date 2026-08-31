@@ -3,6 +3,9 @@ package com.dua3.utility.options;
 import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -169,6 +172,18 @@ class ArgumentsParserHelpTest {
                 """;
 
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.helpMarkdown());
+    }
+
+    /**
+     * Test helpMarkdown() header translations.
+     */
+    @Test
+    void testHelpMarkdownHeaderTranslations() {
+        ResourceBundle bundle = ResourceBundle.getBundle("com.dua3.utility.messages", Locale.GERMAN);
+
+        assertEquals("Option", bundle.getString("dua3.utility.options.ArgumentsParser.help.markdown.option"));
+        assertEquals("Vorkommen", bundle.getString("dua3.utility.options.ArgumentsParser.help.markdown.occurrence"));
+        assertEquals("Beschreibung", bundle.getString("dua3.utility.options.ArgumentsParser.help.markdown.description"));
     }
 
     /**
