@@ -195,9 +195,9 @@ class ArgumentsParserHelpTest {
                 
                 ## <options>:
                 
-                | Option | Occurrence | Description |
-                | --- | --- | --- |
-                | `--pipe` |  | Use A \\| B.<br>Keep backslashes: \\\\. |
+                | Option   | Occurrence | Description                          |
+                | -------- | ---------- | ------------------------------------ |
+                | `--pipe` |            | Use A \\| B.<br>Keep backslashes: \\\\. |
                 
                 """;
 
