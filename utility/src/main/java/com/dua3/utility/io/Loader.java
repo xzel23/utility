@@ -22,6 +22,10 @@ import java.util.stream.Stream;
  */
 public interface Loader<T> {
 
+    /**
+     * A constant string used as an error message prefix to indicate that no suitable
+     * Loader implementation supports the requested operation.
+     */
     String NO_LOADER_IMPLEMENTATION_SUPPORTS = "no Loader implementation supports ";
 
     /**
