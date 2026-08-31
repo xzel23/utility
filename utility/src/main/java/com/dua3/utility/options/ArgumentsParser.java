@@ -199,6 +199,76 @@ public class ArgumentsParser {
     }
 
     /**
+     * Get a Markdown help message listing all available options.
+     *
+     * @return Markdown help message
+     */
+    public String helpMarkdown() {
+        try (Formatter fmt = new Formatter()) {
+
+            if (!name.isEmpty()) {
+                fmt.format("# %s%n%n", name);
+            }
+
+            if (!description.isEmpty()) {
+                fmt.format("%s%n%n", description);
+            }
+
+            String cmdText = name.isEmpty() ? I18NInstance.get().get("dua3.utility.options.ArgumentsParser.help.program") : name;
+            if (hasOptions()) {
+                cmdText += " " + I18NInstance.get().get("dua3.utility.options.ArgumentsParser.help.options");
+            }
+            cmdText += getArgText(minPositionalArgs, maxPositionalArgs, positionalArgDisplayNames);
+            fmt.format("```text%n%s%n```%n%n", cmdText);
+
+            if (!argsDescription.isEmpty()) {
+                fmt.format("%s%n%n", argsDescription);
+            }
+
+            if (hasOptions()) {
+                record OptionData(String name, String occurrences, String description) {}
+                List<OptionData> optionData = options.values().stream().distinct().map(option -> {
+                    String argText = getArgText(option.minArgs(), option.maxArgs(), option.params().stream().map(Param::argName).toArray(String[]::new));
+                    String occurrenceText = getOccurrenceText(option.repetitions(), option.isFlag()).strip();
+                    return new OptionData(
+                            toMarkdownCode(String.join(", ", option.switches()) + argText),
+                            escapeMarkdownTableCell(occurrenceText),
+                            escapeMarkdownTableCell(option.description())
+                    );
+                }).toList();
+
+                String[] header = {"Option", "Occurrence", "Description"};
+                int[] widths = {header[0].length(), header[1].length(), header[2].length()};
+                optionData.forEach(item -> {
+                    widths[0] = Math.max(widths[0], item.name.length());
+                    widths[1] = Math.max(widths[1], item.occurrences.length());
+                    widths[2] = Math.max(widths[2], item.description.length());
+                });
+
+                fmt.format("## %s%n%n", I18NInstance.get().get("dua3.utility.options.ArgumentsParser.help.options_header"));
+
+                formatFields(fmt, widths, ' ', header);
+                formatFields(fmt, widths, '-');
+
+                optionData.forEach(option ->
+                        formatFields(fmt, widths, ' ', option.name(), option.occurrences(), option.description())
+                );
+                fmt.format("%n");
+            }
+
+            return fmt.toString();
+        }
+    }
+
+    private static void formatFields(Formatter fmt, int[] widths, char filler, String... texts) {
+        for (int i = 0; i < widths.length; i++) {
+            String text = i < texts.length ? texts[i] : "";
+            fmt.format("| %s%s ", text, Character.toString(filler).repeat(widths[i] - text.length()));
+        }
+        fmt.format("|%n");
+    }
+
+    /**
      * Output option help.
      *
      * @param fmt the {@link Formatter} used for output
@@ -355,6 +425,31 @@ public class ArgumentsParser {
         return "    " + I18NInstance.get().format("dua3.utility.options.ArgumentsParser.occurrence.times_range", repetitions.min(), repetitions.max());
     }
 
+    private static String escapeMarkdownTableCell(String s) {
+        return s.replace("\\", "\\\\")
+                .replace("|", "\\|")
+                .replace("\r\n", "<br>")
+                .replace("\n", "<br>")
+                .replace("\r", "<br>");
+    }
+
+    private static String toMarkdownCode(String s) {
+        int maxBackticks = 0;
+        int currentBackticks = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '`') {
+                currentBackticks++;
+                maxBackticks = Math.max(maxBackticks, currentBackticks);
+            } else {
+                currentBackticks = 0;
+            }
+        }
+
+        String delimiter = "`".repeat(maxBackticks + 1);
+        return delimiter + s + delimiter;
+    }
+
+    @SuppressWarnings("java:S3457")
     private static int appendArg(Formatter fmt, String arg, boolean useBrackets, boolean useNumbering, boolean addEllipsis, int argNr) {
         fmt.format(" ");
         if (useBrackets) {

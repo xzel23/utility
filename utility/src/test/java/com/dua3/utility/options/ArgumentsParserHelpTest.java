@@ -107,6 +107,104 @@ class ArgumentsParserHelpTest {
     }
 
     /**
+     * Test helpMarkdown() with description and argsDescription.
+     */
+    @Test
+    void testHelpMarkdownWithArgsDescription() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder()
+                .name("TestName")
+                .description("Test description")
+                .argsDescription("Arguments description");
+        ArgumentsParser parser = builder.build();
+
+        String expected = """
+                # TestName
+                
+                Test description
+                
+                ```text
+                TestName [<arg> ...]
+                ```
+                
+                Arguments description
+                
+                """;
+
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.helpMarkdown());
+    }
+
+    /**
+     * Test helpMarkdown() with options.
+     */
+    @Test
+    void testHelpMarkdownWithOptions() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder()
+                .name("testOption")
+                .description("Unit test for Markdown option help.");
+
+        builder.addFlag("Verbose", "Enable verbose output.", "--verbose", "-v");
+        builder.optionBuilder("Option", "The option.", String.class)
+                .param(Param.ofString("Option", "--opt", "value", Param.Required.REQUIRED))
+                .repetitions(Repetitions.EXACTLY_ONE)
+                .build("--opt");
+
+        ArgumentsParser parser = builder.build();
+
+        String expected = """
+                # testOption
+                
+                Unit test for Markdown option help.
+                
+                ```text
+                testOption <options> [<arg> ...]
+                ```
+                
+                ## <options>:
+                
+                | Option          | Occurrence | Description            |
+                | --------------- | ---------- | ---------------------- |
+                | `--verbose, -v` |            | Enable verbose output. |
+                | `--opt <value>` | (required) | The option.            |
+                
+                """;
+
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.helpMarkdown());
+    }
+
+    /**
+     * Test helpMarkdown() escapes Markdown table cells.
+     */
+    @Test
+    void testHelpMarkdownEscapesTableCells() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder()
+                .name("testOption")
+                .description("Unit test for Markdown table escaping.");
+
+        builder.addFlag("Pipe", "Use A | B.\nKeep backslashes: \\.", "--pipe");
+
+        ArgumentsParser parser = builder.build();
+
+        String expected = """
+                # testOption
+                
+                Unit test for Markdown table escaping.
+                
+                ```text
+                testOption <options> [<arg> ...]
+                ```
+                
+                ## <options>:
+                
+                | Option | Occurrence | Description |
+                | --- | --- | --- |
+                | `--pipe` |  | Use A \\| B.<br>Keep backslashes: \\\\. |
+                
+                """;
+
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.helpMarkdown());
+    }
+
+    /**
      * Test help() with no options.
      */
     @Test
