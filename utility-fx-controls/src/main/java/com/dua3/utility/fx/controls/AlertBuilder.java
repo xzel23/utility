@@ -18,6 +18,7 @@ import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -31,6 +32,8 @@ import org.jspecify.annotations.Nullable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Builder for Alert Dialogs.
@@ -43,6 +46,7 @@ public class AlertBuilder
     private boolean selectableText = false;
     private final List<ButtonDef<ButtonType>> buttons = new ArrayList<>();
     private @Nullable ButtonType defaultButton;
+    private Consumer<Alert> contentSetter = this::setDefaultContent;
 
     /**
      * Constructs an AlertBuilder for creating Alert dialogs.
@@ -57,7 +61,7 @@ public class AlertBuilder
     }
 
     /**
-     * Create Alert instance.
+     * Create a new Alert instance.
      *
      * @return Alert instance
      */
@@ -65,6 +69,38 @@ public class AlertBuilder
     public Alert build() {
         Alert dlg = super.build();
 
+        contentSetter.accept(dlg);
+
+        LangUtil.applyIfNotEmpty(css, dlg.getDialogPane().getScene().getStylesheets()::add);
+        LangUtil.applyIfNotEmpty(text, dlg::setContentText);
+
+        if (!buttons.isEmpty()) {
+            ObservableList<ButtonType> buttonTypes = dlg.getButtonTypes();
+            buttonTypes.clear();
+            buttons.forEach(bd -> buttonTypes.add(bd.type()));
+        }
+
+        if (defaultButton != null) {
+            DialogPane pane = dlg.getDialogPane();
+            for (ButtonType t : dlg.getButtonTypes()) {
+                ((Button) pane.lookupButton(t)).setDefaultButton(t == defaultButton);
+            }
+        }
+
+        dlg.getDialogPane().applyCss();
+
+        return dlg;
+    }
+
+    /**
+     * Sets the content of the alert dialog. If the text should be selectable,
+     * replaces the dialog pane's label with a non-editable, selectable, and copyable text area.
+     * The text area is styled to visually resemble the standard dialog content.
+     * Additional CSS and text content can be applied if specified.
+     *
+     * @param dlg the Alert dialog whose content is to be set
+     */
+    private void setDefaultContent(Alert dlg) {
         // Replace the Label in the dialog pane with a text area to allow the user to select and copy text
         if (selectableText && dlg.getDialogPane().lookup(".content.label") instanceof Label label) {
             TextArea textArea = new TextArea("");
@@ -87,26 +123,6 @@ public class AlertBuilder
 
             dlg.getDialogPane().setContent(textArea);
         }
-
-        LangUtil.applyIfNotEmpty(css, dlg.getDialogPane().getScene().getStylesheets()::add);
-        LangUtil.applyIfNotEmpty(text, dlg::setContentText);
-
-        if (!buttons.isEmpty()) {
-            ObservableList<ButtonType> buttonTypes = dlg.getButtonTypes();
-            buttonTypes.clear();
-            buttons.forEach(bd -> buttonTypes.add(bd.type()));
-        }
-
-        if (defaultButton != null) {
-            DialogPane pane = dlg.getDialogPane();
-            for (ButtonType t : dlg.getButtonTypes()) {
-                ((Button) pane.lookupButton(t)).setDefaultButton(t == defaultButton);
-            }
-        }
-
-        dlg.getDialogPane().applyCss();
-
-        return dlg;
     }
 
     @Override
@@ -171,4 +187,15 @@ public class AlertBuilder
         return self();
     }
 
+    /**
+     * Sets the content of the alert dialog using the specified Node.
+     * This allows for flexible content customization beyond simple text.
+     *
+     * @param content the Node to set as content in the alert dialog
+     * @return the current instance of {@code AlertBuilder} for method chaining
+     */
+    public AlertBuilder contentNode(Supplier<Node> content) {
+        this.contentSetter = dlg -> dlg.getDialogPane().setContent(content.get());
+        return self();
+    }
 }

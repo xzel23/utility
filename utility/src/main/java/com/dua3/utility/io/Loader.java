@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,20 +22,42 @@ import java.util.stream.Stream;
  */
 public interface Loader<T> {
 
+    String NO_LOADER_IMPLEMENTATION_SUPPORTS = "no Loader implementation supports ";
+
     /**
      * Loads an object of the specified type using a {@link Loader} implementation
      * that supports the provided class, URI, and options.
      *
      * @param <T>   the type of the object to be loaded
      * @param cls   the class of the object to be loaded
-     * @param uri   the URI pointing to the resource to be loaded
+     * @param uri   the {@link URI} pointing to the resource to be loaded
      * @param options an array of options for configuring the loading process
      * @return an instance of type T loaded from the provided URI and options
      * @throws IOException if no suitable {@link Loader} implementation is found
      *                     or an I/O error occurs during the loading process
      */
     static <T> T load(Class<? extends T> cls, URI uri, Object... options) throws IOException {
-        return tryLoad(cls, uri, options).orElseThrow(() -> new IOException("no Loader implementation supports " + cls.getName()));
+        return tryLoad(cls, uri, options).orElseThrow(() -> new IOException(NO_LOADER_IMPLEMENTATION_SUPPORTS + cls.getName()));
+    }
+
+    /**
+     * Loads an object of the specified type using a {@link Loader} implementation
+     * that supports the provided class, URI, and options.
+     *
+     * @param <T>   the type of the object to be loaded
+     * @param cls   the class of the object to be loaded
+     * @param url   the {@link URL} pointing to the resource to be loaded
+     * @param options an array of options for configuring the loading process
+     * @return an instance of type T loaded from the provided URI and options
+     * @throws IOException if no suitable {@link Loader} implementation is found
+     *                     or an I/O error occurs during the loading process
+     */
+    static <T> T load(Class<? extends T> cls, URL url, Object... options) throws IOException {
+        try {
+            return tryLoad(cls, url.toURI(), options).orElseThrow(() -> new IOException(NO_LOADER_IMPLEMENTATION_SUPPORTS + cls.getName()));
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -51,7 +75,7 @@ public interface Loader<T> {
      * @throws IOException if no suitable loader implementation is found or an I/O error occurs
      */
     static <T> T load(Class<? extends T> cls, Payload payload, Object... options) throws IOException {
-        return tryLoad(cls, payload, options).orElseThrow(() -> new IOException("no Loader implementation supports " + cls.getName()));
+        return tryLoad(cls, payload, options).orElseThrow(() -> new IOException(NO_LOADER_IMPLEMENTATION_SUPPORTS + cls.getName()));
     }
 
     /**
