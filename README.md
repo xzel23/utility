@@ -235,6 +235,17 @@ could not be loaded.
 
 ## Changes
 
+## 24.5.0
+
+- Added Markdown table layout and rendering support for Swing and JavaFX, including wrapping, proportional column
+  sizing, alignment, and improved code-block rendering.
+- Enhanced `TextPane` with block decoration, margins, spacing, selectable read-only text, keyboard navigation, and
+  clipboard copying.
+- Added Markdown-formatted option help via `ArgumentsParser.helpMarkdown()`.
+- Added `RichText.isPlainTextEmpty()` and `RichText.toPlainText()` for handling structural split markers.
+- Improved `AlertBuilder` with custom content nodes and `Loader` with URL-based loading.
+- Fixed layout, indentation, scrolling, viewport initialization, styling, and localization issues.
+
 ### 24.4.1
 
 - fix IconView: prevent child icon CSS/state from overriding the view’s requested color
