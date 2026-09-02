@@ -81,7 +81,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     private final RichText defaultValue;
     private final InputControlState<RichText> state;
     private final SelectionModel selectionModel = new SelectionModel();
-    private @Nullable ScrollPane scrollPane;
     private boolean updatingPropertiesFromText;
     private boolean syncingTextPropertyFromDocument;
     private final ReadOnlyObjectWrapper<RichText> document = new ReadOnlyObjectWrapper<>(this, "documentText", RichText.emptyText());
@@ -1600,27 +1599,6 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
             }
         }
         return false;
-    }
-
-    private @Nullable ScrollPane getScrollPane() {
-        if (scrollPane != null) {
-            return scrollPane;
-        }
-
-        Node direct = lookup(".scroll-pane");
-        if (direct instanceof ScrollPane sp) {
-            scrollPane = sp;
-            return sp;
-        }
-
-        for (Node n : lookupAll(".scroll-pane")) {
-            if (n instanceof ScrollPane sp) {
-                scrollPane = sp;
-                return sp;
-            }
-        }
-
-        return null;
     }
 
     List<VisualLine> buildVisualLines(double wrapWidth) {

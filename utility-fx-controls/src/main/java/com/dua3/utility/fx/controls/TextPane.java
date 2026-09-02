@@ -127,6 +127,7 @@ public class TextPane extends Control implements RichTextPane {
     private final ObjectProperty<IndexRange> selection = new SimpleObjectProperty<>(this, "selection", new IndexRange(0, 0));
     private int selectionAnchor;
     private int selectionCaret;
+    private @Nullable ScrollPane scrollPane;
 
     /**
      * Create an empty {@code TextPane}.
@@ -651,11 +652,24 @@ public class TextPane extends Control implements RichTextPane {
         return false;
     }
 
-    private @Nullable ScrollPane getScrollPane() {
-        Node node = lookup(".scroll-pane");
-        if (node instanceof ScrollPane scrollPane) {
+    protected @Nullable ScrollPane getScrollPane() {
+        if (scrollPane != null) {
             return scrollPane;
         }
+
+        Node direct = lookup(".scroll-pane");
+        if (direct instanceof ScrollPane sp) {
+            scrollPane = sp;
+            return sp;
+        }
+
+        for (Node n : lookupAll(".scroll-pane")) {
+            if (n instanceof ScrollPane sp) {
+                scrollPane = sp;
+                return sp;
+            }
+        }
+
         return null;
     }
 
@@ -690,7 +704,7 @@ public class TextPane extends Control implements RichTextPane {
         if (!extendSelection && selection.get().getLength() > 0) {
             position = delta < 0 ? selection.get().getStart() : selection.get().getEnd();
         } else {
-            position = Math.clamp(position + delta, 0, getText().length());
+            position = Math.clamp((long) position + delta, 0, getText().length());
         }
         moveSelectableCaretTo(position, extendSelection);
     }
