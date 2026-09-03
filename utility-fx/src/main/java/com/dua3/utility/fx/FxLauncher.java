@@ -247,7 +247,7 @@ public final class FxLauncher {
      * This method is a drop-in replacement for `Application.launch(cls, args)`.
      * <ul>
      *     <li><strong>Command line arguments</strong> are reparsed on windows, for details see
-     *     {@link #reparseCommandLine(String[])}.
+     *     {@link PlatformGuard#reparseCommandLine(String[])}.
      * </ul>
      *
      * @param <A>  the application class
