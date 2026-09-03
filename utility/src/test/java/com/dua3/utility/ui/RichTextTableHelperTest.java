@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -116,6 +117,39 @@ class RichTextTableHelperTest {
     }
 
     @Test
+    void wrapsInlineCodeAtWhitespaceWithoutCrossingCellBounds() {
+        RichTextBuilder builder = new RichTextBuilder();
+        appendCell(builder, 10, 0, true, 0, "LEFT", "Option");
+        appendCell(builder, 10, 0, true, 1, "LEFT", "Description");
+        appendRowEnd(builder, 10, 0, true);
+        Style inlineCode = Style.create("inline-code", Map.entry(
+                Style.FONT_FAMILIES, Style.FONT_FAMILIES_VALUE_MONOSPACED
+        ));
+        appendCell(builder, 10, 1, false, 0, "LEFT", "--enable-assertions, -ea", inlineCode);
+        appendCell(builder, 10, 1, false, 1, "LEFT", "A long description that makes the option column narrow.");
+        appendRowEnd(builder, 10, 1, false);
+
+        RichTextTableHelper.TableLayout layout = RichTextTableHelper.layout(
+                RichTextTableHelper.tables(builder.toRichText()).getFirst(),
+                FontUtil.getInstance(),
+                FontUtil.getInstance().getDefaultFont(),
+                300.0f,
+                true,
+                4.0f
+        );
+        RichTextTableHelper.CellLayout option = layout.rows().get(1).cells().getFirst();
+        float right = option.contentBounds().x() + option.contentBounds().width();
+
+        assertTrue(option.fragments().size() > 1);
+        assertEquals(List.of("--enable-assertions,", "-ea"), option.fragments().stream()
+                .map(line -> line.stream().map(fragment -> fragment.text().toString()).collect(Collectors.joining()))
+                .toList());
+        assertTrue(option.fragments().stream()
+                .flatMap(List::stream)
+                .allMatch(fragment -> fragment.x() + fragment.w() <= right + 0.01f));
+    }
+
+    @Test
     void replacesCompleteTablesWithOneInlineNode() {
         RichText table = tableText();
 
@@ -198,13 +232,28 @@ class RichTextTableHelperTest {
             String alignment,
             String value
     ) {
+        appendCell(builder, tableId, row, header, column, alignment, value, Style.EMPTY);
+    }
+
+    private static void appendCell(
+            RichTextBuilder builder,
+            int tableId,
+            int row,
+            boolean header,
+            int column,
+            String alignment,
+            String value,
+            Style contentStyle
+    ) {
         builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ID, tableId);
         builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_ROW, row);
         builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_HEADER, header);
         builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_COLUMN, column);
         builder.push(RichTextTableHelper.ATTRIBUTE_TABLE_COLUMN_ALIGNMENT, alignment);
         builder.push(TABLE_THEME);
+        builder.push(contentStyle);
         builder.append(value).append('\t');
+        builder.pop(contentStyle);
         builder.pop(TABLE_THEME);
         builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_COLUMN_ALIGNMENT);
         builder.pop(RichTextTableHelper.ATTRIBUTE_TABLE_COLUMN);

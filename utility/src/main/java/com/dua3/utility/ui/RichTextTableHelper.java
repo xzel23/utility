@@ -183,7 +183,10 @@ public final class RichTextTableHelper {
         }
 
         float[] naturalColumnWidths = naturalColumnWidths(table, columnCount, fontUtil, font);
-        float[] columnWidths = resolveColumnWidths(naturalColumnWidths, availableWidth, wrapText, cellPadding, font);
+        float[] unbreakableColumnWidths = unbreakableColumnWidths(table, columnCount, fontUtil, font);
+        float[] columnWidths = resolveColumnWidths(
+                naturalColumnWidths, unbreakableColumnWidths, availableWidth, wrapText, cellPadding, font
+        );
         float defaultContentHeight = defaultContentHeight(fontUtil, font);
         List<RowLayout> rows = new ArrayList<>(table.rows().size());
         float y = 0.0f;
@@ -476,6 +479,7 @@ public final class RichTextTableHelper {
 
     private static float[] resolveColumnWidths(
             float[] naturalWidths,
+            float[] unbreakableWidths,
             float availableWidth,
             boolean wrapText,
             float cellPadding,
@@ -495,7 +499,7 @@ public final class RichTextTableHelper {
         float[] minimumWidths = new float[naturalWidths.length];
         for (int column = 0; column < naturalWidths.length; column++) {
             // A short heading or value must not be inflated just because an adjacent column has long prose.
-            minimumWidths[column] = Math.min(naturalWidths[column], readableMinimum);
+            minimumWidths[column] = Math.clamp(readableMinimum, unbreakableWidths[column], naturalWidths[column]);
         }
 
         float minimumWidth = sum(minimumWidths);
@@ -511,7 +515,7 @@ public final class RichTextTableHelper {
             emergencyMinimums[column] = Math.min(naturalWidths[column], emergencyWidth);
         }
         float emergencyTotal = sum(emergencyMinimums);
-        if (emergencyTotal >= availableContentWidth) {
+        if (emergencyTotal > 0 && emergencyTotal >= availableContentWidth) {
             float ratio = availableContentWidth / emergencyTotal;
             float[] widths = emergencyMinimums.clone();
             scaleToTotal(widths, ratio, availableContentWidth);
@@ -580,6 +584,34 @@ public final class RichTextTableHelper {
                 VAnchor.TOP,
                 wrapText ? contentWidth : FragmentedText.NO_WRAP
         );
+    }
+
+    private static float[] unbreakableColumnWidths(Table table, int columnCount, FontUtil fontUtil, Font font) {
+        float[] widths = new float[columnCount];
+        for (Row row : table.rows()) {
+            for (Cell cell : row.cells()) {
+                RichText text = cell.text();
+                int segmentStart = 0;
+                for (int index = 0; index <= text.length(); index++) {
+                    if (index < text.length() && !Character.isWhitespace(text.charAt(index))) {
+                        continue;
+                    }
+                    if (segmentStart < index) {
+                        FragmentedText segment = fragments(
+                                text.subSequence(segmentStart, index),
+                                fontUtil,
+                                font,
+                                Float.MAX_VALUE,
+                                false,
+                                cell.alignment()
+                        );
+                        widths[cell.column()] = Math.max(widths[cell.column()], segment.actualWidth());
+                    }
+                    segmentStart = index + 1;
+                }
+            }
+        }
+        return widths;
     }
 
     private static Alignment toTextAlignment(ColumnAlignment alignment) {
