@@ -101,6 +101,7 @@ public final class FxLauncher {
 
     private static final Pattern PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH = Pattern.compile("^(?:--|[a-zA-Z]:[/\\\\]).*");
 
+    static @Nullable ArgumentsParser argumentsParser = null;
     static @Nullable LoggingConfiguration loggingConfiguration = null;
     static boolean showLogWindow = false;
     static final BooleanProperty debugProperty = new SimpleBooleanProperty(false);
@@ -160,6 +161,71 @@ public final class FxLauncher {
             // launch
             Application.launch(cls, reparsedArgs.toArray(String[]::new));
         }
+
+        /**
+         * Reparse command line arguments.
+         * <ul>
+         * <li><strong>Windows:</strong>
+         * At least when using a jpackaged application with file-associations, command line arguments get messed up
+         * when the application start is the result of double-clicking on a registered file type.
+         * The command line args are split on whitespace, i.e. paths containing spaces
+         * will be split into multiple parts. This method tries to restore what was probably meant.
+         * It works by iterating over the given array of arguments like this:
+         * <pre>
+         * let arg = ""
+         * for each s in args:
+         *
+         *   if s starts with "--" // start of an option
+         *   or s starts with "[letter]:\" or "[letter]:/" // probable file path
+         *   then
+         *     append arg to the output array
+         *     arg = ""
+         *
+         *   if arg != ""
+         *     arg = arg + " "
+         *
+         *   arg = arg + s
+         * push arg to the output array
+         * </pre>
+         * <li><strong>Other platforms:</strong>
+         * The input array is returned without any changes.
+         * </ul>
+         *
+         * @param args the command line arguments
+         * @return the reparsed argument array
+         */
+        private static List<String> reparseCommandLine(String[] args) {
+            if (!Platform.isWindows() || args.length < 2) {
+                return List.of(args);
+            }
+
+            List<String> argL = new ArrayList<>();
+            StringBuilder arg = new StringBuilder();
+            for (String s : args) {
+                // split if s contains spaces, starts with a double dash, or a windows path
+                if (s.indexOf(' ') >= 0 || PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH.matcher(s).matches()) {
+                    if (!arg.isEmpty()) {
+                        argL.add(arg.toString());
+                    }
+                    arg.setLength(0);
+                }
+
+                if (!arg.isEmpty()) {
+                    arg.append(' ');
+                }
+                arg.append(s);
+            }
+            if (!arg.isEmpty()) {
+                argL.add(arg.toString());
+            }
+
+            // !!! Do NOT use a static Logger instance as that interferes with setting up logging !!!
+            Logger log = LOG;
+            log.trace("original arguments: {}", (Object) args);
+            log.trace("re-parsed arguments: {}", argL);
+
+            return argL;
+        }
     }
 
     private FxLauncher() {}
@@ -210,71 +276,6 @@ public final class FxLauncher {
      */
     public static void shutdown() {
         shutdown(30, TimeUnit.SECONDS);
-    }
-
-    /**
-     * Reparse command line arguments.
-     * <ul>
-     * <li><strong>Windows:</strong>
-     * At least when using a jpackaged application with file-associations, command line arguments get messed up
-     * when the application start is the result of double-clicking on a registered file type.
-     * The command line args are split on whitespace, i.e. paths containing spaces
-     * will be split into multiple parts. This method tries to restore what was probably meant.
-     * It works by iterating over the given array of arguments like this:
-     * <pre>
-     * let arg = ""
-     * for each s in args:
-     *
-     *   if s starts with "--" // start of an option
-     *   or s starts with "[letter]:\" or "[letter]:/" // probable file path
-     *   then
-     *     append arg to the output array
-     *     arg = ""
-     *
-     *   if arg != ""
-     *     arg = arg + " "
-     *
-     *   arg = arg + s
-     * push arg to the output array
-     * </pre>
-     * <li><strong>Other platforms:</strong>
-     * The input array is returned without any changes.
-     * </ul>
-     *
-     * @param args the command line arguments
-     * @return the reparsed argument array
-     */
-    private static List<String> reparseCommandLine(String[] args) {
-        if (!Platform.isWindows() || args.length < 2) {
-            return List.of(args);
-        }
-
-        List<String> argL = new ArrayList<>();
-        StringBuilder arg = new StringBuilder();
-        for (String s : args) {
-            // split if s contains spaces, starts with a double dash, or a windows path
-            if (s.indexOf(' ') >= 0 || PATTERN_PATH_OR_STARTS_WITH_DOUBLE_DASH.matcher(s).matches()) {
-                if (!arg.isEmpty()) {
-                    argL.add(arg.toString());
-                }
-                arg.setLength(0);
-            }
-
-            if (!arg.isEmpty()) {
-                arg.append(' ');
-            }
-            arg.append(s);
-        }
-        if (!arg.isEmpty()) {
-            argL.add(arg.toString());
-        }
-
-        // !!! Do NOT use a static Logger instance as that interferes with setting up logging !!!
-        Logger log = LOG;
-        log.trace("original arguments: {}", (Object) args);
-        log.trace("re-parsed arguments: {}", argL);
-
-        return argL;
     }
 
     /**
@@ -418,6 +419,7 @@ public final class FxLauncher {
      * @param addOptions A collection of consumers for configuring additional command-line arguments.
      * @return The return code indicating the application's exit status. Typically returns {@code RC_SUCCESS} on successful execution or {@code RC_ERROR} in case of an exception.
      */
+    @SuppressWarnings("java:S106")
     public static int launchApplication(
             String applicationClassName,
             String[] args,
@@ -461,13 +463,13 @@ public final class FxLauncher {
         addOptions.forEach(addOption -> addOption.accept(agp));
 
         // parse the arguments
-        ArgumentsParser ap = agp.build(flagHelp);
+        argumentsParser = agp.build(flagHelp);
 
-        var arguments = ap.parse(args);
+        var arguments = argumentsParser.parse(args);
 
         if (arguments.isSet(flagHelp)) {
             //noinspection UseOfSystemOutOrSystemErr
-            System.out.println(ap.help());
+            System.out.println(argumentsParser.help());
             return RC_SUCCESS;
         }
 
@@ -714,4 +716,23 @@ public final class FxLauncher {
             return Optional.empty();
         });
     }
+
+    /**
+     *  Get command line help as plain text.
+     *
+     *  @return the command line help as plain text or the empty text, if not available.
+     */
+    public static String getHelpText() {
+        return LangUtil.mapNonNullOrElse(argumentsParser, ArgumentsParser::help, "");
+    }
+
+    /**
+     *  Get command line help as Markdown text.
+     *
+     *  @return the command line help as Markdown text or the empty text, if not available.
+     */
+    public static String getHelpMarkdown() {
+        return LangUtil.mapNonNullOrElse(argumentsParser, ArgumentsParser::helpMarkdown, "");
+    }
+
 }
