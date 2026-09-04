@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,11 +27,13 @@ class ArgumentsParserTest {
     static void setLocale() {
         defaultLocale = Locale.getDefault();
         Locale.setDefault(Locale.ENGLISH);
+        I18N.init("", Locale.getDefault());
     }
 
     @AfterAll
     static void restoreLocale() {
         Locale.setDefault(defaultLocale);
+        I18N.init("", Locale.getDefault());
     }
 
     @Test
