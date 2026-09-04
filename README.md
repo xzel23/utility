@@ -235,6 +235,12 @@ could not be loaded.
 
 ## Changes
 
+## 24.5.1
+
+- fix issues in text wrapping logic for inline markup text
+- add FxLauncher.getHelpText(), getHelpMarkdown()
+- fix inconsistent scroll pane detection in TextPane/TextEditorPane
+
 ## 24.5.0
 
 - Added Markdown table layout and rendering support for Swing and JavaFX, including wrapping, proportional column
