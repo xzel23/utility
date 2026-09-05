@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.FragmentedText;
+import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.ui.RichTextPaneLayoutHelper;
@@ -54,6 +55,28 @@ class TextPaneScaledPreferredHeightTest extends FxTestBase {
     @Test
     void preferredHeightContainsTheScaledCanvasWhenTextDoesNotWrap() throws Exception {
         assertPreferredHeightContainsScaledCanvas(false);
+    }
+
+    @Test
+    void nonWrappingLayoutIncludesParagraphIndentationInItsWidth() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            RichText text = RichText.valueOf("long unwrapped text")
+                    .apply(Map.of(Style.TEXT_INDENT_LEFT, 80.0f));
+            TextPane pane = new TextPane(text);
+            pane.setDisplayScale(1.5);
+
+            RichTextPaneLayoutHelper.Layout<?> layout = pane.createLayout(400.0);
+            double rightmostFragment = layout.renderLines().stream()
+                    .flatMap(List::stream)
+                    .mapToDouble(fragment -> fragment.x() + fragment.w())
+                    .max()
+                    .orElseThrow();
+
+            assertTrue(
+                    layout.width() >= rightmostFragment,
+                    () -> "layout width=" + layout.width() + ", rightmost fragment=" + rightmostFragment
+            );
+        });
     }
 
     @Test

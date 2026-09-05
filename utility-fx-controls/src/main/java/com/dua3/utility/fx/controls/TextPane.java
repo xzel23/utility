@@ -440,8 +440,7 @@ public class TextPane extends Control implements RichTextPane {
      */
     @Override
     protected double computeMinHeight(double width) {
-        Font font = getFont();
-        double min = snappedTopInset() + Math.ceil(font.getFontData().height() * getDisplayScale()) + snappedBottomInset();
+        double min = snappedTopInset() + Math.ceil(getFont().getFontData().height() * getDisplayScale()) + snappedBottomInset();
         min = Math.max(min, super.computeMinHeight(width));
         return clampToMaxHeight(min);
     }
@@ -605,8 +604,8 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private double selectionAvailableWidth() {
-        ScrollPane scrollPane = getScrollPane();
-        double width = isWrapText() && scrollPane != null ? scrollPane.getViewportBounds().getWidth() : 1.0;
+        ScrollPane sp = getScrollPane();
+        double width = isWrapText() && sp != null ? sp.getViewportBounds().getWidth() : 1.0;
         if (!Double.isFinite(width) || width <= 0.0) {
             width = getWidth() - snappedLeftInset() - snappedRightInset();
         }
@@ -614,9 +613,9 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private Point2D selectionContentPoint(MouseEvent event) {
-        ScrollPane scrollPane = getScrollPane();
-        if (scrollPane != null && scrollPane.getContent() != null) {
-            return scrollPane.getContent().sceneToLocal(event.getSceneX(), event.getSceneY());
+        ScrollPane sp = getScrollPane();
+        if (sp != null && sp.getContent() != null) {
+            return sp.getContent().sceneToLocal(event.getSceneX(), event.getSceneY());
         }
         return new Point2D(event.getX() - snappedLeftInset(), event.getY() - snappedTopInset());
     }
@@ -630,8 +629,8 @@ public class TextPane extends Control implements RichTextPane {
             return false;
         }
 
-        ScrollPane scrollPane = getScrollPane();
-        return scrollPane == null || (isDescendantOf(target, scrollPane) && !hasStyleClassInAncestry(target, "scroll-bar"));
+        ScrollPane sp = getScrollPane();
+        return sp == null || (isDescendantOf(target, sp) && !hasStyleClassInAncestry(target, "scroll-bar"));
     }
 
     private static boolean isDescendantOf(Node node, Node ancestor) {
@@ -720,10 +719,10 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private int selectableLineEnd(int position) {
-        String text = getText().toString();
-        int index = Math.clamp(position, 0, text.length());
-        int end = text.indexOf('\n', index);
-        return end < 0 ? text.length() : end;
+        String txt = getText().toString();
+        int index = Math.clamp(position, 0, txt.length());
+        int end = txt.indexOf('\n', index);
+        return end < 0 ? txt.length() : end;
     }
 
     private void updateSelection(int anchor, int caret) {
@@ -832,7 +831,7 @@ public class TextPane extends Control implements RichTextPane {
         return new RichTextPaneLayoutHelper.Layout<>(
                 shiftedRenderLines,
                 shiftedPlacements,
-                prepared.renderWidth(),
+                Math.max(prepared.renderWidth(), renderFragments.actualWidth()),
                 renderHeight,
                 prepared.layoutTextData()
         );
@@ -1256,19 +1255,6 @@ public class TextPane extends Control implements RichTextPane {
             }
             case null, default -> Optional.empty();
         };
-    }
-
-    private static void wireButtonAction(TextPane control, ButtonBase button) {
-        if (button.getOnAction() != null) {
-            return;
-        }
-
-        Optional<URI> target = toUri(button.getUserData());
-        if (target.isEmpty()) {
-            return;
-        }
-
-        button.setOnAction(evt -> control.getHyperlinkHandler().accept(target.get()));
     }
 
     private static void openUriUsingDesktop(URI uri) {
@@ -1917,6 +1903,12 @@ public class TextPane extends Control implements RichTextPane {
             }
         }
 
+        private static void wireButtonAction(TextPane control, ButtonBase button) {
+            if (button.getOnAction() == null) {
+                toUri(button.getUserData()).ifPresent(target -> button.setOnAction(evt -> control.getHyperlinkHandler().accept(target)));
+            }
+        }
+
         private void requestCaretVisibility() {
             if (editor != null) {
                 caretVisibilityRequested = true;
@@ -2215,9 +2207,7 @@ public class TextPane extends Control implements RichTextPane {
 
         private void prepareContentForPreferredHeight(double width, double rightInset, double leftInset) {
             TextPane control = getSkinnable();
-            double visualWidth = width > 0.0
-                    ? Math.max(1.0, width - leftInset - rightInset)
-                    : Math.max(1.0, control.computePrefWidth(-1));
+            double visualWidth = Math.max(1.0, width > 0.0 ? width - leftInset - rightInset : control.computePrefWidth(-1));
             double availableWidth = control.isWrapText() ? visualWidth : 1.0;
             RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = control.createLayout(availableWidth);
             double contentWidth = Math.max(1.0, Math.ceil(layout.width()));
