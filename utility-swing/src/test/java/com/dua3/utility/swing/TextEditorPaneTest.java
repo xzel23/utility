@@ -1,9 +1,10 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
-import com.dua3.utility.text.RichTextBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -122,6 +123,49 @@ class TextEditorPaneTest {
         });
 
         assertEquals(9, onEdtGet(editor::getCaretPosition));
+    }
+
+    @Test
+    void testNavigationBindingsMatchPlatformTextAreaConventions() {
+        String text = "alpha beta\ngamma";
+
+        TextEditorPane macEditor = onEdtGet(() -> new TextEditorPane(text));
+        onEdtRun(() -> {
+            macEditor.setCaretPosition(8);
+            invokeKeyPressed(macEditor, KeyEvent.VK_HOME, 0, Platform.MACOS);
+            assertEquals(0, macEditor.getCaretPosition(), "macOS Home must move to the current visual line start");
+            invokeKeyPressed(macEditor, KeyEvent.VK_END, 0, Platform.MACOS);
+            assertEquals(10, macEditor.getCaretPosition(), "macOS End must move to the current visual line end");
+
+            macEditor.setCaretPosition(8);
+            invokeKeyPressed(macEditor, KeyEvent.VK_LEFT, KeyEvent.META_DOWN_MASK, Platform.MACOS);
+            assertEquals(0, macEditor.getCaretPosition(), "Command-Left must move to line start");
+            macEditor.setCaretPosition(8);
+            invokeKeyPressed(macEditor, KeyEvent.VK_RIGHT, KeyEvent.ALT_DOWN_MASK, Platform.MACOS);
+            assertEquals(10, macEditor.getCaretPosition(), "Option-Right must move to word end");
+            macEditor.setCaretPosition(8);
+            invokeKeyPressed(macEditor, KeyEvent.VK_DOWN, KeyEvent.META_DOWN_MASK, Platform.MACOS);
+            assertEquals(text.length(), macEditor.getCaretPosition(), "Command-Down must move to document end");
+        });
+
+        TextEditorPane windowsEditor = onEdtGet(() -> new TextEditorPane(text));
+        onEdtRun(() -> {
+            windowsEditor.setCaretPosition(6);
+            invokeKeyPressed(windowsEditor, KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, Platform.WINDOWS);
+            assertEquals(11, windowsEditor.getCaretPosition(), "Windows Control-Right must move to the next word start");
+            invokeKeyPressed(windowsEditor, KeyEvent.VK_HOME, KeyEvent.CTRL_DOWN_MASK, Platform.WINDOWS);
+            assertEquals(0, windowsEditor.getCaretPosition(), "Windows Control-Home must move to document start");
+        });
+
+        TextEditorPane linuxEditor = onEdtGet(() -> new TextEditorPane(text));
+        onEdtRun(() -> {
+            linuxEditor.setCaretPosition(6);
+            invokeKeyPressed(linuxEditor, KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, Platform.LINUX);
+            assertEquals(10, linuxEditor.getCaretPosition(), "Linux Control-Right must move to word end");
+            linuxEditor.setCaretPosition(7);
+            invokeKeyPressed(linuxEditor, KeyEvent.VK_DOWN, KeyEvent.CTRL_DOWN_MASK, Platform.LINUX);
+            assertEquals(10, linuxEditor.getCaretPosition(), "Linux Control-Down must move to the paragraph end");
+        });
     }
 
     @Test
@@ -245,6 +289,18 @@ class TextEditorPaneTest {
                 KeyEvent.CHAR_UNDEFINED
         );
         invokePrivate(editor, "handleKeyPressed", event);
+    }
+
+    private static void invokeKeyPressed(TextEditorPane editor, int keyCode, int modifiers, Platform platform) {
+        KeyEvent event = new KeyEvent(
+                editor.getTextComponent(),
+                KeyEvent.KEY_PRESSED,
+                System.currentTimeMillis(),
+                modifiers,
+                keyCode,
+                KeyEvent.CHAR_UNDEFINED
+        );
+        editor.handleKeyPressed(event, platform);
     }
 
     private static void invokeKeyTyped(TextEditorPane editor, char ch) {

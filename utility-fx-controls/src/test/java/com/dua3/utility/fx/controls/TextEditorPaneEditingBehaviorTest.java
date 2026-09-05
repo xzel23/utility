@@ -2,6 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxUtil;
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
@@ -634,6 +635,59 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
 
     @Test
     @Timeout(value = 20, unit = TimeUnit.SECONDS)
+    void testNavigationBindingsMatchPlatformTextAreaConventions() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            String text = "alpha beta\ngamma";
+
+            TextEditorPane macEditor = navigationEditor(text);
+            macEditor.positionCaret(8);
+            macEditor.processKeyPressed(keyPressed(KeyCode.HOME, false, false, false, false), Platform.MACOS);
+            assertEquals(0, macEditor.getCaretPosition(), "macOS Home must move to the current visual line start");
+            macEditor.processKeyPressed(keyPressed(KeyCode.END, false, false, false, false), Platform.MACOS);
+            assertEquals(10, macEditor.getCaretPosition(), "macOS End must move to the current visual line end");
+
+            macEditor.positionCaret(8);
+            macEditor.processKeyPressed(keyPressed(KeyCode.LEFT, false, false, false, true), Platform.MACOS);
+            assertEquals(0, macEditor.getCaretPosition(), "Command-Left must move to line start");
+            macEditor.positionCaret(8);
+            macEditor.processKeyPressed(keyPressed(KeyCode.RIGHT, false, false, false, true), Platform.MACOS);
+            assertEquals(10, macEditor.getCaretPosition(), "Command-Right must move to line end");
+            macEditor.positionCaret(8);
+            macEditor.processKeyPressed(keyPressed(KeyCode.RIGHT, false, false, true, false), Platform.MACOS);
+            assertEquals(10, macEditor.getCaretPosition(), "Option-Right must move to word end");
+            macEditor.positionCaret(8);
+            macEditor.processKeyPressed(keyPressed(KeyCode.DOWN, false, false, false, true), Platform.MACOS);
+            assertEquals(text.length(), macEditor.getCaretPosition(), "Command-Down must move to document end");
+            macEditor.positionCaret(8);
+            macEditor.processKeyPressed(keyPressed(KeyCode.LEFT, true, false, false, true), Platform.MACOS);
+            assertEquals(8, macEditor.getAnchor());
+            assertEquals(0, macEditor.getCaretPosition(), "Shift must extend Command-Left selection");
+
+            TextEditorPane windowsEditor = navigationEditor(text);
+            windowsEditor.positionCaret(8);
+            windowsEditor.processKeyPressed(keyPressed(KeyCode.HOME, false, false, false, false), Platform.WINDOWS);
+            assertEquals(0, windowsEditor.getCaretPosition(), "Windows Home must move to line start");
+            windowsEditor.positionCaret(6);
+            windowsEditor.processKeyPressed(keyPressed(KeyCode.RIGHT, false, true, false, false), Platform.WINDOWS);
+            assertEquals(11, windowsEditor.getCaretPosition(), "Windows Control-Right must move to the next word start");
+            windowsEditor.processKeyPressed(keyPressed(KeyCode.HOME, false, true, false, false), Platform.WINDOWS);
+            assertEquals(0, windowsEditor.getCaretPosition(), "Windows Control-Home must move to document start");
+            windowsEditor.processKeyPressed(keyPressed(KeyCode.END, true, true, false, false), Platform.WINDOWS);
+            assertEquals(0, windowsEditor.getAnchor());
+            assertEquals(text.length(), windowsEditor.getCaretPosition(), "Shift-Control-End must extend to document end");
+
+            TextEditorPane linuxEditor = navigationEditor(text);
+            linuxEditor.positionCaret(6);
+            linuxEditor.processKeyPressed(keyPressed(KeyCode.RIGHT, false, true, false, false), Platform.LINUX);
+            assertEquals(10, linuxEditor.getCaretPosition(), "Linux Control-Right must move to word end");
+            linuxEditor.positionCaret(7);
+            linuxEditor.processKeyPressed(keyPressed(KeyCode.DOWN, false, true, false, false), Platform.LINUX);
+            assertEquals(10, linuxEditor.getCaretPosition(), "Linux Control-Down must move to the paragraph end");
+        });
+    }
+
+    @Test
+    @Timeout(value = 20, unit = TimeUnit.SECONDS)
     void testAttributeRemovalWithNullIgnored() throws Exception {
         runOnFxThreadAndWait(() -> {
             TextEditorPane editor = new TextEditorPane("abcd");
@@ -652,5 +706,16 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
 
     private static KeyEvent keyPressed(KeyCode code, boolean shift, boolean shortcut) {
         return new KeyEvent(KeyEvent.KEY_PRESSED, "", "", code, shift, shortcut, false, shortcut);
+    }
+
+    private static KeyEvent keyPressed(KeyCode code, boolean shift, boolean control, boolean alt, boolean meta) {
+        return new KeyEvent(KeyEvent.KEY_PRESSED, "", "", code, shift, control, alt, meta);
+    }
+
+    private TextEditorPane navigationEditor(String text) {
+        TextEditorPane editor = new TextEditorPane(text);
+        editor.setWrapText(false);
+        addToScene(editor);
+        return editor;
     }
 }

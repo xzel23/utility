@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxUtil;
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
@@ -34,6 +35,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -274,63 +276,32 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     }
 
     void processKeyPressed(KeyEvent evt) {
-        boolean shift = evt.isShiftDown();
-        boolean shortcut = evt.isShortcutDown();
+        processKeyPressed(evt, Platform.currentPlatform());
+    }
 
-        if (shortcut) {
-            switch (evt.getCode()) {
-                case C -> {
-                    copy();
-                    evt.consume();
-                    return;
-                }
-                case X -> {
-                    cut();
-                    evt.consume();
-                    return;
-                }
-                case V -> {
-                    paste();
-                    evt.consume();
-                    return;
-                }
-                case Z -> {
-                    if (shift) {
-                        redo();
-                    } else {
-                        undo();
-                    }
-                    evt.consume();
-                    return;
-                }
-                case Y -> {
-                    redo();
-                    evt.consume();
-                    return;
-                }
-                case A -> {
-                    selectAll();
-                    evt.consume();
-                    return;
-                }
-                default -> {
-                    // continue with non-shortcut handling
-                }
-            }
+    /**
+     * Handles a key press using the bindings of the supplied platform.
+     *
+     * <p>The platform argument keeps the binding rules independently testable. Production event handling always
+     * supplies the platform on which the application is running.
+     */
+    void processKeyPressed(KeyEvent evt, Platform platform) {
+        if (handleStandardShortcut(evt, platform) || handleNavigationKey(evt, platform)) {
+            return;
         }
 
         switch (evt.getCode()) {
             case BACK_SPACE -> {
                 if (isEditable()) {
                     deletePreviousChar();
-                    evt.consume();
                 }
+                evt.consume();
             }
             case DELETE -> {
                 if (isEditable()) {
                     deleteNextChar();
-                    evt.consume();
                 }
+                evt.consume();
             }
             case TAB -> {
                 if (isEditable()) {
@@ -338,74 +309,126 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
                 }
                 evt.consume();
             }
-            case LEFT -> {
-                sharedModel.resetPreferredCaretX();
-                if (shortcut) {
-                    if (shift) {
-                        selectPreviousWord();
-                    } else {
-                        previousWord();
-                    }
-                } else if (shift) {
-                    selectBackward();
-                } else {
-                    backward();
-                }
-                evt.consume();
-            }
-            case RIGHT -> {
-                sharedModel.resetPreferredCaretX();
-                if (shortcut) {
-                    if (shift) {
-                        selectNextWord();
-                    } else {
-                        nextWord();
-                    }
-                } else if (shift) {
-                    selectForward();
-                } else {
-                    forward();
-                }
-                evt.consume();
-            }
-            case UP -> {
-                moveLine(-1, shift);
-                evt.consume();
-            }
-            case DOWN -> {
-                moveLine(1, shift);
-                evt.consume();
-            }
-            case PAGE_UP -> {
-                movePage(-1, shift);
-                evt.consume();
-            }
-            case PAGE_DOWN -> {
-                movePage(1, shift);
-                evt.consume();
-            }
-            case HOME -> {
-                sharedModel.resetPreferredCaretX();
-                if (shift) {
-                    selectHome();
-                } else {
-                    home();
-                }
-                evt.consume();
-            }
-            case END -> {
-                sharedModel.resetPreferredCaretX();
-                if (shift) {
-                    selectEnd();
-                } else {
-                    end();
-                }
-                evt.consume();
-            }
             default -> {
                 // no-op
             }
         }
+    }
+
+    private boolean handleStandardShortcut(KeyEvent evt, Platform platform) {
+        if (!isPrimaryShortcutDown(evt, platform)) {
+            return false;
+        }
+
+        switch (evt.getCode()) {
+            case C -> copy();
+            case X -> cut();
+            case V -> paste();
+            case A -> selectAll();
+            case Z -> {
+                if (evt.isShiftDown() && platform != Platform.WINDOWS) {
+                    redo();
+                } else if (!evt.isShiftDown()) {
+                    undo();
+                } else {
+                    return false;
+                }
+            }
+            case Y -> {
+                if (platform != Platform.WINDOWS) {
+                    return false;
+                }
+                redo();
+            }
+            default -> {
+                return false;
+            }
+        }
+
+        evt.consume();
+        return true;
+    }
+
+    private boolean handleNavigationKey(KeyEvent evt, Platform platform) {
+        KeyCode code = normalizeNavigationKey(evt.getCode());
+        boolean shift = evt.isShiftDown();
+
+        if (platform == Platform.MACOS) {
+            if (evt.isMetaDown() && !evt.isAltDown()) {
+                switch (code) {
+                    case LEFT -> moveCaretLineBoundary(false, shift);
+                    case RIGHT -> moveCaretLineBoundary(true, shift);
+                    case UP, HOME -> moveCaretDocumentBoundary(false, shift);
+                    case DOWN, END -> moveCaretDocumentBoundary(true, shift);
+                    default -> {
+                        return false;
+                    }
+                }
+                evt.consume();
+                return true;
+            }
+            if (evt.isAltDown() && !evt.isMetaDown() && !evt.isControlDown()) {
+                switch (code) {
+                    case LEFT -> moveCaretWord(false, shift, true);
+                    case RIGHT -> moveCaretWord(true, shift, true);
+                    case UP -> moveCaretParagraph(false, shift, platform);
+                    case DOWN -> moveCaretParagraph(true, shift, platform);
+                    default -> {
+                        return false;
+                    }
+                }
+                evt.consume();
+                return true;
+            }
+        } else if (evt.isControlDown() && !evt.isAltDown()) {
+            switch (code) {
+                case LEFT -> moveCaretWord(false, shift, false);
+                case RIGHT -> moveCaretWord(true, shift, platform == Platform.LINUX);
+                case UP -> moveCaretParagraph(false, shift, platform);
+                case DOWN -> moveCaretParagraph(true, shift, platform);
+                case HOME -> moveCaretDocumentBoundary(false, shift);
+                case END -> moveCaretDocumentBoundary(true, shift);
+                default -> {
+                    return false;
+                }
+            }
+            evt.consume();
+            return true;
+        }
+
+        if (evt.isControlDown() || evt.isAltDown() || evt.isMetaDown()) {
+            return false;
+        }
+
+        switch (code) {
+            case LEFT -> moveCaretCharacter(false, shift);
+            case RIGHT -> moveCaretCharacter(true, shift);
+            case UP -> moveLine(-1, shift);
+            case DOWN -> moveLine(1, shift);
+            case PAGE_UP -> movePage(-1, shift);
+            case PAGE_DOWN -> movePage(1, shift);
+            case HOME -> moveCaretLineBoundary(false, shift);
+            case END -> moveCaretLineBoundary(true, shift);
+            default -> {
+                return false;
+            }
+        }
+        evt.consume();
+        return true;
+    }
+
+    private static boolean isPrimaryShortcutDown(KeyEvent evt, Platform platform) {
+        return !evt.isAltDown() && (platform == Platform.MACOS ? evt.isMetaDown() : evt.isControlDown());
+    }
+
+    private static KeyCode normalizeNavigationKey(KeyCode code) {
+        return switch (code) {
+            case KP_LEFT -> KeyCode.LEFT;
+            case KP_RIGHT -> KeyCode.RIGHT;
+            case KP_UP -> KeyCode.UP;
+            case KP_DOWN -> KeyCode.DOWN;
+            default -> code;
+        };
     }
 
     void processKeyTyped(KeyEvent evt) {
@@ -625,6 +648,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      *
      * @return current selection text
      */
+    @Override
     public final RichText getSelectedText() {
         return selectedText.get();
     }
@@ -643,6 +667,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      *
      * @return current selection range
      */
+    @Override
     public final IndexRange getSelection() {
         return selection.get();
     }
@@ -652,6 +677,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      *
      * @return selection property
      */
+    @Override
     public final ReadOnlyObjectProperty<IndexRange> selectionProperty() {
         return selection.getReadOnlyProperty();
     }
@@ -1203,6 +1229,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     /**
      * Selects the full document.
      */
+    @Override
     public void selectAll() {
         sharedModel.selectAll();
         syncSelectionFromModel();
@@ -1358,9 +1385,9 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     /**
      * Copies selection to clipboard.
      */
+    @Override
     public void copy() {
-        RichText selection = getSelectedText().apply(Style.create(getFont()));
-        FxUtil.copyToClipboard(selection);
+        FxUtil.copyToClipboard(getSelectedText().apply(Style.create(getFont())));
     }
 
     /**
@@ -1540,6 +1567,101 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
         IndexRange range = sharedModel.lineRangeAt(pos);
         setSelectionState(range.start(), range.end());
         sharedModel.resetPreferredCaretX();
+    }
+
+    private void moveCaretCharacter(boolean forward, boolean extendSelection) {
+        sharedModel.resetPreferredCaretX();
+        if (extendSelection) {
+            if (forward) {
+                selectForward();
+            } else {
+                selectBackward();
+            }
+        } else if (forward) {
+            forward();
+        } else {
+            backward();
+        }
+    }
+
+    private void moveCaretWord(boolean forward, boolean extendSelection, boolean toWordEnd) {
+        sharedModel.resetPreferredCaretX();
+        if (!forward) {
+            if (extendSelection) {
+                selectPreviousWord();
+            } else {
+                previousWord();
+            }
+        } else if (toWordEnd) {
+            if (extendSelection) {
+                selectEndOfNextWord();
+            } else {
+                endOfNextWord();
+            }
+        } else if (extendSelection) {
+            selectNextWord();
+        } else {
+            nextWord();
+        }
+    }
+
+    private void moveCaretLineBoundary(boolean toEnd, boolean extendSelection) {
+        List<VisualLine> lines = buildVisualLines(currentWrapWidth());
+        if (sharedModel.moveLineBoundary(lines, toEnd, extendSelection)) {
+            syncSelectionFromModel();
+        }
+    }
+
+    private void moveCaretDocumentBoundary(boolean toEnd, boolean extendSelection) {
+        sharedModel.resetPreferredCaretX();
+        if (extendSelection) {
+            if (toEnd) {
+                selectEnd();
+            } else {
+                selectHome();
+            }
+        } else if (toEnd) {
+            end();
+        } else {
+            home();
+        }
+    }
+
+    private void moveCaretParagraph(boolean forward, boolean extendSelection, Platform platform) {
+        String text = sharedModel.getText().toString();
+        int caret = getCaretPosition();
+        int target = caret;
+
+        if (forward) {
+            boolean startedAtParagraphEnd = caret < text.length() && text.charAt(caret) == '\n';
+            if (startedAtParagraphEnd) {
+                target++;
+            }
+            if (!(platform == Platform.WINDOWS && startedAtParagraphEnd)) {
+                while (target < text.length() && text.charAt(target) != '\n') {
+                    target++;
+                }
+                if (platform == Platform.WINDOWS && target < text.length()) {
+                    target++;
+                }
+            }
+        } else if (caret > 0) {
+            if (text.charAt(caret - 1) == '\n') {
+                target--;
+            }
+            while (target > 0 && text.charAt(target - 1) != '\n') {
+                target--;
+            }
+        }
+
+        if (target != caret) {
+            sharedModel.resetPreferredCaretX();
+            if (extendSelection) {
+                selectPositionCaret(target);
+            } else {
+                positionCaret(target);
+            }
+        }
     }
 
     private void moveLine(int delta, boolean extendSelection) {

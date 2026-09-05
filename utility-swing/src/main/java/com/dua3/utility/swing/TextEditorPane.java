@@ -3,6 +3,7 @@ package com.dua3.utility.swing;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
@@ -1001,92 +1002,21 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     }
 
     private void handleKeyPressed(KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        boolean shift = event.isShiftDown();
+        handleKeyPressed(event, Platform.currentPlatform());
+    }
 
-        if (isShortcutDown(event)) {
-            switch (keyCode) {
-                case KeyEvent.VK_Z -> {
-                    if (shift) {
-                        redo();
-                    } else {
-                        undo();
-                    }
-                    event.consume();
-                }
-                case KeyEvent.VK_Y -> {
-                    redo();
-                    event.consume();
-                }
-                case KeyEvent.VK_C -> {
-                    copy();
-                    event.consume();
-                }
-                case KeyEvent.VK_X -> {
-                    cut();
-                    event.consume();
-                }
-                case KeyEvent.VK_V -> {
-                    paste();
-                    event.consume();
-                }
-                case KeyEvent.VK_A -> {
-                    selectAll();
-                    event.consume();
-                }
-                case KeyEvent.VK_B -> {
-                    markBold();
-                    event.consume();
-                }
-                case KeyEvent.VK_I -> {
-                    markItalic();
-                    event.consume();
-                }
-                case KeyEvent.VK_U -> {
-                    markUnderline();
-                    event.consume();
-                }
-                default -> {
-                    // no-op
-                }
-            }
+    /**
+     * Handles a key press using the bindings of the supplied platform.
+     *
+     * <p>The platform argument keeps the binding rules independently testable. Production event handling always
+     * supplies the platform on which the application is running.
+     */
+    void handleKeyPressed(KeyEvent event, Platform platform) {
+        if (handleStandardShortcut(event, platform) || handleNavigationKey(event, platform)) {
             return;
         }
 
-        boolean wordNavigation = event.isControlDown() || event.isAltDown();
-        switch (keyCode) {
-            case KeyEvent.VK_LEFT -> {
-                moveCaretHorizontal(-1, shift, wordNavigation);
-                event.consume();
-            }
-            case KeyEvent.VK_RIGHT -> {
-                moveCaretHorizontal(1, shift, wordNavigation);
-                event.consume();
-            }
-            case KeyEvent.VK_UP -> {
-                moveCaretVertical(-1, shift);
-                event.consume();
-            }
-            case KeyEvent.VK_DOWN -> {
-                moveCaretVertical(1, shift);
-                event.consume();
-            }
-            case KeyEvent.VK_PAGE_UP -> {
-                moveCaretPage(-1, shift);
-                event.consume();
-            }
-            case KeyEvent.VK_PAGE_DOWN -> {
-                moveCaretPage(1, shift);
-                event.consume();
-            }
-            case KeyEvent.VK_HOME -> {
-                moveCaretLineBoundary(false, shift);
-                event.consume();
-            }
-            case KeyEvent.VK_END -> {
-                moveCaretLineBoundary(true, shift);
-                event.consume();
-            }
+        switch (event.getKeyCode()) {
             case KeyEvent.VK_BACK_SPACE -> {
                 if (editable) {
                     deletePreviousChar();
@@ -1111,12 +1041,193 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         }
     }
 
+    private boolean handleStandardShortcut(KeyEvent event, Platform platform) {
+        if (!isPrimaryShortcutDown(event, platform)) {
+            return false;
+        }
+
+        switch (event.getKeyCode()) {
+            case KeyEvent.VK_C -> copy();
+            case KeyEvent.VK_X -> cut();
+            case KeyEvent.VK_V -> paste();
+            case KeyEvent.VK_A -> selectAll();
+            case KeyEvent.VK_B -> markBold();
+            case KeyEvent.VK_I -> markItalic();
+            case KeyEvent.VK_U -> markUnderline();
+            case KeyEvent.VK_Z -> {
+                if (event.isShiftDown() && platform != Platform.WINDOWS) {
+                    redo();
+                } else if (!event.isShiftDown()) {
+                    undo();
+                } else {
+                    return false;
+                }
+            }
+            case KeyEvent.VK_Y -> {
+                if (platform != Platform.WINDOWS) {
+                    return false;
+                }
+                redo();
+            }
+            default -> {
+                return false;
+            }
+        }
+
+        event.consume();
+        return true;
+    }
+
+    private boolean handleNavigationKey(KeyEvent event, Platform platform) {
+        int keyCode = normalizeNavigationKey(event.getKeyCode());
+        boolean shift = event.isShiftDown();
+
+        if (platform == Platform.MACOS) {
+            if (event.isMetaDown() && !event.isAltDown()) {
+                switch (keyCode) {
+                    case KeyEvent.VK_LEFT -> moveCaretLineBoundary(false, shift);
+                    case KeyEvent.VK_RIGHT -> moveCaretLineBoundary(true, shift);
+                    case KeyEvent.VK_UP, KeyEvent.VK_HOME -> moveCaretDocumentBoundary(false, shift);
+                    case KeyEvent.VK_DOWN, KeyEvent.VK_END -> moveCaretDocumentBoundary(true, shift);
+                    default -> {
+                        return false;
+                    }
+                }
+                event.consume();
+                return true;
+            }
+            if (event.isAltDown() && !event.isMetaDown() && !event.isControlDown()) {
+                switch (keyCode) {
+                    case KeyEvent.VK_LEFT -> moveCaretWord(false, shift, true);
+                    case KeyEvent.VK_RIGHT -> moveCaretWord(true, shift, true);
+                    case KeyEvent.VK_UP -> moveCaretParagraph(false, shift, platform);
+                    case KeyEvent.VK_DOWN -> moveCaretParagraph(true, shift, platform);
+                    default -> {
+                        return false;
+                    }
+                }
+                event.consume();
+                return true;
+            }
+        } else if (event.isControlDown() && !event.isAltDown()) {
+            switch (keyCode) {
+                case KeyEvent.VK_LEFT -> moveCaretWord(false, shift, false);
+                case KeyEvent.VK_RIGHT -> moveCaretWord(true, shift, platform == Platform.LINUX);
+                case KeyEvent.VK_UP -> moveCaretParagraph(false, shift, platform);
+                case KeyEvent.VK_DOWN -> moveCaretParagraph(true, shift, platform);
+                case KeyEvent.VK_HOME -> moveCaretDocumentBoundary(false, shift);
+                case KeyEvent.VK_END -> moveCaretDocumentBoundary(true, shift);
+                default -> {
+                    return false;
+                }
+            }
+            event.consume();
+            return true;
+        }
+
+        if (event.isControlDown() || event.isAltDown() || event.isMetaDown()) {
+            return false;
+        }
+
+        switch (keyCode) {
+            case KeyEvent.VK_LEFT -> moveCaretCharacter(false, shift);
+            case KeyEvent.VK_RIGHT -> moveCaretCharacter(true, shift);
+            case KeyEvent.VK_UP -> moveCaretVertical(-1, shift);
+            case KeyEvent.VK_DOWN -> moveCaretVertical(1, shift);
+            case KeyEvent.VK_PAGE_UP -> moveCaretPage(-1, shift);
+            case KeyEvent.VK_PAGE_DOWN -> moveCaretPage(1, shift);
+            case KeyEvent.VK_HOME -> moveCaretLineBoundary(false, shift);
+            case KeyEvent.VK_END -> moveCaretLineBoundary(true, shift);
+            default -> {
+                return false;
+            }
+        }
+        event.consume();
+        return true;
+    }
+
+    private static boolean isPrimaryShortcutDown(KeyEvent event, Platform platform) {
+        return !event.isAltDown() && (platform == Platform.MACOS ? event.isMetaDown() : event.isControlDown());
+    }
+
     private static boolean isShortcutDown(KeyEvent event) {
         return event.isControlDown() || event.isMetaDown();
     }
 
-    private void moveCaretHorizontal(int direction, boolean extendSelection, boolean wordNavigation) {
-        if (model.moveHorizontal(direction, extendSelection, wordNavigation)) {
+    private static int normalizeNavigationKey(int keyCode) {
+        return switch (keyCode) {
+            case KeyEvent.VK_KP_LEFT -> KeyEvent.VK_LEFT;
+            case KeyEvent.VK_KP_RIGHT -> KeyEvent.VK_RIGHT;
+            case KeyEvent.VK_KP_UP -> KeyEvent.VK_UP;
+            case KeyEvent.VK_KP_DOWN -> KeyEvent.VK_DOWN;
+            default -> keyCode;
+        };
+    }
+
+    private void moveCaretCharacter(boolean forward, boolean extendSelection) {
+        if (model.moveHorizontal(forward ? 1 : -1, extendSelection, false)) {
+            onSelectionChanged(false);
+        }
+    }
+
+    private void moveCaretWord(boolean forward, boolean extendSelection, boolean toWordEnd) {
+        int caret = model.getCaretPosition();
+        int target = !forward
+                ? model.previousWordStart(caret)
+                : (toWordEnd ? model.nextWordEnd(caret) : model.nextWordStart(caret));
+        if (extendSelection) {
+            model.selectPositionCaret(target);
+        } else {
+            model.positionCaret(target);
+        }
+        model.resetPreferredCaretX();
+        onSelectionChanged(false);
+    }
+
+    private void moveCaretDocumentBoundary(boolean toEnd, boolean extendSelection) {
+        if (extendSelection) {
+            model.selectPositionCaret(toEnd ? model.length() : 0);
+        } else {
+            model.positionCaret(toEnd ? model.length() : 0);
+        }
+        model.resetPreferredCaretX();
+        onSelectionChanged(false);
+    }
+
+    private void moveCaretParagraph(boolean forward, boolean extendSelection, Platform platform) {
+        String text = model.getText().toString();
+        int caret = model.getCaretPosition();
+        int target = caret;
+
+        if (forward) {
+            boolean startedAtParagraphEnd = caret < text.length() && text.charAt(caret) == '\n';
+            if (startedAtParagraphEnd) {
+                target++;
+            }
+            if (!(platform == Platform.WINDOWS && startedAtParagraphEnd)) {
+                while (target < text.length() && text.charAt(target) != '\n') {
+                    target++;
+                }
+                if (platform == Platform.WINDOWS && target < text.length()) {
+                    target++;
+                }
+            }
+        } else if (caret > 0) {
+            if (text.charAt(caret - 1) == '\n') {
+                target--;
+            }
+            while (target > 0 && text.charAt(target - 1) != '\n') {
+                target--;
+            }
+        }
+
+        if (target != caret) {
+            if (extendSelection) {
+                model.selectPositionCaret(target);
+            } else {
+                model.positionCaret(target);
+            }
+            model.resetPreferredCaretX();
             onSelectionChanged(false);
         }
     }
