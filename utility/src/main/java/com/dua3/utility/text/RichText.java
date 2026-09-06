@@ -613,9 +613,9 @@ public final class RichText
             } else if (r.getStart() >= from && r.getEnd() <= to) {
                 builder.appendRun(r);
             } else {
-                int start = Math.max(from, r.getStart()) - r.getStart();
-                int end = Math.min(to, r.getEnd()) - r.getStart();
-                builder.appendRun(r.subSequence(start, end));
+                int rStart = Math.max(from, r.getStart()) - r.getStart();
+                int rEnd = Math.min(to, r.getEnd()) - r.getStart();
+                builder.appendRun(r.subSequence(rStart, rEnd));
             }
         });
     }
@@ -1121,6 +1121,29 @@ public final class RichText
     }
 
     /**
+     * Find last occurrence character.
+     *
+     * @param ch the character
+     * @return the index of the last occurrence of {@code ch}, or -1 if not found
+     * @see String#indexOf(int)
+     */
+    public int lastIndexOf(int ch) {
+        return TextUtil.lastIndexOf(this, ch);
+    }
+
+    /**
+     * Find last occurrence character.
+     *
+     * @param ch the character
+     * @param fromIndex the index to start searching from
+     * @return the index of the last occurrence of {@code ch}, or -1 if not found
+     * @see String#indexOf(int)
+     */
+    public int lastIndexOf(int ch, int fromIndex) {
+        return TextUtil.lastIndexOf(this, ch, fromIndex);
+    }
+
+    /**
      * Find character.
      *
      * @param ch  the character
@@ -1245,24 +1268,24 @@ public final class RichText
         String base = toString();
         List<Run> updatedRuns = new ArrayList<>();
         boolean changed = false;
-        for (Run run : runs()) {
-            int runStart = run.getStart() - start;
-            int runEnd = runStart + run.length();
-            int overlapStart = Math.max(from, runStart);
-            int overlapEnd = Math.min(to, runEnd);
-            if (overlapStart >= overlapEnd || !run.attributes().containsKey(attribute)) {
-                updatedRuns.add(new Run(base, runStart, run.length(), run.attributes()));
+        for (Run r : runs()) {
+            int rStart = r.getStart() - start;
+            int rEnd = rStart + r.length();
+            int overlapStart = Math.max(from, rStart);
+            int overlapEnd = Math.min(to, rEnd);
+            if (overlapStart >= overlapEnd || !r.attributes().containsKey(attribute)) {
+                updatedRuns.add(new Run(base, rStart, r.length(), r.attributes()));
                 continue;
             }
 
-            if (runStart < overlapStart) {
-                updatedRuns.add(new Run(base, runStart, overlapStart - runStart, run.attributes()));
+            if (rStart < overlapStart) {
+                updatedRuns.add(new Run(base, rStart, overlapStart - rStart, r.attributes()));
             }
-            Map<String, @Nullable Object> attributes = new HashMap<>(run.attributes());
+            Map<String, @Nullable Object> attributes = new HashMap<>(r.attributes());
             attributes.remove(attribute);
             updatedRuns.add(new Run(base, overlapStart, overlapEnd - overlapStart, TextAttributes.of(attributes)));
-            if (overlapEnd < runEnd) {
-                updatedRuns.add(new Run(base, overlapEnd, runEnd - overlapEnd, run.attributes()));
+            if (overlapEnd < rEnd) {
+                updatedRuns.add(new Run(base, overlapEnd, rEnd - overlapEnd, r.attributes()));
             }
             changed = true;
         }

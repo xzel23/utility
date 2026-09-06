@@ -668,6 +668,34 @@ public final class TextUtil {
     }
 
     /**
+     * Find the last occurrence of a char in CharSequence.
+     *
+     * @param haystack the sequence to search
+     * @param needle   the char to find
+     * @return the position where the char was found or -1 if not found
+     */
+    public static int lastIndexOf(CharSequence haystack, int needle) {
+        return lastIndexOf(haystack, needle, haystack.length() - 1);
+    }
+
+    /**
+     * Find the last occurrence of a char in CharSequence.
+     *
+     * @param haystack the sequence to search
+     * @param needle   the char to find
+     * @param fromIndex the index to start searching from
+     * @return the position where the char was found or -1 if not found
+     */
+    public static int lastIndexOf(CharSequence haystack, int needle, int fromIndex) {
+        for (int i = fromIndex; i >=0; i--) {
+            if (haystack.charAt(i) == needle) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Find text in CharSequence.
      *
      * @param haystack the sequence to search

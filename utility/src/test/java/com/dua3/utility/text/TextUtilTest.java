@@ -638,6 +638,21 @@ class TextUtilTest {
     }
 
     @Test
+    void testLastIndexOf() {
+        // Test lastIndexOf(CharSequence, int)
+        Assertions.assertEquals(7, TextUtil.lastIndexOf("Hello world", 'o'));
+        Assertions.assertEquals(-1, TextUtil.lastIndexOf("Hello world", 'z'));
+        Assertions.assertEquals(-1, TextUtil.lastIndexOf("", 'x'));
+
+        // Test lastIndexOf(CharSequence, int, int)
+        Assertions.assertEquals(4, TextUtil.lastIndexOf("Hello world", 'o', 6));
+        Assertions.assertEquals(4, TextUtil.lastIndexOf("Hello world", 'o', 4));
+        Assertions.assertEquals(0, TextUtil.lastIndexOf("Hello world", 'H', 0));
+        Assertions.assertEquals(-1, TextUtil.lastIndexOf("Hello world", 'w', 5));
+        Assertions.assertEquals(-1, TextUtil.lastIndexOf("Hello world", 'o', -1));
+    }
+
+    @Test
     void testStartsWith() {
         // Test with matching prefix
         Assertions.assertTrue(TextUtil.startsWith("Hello", "He"));

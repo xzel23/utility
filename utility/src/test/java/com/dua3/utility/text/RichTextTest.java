@@ -1001,6 +1001,28 @@ class RichTextTest {
     }
 
     @Test
+    void testLastIndexOfChar() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello ");
+        builder.push(Style.BOLD);
+        builder.append("world");
+        builder.pop(Style.BOLD);
+        RichText text = builder.toRichText();
+
+        // Test lastIndexOf(int ch)
+        assertEquals(7, text.lastIndexOf('o'));
+        assertEquals(-1, text.lastIndexOf('z'));
+        assertEquals(-1, RichText.emptyText().lastIndexOf('x'));
+
+        // Test lastIndexOf(int ch, int fromIndex)
+        assertEquals(4, text.lastIndexOf('o', 6));
+        assertEquals(4, text.lastIndexOf('o', 4));
+        assertEquals(0, text.lastIndexOf('H', 0));
+        assertEquals(-1, text.lastIndexOf('w', 5));
+        assertEquals(-1, text.lastIndexOf('o', -1));
+    }
+
+    @Test
     void testIndexOfCharSequence() {
         RichText text = RichText.valueOf("Hello world, Hello universe");
 
