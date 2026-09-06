@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.text.MessageFormatter;
+import com.dua3.utility.text.RichText;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Timeout;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -100,6 +102,23 @@ class AlertBuilderTest extends FxTestBase {
             // Verify alert was created with formatted text
             assertNotNull(alert);
             assertEquals("Hello, User! You have 5 new messages.", alert.getContentText());
+        });
+    }
+
+    /**
+     * Test rich text content.
+     */
+    @Test
+    void testRichText() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            RichText text = RichText.valueOf("Rich alert message");
+            AlertBuilder builder = Dialogs.alert(null, AlertType.INFORMATION, MessageFormatter.standard());
+
+            Alert alert = builder.text(text).selectableText(true).build();
+
+            TextPane textPane = assertInstanceOf(TextPane.class, alert.getDialogPane().getContent());
+            assertEquals(text, textPane.getText());
+            assertTrue(textPane.isSelectable());
         });
     }
 

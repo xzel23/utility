@@ -17,6 +17,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.MessageFormatter;
+import com.dua3.utility.text.RichText;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -42,7 +43,7 @@ import java.util.function.Supplier;
 public class AlertBuilder
         extends DialogBuilder<Alert, AlertBuilder, ButtonType> {
     private @Nullable String css = null;
-    private @Nullable String text = null;
+    private @Nullable CharSequence text = null;
     private boolean selectableText = false;
     private final List<ButtonDef<ButtonType>> buttons = new ArrayList<>();
     private @Nullable ButtonType defaultButton;
@@ -69,10 +70,14 @@ public class AlertBuilder
     public Alert build() {
         Alert dlg = super.build();
 
-        contentSetter.accept(dlg);
+        if (text instanceof RichText richText) {
+            setText(dlg, richText);
+        } else {
+            contentSetter.accept(dlg);
+            LangUtil.applyIfNotEmpty(text, value -> dlg.setContentText(String.valueOf(value)));
+        }
 
         LangUtil.applyIfNotEmpty(css, dlg.getDialogPane().getScene().getStylesheets()::add);
-        LangUtil.applyIfNotEmpty(text, dlg::setContentText);
 
         if (!buttons.isEmpty()) {
             ObservableList<ButtonType> buttonTypes = dlg.getButtonTypes();
@@ -90,6 +95,18 @@ public class AlertBuilder
         dlg.getDialogPane().applyCss();
 
         return dlg;
+    }
+
+    /**
+     * Sets rich text as the content of the alert dialog.
+     *
+     * @param dlg      the Alert dialog whose content is to be set
+     * @param richText the rich text to display
+     */
+    private void setText(Alert dlg, RichText richText) {
+        TextPane textPane = new TextPane(richText);
+        textPane.setSelectable(selectableText);
+        dlg.getDialogPane().setContent(textPane);
     }
 
     /**
@@ -150,6 +167,27 @@ public class AlertBuilder
      */
     public AlertBuilder text(MessageFormatter.MessageFormatterArgs args) {
         this.text = format(args);
+        return self();
+    }
+
+    /**
+     * Set rich text.
+     *
+     * @param text the rich text to display
+     * @return {@code this}
+     */
+    public AlertBuilder text(RichText text) {
+        return setText(text);
+    }
+
+    /**
+     * Set rich text.
+     *
+     * @param text the rich text to display
+     * @return {@code this}
+     */
+    public AlertBuilder setText(RichText text) {
+        this.text = text;
         return self();
     }
 

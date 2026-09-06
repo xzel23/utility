@@ -147,6 +147,30 @@ class TextPaneInlineAnchorLayoutTest extends FxTestBase {
         });
     }
 
+    @Test
+    void testNonWrappingTableUsesNaturalWidth() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            RichText text = createTableText();
+            TextPane control = new TextPane(text);
+
+            // A non-wrapping TextPane uses a one-pixel layout hint to measure ordinary text.
+            RichTextPaneLayoutHelper.Layout<?> layout = control.createLayout(1.0);
+            Node node = (Node) placementValue(layout.placements().getFirst(), "node");
+
+            RichTextTableHelper.Table table = RichTextTableHelper.tables(text).getFirst();
+            RichTextTableHelper.TableLayout naturalLayout = RichTextTableHelper.layout(
+                    table,
+                    FxFontUtil.getInstance(),
+                    control.getFont().scaled((float) control.getDisplayScale()),
+                    Float.MAX_VALUE,
+                    false,
+                    4.0f
+            );
+
+            assertEquals(naturalLayout.bounds().width(), node.prefWidth(-1), 0.01);
+        });
+    }
+
     private static void assertInlineAnchorsUseLineMetrics(TextPane control) {
         control.setWrapText(false);
         control.setPrefWidth(640);

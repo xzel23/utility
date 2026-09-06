@@ -1,6 +1,7 @@
 package com.dua3.utility.application;
 
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.RichText;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -27,7 +28,7 @@ class LicenseDataTest {
         String licensee = null;
         LocalDate validUntil = LocalDate.now();
         String licenseId = "ID-123";
-        Optional<Supplier<CharSequence>> licenseText = Optional.empty();
+        Optional<Supplier<RichText>> licenseText = Optional.empty();
 
         // then
         assertThrowsExcpetionOrAssertionError(NullPointerException.class,
@@ -40,7 +41,7 @@ class LicenseDataTest {
         String licensee = "John Doe";
         LocalDate validUntil = null;
         String licenseId = "ID-123";
-        Optional<Supplier<CharSequence>> licenseText = Optional.empty();
+        Optional<Supplier<RichText>> licenseText = Optional.empty();
 
         // then
         assertThrowsExcpetionOrAssertionError(NullPointerException.class,
@@ -53,7 +54,7 @@ class LicenseDataTest {
         String licensee = "John Doe";
         LocalDate validUntil = LocalDate.now();
         String licenseId = null;
-        Optional<Supplier<CharSequence>> licenseText = Optional.empty();
+        Optional<Supplier<RichText>> licenseText = Optional.empty();
 
         // then
         assertThrowsExcpetionOrAssertionError(NullPointerException.class,

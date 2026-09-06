@@ -112,20 +112,18 @@ public class AboutDialogBuilder {
     public AboutDialogBuilder license(LicenseData licenseData) {
         licenseNote("dua3.utility.fx.controls.about.dialog.license.note", licenseData.licenseId(), licenseData.licensee(), licenseData.validUntil());
         licenseNote("dua3.utility.fx.controls.about.dialog.license.note.short", licenseData.validUntil());
-        licenseData.licenseText().ifPresent(licenseText ->
-                onShowLicenseDetails(() ->
-                        {
-                            Alert alert = Dialogs.alert(null, Alert.AlertType.INFORMATION, messageFormatter)
-                                    .resizable(true)
-                                    .selectableText(true)
-                                    .title(I18N.literal(i18n().format("dua3.utility.fx.controls.about.dialog.license.details.title")))
-                                    .header(I18N.literal(i18n().format("dua3.utility.fx.controls.about.dialog.license.details.header", licenseData.validUntil())))
-                                    .text(I18N.literal(licenseText.get().toString()))
-                                    .build();
-                            alert.setWidth(600);
-                            alert.show();
-                        }
-                )
+        onShowLicenseDetails(() ->
+                {
+                    Alert alert = Dialogs.alert(null, Alert.AlertType.INFORMATION, messageFormatter)
+                            .resizable(true)
+                            .selectableText(true)
+                            .title(I18N.literal(i18n().format("dua3.utility.fx.controls.about.dialog.license.details.title")))
+                            .header(I18N.literal(i18n().format("dua3.utility.fx.controls.about.dialog.license.details.header", licenseData.validUntil())))
+                            .text(licenseData.licenseText())
+                            .build();
+                    alert.setWidth(600);
+                    alert.show();
+                }
         );
         return this;
     }

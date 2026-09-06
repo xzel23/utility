@@ -300,9 +300,9 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
 
     private static Node createInlineNode(Run run, double scale) {
         try {
-            Method method = TextPane.class.getDeclaredMethod("createInlineNode", Run.class, double.class, double.class);
+            Method method = TextPane.class.getDeclaredMethod("createInlineNode", Run.class, double.class, double.class, boolean.class);
             method.setAccessible(true);
-            Object value = method.invoke(null, run, scale, Double.MAX_VALUE);
+            Object value = method.invoke(null, run, scale, Double.MAX_VALUE, true);
             if (value == null) {
                 throw new IllegalStateException("createInlineNode returned null");
             }
