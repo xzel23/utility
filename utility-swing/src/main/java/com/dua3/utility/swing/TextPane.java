@@ -32,8 +32,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.JTextArea;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
+import javax.swing.plaf.UIResource;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -70,13 +72,17 @@ public class TextPane extends JScrollPane implements RichTextPane {
     private static final String STYLE_ATTRIBUTE_INLINE_LEADING_WIDTH = TextPane.class.getName() + ".inlineLeadingWidth";
     private static final String CLIENT_PROPERTY_INLINE_TARGET_URI = TextPane.class.getName() + ".inlineTargetUri";
 
-    protected final transient RichTextEditorModel model;
     private final RichTextCanvas textComponent = new RichTextCanvas();
     private boolean wrapText;
     private transient Font textFont = FontUtil.getInstance().getDefaultFont();
     private double displayScale = 1.0;
     private transient Consumer<URI> hyperlinkHandler = TextPane::openUriUsingDesktop;
     private transient @Nullable RenderLayoutCache renderLayoutCache;
+    private boolean useTextAreaForeground = true;
+    private boolean useTextAreaBackground = true;
+    private boolean applyingTextAreaDefaults;
+
+    protected final transient RichTextEditorModel model;
 
     /**
      * Creates an empty text pane.
@@ -99,7 +105,10 @@ public class TextPane extends JScrollPane implements RichTextPane {
         setWrapText(false);
         textComponent.setLayout(null);
         textComponent.setFocusable(false);
+        textComponent.setOpaque(true);
         textComponent.setFont(com.dua3.utility.awt.AwtFontUtil.getInstance().convert(textFont));
+        installColorSynchronization();
+        applyTextAreaDefaults();
 
         // keep layout cache in sync with viewport geometry changes
         getViewport().addComponentListener(new ComponentAdapter() {
@@ -168,8 +177,72 @@ public class TextPane extends JScrollPane implements RichTextPane {
     @Override
     public final void setTextFont(Font value) {
         textFont = value;
+        useTextAreaForeground = false;
         textComponent.setFont(com.dua3.utility.awt.AwtFontUtil.getInstance().convert(textFont));
         invalidateRenderLayout();
+    }
+
+    /**
+     * Hook for editor panes to synchronize their typing attributes after the default colors change.
+     */
+    protected void onTextAreaColorsChanged() {
+        // default no-op
+    }
+
+    /**
+     * Synchronizes the rendering component after Swing has changed this pane's UI properties.
+     *
+     * <p>A property listener is used instead of overriding {@code updateUI}, {@code setForeground}, or
+     * {@code setBackground}: {@link JScrollPane}'s constructor invokes those methods before this class's fields
+     * have been initialized.
+     */
+    private void installColorSynchronization() {
+        addPropertyChangeListener("foreground", event -> applyForeground((java.awt.Color) event.getNewValue()));
+        addPropertyChangeListener("background", event -> applyBackground((java.awt.Color) event.getNewValue()));
+        addPropertyChangeListener("UI", event -> {
+            applyTextAreaDefaults();
+            onTextAreaColorsChanged();
+        });
+    }
+
+    private void applyForeground(java.awt.Color color) {
+        if (!applyingTextAreaDefaults && !(color instanceof UIResource)) {
+            useTextAreaForeground = false;
+        }
+        textComponent.setForeground(color);
+        if (!applyingTextAreaDefaults || useTextAreaForeground) {
+            textFont = textFont.withColor(SwingUtil.convert(color));
+            invalidateRenderLayout();
+        }
+        if (!applyingTextAreaDefaults) {
+            onTextAreaColorsChanged();
+        }
+    }
+
+    private void applyBackground(java.awt.Color color) {
+        if (!applyingTextAreaDefaults && !(color instanceof UIResource)) {
+            useTextAreaBackground = false;
+        }
+        textComponent.setBackground(color);
+        JViewport viewport = super.getViewport();
+        if (viewport != null) {
+            viewport.setBackground(color);
+        }
+    }
+
+    private void applyTextAreaDefaults() {
+        JTextArea textArea = new JTextArea();
+        applyingTextAreaDefaults = true;
+        try {
+            if (useTextAreaForeground) {
+                super.setForeground(textArea.getForeground());
+            }
+            if (useTextAreaBackground) {
+                super.setBackground(textArea.getBackground());
+            }
+        } finally {
+            applyingTextAreaDefaults = false;
+        }
     }
 
     /**
@@ -640,8 +713,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 Image decodedImage = decodeInlineImage(inlineNode);
                 wrapped = decodedImage != null ? decodedImage : inlineNode.getWrapped();
             }
-            case null, default -> {
-            }
+            case null, default -> {/* do nothing */}
         }
 
         switch (wrapped) {

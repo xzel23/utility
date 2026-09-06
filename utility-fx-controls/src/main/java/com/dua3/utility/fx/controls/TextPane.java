@@ -42,6 +42,11 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.css.CssMetaData;
+import javafx.css.Styleable;
+import javafx.css.StyleableObjectProperty;
+import javafx.css.StyleableProperty;
+import javafx.css.converter.PaintConverter;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -66,6 +71,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
@@ -121,6 +127,7 @@ public class TextPane extends Control implements RichTextPane {
     private final ObjectProperty<ToRichText> text = new SimpleObjectProperty<>(this, "text", RichText.emptyText());
     private final BooleanProperty wrapText = new SimpleBooleanProperty(this, "wrapText", false);
     private final ObjectProperty<Font> font = new SimpleObjectProperty<>(this, "font", FONT_UTIL.getDefaultFont());
+    private boolean useTextAreaTextFill = true;
     private final DoubleProperty displayScale = new SimpleDoubleProperty(this, "displayScale", 1.0);
     private final ObjectProperty<Consumer<URI>> hyperlinkHandler = new SimpleObjectProperty<>(this, "hyperlinkHandler", TextPane::openUriUsingDesktop);
     private final BooleanProperty selectable = new SimpleBooleanProperty(this, "selectable", false);
@@ -133,6 +140,7 @@ public class TextPane extends Control implements RichTextPane {
      * Create an empty {@code TextPane}.
      */
     public TextPane() {
+        font.addListener((obs, oldValue, newValue) -> useTextAreaTextFill = false);
         getStyleClass().setAll("text-input", "text-area", DEFAULT_STYLE_CLASS);
         selectable.addListener((obs, oldValue, newValue) -> {
             if (newValue == Boolean.TRUE) {
@@ -335,7 +343,7 @@ public class TextPane extends Control implements RichTextPane {
      * @return font
      */
     public final javafx.scene.text.Font getFxFont() {
-        return FONT_UTIL.convert(getFont());
+        return FONT_UTIL.convert(getTextFont());
     }
 
     /**
@@ -344,6 +352,7 @@ public class TextPane extends Control implements RichTextPane {
      * @param value font
      */
     public final void setFont(Font value) {
+        useTextAreaTextFill = false;
         font.set(value);
     }
 
@@ -358,7 +367,7 @@ public class TextPane extends Control implements RichTextPane {
      * @param value font
      */
     public final void setFxFont(javafx.scene.text.Font value) {
-        font.set(FONT_UTIL.convert(value));
+        setFont(FONT_UTIL.convert(value));
     }
 
     /**
@@ -464,7 +473,14 @@ public class TextPane extends Control implements RichTextPane {
 
     @Override
     public Font getTextFont() {
-        return getFont();
+        return useTextAreaTextFill ? getFont().withColor(themeTextColor()) : getFont();
+    }
+
+    private Color themeTextColor() {
+        if (getSkin() instanceof TextPaneSkin skin && skin.getTextFill() instanceof javafx.scene.paint.Color color) {
+            return FxUtil.convert(color);
+        }
+        return getFont().getColor();
     }
 
     RichTextPaneLayoutHelper.Layout<InlineControlPlacement> createLayout(double availableWidth) {
@@ -472,7 +488,7 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     RichTextPaneLayoutHelper.Layout<InlineControlPlacement> createLayout(RichText richText, double availableWidth) {
-        return createLayout(richText, getFont(), isWrapText(), availableWidth, getDisplayScale());
+        return createLayout(richText, getTextFont(), isWrapText(), availableWidth, getDisplayScale());
     }
 
     /**
@@ -587,7 +603,7 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private List<VisualLine> selectionVisualLines(double availableWidth) {
-        Font baseFont = getFont().scaled((float) getDisplayScale());
+        Font baseFont = getTextFont().scaled((float) getDisplayScale());
         return RichTextVisualLayoutHelper.buildVisualLines(
                 RichTextVisualLayoutHelper.splitLogicalBlocks(getText()),
                 Math.max(1.0, baseFont.getFontData().height()),
@@ -681,29 +697,29 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private void selectSelectableWordAt(int position) {
-        String text = getText().toString();
-        if (text.isEmpty()) {
+        RichText txt = getText();
+        if (txt.isEmpty()) {
             return;
         }
-        int index = Math.clamp(position, 0, text.length() - 1);
-        boolean wordCharacter = Character.isLetterOrDigit(text.charAt(index));
+        int index = Math.clamp(position, 0, txt.length() - 1);
+        boolean wordCharacter = Character.isLetterOrDigit(txt.charAt(index));
         int start = index;
         int end = index + 1;
-        while (start > 0 && Character.isLetterOrDigit(text.charAt(start - 1)) == wordCharacter) {
+        while (start > 0 && Character.isLetterOrDigit(txt.charAt(start - 1)) == wordCharacter) {
             start--;
         }
-        while (end < text.length() && Character.isLetterOrDigit(text.charAt(end)) == wordCharacter) {
+        while (end < txt.length() && Character.isLetterOrDigit(txt.charAt(end)) == wordCharacter) {
             end++;
         }
         updateSelection(start, end);
     }
 
     private void selectSelectableLineAt(int position) {
-        String text = getText().toString();
-        int index = Math.clamp(position, 0, text.length());
-        int start = text.lastIndexOf('\n', Math.max(0, index - 1)) + 1;
-        int end = text.indexOf('\n', index);
-        updateSelection(start, end < 0 ? text.length() : end);
+        RichText txt = getText();
+        int index = Math.clamp(position, 0, txt.length());
+        int start = txt.lastIndexOf('\n', Math.max(0, index - 1)) + 1;
+        int end = txt.indexOf('\n', index);
+        updateSelection(start, end < 0 ? txt.length() : end);
     }
 
     private void moveSelectableCaret(int delta, boolean extendSelection) {
@@ -721,20 +737,20 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private int selectableLineStart(int position) {
-        String txt = getText().toString();
+        RichText txt = getText();
         int index = Math.clamp(position, 0, txt.length());
         return txt.lastIndexOf('\n', Math.max(0, index - 1)) + 1;
     }
 
     private int selectableLineEnd(int position) {
-        String txt = getText().toString();
+        RichText txt = getText();
         int index = Math.clamp(position, 0, txt.length());
         int end = txt.indexOf('\n', index);
         return end < 0 ? txt.length() : end;
     }
 
     private void updateSelection(int anchor, int caret) {
-        int length = text.get().toRichText().length();
+        int length = getText().length();
         selectionAnchor = Math.clamp(anchor, 0, length);
         selectionCaret = Math.clamp(caret, 0, length);
         selection.set(new IndexRange(Math.min(selectionAnchor, selectionCaret), Math.max(selectionAnchor, selectionCaret)));
@@ -1549,6 +1565,30 @@ public class TextPane extends Control implements RichTextPane {
         private boolean blink = true;
         private @Nullable Rectangle caretNode;
         private final @Nullable TextEditorPane editor;
+        private final StyleableObjectProperty<Paint> textFill = new StyleableObjectProperty<>(javafx.scene.paint.Color.BLACK) {
+            @Override
+            protected void invalidated() {
+                if (getSkinnable() instanceof TextEditorPane editor) {
+                    editor.refreshTypingStylesForTextAreaColors();
+                }
+                invalidate();
+            }
+
+            @Override
+            public Object getBean() {
+                return TextPaneSkin.this;
+            }
+
+            @Override
+            public String getName() {
+                return "textFill";
+            }
+
+            @Override
+            public CssMetaData<TextPane, Paint> getCssMetaData() {
+                return StyleableProperties.TEXT_FILL;
+            }
+        };
         private final Timeline caretTimeline;
         private final Timeline dragAutoscrollTimeline;
 
@@ -2241,7 +2281,7 @@ public class TextPane extends Control implements RichTextPane {
             double availableWidth = getAvailableWidth();
             double displayScale = control.getDisplayScale();
             RichText text = control.getText();
-            Font font = control.getFont();
+            Font font = control.getTextFont();
             boolean wrapText = control.isWrapText();
             boolean widthChanged = !Double.isFinite(lastAvailableWidth) || Math.abs(lastAvailableWidth - availableWidth) > 0.5;
             boolean displayScaleChanged = !Double.isFinite(lastDisplayScale) || Math.abs(lastDisplayScale - displayScale) > 1.0e-6;
@@ -2339,7 +2379,7 @@ public class TextPane extends Control implements RichTextPane {
 
             try (Graphics graphics = new FxGraphics(canvas)) {
                 graphics.reset();
-                graphics.setFont(control.getFont().scaled((float) control.getDisplayScale()));
+                graphics.setFont(control.getTextFont().scaled((float) control.getDisplayScale()));
                 renderBlockDecorations(graphics, layout.renderLines(), (float) layout.width(), control.getDisplayScale());
                 RichTextRenderer.renderFragmentLines(graphics, layout.renderLines(), TextPaneSkin::isInvisibleInlinePlaceholder);
             }
@@ -2767,7 +2807,7 @@ public class TextPane extends Control implements RichTextPane {
                     caretInfo = findCaret(layout.renderLines(), layoutCaretPosition);
                 }
                 if (caretInfo != null) {
-                    caretNode = createCaretNode(caretInfo.x(), caretInfo.y(), caretInfo.height());
+                    caretNode = createCaretNode(caretInfo.x(), caretInfo.y(), caretInfo.height(), getTextFill());
                     caretNode.setOpacity(blink ? 0.0 : 1.0);
                     caretLayer.getChildren().add(caretNode);
                 }
@@ -2822,14 +2862,48 @@ public class TextPane extends Control implements RichTextPane {
             return fontUtil.getTextWidth(run.subSequence(0, length), font);
         }
 
-        private static Rectangle createCaretNode(double x, double y, double height) {
+        private static Rectangle createCaretNode(double x, double y, double height, Paint textFill) {
             // Use fill-only geometry for caret rendering so bounds never spill by half a stroke
             // pixel (which causes content-bound jitter when blink toggles).
             Rectangle caret = new Rectangle(x, y, 1.0, Math.max(1.0, height));
-            caret.setFill(javafx.scene.paint.Color.BLACK);
+            caret.setFill(textFill);
             caret.setStroke(null);
             caret.setManaged(false);
             return caret;
+        }
+
+        private Paint getTextFill() {
+            return textFill.get();
+        }
+
+        private static final class StyleableProperties {
+            private static final CssMetaData<TextPane, Paint> TEXT_FILL = new CssMetaData<>(
+                    "-fx-text-fill", PaintConverter.getInstance(), javafx.scene.paint.Color.BLACK
+            ) {
+                @Override
+                public boolean isSettable(TextPane control) {
+                    TextPaneSkin skin = (TextPaneSkin) control.getSkin();
+                    return skin.textFill == null || !skin.textFill.isBound();
+                }
+
+                @Override
+                public StyleableProperty<Paint> getStyleableProperty(TextPane control) {
+                    return ((TextPaneSkin) control.getSkin()).textFill;
+                }
+            };
+
+            private static final List<CssMetaData<? extends Styleable, ?>> STYLEABLES;
+
+            static {
+                List<CssMetaData<? extends Styleable, ?>> styleables = new ArrayList<>(SkinBase.getClassCssMetaData());
+                styleables.add(TEXT_FILL);
+                STYLEABLES = Collections.unmodifiableList(styleables);
+            }
+        }
+
+        @Override
+        public List<CssMetaData<? extends Styleable, ?>> getCssMetaData() {
+            return StyleableProperties.STYLEABLES;
         }
 
         private static @Nullable CaretInfo findCaret(List<List<FragmentedText.Fragment>> lines, int layoutCaretPosition) {

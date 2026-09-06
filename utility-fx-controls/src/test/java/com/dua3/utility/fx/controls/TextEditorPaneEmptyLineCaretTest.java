@@ -17,6 +17,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -551,9 +552,9 @@ class TextEditorPaneEmptyLineCaretTest extends FxTestBase {
     private static Rectangle createCaretNode(double x, double y, double height) {
         try {
             Class<?> skinClass = Class.forName(TextPane.class.getName() + "$TextPaneSkin");
-            Method factory = skinClass.getDeclaredMethod("createCaretNode", double.class, double.class, double.class);
+            Method factory = skinClass.getDeclaredMethod("createCaretNode", double.class, double.class, double.class, Paint.class);
             factory.setAccessible(true);
-            Object value = factory.invoke(null, x, y, height);
+            Object value = factory.invoke(null, x, y, height, javafx.scene.paint.Color.BLACK);
             if (value instanceof Rectangle rectangle) {
                 return rectangle;
             }

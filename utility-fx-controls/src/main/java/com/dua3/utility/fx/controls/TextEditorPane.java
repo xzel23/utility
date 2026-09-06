@@ -1387,7 +1387,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      */
     @Override
     public void copy() {
-        FxUtil.copyToClipboard(getSelectedText().apply(Style.create(getFont())));
+        FxUtil.copyToClipboard(getSelectedText().apply(Style.create(getTextFont())));
     }
 
     /**
@@ -1628,7 +1628,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     }
 
     private void moveCaretParagraph(boolean forward, boolean extendSelection, Platform platform) {
-        String text = sharedModel.getText().toString();
+        RichText text = sharedModel.getText();
         int caret = getCaretPosition();
         int target = caret;
 
@@ -1725,7 +1725,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
 
     List<VisualLine> buildVisualLines(double wrapWidth) {
         double availableWidth = sharedModel.resolveAvailableWidth(wrapWidth);
-        Font baseFont = getFont().scaled((float) getDisplayScale());
+        Font baseFont = getTextFont().scaled((float) getDisplayScale());
         return sharedModel.buildVisualLines(
                 availableWidth,
                 isWrapText(),
@@ -1751,7 +1751,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     }
 
     private void updatePropertiesFromCaretPosition() {
-        RichTextEditorModel.CaretProperties properties = sharedModel.resolveCaretProperties(getFont());
+        RichTextEditorModel.CaretProperties properties = sharedModel.resolveCaretProperties(getTextFont());
         if (properties == null) {
             return;
         }
@@ -1769,6 +1769,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
         } finally {
             updatingPropertiesFromText = false;
         }
+    }
+
+    void refreshTypingStylesForTextAreaColors() {
+        updatePropertiesFromCaretPosition();
     }
 
     private static RichText toRichText(@Nullable CharSequence text, Font font) {

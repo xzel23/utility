@@ -816,6 +816,11 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     }
 
     @Override
+    protected void onTextAreaColorsChanged() {
+        syncTypingStylesFromCaret();
+    }
+
+    @Override
     protected void paintOverlay(Graphics2D g2, RenderLayout layout) {
         List<VisualLine> lines = layout.visualLines();
         if (lines.isEmpty()) {
@@ -860,7 +865,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
                 int x = (int) Math.round(RichTextVisualLayoutHelper.xForIndex(line, caret));
                 int y1 = (int) Math.floor(line.top());
                 int y2 = (int) Math.ceil(line.top() + line.height());
-                g2.setColor(java.awt.Color.BLACK);
+                g2.setColor(getForeground());
                 g2.drawLine(x, y1, x, y2);
             }
         } else {
@@ -1195,7 +1200,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     }
 
     private void moveCaretParagraph(boolean forward, boolean extendSelection, Platform platform) {
-        String text = model.getText().toString();
+        RichText text = model.getText();
         int caret = model.getCaretPosition();
         int target = caret;
 
