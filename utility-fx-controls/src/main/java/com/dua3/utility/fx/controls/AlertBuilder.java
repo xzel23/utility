@@ -28,6 +28,8 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Window;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URL;
@@ -42,6 +44,8 @@ import java.util.function.Supplier;
  */
 public class AlertBuilder
         extends DialogBuilder<Alert, AlertBuilder, ButtonType> {
+    private static final Logger LOG = LogManager.getLogger(AlertBuilder.class);
+
     private @Nullable String css = null;
     private @Nullable CharSequence text = null;
     private boolean selectableText = false;
@@ -68,33 +72,39 @@ public class AlertBuilder
      */
     @Override
     public Alert build() {
-        Alert dlg = super.build();
+        try {
+            Alert dlg = super.build();
 
-        if (text instanceof RichText richText) {
-            setText(dlg, richText);
-        } else {
-            contentSetter.accept(dlg);
-            LangUtil.applyIfNotEmpty(text, value -> dlg.setContentText(String.valueOf(value)));
-        }
-
-        LangUtil.applyIfNotEmpty(css, dlg.getDialogPane().getScene().getStylesheets()::add);
-
-        if (!buttons.isEmpty()) {
-            ObservableList<ButtonType> buttonTypes = dlg.getButtonTypes();
-            buttonTypes.clear();
-            buttons.forEach(bd -> buttonTypes.add(bd.type()));
-        }
-
-        if (defaultButton != null) {
-            DialogPane pane = dlg.getDialogPane();
-            for (ButtonType t : dlg.getButtonTypes()) {
-                ((Button) pane.lookupButton(t)).setDefaultButton(t == defaultButton);
+            if (text instanceof RichText richText) {
+                setText(dlg, richText);
+            } else {
+                contentSetter.accept(dlg);
+                LangUtil.applyIfNotEmpty(text, value -> dlg.setContentText(String.valueOf(value)));
             }
+
+            LangUtil.applyIfNotEmpty(css, dlg.getDialogPane().getScene().getStylesheets()::add);
+
+            if (!buttons.isEmpty()) {
+                ObservableList<ButtonType> buttonTypes = dlg.getButtonTypes();
+                buttonTypes.clear();
+                buttons.forEach(bd -> buttonTypes.add(bd.type()));
+            }
+
+            if (defaultButton != null) {
+                DialogPane pane = dlg.getDialogPane();
+                for (ButtonType t : dlg.getButtonTypes()) {
+                    ((Button) pane.lookupButton(t)).setDefaultButton(t == defaultButton);
+                }
+            }
+
+            dlg.getDialogPane().applyCss();
+
+            return dlg;
+        } catch (RuntimeException e) {
+            // we log and rethrow the exception because it might be swallowed by JavaFX
+            LOG.error("Error building alert dialog", e);
+            throw e;
         }
-
-        dlg.getDialogPane().applyCss();
-
-        return dlg;
     }
 
     /**
