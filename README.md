@@ -235,6 +235,16 @@ could not be loaded.
 
 ## Changes
 
+## 24.5.2
+
+- fix inconsistent dark mode reporting in ApplicationUtil
+- fix clipping issues in TextPane
+- fix standard keybindings in text editing components
+- RichText support in alerts and license dialogs
+- add `lastIndofOf()` to `RichText` and `TextUtil`
+- dark mode support for TextPane and TextEditorPane
+- add logging to AlertBuilder because Exceptions might be swallowed by JavaFX
+
 ## 24.5.1
 
 - fix issues in text wrapping logic for inline markup text
