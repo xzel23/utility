@@ -235,7 +235,7 @@ could not be loaded.
 
 ## Changes
 
-## 24.5.2
+## 24.6.0
 
 - fix inconsistent dark mode reporting in ApplicationUtil
 - fix clipping issues in TextPane
