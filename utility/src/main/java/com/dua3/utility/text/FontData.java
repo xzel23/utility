@@ -51,7 +51,7 @@ public record FontData(
 ) {
 
     /**
-     * Canonical record constructor..
+     * Canonical record constructor.
      *
      * @param families      the list of font family names;
      *                      it is always guaranteed to contain at least one entry with the family name at index 0
@@ -172,8 +172,13 @@ public record FontData(
         fd.setUnderline(underline);
         fd.setStrikeThrough(strikeThrough);
 
+        // FontData and its FontDef must describe the same ordered fallback
+        // list. FontDef removes duplicate fallbacks, which would otherwise
+        // make these two representations disagree during serialization.
+        List<String> normalizedFamilies = Objects.requireNonNull(fd.getFamilies());
+
         return new FontData(
-                List.copyOf(families),
+                normalizedFamilies,
                 size,
                 monospaced,
                 bold,

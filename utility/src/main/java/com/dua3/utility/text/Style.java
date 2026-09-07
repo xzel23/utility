@@ -642,15 +642,21 @@ public final class Style implements Map<String, @Nullable Object>, Iterable<Map.
      * @return the updated map with added font-related properties
      */
     public static Map<String, @Nullable Object> addFontProperties(Map<String, @Nullable Object> properties, FontDef fontDef) {
-        properties.put(FONT_FAMILIES, Collections.singletonList(fontDef.getFamily()));
-        properties.put(FONT_SIZE, fontDef.getSize());
-        properties.put(COLOR, fontDef.getColor());
-        properties.put(BACKGROUND_COLOR, fontDef.getBackgroundColor());
-        properties.put(FONT_STYLE, triStateSelect(fontDef.getItalic(), null, FONT_STYLE_VALUE_ITALIC, FONT_STYLE_VALUE_NORMAL));
-        properties.put(FONT_WEIGHT, triStateSelect(fontDef.getBold(), null, FONT_WEIGHT_VALUE_BOLD, FONT_WEIGHT_VALUE_NORMAL));
-        properties.put(TEXT_DECORATION_UNDERLINE, triStateSelect(fontDef.getUnderline(), null, TEXT_DECORATION_UNDERLINE_VALUE_LINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));
-        properties.put(TEXT_DECORATION_LINE_THROUGH, triStateSelect(fontDef.getStrikeThrough(), null, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE));
+        putIfDefined(properties, FONT_FAMILIES, fontDef.getFamilies());
+        putIfDefined(properties, FONT_SIZE, fontDef.getSize());
+        putIfDefined(properties, COLOR, fontDef.getColor());
+        putIfDefined(properties, BACKGROUND_COLOR, fontDef.getBackgroundColor());
+        putIfDefined(properties, FONT_STYLE, triStateSelect(fontDef.getItalic(), null, FONT_STYLE_VALUE_ITALIC, FONT_STYLE_VALUE_NORMAL));
+        putIfDefined(properties, FONT_WEIGHT, triStateSelect(fontDef.getBold(), null, FONT_WEIGHT_VALUE_BOLD, FONT_WEIGHT_VALUE_NORMAL));
+        putIfDefined(properties, TEXT_DECORATION_UNDERLINE, triStateSelect(fontDef.getUnderline(), null, TEXT_DECORATION_UNDERLINE_VALUE_LINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));
+        putIfDefined(properties, TEXT_DECORATION_LINE_THROUGH, triStateSelect(fontDef.getStrikeThrough(), null, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE));
         return properties;
+    }
+
+    private static void putIfDefined(Map<String, @Nullable Object> properties, String key, @Nullable Object value) {
+        if (value != null) {
+            properties.put(key, value);
+        }
     }
 
     private static <T> @Nullable T triStateSelect(@Nullable Boolean arg, @Nullable T whenNull, @Nullable T whenTrue, @Nullable T whenFalse) {

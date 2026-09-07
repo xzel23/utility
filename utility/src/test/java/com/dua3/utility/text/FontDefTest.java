@@ -267,6 +267,23 @@ class FontDefTest {
     }
 
     @Test
+    void fontFamiliesRetainTheirFallbackOrderWithoutDuplicates() {
+        FontDef fontDef = FontDef.families(List.of("Arial", "Helvetica", "Arial", "sans-serif", "Helvetica"));
+
+        assertEquals(List.of("Arial", "Helvetica", "sans-serif"), fontDef.getFamilies());
+    }
+
+    @Test
+    void styleRetainsAllDefinedFallbackFamiliesWithoutInventingUndefinedProperties() {
+        List<String> families = List.of("Arial", "Helvetica", "sans-serif");
+        Style style = Style.create(FontDef.families(families));
+
+        assertEquals(families, style.get(Style.FONT_FAMILIES));
+        assertFalse(style.containsKey(Style.COLOR));
+        assertTrue(Style.create(new FontDef()).isEmpty());
+    }
+
+    @Test
     void testCreateWithItalic() {
         boolean italic = true;
         FontDef fontDef = FontDef.italic(italic);

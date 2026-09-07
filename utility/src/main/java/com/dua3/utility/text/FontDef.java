@@ -577,7 +577,9 @@ public final class FontDef {
     public void setFamilies(@Nullable SequencedCollection<String> families) {
         this.fontspec = null;
         this.cssStyle = null;
-        this.families = families == null || families.isEmpty() ? null : List.copyOf(families);
+        this.families = families == null || families.isEmpty()
+                ? null
+                : families.stream().distinct().toList();
     }
 
     /**
@@ -586,9 +588,7 @@ public final class FontDef {
      * @param family the font family names to set. Can be null if no font family is specified.
      */
     public void setFamily(@Nullable String family) {
-        this.fontspec = null;
-        this.cssStyle = null;
-        this.families = family == null ? null : parseFontFamilies(family, false);
+        setFamilies(family == null ? null : parseFontFamilies(family, false));
     }
 
     /**

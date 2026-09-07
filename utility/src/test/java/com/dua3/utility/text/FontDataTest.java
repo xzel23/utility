@@ -162,6 +162,26 @@ class FontDataTest {
         assertEquals(spaceWidth, fontData.spaceWidth());
     }
 
+    @Test
+    void testGetNormalizesDuplicateFallbackFamilies() {
+        FontData fontData = FontData.get(
+                List.of("Arial", "Helvetica", "Arial", "sans-serif"),
+                12.0f,
+                false,
+                false,
+                false,
+                false,
+                false,
+                9.0,
+                3.0,
+                12.0,
+                3.0
+        );
+
+        assertEquals(List.of("Arial", "Helvetica", "sans-serif"), fontData.families());
+        assertEquals(fontData.families(), fontData.fontDef().getFamilies());
+    }
+
     /**
      * Test the descentSigned method.
      */
