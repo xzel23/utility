@@ -229,10 +229,10 @@ public final class FontDef {
     }
 
     /**
-     * Parse fontspec.
+     * Parse CSS font definition.
      *
      * @param fontdef the CSS font definition
-     * @return FontDef instance matching fontspec
+     * @return FontDef instance matching the font definition
      */
     public static FontDef parseCssFontDef(String fontdef) {
         fontdef = fontdef.strip();
