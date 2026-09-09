@@ -15,10 +15,6 @@ on:
         required: true
         type: string
 
-permissions:
-  actions: read
-  contents: read
-
 concurrency:
   group: prepared-release-${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || inputs.branch || github.ref_name }}
   cancel-in-progress: false
@@ -33,6 +29,9 @@ jobs:
        github.event.workflow_run.head_branch == 'main' &&
        github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
     outputs:
       prepared: ${{ steps.plan.outputs.prepared }}
       revision: ${{ steps.ci-run.outputs.revision }}
