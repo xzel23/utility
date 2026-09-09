@@ -21,6 +21,9 @@ import org.slb4j.ext.LogBuffer;
 import org.slb4j.ext.fx.FxLogPane;
 import org.slb4j.ext.fx.FxLogWindow;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +35,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -111,6 +115,50 @@ public final class FxLauncher {
     static final AtomicReference<@Nullable LogBuffer> logBuffer = new AtomicReference<>();
     static final AtomicReference<@Nullable FxLogWindow> logWindow = new AtomicReference<>();
     static final AtomicReference<@Nullable FxLogPane> logPane = new AtomicReference<>();
+    private static final AtomicBoolean macOpenFileHandlerInstalled = new AtomicBoolean(false);
+    private static final OpenFilesDispatcher openFilesDispatcher = new OpenFilesDispatcher(FxLauncher::dispatchOpenFiles);
+
+    /**
+     * Holds file-open requests until an application is ready to handle them.
+     *
+     * <p>macOS can send an open-documents event while the JavaFX application is still starting.
+     * The dispatcher therefore retains requests until a handler is installed.</p>
+     */
+    static final class OpenFilesDispatcher {
+        private final BiConsumer<Consumer<List<Path>>, List<Path>> dispatcher;
+        private final List<List<Path>> pendingRequests = new ArrayList<>();
+        private @Nullable Consumer<List<Path>> handler;
+
+        OpenFilesDispatcher(BiConsumer<Consumer<List<Path>>, List<Path>> dispatcher) {
+            this.dispatcher = Objects.requireNonNull(dispatcher, "dispatcher");
+        }
+
+        void setHandler(@Nullable Consumer<List<Path>> handler) {
+            List<List<Path>> requestsToDispatch;
+            synchronized (this) {
+                this.handler = handler;
+                if (handler == null || pendingRequests.isEmpty()) {
+                    return;
+                }
+                requestsToDispatch = List.copyOf(pendingRequests);
+                pendingRequests.clear();
+            }
+            requestsToDispatch.forEach(request -> dispatcher.accept(handler, request));
+        }
+
+        void accept(List<Path> paths) {
+            List<Path> request = List.copyOf(paths);
+            Consumer<List<Path>> currentHandler;
+            synchronized (this) {
+                currentHandler = handler;
+                if (currentHandler == null) {
+                    pendingRequests.add(request);
+                    return;
+                }
+            }
+            dispatcher.accept(currentHandler, request);
+        }
+    }
 
     /**
      * A utility class for managing the JavaFX application platform lifecycle.
@@ -231,6 +279,62 @@ public final class FxLauncher {
     private FxLauncher() {}
 
     /**
+     * Installs the handler for files opened through Finder while the application is running.
+     *
+     * <p>macOS delivers these requests as native open-document events rather than command-line
+     * arguments. The handler is installed before JavaFX creates the application instance so that
+     * early requests can be retained until {@link #setOpenFilesHandler(Consumer)} is called.</p>
+     */
+    private static void installMacOpenFileHandler() {
+        if (!Platform.isMacOS() || !macOpenFileHandlerInstalled.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            if (!Desktop.isDesktopSupported()) {
+                LOG.warn("macOS file-open events are not supported by the desktop environment");
+                return;
+            }
+
+            Desktop desktop = Desktop.getDesktop();
+            if (!desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
+                LOG.warn("macOS file-open events are not supported by this Java runtime");
+                return;
+            }
+
+            desktop.setOpenFileHandler(event -> openFilesDispatcher.accept(
+                    event.getFiles().stream().map(File::toPath).toList()
+            ));
+        } catch (Exception e) {
+            LOG.warn("could not install the macOS file-open handler", e);
+        }
+    }
+
+    private static void dispatchOpenFiles(Consumer<List<Path>> handler, List<Path> paths) {
+        try {
+            PlatformHelper.runLater(
+                    () -> handler.accept(paths),
+                    e -> LOG.warn("exception while handling files opened by the operating system", e)
+            );
+        } catch (IllegalStateException e) {
+            LOG.warn("could not dispatch files opened by the operating system", e);
+        }
+    }
+
+    /**
+     * Sets the handler for files opened by the operating system.
+     *
+     * <p>On macOS, requests received before this handler is set are delivered after it is set.
+     * The handler always runs on the JavaFX application thread. Passing {@code null} stops
+     * delivery and queues subsequent macOS requests until another handler is installed.</p>
+     *
+     * @param handler the file-open handler, or null to remove it
+     */
+    public static void setOpenFilesHandler(@Nullable Consumer<List<Path>> handler) {
+        openFilesDispatcher.setHandler(handler);
+    }
+
+    /**
      * Executes the given Runnable object.
      * <p>
      * Delegating the task to the launcher makes sure that the platform startup is completed
@@ -256,6 +360,7 @@ public final class FxLauncher {
      */
     public static <A extends Application>
     void launch(Class<A> cls, String... args) {
+        installMacOpenFileHandler();
         PlatformGuard.launch(cls, args);
     }
 
@@ -430,6 +535,8 @@ public final class FxLauncher {
             String appDescription,
             Collection<? extends Consumer<ArgumentsParserBuilder>> addOptions
     ) {
+        installMacOpenFileHandler();
+
         var agp = ArgumentsParser.builder()
                 .name(appName)
                 .description(I18NInstance.get().format("dua3.utility.fx.launcher.about.version", version) + "\n"
