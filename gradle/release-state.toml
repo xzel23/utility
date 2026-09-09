@@ -1,11 +1,11 @@
 [release]
 schemaVersion = 2
-bomVersion = "24.6.0"
-publishedRevision = "7dd0cf64314c60350bba6c1a872663ddb5a99b30"
+bomVersion = "24.6.1"
+publishedRevision = "4c01e8bb5ffbc8a24d42ee5469546250d82f184e"
 
 [modules.utility]
-version = "24.6.0"
-publishedRevision = "7dd0cf64314c60350bba6c1a872663ddb5a99b30"
+version = "24.6.1"
+publishedRevision = "4c01e8bb5ffbc8a24d42ee5469546250d82f184e"
 paths = ["utility"]
 
 [modules.utility-db]
@@ -19,8 +19,8 @@ publishedRevision = "7dd0cf64314c60350bba6c1a872663ddb5a99b30"
 paths = ["utility-swing"]
 
 [modules.utility-fx]
-version = "24.6.0"
-publishedRevision = "7dd0cf64314c60350bba6c1a872663ddb5a99b30"
+version = "24.6.1"
+publishedRevision = "4c01e8bb5ffbc8a24d42ee5469546250d82f184e"
 paths = ["utility-fx"]
 
 [modules.utility-fx-icons]
