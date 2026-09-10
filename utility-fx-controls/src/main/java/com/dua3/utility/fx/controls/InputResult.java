@@ -84,6 +84,7 @@ public record InputResult(ButtonType result, Map<String, @Nullable Object> data)
      * @return the value associated with the specified key, cast to the specified type, or {@code null} if the key is not present
      * @throws IllegalStateException if the value associated with the key cannot be converted to the specified type
      */
+    @SuppressWarnings("ChainOfInstanceofChecks")
     public <T extends @Nullable Object> T get(String key, Class<T> type) {
         Object raw = data.get(key);
         if (raw == null) {

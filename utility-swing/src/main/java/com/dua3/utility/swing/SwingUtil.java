@@ -322,14 +322,10 @@ public final class SwingUtil {
         try {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             Transferable transferable = clipboard.getContents(null);
-            if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                Object data = transferable.getTransferData(DataFlavor.imageFlavor);
-                if (data instanceof BufferedImage bufferedImage) {
-                    return Optional.of(bufferedImage);
-                }
-                if (data instanceof Image image) {
-                    return Optional.of(toBufferedImage(image));
-                }
+            if (transferable != null
+                    && transferable.isDataFlavorSupported(DataFlavor.imageFlavor)
+                    && transferable.getTransferData(DataFlavor.imageFlavor) instanceof Image image) {
+                return Optional.of(toBufferedImage(image));
             }
         } catch (HeadlessException | IOException | UnsupportedFlavorException e) {
             LOG.warn(COULD_NOT_GET_CLIPBOARD_CONTENTS, e);

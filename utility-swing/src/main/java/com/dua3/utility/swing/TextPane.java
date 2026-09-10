@@ -871,6 +871,7 @@ public class TextPane extends JScrollPane implements RichTextPane {
         return Double.NaN;
     }
 
+    @SuppressWarnings("ChainOfInstanceofChecks")
     private static void applyImageScaling(Component component, double maxWidth, double maxHeight) {
         if (!(component instanceof JLabel label)) {
             return;
