@@ -131,7 +131,7 @@ jobs:
         run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: Run tests
-        run: gradle --no-daemon --build-cache test testCodeCoverageReport
+        run: gradle --no-daemon --build-cache test testCodeCoverageReport -Dorg.gradle.workers.max=2
         env:
           DISPLAY: ":99"
 
