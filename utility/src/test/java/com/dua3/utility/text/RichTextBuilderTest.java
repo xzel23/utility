@@ -6,21 +6,32 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
+import com.dua3.utility.ui.InlineNode;
+import com.dua3.utility.ui.VAnchor;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link RichTextBuilder} unit test.
  */
-@SuppressWarnings("OptionalGetWithoutIsPresent")
+@SuppressWarnings({"OptionalGetWithoutIsPresent", "unchecked"})
 class RichTextBuilderTest {
 
     @Test
@@ -409,6 +420,7 @@ class RichTextBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("java:S5778") // accepted for test code
     void testAppendToWithRangeErrors() {
         RichTextBuilder source = new RichTextBuilder();
         source.append("abc");
@@ -471,5 +483,232 @@ class RichTextBuilderTest {
         RichText rt = builder.toRichText();
         assertEquals("Bold and Italic just Bold", rt.toString());
         assertEquals(3, rt.stream().count()); // Should have three runs with different attributes
+    }
+
+    @Test
+    void testAppendInlineNodeCreatesLazyInlineNodeFactory() {
+        TestRichTextBuilder builder = new TestRichTextBuilder();
+        AtomicInteger supplierCalls = new AtomicInteger();
+
+        assertSame(builder, builder.appendInlineNode(() -> {
+            supplierCalls.incrementAndGet();
+            return "node";
+        }));
+
+        Style style = inlineStyle(builder);
+        Function<String, ?> factory = inlineNodeFactory(style);
+        assertEquals(0, supplierCalls.get());
+
+        InlineNode<String> inlineNode = assertInstanceOf(InlineNode.class, factory.apply("ignored"));
+        assertEquals("node", inlineNode.getWrapped());
+        assertEquals("application/octet-stream", inlineNode.getMimeType());
+        assertArrayEquals(new byte[0], inlineNode.getData());
+        assertEquals(1, supplierCalls.get());
+    }
+
+    @Test
+    void testExtensionCapacityConstructor() {
+        TestRichTextBuilder builder = new TestRichTextBuilder(1);
+        builder.append("text that exceeds the initial capacity");
+
+        assertEquals("text that exceeds the initial capacity", builder.toString());
+    }
+
+    @Test
+    void testAppendHyperlinkStoresTargetAndLabelInInlinePayload() {
+        TestRichTextBuilder builder = new TestRichTextBuilder();
+        URI target = URI.create("https://example.test/path?q=1");
+
+        assertSame(builder, builder.appendHyperlink(new StringBuilder("read ✓"), target));
+
+        Style style = inlineStyle(builder);
+        Function<String, ?> factory = inlineNodeFactory(style);
+        InlineNode<String> inlineNode = assertInstanceOf(InlineNode.class, factory.apply("ignored"));
+
+        assertEquals("hyperlink:read ✓:" + target, inlineNode.getWrapped());
+        assertEquals(RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_HYPERLINK, inlineNode.getMimeType());
+        assertEquals(new RichTextBuilderExtBase.HyperlinkData(target.toString(), "read ✓"),
+                RichTextBuilderExtBase.decodeInlineHyperlinkData(inlineNode.getData()));
+    }
+
+    @Test
+    void testAppendButtonCreatesButtonAndPreservesAction() {
+        TestRichTextBuilder builder = new TestRichTextBuilder();
+        AtomicBoolean actionCalled = new AtomicBoolean();
+
+        assertSame(builder, builder.appendButton("Click me", () -> actionCalled.set(true)));
+
+        Style style = inlineStyle(builder);
+        Function<String, ?> factory = inlineNodeFactory(style);
+        InlineNode<String> inlineNode = assertInstanceOf(InlineNode.class, factory.apply("ignored"));
+
+        assertEquals("button:Click me", inlineNode.getWrapped());
+        assertEquals(RichTextBuilderExtBase.INLINE_NODE_MIME_TYPE_BUTTON, inlineNode.getMimeType());
+        RichTextBuilderExtBase.ButtonData data = RichTextBuilderExtBase.decodeInlineButtonData(inlineNode.getData());
+        assertEquals(RichTextBuilderExtBase.createInlineButtonFallbackUri("Click me").toString(), data.target());
+        assertEquals("Click me", data.text());
+
+        assertEquals(1, builder.createdActions.size());
+        builder.createdActions.getFirst().run();
+        assertTrue(actionCalled.get());
+    }
+
+    @Test
+    void testAppendImageAddsAnchorAndArgbPayload() {
+        Image image = testImage();
+        TestRichTextBuilder builder = new TestRichTextBuilder();
+
+        assertSame(builder, builder.appendImage(image, VAnchor.TOP));
+
+        Style style = inlineStyle(builder);
+        assertEquals(VAnchor.TOP, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR));
+        assertEquals(0.0, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT));
+
+        Function<String, ?> factory = inlineNodeFactory(style);
+        InlineNode<String> inlineNode = assertInstanceOf(InlineNode.class, factory.apply("ignored"));
+        assertEquals("image", inlineNode.getWrapped());
+        assertEquals("image/test", inlineNode.getMimeType());
+        Image decodedImage = InlineNode.decodeArgbImageData(inlineNode.getData());
+        assertEquals(2, decodedImage.width());
+        assertEquals(1, decodedImage.height());
+        assertArrayEquals(new int[]{0xff102030, 0xff405060}, decodedImage.getArgb());
+
+        TestRichTextBuilder defaultAnchorBuilder = new TestRichTextBuilder();
+        defaultAnchorBuilder.appendImage(image);
+        assertEquals(VAnchor.BOTTOM, inlineStyle(defaultAnchorBuilder)
+                .get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR));
+    }
+
+    @Test
+    void testAppendScaledImageStoresLimitsAndUsesScaledImageFactory() {
+        Image image = testImage();
+        TestRichTextBuilder builder = new TestRichTextBuilder();
+
+        builder.appendImage(image, 40.0f, 20.0f, VAnchor.MIDDLE);
+
+        Style style = inlineStyle(builder);
+        assertEquals(VAnchor.MIDDLE, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR));
+        assertEquals(0.0, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_DESCENT));
+        assertEquals(40.0f, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH));
+        assertEquals(20.0f, style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT));
+
+        Function<String, ?> factory = inlineNodeFactory(style);
+        assertEquals("scaled-image:40.0:20.0",
+                assertInstanceOf(InlineNode.class, factory.apply("ignored")).getWrapped());
+
+        TestRichTextBuilder clampingBuilder = new TestRichTextBuilder();
+        clampingBuilder.appendImage(image, 0.0f, -2.0f);
+        Style clampedStyle = inlineStyle(clampingBuilder);
+        assertEquals(1.0f, clampedStyle.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH));
+        assertEquals(1.0f, clampedStyle.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT));
+        assertEquals(VAnchor.BASELINE, clampedStyle.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR));
+    }
+
+    @Test
+    void testInlineHyperlinkPayloadSupportsEmptyUtf8AndLegacyData() {
+        assertEquals(new RichTextBuilderExtBase.HyperlinkData("target ✓", "label ✓"),
+                RichTextBuilderExtBase.decodeInlineHyperlinkData(
+                        RichTextBuilderExtBase.encodeInlineHyperlinkData("target ✓", "label ✓")));
+        assertEquals(new RichTextBuilderExtBase.HyperlinkData("", ""),
+                RichTextBuilderExtBase.decodeInlineHyperlinkData(
+                        RichTextBuilderExtBase.encodeInlineHyperlinkData("", "")));
+        assertEquals(new RichTextBuilderExtBase.HyperlinkData("legacy", "legacy"),
+                RichTextBuilderExtBase.decodeInlineHyperlinkData("legacy".getBytes(StandardCharsets.UTF_8)));
+
+        byte[] malformed = new byte[Integer.BYTES * 2];
+        malformed[3] = 1;
+        String malformedLegacyValue = new String(malformed, StandardCharsets.UTF_8);
+        assertEquals(new RichTextBuilderExtBase.HyperlinkData(malformedLegacyValue, malformedLegacyValue),
+                RichTextBuilderExtBase.decodeInlineHyperlinkData(malformed));
+    }
+
+    @Test
+    void testInlineButtonPayloadUsesFallbackForBlankTargetAndEncodesSpaces() {
+        String label = "Save / ✓";
+        URI fallback = RichTextBuilderExtBase.createInlineButtonFallbackUri(label);
+        assertEquals("dua3button://action?text=Save%20%2F%20%E2%9C%93", fallback.toString());
+
+        assertEquals(new RichTextBuilderExtBase.ButtonData(fallback.toString(), label),
+                RichTextBuilderExtBase.decodeInlineButtonData(
+                        RichTextBuilderExtBase.encodeInlineButtonData("", label)));
+        assertEquals(new RichTextBuilderExtBase.ButtonData("custom:action", label),
+                RichTextBuilderExtBase.decodeInlineButtonData(
+                        RichTextBuilderExtBase.encodeInlineButtonData("custom:action", label)));
+        assertEquals(new RichTextBuilderExtBase.ButtonData(label, label),
+                RichTextBuilderExtBase.decodeInlineButtonData(
+                        RichTextBuilderExtBase.encodeInlineButtonData(label, label)));
+        assertEquals(new RichTextBuilderExtBase.ButtonData(fallback.toString(), label),
+                RichTextBuilderExtBase.decodeInlineButtonData(label.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    private static Style inlineStyle(RichTextBuilder builder) {
+        return builder.toRichText().runs().stream()
+                .filter(run -> run.toString().equals(String.valueOf(RichTextBuilderExtBase.INLINE_NODE_MARKER)))
+                .findFirst()
+                .orElseThrow()
+                .getStyles().getFirst();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Function<String, ?> inlineNodeFactory(Style style) {
+        return (Function<String, ?>) assertInstanceOf(Function.class,
+                style.get(RichTextBuilderExtBase.STYLE_ATTRIBUTE_INLINE_NODE_FACTORY));
+    }
+
+    private static Image testImage() {
+        return new Image() {
+            @Override
+            public int width() {
+                return 2;
+            }
+
+            @Override
+            public int height() {
+                return 1;
+            }
+
+            @Override
+            public int[] getArgb() {
+                return new int[]{0xff102030, 0xff405060};
+            }
+
+            @Override
+            public String mimeType() {
+                return "image/test";
+            }
+        };
+    }
+
+    private static final class TestRichTextBuilder extends RichTextBuilderExtBase<String, TestRichTextBuilder> {
+        private final List<Runnable> createdActions = new ArrayList<>();
+
+        private TestRichTextBuilder() {
+            super();
+        }
+
+        private TestRichTextBuilder(int capacity) {
+            super(capacity);
+        }
+
+        @Override
+        protected String createHyperlink(CharSequence text, URI uri) {
+            return "hyperlink:" + text + ":" + uri;
+        }
+
+        @Override
+        protected String createButton(CharSequence text, Runnable action) {
+            createdActions.add(action);
+            return "button:" + text;
+        }
+
+        @Override
+        protected String createImage(Image image) {
+            return "image";
+        }
+
+        @Override
+        protected String createImage(Image image, float maxWidth, float maxHeight) {
+            return "scaled-image:" + maxWidth + ":" + maxHeight;
+        }
     }
 }

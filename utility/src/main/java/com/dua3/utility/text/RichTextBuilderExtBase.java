@@ -237,8 +237,24 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
     public static ButtonData decodeInlineButtonData(byte[] data) {
         HyperlinkData decoded = decodeInlineHyperlinkData(data);
         String text = decoded.text();
-        String target = decoded.target().isBlank() ? createInlineButtonFallbackUri(text).toString() : decoded.target();
+        boolean legacyPayload = !isEncodedInlineHyperlinkData(data);
+        String target = legacyPayload || decoded.target().isBlank()
+                ? createInlineButtonFallbackUri(text).toString()
+                : decoded.target();
         return new ButtonData(target, text);
+    }
+
+    private static boolean isEncodedInlineHyperlinkData(byte[] data) {
+        if (data.length < Integer.BYTES * 2) {
+            return false;
+        }
+
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        int targetLength = buffer.getInt();
+        int textLength = buffer.getInt();
+        return targetLength >= 0
+                && textLength >= 0
+                && (long) Integer.BYTES * 2 + targetLength + textLength == data.length;
     }
 
     /**
