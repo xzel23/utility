@@ -24,7 +24,7 @@ public abstract class AbstractOptionBuilder<T, B extends AbstractOptionBuilder<T
     private final String displayName;
     private final String description;
     private final Class<T> targetType;
-    private @Nullable Function<Object[], @Nullable T> mapper;
+    private @Nullable Function<Object @Nullable [], @Nullable T> mapper;
     private Supplier<@Nullable T> defaultSupplier = () -> null;
     private Consumer<T> handler = stream -> {};
     private @Nullable List<Param<?>> requiredParams;
@@ -63,7 +63,7 @@ public abstract class AbstractOptionBuilder<T, B extends AbstractOptionBuilder<T
      * @param mapper the mapper function
      * @return this builder instance
      */
-    protected B mapper(Function<Object[], T> mapper) {
+    protected B mapper(Function<Object @Nullable [], T> mapper) {
         this.mapper = mapper;
         return self();
     }
@@ -178,6 +178,9 @@ public abstract class AbstractOptionBuilder<T, B extends AbstractOptionBuilder<T
             var param = requiredParams.getFirst();
             if (param.argRepetitions() == Repetitions.EXACTLY_ONE && param.targetType() == targetType) {
                 mapper = list -> {
+                    if (list == null) {
+                        return null;
+                    }
                     LangUtil.check(list.length == 1, "internal error: wrong number of arguments for required parameter " + param.displayName());
                     return targetType.cast(list[0]);
                 };

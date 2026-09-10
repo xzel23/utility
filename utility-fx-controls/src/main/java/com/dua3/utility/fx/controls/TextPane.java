@@ -456,7 +456,7 @@ public class TextPane extends Control implements RichTextPane {
 
     private double clampToMaxHeight(double value) {
         double max = getMaxHeight();
-        if (!Double.isNaN(max) && max >= 0 && max < Double.MAX_VALUE && max != USE_COMPUTED_SIZE) {
+        if (!Double.isNaN(max) && max >= 0 && max < Double.MAX_VALUE) {
             return Math.min(value, max);
         }
         return value;
@@ -2131,7 +2131,7 @@ public class TextPane extends Control implements RichTextPane {
                 return false;
             }
 
-            scrollPane.setHvalue(maxOffset <= 0.0 ? 0.0 : targetOffset / maxOffset);
+            scrollPane.setHvalue(targetOffset / maxOffset);
             return true;
         }
 
@@ -2160,7 +2160,7 @@ public class TextPane extends Control implements RichTextPane {
                 return false;
             }
 
-            scrollPane.setVvalue(maxOffset <= 0.0 ? 0.0 : targetOffset / maxOffset);
+            scrollPane.setVvalue(targetOffset / maxOffset);
             return true;
         }
 
@@ -2883,7 +2883,7 @@ public class TextPane extends Control implements RichTextPane {
                 @Override
                 public boolean isSettable(TextPane control) {
                     TextPaneSkin skin = (TextPaneSkin) control.getSkin();
-                    return skin.textFill == null || !skin.textFill.isBound();
+                    return !skin.textFill.isBound();
                 }
 
                 @Override

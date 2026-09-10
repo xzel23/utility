@@ -187,7 +187,7 @@ public class Option<T> {
             Repetitions repetitions,
             Class<T> targetType,
             String[] switches,
-            Function<Object[], T> mapper,
+            Function<Object @Nullable [], T> mapper,
             Supplier<@Nullable T> defaultSupplier,
             Consumer<T> handler,
             List<Param<?>> requiredArgs,

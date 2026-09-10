@@ -3,6 +3,7 @@ package com.dua3.utility.application.imp;
 import com.dua3.utility.application.DarkModeDetector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.FunctionDescriptor;
@@ -13,8 +14,6 @@ import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static java.lang.foreign.ValueLayout.ADDRESS;
 
 /**
  * Dark mode detector implementation for Microsoft Windows using the Java Foreign Function & Memory (FFM) API.
@@ -64,9 +63,9 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
 
     private final Object watcherLock = new Object();
     private final AtomicBoolean watcherRunning = new AtomicBoolean(false);
-    private Thread watcherThread;
+    private @Nullable Thread watcherThread;
     private MemorySegment cancellationEvent = MemorySegment.NULL;
-    private volatile Boolean lastState = null;
+    private volatile @Nullable Boolean lastState;
 
     private static class Holder {
         private static final DarkModeDetector INSTANCE = createInstance();
@@ -96,40 +95,40 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
 
             regOpenCurrentUser = linker.downcallHandle(
                     advapi.findOrThrow("RegOpenCurrentUser"),
-                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ADDRESS)
+                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.ADDRESS)
             );
             regOpenKeyExW = linker.downcallHandle(
                     advapi.findOrThrow("RegOpenKeyExW"),
-                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ADDRESS, ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ADDRESS)
+                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.ADDRESS)
             );
             regGetValueW = linker.downcallHandle(
                     advapi.findOrThrow("RegGetValueW"),
-                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ADDRESS, ADDRESS, ADDRESS, ValueLayout.JAVA_INT, ADDRESS, ADDRESS, ADDRESS)
+                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
             );
             regNotifyChangeKeyValue = linker.downcallHandle(
                     advapi.findOrThrow("RegNotifyChangeKeyValue"),
-                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ADDRESS, ValueLayout.JAVA_INT)
+                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT)
             );
             regCloseKey = linker.downcallHandle(
                     advapi.findOrThrow("RegCloseKey"),
-                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ADDRESS)
+                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS)
             );
             SymbolLookup kernel32 = SymbolLookup.libraryLookup("Kernel32", shared);
             createEventW = linker.downcallHandle(
                     kernel32.findOrThrow("CreateEventW"),
-                    FunctionDescriptor.of(ADDRESS, ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ADDRESS)
+                    FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.ADDRESS)
             );
             setEvent = linker.downcallHandle(
                     kernel32.findOrThrow("SetEvent"),
-                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ADDRESS)
+                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS)
             );
             waitForMultipleObjects = linker.downcallHandle(
                     kernel32.findOrThrow("WaitForMultipleObjects"),
-                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT)
+                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT)
             );
             closeHandle = linker.downcallHandle(
                     kernel32.findOrThrow("CloseHandle"),
-                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ADDRESS)
+                    FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS)
             );
         } catch (Exception t) {
             throw new IllegalStateException("Failed to initialize Windows registry FFM handles", t);
@@ -210,9 +209,9 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
                 return;
             }
             try {
-                MemorySegment eventHandles = arena.allocate(ADDRESS, 2);
-                eventHandles.set(ADDRESS, 0, cancelEvent);
-                eventHandles.set(ADDRESS, ADDRESS.byteSize(), notificationEvent);
+                MemorySegment eventHandles = arena.allocate(ValueLayout.ADDRESS, 2);
+                eventHandles.set(ValueLayout.ADDRESS, 0, cancelEvent);
+                eventHandles.set(ValueLayout.ADDRESS, ValueLayout.ADDRESS.byteSize(), notificationEvent);
 
                 while (watcherRunning.get()) {
                     MemorySegment hku = MemorySegment.NULL;
@@ -223,13 +222,13 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
                             sleepBeforeRestart();
                             continue;
                         }
-                        MemorySegment phkResult = arena.allocate(ADDRESS);
+                        MemorySegment phkResult = arena.allocate(ValueLayout.ADDRESS);
                         int rcOpenKey = (int) regOpenKeyExW.invokeExact(hku, toWideString(arena, SUBKEY_PERSONALIZE), 0, KEY_READ | KEY_NOTIFY, phkResult);
                         if (rcOpenKey != 0) {
                             sleepBeforeRestart();
                             continue;
                         }
-                        personalizeKey = phkResult.get(ADDRESS, 0);
+                        personalizeKey = phkResult.get(ValueLayout.ADDRESS, 0);
 
                         boolean current = isDarkMode();
                         Boolean prev = lastState;
@@ -296,7 +295,7 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
         }
     }
 
-    private void signalEventQuiet(MemorySegment event) {
+    private void signalEventQuiet(@Nullable MemorySegment event) {
         try {
             if (event != null && !event.equals(MemorySegment.NULL)) {
                 int result = (int) setEvent.invokeExact(event);
@@ -309,7 +308,7 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
         }
     }
 
-    private void closeHandleQuiet(MemorySegment handle) {
+    private void closeHandleQuiet(@Nullable MemorySegment handle) {
         try {
             if (handle != null && !handle.equals(MemorySegment.NULL)) {
                 int result = (int) closeHandle.invokeExact(handle);
@@ -327,15 +326,15 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
     }
 
     private MemorySegment openCurrentUser(Arena arena) throws Throwable {
-        MemorySegment phKey = arena.allocate(ADDRESS);
+        MemorySegment phKey = arena.allocate(ValueLayout.ADDRESS);
         int rc = (int) regOpenCurrentUser.invokeExact(KEY_READ, phKey);
         if (rc != 0) {
             return MemorySegment.NULL;
         }
-        return phKey.get(ADDRESS, 0);
+        return phKey.get(ValueLayout.ADDRESS, 0);
     }
 
-    private Integer readDwordFromPersonalize(Arena arena, String valueName) throws Throwable {
+    private @Nullable Integer readDwordFromPersonalize(Arena arena, String valueName) throws Throwable {
         MemorySegment hku = openCurrentUser(arena);
         if (hku.equals(MemorySegment.NULL)) {
             return null;
@@ -375,7 +374,7 @@ public final class DarkModeDetectorWindows extends DarkModeDetectorBase {
         return seg;
     }
 
-    private void closeKeyQuiet(MemorySegment hKey) {
+    private void closeKeyQuiet(@Nullable MemorySegment hKey) {
         try {
             if (hKey != null && !hKey.equals(MemorySegment.NULL)) {
                 int result = (int) regCloseKey.invokeExact(hKey);

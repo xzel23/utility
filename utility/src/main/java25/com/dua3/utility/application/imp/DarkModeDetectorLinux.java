@@ -84,8 +84,7 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
     public boolean isDarkModeDetectionSupported() {
         // We consider it supported if gdbus exists and the portal responds.
         try {
-            Integer v = readPortalColorScheme();
-            return v != null; // portal reachable
+            return readPortalColorScheme() != null; // portal reachable
         } catch (Exception e) {
             LOG.debug("Portal color-scheme read failed, detection unsupported.", e);
             return false;
@@ -204,7 +203,7 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
         }
     }
 
-    private static Integer extractUint32(String s) {
+    private static @Nullable Integer extractUint32(String s) {
         Matcher m = UINT32_PATTERN.matcher(s);
         if (m.find()) {
             try {
@@ -225,7 +224,7 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
         return null;
     }
 
-    private static Integer readPortalColorScheme() throws IOException, InterruptedException {
+    private static @Nullable Integer readPortalColorScheme() throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(READ_CMD);
         pb.redirectErrorStream(true);
         Process p = pb.start();
@@ -242,7 +241,6 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
             throw new IOException("gdbus call failed: exit=" + p.exitValue() + ", out=" + out);
         }
         // Example outputs may look like: "(<'uint32 1'>)" or "(uint32 1)" depending on gdbus version
-        Integer v = extractUint32(out);
-        return v;
+        return extractUint32(out);
     }
 }

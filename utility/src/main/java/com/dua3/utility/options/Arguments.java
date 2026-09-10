@@ -119,9 +119,9 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         Map<Option<?>, Integer> hist = new HashMap<>();
         options.forEach(entry -> hist.compute(entry.option, (opt, i) -> i == null ? 1 : i + 1));
 
-        record OptionOccurences(Option<?> option, int occurrences) {}
+        record OptionOccurrences(Option<?> option, int occurrences) {}
         allOptions.stream()
-                .map(option -> new OptionOccurences(option, hist.getOrDefault(option, 0)))
+                .map(option -> new OptionOccurrences(option, hist.getOrDefault(option, 0)))
                 .forEach(oo -> {
                     Option<?> option = oo.option();
                     int occurrences = oo.occurrences();
