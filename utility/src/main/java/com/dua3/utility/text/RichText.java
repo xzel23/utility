@@ -131,16 +131,30 @@ public final class RichText
     }
 
     /**
-     * Get RichText containing an objects string representation.
+     * Get RichText containing an object's string representation.
      *
      * @param obj the object to convert to RichText
      * @return RichText.valueOf(String.valueOf ( obj))
      */
     public static RichText valueOf(@Nullable Object obj) {
+        return valueOf(obj, NULL_TEXT);
+    }
+
+    /**
+     * Get RichText containing an object's string representation.
+     *
+     * @param obj the object to convert to RichText
+     * @param valueIfNull the value to return if obj is null
+     * @return {@code obj}, if {@code obj} is an instance of {@code RichText},
+     *         {@code obj.toRichText()} if {@code obj} is an instance of {@link ToRichText},
+     *         {@code valueIfNull} if {@code obj} is {@code null},
+     *         {@code RichText.valueOf(obj.toString())} otherwise
+     */
+    public static RichText valueOf(@Nullable Object obj, RichText valueIfNull) {
         return switch (obj) {
             case ToRichText trt -> trt.toRichText();
             case CharSequence cs -> cs.isEmpty() ? EMPTY_TEXT : valueOf(cs.toString());
-            case null -> NULL_TEXT;
+            case null -> valueIfNull;
             default -> valueOf(String.valueOf(obj));
         };
     }
@@ -1311,10 +1325,10 @@ public final class RichText
         boolean changed = false;
         RichTextBuilder rtb = new RichTextBuilder(length);
         subSequence(0, start).appendTo(rtb);
-        for (Run run : subSequence(start, end)) {
-            List<Style> styles = run.getStyles();
+        for (Run r : subSequence(start, end)) {
+            List<Style> styles = r.getStyles();
             if (styles.isEmpty()) {
-                rtb.appendRun(run);
+                rtb.appendRun(r);
                 continue;
             }
 
@@ -1323,18 +1337,18 @@ public final class RichText
                     .toList();
 
             if (filteredStyles.size() == styles.size()) {
-                rtb.appendRun(run);
+                rtb.appendRun(r);
                 continue;
             }
 
             changed = true;
-            Map<String, @Nullable Object> attributes = new HashMap<>(run.attributes());
+            Map<String, @Nullable Object> attributes = new HashMap<>(r.attributes());
             if (filteredStyles.isEmpty()) {
                 attributes.remove(ATTRIBUTE_NAME_STYLE_LIST);
             } else {
                 attributes.put(ATTRIBUTE_NAME_STYLE_LIST, filteredStyles);
             }
-            rtb.appendRun(new Run(run.base(), run.getStart(), run.length(), TextAttributes.of(attributes)));
+            rtb.appendRun(new Run(r.base(), r.getStart(), r.length(), TextAttributes.of(attributes)));
         }
         subSequence(end, length).appendTo(rtb);
         return changed ? rtb.toRichText() : this;
