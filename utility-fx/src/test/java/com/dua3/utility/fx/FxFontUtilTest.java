@@ -117,7 +117,7 @@ class FxFontUtilTest extends FxTestBase {
      *
      * @return the default font family as a non-null string
      */
-    private static @NonNull String getDefaultFontFamily() {
+    private static String getDefaultFontFamily() {
         return switch (Platform.currentPlatform()) {
             case WINDOWS, MACOS -> "Arial";
             default -> "Liberation Sans";

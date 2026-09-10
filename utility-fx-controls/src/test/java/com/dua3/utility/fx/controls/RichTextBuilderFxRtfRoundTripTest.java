@@ -399,7 +399,7 @@ class RichTextBuilderFxRtfRoundTripTest extends FxTestBase {
         return info;
     }
 
-    private static @NonNull List<ScaledInlineImageInfo> getScaledInlineImageInfos(RichText text) {
+    private static List<ScaledInlineImageInfo> getScaledInlineImageInfos(RichText text) {
         List<ScaledInlineImageInfo> info = new ArrayList<>();
         for (Run run : text) {
             if (run.toString().indexOf(RichTextBuilderExtBase.INLINE_NODE_MARKER) < 0) {
