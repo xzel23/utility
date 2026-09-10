@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * A math utility class.
  */
-@SuppressWarnings("BoundedWildcard")
+@SuppressWarnings({"BoundedWildcard", "java:S5778"}) // disable some warnings for test code
 class MathUtilTest {
 
     private static void checkRounding(Map<RoundingMode, DoubleUnaryOperator> operations, double x, double xUp, double xDown, double xCeiling, double xFloor, double xHalfUp, double xHalfDown, double xHalfEven) {
