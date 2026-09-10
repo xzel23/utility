@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Axel Howind
  */
-@SuppressWarnings({"UnnecessaryLocalVariable", "StringBufferWithoutInitialCapacity", "SpellCheckingInspection", "EqualsWithItself", "java:S1612", "java:S1854"})
+@SuppressWarnings({"UnnecessaryLocalVariable", "StringBufferWithoutInitialCapacity", "SpellCheckingInspection", "EqualsWithItself", "java:S1612", "java:S1854", "java:S5778"})
 class RichTextTest {
     private static final Logger LOG = LogManager.getLogger(RichTextTest.class);
 
@@ -114,6 +114,42 @@ class RichTextTest {
 
         assertEquals(RichText.valueOf("obj"), RichText.valueOf(obj));
         assertEquals(RichText.valueOf(null), RichText.valueOf(String.valueOf((Object) null)));
+    }
+
+    @Test
+    void testValueOfObjectWithNullValue() {
+        RichText valueIfNull = RichText.valueOf("fallback");
+
+        assertSame(valueIfNull, RichText.valueOf(null, valueIfNull));
+    }
+
+    @Test
+    void testValueOfObjectWithToRichText() {
+        RichText expected = RichText.valueOf("converted");
+        ToRichText value = () -> expected;
+
+        assertSame(expected, RichText.valueOf(value, RichText.emptyText()));
+    }
+
+    @Test
+    void testValueOfObjectWithCharSequence() {
+        CharSequence nonEmpty = new StringBuilder("text");
+        CharSequence empty = new StringBuilder();
+
+        assertEquals("text", RichText.valueOf(nonEmpty, RichText.emptyText()).toString());
+        assertSame(RichText.emptyText(), RichText.valueOf(empty, RichText.valueOf("fallback")));
+    }
+
+    @Test
+    void testValueOfObjectWithOtherObject() {
+        Object value = new Object() {
+            @Override
+            public String toString() {
+                return "converted";
+            }
+        };
+
+        assertEquals(RichText.valueOf("converted"), RichText.valueOf(value, RichText.emptyText()));
     }
 
     @Test
