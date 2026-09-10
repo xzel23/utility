@@ -235,6 +235,10 @@ could not be loaded.
 
 ## Changes
 
+## 24.6.1
+
+- FxLauncher: support forwarding document open requests to the application
+
 ## 24.6.0
 
 - fix inconsistent dark mode reporting in ApplicationUtil
