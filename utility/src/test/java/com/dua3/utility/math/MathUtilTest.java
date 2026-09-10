@@ -812,4 +812,20 @@ class MathUtilTest {
         assertEquals(-1, MathUtil.sign(-1L));
         assertEquals(-1, MathUtil.sign(Long.MIN_VALUE));
     }
+
+    @Test
+    @SuppressWarnings({"ConstantMathCall", "java:S3415", "java:S2185"})
+    void testConstants() {
+        assertEquals(Math.PI, MathUtil.PI);
+        assertEquals(Math.PI / 2.0, MathUtil.PI_HALF);
+        assertEquals(Math.PI / 4.0, MathUtil.PI_QUARTER);
+        assertEquals(Math.PI / 180.0, MathUtil.PI_DIV_180);
+        assertEquals(2.0 * Math.PI, MathUtil.TWO_PI);
+        assertEquals((1.0 + Math.sqrt(5)) / 2.0, MathUtil.GOLDEN_RATIO);
+        assertEquals(Math.exp(1.0), MathUtil.E);
+        assertEquals(Math.log(2.0), MathUtil.LN_2);
+        assertEquals(Math.sqrt(2.0), MathUtil.SQRT_2);
+        assertEquals(Math.sqrt(3.0), MathUtil.SQRT_3);
+        assertEquals(Math.sqrt(5.0), MathUtil.SQRT_5);
+    }
 }

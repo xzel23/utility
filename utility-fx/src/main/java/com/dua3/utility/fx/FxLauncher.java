@@ -130,7 +130,7 @@ public final class FxLauncher {
         private @Nullable Consumer<List<Path>> handler;
 
         OpenFilesDispatcher(BiConsumer<Consumer<List<Path>>, List<Path>> dispatcher) {
-            this.dispatcher = Objects.requireNonNull(dispatcher, "dispatcher");
+            this.dispatcher = dispatcher;
         }
 
         void setHandler(@Nullable Consumer<List<Path>> handler) {

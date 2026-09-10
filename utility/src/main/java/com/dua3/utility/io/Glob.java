@@ -8,7 +8,6 @@ package com.dua3.utility.io;
 import com.dua3.utility.lang.LangUtil;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -19,7 +18,7 @@ final class Glob<T> {
     private final GlobAdapter<T> adapter;
 
     Glob(GlobAdapter<T> adapter) {
-        this.adapter = Objects.requireNonNull(adapter);
+        this.adapter = adapter;
     }
 
     /**
@@ -109,16 +108,7 @@ record GlobAdapter<T>(
         LangUtil.FunctionThrows<T, Stream<T>, IOException> walk,
         GlobMatcherFactory<T> matcherFactory,
         BiFunction<T, T, T> normalize
-) {
-    GlobAdapter {
-        Objects.requireNonNull(separator);
-        Objects.requireNonNull(resolve);
-        Objects.requireNonNull(exists);
-        Objects.requireNonNull(walk);
-        Objects.requireNonNull(matcherFactory);
-        Objects.requireNonNull(normalize);
-    }
-}
+) {}
 
 /** Creates a predicate that matches objects below a fixed glob prefix. */
 @FunctionalInterface

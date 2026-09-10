@@ -271,8 +271,6 @@ public final class MathUtil {
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public static int roundToInt(double x, RoundingMode mode) {
-        Objects.requireNonNull(mode, "mode");
-
         double rounded = round(x, mode);
         if (rounded >= Integer.MIN_VALUE && rounded <= Integer.MAX_VALUE && isIntegral(rounded)) {
             return (int) rounded;
@@ -314,7 +312,6 @@ public final class MathUtil {
      *                             RoundingMode#UNNECESSARY} is used and rounding is required
      */
     public static long roundToLong(double x, RoundingMode mode) {
-        Objects.requireNonNull(mode, "mode");
         if (x >= MIN_DOUBLE_ROUNDABLE_TO_LONG && x <= MAX_DOUBLE_ROUNDABLE_TO_LONG) {
             return (long) round(x, mode);
         }
@@ -393,7 +390,6 @@ public final class MathUtil {
      * @throws ArithmeticException if {@link RoundingMode#UNNECESSARY} is used and rounding is required
      */
     public static double round(double x, int n, RoundingMode mode) {
-        Objects.requireNonNull(mode, "mode");
         if (x == 0 || Double.isNaN(x) || Double.isInfinite(x)) {
             return x;
         }
@@ -450,7 +446,6 @@ public final class MathUtil {
      */
     public static double roundToPrecision(double x, int p, RoundingMode mode) {
         LangUtil.checkArg(p > 0, "p must be positive: %d", p);
-        Objects.requireNonNull(mode, "mode");
 
         if (x == 0 || Double.isNaN(x) || Double.isInfinite(x)) {
             return x;
@@ -475,8 +470,6 @@ public final class MathUtil {
      * @throws NullPointerException if {@code mode} is {@code null}
      */
     public static DoubleUnaryOperator roundingOperation(int n, RoundingMode mode) {
-        Objects.requireNonNull(mode, "mode");
-
         // determine rounding operation to use
         DoubleUnaryOperator roundingOperation = getRoundingOperation(mode);
 
@@ -506,7 +499,6 @@ public final class MathUtil {
      *                             RoundingMode#UNNECESSARY}
      */
     public static DoubleUnaryOperator getRoundingOperation(RoundingMode mode) {
-        Objects.requireNonNull(mode, "mode");
         return switch (mode) {
             case HALF_UP -> x -> x >= 0 ? Math.floor(x + 0.5) : Math.ceil(x - 0.5);
             case HALF_DOWN -> x -> x >= 0 ? Math.ceil(x - 0.5) : Math.floor(x + 0.5);
@@ -569,12 +561,14 @@ public final class MathUtil {
      * Represents the natural logarithm of 2 (ln(2)), a constant value approximately equal to 0.6931471805599453.
      * This constant is often used in mathematical calculations and algorithms that involve logarithms with a natural base.
      */
+    @SuppressWarnings("java:S9133") // this is the definition of the mathematical constant ln(2), value is unit tested
     public static final double LN_2 = 0.6931471805599453;
 
     /**
      * A constant that represents the square root of 2 (√2) with high precision.
      * The square root of 2 is an irrational number that is approximately equal to 1.4142135623730951.
      */
+    @SuppressWarnings("java:S9133") // this is the definition of the mathematical constant sqrt(2), value is unit tested
     public static final double SQRT_2 = 1.4142135623730951;
 
     /**
