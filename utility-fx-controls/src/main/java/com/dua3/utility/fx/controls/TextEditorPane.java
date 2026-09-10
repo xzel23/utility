@@ -103,11 +103,10 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      * @param text initial text
      */
     public TextEditorPane(@Nullable CharSequence text) {
-        super(text);
-
+        // do not use super(text) as it will call an overloaded method that will throw a NPE!
         getStyleClass().add("text-editor-pane");
 
-        RichText initial = normalizeIncomingText(textProperty().get());
+        RichText initial = normalizeIncomingText(text);
         document.set(initial);
         this.sharedModel = new RichTextEditorModel(initial, MAX_HISTORY_SIZE, FxFontUtil.getInstance());
         sharedModel.setPageWidthProvider(model -> {
@@ -1793,12 +1792,8 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
         );
     }
 
-    private RichText normalizeIncomingText(@Nullable ToRichText text) {
-        if (text == null) {
-            return RichText.emptyText();
-        }
-
-        return text.toRichText();
+    private static RichText normalizeIncomingText(@Nullable Object text) {
+        return RichText.valueOf(text, RichText.emptyText());
     }
 
     private double resolveCurrentWrapWidthFromView() {
