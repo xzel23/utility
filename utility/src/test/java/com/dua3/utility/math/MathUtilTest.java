@@ -820,10 +820,10 @@ class MathUtilTest {
         assertEquals(Math.PI / 2.0, MathUtil.PI_HALF);
         assertEquals(Math.PI / 4.0, MathUtil.PI_QUARTER);
         assertEquals(Math.PI / 180.0, MathUtil.PI_DIV_180);
-        assertEquals(2.0 * Math.PI, MathUtil.TWO_PI);
+        assertEquals(Math.TAU, MathUtil.TWO_PI);
         assertEquals(1.0 / Math.PI, MathUtil.INV_PI);
         assertEquals(1.0 / Math.TAU, MathUtil.INV_TWO_PI);
-        assertEquals(Math.sqrt(Math.PI), MathUtil.SQRT_PI, Math.ulp(Math.sqrt(Math.PI)));
+        assertEquals(Math.sqrt(Math.PI), MathUtil.SQRT_PI, Math.ulp(Math.sqrt(Math.PI))); // see note at definition of SQRT_PI
         assertEquals((1.0 + Math.sqrt(5)) / 2.0, MathUtil.GOLDEN_RATIO);
         assertEquals(Math.E, MathUtil.E);
         assertEquals(Math.log(2.0), MathUtil.LN_2);

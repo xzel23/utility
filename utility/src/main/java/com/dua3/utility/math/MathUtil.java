@@ -22,6 +22,13 @@ import java.util.function.DoubleUnaryOperator;
  * logarithmic and power calculations, rounding, and quadrant/octant
  * determination, among others. It also includes constants commonly
  * used in mathematical calculations.
+ * <p>
+ * A note on contained constants: the values for constants are given with 20 digits of precision
+ * where the last digit is rounded. The compiler will replace the value with the nearest representable
+ * value.
+ * This is done to reduce rounding errors introduced by using approximate input values. For example,
+ * {@code Math.sqrt(Math.PI)} does produce a result that is not the nearest representable value of the
+ * mathematically correct result of π^(1/2).
  */
 public final class MathUtil {
 
@@ -531,27 +538,27 @@ public final class MathUtil {
     /**
      * Represents the constant π/2 (in degrees: 90°).
      */
-    public static final double PI_HALF = Math.PI / 2.0;
+    public static final double PI_HALF = 1.5707963267948966192;
 
     /**
-     * Represents the constant π/2 (in degrees: 45°).
+     * Represents the constant π/4 (in degrees: 45°).
      */
-    public static final double PI_QUARTER = Math.PI / 4.0;
+    public static final double PI_QUARTER = 0.78539816339744830962;
 
     /**
      * Represents the constant π/180 (in degrees: 1°).
      */
-    public static final double PI_DIV_180 = Math.PI / 180.0;
+    public static final double PI_DIV_180 = 0.017453292519943295769;
 
     /**
      * The inverse of π, 1/π.
      */
-    public static final double INV_PI = 1.0 / Math.PI;
+    public static final double INV_PI = 0.31830988618379067154;
 
     /**
      * The inverse of 2π, 1/(2π).
      */
-    public static final double INV_TWO_PI = 1.0 / Math.TAU;
+    public static final double INV_TWO_PI = 0.159154943091895335769;
 
     /**
      * The square root of π.
@@ -561,7 +568,7 @@ public final class MathUtil {
      * itself already being an approximation of π. The mathematical correct value of
      * the square root of π is 1.772453850905516027... .
      */
-    public static final double SQRT_PI = 1.772453850905516;
+    public static final double SQRT_PI = 1.77245385090551602730;
 
     /**
      * Represents the mathematical constant known as the Golden Ratio,
@@ -569,7 +576,7 @@ public final class MathUtil {
      * approximately equal to 1.618033988749895 and is often encountered
      * in mathematics, art, architecture, and nature.
      */
-    public static final double GOLDEN_RATIO = 1.618033988749895;
+    public static final double GOLDEN_RATIO = 1.6180339887498948482;
 
     /**
      * A mathematical constant representing Euler's number (e), the base of the natural logarithm.
@@ -582,20 +589,20 @@ public final class MathUtil {
      * This constant is often used in mathematical calculations and algorithms that involve logarithms with a natural base.
      */
     @SuppressWarnings("java:S9133") // this is the definition of the mathematical constant ln(2), value is unit tested
-    public static final double LN_2 = 0.6931471805599453;
+    public static final double LN_2 = 0.69314718055994530942;
 
     /**
      * A constant that represents the square root of 2 (√2) with high precision.
      * The square root of 2 is an irrational number that is approximately equal to 1.4142135623730951.
      */
     @SuppressWarnings("java:S9133") // this is the definition of the mathematical constant sqrt(2), value is unit tested
-    public static final double SQRT_2 = 1.4142135623730951;
+    public static final double SQRT_2 = 1.4142135623730950488;
 
     /**
      * A constant holding the square root of 3, approximately 1.7320508075688772.
      * This value is often used in mathematical calculations and geometry-related computations.
      */
-    public static final double SQRT_3 = 1.7320508075688772;
+    public static final double SQRT_3 = 1.7320508075688772935;
 
     /**
      * Represents the square root of 5 as a constant value.
@@ -603,7 +610,7 @@ public final class MathUtil {
      * commonly used in mathematical calculations requiring
      * the square root of 5.
      */
-    public static final double SQRT_5 = 2.23606797749979;
+    public static final double SQRT_5 = 2.2360679774997896964;
 
     /**
      * Converts an angle measured in degrees to an equivalent angle measured in radians.
