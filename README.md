@@ -235,6 +235,12 @@ could not be loaded.
 
 ## Changes
 
+## 24.6.2
+
+- added some constants to MathUtil
+- code cleanup; fixed some sonar and Qodana warnings
+- improve test coverage
+
 ## 24.6.1
 
 - FxLauncher: support forwarding document open requests to the application
