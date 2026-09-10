@@ -526,7 +526,7 @@ public final class MathUtil {
     /**
      * Represents the constant 2π (in degrees: 360°).
      */
-    public static final double TWO_PI = 2.0 * Math.PI;
+    public static final double TWO_PI = Math.TAU;
 
     /**
      * Represents the constant π/2 (in degrees: 90°).
@@ -544,6 +544,26 @@ public final class MathUtil {
     public static final double PI_DIV_180 = Math.PI / 180.0;
 
     /**
+     * The inverse of π, 1/π.
+     */
+    public static final double INV_PI = 1.0 / Math.PI;
+
+    /**
+     * The inverse of 2π, 1/(2π).
+     */
+    public static final double INV_TWO_PI = 1.0 / Math.TAU;
+
+    /**
+     * The square root of π.
+     * <p>
+     * Note that this value is <strong>not</strong> equal to the result of
+     * {@code Math.sqrt(Math.PI)} (which is 1.7724538509055159) because of {@code Math.PI}
+     * itself already being an approximation of π. The mathematical correct value of
+     * the square root of π is 1.772453850905516027... .
+     */
+    public static final double SQRT_PI = 1.772453850905516;
+
+    /**
      * Represents the mathematical constant known as the Golden Ratio,
      * denoted by the Greek letter phi (φ). This is an irrational number
      * approximately equal to 1.618033988749895 and is often encountered
@@ -553,9 +573,9 @@ public final class MathUtil {
 
     /**
      * A mathematical constant representing Euler's number (e), the base of the natural logarithm.
-     * It is an irrational constant approximately equal to 2.7182818284590455.
+     * It is an irrational constant approximately equal to 2.718281828459045.
      */
-    public static final double E = 2.7182818284590455;
+    public static final double E = Math.E;
 
     /**
      * Represents the natural logarithm of 2 (ln(2)), a constant value approximately equal to 0.6931471805599453.
