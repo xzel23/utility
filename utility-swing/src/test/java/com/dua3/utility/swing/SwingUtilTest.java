@@ -3,6 +3,8 @@ package com.dua3.utility.swing;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.math.geometry.Path2f;
+import com.dua3.utility.math.geometry.Scale2f;
+import com.dua3.utility.math.geometry.Vector2f;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -13,9 +15,11 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -136,6 +140,61 @@ class SwingUtilTest {
         g2d.dispose();
     }
 
+    @Test
+    void testSetRenderingQualityHighSetsAllQualityHints() {
+        BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+
+        try {
+            SwingUtil.setRenderingQualityHigh(graphics);
+
+            assertEquals(RenderingHints.VALUE_ANTIALIAS_ON, graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING));
+            assertEquals(RenderingHints.VALUE_TEXT_ANTIALIAS_ON, graphics.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING));
+            assertEquals(RenderingHints.VALUE_COLOR_RENDER_QUALITY, graphics.getRenderingHint(RenderingHints.KEY_COLOR_RENDERING));
+            assertEquals(RenderingHints.VALUE_STROKE_NORMALIZE, graphics.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL));
+            assertEquals(RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY, graphics.getRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION));
+            assertEquals(RenderingHints.VALUE_INTERPOLATION_BICUBIC, graphics.getRenderingHint(RenderingHints.KEY_INTERPOLATION));
+        } finally {
+            graphics.dispose();
+        }
+    }
+
+    @Test
+    void testGetDisplayScaleForUnrealizedComponent() {
+        assertEquals(Scale2f.identity(), SwingUtil.getDisplayScale(testComponent));
+    }
+
+    @Test
+    void testScrollToEndMovesToMaximumAndRemovesListener() {
+        JScrollBar scrollBar = new JScrollBar();
+        scrollBar.setMaximum(100);
+        scrollBar.setVisibleAmount(10);
+        scrollBar.setValue(25);
+
+        SwingUtil.scrollToEnd(scrollBar);
+        assertEquals(1, scrollBar.getAdjustmentListeners().length);
+
+        scrollBar.setValue(50);
+
+        assertEquals(90, scrollBar.getValue());
+        assertEquals(0, scrollBar.getAdjustmentListeners().length);
+    }
+
+    @Test
+    void testUpdateAndScrollToEndDoesNotInstallListenerWhenNotAtEnd() {
+        JScrollBar scrollBar = new JScrollBar();
+        scrollBar.setMaximum(100);
+        scrollBar.setVisibleAmount(10);
+        scrollBar.setValue(25);
+        AtomicBoolean updatePerformed = new AtomicBoolean();
+
+        SwingUtil.updateAndScrollToEnd(scrollBar, () -> updatePerformed.set(true));
+
+        assertTrue(updatePerformed.get());
+        assertEquals(25, scrollBar.getValue());
+        assertEquals(0, scrollBar.getAdjustmentListeners().length);
+    }
+
     /**
      * Test the addDropFilesSupport method.
      * This test only verifies that the method doesn't throw exceptions.
@@ -226,6 +285,61 @@ class SwingUtilTest {
 
         // We can't easily check the path points, but we can verify it's not null
         assertNotNull(swingPath, "Converted path should not be null");
+    }
+
+    @Test
+    void testConvertToSwingPathPreservesCurvesAndClosePath() {
+        Path2f path = Path2f.builder()
+                .moveTo(10, 10)
+                .lineTo(100, 10)
+                .curveTo(new Vector2f(150, 50), new Vector2f(100, 100))
+                .curveTo(new Vector2f(80, 120), new Vector2f(40, 120), new Vector2f(10, 100))
+                .arcTo(new Vector2f(10, 10), new Vector2f(50, 50), 45, false, false)
+                .closePath()
+                .build();
+
+        PathIterator iterator = SwingUtil.convertToSwingPath(path).getPathIterator(null);
+        int moveCount = 0;
+        int lineCount = 0;
+        int quadCount = 0;
+        int cubicCount = 0;
+        int closeCount = 0;
+        while (!iterator.isDone()) {
+            switch (iterator.currentSegment(new float[6])) {
+                case PathIterator.SEG_MOVETO -> moveCount++;
+                case PathIterator.SEG_LINETO -> lineCount++;
+                case PathIterator.SEG_QUADTO -> quadCount++;
+                case PathIterator.SEG_CUBICTO -> cubicCount++;
+                case PathIterator.SEG_CLOSE -> closeCount++;
+                default -> throw new AssertionError("Unexpected path segment");
+            }
+            iterator.next();
+        }
+
+        assertEquals(2, moveCount, "The arc approximation starts a new subpath");
+        assertEquals(1, lineCount);
+        assertEquals(1, quadCount);
+        assertTrue(cubicCount >= 2, "The cubic curve and arc should produce cubic segments");
+        assertEquals(1, closeCount);
+    }
+
+    @Test
+    void testClipboardOperationsAreSafeInHeadlessMode() {
+        assertDoesNotThrow(() -> SwingUtil.copyToClipboard("text"));
+        assertDoesNotThrow(() -> SwingUtil.copyToClipboard(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)));
+        assertDoesNotThrow(() -> SwingUtil.copyToClipboard(java.nio.file.Path.of("test.txt")));
+
+        if (GraphicsEnvironment.isHeadless()) {
+            assertTrue(SwingUtil.getStringFromClipboard().isEmpty());
+            assertTrue(SwingUtil.getTextFromClipboard().isEmpty());
+            assertTrue(SwingUtil.getImageFromClipboard().isEmpty());
+            assertTrue(SwingUtil.getFilesFromClipboard().isEmpty());
+        }
+    }
+
+    @Test
+    void testSetNativeLookAndFeelIsSafe() {
+        assertDoesNotThrow(() -> SwingUtil.setNativeLookAndFeel("SwingUtilTest"));
     }
 
     /**
