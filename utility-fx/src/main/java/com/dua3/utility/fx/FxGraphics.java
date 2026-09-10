@@ -347,7 +347,7 @@ public class FxGraphics implements Graphics {
     }
 
     private void applyLineDashes() {
-        if (state.lineDashes == null || state.lineDashes.length == 0) {
+        if (state.lineDashes.length == 0) {
             gc.setLineDashes();
         } else {
             double[] dashes = new double[state.lineDashes.length];
