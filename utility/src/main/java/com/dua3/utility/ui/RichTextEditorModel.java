@@ -941,7 +941,7 @@ public class RichTextEditorModel {
                 Object value = updated.attributesAt(line.start()).get(Style.TEXT_INDENT_LEFT);
                 double current = value instanceof Number n ? n.doubleValue() : 0.0;
                 double next = Math.max(0.0, current + deltaPoints);
-                if (Math.abs(next - current) > 1e-6) {
+                if (Math.abs(next - current) > 1.0e-6) {
                     // Paragraph indentation belongs only to the first character of the line.
                     updated = next == 0.0
                             ? updated.removeAttribute(Style.TEXT_INDENT_LEFT, line.start(), line.start() + 1)

@@ -10,6 +10,7 @@ import java.util.Objects;
 /**
  * An interface for classes that can be represented as RichText.
  */
+@FunctionalInterface
 public interface ToRichText {
 
     /**

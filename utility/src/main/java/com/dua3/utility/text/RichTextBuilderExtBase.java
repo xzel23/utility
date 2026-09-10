@@ -66,6 +66,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
 
     private static final AtomicLong STYLE_ID = new AtomicLong();
     private static final String INLINE_NODE = "inline-node";
+    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
     /**
      * Protected constructor for the {@code RichTextBuilderExtBase} class.
@@ -133,7 +134,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      */
     public B appendInlineNode(Supplier<? extends N> node) {
         return appendInlineNodeWithStyle(() ->
-                new InlineNode<>(node.get(), "application/octet-stream", new byte[0]));
+                new InlineNode<>(node.get(), "application/octet-stream", EMPTY_BYTE_ARRAY));
     }
 
     /**
@@ -328,8 +329,8 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_FACTORY, nodeFactory),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_V_ANCHOR, vAnchor),
                 Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_DESCENT, 0.0),
-                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH, Math.max(1f, maxWidth)),
-                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT, Math.max(1f, maxHeight))
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_MAX_WIDTH, Math.max(1.0f, maxWidth)),
+                Map.entry(STYLE_ATTRIBUTE_INLINE_NODE_MAX_HEIGHT, Math.max(1.0f, maxHeight))
         );
         push(style);
         append(INLINE_NODE_MARKER);

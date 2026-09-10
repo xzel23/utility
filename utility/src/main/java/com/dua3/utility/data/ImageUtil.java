@@ -25,10 +25,10 @@ import java.util.function.Supplier;
 /**
  * Interface for Image handling utility classes. The concrete implementation is automatically chosen at runtime.
  * @param <I> the image type returned by methods that create new images, i.e., {@link #load(Payload)},
- * @param <MI> the image type returned by methods that create new buffered images, i.e.,
+ * @param <M> the image type returned by methods that create new buffered images, i.e.,
  * {@link #createImage(int, int)} (int, int)}, {@link #createImage(int, int)} (int, int, int[])}, etc.
  */
-public interface ImageUtil<I extends Image, MI extends MutableImage> {
+public interface ImageUtil<I extends Image, M extends MutableImage> {
     /**
      * Represents the MIME type for PNG (Portable Network Graphics) image files.
      */
@@ -78,7 +78,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
          * created without any reference to the original data. Images loaded in this mode cannot will be written out
          * in a standard format.
          */
-        DONT_RETAIN_DATA;
+        DONT_RETAIN_DATA
     }
 
     /**
@@ -120,6 +120,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      *
      * @return the default FontUtil instance
      */
+    @SuppressWarnings("java:S1452") // accepted
     static ImageUtil<? extends Image, ? extends MutableImage> getInstance() {
         final class SingletonHolder {
             static final ImageUtil<?, ?> INSTANCE = SpiLoader.builder(ImageUtilProvider.class)
@@ -255,7 +256,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * @return the image
      * @throws IOException if loading fails
      */
-    default MI loadMutable(InputStream in) throws IOException {
+    default M loadMutable(InputStream in) throws IOException {
         return loadMutable(Payload.fromInputStream(in));
     }
 
@@ -266,7 +267,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * @return the image
      * @throws IOException if loading fails
      */
-    default MI loadMutable(URI uri) throws IOException {
+    default M loadMutable(URI uri) throws IOException {
         return loadMutable(Payload.fromUri(uri));
     }
 
@@ -277,7 +278,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * @return the image
      * @throws IOException if loading fails
      */
-    default MI loadMutable(Path path) throws IOException {
+    default M loadMutable(Path path) throws IOException {
         return loadMutable(Payload.fromPath(path));
     }
 
@@ -288,7 +289,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * @return the image
      * @throws IOException if loading fails
      */
-    default MI loadMutable(URL url) throws IOException {
+    default M loadMutable(URL url) throws IOException {
         return loadMutable(Payload.fromUrl(url));
     }
 
@@ -299,7 +300,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * @return the image
      * @throws IOException if loading fails
      */
-    MI loadMutable(Payload payload) throws IOException;
+    M loadMutable(Payload payload) throws IOException;
 
     /**
      * Creates an image from premultiplied ARGB pixel data.
@@ -309,7 +310,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * @param data pixel data as premultiplied ARGB values
      * @return a new mutable AWT image backed by the provided pixel data
      */
-    MI createImage(int w, int h, int[] data);
+    M createImage(int w, int h, int[] data);
 
     /**
      * Create an empty {@link MutableImage}.
@@ -318,7 +319,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * @param h   the image height
      * @return new {@link MutableImage}
      */
-    MI createImage(int w, int h);
+    M createImage(int w, int h);
 
     /**
      * Premultiplies the RGB components of all pixels in-place.
@@ -386,7 +387,7 @@ public interface ImageUtil<I extends Image, MI extends MutableImage> {
      * @param img the ARGBImage
      * @return the image
      */
-    default MI fromImageBuffer(ImageBuffer img) {
+    default M fromImageBuffer(ImageBuffer img) {
         return createImage(img.width(), img.height(), img.getArgb());
     }
 

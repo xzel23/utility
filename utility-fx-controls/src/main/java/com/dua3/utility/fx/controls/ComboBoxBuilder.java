@@ -144,7 +144,7 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
 
                 @Override
                 public T fromString(String string) {
-                    throw new UnsupportedOperationException();
+                    throw new UnsupportedOperationException("fromString(String) is unsupported in " + getClass().getName());
                 }
             });
         }

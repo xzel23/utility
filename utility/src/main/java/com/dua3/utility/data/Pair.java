@@ -166,6 +166,8 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @param value new value to be stored in this entry
      * @return nothing, method always throws
      * @throws UnsupportedOperationException when called
+     * @deprecated this method is not supported and will throw {@link UnsupportedOperationException};
+     *             it needs to be declared because it is an optional method of the {@link Map} interface
      */
     @Override
     @Deprecated(forRemoval = false)

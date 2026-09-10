@@ -224,9 +224,9 @@ public class TextPane extends JScrollPane implements RichTextPane {
             useTextAreaBackground = false;
         }
         textComponent.setBackground(color);
-        JViewport viewport = super.getViewport();
-        if (viewport != null) {
-            viewport.setBackground(color);
+        JViewport vp = getViewport();
+        if (vp != null) {
+            vp.setBackground(color);
         }
     }
 
@@ -235,10 +235,10 @@ public class TextPane extends JScrollPane implements RichTextPane {
         applyingTextAreaDefaults = true;
         try {
             if (useTextAreaForeground) {
-                super.setForeground(textArea.getForeground());
+                setForeground(textArea.getForeground());
             }
             if (useTextAreaBackground) {
-                super.setBackground(textArea.getBackground());
+                setBackground(textArea.getBackground());
             }
         } finally {
             applyingTextAreaDefaults = false;

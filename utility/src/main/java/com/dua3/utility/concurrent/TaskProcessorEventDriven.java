@@ -55,7 +55,6 @@ public class TaskProcessorEventDriven<K> extends TaskProcessorBase {
      * @param result the result to be set if the task is successfully completed
      * @param isCompleted a flag indicating whether the task is completed
      */
-    @SuppressWarnings("unchecked")
     public void updateTask(K key, Object result, boolean isCompleted) {
         if (isCompleted) {
             // set the result and remove the future

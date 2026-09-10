@@ -549,7 +549,7 @@ public final class RtfReader {
                 int heightTwips = resolveDisplayDimensionTwips(pictureHeightGoalTwips, pictureNativeHeight, pictureScaleYPercent, image.height());
                 double widthPx = Math.max(1.0, widthTwips / TWIPS_PER_PIXEL);
                 double heightPx = Math.max(1.0, heightTwips / TWIPS_PER_PIXEL);
-                boolean scaled = Math.abs(widthPx - image.width()) > 1.0e-6 || Math.abs(heightPx - image.height()) > 1e-6;
+                boolean scaled = Math.abs(widthPx - image.width()) > 1.0e-6 || Math.abs(heightPx - image.height()) > 1.0e-6;
 
                 VAnchor vAnchor = deriveVAnchor(style.baselineShiftHalfPoints, heightTwips, style.fontSize);
                 appendInlineNodeMarker(inlineNode, vAnchor, scaled ? widthPx : null, scaled ? heightPx : null);

@@ -161,7 +161,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         strikeButton = fontStyleButton("S", DEFAULT_FONT.withStrikeThrough(true), this::markStrikeThrough);
         increaseIndentButton = editButton("⇥", this::increaseIndentation);
         decreaseIndentButton = editButton("⇤", this::decreaseIndentation);
-        fontList = new JComboBox<>(FONT_UTIL.getFamilies(FontUtil.FontTypes.ALL).toArray(new String[0]));
+        fontList = new JComboBox<>(FONT_UTIL.getFamilies(FontUtil.FontTypes.ALL).toArray(String[]::new));
         sizeList = new JComboBox<>(DEFAULT_FONT_SIZES);
         textColorList = new JComboBox<>(DEFAULT_TEXT_COLORS);
         backgroundColorList = new JComboBox<>(DEFAULT_BACKGROUND_COLORS);
@@ -1649,11 +1649,10 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     }
 
     private static void ensureSortedFontSizeEntry(JComboBox<Float> sizeList, float size) {
-        if (!Float.isFinite(size) || size <= 0f) {
+        if (!Float.isFinite(size) || size <= 0.0f) {
             return;
         }
 
-        @SuppressWarnings("unchecked")
         DefaultComboBoxModel<Float> model = (DefaultComboBoxModel<Float>) sizeList.getModel();
 
         int insertAt = model.getSize();

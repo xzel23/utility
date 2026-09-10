@@ -70,12 +70,12 @@ final class NumberParsingUtil {
             return percent;
         }
 
-        OptionalDouble explicitPercent = tryParseWithMultiplier(text, locale, 100d, String.valueOf(symbols.getPercent()), "%");
+        OptionalDouble explicitPercent = tryParseWithMultiplier(text, locale, 100.0d, String.valueOf(symbols.getPercent()), "%");
         if (explicitPercent.isPresent()) {
             return explicitPercent;
         }
 
-        return tryParseWithMultiplier(text, locale, 1000d, String.valueOf(symbols.getPerMill()), "‰");
+        return tryParseWithMultiplier(text, locale, 1000.0d, String.valueOf(symbols.getPerMill()), "‰");
     }
 
     /**

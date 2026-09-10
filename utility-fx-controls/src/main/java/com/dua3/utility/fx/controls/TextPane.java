@@ -2895,7 +2895,7 @@ public class TextPane extends Control implements RichTextPane {
             private static final List<CssMetaData<? extends Styleable, ?>> STYLEABLES;
 
             static {
-                List<CssMetaData<? extends Styleable, ?>> styleables = new ArrayList<>(SkinBase.getClassCssMetaData());
+                List<CssMetaData<? extends Styleable, ?>> styleables = new ArrayList<>(getClassCssMetaData());
                 styleables.add(TEXT_FILL);
                 STYLEABLES = Collections.unmodifiableList(styleables);
             }
