@@ -1107,13 +1107,8 @@ public final class RtfReader {
         }
     }
 
-    private static final class ParserInvocationHandler implements InvocationHandler {
+    private record ParserInvocationHandler(StyledRtfParser parser) implements InvocationHandler {
         private static final Object[] NO_ARGS = new Object[0];
-        private final StyledRtfParser parser;
-
-        private ParserInvocationHandler(StyledRtfParser parser) {
-            this.parser = parser;
-        }
 
         @Override
         public @Nullable Object invoke(Object proxy, Method method, Object @Nullable [] args) {
