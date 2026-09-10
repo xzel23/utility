@@ -112,6 +112,7 @@ public final class NativeHelperMacOs implements com.dua3.utility.application.Nat
     @Override
     public boolean setWindowDecorations(boolean dark) {
         String appearanceName = (dark ? NSAPPEARANCE_NAME_DARK : NSAPPEARANCE_NAME_LIGHT) + defaultAppearanceName;
+        LOG.debug("Setting appearance to {}", appearanceName);
 
         try (Arena arena = Arena.ofConfined()) {
             // 1. Get the shared application instance

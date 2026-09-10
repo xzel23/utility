@@ -216,8 +216,18 @@ public final class ApplicationUtil {
     private static void setDarkMode(boolean darkMode) {
         DARK_MODE.set(darkMode);
         LOG.debug("application dark mode set to {}", darkMode);
-        NativeHelperInstance.get().setWindowDecorations(darkMode);
+        updateWindowDecorations();
         onUpdateDarkMode(darkMode);
+    }
+
+    /**
+     * Updates native window decorations to match the current application dark mode.
+     * <p>
+     * Call this after creating or showing a native window so that platform integrations
+     * can apply the current decoration appearance to that window.
+     */
+    public static void updateWindowDecorations() {
+        NativeHelperInstance.get().setWindowDecorations(DARK_MODE.get());
     }
 
     /**
