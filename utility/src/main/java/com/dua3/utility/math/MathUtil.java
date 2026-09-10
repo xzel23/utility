@@ -770,6 +770,7 @@ public final class MathUtil {
         return sumUnchecked(args, off, len);
     }
 
+    @SuppressWarnings("java:S3776") // complexity accepted for this method
     private static double sumUnchecked(double[] a, int off, int len) {
         if (len < 64) {
             // Kahan
