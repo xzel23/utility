@@ -105,25 +105,21 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
         ObservableList<Node> children = container.getChildren();
         children.setAll(comboBox);
 
+        this.edit = edit;
         if (edit != null) {
-            this.edit = edit;
             Button buttonEdit = Controls.button().text(I18NInstance.get().get("dua3.utility.fx.controls.combobox.ex.edit")).action(this::editItem).build();
             children.add(buttonEdit);
             buttonEdit.disableProperty().bind(comboBox.selectionModelProperty().isNull());
-        } else {
-            this.edit = null;
         }
 
+        this.add = add;
         if (add != null) {
-            this.add = add;
             Button buttonAdd = Controls.button().text(I18NInstance.get().get("dua3.utility.fx.controls.combobox.ex.add")).action(this::addItem).build();
             children.add(buttonAdd);
-        } else {
-            this.add = null;
         }
 
+        this.remove = remove;
         if (remove != null) {
-            this.remove = remove;
             Button buttonRemove = Controls.button().text(I18NInstance.get().get("dua3.utility.fx.controls.combobox.ex.remove")).action(this::removeItem).build();
             children.add(buttonRemove);
             buttonRemove.disableProperty().bind(Bindings.createBooleanBinding(
@@ -131,8 +127,6 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
                     comboBox.selectionModelProperty(), this.items)
             );
             buttonRemove.disableProperty().bind(comboBox.selectionModelProperty().isNull().or(comboBox.valueProperty().isNull()));
-        } else {
-            this.remove = null;
         }
 
         Callback<@Nullable ListView<@Nullable T>, ListCell<@Nullable T>> cellFactory = new Callback<>() {
