@@ -1557,14 +1557,14 @@ public class RichTextEditorModel {
         return new ToRichText() {
             @Override
             public RichText toRichText() {
-                return materialized.get();
+                return Objects.requireNonNullElse(materialized.get(), RichText.emptyText());
             }
 
             @Override
             public void appendTo(RichTextBuilder builder) {
                 List<RichText> list = snapshot[0];
                 if (list == null) {
-                    materialized.get().appendTo(builder);
+                    LangUtil.applyIfNonNull(materialized.get(), rt -> rt.appendTo(builder));
                 } else {
                     appendSnapshotToBuilder(list, builder);
                 }

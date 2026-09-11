@@ -111,19 +111,23 @@ public final class Fields {
          * is successful, the field's value is updated. Additionally, dependent fields are validated
          * after the update. If any validation errors are encountered, an error message is returned.
          *
-         * @param fields   the collection of fields used for validation; ensures dependencies are considered
+         * @param flds   the collection of fields used for validation; ensures dependencies are considered
          *                 during the validation process
          * @param newValue the new value of type T to be validated and potentially set as the field's value;
          *                 can be null
          * @return an {@code Optional<String>} containing a validation error message if the validation fails,
          * or {@code Optional.empty()} if the operation succeeds
          */
-        public Optional<String> updateAndValidate(Fields fields, @Nullable T newValue) {
-            Optional<String> error = validateField.apply(newValue, fields);
+        public Optional<String> updateAndValidate(@Nullable Fields flds, @Nullable T newValue) {
+            if (flds == null) {
+                return Optional.empty();
+            }
+
+            Optional<String> error = validateField.apply(newValue, flds);
             if (error.isEmpty()) {
                 LOG.debug("Setting value of field {} to {}", id, newValue);
                 value.set(newValue);
-                error = validateDependents(fields);
+                error = validateDependents(flds);
             }
             return error;
         }

@@ -1,6 +1,7 @@
 package com.dua3.utility.io;
 
 import org.apache.logging.log4j.LogManager;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
@@ -115,7 +116,7 @@ public interface Loader<T> {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     static <T> Optional<T> tryLoad(Class<? extends T> cls, Payload payload, Object... options) throws IOException {
-        List[] ex = {null};
+        @Nullable List[] ex = {null};
         Optional<T> loaded = Stream.of(Thread.currentThread().getContextClassLoader(), Loader.class.getClassLoader(), ClassLoader.getSystemClassLoader())
                 .distinct()
                 .flatMap(cl -> ServiceLoader.load(Loader.class, cl).stream())

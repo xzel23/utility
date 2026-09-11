@@ -167,7 +167,7 @@ public class ToolBarEx extends ToolBar implements DetachableNode<ToolBarEx, Pare
                     if (ownerWindow != null) {
                         stage.initOwner(ownerWindow);
                         ownerWindow.onHidingProperty().addListener((obs, oldVal, newVal) -> {
-                            stage.close();
+                            LangUtil.applyIfNonNull(stage, Stage::close);
                             stage = null;
                         });
                     }
