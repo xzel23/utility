@@ -14,8 +14,9 @@ import java.util.function.Function;
  * @param name the name of the function
  * @param f the implemented function
  */
-public record NamedFunction<T extends @Nullable Object, R extends @Nullable Object>(String name,
-                                                                                    Function<@Nullable T, @Nullable R> f) implements Function<@Nullable T, @Nullable R> {
+public record NamedFunction<T extends @Nullable Object, R extends @Nullable Object>(
+        String name,
+        Function<T, R> f) implements Function<T, R> {
     @Override
     public R apply(T t) {
         return f.apply(t);

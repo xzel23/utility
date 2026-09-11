@@ -57,7 +57,7 @@ public class OptionBuilder<T> extends AbstractOptionBuilder<T, OptionBuilder<T>>
     }
 
     @Override
-    public OptionBuilder<T> mapper(Function<Object[], T> mapper) {
+    public OptionBuilder<T> mapper(Function<Object @Nullable [], T> mapper) {
         return super.mapper(mapper);
     }
 
