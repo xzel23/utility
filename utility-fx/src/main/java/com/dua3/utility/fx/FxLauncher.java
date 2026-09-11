@@ -343,6 +343,7 @@ public final class FxLauncher {
      * @param r the Runnable object to be executed
      */
     public static void run(Runnable r) {
+        installWindowDecorationUpdater();
         PlatformGuard.run(r);
     }
 
@@ -361,7 +362,12 @@ public final class FxLauncher {
     public static <A extends Application>
     void launch(Class<A> cls, String... args) {
         installMacOpenFileHandler();
+        installWindowDecorationUpdater();
         PlatformGuard.launch(cls, args);
+    }
+
+    private static void installWindowDecorationUpdater() {
+        PlatformGuard.run(() -> PlatformHelper.runAndWait(FxWindowDecorationUpdater::install));
     }
 
     /**
