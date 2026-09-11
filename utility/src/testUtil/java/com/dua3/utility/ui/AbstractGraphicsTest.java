@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * Concrete test classes should extend this class and implement the abstract methods to provide
  * the specific Graphics implementation to test.
  */
+@SuppressWarnings("resource")
 public abstract class AbstractGraphicsTest {
     private static final Logger LOG = LogManager.getLogManager().getLogger(AbstractGraphicsTest.class.getName());
 
@@ -71,7 +72,7 @@ public abstract class AbstractGraphicsTest {
      * Get the Graphics instance to be used for rendering operations.
      * @return the Graphics instance
      */
-    protected Graphics getGraphics() {
+    protected Graphics graphics() {
         return Objects.requireNonNull(graphics, "Graphics instance not set");
     }
 
@@ -93,8 +94,8 @@ public abstract class AbstractGraphicsTest {
      */
     protected void setUp() {
         Objects.requireNonNull(graphics, "Graphics instance not set");
-        graphics.setFill(Color.WHITE);
-        graphics.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+        graphics().setFill(Color.WHITE);
+        graphics().fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
     }
 
     /**
@@ -104,7 +105,7 @@ public abstract class AbstractGraphicsTest {
     @AfterEach
     protected void tearDown() {
         if (graphics != null) {
-            graphics.close();
+            graphics().close();
             graphics = null;
         }
     }
@@ -130,11 +131,11 @@ public abstract class AbstractGraphicsTest {
      */
     protected void testDimensionMethods() {
         // Test getWidth and getHeight
-        assertEquals(IMAGE_WIDTH, graphics.getWidth(), "Width should match the image width");
-        assertEquals(IMAGE_HEIGHT, graphics.getHeight(), "Height should match the image height");
+        assertEquals(IMAGE_WIDTH, graphics().getWidth(), "Width should match the image width");
+        assertEquals(IMAGE_HEIGHT, graphics().getHeight(), "Height should match the image height");
 
         // Test getDimension
-        Dimension2f dimension = graphics.getDimension();
+        Dimension2f dimension = graphics().getDimension();
         assertEquals(IMAGE_WIDTH, dimension.width(), "Dimension width should match the image width");
         assertEquals(IMAGE_HEIGHT, dimension.height(), "Dimension height should match the image height");
     }
@@ -144,10 +145,10 @@ public abstract class AbstractGraphicsTest {
      */
     protected void testUtilityMethods() {
         // Test getFontUtil
-        assertNotNull(graphics.getFontUtil(), "FontUtil should not be null");
+        assertNotNull(graphics().getFontUtil(), "FontUtil should not be null");
 
         // Test getDefaultFont
-        Font defaultFont = graphics.getDefaultFont();
+        Font defaultFont = graphics().getDefaultFont();
         assertNotNull(defaultFont, "Default font should not be null");
     }
 
@@ -156,39 +157,39 @@ public abstract class AbstractGraphicsTest {
      */
     protected void testStylingMethods() {
         // Test setFill and getFill
-        graphics.setFill(Color.RED);
-        assertEquals(Color.RED, graphics.getFill(), "Fill color should be RED");
+        graphics().setFill(Color.RED);
+        assertEquals(Color.RED, graphics().getFill(), "Fill color should be RED");
 
         // Test setStroke, getStrokeColor, and getStrokeWidth
-        graphics.setStroke(Color.BLUE, 5.0f);
-        assertEquals(Color.BLUE, graphics.getStrokeColor(), "Stroke color should be BLUE");
-        assertEquals(5.0f, graphics.getStrokeWidth(), "Stroke width should be 5.0");
+        graphics().setStroke(Color.BLUE, 5.0f);
+        assertEquals(Color.BLUE, graphics().getStrokeColor(), "Stroke color should be BLUE");
+        assertEquals(5.0f, graphics().getStrokeWidth(), "Stroke width should be 5.0");
 
         // Test setStrokeColor
-        graphics.setStrokeColor(Color.GREEN);
-        assertEquals(Color.GREEN, graphics.getStrokeColor(), "Stroke color should be GREEN");
+        graphics().setStrokeColor(Color.GREEN);
+        assertEquals(Color.GREEN, graphics().getStrokeColor(), "Stroke color should be GREEN");
 
         // Test setStrokeWidth
-        graphics.setStrokeWidth(2.0f);
-        assertEquals(2.0f, graphics.getStrokeWidth(), "Stroke width should be 2.0");
+        graphics().setStrokeWidth(2.0f);
+        assertEquals(2.0f, graphics().getStrokeWidth(), "Stroke width should be 2.0");
 
         // Test line dash pattern and offset
         float[] lineDashes = {8.0f, 4.0f, 2.0f, 4.0f};
-        graphics.setLineDashes(lineDashes);
-        assertArrayEquals(lineDashes, graphics.getLineDashes(), "Line dash pattern should match");
+        graphics().setLineDashes(lineDashes);
+        assertArrayEquals(lineDashes, graphics().getLineDashes(), "Line dash pattern should match");
         lineDashes[0] = 16.0f;
-        assertEquals(8.0f, graphics.getLineDashes()[0], "Line dash pattern should be copied");
+        assertEquals(8.0f, graphics().getLineDashes()[0], "Line dash pattern should be copied");
 
-        graphics.setLineDashOffset(3.0f);
-        assertEquals(3.0f, graphics.getLineDashOffset(), "Line dash offset should be 3.0");
+        graphics().setLineDashOffset(3.0f);
+        assertEquals(3.0f, graphics().getLineDashOffset(), "Line dash offset should be 3.0");
 
-        graphics.setLineDashes(new float[0]);
-        assertArrayEquals(new float[0], graphics.getLineDashes(), "Empty line dash pattern should be preserved");
+        graphics().setLineDashes(new float[0]);
+        assertArrayEquals(new float[0], graphics().getLineDashes(), "Empty line dash pattern should be preserved");
 
         // Test setFont and getFont
-        Font font = graphics.getDefaultFont().withSize(16).withColor(Color.BLACK);
-        graphics.setFont(font);
-        assertEquals(font, graphics.getFont(), "Font should match the set font");
+        Font font = graphics().getDefaultFont().withSize(16).withColor(Color.BLACK);
+        graphics().setFont(font);
+        assertEquals(font, graphics().getFont(), "Font should match the set font");
     }
 
     /**
@@ -197,25 +198,25 @@ public abstract class AbstractGraphicsTest {
     protected void testTransformationMethods() {
         // Test setTransformation and getTransformation
         AffineTransformation2f transform = AffineTransformation2f.rotate(Math.PI / 4);
-        graphics.setTransformation(transform);
-        assertEquals(transform, graphics.getTransformation(), "Transformation should match the set transformation");
+        graphics().setTransformation(transform);
+        assertEquals(transform, graphics().getTransformation(), "Transformation should match the set transformation");
 
         // Test transform method
-        AffineTransformation2f originalTransform = graphics.getTransformation();
+        AffineTransformation2f originalTransform = graphics().getTransformation();
         AffineTransformation2f additionalTransform = AffineTransformation2f.translate(10, 20);
-        AffineTransformation2f returnedTransform = graphics.transform(additionalTransform);
+        AffineTransformation2f returnedTransform = graphics().transform(additionalTransform);
 
         assertEquals(originalTransform, returnedTransform, "Transform should return the original transformation");
 
         AffineTransformation2f expectedCombinedTransform = AffineTransformation2f.combine(additionalTransform, originalTransform);
-        assertEquals(expectedCombinedTransform, graphics.getTransformation(), "Combined transformation should match expected");
+        assertEquals(expectedCombinedTransform, graphics().getTransformation(), "Combined transformation should match expected");
 
         // Test getInverseTransformation
-        AffineTransformation2f inverseTransform = graphics.getInverseTransformation();
+        AffineTransformation2f inverseTransform = graphics().getInverseTransformation();
         assertNotNull(inverseTransform, "Inverse transformation should not be null");
 
         // Reset transformation
-        graphics.setTransformation(AffineTransformation2f.identity());
+        graphics().setTransformation(AffineTransformation2f.identity());
     }
 
     /**
@@ -233,13 +234,13 @@ public abstract class AbstractGraphicsTest {
         Image image2 = convertImage(testImage);
 
         // Test drawImage with float coordinates
-        graphics.drawImage(image2, 50, 50);
+        graphics().drawImage(image2, 50, 50);
 
         // Test drawImage with Vector2f
-        graphics.drawImage(image2, Vector2f.of(200, 50));
+        graphics().drawImage(image2, Vector2f.of(200, 50));
 
-        graphics.transform(AffineTransformation2f.rotate(30.0 * Math.PI / 180.0, Vector2f.of(400, 100)));
-        graphics.drawImage(image2, Vector2f.of(350, 50));
+        graphics().transform(AffineTransformation2f.rotate(30.0 * Math.PI / 180.0, Vector2f.of(400, 100)));
+        graphics().drawImage(image2, Vector2f.of(350, 50));
     }
 
     protected abstract Image convertImage(BufferedImage testImage);
@@ -249,60 +250,60 @@ public abstract class AbstractGraphicsTest {
      */
     protected void testBasicShapeDrawingMethods() {
         // Test strokeRect with float parameters
-        graphics.setStroke(Color.BLACK, 2);
-        graphics.strokeRect(50, 50, 100, 100);
+        graphics().setStroke(Color.BLACK, 2);
+        graphics().strokeRect(50, 50, 100, 100);
 
         // Test strokeRect with Rectangle2f
         Rectangle2f rect = Rectangle2f.of(200, 50, 100, 100);
-        graphics.strokeRect(rect);
+        graphics().strokeRect(rect);
 
         // Test strokeRect with Vector2f and Dimension2f
         Vector2f pos = Vector2f.of(50, 200);
         Dimension2f dim = new Dimension2f(100, 100);
-        graphics.strokeRect(pos, dim);
+        graphics().strokeRect(pos, dim);
 
         // Test fillRect with float parameters
-        graphics.setFill(Color.BLUE);
-        graphics.fillRect(350, 50, 100, 100);
+        graphics().setFill(Color.BLUE);
+        graphics().fillRect(350, 50, 100, 100);
 
         // Test fillRect with Rectangle2f
-        graphics.setFill(Color.RED);
-        graphics.fillRect(Rectangle2f.of(350, 200, 100, 100));
+        graphics().setFill(Color.RED);
+        graphics().fillRect(Rectangle2f.of(350, 200, 100, 100));
 
         // Test strokeCircle with float parameters
-        graphics.setStroke(Color.GREEN, 2);
-        graphics.strokeCircle(100, 350, 50);
+        graphics().setStroke(Color.GREEN, 2);
+        graphics().strokeCircle(100, 350, 50);
 
         // Test strokeCircle with Vector2f
-        graphics.strokeCircle(Vector2f.of(250, 350), 50);
+        graphics().strokeCircle(Vector2f.of(250, 350), 50);
 
         // Test fillCircle with float parameters
-        graphics.setFill(Color.YELLOW);
-        graphics.fillCircle(400, 350, 50);
+        graphics().setFill(Color.YELLOW);
+        graphics().fillCircle(400, 350, 50);
 
         // Test fillCircle with Vector2f
-        graphics.setFill(Color.BLUE);
-        graphics.fillCircle(Vector2f.of(550, 350), 50);
+        graphics().setFill(Color.BLUE);
+        graphics().fillCircle(Vector2f.of(550, 350), 50);
 
         // Test strokeEllipse
-        graphics.setStroke(Color.GREEN, 2);
-        graphics.strokeEllipse(100, 450, 70, 40, 0);
+        graphics().setStroke(Color.GREEN, 2);
+        graphics().strokeEllipse(100, 450, 70, 40, 0);
 
         // Test fillEllipse
-        graphics.setFill(Color.RED);
-        graphics.fillEllipse(250, 450, 70, 40, (float) (Math.PI / 4));
+        graphics().setFill(Color.RED);
+        graphics().fillEllipse(250, 450, 70, 40, (float) (Math.PI / 4));
 
         // Test strokeLine with float parameters
-        graphics.setStroke(Color.BLACK, 3);
-        graphics.strokeLine(400, 400, 550, 500);
+        graphics().setStroke(Color.BLACK, 3);
+        graphics().strokeLine(400, 400, 550, 500);
 
         // Test strokeLine with Vector2f
-        graphics.setStroke(Color.RED, 3);
-        graphics.strokeLine(Vector2f.of(400, 500), Vector2f.of(550, 400));
+        graphics().setStroke(Color.RED, 3);
+        graphics().strokeLine(Vector2f.of(400, 500), Vector2f.of(550, 400));
 
         // Test strokePolyLines
-        graphics.setStroke(Color.GREEN, 2);
-        graphics.strokePolyLines(
+        graphics().setStroke(Color.GREEN, 2);
+        graphics().strokePolyLines(
                 Vector2f.of(50, 550),
                 Vector2f.of(100, 600),
                 Vector2f.of(150, 550),
@@ -310,8 +311,8 @@ public abstract class AbstractGraphicsTest {
         );
 
         // Test strokePolygon
-        graphics.setStroke(Color.BLUE, 2);
-        graphics.strokePolygon(
+        graphics().setStroke(Color.BLUE, 2);
+        graphics().strokePolygon(
                 Vector2f.of(250, 550),
                 Vector2f.of(300, 550),
                 Vector2f.of(325, 600),
@@ -334,8 +335,8 @@ public abstract class AbstractGraphicsTest {
                 .build();
 
         // Test strokePath
-        graphics.setStroke(Color.BLUE, 2);
-        graphics.strokePath(path);
+        graphics().setStroke(Color.BLUE, 2);
+        graphics().strokePath(path);
 
         // Create another path
         Path2f path2 = Path2f.builder()
@@ -347,8 +348,8 @@ public abstract class AbstractGraphicsTest {
                 .build();
 
         // Test fillPath
-        graphics.setFill(Color.RED);
-        graphics.fillPath(path2);
+        graphics().setFill(Color.RED);
+        graphics().fillPath(path2);
     }
 
     /**
@@ -365,25 +366,25 @@ public abstract class AbstractGraphicsTest {
                 .build();
 
         // Test clip with Path2f
-        graphics.clip(clipPath);
+        graphics().clip(clipPath);
 
         // Draw something that extends beyond the clip region
-        graphics.setFill(Color.BLUE);
-        graphics.fillRect(50, 50, 400, 400);
+        graphics().setFill(Color.BLUE);
+        graphics().fillRect(50, 50, 400, 400);
 
         // Reset clip
-        graphics.resetClip();
+        graphics().resetClip();
 
         // Test clip with Rectangle2f
         Rectangle2f clipRect = Rectangle2f.of(350, 100, 200, 200);
-        graphics.clip(clipRect);
+        graphics().clip(clipRect);
 
         // Draw something that extends beyond the clip region
-        graphics.setFill(Color.RED);
-        graphics.fillRect(300, 50, 400, 400);
+        graphics().setFill(Color.RED);
+        graphics().fillRect(300, 50, 400, 400);
 
         // Reset clip
-        graphics.resetClip();
+        graphics().resetClip();
     }
 
     /**
@@ -392,14 +393,14 @@ public abstract class AbstractGraphicsTest {
     protected void testTextRenderingMethods() {
         // Test drawText with CharSequence, float x, float y
         Font font = getFontUtil().getFont("Arial-10");
-        graphics.setFont(font);
-        graphics.drawText("Test drawText with x, y", 100, 100);
+        graphics().setFont(font);
+        graphics().drawText("Test drawText with x, y", 100, 100);
 
         // Test drawText with CharSequence, Vector2f
-        graphics.drawText("Test drawText with Vector2f", Vector2f.of(100, 150));
+        graphics().drawText("Test drawText with Vector2f", Vector2f.of(100, 150));
 
         // Test drawText with CharSequence, float x, float y, HAnchor, VAnchor
-        graphics.drawText("Test drawText with anchors", 300, 100, HAnchor.CENTER, VAnchor.MIDDLE);
+        graphics().drawText("Test drawText with anchors", 300, 100, HAnchor.CENTER, VAnchor.MIDDLE);
 
         // Test renderText with RichText
         // Note: This is a simplified test as RichText creation is complex
@@ -408,7 +409,7 @@ public abstract class AbstractGraphicsTest {
                     .append("Test renderText")
                     .toRichText();
 
-            graphics.renderText(
+            graphics().renderText(
                     Vector2f.of(100, 200),
                     richText,
                     HAnchor.LEFT,
@@ -420,7 +421,7 @@ public abstract class AbstractGraphicsTest {
             );
 
             // Test renderText with rotation
-            graphics.renderText(
+            graphics().renderText(
                     Vector2f.of(400, 200),
                     richText,
                     HAnchor.LEFT,
@@ -442,15 +443,15 @@ public abstract class AbstractGraphicsTest {
      */
     protected void testResetMethod() {
         // Draw something
-        graphics.setFill(Color.RED);
-        graphics.fillRect(100, 100, 200, 200);
+        graphics().setFill(Color.RED);
+        graphics().fillRect(100, 100, 200, 200);
 
         // Reset
-        graphics.reset();
+        graphics().reset();
 
         // Draw something else to verify reset worked
-        graphics.setFill(Color.BLUE);
-        graphics.fillRect(300, 300, 100, 100);
+        graphics().setFill(Color.BLUE);
+        graphics().fillRect(300, 300, 100, 100);
     }
 
     /**
@@ -475,31 +476,31 @@ public abstract class AbstractGraphicsTest {
         testTransformationMethods();
 
         // Test image drawing methods
-        graphics.setTransformation(AffineTransformation2f.translate(0, 0));
+        graphics().setTransformation(AffineTransformation2f.translate(0, 0));
         testImageDrawingMethods();
 
         // Test basic shape drawing methods
-        graphics.setTransformation(AffineTransformation2f.translate(0, 100));
+        graphics().setTransformation(AffineTransformation2f.translate(0, 100));
         testBasicShapeDrawingMethods();
 
         // Test path operations
-        graphics.setTransformation(AffineTransformation2f.translate(0, 200));
+        graphics().setTransformation(AffineTransformation2f.translate(0, 200));
         testPathOperations();
 
         // Test clipping operations
-        graphics.setTransformation(AffineTransformation2f.translate(400, 0));
+        graphics().setTransformation(AffineTransformation2f.translate(400, 0));
         testClippingOperations();
 
         // Test text rendering methods
-        graphics.setTransformation(AffineTransformation2f.translate(400, 400));
+        graphics().setTransformation(AffineTransformation2f.translate(400, 400));
         testTextRenderingMethods();
 
         // Add a title to the image
-        graphics.setTransformation(AffineTransformation2f.identity());
+        graphics().setTransformation(AffineTransformation2f.identity());
         Font titleFont = getFontUtil().getFont("arial-20");
-        graphics.setFont(titleFont);
+        graphics().setFont(titleFont);
         String title = "Graphics Test - All Methods - %s (%s)".formatted(getClass().getSimpleName(), Platform.currentPlatform());
-        graphics.drawText(title, IMAGE_HEIGHT / 2.0f, 24, HAnchor.CENTER, VAnchor.TOP);
+        graphics().drawText(title, IMAGE_HEIGHT / 2.0f, 24, HAnchor.CENTER, VAnchor.TOP);
 
         // Get the rendered image
         BufferedImage image = getRenderedImage();

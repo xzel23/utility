@@ -80,6 +80,7 @@ import java.util.function.Predicate;
 /**
  * Utility methods for Swing applications.
  */
+@SuppressWarnings("NumericCastThatLosesPrecision")
 public final class SwingUtil {
     /**
      * Logger instance.

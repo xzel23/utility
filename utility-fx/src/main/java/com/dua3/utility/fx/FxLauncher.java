@@ -114,7 +114,6 @@ public final class FxLauncher {
     static int logBufferSize = 10_000;
     static final AtomicReference<@Nullable LogBuffer> logBuffer = new AtomicReference<>();
     static final AtomicReference<@Nullable FxLogWindow> logWindow = new AtomicReference<>();
-    static final AtomicReference<@Nullable FxLogPane> logPane = new AtomicReference<>();
     private static final AtomicBoolean macOpenFileHandlerInstalled = new AtomicBoolean(false);
     private static final OpenFilesDispatcher openFilesDispatcher = new OpenFilesDispatcher(FxLauncher::dispatchOpenFiles);
 
@@ -530,7 +529,7 @@ public final class FxLauncher {
      * @param addOptions A collection of consumers for configuring additional command-line arguments.
      * @return The return code indicating the application's exit status. Typically returns {@code RC_SUCCESS} on successful execution or {@code RC_ERROR} in case of an exception.
      */
-    @SuppressWarnings("java:S106")
+    @SuppressWarnings({"java:S106", "JavaPrintToLogpoint"})
     public static int launchApplication(
             String applicationClassName,
             String[] args,
@@ -581,7 +580,6 @@ public final class FxLauncher {
         var arguments = argumentsParser.parse(args);
 
         if (arguments.isSet(flagHelp)) {
-            //noinspection UseOfSystemOutOrSystemErr
             System.out.println(argumentsParser.help());
             return RC_SUCCESS;
         }
@@ -645,7 +643,7 @@ public final class FxLauncher {
     }
 
     private static void initLogBuffer() {
-        logBuffer.updateAndGet( buffer -> {
+        logBuffer.updateAndGet(buffer -> {
             if (buffer == null) {
                 buffer = new LogBuffer("Application Log", logBufferSize);
             }
@@ -675,6 +673,7 @@ public final class FxLauncher {
                 Repetitions.ZERO_OR_MORE,
                 "rule",
                 arg -> Arrays.stream(arg.split(",")).map(String::trim).forEach(rule -> {
+                    assert loggingConfiguration != null : "internal error: Logging configuration not initialized";
                     String[] parts = rule.split("=");
                     switch (parts.length) {
                         case 1 -> {
@@ -807,9 +806,9 @@ public final class FxLauncher {
     }
 
     /**
-     * Retrieves the current instance of the FxLogWindow, if it exists.
+     * Retrieves the current instance of the {@link FxLogWindow}, if it exists.
      *
-     * @return an Optional containing the FxLogWindow instance, or an empty Optional if none is present.
+     * @return an {@link Optional} containing the FxLogWindow instance or an empty {@code Optional} if none is present.
      */
     public static Optional<FxLogWindow> getLogWindow() {
         return Optional.ofNullable(logWindow.get());

@@ -237,6 +237,8 @@ could not be loaded.
 
 ## 24.6.2
 
+- fix native window decorations not being updated when darkmode is toggled
+- fix an NPE during construction of the JavaFX TextEditorPane
 - added some constants to MathUtil
 - code cleanup; fixed some sonar and Qodana warnings
 - improve test coverage
