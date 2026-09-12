@@ -1394,7 +1394,11 @@ public final class TextUtil {
      * @return {@code true} if the CharSequence is blank, {@code false} otherwise
      */
     public static boolean isBlank(CharSequence cs) {
-        return cs.codePoints().allMatch(Character::isWhitespace);
+        return switch (cs) {
+            case String s -> s.isBlank();
+            case RichText rt -> rt.isBlank();
+            default -> cs.codePoints().allMatch(Character::isWhitespace);
+        };
     }
 
     /**
