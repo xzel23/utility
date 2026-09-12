@@ -178,7 +178,7 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
      * @param i index
      * @return the i-th element
      */
-    public @Nullable T get(int i) {
+    public T get(int i) {
         checkIndex(i);
         return data[index(i)];
     }
@@ -195,8 +195,17 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
 
     @Override
     public boolean contains(@Nullable Object o) {
+        if (o == null) {
+            for (T item : this) {
+                if (item == null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         for (T item : this) {
-            if (Objects.equals(item, o)) {
+            if (o.equals(item)) {
                 return true;
             }
         }
