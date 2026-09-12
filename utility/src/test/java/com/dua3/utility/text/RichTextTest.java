@@ -1012,6 +1012,7 @@ class RichTextTest {
         // Test with whitespace only
         assertTrue(RichText.valueOf("   ").isBlank());
         assertTrue(RichText.valueOf("\t\n\r").isBlank());
+        assertTrue(RichText.valueOf("\u2003\u205f\u3000").isBlank());
 
         // Test with non-blank text
         assertFalse(RichText.valueOf("Hello").isBlank());

@@ -3,6 +3,7 @@ package com.dua3.utility.lang;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.math.MathUtil;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -277,6 +278,7 @@ class LangUtilTest {
     }
 
     @Test
+    @SuppressFBWarnings("DM_STRING_CTOR") // we need a new String instancw to avoid object identity
     void containsSearchesArraysIncludingNulls() {
         String[] values = {"first", null, "last", "first"};
 
@@ -288,6 +290,7 @@ class LangUtilTest {
     }
 
     @Test
+    @SuppressFBWarnings("DM_STRING_CTOR") // we need a new String instancw to avoid object identity
     void indexOfFindsFirstMatchingElement() {
         String[] values = {"first", null, "last", "first"};
 
@@ -311,6 +314,7 @@ class LangUtilTest {
     }
 
     @Test
+    @SuppressFBWarnings("DM_STRING_CTOR") // we need a new String instancw to avoid object identity
     void lastIndexOfFindsLastMatchingElement() {
         String[] values = {"first", null, "last", "first"};
 

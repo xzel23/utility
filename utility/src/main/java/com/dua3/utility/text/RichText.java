@@ -528,7 +528,22 @@ public final class RichText
      *         {@code false} otherwise
      */
     public boolean isBlank() {
-        return isEmpty() || TextUtil.isBlank(this);
+        int end = start + length;
+        for (int index = start; index < end; ) {
+            char high = text.charAt(index++);
+            int codePoint = high;
+            if (Character.isHighSurrogate(high) && index < end) {
+                char low = text.charAt(index);
+                if (Character.isLowSurrogate(low)) {
+                    codePoint = Character.toCodePoint(high, low);
+                    index++;
+                }
+            }
+            if (!Character.isWhitespace(codePoint)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -1282,7 +1297,7 @@ public final class RichText
         String base = toString();
         List<Run> updatedRuns = new ArrayList<>();
         boolean changed = false;
-        for (Run r : runs()) {
+        for (Run r : run) {
             int rStart = r.getStart() - start;
             int rEnd = rStart + r.length();
             int overlapStart = Math.max(from, rStart);
@@ -1387,7 +1402,7 @@ public final class RichText
      */
     @Override
     public List<Run> runs() {
-        return List.of(run);
+        return LangUtil.asUnmodifiableList(run);
     }
 
     @Override
