@@ -1258,12 +1258,11 @@ public final class TextUtil {
                 sb.append(s1.charAt(i));
             }
         }
-        String s = sb.toString();
 
         return String.format(Locale.ROOT,
                 "mailto:%s?subject=%s",
                 email,
-                s);
+                sb);
     }
 
     /**

@@ -152,6 +152,7 @@ public final class RichText
      */
     public static RichText valueOf(@Nullable Object obj, RichText valueIfNull) {
         return switch (obj) {
+            case RichText rt -> rt;
             case ToRichText trt -> trt.toRichText();
             case CharSequence cs -> cs.isEmpty() ? EMPTY_TEXT : valueOf(cs.toString());
             case null -> valueIfNull;

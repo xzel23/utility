@@ -179,8 +179,9 @@ public final class DarkModeDetectorLinux extends DarkModeDetectorBase {
                         if (l.trim().startsWith(")")) break;
                     }
                     String content = block.toString();
-                    if (content.toLowerCase(Locale.ROOT).contains("org.freedesktop.appearance")
-                            && content.toLowerCase(Locale.ROOT).contains("color-scheme")) {
+                    String contentLowerCase = content.toLowerCase(Locale.ROOT);
+                    if (contentLowerCase.contains("org.freedesktop.appearance")
+                            && contentLowerCase.contains("color-scheme")) {
                         Integer v = extractUint32(content);
                         if (v != null) {
                             boolean dark = v == 1;
