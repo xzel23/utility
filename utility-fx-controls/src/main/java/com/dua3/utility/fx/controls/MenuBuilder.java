@@ -4,7 +4,6 @@ import com.dua3.utility.fx.controls.abstract_builders.MenuItemBuilder;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
