@@ -767,7 +767,7 @@ public final class IoUtil {
      * @return Runnable instance that closes all passed arguments when run
      */
     public static Runnable composedClose(@Nullable AutoCloseable... closeables) {
-        return () -> doCloseAll(Arrays.asList(closeables));
+        return () -> doCloseAll(LangUtil.asUnmodifiableList(closeables));
     }
 
     /**

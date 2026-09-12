@@ -248,7 +248,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
 
     @Override
     public Iterator<T> iterator() {
-        return Arrays.asList(elements).iterator();
+        return LangUtil.asUnmodifiableList(elements).iterator();
     }
 
     @Override

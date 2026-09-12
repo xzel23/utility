@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.lang.LangUtil;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.value.ObservableValue;
@@ -70,7 +71,7 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      * @return The current instance of FileInputBuilder, allowing for method chaining.
      */
     public FileInputBuilder filter(FileChooser.ExtensionFilter... filter) {
-        extensionFilters.addAll(Arrays.asList(filter));
+        extensionFilters.addAll(LangUtil.asUnmodifiableList(filter));
         return self();
     }
 

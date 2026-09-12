@@ -69,7 +69,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
             Function<? super @Nullable T, ? extends Node> graphic,
             T... items
     ) {
-        this(edit, add, remove, dflt, format, graphic, Arrays.asList(items));
+        this(edit, add, remove, dflt, format, graphic, LangUtil.asUnmodifiableList(items));
     }
 
     /**

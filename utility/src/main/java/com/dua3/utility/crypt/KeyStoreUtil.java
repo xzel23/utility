@@ -207,7 +207,7 @@ public final class KeyStoreUtil {
         }
 
         try {
-            List<Certificate> extendedChain = new ArrayList<>(Arrays.asList(chain));
+            List<Certificate> extendedChain = new ArrayList<>(LangUtil.asUnmodifiableList(chain));
             X509Certificate lastCert = (X509Certificate) chain[chain.length - 1];
 
             // Keep extending the chain until we reach a self-signed certificate or can't find parent

@@ -414,7 +414,7 @@ public final class FxLauncher {
             String appDescription,
             Consumer<ArgumentsParserBuilder>... addOptions
     ) {
-        return launchApplicationI18N(applicationClassName, args, initI18n, appName, version, copyright, developerMail, appDescription, Arrays.asList(addOptions));
+        return launchApplicationI18N(applicationClassName, args, initI18n, appName, version, copyright, developerMail, appDescription, LangUtil.asUnmodifiableList(addOptions));
     }
 
     /**
@@ -447,8 +447,7 @@ public final class FxLauncher {
             Collection<? extends Consumer<ArgumentsParserBuilder>> addOptions
     ) {
         // set the locale
-        List<String> argList = Arrays.asList(args);
-        int localeIdx = argList.indexOf("--locale");
+        int localeIdx = LangUtil.indexOf(args, "--locale");
         if (localeIdx >= 0 && localeIdx < args.length - 1) {
             String tag = args[localeIdx + 1];
             try {
@@ -513,7 +512,7 @@ public final class FxLauncher {
             String appDescription,
             Consumer<ArgumentsParserBuilder>... addOptions
     ) {
-        return launchApplication(applicationClassName, args, appName, version, copyright, developerMail, appDescription, Arrays.asList(addOptions));
+        return launchApplication(applicationClassName, args, appName, version, copyright, developerMail, appDescription, LangUtil.asUnmodifiableList(addOptions));
     }
 
     /**

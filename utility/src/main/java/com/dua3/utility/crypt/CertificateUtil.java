@@ -522,7 +522,7 @@ public final class CertificateUtil {
 
     private static byte[] encodeCertificates(Certificate[] certificates, String encoding) throws CertificateException {
         CertificateFactory cf = CertificateFactory.getInstance(CERT_TYPE_X_509);
-        List<Certificate> certList = Arrays.asList(certificates);
+        List<Certificate> certList = List.of(certificates);
         CertPath certPath = cf.generateCertPath(certList);
         return certPath.getEncoded(encoding);
     }

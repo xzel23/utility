@@ -32,7 +32,7 @@ public class MenuBuilder extends MenuItemBuilder<Menu, MenuBuilder> {
      * @return this MenuBuilder instance
      */
     public MenuBuilder items(MenuItem... items) {
-        this.items = Arrays.asList(items);
+        this.items = List.of(items);
         return self();
     }
 }

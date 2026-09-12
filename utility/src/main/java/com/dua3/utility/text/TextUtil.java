@@ -310,7 +310,7 @@ public final class TextUtil {
      */
     @SafeVarargs
     public static String transform(String template, Map.Entry<String, ?>... substitutions) {
-        return transform(template, Arrays.asList(substitutions));
+        return transform(template, LangUtil.asUnmodifiableList(substitutions));
     }
 
     /**

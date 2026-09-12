@@ -209,7 +209,7 @@ public final class RichText
      * @return RichText.valueOf(String.valueOf ( obj))
      */
     public static RichText valueOf(@Nullable Object obj, Style... styles) {
-        return valueOf(obj, Arrays.asList(styles));
+        return valueOf(obj, LangUtil.asUnmodifiableList(styles));
     }
 
     /**
