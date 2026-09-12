@@ -238,7 +238,7 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
 
     @Override
     public int lastIndexOf(@Nullable Object o) {
-        return indexOf(o); // elememts are unique
+        return indexOf(o); // elements are unique
     }
 
     @Override
