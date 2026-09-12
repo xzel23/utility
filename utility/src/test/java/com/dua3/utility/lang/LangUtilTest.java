@@ -41,6 +41,7 @@ import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -194,6 +195,29 @@ class LangUtilTest {
     }
 
     @Test
+    void checkOverloadsFormatTheirMessages() {
+        assertDoesNotThrow(() -> LangUtil.checkArg(true, "valid"));
+        assertEquals("invalid", assertThrows(IllegalArgumentException.class,
+                () -> LangUtil.checkArg(false, "invalid")).getMessage());
+        assertDoesNotThrow(() -> LangUtil.checkArg(true, "%d/%d", 1L, 2L));
+        assertEquals("1/2", assertThrows(IllegalArgumentException.class,
+                () -> LangUtil.checkArg(false, "%d/%d", 1L, 2L)).getMessage());
+
+        assertDoesNotThrow(() -> LangUtil.check(true, "valid"));
+        assertEquals("invalid", assertThrows(LangUtil.FailedCheckException.class,
+                () -> LangUtil.check(false, "invalid")).getMessage());
+        assertDoesNotThrow(() -> LangUtil.check(true, "%s/%s", "a", "b"));
+        assertEquals("a/b", assertThrows(LangUtil.FailedCheckException.class,
+                () -> LangUtil.check(false, "%s/%s", "a", "b")).getMessage());
+        assertDoesNotThrow(() -> LangUtil.check(true, "%d", 1L));
+        assertEquals("1", assertThrows(LangUtil.FailedCheckException.class,
+                () -> LangUtil.check(false, "%d", 1L)).getMessage());
+        assertDoesNotThrow(() -> LangUtil.check(true, "%.1f", 1.2));
+        assertEquals("1.2", assertThrows(LangUtil.FailedCheckException.class,
+                () -> LangUtil.check(false, "%.1f", 1.2)).getMessage());
+    }
+
+    @Test
     void testRemoveLeadingAndTrailing() {
         List<Integer> list = new ArrayList<>(List.of(1, 1, 2, 3, 1, 1));
         LangUtil.removeLeadingAndTrailing(list, i -> i == 1);
@@ -250,6 +274,63 @@ class LangUtilTest {
     @Test
     void ignore() {
         assertDoesNotThrow(() -> LangUtil.ignore("test"));
+    }
+
+    @Test
+    void containsSearchesArraysIncludingNulls() {
+        String[] values = {"first", null, "last", "first"};
+
+        assertTrue(LangUtil.contains(values, new String("first")));
+        assertTrue(LangUtil.contains(values, null));
+        assertFalse(LangUtil.contains(values, "missing"));
+        assertFalse(LangUtil.contains(new String[0], "first"));
+        assertFalse(LangUtil.contains(null, "first"));
+    }
+
+    @Test
+    void indexOfFindsFirstMatchingElement() {
+        String[] values = {"first", null, "last", "first"};
+
+        assertEquals(0, LangUtil.indexOf(values, new String("first")));
+        assertEquals(1, LangUtil.indexOf(values, null));
+        assertEquals(-1, LangUtil.indexOf(values, "missing"));
+        assertEquals(-1, LangUtil.indexOf(new String[0], "first"));
+        assertEquals(-1, LangUtil.indexOf(null, "first"));
+    }
+
+    @Test
+    void indexOfStartsAtTheGivenIndex() {
+        String[] values = {"first", null, "last", "first"};
+
+        assertEquals(3, LangUtil.indexOf(values, "first", 1));
+        assertEquals(1, LangUtil.indexOf(values, null, 0));
+        assertEquals(-1, LangUtil.indexOf(values, null, 2));
+        assertEquals(-1, LangUtil.indexOf(values, "first", values.length));
+        assertEquals(0, LangUtil.indexOf(values, "first", -1));
+        assertEquals(-1, LangUtil.indexOf(null, "first", 0));
+    }
+
+    @Test
+    void lastIndexOfFindsLastMatchingElement() {
+        String[] values = {"first", null, "last", "first"};
+
+        assertEquals(3, LangUtil.lastIndexOf(values, new String("first")));
+        assertEquals(1, LangUtil.lastIndexOf(values, null));
+        assertEquals(-1, LangUtil.lastIndexOf(values, "missing"));
+        assertEquals(-1, LangUtil.lastIndexOf(new String[0], "first"));
+        assertEquals(-1, LangUtil.lastIndexOf(null, "first"));
+    }
+
+    @Test
+    void lastIndexOfStartsAtTheGivenIndex() {
+        String[] values = {"first", null, "last", "first"};
+
+        assertEquals(0, LangUtil.lastIndexOf(values, "first", 2));
+        assertEquals(1, LangUtil.lastIndexOf(values, null, 2));
+        assertEquals(-1, LangUtil.lastIndexOf(values, "last", 1));
+        assertEquals(3, LangUtil.lastIndexOf(values, "first", values.length));
+        assertEquals(-1, LangUtil.lastIndexOf(values, "first", -1));
+        assertEquals(-1, LangUtil.lastIndexOf(null, "first", 0));
     }
 
     @Test
@@ -313,6 +394,17 @@ class LangUtilTest {
     }
 
     @Test
+    void uncheckedBiConsumer() {
+        AtomicReference<String> received = new AtomicReference<>();
+        LangUtil.uncheckedConsumer((String first, String second) -> received.set(first + second)).accept("a", "b");
+        assertEquals("ab", received.get());
+
+        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedConsumer((String first, String second) -> {
+            throw new IOException("test");
+        }).accept("a", "b"));
+    }
+
+    @Test
     void uncheckedSupplier() {
         WrappedException trhown = assertThrows(WrappedException.class,
                 () -> LangUtil.unchecked(() -> Class.forName("com.dua3.utility.lang.DoesNotExist")).get(), "test");
@@ -329,15 +421,39 @@ class LangUtilTest {
 
     @Test
     void uncheckedRunnable() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.unchecked(() -> {
+        assertThrows(UncheckedIOException.class, () -> LangUtil.unchecked((LangUtil.RunnableThrows<IOException>) () -> {
             throw new IOException("test");
         }).run(), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.unchecked(() -> {
+        assertThrows(IllegalStateException.class, () -> LangUtil.unchecked((LangUtil.RunnableThrows<IllegalStateException>) () -> {
             throw new IllegalStateException("test");
         }).run(), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.unchecked(() -> {
+        assertThrows(WrappedException.class, () -> LangUtil.unchecked((LangUtil.RunnableThrows<Exception>) () -> {
             throw new Exception("test");
         }).run(), "test");
+    }
+
+    @Test
+    void cleanerReturnsSingletonAndAcceptsCleanupRegistrations() {
+        assertSame(LangUtil.getCleaner(), LangUtil.getCleaner());
+        assertDoesNotThrow(() -> LangUtil.registerForCleanup(new Object(), () -> { }));
+    }
+
+    @Test
+    void isOfKnownImmutableTypeIdentifiesImmutableAndMutableObjects() {
+        assertTrue(LangUtil.isOfKnownImmutableType("immutable"));
+        assertTrue(LangUtil.isOfKnownImmutableType(Instant.EPOCH));
+        assertFalse(LangUtil.isOfKnownImmutableType(new StringBuilder()));
+        assertFalse(LangUtil.isOfKnownImmutableType(null));
+    }
+
+    @Test
+    void atomicBooleanNegationMethodsReturnTheExpectedValue() {
+        AtomicBoolean value = new AtomicBoolean(false);
+
+        assertTrue(LangUtil.negateAndGet(value));
+        assertTrue(value.get());
+        assertTrue(LangUtil.getAndnegate(value));
+        assertFalse(value.get());
     }
 
     @Test

@@ -521,7 +521,111 @@ public final class LangUtil {
     }
 
     /**
-     * Test if first argument is equal to one of the other arguments.
+     * Checks if the specified array contains the specified element.
+     *
+     * @param <T> the element type of the array
+     * @param haystack the array to be searched, may be null
+     * @param needle the element to find, may be null
+     * @return true if the array contains the specified element, false otherwise
+     */
+    public static <T> boolean contains(@Nullable T @Nullable [] haystack, @Nullable Object needle) {
+        return indexOf(haystack, needle) >= 0;
+    }
+
+    /**
+     * Searches for the first occurrence of the specified element in the given array.
+     *
+     * @param <T> the type of elements in the array
+     * @param haystack the array in which to search for the specified element, may be null
+     * @param needle the element to search for, may be null
+     * @return the index of the first occurrence of the specified element in the array,
+     * or -1 if the element is not found or if the array is null
+     */
+    public static <T> int indexOf(@Nullable T @Nullable [] haystack, @Nullable Object needle) {
+        return indexOf(haystack, needle, 0);
+    }
+
+    /**
+     * Searches for the first occurrence of the specified element in the given array.
+     *
+     * @param <T> the type of elements in the array
+     * @param haystack the array in which to search for the specified element, may be null
+     * @param needle the element to search for, may be null
+     * @param start the index to start the search from; a negative value is treated as zero
+     * @return the index of the first occurrence of the specified element in the array,
+     * or -1 if the element is not found or if the array is null
+     */
+    public static <T> int indexOf(@Nullable T @Nullable [] haystack, @Nullable Object needle, int start) {
+        if (haystack == null) {
+            return -1;
+        }
+
+        if (needle == null) {
+            for (int idx = Math.max(0, start); idx < haystack.length; idx++) {
+                if (haystack[idx] == null) {
+                    return idx;
+                }
+            }
+            return -1;
+        }
+
+        for (int idx = Math.max(0, start); idx < haystack.length; idx++) {
+            if (needle.equals(haystack[idx])) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Searches for the last occurrence of the specified element in the given array.
+     *
+     * @param <T> the type of elements in the array
+     * @param haystack the array in which to search for the specified element, may be null
+     * @param needle the element to search for, may be null
+     * @return the index of the last occurrence of the specified element in the array,
+     * or -1 if the element is not found or if the array is null
+     */
+    public static <T> int lastIndexOf(@Nullable T @Nullable [] haystack, @Nullable Object needle) {
+        return lastIndexOf(haystack, needle, haystack == null ? -1 : haystack.length - 1);
+    }
+
+    /**
+     * Searches backwards for the specified element in the given array.
+     *
+     * @param <T> the type of elements in the array
+     * @param haystack the array in which to search for the specified element, may be null
+     * @param needle the element to search for, may be null
+     * @param start the index to start the backwards search from; values beyond the end of the array
+     *              are treated as the last index
+     * @return the index of the last occurrence of the specified element at or before {@code start},
+     * or -1 if the element is not found or if the array is null
+     */
+    public static <T> int lastIndexOf(@Nullable T @Nullable [] haystack, @Nullable Object needle, int start) {
+        if (haystack == null) {
+            return -1;
+        }
+
+        int firstIndex = Math.min(start, haystack.length - 1);
+        if (needle == null) {
+            for (int idx = firstIndex; idx >= 0; idx--) {
+                if (haystack[idx] == null) {
+                    return idx;
+                }
+            }
+            return -1;
+        }
+
+        for (int idx = firstIndex; idx >= 0; idx--) {
+            if (needle.equals(haystack[idx])) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Test if the first argument is equal to one of the other arguments.
      *
      * @param <T>  argument type
      * @param arg  first argument
@@ -531,7 +635,7 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <T extends @Nullable Object> boolean isOneOf(T arg, T... rest) {
-        return asUnmodifiableList(rest).contains(arg);
+        return contains(rest, arg);
     }
 
     /**
@@ -545,7 +649,7 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <T extends @Nullable Object> boolean isNoneOf(T arg, T... rest) {
-        return !asUnmodifiableList(rest).contains(arg);
+        return !contains(rest, arg);
     }
 
     /**
