@@ -22,7 +22,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
     private boolean snapToTicks = false;
     private boolean showTickLabels = false;
 
-    private DoubleFunction<String> formatter = null;
+    private DoubleFunction<String> formatter = v -> "";
     private double offset = 0.0;
     private @Nullable Orientation orientation;
     private @Nullable Double min = null;
@@ -267,9 +267,7 @@ public class SliderBuilder extends InputControlBuilder<SliderBuilder, Double> {
      */
     @Override
     public SliderWithButtons build() {
-        DoubleFunction<String> fmtr = LangUtil.orElse(formatter, v -> "");
-
-        SliderWithButtons slider = new SliderWithButtons(mode, fmtr, offset);
+        SliderWithButtons slider = new SliderWithButtons(mode, formatter, offset);
         applyTo(slider);
 
         LangUtil.applyIfNonNull(orientation, slider::setOrientation);
