@@ -105,6 +105,7 @@ import java.util.function.Function;
  * <p>Inline controls can be embedded by assigning styles containing
  * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE_FACTORY} to a run.
  */
+@SuppressWarnings("NumericCastThatLosesPrecision")
 public class TextPane extends Control implements RichTextPane {
 
     /**
