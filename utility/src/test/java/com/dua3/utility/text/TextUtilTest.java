@@ -1063,6 +1063,31 @@ class TextUtilTest {
     }
 
     @Test
+    void testAsCharSequenceCharAtUsesViewBounds() {
+        CharSequence cs = TextUtil.asCharSequence("012345".toCharArray()).subSequence(2, 4);
+
+        Assertions.assertEquals(2, cs.length());
+        Assertions.assertEquals('2', cs.charAt(0));
+        Assertions.assertEquals('3', cs.charAt(1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> cs.charAt(-1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> cs.charAt(cs.length()));
+    }
+
+    @Test
+    void testAsCharSequenceEqualityAndHashCode() {
+        char[] chars = "x-value-y".toCharArray();
+        CharSequence first = TextUtil.asCharSequence(chars).subSequence(2, 7);
+        CharSequence second = TextUtil.asCharSequence(chars).subSequence(2, 7);
+        CharSequence differentRange = TextUtil.asCharSequence("xvalue".toCharArray()).subSequence(1, 6);
+
+        Assertions.assertEquals("value", first.toString());
+        Assertions.assertEquals(first, second);
+        Assertions.assertEquals(first.hashCode(), second.hashCode());
+        Assertions.assertNotEquals(first, differentRange);
+        Assertions.assertNotEquals(first, "value");
+    }
+
+    @Test
     void testStripTrailingWithWhitespace() {
         String input = "Test String   ";
         CharSequence result = TextUtil.stripTrailing(input);

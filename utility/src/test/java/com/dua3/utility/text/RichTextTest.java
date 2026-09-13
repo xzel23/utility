@@ -578,6 +578,38 @@ class RichTextTest {
     }
 
     @Test
+    void testReplaceRangeCanSpliceAnExistingSegmentedBackingSequence() {
+        RichText first = RichText.valueOf("0123456789").replace(2, 8, RichText.valueOf("abcdef"));
+        RichText updated = first.replace(3, 9, RichText.valueOf("XY"));
+
+        assertEquals("01aXY9", updated.toString());
+        assertEquals('0', updated.charAt(0));
+        assertEquals('a', updated.charAt(2));
+        assertEquals('X', updated.charAt(3));
+        assertEquals('Y', updated.charAt(4));
+        assertEquals('9', updated.charAt(5));
+        assertEquals("1aXY", updated.subSequence(1, 5).toString());
+    }
+
+    @Test
+    void testReplaceRangeCompactsExcessiveNumberOfSegments() {
+        RichText actual = RichText.valueOf("seed");
+        StringBuilder expected = new StringBuilder("seed");
+
+        for (int i = 0; i < 513; i++) {
+            char inserted = (char) ('A' + i % 26);
+            actual = actual.replace(0, 0, RichText.valueOf(inserted));
+            expected.insert(0, inserted);
+        }
+
+        assertEquals(expected.toString(), actual.toString());
+        assertEquals(expected.length(), actual.length());
+        assertEquals(expected.charAt(0), actual.charAt(0));
+        assertEquals(expected.charAt(256), actual.charAt(256));
+        assertEquals(expected.charAt(expected.length() - 1), actual.charAt(actual.length() - 1));
+    }
+
+    @Test
     void testReplaceRangeWholeTextReturnsReplacement() {
         RichText source = RichText.valueOf("abcdef");
         RichText replacement = RichText.valueOf("XYZ").apply(Style.BOLD);

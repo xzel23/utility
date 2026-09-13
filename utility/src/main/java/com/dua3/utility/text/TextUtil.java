@@ -507,6 +507,7 @@ public final class TextUtil {
 
         @Override
         public char charAt(int index) {
+            Objects.checkIndex(index, length());
             return charArray[start + index];
         }
 
