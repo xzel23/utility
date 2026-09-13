@@ -687,8 +687,8 @@ public class TextPane extends Control implements RichTextPane {
             return sp;
         }
 
-        for (Node n : lookupAll(".scroll-pane")) {
-            if (n instanceof ScrollPane sp) {
+        for (Node node : lookupAll(".scroll-pane")) {
+            if (node instanceof ScrollPane sp) {
                 scrollPane = sp;
                 return sp;
             }
@@ -1569,7 +1569,7 @@ public class TextPane extends Control implements RichTextPane {
         private final StyleableObjectProperty<Paint> textFill = new StyleableObjectProperty<>(javafx.scene.paint.Color.BLACK) {
             @Override
             protected void invalidated() {
-                if (getSkinnable() instanceof TextEditorPane editor) {
+                if (editor != null) {
                     editor.refreshTypingStylesForTextAreaColors();
                 }
                 invalidate();
@@ -1728,8 +1728,9 @@ public class TextPane extends Control implements RichTextPane {
                 editor.documentVersionProperty().addListener((obs, oldVal, newVal) -> invalidate());
             }
             control.wrapTextProperty().addListener((obs, oldVal, newVal) -> {
-                scrollPane.setFitToWidth(newVal);
-                scrollPane.setHbarPolicy(newVal == Boolean.TRUE ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                boolean nv = newVal != null && newVal;
+                scrollPane.setFitToWidth(nv);
+                scrollPane.setHbarPolicy(nv ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
                 invalidate();
             });
             control.fontProperty().addListener((obs, oldVal, newVal) -> invalidate());
@@ -2049,7 +2050,7 @@ public class TextPane extends Control implements RichTextPane {
             }
 
             Point2D point = contentPane.sceneToLocal(sceneX, dragSceneY);
-            int caret = getSkinnable().sourcePositionForPoint(point, getAvailableWidth(), lines);
+            int caret = editor.sourcePositionForPoint(point, getAvailableWidth(), lines);
             editor.selectPositionCaret(caret);
         }
 
@@ -2220,11 +2221,7 @@ public class TextPane extends Control implements RichTextPane {
         }
 
         private boolean shouldAnimateCaret() {
-            TextPane control = getSkinnable();
-            if (!(control instanceof TextEditorPane tep)) {
-                return false;
-            }
-            return tep.isEditable() && hasEditorFocus(control);
+            return editor != null && editor.isEditable() && hasEditorFocus(editor);
         }
 
         private void restartCaretAnimation() {
