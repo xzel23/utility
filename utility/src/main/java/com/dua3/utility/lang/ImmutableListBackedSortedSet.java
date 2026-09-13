@@ -440,7 +440,6 @@ public final class ImmutableListBackedSortedSet<T extends @Nullable Object> exte
         @Override
         public Comparator<? super T> comparator() {
             Comparator<? super T> cmp = LangUtil.orNaturalOrder(original.comparator());
-            assert cmp != null : "the comparator should never be null; if the original comparator was null, a natural order comparator would be returned";
             return cmp.reversed();
         }
 
