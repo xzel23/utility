@@ -1894,7 +1894,7 @@ public final class LangUtil {
         /**
          * The cached value provided by the supplier.
          */
-        private SoftReference<T> ref = new SoftReference<>(null);
+        private SoftReference<@Nullable T> ref = new SoftReference<>(null);
 
         WeakCachingSupplier(Supplier<? extends T> supplier) {
             this.supplier = supplier;
