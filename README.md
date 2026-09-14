@@ -235,7 +235,7 @@ could not be loaded.
 
 ## Changes
 
-## 27.1.0
+## 24.8.0
 
 - add Array related methods to LangUtil: indexOf(), lastIndexOf()
 - Improve performance of RichText.isBlank() and TextUtil.isBlank() (depending on argument type)
@@ -246,7 +246,7 @@ could not be loaded.
 - improve code coverage
 - refactor JavaFX native setup actions
 
-## 27.0.0
+## 24.7.0
 
 - fix native window decorations not being updated when darkmode is toggled
 - fix an NPE during construction of the JavaFX TextEditorPane
