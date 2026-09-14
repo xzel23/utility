@@ -285,7 +285,7 @@ public final class FxLauncher {
      * early requests can be retained until {@link #setOpenFilesHandler(Consumer)} is called.</p>
      */
     private static void installMacOpenFileHandler() {
-        if (!Platform.isMacOS() || !macOpenFileHandlerInstalled.compareAndSet(false, true)) {
+        if (!Platform.isMacOS() || Platform.isNativeImage() || !macOpenFileHandlerInstalled.compareAndSet(false, true)) {
             return;
         }
 
@@ -342,7 +342,7 @@ public final class FxLauncher {
      * @param r the Runnable object to be executed
      */
     public static void run(Runnable r) {
-        installWindowDecorationUpdater();
+        installPlatformIntegrations();
         PlatformGuard.run(r);
     }
 
@@ -360,13 +360,20 @@ public final class FxLauncher {
      */
     public static <A extends Application>
     void launch(Class<A> cls, String... args) {
-        installMacOpenFileHandler();
-        installWindowDecorationUpdater();
+        installPlatformIntegrations();
         PlatformGuard.launch(cls, args);
     }
 
-    private static void installWindowDecorationUpdater() {
-        PlatformGuard.run(() -> PlatformHelper.runAndWait(FxWindowDecorationUpdater::install));
+    /**
+     * Installs integrations which must be initialized after JavaFX Glass has created the
+     * native application. This is deliberately the single initialization point used by
+     * both {@link #run(Runnable)} and {@link #launch(Class, String...)}.
+     */
+    private static void installPlatformIntegrations() {
+        PlatformGuard.run(() -> PlatformHelper.runAndWait(() -> {
+            FxWindowDecorationUpdater.install();
+            installMacOpenFileHandler();
+        }));
     }
 
     /**
