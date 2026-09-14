@@ -235,7 +235,18 @@ could not be loaded.
 
 ## Changes
 
-## 24.6.2
+## 27.1.0
+
+- add Array related methods to LangUtil: indexOf(), lastIndexOf()
+- Improve performance of RichText.isBlank() and TextUtil.isBlank() (depending on argument type)
+- reduce allocations/element copying in several places by using LangUtil.asUnmodifiableList()
+- improve RingBuffer.contains() performance
+- some TextPane refactorings to reduce overhead and simplify the code
+- general code cleanup
+- improve code coverage
+- refactor JavaFX native setup actions
+
+## 27.0.0
 
 - fix native window decorations not being updated when darkmode is toggled
 - fix an NPE during construction of the JavaFX TextEditorPane
