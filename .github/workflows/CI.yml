@@ -186,7 +186,7 @@ jobs:
             toolchains
 
       - name: Run tests
-        run: gradle --no-daemon --build-cache test -x jacocoTestReport -Dorg.gradle.workers.max=2
+        run: gradle --no-daemon --build-cache test -x jacocoTestReport --max-workers=2
 
   sonar:
     needs: test-linux
