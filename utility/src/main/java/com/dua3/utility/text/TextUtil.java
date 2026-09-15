@@ -94,18 +94,19 @@ public final class TextUtil {
     /**
      * HTML-unescape a string.
      *
-     * @param s the string
+     * @param cs the string
      * @return the HTML-unescaped string
      */
-    public static String unescapeHtml(CharSequence s) {
-        StringBuilder sb = new StringBuilder(s.length());
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    public static String unescapeHtml(CharSequence cs) {
+        StringBuilder sb = new StringBuilder(cs.length());
         int i = 0;
-        while (i < s.length()) {
-            int ch = s.charAt(i);
+        while (i < cs.length()) {
+            int ch = cs.charAt(i);
             if (ch == '&') {
-                int semicolon = indexOf(s, ';', i);
+                int semicolon = indexOf(cs, ';', i);
                 if (semicolon > 0) {
-                    CharSequence entity = s.subSequence(i + 1, semicolon);
+                    CharSequence entity = cs.subSequence(i + 1, semicolon);
                     ch = parseEntity(entity);
                     if (ch >= 0) {
                         sb.append((char) ch);
@@ -523,8 +524,8 @@ public final class TextUtil {
         }
 
         @Override
-        public boolean equals(@Nullable Object o) {
-            if (!(o instanceof CharSequenceWrapper(char[] charArray2, int start2, int end2))) return false;
+        public boolean equals(@Nullable Object obj) {
+            if (!(obj instanceof CharSequenceWrapper(char[] charArray2, int start2, int end2))) return false;
             return end == end2 && start == start2 && Arrays.equals(charArray, charArray2);
         }
 
@@ -550,12 +551,12 @@ public final class TextUtil {
      * <p>
      * For a parameter s of type string, this unit returns the same result as {@code }s.split("\\R")}.
      *
-     * @param s the character sequence to be split into lines
+     * @param cs the character sequence to be split into lines
      * @return an array of strings, where each string represents a line
      *         extracted from the input character sequence
      */
-    public static String[] lines(CharSequence s) {
-        return PATTERN_SPLIT_LINES.split(s);
+    public static String[] lines(CharSequence cs) {
+        return PATTERN_SPLIT_LINES.split(cs);
     }
 
     /**
@@ -593,11 +594,11 @@ public final class TextUtil {
      * Checks if the given string ends with a newline character.
      * Newline characters considered are '\r', '\n', '\u0085', '\u2028', and '\u2029'.
      *
-     * @param s the string to check for newline termination
+     * @param cs the string to check for newline termination
      * @return true if the string ends with a newline character, false otherwise
      */
-    public static boolean isNewlineTerminated(CharSequence s) {
-        return !s.isEmpty() && switch (s.charAt(s.length() - 1)) {
+    public static boolean isNewlineTerminated(CharSequence cs) {
+        return !cs.isEmpty() && switch (cs.charAt(cs.length() - 1)) {
             case '\r', '\n', '\u0085', '\u2028', '\u2029' -> true;
             default -> false;
         };
@@ -1183,39 +1184,39 @@ public final class TextUtil {
     /**
      * Pad String to width with alignment.
      *
-     * @param s     the string
+     * @param cs     the string
      * @param width the width
      * @param align the alignment
      * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string
      * is returned
      */
-    public static String align(CharSequence s, int width, Alignment align) {
-        return align(s, width, align, ' ');
+    public static String align(CharSequence cs, int width, Alignment align) {
+        return align(cs, width, align, ' ');
     }
 
     /**
      * Pad String to width with alignment.
      *
-     * @param s      the string
+     * @param cs      the string
      * @param width  the width
      * @param align  the alignment
      * @param filler the fill character
      * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string
      * is returned
      */
-    public static String align(CharSequence s, int width, Alignment align, char filler) {
-        s = stripTrailing(s);
-        int len = s.length();
+    public static String align(CharSequence cs, int width, Alignment align, char filler) {
+        cs = stripTrailing(cs);
+        int len = cs.length();
         return switch (align) {
-            case LEFT -> s + padding(filler, width - len);
-            case RIGHT -> padding(filler, width - len) + s;
-            case CENTER -> padding(filler, (width - len) / 2) + s + padding(filler, width - len - (width - len) / 2);
+            case LEFT -> cs + padding(filler, width - len);
+            case RIGHT -> padding(filler, width - len) + cs;
+            case CENTER -> padding(filler, (width - len) / 2) + cs + padding(filler, width - len - (width - len) / 2);
             case JUSTIFY, DISTRIBUTE -> {
                 int spaceToDistribute = Math.max(0, width - len);
                 if (spaceToDistribute == 0) {
-                    yield s.toString();
+                    yield cs.toString();
                 }
-                String[] fragments = PATTERN_SPLIT_PRESERVING_WHITESPACE.split(s);
+                String[] fragments = PATTERN_SPLIT_PRESERVING_WHITESPACE.split(cs);
                 // statistics about blank space in the text.
                 record Stats(int blankChars, int blankFragments) {}
                 Stats stats = Arrays.stream(fragments)
@@ -1224,7 +1225,7 @@ public final class TextUtil {
                         .reduce((a, b) -> new Stats(a.blankChars + b.blankChars, a.blankFragments + b.blankFragments))
                         .orElseGet(() -> new Stats(0, 0));
                 if (stats.blankFragments() == 0) {
-                    yield s.toString();
+                    yield cs.toString();
                 }
                 double fBlank = 1.0f + (double) spaceToDistribute / stats.blankFragments();
                 int used = 0;
@@ -1438,11 +1439,11 @@ public final class TextUtil {
     /**
      * Checks if the provided {@code CharSequence} is either {@code null} or blank (consists only of whitespace characters).
      *
-     * @param s the {@code CharSequence} to be checked, may be {@code null}
+     * @param cs the {@code CharSequence} to be checked, may be {@code null}
      * @return {@code true} if the {@code CharSequence} is {@code null} or blank, otherwise {@code false}
      */
-    public static boolean isNullOrBlank(@Nullable CharSequence s) {
-        return s == null || isBlank(s);
+    public static boolean isNullOrBlank(@Nullable CharSequence cs) {
+        return cs == null || isBlank(cs);
     }
 
     /**
@@ -1578,11 +1579,11 @@ public final class TextUtil {
      * Normalizes the given character sequence by applying Unicode normalization
      * in NFKC form and normalizing line endings.
      *
-     * @param s the character sequence to be normalized
+     * @param cs the character sequence to be normalized
      * @return a normalized string with Unicode NFKC form and standardized line endings ('\n')
      */
-    public static String normalize(CharSequence s) {
-        return normalizeLineEnds(Normalizer.normalize(s, Normalizer.Form.NFKC));
+    public static String normalize(CharSequence cs) {
+        return normalizeLineEnds(Normalizer.normalize(cs, Normalizer.Form.NFKC));
     }
 
     /**
@@ -1615,13 +1616,13 @@ public final class TextUtil {
      * Splits the input string into an array of substrings using the specified delimiter,
      * while ignoring instances of the delimiter that are escaped with a backslash.
      *
-     * @param s the input character sequence to be split
+     * @param cs the input character sequence to be split
      * @param delimiter the character used as the delimiter for splitting the string
      * @return an array of substrings obtained by splitting the input string on the specified delimiter,
      *         excluding delimiters that are escaped with a backslash
      */
-    public static String[] splitOnUnescapedDelimiter(CharSequence s, char delimiter) {
-        return createUnescapedDelimiterPattern(delimiter).split(s);
+    public static String[] splitOnUnescapedDelimiter(CharSequence cs, char delimiter) {
+        return createUnescapedDelimiterPattern(delimiter).split(cs);
     }
 
     /**
