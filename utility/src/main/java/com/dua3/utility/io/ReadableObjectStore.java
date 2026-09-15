@@ -112,7 +112,7 @@ public interface ReadableObjectStore extends AutoCloseable {
         return new Glob<>(adapter).glob(relativeUri, pattern);
     }
 
-    private static URI resolveGlobPath(URI base, String path) throws IOException {
+    private static URI resolveGlobPath(URI base, String path) throws IllegalPathException {
         URI normalizedBase = validateRelativeGlobUri(base, "glob base");
         if (path.startsWith("/")) {
             throw new IllegalPathException("glob pattern must be relative: " + path);
