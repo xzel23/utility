@@ -412,6 +412,32 @@ abstract class AbstractObjectStoreTest {
     }
 
     @Test
+    void glob_matchesLiteralPathContainingSpaces() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("sample%20data/regression-case.json");
+            store.write(path, "sample".getBytes(StandardCharsets.UTF_8));
+
+            try (Stream<URI> matches = store.glob("sample data/regression-case.json")) {
+                assertEquals(List.of(path), matches.toList());
+            }
+        }
+    }
+
+    @Test
+    void glob_matchesWildcardPathContainingSpaces() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI jsonPath = URI.create("sample%20data/regression-case.json");
+            URI textPath = URI.create("sample%20data/regression-case.txt");
+            store.write(jsonPath, "sample".getBytes(StandardCharsets.UTF_8));
+            store.write(textPath, "sample".getBytes(StandardCharsets.UTF_8));
+
+            try (Stream<URI> matches = store.glob("sample data/*.json")) {
+                assertEquals(List.of(jsonPath), matches.toList());
+            }
+        }
+    }
+
+    @Test
     void glob_rejectsPathsOutsideTheStore() throws Exception {
         try (ObjectStore store = createStore(tempDir.resolve("store"))) {
             assertThrows(IllegalPathException.class, () -> store.glob("/reports/*.txt"));
