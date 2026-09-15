@@ -1,6 +1,7 @@
 package com.dua3.utility.data;
 
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.TextUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
@@ -471,16 +472,14 @@ public final class DataUtil {
      * @return a URI representation of the given value if conversion is possible, or null if the target class
      * is not {@link URI} or the source class is unsupported
      */
-    private static @Nullable Object convertToUri(Class<?> targetClass, Class<?> sourceClass, Object value) {
+    @SuppressWarnings("ChainOfInstanceofChecks")
+    private static @Nullable URI convertToUri(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (targetClass != URI.class) {
             return null;
         }
 
-        if (CharSequence.class.isAssignableFrom(sourceClass)) {
-            return URI.create(value.toString());
-        }
-        if (sourceClass == File.class) {
-            return ((File) value).toURI();
+        if (sourceClass == URI.class) {
+            return (URI) value;
         }
         if (sourceClass == URL.class) {
             try {
@@ -492,6 +491,13 @@ public final class DataUtil {
         if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
             return ((Path) value).toUri();
         }
+        if (sourceClass == File.class) {
+            return ((File) value).toURI();
+        }
+        if (CharSequence.class.isAssignableFrom(sourceClass)) {
+            return URI.create(value.toString());
+        }
+
         return null;
     }
 
@@ -507,24 +513,13 @@ public final class DataUtil {
      * if the target class is not {@link URL} or conversion is unsupported
      * @throws ConversionException if the conversion fails
      */
-    private static @Nullable Object convertToUrl(Class<?> targetClass, Class<?> sourceClass, Object value) {
+    private static @Nullable URL convertToUrl(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (targetClass != URL.class) {
             return null;
         }
 
-        if (CharSequence.class.isAssignableFrom(sourceClass)) {
-            try {
-                return URI.create(value.toString()).toURL();
-            } catch (MalformedURLException e) {
-                throw new ConversionException(sourceClass, targetClass, e);
-            }
-        }
-        if (sourceClass == File.class) {
-            try {
-                return ((File) value).toURI().toURL();
-            } catch (MalformedURLException e) {
-                throw new ConversionException(sourceClass, targetClass, e);
-            }
+        if (sourceClass == URL.class) {
+            return (URL) value;
         }
         if (sourceClass == URI.class) {
             try {
@@ -540,6 +535,21 @@ public final class DataUtil {
                 throw new ConversionException(sourceClass, targetClass, e);
             }
         }
+        if (sourceClass == File.class) {
+            try {
+                return ((File) value).toURI().toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        if (CharSequence.class.isAssignableFrom(sourceClass)) {
+            try {
+                return URI.create(value.toString()).toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+
         return null;
     }
 

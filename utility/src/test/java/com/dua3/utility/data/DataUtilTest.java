@@ -153,6 +153,19 @@ class DataUtilTest {
     }
 
     @Test
+    void convertPathAndFileWithSpacesToUriAndUrl() throws Exception {
+        Path path = Paths.get("sample data", "result.txt").toAbsolutePath().normalize();
+        File file = path.toFile();
+        URI expectedUri = path.toUri();
+        URL expectedUrl = expectedUri.toURL();
+
+        assertEquals(expectedUri, DataUtil.convert(path, URI.class));
+        assertEquals(expectedUri, DataUtil.convert(file, URI.class));
+        assertEquals(expectedUrl, DataUtil.convert(path, URL.class));
+        assertEquals(expectedUrl, DataUtil.convert(file, URL.class));
+    }
+
+    @Test
     void testConvertToArray() {
         assertArrayEquals(new Integer[]{5, -7, 13}, DataUtil.convertToArray(List.of("5", "-7", "13"), Integer.class));
     }
