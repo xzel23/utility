@@ -235,6 +235,13 @@ could not be loaded.
 
 ## Changes
 
+## 24.8.1
+
+- fix exception being thrown when using glob pattern containing spaces in ReadableObjectStore
+- add urlEncode()/urlDecode() in TextUtil
+- code cleanup
+- increase test coverage
+
 ## 24.8.0
 
 - add Array related methods to LangUtil: indexOf(), lastIndexOf()
