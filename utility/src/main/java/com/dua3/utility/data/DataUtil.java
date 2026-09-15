@@ -365,6 +365,7 @@ public final class DataUtil {
      * @throws ConversionException if the value cannot be converted to the target class
      *                             without loss of precision
      */
+    @SuppressWarnings("ChainOfInstanceofChecks")
     private static @Nullable Object convertToIntegralNumber(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (sourceClass != Double.class && sourceClass != Float.class) {
             return null;
@@ -398,6 +399,7 @@ public final class DataUtil {
      * or the source class is unsupported.
      * @throws ConversionException If the source class is {@link URL} and the value cannot be successfully converted to a {@link URI}.
      */
+    @SuppressWarnings("ChainOfInstanceofChecks")
     private static @Nullable Object convertToPath(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (targetClass != Path.class) {
             return null;
@@ -435,6 +437,7 @@ public final class DataUtil {
      * @throws ConversionException if the source class is {@code URL} and the conversion to {@code File} fails
      *                             due to a {@code URISyntaxException}
      */
+    @SuppressWarnings("ChainOfInstanceofChecks")
     private static @Nullable Object convertToFile(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (targetClass != File.class) {
             return null;
@@ -512,6 +515,7 @@ public final class DataUtil {
      * if the target class is not {@link URL} or conversion is unsupported
      * @throws ConversionException if the conversion fails
      */
+    @SuppressWarnings("ChainOfInstanceofChecks")
     private static @Nullable URL convertToUrl(Class<?> targetClass, Class<?> sourceClass, Object value) {
         if (targetClass != URL.class) {
             return null;
@@ -896,6 +900,7 @@ public final class DataUtil {
      * @param collection the collection to check for sorted order
      * @return {@code true} if the collection is sorted in natural order, {@code false} otherwise
      */
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     public static <T extends Comparable<T>> boolean isSorted(Collection<T> collection) {
         return switch (collection) {
             case SortedSet<?> ss when ss.comparator() == null -> true;

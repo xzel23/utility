@@ -690,7 +690,7 @@ public final class TextUtil {
      * @return the position where the char was found or -1 if not found
      */
     public static int lastIndexOf(CharSequence haystack, int needle, int fromIndex) {
-        for (int i = fromIndex; i >=0; i--) {
+        for (int i = fromIndex; i >= 0; i--) {
             if (haystack.charAt(i) == needle) {
                 return i;
             }
