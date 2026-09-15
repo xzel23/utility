@@ -881,6 +881,21 @@ class TextUtilTest {
     }
 
     @Test
+    void testIsBlankWithRichTextArgument() {
+        // Test with blank strings
+        Assertions.assertTrue(TextUtil.isBlank(RichText.valueOf("")));
+        Assertions.assertTrue(TextUtil.isBlank(RichText.valueOf(" ")));
+        Assertions.assertTrue(TextUtil.isBlank(RichText.valueOf("\t")));
+        Assertions.assertTrue(TextUtil.isBlank(RichText.valueOf("\n")));
+        Assertions.assertTrue(TextUtil.isBlank(RichText.valueOf(" \t\n\r")));
+
+        // Test with non-blank strings
+        Assertions.assertFalse(TextUtil.isBlank(RichText.valueOf("a")));
+        Assertions.assertFalse(TextUtil.isBlank(RichText.valueOf(" a ")));
+        Assertions.assertFalse(TextUtil.isBlank(RichText.valueOf("\ta\n")));
+    }
+
+    @Test
     void testAppendHtmlEscapedCharactersGeneric() throws IOException {
         // Test with a custom Appendable implementation
         class TestAppendable implements Appendable {
