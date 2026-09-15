@@ -1,11 +1,11 @@
 [release]
 schemaVersion = 2
-bomVersion = "24.8.0"
-publishedRevision = "a2574afdfe158225727753ea6d1b1dfcc51e83e1"
+bomVersion = "24.8.1"
+publishedRevision = "8132d2857faf341cf3eee2e219239f1c85cc66eb"
 
 [modules.utility]
-version = "24.8.0"
-publishedRevision = "a2574afdfe158225727753ea6d1b1dfcc51e83e1"
+version = "24.8.1"
+publishedRevision = "8132d2857faf341cf3eee2e219239f1c85cc66eb"
 paths = ["utility"]
 
 [modules.utility-db]
