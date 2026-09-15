@@ -241,6 +241,7 @@ could not be loaded.
 - add urlEncode()/urlDecode() in TextUtil
 - code cleanup
 - increase test coverage
+- release: compatibility checks reject binary-incompatible changes only
 
 ## 24.8.0
 

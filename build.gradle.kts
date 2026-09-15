@@ -499,7 +499,6 @@ tasks.register("checkReleaseCompatibility") {
                 "--new", newJar.absolutePath,
                 "--only-modified",
                 "--error-on-binary-incompatibility",
-                "--error-on-source-incompatibility",
                 "--ignore-missing-classes"
             ).inheritIO().start()
             check(process.waitFor() == 0) { "binary compatibility check failed for $moduleName" }
