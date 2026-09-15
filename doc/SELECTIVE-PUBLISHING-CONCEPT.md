@@ -98,19 +98,20 @@ This allows a repository commit affecting only `utility/` to leave `utility-db`,
 
 ### Shared build and release inputs
 
-Changes outside a module directory may still affect its published artifact. Therefore, change detection must incorporate shared ownership rules.
+Changes outside a module directory can affect how artifacts are built, but do not by themselves require republishing
+every library. Normal CI validates those changes against all current sources; a patch release publishes only modules
+whose owned paths changed.
 
 Use a declarative mapping from paths to affected modules. This makes the policy auditable and avoids hidden release
-behavior. Initially use the following conservative rules:
+behavior. The rules are:
 
 1. A module owns its directory, including production sources and resources, its build script, and module-specific
    generated-input configuration.
-2. The root build configuration, Gradle settings, wrapper/toolchain configuration, and shared build or
-   publishing/signing logic select all publishable library modules unless a narrower mapping is proven safe.
+2. Root build configuration, Gradle settings, wrapper/toolchain configuration, and shared build or publishing/signing
+   logic select no library module by themselves.
 3. Dependency lockfiles are reproducibility inputs and never select a library module. A publication-relevant version
    catalog change is published by the BOM, whose constraints carry dependency updates to consumers; it may therefore
-   create a BOM-only patch release. A build-logic, toolchain, or instrumentation change remains a shared build input
-   and selects all publishable library modules.
+   create a BOM-only patch release.
 4. The BOM build directory, the published release state, and the prepared release plan select only the BOM. A
    release-state or plan update alone must never select a library module.
 5. Repository documentation, CI-only configuration, and repository-administration changes select no library modules.
@@ -355,8 +356,8 @@ Credentials for signing and Maven Central deployment must remain available only 
 
   Each module owns its directory except its Gradle dependency lockfile, which is ignored for release selection.
   Dependency catalog changes are carried by the BOM and can therefore create a BOM-only patch release. Shared build,
-  toolchain, publishing, settings, and instrumentation inputs select all library modules. The BOM build directory and
-  release metadata select only the BOM.
+  toolchain, publishing, settings, and instrumentation inputs are validated by CI but do not select a library module.
+  The BOM build directory and release metadata select only the BOM.
 
 - **Decide whether documentation-only changes should cause a module republish.**
 

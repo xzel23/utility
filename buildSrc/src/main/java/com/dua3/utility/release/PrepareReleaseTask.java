@@ -44,13 +44,6 @@ public abstract class PrepareReleaseTask extends DefaultTask {
             "utility-fx-db",
             "utility-fx-web"
     );
-    private static final List<String> SHARED_BUILD_INPUT_PATHS = List.of(
-            "build.gradle.kts",
-            "settings.gradle.kts",
-            "gradle.properties",
-            "gradle/wrapper",
-            ":(glob)gradle/*.gradle.kts"
-    );
     private static final List<String> DEPENDENCY_LOCKFILE_EXCLUSIONS = List.of(
             ":(exclude,glob)**/gradle.lockfile",
             ":(exclude)settings-gradle.lockfile"
@@ -147,18 +140,8 @@ public abstract class PrepareReleaseTask extends DefaultTask {
                         releaseRevision,
                         module.paths()
                 );
-                boolean sharedInputChanged = gitHasChanges(
-                        repositoryDirectory,
-                        module.publishedRevision(),
-                        releaseRevision,
-                        SHARED_BUILD_INPUT_PATHS
-                ) || versionCatalogChange == VersionCatalogChange.SHARED_BUILD;
-                if (sourceChanged && sharedInputChanged) {
-                    selectedReasons.put(moduleName, "direct source and shared build input change");
-                } else if (sourceChanged) {
+                if (sourceChanged) {
                     selectedReasons.put(moduleName, "direct source change");
-                } else if (sharedInputChanged) {
-                    selectedReasons.put(moduleName, "shared build input change");
                 }
             }
             for (String moduleName : additionalModules) {
@@ -372,9 +355,8 @@ public abstract class PrepareReleaseTask extends DefaultTask {
     }
 
     /**
-     * Dependency catalog changes are published through the BOM, whereas toolchain and plugin changes affect every
-     * module build. The catalog's project version is deliberately ignored: finalization changes it to the next
-     * snapshot after the BOM has already been published.
+     * Dependency catalog changes are published through the BOM. The catalog's project version is deliberately
+     * ignored: finalization changes it to the next snapshot after the BOM has already been published.
      */
     private static VersionCatalogChange versionCatalogChange(
             File directory,
@@ -408,16 +390,9 @@ public abstract class PrepareReleaseTask extends DefaultTask {
             if (versionEntry && entry.group(1).equals("projectVersion")) {
                 continue;
             }
-            if (versionEntry && isSharedBuildVersion(entry.group(1))) {
-                return VersionCatalogChange.SHARED_BUILD;
-            }
             change = VersionCatalogChange.BOM_ONLY;
         }
         return change;
-    }
-
-    private static boolean isSharedBuildVersion(String alias) {
-        return alias.equals("jdkVersion") || alias.equals("javafxJdkVersion") || alias.endsWith("-plugin");
     }
 
     private static boolean isMavenCentralCoordinatePublished(String artifactId, String version) {
@@ -517,8 +492,7 @@ public abstract class PrepareReleaseTask extends DefaultTask {
 
     private enum VersionCatalogChange {
         NONE,
-        BOM_ONLY,
-        SHARED_BUILD
+        BOM_ONLY
     }
 
     private record SemanticVersion(int major, int minor, int patch) {

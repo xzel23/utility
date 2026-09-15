@@ -242,6 +242,7 @@ could not be loaded.
 - code cleanup
 - increase test coverage
 - release: compatibility checks reject binary-incompatible changes only
+- release: patch selection retains modules without direct changes
 
 ## 24.8.0
 
