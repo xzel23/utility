@@ -9,6 +9,7 @@ import com.dua3.utility.fx.controls.TextPane;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilderExtBase;
 import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.ui.DetachableNode;
 import com.dua3.utility.ui.VAnchor;
 import javafx.application.Application;
@@ -28,7 +29,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.URLDecoder;
 import java.text.DecimalFormat;
 import java.nio.charset.StandardCharsets;
@@ -249,7 +249,7 @@ public class TextEditorPaneSample extends Application {
     }
 
     private static URI statusUri(String text) {
-        String encoded = URLEncoder.encode(text, StandardCharsets.UTF_8).replace("+", "%20");
+        String encoded = TextUtil.urlEncode(text).replace("+", "%20");
         return URI.create("testapp://setStatus?text=" + encoded);
     }
 

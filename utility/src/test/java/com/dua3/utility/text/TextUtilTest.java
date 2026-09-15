@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @NullUnmarked
+@SuppressWarnings("java:S5778")
 class TextUtilTest {
 
     @Test
@@ -64,6 +65,27 @@ class TextUtilTest {
 
         Assertions.assertArrayEquals(data, decodedFromChars);
         Assertions.assertArrayEquals(data, decodedFromCharSequence);
+    }
+
+    @ParameterizedTest
+    @MethodSource("urlEncodingData")
+    void testUrlEncodingAndDecoding(String input, String encoded) {
+        Assertions.assertEquals(encoded, TextUtil.urlEncode(input));
+        Assertions.assertEquals(input, TextUtil.urlDecode(encoded));
+    }
+
+    private static Stream<Arguments> urlEncodingData() {
+        return Stream.of(
+                Arguments.of("", ""),
+                Arguments.of("hello world", "hello+world"),
+                Arguments.of("a+b/c?d=e&f", "a%2Bb%2Fc%3Fd%3De%26f"),
+                Arguments.of("Grüße 世界", "Gr%C3%BC%C3%9Fe+%E4%B8%96%E7%95%8C")
+        );
+    }
+
+    @Test
+    void testUrlDecodeRejectsMalformedInput() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> TextUtil.urlDecode("%"));
     }
 
     @Test
@@ -1084,7 +1106,7 @@ class TextUtilTest {
         Assertions.assertEquals(first, second);
         Assertions.assertEquals(first.hashCode(), second.hashCode());
         Assertions.assertNotEquals(first, differentRange);
-        Assertions.assertNotEquals(first, "value");
+        Assertions.assertNotEquals("value", first);
     }
 
     @Test

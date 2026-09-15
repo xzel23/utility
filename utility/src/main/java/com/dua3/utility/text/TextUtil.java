@@ -13,6 +13,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -900,6 +901,28 @@ public final class TextUtil {
     }
 
     /**
+     * Encodes a given text into a format suitable for use as a URL parameter.
+     * This method uses UTF-8 encoding to convert the input text.
+     *
+     * @param text the input text to be URL-encoded
+     * @return a URL-encoded string representation of the input text
+     */
+    public static String urlEncode(String text) {
+        return URLEncoder.encode(text, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Decodes a given URL-encoded string using the UTF-8 character set.
+     *
+     * @param text the URL-encoded string to be decoded
+     * @return the decoded string
+     * @throws IllegalArgumentException if the specified string cannot be decoded
+     */
+    public static String urlDecode(String text) {
+        return URLDecoder.decode(text, StandardCharsets.UTF_8);
+    }
+
+    /**
      * Convert mm to pt.
      *
      * @param mm value in millimeters
@@ -1249,8 +1272,8 @@ public final class TextUtil {
      */
     public static String generateMailToLink(String email, String subject) {
         // give some care to translate space to "%20"
-        String s1 = URLEncoder.encode(subject, StandardCharsets.UTF_8);
-        String s2 = URLEncoder.encode(subject.replace(" ", "_"), StandardCharsets.UTF_8);
+        String s1 = urlEncode(subject);
+        String s2 = urlEncode(subject.replace(" ", "_"));
         StringBuilder sb = new StringBuilder(s1.length());
         for (int i = 0; i < s1.length(); i++) {
             if (s1.charAt(i) == '+' && s2.charAt(i) == '_') {

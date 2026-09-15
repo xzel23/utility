@@ -8,7 +8,6 @@ import java.nio.ByteBuffer;
 import java.nio.BufferUnderflowException;
 import java.nio.charset.StandardCharsets;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -264,7 +263,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      * @return fallback URI
      */
     public static URI createInlineButtonFallbackUri(CharSequence text) {
-        String encoded = URLEncoder.encode(String.valueOf(text), StandardCharsets.UTF_8).replace("+", "%20");
+        String encoded = TextUtil.urlEncode(String.valueOf(text)).replace("+", "%20");
         return URI.create(INLINE_BUTTON_FALLBACK_URI_SCHEME + "://action?text=" + encoded);
     }
 
