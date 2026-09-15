@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("HttpUrlsUsage")
+@SuppressWarnings({"HttpUrlsUsage", "java:S5961"})
 class DataUtilTest {
 
     @Test
@@ -185,8 +186,29 @@ class DataUtilTest {
     }
 
     @Test
+    void convertCollectionToListWithConstructor() {
+        assertEquals(
+                List.of(BigDecimal.valueOf(5), BigDecimal.valueOf(-7), BigDecimal.valueOf(13)),
+                DataUtil.convert(List.of("5", "-7", "13"), BigDecimal.class, true)
+        );
+    }
+
+    @Test
+    void convertCollectionToListWithNullValues() {
+        assertEquals(
+                Arrays.asList(BigDecimal.valueOf(5), null, BigDecimal.valueOf(13)),
+                DataUtil.convert(Arrays.asList("5", null, "13"), BigDecimal.class, true)
+        );
+    }
+
+    @Test
     void testCollect() {
         assertEquals(List.of(1, 2, 3), DataUtil.collect(List.of(1, 2, 3).iterator()));
+    }
+
+    @Test
+    void testCollectIterable() {
+        assertEquals(List.of(1, 2, 3), DataUtil.collect(List.of(1, 2, 3)));
     }
 
     @Test

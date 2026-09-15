@@ -547,6 +547,7 @@ class TextUtilTest {
         Assertions.assertEquals("你好!", TextUtil.escape("你好!"));
 
         // Test with character not belonging to any of the above classes
+        Assertions.assertEquals("\\u2603", TextUtil.escape("☃"));
         Assertions.assertEquals("\\u2603", TextUtil.escapeASCII("☃"));
 
         // Test with empty string

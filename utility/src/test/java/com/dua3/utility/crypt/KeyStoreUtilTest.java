@@ -25,6 +25,7 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -80,6 +81,7 @@ class KeyStoreUtilTest {
         }
     }
 
+    @SuppressWarnings("ZeroLengthArrayAllocation")
     @Test
     void testCreateKeyStoreEmptyPassword() throws GeneralSecurityException {
         // Create KeyStore with empty password
@@ -515,7 +517,8 @@ class KeyStoreUtilTest {
      * @param newAlias the alias for the new certificate
      * @param expectedChainLength the expected length of the certificate chain after storage
      */
-    private void createAndStoreSignedCertificate(
+    @SuppressWarnings("SuspiciousArrayCast")
+    private static void createAndStoreSignedCertificate(
             KeyStore keyStore,
             String parentAlias,
             String newAlias,
@@ -523,10 +526,10 @@ class KeyStoreUtilTest {
 
         // Retrieve parent private key and certificate chain from keystore
         PrivateKey parentPrivateKey = KeyStoreUtil.loadPrivateKey(keyStore, parentAlias, password());
-        X509Certificate[] parentChain = DataUtil.convert(
+        X509Certificate[] parentChain = Objects.requireNonNull(DataUtil.convert(
                 KeyStoreUtil.loadCertificateChain(keyStore, parentAlias),
                 X509Certificate[].class
-        );
+        ));
 
         LOG.debug("Parent '{}' chain length: {}", parentAlias, parentChain.length);
 

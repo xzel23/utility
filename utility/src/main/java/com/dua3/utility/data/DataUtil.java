@@ -1,7 +1,6 @@
 package com.dua3.utility.data;
 
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.TextUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
@@ -109,7 +108,7 @@ public final class DataUtil {
      * @param <T>         target type
      * @return the object converted to the target class
      */
-    public static <T extends @Nullable Object> T convert(@Nullable Object value, Class<T> targetClass) {
+    public static <T extends @Nullable Object> @Nullable T convert(@Nullable Object value, Class<T> targetClass) {
         return convert(value, targetClass, false);
     }
 
@@ -138,7 +137,7 @@ public final class DataUtil {
      * @return the object converted to the target class
      */
     @SuppressWarnings("unchecked") // types are checked with isAssignable()
-    public static <T> @Nullable T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
+    public static <T extends @Nullable Object> @Nullable T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
         // null -> null
         if (value == null) {
             return null;
@@ -645,7 +644,7 @@ public final class DataUtil {
     public static <T extends @Nullable Object, U extends @Nullable Object> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         return data.stream()
                 .map((T obj) -> convert(obj, targetClass, useConstructor))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
