@@ -4,7 +4,10 @@ import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.InputPane;
 import com.dua3.utility.fx.controls.PinBoard;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.MessageFormatter;
+import com.dua3.utility.text.TextUtil;
 import javafx.application.Application;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -46,6 +49,7 @@ public class PinBoardSample extends Application {
      *
      * @param args the command line arguments
      */
+    @SuppressWarnings("UnnecessaryModifier")
     public static void main(String[] args) {
         launch(args);
     }
@@ -56,7 +60,7 @@ public class PinBoardSample extends Application {
     public PinBoardSample() { /* nothing to do */ }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage primaryStage) {
         pinBoard.clear();
         pinBoard.setBackground(Background.fill(Color.LIGHTBLUE));
 
@@ -97,8 +101,8 @@ public class PinBoardSample extends Application {
                 text.format("Scale: %d%%%n", Math.round(pinBoard.getDisplayScale() * 100));
                 text.format("Area: %s%n", pinBoard.getArea());
 
-                int x = (int) evt.getX();
-                int y = (int) evt.getY();
+                int x = MathUtil.roundToInt(evt.getX());
+                int y = MathUtil.roundToInt(evt.getY());
                 text.format("Mouse position: (%d,%d)", x, y);
 
                 text.format("%nvisible items: %s%n", pinBoard.getVisibleItems().size());
@@ -122,9 +126,9 @@ public class PinBoardSample extends Application {
             }
         });
 
-        stage.setScene(scene);
-        stage.setTitle("Shape");
-        stage.show();
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Shape");
+        primaryStage.show();
     }
 
     private void scrollToPositionInItem() {
@@ -154,21 +158,19 @@ public class PinBoardSample extends Application {
     }
 
     double getDoubleInput(String name) {
-        var v = input.get().get(name);
-        return Double.parseDouble(toNonEmptyString(v, "0.0"));
+        return LangUtil.mapNonNullOrElse(input, ip -> Double.parseDouble(toNonEmptyString(ip.get().get(name), "0.0")), 0.0);
     }
 
     int getIntegerInput(String name) {
-        var v = input.get().get(name);
-        return Integer.parseInt(toNonEmptyString(v, "0"));
+        return LangUtil.mapNonNullOrElse(input, ip -> Integer.parseInt(toNonEmptyString(ip.get().get(name), "0")), 0);
     }
 
-    String toNonEmptyString(Object obj, String ifEmpty) {
-        String v = String.valueOf(obj);
+    static String toNonEmptyString(@Nullable Object obj, String ifEmpty) {
+        String v = TextUtil.toString(obj, ifEmpty);
         return v.isBlank() ? ifEmpty : v;
     }
 
-    private void createItem(PinBoard pinBoard, int i) {
+    private static void createItem(PinBoard pinBoard, int i) {
         int minWidth = 200;
         int maxWidth = 600;
         int width = RANDOM.nextInt(minWidth, maxWidth + 1);
