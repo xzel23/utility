@@ -267,6 +267,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
      * @param item the item to be removed
      * @return true if the user confirms the removal, false otherwise
      */
+    @SuppressWarnings("java:S3400")
     public static <T> boolean alwaysRemoveSelectedItem(ComboBoxEx<T> cb, T item) {
         return true;
     }
@@ -338,7 +339,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
      *
      * @return the Property representing the value of the ComboBoxEx
      */
-    public Property<T> valueProperty() {
+    public Property<@Nullable T> valueProperty() {
         return comboBox.valueProperty();
     }
 }
