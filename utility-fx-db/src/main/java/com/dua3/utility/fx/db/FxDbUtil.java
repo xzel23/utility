@@ -163,7 +163,7 @@ public final class FxDbUtil {
             newItems.add(list);
         }
         LOG.trace("read {} rows of data", newItems.size());
-+
+
         LOG.trace("setting rows");
         PlatformHelper.runLater(() -> {
             columns.setAll(newColumns);
