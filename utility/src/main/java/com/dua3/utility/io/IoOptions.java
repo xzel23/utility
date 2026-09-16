@@ -71,6 +71,7 @@ public final class IoOptions {
      *
      * @see IoOptions#input(Supplier)
      */
+    @SuppressWarnings("unused")
     public static final Option<Path> OPTION_INPUT = input(() -> null);
     /**
      * An option for specifying the output path. This option allows users to define the
@@ -82,6 +83,7 @@ public final class IoOptions {
      * The provided {@code Supplier} for the default value returns {@code null} by default,
      * indicating that no output path is specified unless explicitly set.
      */
+    @SuppressWarnings("unused")
     public static final Option<Path> OPTION_OUTPUT = output(() -> null);
     /**
      * Represents an option for specifying the {@code Locale} to be used in various operations.
@@ -154,6 +156,7 @@ public final class IoOptions {
      *                        The supplied path can be {@code null}.
      * @return an {@code Option<Path>} representing the input path option.
      */
+    @SuppressWarnings("ConstantValue")
     public static Option<Path> input(Supplier<@Nullable Path> defaultSupplier) {
         return Option.createSimpleOption(
                 "Input path",
@@ -177,6 +180,7 @@ public final class IoOptions {
      *                        is explicitly specified. The supplied path can be {@code null}.
      * @return an {@code Option<Path>} representing the output path option.
      */
+    @SuppressWarnings("ConstantValue")
     public static Option<Path> output(Supplier<@Nullable Path> defaultSupplier) {
         return Option.createSimpleOption(
                 "Output path",
