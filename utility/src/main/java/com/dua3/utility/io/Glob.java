@@ -31,12 +31,13 @@ final class Glob<T> {
      */
     Stream<T> glob(T base, String pattern) throws IOException {
         int firstGlobCharIndex = findFirstGlobChar(pattern, adapter.separator());
-        int lastDirectorySeparatorIndex = findLastDirectorySeparator(pattern, firstGlobCharIndex, adapter.separator());
+        int lastDirSeparatorIdx = findLastDirectorySeparator(pattern, firstGlobCharIndex, adapter.separator());
 
-        String fixedPart = lastDirectorySeparatorIndex == -1
+        String fixedPart = lastDirSeparatorIdx == -1
                 ? ""
-                : pattern.substring(0, lastDirectorySeparatorIndex);
+                : pattern.substring(0, lastDirSeparatorIdx);
         T fixedBase = adapter.resolve().apply(base, fixedPart);
+        assert fixedBase != null : "internal error fixedBase cannot be null";
 
         if (firstGlobCharIndex == pattern.length()) {
             T object = adapter.resolve().apply(base, pattern);
@@ -45,9 +46,9 @@ final class Glob<T> {
                     : Stream.empty();
         }
 
-        String globPart = lastDirectorySeparatorIndex == -1
+        String globPart = lastDirSeparatorIdx == -1
                 ? "/" + pattern
-                : pattern.substring(lastDirectorySeparatorIndex);
+                : pattern.substring(lastDirSeparatorIdx);
         Predicate<T> matcher = adapter.matcherFactory().apply(fixedBase, globPart);
 
         // The caller owns the returned stream and must close it.
