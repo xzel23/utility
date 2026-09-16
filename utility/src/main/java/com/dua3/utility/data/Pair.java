@@ -122,40 +122,42 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * Map pair to another pair.
      *
      * @param <U> the result's component type*
-     * @param f   mapper for components
+     * @param mapper   mapper for components
      * @return Pair consisting of the mapped values of this pair
      */
-    public <U extends @Nullable Object> Pair<U, U> map(Function<@Nullable Object, ? extends @Nullable U> f) {
-        return of(f.apply(first()), f.apply(second()));
+    public <U extends @Nullable Object> Pair<U, U> map(Function<@Nullable Object, ? extends @Nullable U> mapper) {
+        return of(mapper.apply(first()), mapper.apply(second()));
     }
 
     /**
      * Apply mapping to the first component only.
      *
      * @param <U1> the result's first component type
-     * @param f   mapper for first component
+     * @param keyMapper   mapper for first component
      * @return Pair consisting of the mapped first and original second component of this pair
      */
-    public <U1 extends @Nullable Object> Pair<U1, T2> mapFirst(Function<? super T1, ? extends U1> f) {
-        return of(f.apply(first()), second());
+    public <U1 extends @Nullable Object> Pair<U1, T2> mapFirst(Function<? super T1, ? extends U1> keyMapper) {
+        return of(keyMapper.apply(first()), second());
     }
 
     /**
      * Apply mapping to the second component only.
      *
      * @param <U2> the result's secondt component type
-     * @param f   mapper for second component
+     * @param valueMapper   mapper for second component
      * @return Pair consisting of the original first and the mapped second component of this pair
      */
-    public <U2 extends @Nullable Object> Pair<T1, U2> mapSecond(Function<? super T2, ? extends U2> f) {
-        return of(first(), f.apply(second()));
+    public <U2 extends @Nullable Object> Pair<T1, U2> mapSecond(Function<? super T2, ? extends U2> valueMapper) {
+        return of(first(), valueMapper.apply(second()));
     }
 
+    @SuppressWarnings("SuspiciousGetterSetter")
     @Override
     public T1 getKey() {
         return first;
     }
 
+    @SuppressWarnings("SuspiciousGetterSetter")
     @Override
     public T2 getValue() {
         return second;
@@ -170,6 +172,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      *             it needs to be declared because it is an optional method of the {@link Map} interface
      */
     @Override
+    @SuppressWarnings({"DefaultAnnotationParam", "java:S1133"})
     @Deprecated(forRemoval = false)
     public T2 setValue(T2 value) {
         throw new UnsupportedOperationException("class is immutable");
