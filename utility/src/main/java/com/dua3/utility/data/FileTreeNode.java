@@ -120,6 +120,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         return parent == null;
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     public T parent() {
         LangUtil.check(parent != null, "parent() called on root node");
