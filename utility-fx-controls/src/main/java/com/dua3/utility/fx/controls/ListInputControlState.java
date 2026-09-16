@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.SequencedCollection;
@@ -36,7 +37,7 @@ public class ListInputControlState<S> extends InputControlState<ObservableList<S
         super(toObservableListSupplier(dflt), validate);
         this.value = value;
 
-        requiredProperty().set(validate.apply(null).isPresent());
+        requiredProperty().set(validate.apply(Collections.emptyList()).isPresent());
         validProperty().set(validate.apply(value.getValue()).isEmpty());
         errorProperty().setValue("");
 

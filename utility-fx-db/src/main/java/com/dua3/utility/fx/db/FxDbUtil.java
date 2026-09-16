@@ -98,19 +98,19 @@ public final class FxDbUtil {
 
             // define the formatting
             @SuppressWarnings("java:S3457")
-            Function<@Nullable  Object, String> format = switch (sqlType) {
-                case DATE -> //noinspection DataFlowIssue - format is not called for null arguments
-                        item -> LangUtil.mapNonNull(DbUtil.toLocalDate(item), v -> v.format(dateFormatter));
-                case TIMESTAMP -> //noinspection DataFlowIssue - format is not called for null arguments
-                        item -> LangUtil.mapNonNull(DbUtil.toLocalDateTime(item), v -> v.format(timestampFormatter));
-                case TIME ->  //noinspection DataFlowIssue - format is not called for null arguments
-                        item -> LangUtil.mapNonNull(DbUtil.toLocalDateTime(item), v -> v.format(timeFormatter));
+            Function<@Nullable Object, String> format = switch (sqlType) {
+                case DATE ->
+                        item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalDate(item), v -> v.format(dateFormatter), LangUtil.NULL_STRING);
+                case TIMESTAMP ->
+                        item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalDateTime(item), v -> v.format(timestampFormatter), LangUtil.NULL_STRING);
+                case TIME ->
+                        item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalDateTime(item), v -> v.format(timeFormatter), LangUtil.NULL_STRING);
 
                 // numbers that have scale
                 case DECIMAL, NUMERIC -> {
                     if (scale > 0) {
                         //noinspection StringConcatenationInFormatCall,StringConcatenationMissingWhitespace
-                        yield item -> String.format(locale, "%.0" + scale + "f", ((Number) item).doubleValue());
+                        yield item -> item == null ? LangUtil.NULL_STRING : String.format(locale, "%.0" + scale + "f", ((Number) item).doubleValue());
                     } else {
                         yield String::valueOf;
                     }
@@ -163,7 +163,7 @@ public final class FxDbUtil {
             newItems.add(list);
         }
         LOG.trace("read {} rows of data", newItems.size());
-
++
         LOG.trace("setting rows");
         PlatformHelper.runLater(() -> {
             columns.setAll(newColumns);
