@@ -60,6 +60,7 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
      *                 no value is selected or the value is explicitly set to {@code null}
      * @return this instance of the {@code ChoiceMenuBuilder} for method chaining
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public ComboBoxBuilder<T> onChange(Consumer<@Nullable T> onChange) {
         this.onChange = onChange;
         return self();
@@ -73,6 +74,7 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
      *                 can hold {@code null} items
      * @return this instance of the {@code ChoiceMenuBuilder} for method chaining
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public ComboBoxBuilder<T> bind(Property<@Nullable T> property) {
         this.property.bindBidirectional(property);
         return self();
@@ -84,6 +86,7 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
      * @param localized true, if items should be localized
      * @return this builder
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public ComboBoxBuilder<T> localized(boolean localized) {
         this.localized = localized;
         return self();
@@ -130,6 +133,7 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
         }
         if (format != null) {
             comboBox.setCellFactory(lv -> new ListCell<>() {
+                @SuppressWarnings("DataFlowIssue")
                 @Override
                 protected void updateItem(@Nullable T item, boolean empty) {
                     super.updateItem(item, empty);
@@ -142,6 +146,7 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
                     return item == null ? "" : format.apply(item);
                 }
 
+                @SuppressWarnings("QuestionableName")
                 @Override
                 public T fromString(String string) {
                     throw new UnsupportedOperationException("fromString(String) is unsupported in " + getClass().getName());
