@@ -143,6 +143,7 @@ public class WizardDialogBuilder {
      * @param modality the modality to set
      * @return the current builder instance, to allow method chaining
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public WizardDialogBuilder modality(Modality modality) {
         this.modality = modality;
         return this;
@@ -187,7 +188,7 @@ public class WizardDialogBuilder {
      *         or an empty Optional if the dialog was canceled or closed without completion.
      */
     @SuppressWarnings("OptionalContainsCollection")
-    public Optional<Map<String, Object>> showAndWait() {
+    public Optional<Map<String, @Nullable Object>> showAndWait() {
         return build().showAndWait();
     }
 
@@ -236,6 +237,7 @@ public class WizardDialogBuilder {
      *
      * @param startPage The name of the page to be set as the start page.
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setStartPage(String startPage) {
         this.startPage = startPage;
     }
