@@ -195,6 +195,7 @@ class LangUtilTest {
         assertThrows(AssertionError.class, () -> LangUtil.checkArg(true, "value=%f", "x"));
     }
 
+    @SuppressWarnings("java:S5961")
     @Test
     void checkOverloadsFormatTheirMessages() {
         assertDoesNotThrow(() -> LangUtil.checkArg(true, "valid"));
@@ -1919,6 +1920,7 @@ class LangUtilTest {
         assertEquals(0, set.size());
     }
 
+    @SuppressWarnings("java:S2925")
     @Test
     void newWeakHashSet_allowsGarbageCollection() {
         var set = LangUtil.newWeakHashSet();
@@ -1952,6 +1954,7 @@ class LangUtilTest {
         assertEquals(0, set.size(), "stale entry should be removed from weak set");
     }
 
+    @SuppressWarnings("java:S2925")
     @Test
     void newWeakHashSet_withInitialCapacity_behavesLikeWeakSet() {
         var set = LangUtil.newWeakHashSet(16);
@@ -2226,5 +2229,81 @@ class LangUtilTest {
         AssertionError error = new AssertionError("boom");
         AssertionError thrown = assertThrows(AssertionError.class, () -> LangUtil.throwAsRuntimeException(error));
         assertSame(error, thrown);
+    }
+
+    @Test
+    void testFailedCheckException() {
+        LangUtil.FailedCheckException ex1 = new LangUtil.FailedCheckException();
+        assertNull(ex1.getMessage());
+
+        LangUtil.FailedCheckException ex2 = new LangUtil.FailedCheckException("custom message");
+        assertEquals("custom message", ex2.getMessage());
+
+        Throwable cause = new RuntimeException("cause");
+        LangUtil.FailedCheckException ex3 = new LangUtil.FailedCheckException(cause);
+        assertSame(cause, ex3.getCause());
+
+        LangUtil.FailedCheckException ex4 = new LangUtil.FailedCheckException("custom message", cause);
+        assertEquals("custom message", ex4.getMessage());
+        assertSame(cause, ex4.getCause());
+    }
+
+    @Test
+    void testAtomicBooleanNegations() {
+        java.util.concurrent.atomic.AtomicBoolean ab = new java.util.concurrent.atomic.AtomicBoolean(false);
+
+        boolean prev = LangUtil.getAndnegate(ab);
+        assertFalse(prev);
+        assertTrue(ab.get());
+
+        boolean updated = LangUtil.negateAndGet(ab);
+        assertFalse(updated);
+        assertFalse(ab.get());
+    }
+
+    @Test
+    void testFormatLazy() {
+        Object lazy = LangUtil.formatLazy("Hello, %s %d!", "World", 42);
+        assertEquals("Hello, World 42!", lazy.toString());
+        assertEquals("Hello, World 42!", lazy.toString()); // subsequent calls
+
+        Object lazyNullFmt = LangUtil.formatLazy(null);
+        assertEquals("null", lazyNullFmt.toString());
+    }
+
+    @Test
+    void testCachingSuppliers() {
+        java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger(0);
+        LangUtil.CachingSupplier<Integer> supplier = LangUtil.cache(counter::incrementAndGet);
+
+        assertEquals(1, supplier.get());
+        assertEquals(1, supplier.get());
+        supplier.reset();
+        assertEquals(2, supplier.get());
+
+        java.util.concurrent.atomic.AtomicInteger strCounter = new java.util.concurrent.atomic.AtomicInteger(10);
+        Supplier<String> strSupplier = LangUtil.cachingStringSupplier(() -> "val" + strCounter.incrementAndGet());
+        assertEquals("val11", strSupplier.get());
+        assertEquals("val11", strSupplier.get());
+    }
+
+    @Test
+    void testNullableNaturalOrderComparator() {
+        Comparator<String> comp = LangUtil.naturalOrder();
+        assertTrue(comp.compare("a", "b") < 0);
+        assertTrue(comp.compare("b", "a") > 0);
+        assertEquals(0, comp.compare("a", "a"));
+        assertTrue(comp.compare(null, "a") < 0);
+        assertTrue(comp.compare("a", null) > 0);
+        assertEquals(0, comp.compare(null, null));
+
+        assertTrue(LangUtil.isNaturalOrder(comp));
+        assertTrue(LangUtil.isNaturalOrder(Comparator.naturalOrder()));
+        assertTrue(LangUtil.isNaturalOrder(null));
+        assertFalse(LangUtil.isNaturalOrder(Comparator.reverseOrder()));
+
+        assertSame(comp, LangUtil.orNaturalOrder(null));
+        Comparator<String> reverse = Comparator.reverseOrder();
+        assertSame(reverse, LangUtil.orNaturalOrder(reverse));
     }
 }

@@ -2,6 +2,7 @@ package com.dua3.utility.xml;
 
 import org.jspecify.annotations.Nullable;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,7 +70,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
 
     @Override
     public String getNamespaceURI(String prefix) {
-        return nsToUri.get(prefix);
+        return nsToUri.getOrDefault(prefix, XMLConstants.NULL_NS_URI);
     }
 
     @Override

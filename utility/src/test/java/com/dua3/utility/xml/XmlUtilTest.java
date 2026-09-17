@@ -528,4 +528,68 @@ class XmlUtilTest {
         }
         assertTrue(foundTemplate, "Template element not found in normalized document");
     }
+
+    @Test
+    void testInstancesAndParsing() throws Exception {
+        XmlUtil defaultUtil = XmlUtil.defaultInstance();
+        XmlUtil jaxpUtil = XmlUtil.jaxpInstance();
+        assertNotNull(defaultUtil);
+        assertNotNull(jaxpUtil);
+
+        java.nio.file.Path tempFile = java.nio.file.Files.createTempFile("xmltest", ".xml");
+        try {
+            java.nio.file.Files.writeString(tempFile, "<root><child>value</child></root>", StandardCharsets.UTF_8);
+            Document docPath = defaultUtil.parse(tempFile);
+            assertNotNull(docPath);
+            assertEquals("root", docPath.getDocumentElement().getTagName());
+
+            Document docUri = defaultUtil.parse(tempFile.toUri());
+            assertNotNull(docUri);
+            assertEquals("root", docUri.getDocumentElement().getTagName());
+        } finally {
+            java.nio.file.Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testDocumentWithNamespaceRecord() throws Exception {
+        XmlUtil util = XmlUtil.defaultInstance();
+        Document doc = util.parse("<root xmlns=\"http://example.com/ns\"><item/></root>");
+        XmlUtil.DocumentWithNamespace dwn = XmlUtil.DocumentWithNamespace.of(doc);
+
+        assertNotNull(dwn);
+        assertSame(doc, dwn.document());
+        assertNotNull(dwn.namespaceContext());
+        assertNotNull(dwn.toString());
+    }
+
+    @Test
+    void testFormatNodeAndPrettyPrintFallbacks() throws Exception {
+        XmlUtil util = XmlUtil.defaultInstance();
+        Document doc = util.parse("<root><item id=\"1\"/></root>");
+
+        String formattedNode = util.format(doc.getDocumentElement());
+        assertTrue(formattedNode.contains("<root>"));
+
+        StringWriter sw = new StringWriter();
+        util.format(sw, doc.getDocumentElement(), StandardCharsets.ISO_8859_1);
+        assertTrue(sw.toString().contains("<root>"));
+
+        // Fallback when invalid XML is passed to prettyPrint
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        util.prettyPrint(baos, "not-valid-xml", StandardCharsets.UTF_8);
+        assertEquals("not-valid-xml", baos.toString(StandardCharsets.UTF_8));
+
+        StringWriter swInvalid = new StringWriter();
+        util.prettyPrint(swInvalid, "not-valid-xml");
+        assertEquals("not-valid-xml", swInvalid.toString());
+    }
+
+    @Test
+    void testXPathFactoryMethods() throws Exception {
+        XmlUtil util = XmlUtil.defaultInstance();
+        assertNotNull(util.xpath());
+        assertNotNull(util.xpath("http://example.com"));
+        assertNotNull(util.xpath(Map.of("p", "http://example.com"), "http://example.com"));
+    }
 }

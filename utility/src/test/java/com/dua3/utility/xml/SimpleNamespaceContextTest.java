@@ -66,4 +66,28 @@ class SimpleNamespaceContextTest {
         assertEquals("http://www.namespaceA.com", ctx.getNamespaceURI("ns3"));
     }
 
+    @Test
+    void testPrefixAndUriListsAndMissingEntries() {
+        SimpleNamespaceContext ctx = new SimpleNamespaceContext(Map.of("a", "http://a.com", "b", "http://b.com"));
+
+        List<String> prefixes = ctx.getPrefixes();
+        assertEquals(2, prefixes.size());
+        org.junit.jupiter.api.Assertions.assertTrue(prefixes.contains("a"));
+        org.junit.jupiter.api.Assertions.assertTrue(prefixes.contains("b"));
+
+        List<String> uris = ctx.getNamespaceURIs();
+        assertEquals(2, uris.size());
+        org.junit.jupiter.api.Assertions.assertTrue(uris.contains("http://a.com"));
+        org.junit.jupiter.api.Assertions.assertTrue(uris.contains("http://b.com"));
+
+        org.junit.jupiter.api.Assertions.assertFalse(ctx.getDefaultPrefix().isPresent());
+        org.junit.jupiter.api.Assertions.assertNull(ctx.getPrefix("http://nonexistent.com"));
+        org.junit.jupiter.api.Assertions.assertFalse(ctx.getPrefixes("http://nonexistent.com").hasNext());
+    }
+
+    @Test
+    void testUnboundPrefixGetNamespaceURI() {
+        SimpleNamespaceContext ctx = new SimpleNamespaceContext(Map.of("a", "http://a.com"));
+        assertEquals(javax.xml.XMLConstants.NULL_NS_URI, ctx.getNamespaceURI("nonexistent"));
+    }
 }

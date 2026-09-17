@@ -235,6 +235,11 @@ could not be loaded.
 
 ## Changes
 
+## 24.8.2
+
+- fix return value of `SimpleNamespaceContext.getNamespaceURI()` to return `XMLConstants.NULL_NS_URI` for unbound `URI`
+- improved test coverage and fixed Qodana and Sonar warnings
+
 ## 24.8.1
 
 - fix exception being thrown when using glob pattern containing spaces in ReadableObjectStore

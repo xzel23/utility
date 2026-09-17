@@ -1014,4 +1014,62 @@ class ArgumentsParserOptionTest {
         assertTrue(parser.parse("arg1", "--flag", "arg2").isSet(flagOption));
         assertTrue(parser.parse("arg1", "arg2", "--flag").isSet(flagOption));
     }
+
+    public record ServerConfig(String host, int port, double timeout, TestEnum mode) {}
+    public record UnsupportedConfig(boolean active) {}
+
+    @Test
+    void testAddRecordOptionWithDefaultSupplier() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder().name("RecordTest");
+        Option<ServerConfig> serverOpt = builder.addRecordOption(
+                "server",
+                "Server configuration",
+                Repetitions.ZERO_OR_ONE,
+                () -> new ServerConfig("localhost", 8080, 5.0, TestEnum.SMALL),
+                ServerConfig.class,
+                "--server"
+        );
+
+        ArgumentsParser parser = builder.build();
+
+        Arguments defaultArgs = parser.parse();
+        assertEquals(new ServerConfig("localhost", 8080, 5.0, TestEnum.SMALL), defaultArgs.get(serverOpt).orElseThrow());
+
+        Arguments parsedArgs = parser.parse("--server", "example.com", "9090", "2.5", "MEDIUM");
+        assertEquals(new ServerConfig("example.com", 9090, 2.5, TestEnum.MEDIUM), parsedArgs.get(serverOpt).orElseThrow());
+    }
+
+    @Test
+    void testAddRecordOptionWithConsumerHandler() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder().name("RecordTest");
+        java.util.concurrent.atomic.AtomicReference<ServerConfig> ref = new java.util.concurrent.atomic.AtomicReference<>();
+
+        Option<ServerConfig> serverOpt = builder.addRecordOption(
+                "server",
+                "Server configuration",
+                Repetitions.ZERO_OR_ONE,
+                ref::set,
+                ServerConfig.class,
+                "--server"
+        );
+
+        ArgumentsParser parser = builder.build();
+        Arguments parsedArgs = parser.parse("--server", "myhost", "80", "1.0", "LARGE");
+        assertEquals(new ServerConfig("myhost", 80, 1.0, TestEnum.LARGE), parsedArgs.get(serverOpt).orElseThrow());
+        parsedArgs.handle();
+        assertEquals(new ServerConfig("myhost", 80, 1.0, TestEnum.LARGE), ref.get());
+    }
+
+    @Test
+    void testAddRecordOptionWithUnsupportedTypeThrows() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder();
+        assertThrows(IllegalArgumentException.class, () -> builder.addRecordOption(
+                "unsupported",
+                "Unsupported",
+                Repetitions.ZERO_OR_ONE,
+                () -> new UnsupportedConfig(true),
+                UnsupportedConfig.class,
+                "--unsupported"
+        ));
+    }
 }

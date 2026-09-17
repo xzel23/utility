@@ -649,4 +649,27 @@ class ArgumentsParserHelpTest {
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
+
+    @Test
+    void testHelpMarkdown() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder()
+                .name("App")
+                .description("Application description")
+                .argsDescription("positional arguments description")
+                .positionalArgs(1, 2, "source", "dest");
+
+        builder.flagBuilder("Verbose", "Enable verbose output").build("-v", "--verbose");
+        builder.optionBuilder("Output", "Output file", String.class)
+                .param(Param.ofString("Output", "Output path", "out", Param.Required.REQUIRED))
+                .build("-o", "--output");
+
+        ArgumentsParser parser = builder.build();
+        String md = parser.helpMarkdown();
+
+        org.junit.jupiter.api.Assertions.assertNotNull(md);
+        org.junit.jupiter.api.Assertions.assertTrue(md.contains("# App"));
+        org.junit.jupiter.api.Assertions.assertTrue(md.contains("Application description"));
+        org.junit.jupiter.api.Assertions.assertTrue(md.contains("-v, --verbose"));
+        org.junit.jupiter.api.Assertions.assertTrue(md.contains("-o, --output"));
+    }
 }
