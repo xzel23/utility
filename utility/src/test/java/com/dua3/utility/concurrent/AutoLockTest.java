@@ -113,6 +113,25 @@ class AutoLockTest {
         assertEquals(0, lock.getHoldCount());
     }
 
+    @Test
+    void testNullArgumentsThrow() {
+        assertThrows(Throwable.class, () -> AutoLock.of(null));
+        assertThrows(Throwable.class, () -> AutoLock.of(null, "name"));
+        assertThrows(Throwable.class, () -> AutoLock.of(new ReentrantLock(), (String) null));
+        assertThrows(Throwable.class, () -> AutoLock.of(null, () -> "name"));
+        assertThrows(Throwable.class, () -> AutoLock.of(new ReentrantLock(), (java.util.function.Supplier<String>) null));
+    }
+
+    @Test
+    void testManualClose() {
+        ReentrantLock lock = new ReentrantLock();
+        AutoLock autoLock = AutoLock.of(lock);
+        assertTrue(lock.isLocked());
+
+        autoLock.close();
+        assertFalse(lock.isLocked());
+    }
+
     /**
      * A mock Lock implementation that tracks lock/unlock calls
      */

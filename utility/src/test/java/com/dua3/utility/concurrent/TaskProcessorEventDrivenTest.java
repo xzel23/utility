@@ -143,6 +143,42 @@ class TaskProcessorEventDrivenTest {
         Assertions.assertFalse(cf.isDone());
     }
 
+    @Test
+    void testTaskTimeoutTriggers() {
+        Map<Object, String> registry = new ConcurrentHashMap<>();
+        processor = new TaskProcessorEventDriven<>("ev-timeout", registry::get);
+
+        CallableWithId<Integer> task = new CallableWithId<>("T1", () -> 100);
+        registry.put(task, task.id());
+        CompletableFuture<Integer> future = processor.submit(task);
+
+        processor.addTaskTimeout(task.id(), java.time.Duration.ofMillis(50));
+
+        java.util.concurrent.ExecutionException ex = Assertions.assertThrows(
+                java.util.concurrent.ExecutionException.class,
+                () -> future.get(1, TimeUnit.SECONDS)
+        );
+        Assertions.assertInstanceOf(java.util.concurrent.TimeoutException.class, ex.getCause());
+    }
+
+    @Test
+    void testTaskTimeoutIgnoredWhenUnknownKeyOrAlreadyCompleted() {
+        Map<Object, String> registry = new ConcurrentHashMap<>();
+        processor = new TaskProcessorEventDriven<>("ev-timeout-ignored", registry::get);
+
+        // Unknown key: should not throw
+        Assertions.assertDoesNotThrow(() -> processor.addTaskTimeout("unknownKey", java.time.Duration.ofMillis(50)));
+
+        // Already completed key: should ignore timeout
+        CallableWithId<Integer> task = new CallableWithId<>("T2", () -> 200);
+        registry.put(task, task.id());
+        CompletableFuture<Integer> future = processor.submit(task);
+        processor.updateTask(task.id(), 200, true);
+        Assertions.assertTrue(future.isDone());
+
+        Assertions.assertDoesNotThrow(() -> processor.addTaskTimeout(task.id(), java.time.Duration.ofMillis(50)));
+    }
+
     private static final class CallableWithId<T> implements java.util.concurrent.Callable<T> {
         private final String id;
         private final java.util.concurrent.Callable<T> delegate;

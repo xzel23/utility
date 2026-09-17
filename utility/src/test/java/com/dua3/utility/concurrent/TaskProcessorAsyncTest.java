@@ -24,6 +24,22 @@ class TaskProcessorAsyncTest {
     }
 
     @Test
+    void testConstructorValidation() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new TaskProcessorAsync("async-invalid", 0));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new TaskProcessorAsync("async-invalid", -1));
+    }
+
+    @Test
+    void testSubmitRunnable() throws Exception {
+        processor = new TaskProcessorAsync("async-runnable", 1);
+        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+
+        processor.submit(latch::countDown);
+
+        Assertions.assertTrue(latch.await(1, TimeUnit.SECONDS));
+    }
+
+    @Test
     void testSubmitReturnsResult() throws Exception {
         processor = new TaskProcessorAsync("async", 2);
 
@@ -111,6 +127,7 @@ class TaskProcessorAsyncTest {
         Assertions.assertThrows(IllegalStateException.class, () -> processor.submit(() -> 3));
     }
 
+    @SuppressWarnings("java:S2925")
     @Test
     void testShutdownAndAbortWhileTaskRunning() {
         processor = new TaskProcessorAsync("async-abort-running", 1);

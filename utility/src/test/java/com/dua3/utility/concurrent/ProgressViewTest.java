@@ -127,6 +127,78 @@ class ProgressViewTest {
 
         progressView.update("task1", PROGRESS_INDETERMINATE);
         assertEquals(PROGRESS_INDETERMINATE, mockIndicator.lastPercentDone);
+
+        assertTrue(ProgressView.isIndeterminate(PROGRESS_INDETERMINATE));
+        assertTrue(ProgressView.isIndeterminate(Double.NaN));
+        assertFalse(ProgressView.isIndeterminate(0.0));
+        assertFalse(ProgressView.isIndeterminate(1.0));
+        assertFalse(ProgressView.isIndeterminate(0.5));
+    }
+
+    @Test
+    void testUpdateClampingInt() {
+        progressView.schedule("task1");
+
+        // done < 0 should be clamped to 0
+        progressView.update("task1", 100, -10);
+        assertEquals(0, mockIndicator.lastDone);
+        assertEquals(100, mockIndicator.lastTotal);
+
+        // done > total should be clamped to total
+        progressView.update("task1", 100, 150);
+        assertEquals(100, mockIndicator.lastDone);
+        assertEquals(100, mockIndicator.lastTotal);
+    }
+
+    @Test
+    void testUpdateClampingDouble() {
+        progressView.schedule("task1");
+
+        // percentDone < 0.0 should be clamped to 0.0
+        progressView.update("task1", -0.5);
+        assertEquals(0.0, mockIndicator.lastPercentDone);
+
+        // percentDone > 1.0 should be clamped to 1.0
+        progressView.update("task1", 1.5);
+        assertEquals(1.0, mockIndicator.lastPercentDone);
+    }
+
+    @Test
+    void testPauseWhenAlreadyTerminal() {
+        progressView.schedule("task1");
+        progressView.finish("task1", State.COMPLETED_SUCCESS);
+
+        // Attempting to pause after finish is ignored with warning
+        progressView.pause("task1");
+        assertEquals(State.COMPLETED_SUCCESS, mockIndicator.lastState);
+    }
+
+    @Test
+    void testAbortWhenAlreadyTerminal() {
+        progressView.schedule("task1");
+        progressView.finish("task1", State.COMPLETED_SUCCESS);
+
+        // Attempting to abort after finish is ignored with warning
+        progressView.abort("task1");
+        assertEquals(State.COMPLETED_SUCCESS, mockIndicator.lastState);
+    }
+
+    @SuppressWarnings("java:S1186")
+    @Test
+    void testDefaultProgressIndicatorPause() {
+        ProgressView.ProgressIndicator indicator = new ProgressView.ProgressIndicator() {
+            @Override
+            public void finish(State s) {}
+
+            @Override
+            public void update(int total, int done) {}
+
+            @Override
+            public void update(double percentDone) {}
+        };
+
+        // Calling default pause() method should not throw
+        assertDoesNotThrow(indicator::pause);
     }
 
     /**

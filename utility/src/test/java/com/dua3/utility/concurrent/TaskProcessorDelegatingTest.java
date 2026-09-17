@@ -57,6 +57,7 @@ class TaskProcessorDelegatingTest {
         Assertions.assertTrue(createdKeys.containsAll(Set.of("A", "B")));
     }
 
+    @SuppressWarnings("java:S5778")
     @Test
     void testShutdownPropagatesToDelegatesAndPreventsFurtherSubmissions() throws Exception {
         // wrapping delegate recording shutdown calls
@@ -122,6 +123,7 @@ class TaskProcessorDelegatingTest {
         Assertions.assertEquals("inner-boom", ex.getCause().getMessage());
     }
 
+    @SuppressWarnings("java:S5778")
     @Test
     void testShutdownAndAbortWhenNoTasks() {
         Function<String, TaskProcessor> factory = key -> new TaskProcessorAsync("d-abort-none-" + key, 1);
@@ -138,6 +140,7 @@ class TaskProcessorDelegatingTest {
         Assertions.assertThrows(IllegalStateException.class, () -> processor.submit(new KeyedCallable<>("X", () -> 1)));
     }
 
+    @SuppressWarnings("java:S5778")
     @Test
     void testShutdownAndAbortAfterCompletedTasks() throws Exception {
         Function<String, TaskProcessor> factory = key -> new TaskProcessorAsync("d-abort-completed-" + key, 1);
@@ -159,6 +162,7 @@ class TaskProcessorDelegatingTest {
         Assertions.assertThrows(IllegalStateException.class, () -> processor.submit(new KeyedCallable<>("A", () -> 3)));
     }
 
+    @SuppressWarnings("java:S2925")
     @Test
     void testShutdownAndAbortWhileTasksRunning() {
         Function<String, TaskProcessor> factory = key -> new TaskProcessorAsync("d-abort-run-" + key, 1);
@@ -192,6 +196,21 @@ class TaskProcessorDelegatingTest {
 
         Assertions.assertTrue(processor.waitForCompletion(1_000, TimeUnit.MILLISECONDS));
         Assertions.assertTrue(processor.isCompleted());
+    }
+
+    @Test
+    void testSubmitRunnable() throws Exception {
+        Function<String, TaskProcessor> factory = key -> new TaskProcessorAsync("d-runnable-" + key, 1);
+        processor = new TaskProcessorDelegating<>(
+                "delegating-runnable",
+                factory,
+                task -> "R"
+        );
+
+        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+        processor.submit(latch::countDown);
+
+        Assertions.assertTrue(latch.await(1, TimeUnit.SECONDS));
     }
 
     private static final class KeyedCallable<T> implements java.util.concurrent.Callable<T> {
