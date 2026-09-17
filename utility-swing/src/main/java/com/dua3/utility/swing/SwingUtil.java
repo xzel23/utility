@@ -72,6 +72,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -387,10 +388,11 @@ public final class SwingUtil {
         }
         try {
             Object data = transferable.getTransferData(flavor);
+            assert data != null;
             return switch (data) {
                 case String s -> Optional.of(s);
                 case ByteArrayInputStream bais -> Optional.of(new String(bais.readAllBytes(), StandardCharsets.UTF_8));
-                case null, default -> Optional.empty();
+                default -> Optional.empty();
             };
         } catch (IOException | UnsupportedFlavorException e) {
             LOG.warn("could not read clipboard data for flavor {}", flavor, e);
@@ -617,7 +619,7 @@ public final class SwingUtil {
     }
 
     @SafeVarargs
-    private static Optional<Path> showFileDialog(@Nullable Component parent, Path current, int selectionMode, BiFunction<? super JFileChooser, ? super Component, Integer> showDialog,
+    private static Optional<Path> showFileDialog(@Nullable Component parent, Path current, int selectionMode, BiFunction<? super JFileChooser, ? super @Nullable Component, Integer> showDialog,
                                                  Pair<String, String[]>... types) {
         boolean isFileOnlySelection = selectionMode == JFileChooser.FILES_ONLY;
         File file;
@@ -641,7 +643,10 @@ public final class SwingUtil {
 
         JFileChooser jfc = new JFileChooser(directory);
         for (var entry : types) {
-            jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first(), entry.second()));
+            jfc.addChoosableFileFilter(new FileNameExtensionFilter(
+                    entry.first(),
+                    Objects.requireNonNull(entry.second(), "internal error, extensions must not be null")
+            ));
         }
 
         jfc.setSelectedFile(file);
