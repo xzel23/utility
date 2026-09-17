@@ -439,6 +439,7 @@ class ResourcePoolTest {
         assertTimeoutPreemptively(Duration.ofSeconds(1), pool::close);
     }
 
+    @SuppressWarnings("java:S2925")
     @Test
     void closeWithWaitersSatisfiesThemFirst() throws InterruptedException {
         ResourcePool<Object> pool = ResourcePool.newFixedSizeResourcePool(Object::new, r -> {}, 1);
@@ -446,26 +447,38 @@ class ResourcePoolTest {
         // Hold the only resource
         var lease1 = pool.acquire();
 
-        // NEW: Ensure the waiter is actually blocked/ready before we close
-        CountDownLatch waiterReady = new CountDownLatch(1);
+        // Ensure the waiter is actually blocked/ready before we close
         CountDownLatch waiterAcquired = new CountDownLatch(1);
 
         Thread waiterThread = new Thread(() -> {
-            waiterReady.countDown(); // Signal that this thread is alive
             try (var lease2 = pool.acquire()) {
                 waiterAcquired.countDown();
             }
         });
         waiterThread.start();
 
-        // Wait for the waiter thread to at least start its execution
-        assertTrue(waiterReady.await(5, TimeUnit.SECONDS));
+        // Wait until the waiter thread is actually blocked in acquire() waiting for a resource
+        long deadline = System.currentTimeMillis() + 5000;
+        while (waiterThread.getState() != Thread.State.WAITING && System.currentTimeMillis() < deadline) {
+            //noinspection BusyWait
+            Thread.sleep(10);
+        }
+        assertEquals(Thread.State.WAITING, waiterThread.getState(), "Waiter thread should be waiting in acquire()");
 
         CountDownLatch closeFinished = new CountDownLatch(1);
-        new Thread(() -> {
+        Thread closerThread = new Thread(() -> {
             pool.close();
             closeFinished.countDown();
-        }).start();
+        });
+        closerThread.start();
+
+        // Wait until closer thread is actually blocked in close() waiting for active/waiting resources
+        long closeDeadline = System.currentTimeMillis() + 5000;
+        while (closerThread.getState() != Thread.State.WAITING && System.currentTimeMillis() < closeDeadline) {
+            //noinspection BusyWait
+            Thread.sleep(10);
+        }
+        assertEquals(Thread.State.WAITING, closerThread.getState(), "Closer thread should be waiting in close()");
 
         // Release the resource.
         lease1.close();
