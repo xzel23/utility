@@ -664,8 +664,8 @@ public final class FxUtil {
      * @param observableValue  the observable value
      * @param changeListener   the change listener
      */
-    private record ChangeListenerAdapter<T>(ObservableValue<T> observableValue,
-                                            ChangeListener<? super T> changeListener)
+    private record ChangeListenerAdapter<T>(ObservableValue<@Nullable T> observableValue,
+                                            ChangeListener<? super @Nullable T> changeListener)
             implements BiConsumer<T, T> {
         @Override
         public void accept(@Nullable T t1, @Nullable T t2) {
