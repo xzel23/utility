@@ -150,6 +150,7 @@ public final class ApplicationUtil {
      *
      * @return the current application UI mode, which is an instance of {@link UiMode}
      */
+    @SuppressWarnings("java:S2637") // false positive
     public static UiMode getUiMode() {
         return Objects.requireNonNullElse(uiMode.get(), UiMode.SYSTEM_DEFAULT);
     }
@@ -162,7 +163,9 @@ public final class ApplicationUtil {
      * @param mode the desired UI mode for the application. Must be one of {@link UiMode#DARK}, {@link UiMode#LIGHT},
      *             or {@link UiMode#SYSTEM_DEFAULT}.
      */
-    public static void setUiMode(UiMode mode) {
+    @SuppressWarnings("java:S4449") // false positive
+    public static void setUiMode(@Nullable UiMode mode) {
+        mode = Objects.requireNonNullElse(mode, UiMode.SYSTEM_DEFAULT);
         UiMode previousMode = uiMode.getAndSet(mode);
         if (previousMode != mode) {
             boolean dark = switch (getUiMode()) {
@@ -178,12 +181,12 @@ public final class ApplicationUtil {
     /**
      * Notifies all registered UI mode listeners.
      *
-     * @param uiMode the UiMode
+     * @param newUiMode the UiMode
      */
-    private static void onUpdateUiMode(UiMode uiMode) {
+    private static void onUpdateUiMode(UiMode newUiMode) {
         uiModeListeners.forEach(listener -> {
             try {
-                listener.accept(uiMode);
+                listener.accept(newUiMode);
             } catch (Exception ex) {
                 LOG.warn("Ignoring exception while notifying listener", ex);
             }
