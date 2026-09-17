@@ -78,6 +78,7 @@ public final class RtfReader {
         return parser.toRichText();
     }
 
+    @SuppressWarnings("Java9ReflectionClassVisibility") // rtfparserkit is an optional dependency
     @NullUnmarked
     private static final class StyledRtfParser {
         private static final Map<Color, Style> PREDEFINED_TEXT_COLOR_STYLES = Map.of(
