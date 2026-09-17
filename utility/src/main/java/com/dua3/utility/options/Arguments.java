@@ -212,15 +212,18 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return true, if the flag is set
      */
     public boolean isSet(Option<Boolean> flag) {
+        //noinspection DataFlowIssue -- false positive
         return Optional.ofNullable(
                         stream()
                                 .filter(entry -> entry.option.isEquivalent(flag))
                                 .map(Entry::getValue)
                                 .map(Boolean.class::cast)
                                 .reduce(null, (@Nullable Boolean a, @Nullable Boolean b) -> {
+                                    //noinspection ConstantValue --false positive
                                     if (a == null) {
                                         return b;
                                     }
+                                    //noinspection ConstantValue --false positive
                                     if (b == null) {
                                         return a;
                                     }
