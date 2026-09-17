@@ -207,15 +207,19 @@ public final class I18N {
      * @param bundleLoader The function used to load the ResourceBundle for the given locale.
      * @return An Optional containing the ResourceBundle for the key, or an empty Optional if the key is not found.
      */
-    public Optional<ResourceBundle> lookupBundle(String key, Function<Locale, ResourceBundle> bundleLoader) {
-        return Optional.ofNullable(bundleMap.computeIfAbsent(key, k -> {
-            ResourceBundle newBundle = bundleLoader.apply(mainBundle.getLocale());
-            if (!newBundle.containsKey(k)) {
-                return null;
-            }
-            mergeBundle(newBundle);
-            return newBundle;
-        }));
+    public Optional<ResourceBundle> lookupBundle(String key, Function<Locale, @Nullable ResourceBundle> bundleLoader) {
+        ResourceBundle bundle = bundleMap.get(key);
+        if (bundle != null) {
+            return Optional.of(bundle);
+        }
+
+        ResourceBundle newBundle = bundleLoader.apply(mainBundle.getLocale());
+        if (newBundle == null || !newBundle.containsKey(key)) {
+            return Optional.empty();
+        }
+
+        mergeBundle(newBundle);
+        return Optional.ofNullable(bundleMap.get(key));
     }
 
     /**
