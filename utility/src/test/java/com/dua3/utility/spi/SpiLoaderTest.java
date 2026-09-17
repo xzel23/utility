@@ -108,4 +108,35 @@ class SpiLoaderTest {
         assertThrows(IllegalStateException.class, () -> builder.defaultSupplier(AnotherTestServiceImpl::new));
     }
 
+    @Test
+    void testLoadWithDefaultSupplier() {
+        SpiLoader<TestService> loader = SpiLoader.builder(TestService.class)
+                .defaultSupplier(TestServiceImpl::new)
+                .build();
+
+        TestService service = loader.load();
+        assertNotNull(service);
+        assertEquals("TestServiceImpl", service.getName());
+    }
+
+    @Test
+    void testLoadWithoutImplementationOrSupplierThrowsException() {
+        SpiLoader<TestService> loader = SpiLoader.builder(TestService.class)
+                .build();
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, loader::load);
+        assertTrue(ex.getMessage().contains("no implementation found for type"));
+    }
+
+    @Test
+    void testLoadWithPredicateFilterAndFallback() {
+        SpiLoader<TestService> loader = SpiLoader.builder(TestService.class)
+                .accept(service -> false)
+                .defaultSupplier(AnotherTestServiceImpl::new)
+                .build();
+
+        TestService service = loader.load();
+        assertNotNull(service);
+        assertEquals("AnotherTestServiceImpl", service.getName());
+    }
 }
