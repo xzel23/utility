@@ -786,6 +786,7 @@ public final class FxLauncher {
             return Optional.empty();
         }
 
+        //noinspection DataFlowIssue -- value returned by PlatformGuar.run() cannot evaluate to null
         return Optional.ofNullable(logWindow.updateAndGet(lw ->
                 Objects.requireNonNullElse(
                         lw,

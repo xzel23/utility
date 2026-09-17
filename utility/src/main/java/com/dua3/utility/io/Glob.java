@@ -41,6 +41,7 @@ final class Glob<T> {
 
         if (firstGlobCharIndex == pattern.length()) {
             T object = adapter.resolve().apply(base, pattern);
+            assert object != null : "internal error, object cannot be null";
             return adapter.exists().apply(object)
                     ? Stream.of(adapter.normalize().apply(base, object))
                     : Stream.empty();
@@ -52,6 +53,7 @@ final class Glob<T> {
         Predicate<T> matcher = adapter.matcherFactory().apply(fixedBase, globPart);
 
         // The caller owns the returned stream and must close it.
+        //noinspection DataFlowIssue -- result cannot be null
         return adapter.walk().apply(fixedBase)
                 .filter(matcher)
                 .map(object -> adapter.normalize().apply(base, object));
