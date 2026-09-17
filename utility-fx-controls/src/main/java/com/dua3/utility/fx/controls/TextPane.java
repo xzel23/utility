@@ -941,10 +941,10 @@ public class TextPane extends Control implements RichTextPane {
             }
             if (!Objects.equals(activeSpacing, spacing)) {
                 if (activeSpacing != null) {
-                    yOffset += activeSpacing.bottom() * displayScale;
+                    yOffset = (float) (yOffset + activeSpacing.bottom() * displayScale);
                 }
                 if (spacing != null) {
-                    yOffset += spacing.top() * displayScale;
+                    yOffset = (float) (yOffset + spacing.top() * displayScale);
                 }
                 activeSpacing = spacing;
             }
