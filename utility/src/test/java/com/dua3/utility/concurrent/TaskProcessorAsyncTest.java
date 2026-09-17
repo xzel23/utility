@@ -138,6 +138,7 @@ class TaskProcessorAsyncTest {
                 return 42;
             } catch (InterruptedException e) {
                 // propagate as runtime to be wrapped by CompletionException in executor path
+                //noinspection ProhibitedExceptionThrown
                 throw new RuntimeException(e);
             }
         });
