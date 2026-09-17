@@ -292,6 +292,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         return options.iterator();
     }
 
+    @SuppressWarnings("java:S3457") // -- toString() should give platform independent result
     @Override
     public String toString() {
         try (Formatter fmt = new Formatter()) {
