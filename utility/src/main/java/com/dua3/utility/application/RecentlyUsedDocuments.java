@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Predicate;
@@ -66,8 +65,8 @@ public final class RecentlyUsedDocuments {
     private void load() {
         try {
             Arrays.stream(prefs.keys())
-                    // ... sort
-                    .sorted(Comparator.comparing(Integer::valueOf))
+                    // ... sort descending so that putFirst maintains the original order
+                    .sorted((a, b) -> Integer.compare(Integer.parseInt(b), Integer.parseInt(a)))
                     // ... get values
                     .map(key -> prefs.get(key, ""))
                     // ... ignore empty values

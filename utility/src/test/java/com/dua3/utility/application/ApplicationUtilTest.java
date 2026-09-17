@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.prefs.Preferences;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,10 +27,17 @@ class ApplicationUtilTest {
     }
 
     @Test
+    void testInitApplicationPreferences() {
+        Preferences prefs = EphemeralPreferences.createRoot();
+        assertDoesNotThrow(() -> ApplicationUtil.initApplicationPreferences(prefs));
+        assertDoesNotThrow(() -> ApplicationUtil.initApplicationPreferences(prefs));
+    }
+
+    @Test
     void testRecentlyUsedDocumentsShouldReturnSameInstance() {
         var first = ApplicationUtil.recentlyUsedDocuments();
         var second = ApplicationUtil.recentlyUsedDocuments();
-        assertSame( first, second);
+        assertSame(first, second);
     }
 
     @Test
@@ -55,10 +63,18 @@ class ApplicationUtilTest {
 
         Consumer<UiMode> uiModeListener = observedUiMode::set;
         Consumer<Boolean> darkModeListener = observedDarkMode::set;
+        Consumer<UiMode> throwingUiModeListener = mode -> {
+            throw new RuntimeException("Simulated UI mode exception");
+        };
+        Consumer<Boolean> throwingDarkModeListener = dark -> {
+            throw new RuntimeException("Simulated dark mode exception");
+        };
 
         ApplicationUtil.setUiMode(UiMode.LIGHT);
         ApplicationUtil.addUiModeListener(uiModeListener);
         ApplicationUtil.addDarkModeListener(darkModeListener);
+        ApplicationUtil.addUiModeListener(throwingUiModeListener);
+        ApplicationUtil.addDarkModeListener(throwingDarkModeListener);
         try {
             ApplicationUtil.setUiMode(UiMode.DARK);
             assertEquals(UiMode.DARK, observedUiMode.get());
@@ -67,6 +83,8 @@ class ApplicationUtilTest {
 
             ApplicationUtil.removeUiModeListener(uiModeListener);
             ApplicationUtil.removeDarkModeListener(darkModeListener);
+            ApplicationUtil.removeUiModeListener(throwingUiModeListener);
+            ApplicationUtil.removeDarkModeListener(throwingDarkModeListener);
             ApplicationUtil.setUiMode(UiMode.LIGHT);
 
             assertEquals(UiMode.DARK, observedUiMode.get());
@@ -75,8 +93,36 @@ class ApplicationUtilTest {
         } finally {
             ApplicationUtil.removeUiModeListener(uiModeListener);
             ApplicationUtil.removeDarkModeListener(darkModeListener);
+            ApplicationUtil.removeUiModeListener(throwingUiModeListener);
+            ApplicationUtil.removeDarkModeListener(throwingDarkModeListener);
             ApplicationUtil.setUiMode(originalMode);
         }
+    }
+
+    @Test
+    void testSetUiModeNullDefaultsToSystemDefault() {
+        UiMode originalMode = ApplicationUtil.getUiMode();
+        try {
+            ApplicationUtil.setUiMode(null);
+            assertEquals(UiMode.SYSTEM_DEFAULT, ApplicationUtil.getUiMode());
+        } finally {
+            ApplicationUtil.setUiMode(originalMode);
+        }
+    }
+
+    @Test
+    void testUpdateWindowDecorations() {
+        assertDoesNotThrow(ApplicationUtil::updateWindowDecorations);
+    }
+
+    @Test
+    void testIsDarkModeDetectionSupported() {
+        assertDoesNotThrow(ApplicationUtil::isDarkModeDetectionSupported);
+    }
+
+    @Test
+    void testIsDesktopSupported() {
+        assertDoesNotThrow(ApplicationUtil::isDesktopSupported);
     }
 
     @Test
