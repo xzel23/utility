@@ -68,4 +68,27 @@ class RandomUtilTest {
         assertTrue(uniqueValues.size() > 200,
                 "Expected at least 200 unique byte values in 10,000 random bytes, but got " + uniqueValues.size());
     }
+
+    @SuppressWarnings("java:S1612")
+    @Test
+    void testNextInt() {
+        assertDoesNotThrow(() -> {RandomUtil.nextInt();});
+        assertDoesNotThrow(() -> {RandomUtil.nextInt();});
+        assertDoesNotThrow(() -> {RandomUtil.nextInt();});
+    }
+
+    @Test
+    void testNextIntWithBounds() {
+        int min = 10;
+        int max = 20;
+
+        for (int i = 0; i < 100; i++) {
+            int val = RandomUtil.nextInt(min, max);
+            assertTrue(val >= min && val < max, "Generated value " + val + " should be in range [" + min + ", " + max + ")");
+        }
+
+        // Invalid bounds
+        assertThrows(IllegalArgumentException.class, () -> RandomUtil.nextInt(10, 10));
+        assertThrows(IllegalArgumentException.class, () -> RandomUtil.nextInt(20, 10));
+    }
 }
