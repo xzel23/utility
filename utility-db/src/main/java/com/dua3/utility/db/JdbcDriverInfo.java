@@ -187,12 +187,13 @@ public class JdbcDriverInfo {
                     () -> dflt,
                     "--" + name
             );
-            case OPTION_TYPE_PATH -> Option.createSimpleOption(name,
-                    description,
-                    Param.ofPath(name, "The " + name + ".", name, Param.Required.REQUIRED, Objects::nonNull),
-                    () -> dflt == null ? null : Paths.get(dflt),
-                    "--" + name
-            );
+            case OPTION_TYPE_PATH -> //noinspection ConstantValue -- by design
+                    Option.createSimpleOption(name,
+                            description,
+                            Param.ofPath(name, "The " + name + ".", name, Param.Required.REQUIRED, Objects::nonNull),
+                            () -> dflt == null ? null : Paths.get(dflt),
+                            "--" + name
+                    );
             case OPTION_TYPE_INTEGER -> Option.createSimpleOption(name,
                     description,
                     Param.ofInt(name, "The " + name + ".", name, Param.Required.REQUIRED),
