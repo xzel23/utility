@@ -148,6 +148,21 @@ class AwtImageUtilTest {
     }
 
     @Test
+    void testToMutableImage_fromAwtMutableImage() {
+        AwtMutableImage originalImage = imageUtil.createImage(30, 25);
+        AwtMutableImage convertedImage = imageUtil.toMutableImage(originalImage);
+        assertSame(originalImage, convertedImage);
+    }
+
+    @Test
+    void testLoad_invalidDataThrowsIOException() {
+        byte[] invalidBytes = new byte[]{1, 2, 3, 4};
+        org.junit.jupiter.api.Assertions.assertThrows(java.io.IOException.class, () -> {
+            imageUtil.load(new java.io.ByteArrayInputStream(invalidBytes));
+        });
+    }
+
+    @Test
     void testLoad() throws Exception {
         try (InputStream in = AwtMutableImageTest.class.getResourceAsStream("image.jpg")) {
             AwtImage image = imageUtil.load(in);

@@ -238,6 +238,8 @@ could not be loaded.
 ## 24.8.2
 
 - fix return value of `SimpleNamespaceContext.getNamespaceURI()` to return `XMLConstants.NULL_NS_URI` for unbound `URI`
+- fix return value of `AwtStandardImage.getSources()` and `AwtStandardImage.getPropertyNames()` not being declared as
+  `@Nullable`
 - improved test coverage and fixed Qodana and Sonar warnings
 
 ## 24.8.1

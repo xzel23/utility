@@ -1,6 +1,7 @@
 package com.dua3.utility.awt;
 
 import com.dua3.utility.data.MutableImage;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.Rectangle;
 import java.awt.image.ColorModel;
@@ -38,7 +39,7 @@ public final class AwtStandardImage implements AwtImage {
     }
 
     @Override
-    public Vector<RenderedImage> getSources() {
+    public @Nullable Vector<RenderedImage> getSources() {
         return image.getSources();
     }
 
@@ -48,7 +49,7 @@ public final class AwtStandardImage implements AwtImage {
     }
 
     @Override
-    public String[] getPropertyNames() {
+    public String @Nullable[] getPropertyNames() {
         return image.getPropertyNames();
     }
 

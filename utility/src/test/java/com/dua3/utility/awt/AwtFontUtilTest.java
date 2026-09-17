@@ -114,6 +114,10 @@ class AwtFontUtilTest {
         fontDef.setSize(16.0f);
         fontDef.setBold(true);
         fontDef.setItalic(true);
+        fontDef.setUnderline(true);
+        fontDef.setStrikeThrough(true);
+        fontDef.setColor(com.dua3.utility.data.Color.RED);
+        fontDef.setBackgroundColor(com.dua3.utility.data.Color.YELLOW);
 
         // Derive a new font from the default font
         Font derivedFont = fontUtil.deriveFont(defaultFont, fontDef);
@@ -122,6 +126,35 @@ class AwtFontUtilTest {
         assertEquals(16.0f, derivedFont.getSizeInPoints(), 0.001);
         assertTrue(derivedFont.isBold());
         assertTrue(derivedFont.isItalic());
+        assertTrue(derivedFont.isUnderline());
+        assertTrue(derivedFont.isStrikeThrough());
+        assertEquals(com.dua3.utility.data.Color.RED, derivedFont.getColor());
+        assertEquals(com.dua3.utility.data.Color.YELLOW, derivedFont.getBackgroundColor());
+    }
+
+    @Test
+    void testGetTextDimensionForAwtFont() {
+        java.awt.Font awtFont = fontUtil.convert(defaultFont);
+        String text = "Test String";
+
+        Rectangle2f dimension = fontUtil.getTextDimension(text, awtFont);
+        assertNotNull(dimension);
+        assertTrue(dimension.width() > 0);
+        assertTrue(dimension.height() > 0);
+
+        double width = fontUtil.getTextWidth(text, awtFont);
+        double height = fontUtil.getTextHeight(text, awtFont);
+        assertTrue(width > 0);
+        assertTrue(height > 0);
+    }
+
+    @Test
+    void testGetTextDimension_RichText() {
+        com.dua3.utility.text.RichText rt = com.dua3.utility.text.RichText.valueOf("Hello World");
+        Rectangle2f dimension = fontUtil.getTextDimension(rt, defaultFont);
+        assertNotNull(dimension);
+        assertTrue(dimension.width() > 0);
+        assertTrue(dimension.height() > 0);
     }
 
     // Note: getFontData is a private method, so we test it indirectly through convert
