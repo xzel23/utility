@@ -19,8 +19,8 @@ class MessageFormatterTest {
 
         assertEquals("Hello, %s!", args.fmt());
         assertArrayEquals(new Object[]{"World"}, args.args());
-        assertEquals(args, new MessageFormatter.MessageFormatterArgs("Hello, %s!", "World"));
-        assertEquals(args.hashCode(), new MessageFormatter.MessageFormatterArgs("Hello, %s!", "World").hashCode());
+        assertEquals(new MessageFormatter.MessageFormatterArgs("Hello, %s!", "World"), args);
+        assertEquals(new MessageFormatter.MessageFormatterArgs("Hello, %s!", "World").hashCode(), args.hashCode());
 
         assertEquals(new MessageFormatter.MessageFormatterArgs("\0", "literal"), MessageFormatter.literal("literal"));
         assertEquals(new MessageFormatter.MessageFormatterArgs("\0", (Object) null), MessageFormatter.literal(null));
@@ -81,5 +81,55 @@ class MessageFormatterTest {
     void standardFormatterIsSingletonAndUsesDefaultLocale() {
         assertSame(MessageFormatter.standard(), MessageFormatter.standard());
         assertEquals(MessageFormatter.FormatStyle.STRING_FORMAT, MessageFormatter.standard().getFormatStyle());
+    }
+
+    @Test
+    void testFactoriesAndFormatting() {
+        MessageFormatter fmtStandard = MessageFormatter.standard();
+        assertEquals(MessageFormatter.FormatStyle.STRING_FORMAT, fmtStandard.getFormatStyle());
+
+        MessageFormatter fmtLoc = MessageFormatter.localized(Locale.GERMAN);
+        assertEquals(MessageFormatter.FormatStyle.STRING_FORMAT, fmtLoc.getFormatStyle());
+        assertEquals("1,5", fmtLoc.format("%.1f", 1.5));
+        assertEquals("1,5", fmtLoc.format(MessageFormatter.args("%.1f", 1.5)));
+
+        MessageFormatter fmtMsg = MessageFormatter.messageFormat();
+        assertEquals(MessageFormatter.FormatStyle.MESSAGE_FORMAT, fmtMsg.getFormatStyle());
+        assertEquals("Hello Alice", fmtMsg.format("Hello {0}", "Alice"));
+        assertEquals("Hello Alice", fmtMsg.format(MessageFormatter.args("Hello {0}", "Alice")));
+
+        I18N i18n = I18N.create(new ListResourceBundle() {
+            @Override
+            protected Object[][] getContents() {
+                return new Object[][]{{"key", "value"}, {"test_key", "Result: {0}"}};
+            }
+        });
+        MessageFormatter fmtI18n = MessageFormatter.i18n(i18n);
+        assertEquals(MessageFormatter.FormatStyle.I18N, fmtI18n.getFormatStyle());
+        assertEquals("value", fmtI18n.format("key"));
+        assertEquals("Result: 123", fmtI18n.format("test_key", 123));
+        assertEquals("Result: 123", fmtI18n.format(MessageFormatter.args("test_key", 123)));
+
+        MessageFormatter defaultI18n = MessageFormatter.i18n();
+        assertEquals(MessageFormatter.FormatStyle.I18N, defaultI18n.getFormatStyle());
+    }
+
+    @SuppressWarnings("java:S5845")
+    @Test
+    void testMessageFormatterArgsDetails() {
+        MessageFormatter.MessageFormatterArgs args1 = MessageFormatter.args("fmt %s", "a");
+        MessageFormatter.MessageFormatterArgs args2 = MessageFormatter.args("fmt %s", "a");
+        MessageFormatter.MessageFormatterArgs args3 = MessageFormatter.args("fmt %s", "b");
+        MessageFormatter.MessageFormatterArgs args4 = MessageFormatter.args("other %s", "a");
+
+        assertEquals(args1, args2);
+        assertEquals(args1.hashCode(), args2.hashCode());
+        org.junit.jupiter.api.Assertions.assertNotEquals(args1, args3);
+        org.junit.jupiter.api.Assertions.assertNotEquals(args1, args4);
+        org.junit.jupiter.api.Assertions.assertNotEquals(null, args1);
+        //noinspection AssertBetweenInconvertibleTypes
+        org.junit.jupiter.api.Assertions.assertNotEquals("not an args object", args1);
+
+        org.junit.jupiter.api.Assertions.assertTrue(args1.toString().contains("fmt %s"));
     }
 }

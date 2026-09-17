@@ -1398,4 +1398,46 @@ class RichTextTest {
         Throwable throwable = Assertions.assertThrows(Throwable.class, () -> source.appendTo(null, 0, 1));
         assertTrue(throwable instanceof NullPointerException || throwable instanceof AssertionError);
     }
+
+    @Test
+    void testRemoveAttributeAndRemoveStyle() {
+        RichText text = new RichTextBuilder()
+                .push(Style.BOLD)
+                .append("Hello ")
+                .push(Style.RED)
+                .append("World")
+                .pop(Style.RED)
+                .pop(Style.BOLD)
+                .toRichText();
+
+        RichText noBold = text.removeAttribute(Style.FONT_WEIGHT, 0, text.length());
+        assertEquals("Hello World", noBold.toString());
+        Assertions.assertFalse(noBold.runs().get(0).attributes().containsKey(Style.FONT_WEIGHT));
+
+        RichText noChange = text.removeAttribute(Style.FONT_WEIGHT, 0, 0);
+        Assertions.assertSame(text, noChange);
+
+        RichText noRed = text.removeStyle(Style.RED, 6, 11);
+        assertEquals("Hello World", noRed.toString());
+        Assertions.assertFalse(noRed.runs().get(noRed.runs().size() - 1).attributes().containsKey(Style.COLOR));
+    }
+
+    @Test
+    void testJoinerOverloads() {
+        RichTextJoiner j1 = RichText.joiner(RichText.valueOf(", "));
+        RichText r1 = java.util.stream.Stream.of(RichText.valueOf("A"), RichText.valueOf("B")).collect(j1);
+        assertEquals("A, B", r1.toString());
+
+        RichTextJoiner j2 = RichText.joiner(RichText.valueOf(", "), RichText.valueOf("["), RichText.valueOf("]"));
+        RichText r2 = java.util.stream.Stream.of(RichText.valueOf("A"), RichText.valueOf("B")).collect(j2);
+        assertEquals("[A, B]", r2.toString());
+
+        RichTextJoiner j3 = RichText.joiner(", ");
+        RichText r3 = java.util.stream.Stream.of(RichText.valueOf("X"), RichText.valueOf("Y")).collect(j3);
+        assertEquals("X, Y", r3.toString());
+
+        RichTextJoiner j4 = RichText.joiner(", ", "(", ")");
+        RichText r4 = java.util.stream.Stream.of(RichText.valueOf("X"), RichText.valueOf("Y")).collect(j4);
+        assertEquals("(X, Y)", r4.toString());
+    }
 }

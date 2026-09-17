@@ -1467,4 +1467,99 @@ class TextUtilTest {
                 Arguments.of("user@", null, IllegalArgumentException.class)
         );
     }
+
+    @Test
+    void testToSystemLineEndsAndSetLineEnds() {
+        String unixText = "Line 1\nLine 2\n";
+        String customLineEnds = TextUtil.setLineEnds(unixText, "\r\n");
+        Assertions.assertEquals("Line 1\r\nLine 2\r\n", customLineEnds);
+
+        String systemLineEnds = TextUtil.toSystemLineEnds(unixText);
+        Assertions.assertEquals("Line 1" + TextUtil.LINE_END_SYSTEM + "Line 2" + TextUtil.LINE_END_SYSTEM, systemLineEnds);
+
+        String noTrailing = "Line 1\nLine 2";
+        Assertions.assertEquals("Line 1;Line 2", TextUtil.setLineEnds(noTrailing, ";"));
+    }
+
+    @Test
+    void testJoinQuotedAndJoinQuotedIfNeeded() {
+        List<String> list = List.of("simple", "with space", "tab\tseparated", "");
+        Assertions.assertEquals("\"simple\", \"with space\", \"tab\\tseparated\", \"\"", TextUtil.joinQuoted(list));
+        Assertions.assertEquals("\"simple\";\"with space\";\"tab\\tseparated\";\"\"", TextUtil.joinQuoted(list, ";"));
+
+        Assertions.assertEquals("simple, \"with space\", \"tab\\tseparated\", ", TextUtil.joinQuotedIfNeeded(list));
+        Assertions.assertEquals("simple;\"with space\";\"tab\\tseparated\";", TextUtil.joinQuotedIfNeeded(list, ";"));
+    }
+
+    @Test
+    void testDecodeToString() {
+        byte[] bytes = "Hello World".getBytes(StandardCharsets.UTF_8);
+        Assertions.assertEquals("Hello World", TextUtil.decodeToString(bytes));
+    }
+
+    @Test
+    void testGetDigestAndDigestString() throws Exception {
+        byte[] data = "test-data".getBytes(StandardCharsets.UTF_8);
+        byte[] digest = TextUtil.getDigest("SHA-256", data);
+        Assertions.assertNotNull(digest);
+        Assertions.assertEquals(32, digest.length);
+
+        String digestStr = TextUtil.getDigestString("SHA-256", data);
+        Assertions.assertEquals(64, digestStr.length());
+
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        byte[] digestStream = TextUtil.getDigest("SHA-256", in);
+        Assertions.assertArrayEquals(digest, digestStream);
+
+        ByteArrayInputStream in2 = new ByteArrayInputStream(data);
+        String digestStreamStr = TextUtil.getDigestString("SHA-256", in2);
+        Assertions.assertEquals(digestStr, digestStreamStr);
+    }
+
+    @Test
+    void testToLocalizedStringFallbackAndNull() {
+        Localized loc = () -> "custom-localized";
+        Assertions.assertEquals("custom-localized", TextUtil.toLocalizedString(loc));
+        Assertions.assertEquals("42", TextUtil.toLocalizedString(42));
+        Assertions.assertEquals("null", TextUtil.toLocalizedString(null));
+        Assertions.assertEquals("fallback", TextUtil.toLocalizedString(null, "fallback"));
+        Assertions.assertEquals("42", TextUtil.toLocalizedString(42, "fallback"));
+    }
+
+    @Test
+    void testGroupNamedMatcher() {
+        Pattern pattern = Pattern.compile("(?<greeting>\\w+)\\s+(?<name>\\w+)(?:\\s+(?<extra>\\w+))?");
+        Matcher matcher = pattern.matcher("Hello World");
+        Assertions.assertTrue(matcher.matches());
+
+        Optional<CharSequence> greeting = TextUtil.group(matcher, "Hello World", "greeting");
+        Assertions.assertTrue(greeting.isPresent());
+        Assertions.assertEquals("Hello", greeting.get().toString());
+
+        Optional<CharSequence> extra = TextUtil.group(matcher, "Hello World", "extra");
+        Assertions.assertFalse(extra.isPresent());
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> TextUtil.group(matcher, "Hello World", "nonexistent"));
+    }
+
+    @Test
+    void testTextDimensionDelegation() {
+        Font font = FontUtil.getInstance().getDefaultFont();
+        Rectangle2f dim = TextUtil.getTextDimension("Hello", font);
+        Assertions.assertNotNull(dim);
+        Assertions.assertTrue(dim.width() > 0);
+
+        RichText rt = RichText.valueOf("Rich Text");
+        Rectangle2f rtDim = TextUtil.getRichTextDimension(rt, font);
+        Assertions.assertNotNull(rtDim);
+        Assertions.assertTrue(rtDim.width() > 0);
+    }
+
+    @Test
+    void testParseDoubleAndTryParseDouble() {
+        Assertions.assertEquals(42.5, TextUtil.parseDouble("42.5", Locale.US), 1e-6);
+        Assertions.assertTrue(TextUtil.tryParseDouble("42.5", Locale.US).isPresent());
+        Assertions.assertFalse(TextUtil.tryParseDouble(null, Locale.US).isPresent());
+        Assertions.assertFalse(TextUtil.tryParseDouble("", Locale.US).isPresent());
+    }
 }
