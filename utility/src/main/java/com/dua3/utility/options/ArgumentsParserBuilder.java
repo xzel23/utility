@@ -307,6 +307,7 @@ public class ArgumentsParserBuilder {
      * @param moreSwitches    additional switches or flags that can also trigger this option
      * @return an {@code Option<Path>} instance representing the configured {@code Path}-based option
      */
+    //noinspection ConstantValue -- by design
     public Option<Path> addPathOption(
             String displayName,
             String description,
@@ -335,6 +336,7 @@ public class ArgumentsParserBuilder {
      * @param moreSwitches additional switches or flags that can also trigger this option
      * @return an {@code Option<Path>} instance representing the configured {@code Path}-based option
      */
+    //noinspection ConstantValue -- by design
     public Option<Path> addPathOption(
             String displayName,
             String description,
@@ -363,6 +365,7 @@ public class ArgumentsParserBuilder {
      * @param moreSwitches    additional switches for the option
      * @return an {@code Option<URI>} representing the configured URI option
      */
+    //noinspection ConstantValue -- by design
     public Option<URI> addUriOption(
             String displayName,
             String description,
@@ -400,6 +403,7 @@ public class ArgumentsParserBuilder {
             String firstSwitch,
             String... moreSwitches
     ) {
+        //noinspection ConstantValue -- by design
         return new OptionBuilder<>(this, displayName, description, URI.class)
                 .repetitions(repetitions)
                 .param(Param.ofUri(displayName, description, argName, Param.Required.REQUIRED, Objects::nonNull))
