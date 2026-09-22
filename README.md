@@ -235,6 +235,8 @@ could not be loaded.
 
 ## Changes
 
+## 24.8.3 (in development)
+
 ## 24.8.2
 
 - fix return value of `SimpleNamespaceContext.getNamespaceURI()` to return `XMLConstants.NULL_NS_URI` for unbound `URI`
