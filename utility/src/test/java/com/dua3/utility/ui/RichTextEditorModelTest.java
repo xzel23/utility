@@ -256,4 +256,44 @@ class RichTextEditorModelTest {
 
         assertNotNull(model.createLazySnapshot());
     }
+
+    @Test
+    void testToRichTextAndAttributeResolvers() {
+        Font font = FontUtil.getInstance().getDefaultFont();
+        RichText rt1 = RichTextEditorModel.toRichText("hello", font);
+        assertEquals("hello", rt1.toString());
+
+        RichText rt2 = RichTextEditorModel.toRichText(
+                "styled",
+                true,
+                true,
+                true,
+                true,
+                com.dua3.utility.data.Color.RED,
+                com.dua3.utility.data.Color.BLUE,
+                "Arial",
+                14.0
+        );
+        assertEquals("styled", rt2.toString());
+        assertTrue(rt2.runs().getFirst().getStyles().contains(Style.BOLD));
+        assertTrue(rt2.runs().getFirst().getStyles().contains(Style.ITALIC));
+        assertTrue(rt2.runs().getFirst().getStyles().contains(Style.UNDERLINE));
+        assertTrue(rt2.runs().getFirst().getStyles().contains(Style.LINE_THROUGH));
+
+        // empty / null
+        assertEquals("", RichTextEditorModel.toRichText(null, font).toString());
+        assertEquals("", RichTextEditorModel.toRichText("", false, false, false, false, null, null, null, 0.0).toString());
+
+        // Test attribute resolution
+        Style s = Style.create(font);
+        List<Style> styles = List.of(s);
+        com.dua3.utility.text.TextAttributes attrs = com.dua3.utility.text.TextAttributes.of(
+                com.dua3.utility.data.Pair.of(Style.COLOR, com.dua3.utility.data.Color.GREEN),
+                com.dua3.utility.data.Pair.of(Style.FONT_SIZE, 16.0)
+        );
+
+        assertEquals(com.dua3.utility.data.Color.GREEN, RichTextEditorModel.resolveColor(attrs, styles));
+        assertEquals(16.0, RichTextEditorModel.resolveFontSize(attrs, styles));
+        assertNotNull(RichTextEditorModel.resolveFontFamily(attrs, styles));
+    }
 }

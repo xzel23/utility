@@ -457,4 +457,47 @@ class DataUtilTest {
         assertTrue(exception3.getMessage().contains(Integer.class.getName()));
         assertEquals(cause, exception3.getCause());
     }
+
+    @Test
+    void testConvertToArrayAndList() {
+        List<String> list = List.of("1", "2", "3");
+        Integer[] arr = DataUtil.convertToArray(list, Integer.class);
+        assertArrayEquals(new Integer[]{1, 2, 3}, arr);
+
+        List<Integer> convertedList = DataUtil.convert(list, Integer.class);
+        assertEquals(List.of(1, 2, 3), convertedList);
+
+        List<Integer> mappedList = DataUtil.convert(list, Integer::valueOf);
+        assertEquals(List.of(1, 2, 3), mappedList);
+
+        HashSet<Integer> set = DataUtil.convertCollection(list, Integer.class, HashSet::new);
+        assertEquals(new HashSet<>(List.of(1, 2, 3)), set);
+    }
+
+    @Test
+    void testIteratorsAndCollect() {
+        List<Integer> list = List.of(1, 2, 3, 4, 5);
+        Iterator<Integer> filtered = DataUtil.filter(list.iterator(), i -> i % 2 == 0);
+        assertEquals(List.of(2, 4), DataUtil.collect(() -> filtered));
+
+        Iterator<String> mapped = DataUtil.map(list.iterator(), Object::toString);
+        assertArrayEquals(new String[]{"1", "2", "3", "4", "5"}, DataUtil.collectArray(() -> mapped));
+    }
+
+    @Test
+    void testAsFunctionAndChanges() {
+        Map<String, Integer> map = Map.of("a", 1, "b", 2);
+        Function<String, Integer> fn = DataUtil.asFunction(map, 0);
+        assertEquals(1, fn.apply("a"));
+        assertEquals(0, fn.apply("c"));
+
+        Map<String, Integer> mapA = Map.of("a", 1, "b", 2, "c", 3);
+        Map<String, Integer> mapB = Map.of("a", 1, "b", 20, "d", 4);
+        Map<String, Pair<Integer, Integer>> changes = DataUtil.changes(mapA, mapB);
+
+        assertEquals(3, changes.size());
+        assertEquals(Pair.of(2, 20), changes.get("b"));
+        assertEquals(Pair.of(3, null), changes.get("c"));
+        assertEquals(Pair.of(null, 4), changes.get("d"));
+    }
 }

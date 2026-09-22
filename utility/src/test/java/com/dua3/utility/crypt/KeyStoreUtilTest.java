@@ -574,4 +574,47 @@ class KeyStoreUtilTest {
         assertDoesNotThrow(() -> CertificateUtil.verifyCertificateChain((X509Certificate[]) storedChain),
                 "Certificate chain for '" + newAlias + "' should be valid");
     }
+
+    @Test
+    void testSaveKeyStoreToFileAndZipExport() throws Exception {
+        KeyStore keyStore = KeyStoreUtil.createKeyStore(KeyStoreType.PKCS12, password());
+        KeyPair keyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        Certificate[] certChain = CertificateUtil.createSelfSignedX509Certificate(
+                keyPair, "CN=Export Test,O=Test,C=US", 365, true);
+        KeyStoreUtil.storeKeyPair(keyStore, "test-entry", keyPair, certChain, password());
+
+        Path p12File = tempDir.resolve("exported.p12");
+        KeyStoreUtil.saveKeyStoreToFile(keyStore, p12File, password());
+        assertTrue(java.nio.file.Files.exists(p12File));
+
+        Path zipFile = tempDir.resolve("exported.zip");
+        KeyStoreUtil.saveKeyStoreToFile(keyStore, zipFile, password());
+        assertTrue(java.nio.file.Files.exists(zipFile));
+        assertTrue(java.nio.file.Files.size(zipFile) > 0);
+    }
+
+    @Test
+    void testReconstructFullCertificateChain() throws Exception {
+        KeyStore keyStore = KeyStoreUtil.createKeyStore(KeyStoreType.PKCS12, password());
+
+        // Root CA
+        KeyPair rootKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        Certificate[] rootChain = CertificateUtil.createSelfSignedX509Certificate(
+                rootKeyPair, "CN=Root CA,O=Org,C=US", 365, true);
+        KeyStoreUtil.storeKeyPair(keyStore, "root-ca", rootKeyPair, rootChain, password());
+
+        // Intermediate cert issued by Root CA, but only stored with single cert
+        KeyPair interKeyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        X509Certificate[] fullInterChain = CertificateUtil.createX509Certificate(
+                interKeyPair, "CN=Inter CA,O=Org,C=US", 365, true, rootKeyPair.getPrivate(), (X509Certificate[]) rootChain);
+
+        // Reconstruct chain from single cert
+        Certificate[] fixedChain = KeyStoreUtil.reconstructFullCertificateChain(keyStore, new Certificate[]{fullInterChain[0]});
+        assertEquals(2, fixedChain.length);
+        assertEquals(fullInterChain[0], fixedChain[0]);
+        assertEquals(rootChain[0], fixedChain[1]);
+
+        // Empty chain returns empty
+        assertEquals(0, KeyStoreUtil.reconstructFullCertificateChain(keyStore, new Certificate[0]).length);
+    }
 }

@@ -31,6 +31,7 @@ class RichTextEditHistoryTest {
         RichTextEditHistory.TextReplaceHistoryEntry entry = new RichTextEditHistory.TextReplaceHistoryEntry(
                 2, removed, inserted, 2, 5, 2, 10
         );
+        org.junit.jupiter.api.Assertions.assertNotNull(entry.toString());
 
         history.push(entry);
         assertTrue(history.canUndo());

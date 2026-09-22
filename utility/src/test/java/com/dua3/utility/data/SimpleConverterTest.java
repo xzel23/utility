@@ -86,4 +86,51 @@ class SimpleConverterTest {
         assertEquals(123, converter.convert("123"));
         assertEquals("123", converter.convertBack(123));
     }
+
+    enum SampleEnum { FOO, BAR }
+
+    static class WithValueOf {
+        final String val;
+        WithValueOf(String val) { this.val = val; }
+        public static WithValueOf valueOf(String s) { return new WithValueOf(s); }
+        @Override public String toString() { return val; }
+    }
+
+    static class WithConstructor {
+        final String val;
+        public WithConstructor(String val) { this.val = val; }
+        @Override public String toString() { return val; }
+    }
+
+    static class UnsupportedType {}
+
+    @Test
+    void testStringConverter() {
+        Converter<String, SampleEnum> enumConv = Converter.stringConverter(SampleEnum.class);
+        assertEquals(SampleEnum.FOO, enumConv.convert("FOO"));
+        assertEquals("BAR", enumConv.convertBack(SampleEnum.BAR));
+
+        Converter<String, WithValueOf> valueOfConv = Converter.stringConverter(WithValueOf.class);
+        assertEquals("hello", valueOfConv.convert("hello").val);
+        assertEquals("hello", valueOfConv.convertBack(new WithValueOf("hello")));
+
+        Converter<String, WithConstructor> constructorConv = Converter.stringConverter(WithConstructor.class);
+        assertEquals("world", constructorConv.convert("world").val);
+        assertEquals("world", constructorConv.convertBack(new WithConstructor("world")));
+
+        assertThrows(ConversionException.class, () -> Converter.stringConverter(UnsupportedType.class));
+    }
+
+    @Test
+    void testIdentityAndNullAware() {
+        Converter<String, String> identity = Converter.identity();
+        assertEquals("test", identity.convert("test"));
+        assertEquals("test", identity.convertBack("test"));
+
+        Converter<String, Integer> nullAware = Converter.createNullAware(Integer::valueOf, String::valueOf);
+        assertNull(nullAware.convert(null));
+        assertNull(nullAware.convertBack(null));
+        assertEquals(42, nullAware.convert("42"));
+        assertEquals("42", nullAware.convertBack(42));
+    }
 }

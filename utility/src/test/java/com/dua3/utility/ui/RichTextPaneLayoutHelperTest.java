@@ -34,6 +34,8 @@ class RichTextPaneLayoutHelperTest {
         RichTextPaneLayoutHelper.LayoutTextData data = new RichTextPaneLayoutHelper.LayoutTextData(text, layoutToSource, sourceToLayout);
 
         assertEquals(text, data.text());
+        assertEquals(layoutToSource, data.layoutToSourceMap());
+        assertEquals(sourceToLayout, data.sourceToLayoutMap());
         assertEquals(0, data.layoutToSourcePosition(-5));
         assertEquals(2, data.layoutToSourcePosition(2));
         assertEquals(3, data.layoutToSourcePosition(100));

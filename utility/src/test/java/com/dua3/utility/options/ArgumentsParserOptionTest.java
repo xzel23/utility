@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -1071,5 +1072,49 @@ class ArgumentsParserOptionTest {
                 UnsupportedConfig.class,
                 "--unsupported"
         ));
+    }
+
+    @Test
+    @SuppressWarnings("java:S1612")
+    void testConsumerOptionHandlers() {
+        java.util.concurrent.atomic.AtomicBoolean flagRef = new java.util.concurrent.atomic.AtomicBoolean(false);
+        java.util.concurrent.atomic.AtomicReference<String> strRef = new java.util.concurrent.atomic.AtomicReference<>();
+        java.util.concurrent.atomic.AtomicReference<Integer> intRef = new java.util.concurrent.atomic.AtomicReference<>();
+        java.util.concurrent.atomic.AtomicReference<Path> pathRef = new java.util.concurrent.atomic.AtomicReference<>();
+        java.util.concurrent.atomic.AtomicReference<URI> uriRef = new java.util.concurrent.atomic.AtomicReference<>();
+        java.util.concurrent.atomic.AtomicReference<TestEnum> enumRef = new java.util.concurrent.atomic.AtomicReference<>();
+        java.util.concurrent.atomic.AtomicReference<Integer> objRef = new java.util.concurrent.atomic.AtomicReference<>();
+
+        ArgumentsParserBuilder builder = ArgumentsParser.builder().name("ConsumerTest");
+        builder.addFlag("flag", "Flag", flagRef::set, "-f");
+        builder.addIntegerOption("int", "Int opt", Repetitions.ZERO_OR_ONE, "i", intRef::set, "-i");
+        builder.addPathOption("path", "Path opt", Repetitions.ZERO_OR_ONE, "p", pathRef::set, "-p");
+        builder.addUriOption("uri", "Uri opt", Repetitions.ZERO_OR_ONE, "u", uriRef::set, "-u");
+        builder.addEnumOption("enum", "Enum opt", Repetitions.ZERO_OR_ONE, "e", enumRef::set, TestEnum.class, "-e");
+        builder.addObjectOption("obj", "Obj opt", Repetitions.ZERO_OR_ONE, "o", objRef::set, Integer.class, Converter.create(Integer::valueOf, String::valueOf), "-o");
+        Option<String> strOpt = builder.addStringOption("str", "String opt", Repetitions.ZERO_OR_ONE, "s", strRef::set, "-s");
+
+        ArgumentsParser parser = builder.build();
+        Arguments args = parser.parse("-f", "-s", "hello", "-i", "42", "-p", "a/b", "-u", "https://test.com", "-e", "MEDIUM", "-o", "100");
+        args.handle();
+
+        assertTrue(flagRef.get());
+        assertEquals("hello", strRef.get());
+        assertEquals(42, intRef.get());
+        assertEquals(Path.of("a/b"), pathRef.get());
+        assertEquals(URI.create("https://test.com"), uriRef.get());
+        assertEquals(TestEnum.MEDIUM, enumRef.get());
+        assertEquals(100, objRef.get());
+
+        // Test options list and error messages
+        assertFalse(parser.options().isEmpty());
+        OptionException optEx = new OptionException(strOpt, "Test error");
+        assertEquals(strOpt, optEx.getOption());
+        String errMsg = parser.errorMessage(optEx);
+        assertTrue(errMsg.contains("Test error"));
+
+        // Test ArgumentsException constructors
+        assertDoesNotThrow(() -> new ArgumentsException());
+        assertDoesNotThrow(() -> new ArgumentsException(new RuntimeException("cause")));
     }
 }

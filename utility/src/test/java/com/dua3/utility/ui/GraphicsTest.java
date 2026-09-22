@@ -1,8 +1,18 @@
 package com.dua3.utility.ui;
 
+import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Arc2f;
+import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Path2f;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Vector2f;
+import com.dua3.utility.text.Alignment;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.VerticalAlignment;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -89,5 +99,81 @@ class GraphicsTest {
 
         assertThrows(IllegalArgumentException.class, () ->
                 Graphics.approximateArc(p0, p1, radii, 0.0f, false, true, p -> {}, s -> {}));
+    }
+
+    @SuppressWarnings("java:S1186")
+    static class DummyGraphics implements Graphics {
+        AffineTransformation2f transformation = AffineTransformation2f.identity();
+        Font font = FontUtil.getInstance().getDefaultFont();
+        final List<String> drawnTexts = new ArrayList<>();
+        Color strokeColor = Color.BLACK;
+        Color fillColor = Color.BLACK;
+        float strokeWidth = 1.0f;
+        float[] lineDashes = Graphics.EMPTY_DASHES;
+        float dashOffset = 0.0f;
+
+        @Override public float getWidth() { return 800; }
+        @Override public float getHeight() { return 600; }
+        @Override public FontUtil getFontUtil() { return FontUtil.getInstance(); }
+        @Override public Font getDefaultFont() { return font; }
+        @Override public void reset() {}
+        @Override public void drawImage(Image image, float x, float y) {}
+        @Override public void strokeRect(float x, float y, float w, float h) {}
+        @Override public void fillRect(float x, float y, float w, float h) {}
+        @Override public void strokeEllipse(float x, float y, float rx, float ry, float angle) {}
+        @Override public void fillEllipse(float x, float y, float rx, float ry, float angle) {}
+        @Override public void strokeLine(float x1, float y1, float x2, float y2) {}
+        @Override public void strokePath(Path2f path) {}
+        @Override public void fillPath(Path2f path) {}
+        @Override public void clip(Path2f path) {}
+        @Override public void clip(Rectangle2f r) {}
+        @Override public void resetClip() {}
+        @Override public void setStroke(Color c, float width) { this.strokeColor = c; this.strokeWidth = width; }
+        @Override public void setStrokeColor(Color c) { this.strokeColor = c; }
+        @Override public void setStrokeWidth(float width) { this.strokeWidth = width; }
+        @Override public Color getStrokeColor() { return strokeColor; }
+        @Override public float getStrokeWidth() { return strokeWidth; }
+        @Override public void setLineDashes(float[] lineDash) { this.lineDashes = lineDash; }
+        @Override public float[] getLineDashes() { return lineDashes; }
+        @Override public void setLineDashOffset(float lineDashOffset) { this.dashOffset = lineDashOffset; }
+        @Override public float getLineDashOffset() { return dashOffset; }
+        @Override public void setFill(Color c) { this.fillColor = c; }
+        @Override public Color getFill() { return fillColor; }
+        @Override public void setTransformation(AffineTransformation2f t) { this.transformation = t; }
+        @Override public AffineTransformation2f getTransformation() { return transformation; }
+        @Override public void setFont(Font f) { this.font = f; }
+        @Override public Font getFont() { return font; }
+        @Override public void drawText(CharSequence text, float x, float y) { drawnTexts.add(text.toString() + "@" + x + "," + y); }
+        @Override public void close() {}
+    }
+
+    @Test
+    void testDrawTextAndRenderTextModes() {
+        DummyGraphics g = new DummyGraphics();
+        assertEquals(new Dimension2f(800, 600), g.getDimension());
+
+        // test inverse transform
+        Vector2f pt = Vector2f.of(10, 20);
+        assertEquals(pt, g.inverseTransform(pt));
+        assertEquals(pt, g.inverseTransform(10, 20));
+
+        // test drawText anchors
+        for (HAnchor ha : HAnchor.values()) {
+            for (VAnchor va : VAnchor.values()) {
+                g.drawText("Test", 100, 100, ha, va);
+            }
+        }
+        assertFalse(g.drawnTexts.isEmpty());
+
+        // test renderText modes
+        RichText text = RichText.valueOf("Line 1\nLine 2");
+        Vector2f pos = Vector2f.of(50, 50);
+        Dimension2f dim = new Dimension2f(200, 100);
+
+        g.renderText(pos, text, HAnchor.LEFT, VAnchor.TOP, Alignment.LEFT, VerticalAlignment.TOP, dim, Graphics.TextWrapping.WRAP);
+
+        for (Graphics.TextRotationMode mode : Graphics.TextRotationMode.values()) {
+            g.renderText(pos, text, HAnchor.LEFT, VAnchor.TOP, Alignment.LEFT, VerticalAlignment.TOP, dim, Graphics.TextWrapping.WRAP, Math.PI / 4, mode);
+        }
     }
 }

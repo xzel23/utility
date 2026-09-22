@@ -106,6 +106,22 @@ class HSVColorTest {
     }
 
     @Test
+    void testAlphaModifications() {
+        HSVColor color = new HSVColor(180, 0.5f, 0.8f, 1.0f);
+        HSVColor withIntAlpha = color.withAlpha(128);
+        Assertions.assertEquals(0.5f, withIntAlpha.alpha(), 0.01f);
+
+        HSVColor sameAlpha = color.withAlpha(255);
+        Assertions.assertSame(color, sameAlpha);
+
+        HSVColor withDoubleAlpha = color.withAlpha(0.25);
+        Assertions.assertEquals(0.25f, withDoubleAlpha.alpha(), 0.01f);
+
+        HSVColor multiplied = color.multiplyAlpha(0.5);
+        Assertions.assertEquals(0.5f, multiplied.alpha(), 0.01f);
+    }
+
+    @Test
     void testToString() {
         HSVColor color = new HSVColor(180, 0.5f, 0.8f, 0.75f);
         String str = color.toString();

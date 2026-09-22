@@ -292,4 +292,44 @@ class PemDataTest {
         assertEquals("message with cause", ex3.getMessage());
         assertSame(cause, ex3.getCause());
     }
+
+    @Test
+    void testParseOpenSSLEncryptedKeyPair() throws Exception {
+        KeyPair kp = KeyUtil.generateRSAKeyPair();
+        java.io.StringWriter sw = new java.io.StringWriter();
+        org.bouncycastle.openssl.jcajce.JcePEMEncryptorBuilder encryptorBuilder =
+                new org.bouncycastle.openssl.jcajce.JcePEMEncryptorBuilder("AES-256-CBC");
+        org.bouncycastle.openssl.PEMEncryptor encryptor = encryptorBuilder.build("secret".toCharArray());
+
+        try (org.bouncycastle.openssl.jcajce.JcaPEMWriter writer = new org.bouncycastle.openssl.jcajce.JcaPEMWriter(sw)) {
+            writer.writeObject(kp, encryptor);
+        }
+
+        PemData pemData = PemData.parse(sw.toString());
+        assertEquals(1, pemData.size());
+        assertEquals(PemData.PemType.ENCRYPTED_KEY_PAIR, pemData.get(0).type());
+
+        KeyPair decrypted = pemData.asKeyPair("secret".toCharArray());
+        assertNotNull(decrypted);
+        assertArrayEquals(kp.getPublic().getEncoded(), decrypted.getPublic().getEncoded());
+        assertArrayEquals(kp.getPrivate().getEncoded(), decrypted.getPrivate().getEncoded());
+    }
+
+    @Test
+    void testParseOpenSSLUnencryptedKeyPair() throws Exception {
+        KeyPair kp = KeyUtil.generateRSAKeyPair();
+        java.io.StringWriter sw = new java.io.StringWriter();
+        try (org.bouncycastle.openssl.jcajce.JcaPEMWriter writer = new org.bouncycastle.openssl.jcajce.JcaPEMWriter(sw)) {
+            writer.writeObject(kp);
+        }
+
+        PemData pemData = PemData.parse(sw.toString());
+        assertEquals(1, pemData.size());
+        assertEquals(PemData.PemType.KEY_PAIR, pemData.get(0).type());
+
+        KeyPair loaded = pemData.asKeyPair();
+        assertNotNull(loaded);
+        assertArrayEquals(kp.getPublic().getEncoded(), loaded.getPublic().getEncoded());
+        assertArrayEquals(kp.getPrivate().getEncoded(), loaded.getPrivate().getEncoded());
+    }
 }

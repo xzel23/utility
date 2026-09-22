@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ColorTest {
 
     @Test
+    @SuppressWarnings("java:S9142")
     void testToStringAndValueOfWithHex() {
         for (Color c : Color.values()) {
             String hex = c.toCss();
@@ -86,6 +87,23 @@ class ColorTest {
 
             assertEquals(c.argb(), actual.argb());
         }
+    }
+
+    @Test
+    void testColorConversionAndLuminance() {
+        Color white = Color.WHITE;
+        assertEquals("#ffffffff", white.toArgb());
+        assertEquals("#ffffffff", white.toRgba());
+        assertEquals(1.0, white.luminance(), 0.01);
+        org.junit.jupiter.api.Assertions.assertArrayEquals(new byte[]{(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff}, white.toByteArray());
+        org.junit.jupiter.api.Assertions.assertArrayEquals(new byte[]{(byte) 0xff, (byte) 0xff, (byte) 0xff}, white.toByteArrayRGB());
+
+        Color black = Color.BLACK;
+        assertEquals(0.0, black.luminance(), 0.01);
+
+        Color red = Color.RED;
+        org.junit.jupiter.api.Assertions.assertNotNull(red.toHSLColor());
+        org.junit.jupiter.api.Assertions.assertNotNull(red.toHSVColor());
     }
 
 }
