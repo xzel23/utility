@@ -410,7 +410,7 @@ public final class FileObjectStore implements ObjectStore {
      * @throws AbsolutePathException if the provided URI is absolute
      */
     @SuppressWarnings("OverlyBroadThrowsClause")
-    private Path resolve(URI path) throws IllegalPathException {
+    public Path resolve(URI path) throws IllegalPathException {
         if (path.isAbsolute()) {
             throw new AbsolutePathException("absolute path not allowed: " + path);
         }
