@@ -28,6 +28,7 @@ public abstract class FxService<T> extends Service<T> {
         task.progressProperty().addListener((v, o, n) -> updateTaskProgress(task, n.doubleValue()));
         task.stateProperty().addListener((v, o, n) -> updateTaskState(task, n));
         task.titleProperty().addListener((v, o, n) -> updateTaskTitle(task, n));
+        task.messageProperty().addListener((v, o, n) -> updateTaskMessage(task, n));
         return task;
     }
 
@@ -50,6 +51,10 @@ public abstract class FxService<T> extends Service<T> {
 
     private void updateTaskTitle(Task<T> task, String arg) {
         taskTrackers.forEach(t -> t.updateTaskTitle(task, arg));
+    }
+
+    private void updateTaskMessage(Task<T> task, String arg) {
+        taskTrackers.forEach(t -> t.updateTaskMessage(task, arg));
     }
 
     /**

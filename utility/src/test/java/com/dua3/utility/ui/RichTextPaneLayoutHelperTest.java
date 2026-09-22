@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -34,8 +35,8 @@ class RichTextPaneLayoutHelperTest {
         RichTextPaneLayoutHelper.LayoutTextData data = new RichTextPaneLayoutHelper.LayoutTextData(text, layoutToSource, sourceToLayout);
 
         assertEquals(text, data.text());
-        assertEquals(layoutToSource, data.layoutToSourceMap());
-        assertEquals(sourceToLayout, data.sourceToLayoutMap());
+        assertArrayEquals(layoutToSource, data.layoutToSourceMap());
+        assertArrayEquals(sourceToLayout, data.sourceToLayoutMap());
         assertEquals(0, data.layoutToSourcePosition(-5));
         assertEquals(2, data.layoutToSourcePosition(2));
         assertEquals(3, data.layoutToSourcePosition(100));

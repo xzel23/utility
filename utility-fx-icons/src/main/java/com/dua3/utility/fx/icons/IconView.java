@@ -29,8 +29,6 @@ import java.util.List;
  * It provides methods for setting and getting the icon identifier, size, and color.
  */
 public class IconView extends Control {
-    private static final Logger LOG = LogManager.getLogger(IconView.class);
-
     private static final String DEFAULT_ICON_IDENTIFIER = "";
     private static final int DEFAULT_ICON_SIZE = 10;
     private static final Paint DEFAULT_ICON_COLOR = Paint.valueOf("BLACK");
@@ -118,7 +116,7 @@ public class IconView extends Control {
      */
     public IconView(String iconId, int size, Paint color) {
         this();
-        setIcon(iconId);
+        setIconIdentifier(iconId);
         setIconSize(size);
         setIconColor(color);
     }

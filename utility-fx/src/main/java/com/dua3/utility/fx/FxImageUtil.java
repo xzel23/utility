@@ -2,7 +2,6 @@ package com.dua3.utility.fx;
 
 import com.dua3.utility.data.ImageBuffer;
 import com.dua3.utility.data.ImageUtil;
-import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.Payload;
 import javafx.scene.image.Image;
 
@@ -41,8 +40,9 @@ public final class FxImageUtil implements ImageUtil<FxImage, FxMutableImage> {
             return switch (activeLoadOption) {
                 case RETAIN_DATA -> {
                     // for jpeg, we want to keep the original data in order not to introduce new artifacts
-                    try (var imageIn = IoUtil.getInputStream(payload.stream().readAllBytes())) {
-                        yield new FxDataRetainingImage(new Image(imageIn), MIME_TYPE_JPEG, "jpg", payload.stream().readAllBytes());
+                    byte[] bytes = payload.stream().readAllBytes();
+                    try (var imageIn = new java.io.ByteArrayInputStream(bytes)) {
+                        yield new FxDataRetainingImage(new Image(imageIn), MIME_TYPE_JPEG, "jpg", bytes);
                     }
                 }
                 default -> new FxWrappedImage(new Image(payload.stream()));

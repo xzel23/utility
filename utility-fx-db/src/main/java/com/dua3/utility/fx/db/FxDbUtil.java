@@ -104,7 +104,7 @@ public final class FxDbUtil {
                 case TIMESTAMP ->
                         item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalDateTime(item), v -> v.format(timestampFormatter), LangUtil.NULL_STRING);
                 case TIME ->
-                        item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalDateTime(item), v -> v.format(timeFormatter), LangUtil.NULL_STRING);
+                        item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalTime(item), v -> v.format(timeFormatter), LangUtil.NULL_STRING);
 
                 // numbers that have scale
                 case DECIMAL, NUMERIC -> {
@@ -134,7 +134,7 @@ public final class FxDbUtil {
             Callback<TableColumn<ObservableList<Object>, Object>, TableCell<ObservableList<Object>, Object>> cellFactory
                     = col -> new TableCell<>() {
                 @Override
-                protected void updateItem(Object item, boolean empty) {
+                protected void updateItem(@Nullable Object item, boolean empty) {
                     super.updateItem(item, empty);
 
                     if (empty) {
@@ -173,7 +173,7 @@ public final class FxDbUtil {
         return newItems.size();
     }
 
-    private static Object getObject(ResultSet rs, int i) throws SQLException {
+    private static @Nullable Object getObject(ResultSet rs, int i) throws SQLException {
         Object obj = rs.getObject(i);
 
         if (obj instanceof Clob clob) {

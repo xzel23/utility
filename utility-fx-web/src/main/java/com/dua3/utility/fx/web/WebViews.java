@@ -29,6 +29,7 @@ import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
@@ -261,7 +262,7 @@ public final class WebViews {
             Predicate<? super MouseEvent> filterMouse
     ) implements EventDispatcher {
         @Override
-        public Event dispatchEvent(Event event, EventDispatchChain tail) {
+        public @Nullable Event dispatchEvent(Event event, EventDispatchChain tail) {
             switch (event) {
                 case KeyEvent keyEvent when filterKey.test(keyEvent) -> keyEvent.consume();
                 case MouseEvent mouseEvent when filterMouse.test(mouseEvent) -> event.consume();

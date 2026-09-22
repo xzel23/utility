@@ -8,7 +8,6 @@ import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
