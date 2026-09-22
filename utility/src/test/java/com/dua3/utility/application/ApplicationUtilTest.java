@@ -3,6 +3,7 @@ package com.dua3.utility.application;
 import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.lang.Platform;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,6 +57,7 @@ class ApplicationUtilTest {
     }
 
     @Test
+    @ResourceLock("ApplicationUtil.uiMode")
     void uiModeListenersReceiveChangesAndCanBeRemoved() {
         UiMode originalMode = ApplicationUtil.getUiMode();
         AtomicReference<UiMode> observedUiMode = new AtomicReference<>();
@@ -100,6 +102,7 @@ class ApplicationUtilTest {
     }
 
     @Test
+    @ResourceLock("ApplicationUtil.uiMode")
     void testSetUiModeNullDefaultsToSystemDefault() {
         UiMode originalMode = ApplicationUtil.getUiMode();
         try {
