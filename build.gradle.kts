@@ -322,7 +322,7 @@ val japicmpTool = configurations.create("japicmpTool") {
 
 dependencies {
     // The classifier is a self-contained CLI, which keeps compatibility checks independent of the build JVM classpath.
-    add(japicmpTool.name, "com.github.siom79.japicmp:japicmp:0.26.1:jar-with-dependencies") {
+    add(japicmpTool.name, "com.github.siom79.japicmp:japicmp:0.26.2:jar-with-dependencies") {
         isTransitive = false
     }
 }
