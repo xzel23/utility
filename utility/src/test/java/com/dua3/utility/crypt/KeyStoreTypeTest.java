@@ -1,5 +1,6 @@
 package com.dua3.utility.crypt;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -40,6 +41,7 @@ class KeyStoreTypeTest {
     }
 
     @Test
+    @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     void testForPath() {
         assertEquals(KeyStoreType.PKCS12, KeyStoreType.forPath(Path.of("/some/path/keystore.p12")));
         assertEquals(KeyStoreType.JKS, KeyStoreType.forPath(Path.of("keystore.jks")));
