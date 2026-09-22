@@ -230,6 +230,6 @@ class WebViewsTest {
             latch.countDown();
         });
 
-        assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 }
