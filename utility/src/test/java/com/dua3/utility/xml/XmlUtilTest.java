@@ -586,7 +586,7 @@ class XmlUtilTest {
     }
 
     @Test
-    void testXPathFactoryMethods() throws Exception {
+    void testXPathFactoryMethods() {
         XmlUtil util = XmlUtil.defaultInstance();
         assertNotNull(util.xpath());
         assertNotNull(util.xpath("http://example.com"));
