@@ -240,6 +240,7 @@ could not be loaded.
 - fix return value of `SimpleNamespaceContext.getNamespaceURI()` to return `XMLConstants.NULL_NS_URI` for unbound `URI`
 - fix return value of `AwtStandardImage.getSources()` and `AwtStandardImage.getPropertyNames()` not being declared as
   `@Nullable`
+- declare `FileObjectStore.resolve(URI)` public
 - improved test coverage and fixed Qodana and Sonar warnings
 
 ## 24.8.1
