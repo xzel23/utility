@@ -14,7 +14,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CsvReaderTest {
 
@@ -80,4 +82,94 @@ class CsvReaderTest {
         }
     }
 
+    @Test
+    void testReadCsvFromPath(@org.junit.jupiter.api.io.TempDir java.nio.file.Path tempDir) throws IOException {
+        java.nio.file.Path file = tempDir.resolve("test.csv");
+        java.nio.file.Files.writeString(file, CSV_DATA, StandardCharsets.UTF_8);
+
+        Arguments arguments = Arguments.of(
+                Arguments.createEntry(CsvReader.READ_COLUMN_NAMES, true),
+                Arguments.createEntry(CsvReader.IGNORE_MISSING_FIELDS, true)
+        );
+        List<List<String>> actualRows = new ArrayList<>();
+        CsvReader.RowBuilder rowBuilder = new CsvReader.ListRowBuilder(actualRows::add);
+        try (CsvReader csvReader = CsvReader.create(rowBuilder, file, arguments)) {
+            csvReader.readAll();
+            assertEquals(CSV_COLUMNS, csvReader.getColumnNames());
+            assertIterableEquals(CSV_ROWS, actualRows);
+        }
+    }
+
+    @Test
+    void testReadCsvWithBom() throws IOException {
+        byte[] bom = new byte[]{(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
+        byte[] csvBytes = "A,B\n1,2\n".getBytes(StandardCharsets.UTF_8);
+        byte[] withBom = new byte[bom.length + csvBytes.length];
+        System.arraycopy(bom, 0, withBom, 0, bom.length);
+        System.arraycopy(csvBytes, 0, withBom, bom.length, csvBytes.length);
+
+        Arguments arguments = Arguments.of(
+                Arguments.createEntry(CsvReader.READ_COLUMN_NAMES, true)
+        );
+        List<List<String>> actualRows = new ArrayList<>();
+        CsvReader.RowBuilder rowBuilder = new CsvReader.ListRowBuilder(actualRows::add);
+        try (InputStream in = new ByteArrayInputStream(withBom);
+             CsvReader csvReader = CsvReader.create(rowBuilder, in, arguments)) {
+            csvReader.readAll();
+            assertEquals(List.of("A", "B"), csvReader.getColumnNames());
+            assertEquals(List.of(List.of("1", "2")), actualRows);
+        }
+    }
+
+    @Test
+    void testCsvReaderGettersSettersAndPartialReading() throws IOException {
+        Arguments arguments = Arguments.of(
+                Arguments.createEntry(CsvReader.READ_COLUMN_NAMES, false),
+                Arguments.createEntry(CsvReader.IGNORE_EXCESSIVE_FIELDS, true),
+                Arguments.createEntry(CsvReader.IGNORE_MISSING_FIELDS, true)
+        );
+        List<List<String>> actualRows = new ArrayList<>();
+        CsvReader.RowBuilder rowBuilder = new CsvReader.ListRowBuilder(actualRows::add);
+        try (BufferedReader reader = new BufferedReader(new StringReader("a,b,c\n1,2,3\n4,5,6\n7,8,9\n"));
+             CsvReader csvReader = CsvReader.create(rowBuilder, reader, arguments)) {
+
+            assertTrue(csvReader.getIgnoreExcessFields());
+            assertTrue(csvReader.getIgnoreMissingFields());
+
+            csvReader.setIgnoreExcessFields(false);
+            csvReader.setIgnoreMissingFields(false);
+            org.junit.jupiter.api.Assertions.assertFalse(csvReader.getIgnoreExcessFields());
+            org.junit.jupiter.api.Assertions.assertFalse(csvReader.getIgnoreMissingFields());
+
+            csvReader.setColumnNames(List.of("ColA", "ColB", "ColC"));
+            assertEquals("ColA", csvReader.getColumnName(0));
+            assertEquals("ColB", csvReader.getColumnName(1));
+            assertEquals("ColC", csvReader.getColumnName(2));
+
+            assertEquals(0, csvReader.getRowsRead());
+            assertEquals(0, csvReader.getRowNumber());
+
+            // ignore 1 row
+            assertEquals(1, csvReader.ignoreRows(1));
+            // read next 1 row
+            assertEquals(1, csvReader.readSome(1));
+            assertEquals(1, csvReader.getRowsRead());
+
+            // read remaining
+            csvReader.readAll();
+            assertEquals(3, csvReader.getRowsRead());
+            assertEquals(3, actualRows.size());
+        }
+    }
+
+    @Test
+    void testCsvIoGetOptions() {
+        Arguments arguments = Arguments.of();
+        CsvIo csvIo = new CsvIo(arguments) {
+            @Override
+            public void close() {/* do nothing */}
+        };
+        assertNotNull(csvIo.getOptions());
+        org.junit.jupiter.api.Assertions.assertFalse(csvIo.getOptions().isEmpty());
+    }
 }

@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Timeout(value = 30, unit = TimeUnit.SECONDS)
+@SuppressWarnings("java:S5778")
 class PayloadTest {
 
     @TempDir
@@ -100,6 +101,7 @@ class PayloadTest {
             }
         }
 
+        @SuppressWarnings("OverlyBroadCatchBlock")
         private void serve(byte[] body) {
             accepting.countDown();
             while (!serverSocket.isClosed()) {
@@ -172,18 +174,18 @@ class PayloadTest {
         }
 
         @Override
-        public int read(ByteBuffer destination) throws IOException {
+        public int read(ByteBuffer dst) throws IOException {
             if (!open) {
                 throw new ClosedChannelException();
             }
-            if (!destination.hasRemaining()) {
+            if (!dst.hasRemaining()) {
                 return 0;
             }
 
-            byte[] buffer = new byte[Math.min(destination.remaining(), 8192)];
+            byte[] buffer = new byte[Math.min(dst.remaining(), 8192)];
             int bytesRead = source.read(buffer);
             if (bytesRead > 0) {
-                destination.put(buffer, 0, bytesRead);
+                dst.put(buffer, 0, bytesRead);
             }
             return bytesRead;
         }
@@ -208,7 +210,7 @@ class PayloadTest {
         }
 
         @Override
-        public int read(byte @Nullable [] bytes, int offset, int length) throws IOException {
+        public int read(byte @Nullable [] b, int off, int len) throws IOException {
             throw new IOException("probe failed");
         }
 
@@ -373,6 +375,40 @@ class PayloadTest {
         }
     }
 
+    @Test
+    void fromFileFromUrlFromPathAndFromStream() throws Exception {
+        byte[] content = "test payload data".getBytes(StandardCharsets.UTF_8);
+        Path path = Files.createTempFile(tempDir, "payload-factories-", ".bin");
+        Files.write(path, content);
+
+        // Payload.fromFile(File)
+        try (Payload payload = Payload.fromFile(path.toFile())) {
+            assertEquals(path.toUri(), payload.uri().orElseThrow());
+            assertArrayEquals(content, payload.stream().readAllBytes());
+        }
+
+        // Payload.fromUrl(URL)
+        java.net.URL url = path.toUri().toURL();
+        try (Payload payload = Payload.fromUrl(url)) {
+            assertEquals(path.toUri(), payload.uri().orElseThrow());
+            assertArrayEquals(content, payload.stream().readAllBytes());
+        }
+
+        // Payload.fromPath(Path)
+        try (Payload payload = Payload.fromPath(path)) {
+            assertEquals(path.toUri(), payload.uri().orElseThrow());
+            assertArrayEquals(content, payload.stream().readAllBytes());
+        }
+
+        // Payload.fromInputStream(URI, InputStream)
+        URI customUri = URI.create("custom:/my/path.bin");
+        try (Payload payload = Payload.fromInputStream(customUri, new ByteArrayInputStream(content))) {
+            assertEquals(customUri, payload.uri().orElseThrow());
+            assertArrayEquals(content, payload.stream().readAllBytes());
+        }
+    }
+
+    @SuppressWarnings({"OverlyBroadCatchBlock", "ProhibitedExceptionThrown"})
     private OpenedPayload openPayload(ResourceKind resourceKind, byte[] content) throws Exception {
         Resource resource = openResource(resourceKind, content);
         try {

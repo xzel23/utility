@@ -70,4 +70,59 @@ class WriterOutputStreamTest {
         }
         assertEquals("\uFFFD", sw.toString());
     }
+
+    @Test
+    void singleByteWrites() throws IOException {
+        String text = "single byte write test 1234567890 ÄÖÜ";
+        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+        StringWriter sw = new StringWriter();
+        try (WriterOutputStream wos = new WriterOutputStream(sw)) {
+            for (byte b : bytes) {
+                wos.write(b & 0xFF);
+            }
+        }
+        assertEquals(text, sw.toString());
+    }
+
+    @Test
+    void largeWriteExceedingBufferCapacity() throws IOException {
+        // Exceed 4096 byte buffer and 2048 char buffer
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 5000; i++) {
+            sb.append("line ").append(i).append(": some unicode 🌍 and text\n");
+        }
+        String text = sb.toString();
+        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+
+        StringWriter sw = new StringWriter();
+        try (WriterOutputStream wos = new WriterOutputStream(sw)) {
+            wos.write(bytes);
+        }
+        assertEquals(text, sw.toString());
+    }
+
+    @Test
+    void writeInvalidBoundsThrows() throws IOException {
+        StringWriter sw = new StringWriter();
+        try (WriterOutputStream wos = new WriterOutputStream(sw)) {
+            byte[] b = new byte[10];
+            assertThrows(IndexOutOfBoundsException.class, () -> wos.write(b, -1, 5));
+            assertThrows(IndexOutOfBoundsException.class, () -> wos.write(b, 0, -1));
+            assertThrows(IndexOutOfBoundsException.class, () -> wos.write(b, 5, 6));
+        }
+    }
+
+    @Test
+    void closedStreamThrowsOnWriteOrFlush() throws IOException {
+        StringWriter sw = new StringWriter();
+        WriterOutputStream wos = new WriterOutputStream(sw);
+        wos.close();
+        // multiple closes are safe
+        wos.close();
+
+        assertThrows(IOException.class, () -> wos.write(65));
+        assertThrows(IOException.class, () -> wos.write(new byte[]{65}));
+        assertThrows(IOException.class, () -> wos.write(new byte[]{65}, 0, 1));
+        assertThrows(IOException.class, wos::flush);
+    }
 }

@@ -266,4 +266,40 @@ class StreamSupplierTest {
             assertEquals(-1, is.read());
         }
     }
+
+    @Test
+    void writer_supportedForOutput_only() throws Exception {
+        StringWriter sw = new StringWriter();
+        try (OutputStream os = StreamSupplier.getOutputStream(sw)) {
+            os.write("hello writer".getBytes(StandardCharsets.UTF_8));
+        }
+        assertEquals("hello writer", sw.toString());
+
+        assertThrows(UnsupportedOperationException.class, () -> StreamSupplier.getInputStream(sw));
+    }
+
+    @Test
+    void readableAndWritableByteChannels() throws Exception {
+        byte[] data = "channel data".getBytes(StandardCharsets.UTF_8);
+        java.nio.channels.ReadableByteChannel rbc = java.nio.channels.Channels.newChannel(new ByteArrayInputStream(data));
+        try (InputStream in = StreamSupplier.getInputStream(rbc)) {
+            assertArrayEquals(data, in.readAllBytes());
+        }
+        assertThrows(UnsupportedOperationException.class, () -> StreamSupplier.getOutputStream(rbc));
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        java.nio.channels.WritableByteChannel wbc = java.nio.channels.Channels.newChannel(baos);
+        try (OutputStream out = StreamSupplier.getOutputStream(wbc)) {
+            out.write(data);
+        }
+        assertArrayEquals(data, baos.toByteArray());
+        assertThrows(UnsupportedOperationException.class, () -> StreamSupplier.getInputStream(wbc));
+    }
+
+    @Test
+    void unsupportedObjectThrows() {
+        Object obj = new Object();
+        assertThrows(UnsupportedOperationException.class, () -> StreamSupplier.getInputStream(obj));
+        assertThrows(UnsupportedOperationException.class, () -> StreamSupplier.getOutputStream(obj));
+    }
 }

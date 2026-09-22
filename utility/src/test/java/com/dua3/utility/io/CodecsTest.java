@@ -16,6 +16,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test the Codecs class.
  */
+@SuppressWarnings("java:S5778")
 class CodecsTest {
 
     /**
@@ -199,6 +201,7 @@ class CodecsTest {
     /**
      * Test the registerCodec and get methods.
      */
+    @SuppressWarnings("ProhibitedExceptionThrown")
     @Test
     void testRegisterAndGet() {
         Codecs codecs = new Codecs();
@@ -346,5 +349,85 @@ class CodecsTest {
                 mapCodec.encode(dos, mapWithNull);
             }
         });
+    }
+
+    @Test
+    void testRgbColorCodec() throws IOException {
+        Codecs codecs = new Codecs();
+        Codec<RGBColor> rgbCodec = codecs.get(RGBColor.class).orElseThrow();
+
+        RGBColor color = new RGBColor(12, 34, 56, 78);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (DataOutputStream dos = new DataOutputStream(baos)) {
+            rgbCodec.encode(dos, color);
+        }
+
+        RGBColor decoded;
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(baos.toByteArray()))) {
+            decoded = rgbCodec.decode(dis);
+        }
+
+        assertEquals(color, decoded);
+    }
+
+    @SuppressWarnings("ZeroLengthArrayAllocation")
+    @Test
+    void testEncoderAndDecoderCollectionAndOptionalMethods() throws IOException {
+        Encoder<String> encoder = DataOutputStream::writeUTF;
+        Decoder<String> decoder = DataInput::readUTF;
+
+        // Test Encoder.encode and Decoder.decode for collections
+        List<String> list = List.of("alpha", "beta", "gamma");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (DataOutputStream dos = new DataOutputStream(baos)) {
+            Encoder.encode(dos, list, encoder);
+        }
+
+        Collection<String> decodedList;
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(baos.toByteArray()))) {
+            decodedList = Decoder.decode(dis, decoder, ArrayList::new);
+        }
+        assertEquals(list, decodedList);
+
+        // Test Decoder.decode invalid size
+        ByteArrayOutputStream invalidBaos = new ByteArrayOutputStream();
+        try (DataOutputStream dos = new DataOutputStream(invalidBaos)) {
+            dos.writeInt(-1);
+        }
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(invalidBaos.toByteArray()))) {
+            assertThrows(RuntimeException.class, () -> Decoder.decode(dis, decoder, ArrayList::new));
+        }
+
+        // Test Encoder.encodeOptional and Decoder.decodeOptional
+        ByteArrayOutputStream optBaos = new ByteArrayOutputStream();
+        try (DataOutputStream dos = new DataOutputStream(optBaos)) {
+            encoder.encodeOptional(dos, "present");
+            encoder.encodeOptional(dos, null);
+        }
+
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(optBaos.toByteArray()))) {
+            Optional<String> first = decoder.decodeOptional(dis);
+            Optional<String> second = decoder.decodeOptional(dis);
+            assertEquals(Optional.of("present"), first);
+            assertEquals(Optional.empty(), second);
+        }
+
+        // Test encodeUnchecked and decodeUnchecked
+        ByteArrayOutputStream unchBaos = new ByteArrayOutputStream();
+        try (DataOutputStream dos = new DataOutputStream(unchBaos)) {
+            encoder.encodeUnchecked(dos, "uncheckedValue");
+        }
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(unchBaos.toByteArray()))) {
+            String val = decoder.decodeUnchecked(dis);
+            assertEquals("uncheckedValue", val);
+        }
+
+        // Test encodeUnchecked exception wrapping
+        Encoder<String> failingEncoder = (os, s) -> { throw new IOException("simulated encode failure"); };
+        assertThrows(java.io.UncheckedIOException.class, () -> failingEncoder.encodeUnchecked(new DataOutputStream(new ByteArrayOutputStream()), "fail"));
+
+        // Test decodeUnchecked exception wrapping
+        Decoder<String> failingDecoder = is -> { throw new IOException("simulated decode failure"); };
+        assertThrows(java.io.UncheckedIOException.class, () -> failingDecoder.decodeUnchecked(new DataInputStream(new ByteArrayInputStream(new byte[0]))));
     }
 }

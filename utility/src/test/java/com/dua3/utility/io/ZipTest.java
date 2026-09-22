@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Tests for the Zip helper.
  */
+@SuppressWarnings("java:S5778")
 class ZipTest {
 
     @Test
@@ -73,16 +74,37 @@ class ZipTest {
         assertArrayEquals("2".getBytes(StandardCharsets.UTF_8), zc.files.get("root/two.txt"));
     }
 
+    @SuppressWarnings("ZeroLengthArrayAllocation")
     @Test
     void add_throws_on_empty_filename_and_on_slash_in_filename() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try (Zip zip = new Zip(baos)) {
             assertThrows(IllegalArgumentException.class, () -> zip.add("", new byte[0]));
+            assertThrows(IllegalArgumentException.class, () -> zip.add("", "test"));
             assertThrows(IllegalArgumentException.class, () -> zip.add("", new ByteArrayInputStream(new byte[0])));
             assertThrows(IllegalArgumentException.class, () -> zip.add("a/b.txt", new byte[0]));
+            assertThrows(IllegalArgumentException.class, () -> zip.add("a/b.txt", "test"));
             assertThrows(IllegalArgumentException.class, () -> zip.add("a/b.txt", new ByteArrayInputStream(new byte[0])));
         }
+    }
+
+    @Test
+    void add_with_string_and_input_stream() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String text = "string content in zip";
+        byte[] streamBytes = new byte[]{10, 20, 30, 40};
+
+        try (Zip zip = new Zip(baos)) {
+            zip.directory("text-folder");
+            zip.add("msg.txt", text);
+            zip.add("data.bin", new ByteArrayInputStream(streamBytes));
+        }
+
+        ZipContent zc = readZip(baos.toByteArray());
+        assertTrue(zc.directories.contains("text-folder/"));
+        assertArrayEquals(text.getBytes(StandardCharsets.UTF_8), zc.files.get("text-folder/msg.txt"));
+        assertArrayEquals(streamBytes, zc.files.get("text-folder/data.bin"));
     }
 
     @Test

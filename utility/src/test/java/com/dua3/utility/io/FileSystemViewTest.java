@@ -128,6 +128,39 @@ class FileSystemViewTest {
         }
     }
 
+    @Test
+    void create_variantsAndExceptions() throws IOException {
+        // missing directory without CREATE_IF_MISSING
+        Path missing = tempDir.resolve("missingDir");
+        assertThrows(LangUtil.FailedCheckException.class, () -> FileSystemView.create(missing));
+
+        // missing directory with CREATE_IF_MISSING
+        try (FileSystemView fsv = FileSystemView.create(missing, FileSystemView.Flags.CREATE_IF_MISSING)) {
+            assertTrue(Files.isDirectory(fsv.getRoot()));
+            Path res = fsv.resolve("sub/file.txt");
+            assertEquals(missing.resolve("sub/file.txt"), res);
+        }
+
+        // existing non-zip file
+        Path textFile = tempDir.resolve("somefile.txt");
+        Files.writeString(textFile, "hello");
+        assertThrows(IllegalArgumentException.class, () -> FileSystemView.create(textFile));
+
+        // existing directory
+        try (FileSystemView fsv = FileSystemView.create(tempDir)) {
+            assertEquals(tempDir.toAbsolutePath(), fsv.getRoot());
+            assertNotNull(fsv.toString());
+        }
+
+        // existing zip file via create(Path)
+        Path zipFile = tempDir.resolve("archive.zip");
+        createZipWithEntry(zipFile, "test.txt", "content".getBytes(StandardCharsets.UTF_8));
+        try (FileSystemView fsv = FileSystemView.create(zipFile)) {
+            Path res = fsv.resolve("test.txt");
+            assertEquals("content", Files.readString(res));
+        }
+    }
+
     // helper to create a zip with a single entry via NIO FS
     private static void createZipWithEntry(Path zipPath, String entryName, byte[] data) throws IOException {
         URI uri = URI.create("jar:" + zipPath.toUri());

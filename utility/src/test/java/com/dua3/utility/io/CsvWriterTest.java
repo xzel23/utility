@@ -229,4 +229,22 @@ class CsvWriterTest {
         // Verify output
         assertEquals(expected, outputStream.toString(StandardCharsets.UTF_8));
     }
+
+    @Test
+    void testWriteCsvToPathAndFlush(@org.junit.jupiter.api.io.TempDir java.nio.file.Path tempDir) throws IOException {
+        java.nio.file.Path file = tempDir.resolve("output.csv");
+        Arguments arguments = Arguments.of();
+
+        try (CsvWriter csvWriter = CsvWriter.create(file, arguments)) {
+            csvWriter.addField("A");
+            csvWriter.addField("B");
+            csvWriter.nextRow();
+            csvWriter.addField(10);
+            csvWriter.addField(20);
+            csvWriter.flush();
+        }
+
+        String content = java.nio.file.Files.readString(file, StandardCharsets.UTF_8);
+        assertEquals("A,B\r\n10,20\r\n", content);
+    }
 }

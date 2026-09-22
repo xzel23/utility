@@ -62,4 +62,23 @@ class LoaderTest {
             assertEquals(1, LoaderTestSecondProvider.loadCalls);
         }
     }
+
+    @Test
+    void loadFromUrlAndTryLoadMethods(@TempDir Path tempDir) throws IOException {
+        Path input = tempDir.resolve("input.bin");
+        Files.write(input, LoaderTestSecondProvider.magicBytes());
+        java.net.URL url = input.toUri().toURL();
+
+        // load(Class, URL, Object...)
+        String loaded = Loader.load(String.class, url);
+        assertEquals("second-loader-result", loaded);
+
+        // tryLoad(Class, URI, Object...)
+        var optUri = Loader.tryLoad(String.class, input.toUri());
+        assertEquals(java.util.Optional.of("second-loader-result"), optUri);
+
+        // tryLoad for unsupported class
+        var optUnsupported = Loader.tryLoad(Integer.class, input.toUri());
+        assertEquals(java.util.Optional.empty(), optUnsupported);
+    }
 }

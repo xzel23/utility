@@ -45,6 +45,7 @@ import java.util.zip.ZipException;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test the FileSystemView class.
  */
+@SuppressWarnings("java:S5778")
 class IoUtilTest {
 
     /**
@@ -1082,7 +1084,7 @@ class IoUtilTest {
     }
 
     @Test
-    @SuppressWarnings("java:S3415") // false positive
+    @SuppressWarnings({"java:S3415", "java:S2093"}) // false positive
     void testRedirectStandardStreams() throws Exception {
         // Create a temporary file for redirection
         Path tempFile = Files.createTempFile("redirect-test", ".txt");
@@ -1360,5 +1362,92 @@ class IoUtilTest {
         } finally {
             IoUtil.deleteRecursive(tempDir);
         }
+    }
+
+    @Test
+    void testCloseAllAndComposedClose() {
+        // Normal close all without exceptions
+        boolean[] closed = new boolean[2];
+        AutoCloseable c1 = () -> closed[0] = true;
+        AutoCloseable c2 = () -> closed[1] = true;
+
+        assertDoesNotThrow(() -> IoUtil.closeAll(c1, c2));
+        assertTrue(closed[0]);
+        assertTrue(closed[1]);
+
+        // closeAll with exceptions collects suppressed
+        AutoCloseable failing1 = () -> { throw new IOException("fail1"); };
+        AutoCloseable failing2 = () -> { throw new IOException("fail2"); };
+        IOException ex = assertThrows(IOException.class, () -> IoUtil.closeAll(failing1, failing2));
+        assertNotNull(ex.getCause());
+        Throwable inner = ex.getCause().getCause() != null ? ex.getCause().getCause() : ex.getCause();
+        assertEquals("fail1", inner.getMessage());
+        assertEquals(1, inner.getSuppressed().length);
+        assertEquals("fail2", inner.getSuppressed()[0].getMessage());
+
+        // composedClose creates a runnable
+        boolean[] composedClosed = new boolean[1];
+        AutoCloseable c3 = () -> composedClosed[0] = true;
+        IoUtil.composedClose(List.of(c3)).run();
+        assertTrue(composedClosed[0]);
+
+        // composedClose wrapping IOException in UncheckedIOException
+        assertThrows(UncheckedIOException.class, () -> IoUtil.composedClose(failing1).run());
+    }
+
+    @Test
+    void testConversionsAndReplaceExtension() throws Exception {
+        Path tempFile = Files.createTempFile("test-conv-", ".txt");
+        try {
+            URI uri = IoUtil.toURI(tempFile);
+            assertEquals(tempFile.toUri(), uri);
+
+            URL url = IoUtil.toURL(uri);
+            assertEquals(uri.toURL(), url);
+
+            URI fromUrl = IoUtil.toURI(url);
+            assertEquals(uri, fromUrl);
+
+            Path fromStr = IoUtil.toPath(tempFile.toString());
+            assertEquals(tempFile, fromStr);
+
+            URL fromStrUrl = IoUtil.toURL(url.toString());
+            assertEquals(url, fromStrUrl);
+
+            Path replaced = IoUtil.replaceExtension(tempFile, "dat");
+            assertEquals("dat", IoUtil.getExtension(replaced));
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testNullAppendableAndLimitedOutputStream() throws IOException {
+        // NullAppendable
+        Appendable na = IoUtil.nullAppendable();
+        assertSame(na, na.append('a'));
+        assertSame(na, na.append("hello"));
+        assertSame(na, na.append("hello", 1, 3));
+
+        // NullFormatter
+        java.util.Formatter formatter = IoUtil.nullFormatter();
+        assertNotNull(formatter);
+
+        // LimitedOutputStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream los = new IoUtil.LimitedOutputStream(baos, 5, 10.0, 1)) {
+            los.write(65);
+            los.write(new byte[]{66, 67});
+            los.write(new byte[]{68, 69, 70}, 0, 2); // reached limit (5 bytes)
+            assertThrows(IOException.class, () -> los.write(71));
+        }
+        assertEquals("ABCDE", baos.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void testGetApplicationDataDir() throws IOException {
+        Path dataDir = IoUtil.getApplicationDataDir("TestApp");
+        assertNotNull(dataDir);
+        assertTrue(dataDir.toString().contains("TestApp"));
     }
 }
