@@ -34,6 +34,8 @@ public final class MathUtil {
 
     private static final Logger LOG = LogManager.getLogger(MathUtil.class);
 
+    private static final double MIN_DOUBLE_ROUNDABLE_TO_SHORT = Short.MIN_VALUE - 0.5;
+    private static final double MAX_DOUBLE_ROUNDABLE_TO_SHORT = Math.nextDown(Short.MAX_VALUE + 0.5);
     private static final double MIN_DOUBLE_ROUNDABLE_TO_INT = Integer.MIN_VALUE - 0.5;
     private static final double MAX_DOUBLE_ROUNDABLE_TO_INT = Math.nextDown(Integer.MAX_VALUE + 0.5);
     private static final double MIN_DOUBLE_ROUNDABLE_TO_LONG = -9007199254740991.0; // 53 bit mantissa -> BigDecimal.valueOf(2).pow(53).subtract(BigDecimal.ONE).negate()
@@ -281,6 +283,41 @@ public final class MathUtil {
         double rounded = round(x, mode);
         if (rounded >= Integer.MIN_VALUE && rounded <= Integer.MAX_VALUE && isIntegral(rounded)) {
             return (int) rounded;
+        }
+        throw new ArithmeticException("Invalid or out-of-bounds value: " + x);
+    }
+
+    /**
+     * Rounds a double value to the nearest short using the same tie-breaking behavior as {@link Math#round(double)}
+     * and returns the result as a short.
+     *
+     * @param x the double value to be rounded
+     * @return the rounded value as a short
+     * @throws ArithmeticException if the result is out of range of a short
+     */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    public static short roundToShort(double x) {
+        if (x >= MIN_DOUBLE_ROUNDABLE_TO_SHORT && x <= MAX_DOUBLE_ROUNDABLE_TO_SHORT) {
+            return (short) Math.round(x);
+        }
+        throw new ArithmeticException("Invalid or out-of-bounds value: " + x);
+    }
+
+    /**
+     * Rounds a double value to an short according to the supplied {@link RoundingMode} and returns the result as a
+     * short.
+     *
+     * @param x the double value to be rounded
+     * @param mode the {@link RoundingMode} to use
+     * @return the rounded value as a short
+     * @throws ArithmeticException if the rounded value is not representable as an short, or if {@link
+     *                             RoundingMode#UNNECESSARY} is used and rounding is required
+     */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    public static short roundToShort(double x, RoundingMode mode) {
+        double rounded = round(x, mode);
+        if (rounded >= Short.MIN_VALUE && rounded <= Short.MAX_VALUE && isIntegral(rounded)) {
+            return (short) rounded;
         }
         throw new ArithmeticException("Invalid or out-of-bounds value: " + x);
     }

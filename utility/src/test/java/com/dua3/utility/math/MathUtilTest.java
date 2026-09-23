@@ -141,6 +141,37 @@ class MathUtilTest {
      * Test of roundToInt method, of class MathUtil.
      */
     @Test
+    void testRoundToShort() {
+        assertEquals(0, MathUtil.roundToShort(0.0));
+        assertEquals(1, MathUtil.roundToShort(1.0));
+        assertEquals(1, MathUtil.roundToShort(1.2));
+        assertEquals(2, MathUtil.roundToShort(1.5));
+        assertEquals(2, MathUtil.roundToShort(1.8));
+        assertEquals(Short.MAX_VALUE, MathUtil.roundToShort((double) Short.MAX_VALUE));
+        assertEquals(Short.MAX_VALUE, MathUtil.roundToShort(Math.nextDown(Short.MAX_VALUE + 0.5)));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToShort(Short.MAX_VALUE + 0.5));
+
+        assertEquals(-1, MathUtil.roundToShort(-1.0));
+        assertEquals(-1, MathUtil.roundToShort(-1.2));
+        assertEquals(-1, MathUtil.roundToShort(-1.5));
+        assertEquals(-2, MathUtil.roundToShort(-1.8));
+        assertEquals(Short.MIN_VALUE, MathUtil.roundToShort((double) Short.MIN_VALUE));
+        assertEquals(Short.MIN_VALUE, MathUtil.roundToShort(Short.MIN_VALUE - 0.5));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToShort(Math.nextDown(Short.MIN_VALUE - 0.5)));
+
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToShort(Double.NaN));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToShort(Long.MAX_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToShort(Double.MAX_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToShort(Double.POSITIVE_INFINITY));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToShort(Long.MIN_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToShort(-Double.MAX_VALUE));
+        assertThrows(ArithmeticException.class, () -> MathUtil.roundToShort(Double.NEGATIVE_INFINITY));
+    }
+
+    /**
+     * Test of roundToInt method, of class MathUtil.
+     */
+    @Test
     void testRoundToInt() {
         assertEquals(0, MathUtil.roundToInt(0.0));
         assertEquals(1, MathUtil.roundToInt(1.0));
