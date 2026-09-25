@@ -44,6 +44,7 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      * @param disabled an ObservableValue object representing the disabled state of the FileInput control
      * @return the current instance of FileInputBuilder with the 'disabled' property set
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public FileInputBuilder disabled(ObservableValue<Boolean> disabled) {
         this.disabled = disabled;
         return self();
@@ -57,6 +58,7 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      *                 validation succeeds
      * @return the updated FileInputBuilder instance
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public FileInputBuilder validate(Function<Path, Optional<String>> validate) {
         this.validate = validate;
         return self();
@@ -80,6 +82,7 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      * @param flag a boolean flag; if true, only existing files or directories can be selected, otherwise new ones can also be selected
      * @return the current instance of FileInputBuilder for method chaining
      */
+    @SuppressWarnings("unused")
     public FileInputBuilder existingOnly(boolean flag) {
         this.existingOnly = flag;
         return self();
@@ -110,12 +113,12 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      */
     private String itemText(boolean captitalize) {
         return switch (mode) {
-            case DIRECTORY -> captitalize
-                    ? I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.directory.cap")
-                    : I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.directory");
-            case OPEN, SAVE -> captitalize
-                    ? I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.file.cap")
-                    : I18NInstance.get().get("dua3.utility.fx.controls.file.input.builder.file");
+            case DIRECTORY -> I18NInstance.get().get(
+                    captitalize ? "dua3.utility.fx.controls.file.input.builder.directory.cap" : "dua3.utility.fx.controls.file.input.builder.directory"
+            );
+            case OPEN, SAVE -> I18NInstance.get().get(
+                    captitalize ? "dua3.utility.fx.controls.file.input.builder.file.cap" : "dua3.utility.fx.controls.file.input.builder.file"
+            );
         };
     }
 
