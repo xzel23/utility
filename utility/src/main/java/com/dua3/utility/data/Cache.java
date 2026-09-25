@@ -38,6 +38,7 @@ public class Cache<K, V> {
     private final Function<V, Reference<V>> newReference;
     private final Function<? super K, ? extends V> compute;
     private final Map<K, Reference<V>> items = new ConcurrentHashMap<>();
+    private final WeakReference<Map<K, Reference<V>>> weakItems = new WeakReference<>(items);
 
     /**
      * Constructs a new Cache object with the given type and compute function.
@@ -88,7 +89,13 @@ public class Cache<K, V> {
 
             // 4. Register cleaner with SAFE removal
             // We capture 'newRef' to ensure we only remove the entry if it still holds THIS reference
-            CLEANER.register(val, () -> items.remove(k, newRef));
+            WeakReference<Map<K, Reference<V>>> itemsProxyitemsRef = weakItems; // DO NOT REMOVE! Avoid referencing the Cache from the CLEANER
+            CLEANER.register(val, () -> {
+                Map<K, Reference<V>> itms = itemsProxyitemsRef.get();
+                if (itms != null) {
+                    itms.remove(k, newRef);
+                }
+            });
 
             return newRef;
         });
