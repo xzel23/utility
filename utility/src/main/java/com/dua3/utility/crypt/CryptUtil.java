@@ -6,12 +6,17 @@ import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -55,6 +60,18 @@ public final class CryptUtil {
      */
     public static byte[] encryptSymmetric(Key key, byte[] data, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
         return encryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, key, data, inputBufferHandling);
+    }
+
+    /**
+     * Symmetrically encrypt data from an InputStream using a Key object with the default algorithm.
+     *
+     * @param key  the encryption key (must be compatible with the algorithm)
+     * @param data the stream of data to encrypt
+     * @return an InputStream producing the encrypted data (including IV if required)
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static InputStream encryptSymmetric(Key key, InputStream data) throws GeneralSecurityException {
+        return encryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, key, data);
     }
 
     /**
@@ -104,10 +121,45 @@ public final class CryptUtil {
     }
 
     /**
+     * Symmetrically encrypt data from an InputStream using a Key object with the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm to use
+     * @param key       the encryption key (must be compatible with the algorithm)
+     * @param data      the stream of data to encrypt
+     * @return an InputStream producing the encrypted data (including IV if required)
+     * @throws GeneralSecurityException if encryption fails
+     * @throws IOException              if an I/O error occurs
+     */
+    public static InputStream encryptSymmetric(SymmetricAlgorithm algorithm, Key key, InputStream data) throws GeneralSecurityException {
+        KeyUtil.validateSymmetricKey(key, algorithm);
+
+        Cipher cipher = Cipher.getInstance(algorithm.getTransformation());
+
+        if (algorithm.requiresIv()) {
+            byte[] iv = new byte[algorithm.getIvLength()];
+            RandomUtil.getRandom().nextBytes(iv);
+
+            if (algorithm.isAuthenticated()) {
+                GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+                cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
+            } else {
+                IvParameterSpec ivSpec = new IvParameterSpec(iv);
+                cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+            }
+
+            CipherInputStream cipherIn = new CipherInputStream(data, cipher);
+            return new SequenceInputStream(new ByteArrayInputStream(iv), cipherIn);
+        } else {
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return new CipherInputStream(data, cipher);
+        }
+    }
+
+    /**
      * Encrypts the provided input data using AES encryption with a password-based key derivation.
      * The method generates a random salt, derives a secret key using the provided password,
-     * and encrypts the input data. The result is a Base64-encoded string containing the salt
-     * and the encrypted data, separated by a "$" character.
+     * and encrypts the input data. The result is a byte array containing the salt
+     * and the encrypted data.
      * <p>
      * The password must have at least 8 characters.
      *
@@ -115,17 +167,19 @@ public final class CryptUtil {
      * @param password            the password used to derive the encryption key, represented as a char array
      * @param inputBufferHandling specifies how the method should handle the input buffer after encryption;
      *                            it determines whether to preserve or clear the input
-     * @return a Base64-encoded string containing the salt and the encrypted data,
-     * separated by a "$" character
+     * @return a byte array containing the salt and the encrypted data
      * @throws IllegalStateException if the encryption process encounters a general security exception
      */
-    public static String encrypt(byte[] input, char[] password, InputBufferHandling inputBufferHandling) {
+    public static byte[] encryptBytes(byte[] input, char[] password, InputBufferHandling inputBufferHandling) {
         try {
-            LangUtil.checkArg(password.length >= 8, "password must have at least 8 characters: %d", password.length);
+            checkPasswordLength(password, 8);
             byte[] salt = RandomUtil.generateRandomBytes(16);
             SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
             byte[] encrypted = encryptSymmetric(SymmetricAlgorithm.AES, key, input, inputBufferHandling);
-            return TextUtil.base64Encode(salt) + "$" + TextUtil.base64Encode(encrypted);
+            byte[] result = new byte[salt.length + encrypted.length];
+            System.arraycopy(salt, 0, result, 0, salt.length);
+            System.arraycopy(encrypted, 0, result, salt.length, encrypted.length);
+            return result;
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Failed to encrypt", e);
         } finally {
@@ -137,30 +191,133 @@ public final class CryptUtil {
     }
 
     /**
-     * Decrypts the given input string using the specified password and input buffer handling strategy.
-     * <p>
-     * The input string should be in a specific format with a delimiter ('$') separating the salt and
-     * the encrypted data. The method extracts the salt and the encrypted data from the input string,
-     * derives a key using the provided password and salt, and then decrypts the encrypted data.
+     * Encrypts the provided input data using AES encryption with a password-based key derivation.
+     * The method generates a random salt, derives a secret key using the provided password,
+     * and encrypts the input data. The result is a Base64-encoded string containing the salt
+     * and the encrypted data.
      * <p>
      * The password must have at least 8 characters.
      *
-     * @param input               the encrypted string, which should contain a salt and encrypted data separated by a '$' character
-     * @param password            the password to derive the decryption key
+     * @param input               the data to be encrypted, represented as a byte array
+     * @param password            the password used to derive the encryption key, represented as a char array
+     * @param inputBufferHandling specifies how the method should handle the input buffer after encryption;
+     *                            it determines whether to preserve or clear the input
+     * @return a Base64-encoded string containing the salt and the encrypted data
+     * @throws IllegalStateException if the encryption process encounters a general security exception
+     */
+    public static String encrypt(byte[] input, char[] password, InputBufferHandling inputBufferHandling) {
+        return TextUtil.base64Encode(encryptBytes(input, password, inputBufferHandling));
+    }
+
+    /**
+     * Validates if the provided password meets the minimum length requirement.
+     *
+     * @param password the password to be checked
+     * @param minLength the minimum required length for the password
+     * @throws IllegalArgumentException if the password length is less than the specified minimum length
+     */
+    private static void checkPasswordLength(char[] password, int minLength) {
+        assert minLength >= 0 : "minimum length must not be negative";
+        LangUtil.checkArg(password.length >= minLength, "password must have at least %d characters: %d", minLength, password.length);
+    }
+
+    /**
+     * Encrypts the provided input stream using AES encryption with a password-based key derivation.
+     * The method generates a random salt, derives a secret key using the provided password,
+     * and encrypts the input stream. The result is an InputStream providing the raw salt (16 bytes)
+     * followed by the encrypted data.
+     * <p>
+     * The password must have at least 8 characters. The password array is cleared after key derivation.
+     *
+     * @param input    the input stream of data to be encrypted
+     * @param password the password used to derive the encryption key, represented as a char array
+     * @return an InputStream providing the encrypted data
+     * @throws GeneralSecurityException if encryption fails
+     */
+    @SuppressWarnings("java:S2093") // stream is returned
+    public static InputStream encrypt(InputStream input, char[] password) throws GeneralSecurityException {
+        try {
+            checkPasswordLength(password, 8);
+            byte[] salt = RandomUtil.generateRandomBytes(16);
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
+            InputStream encryptedStream = encryptSymmetric(SymmetricAlgorithm.AES, key, input);
+            return new SequenceInputStream(new ByteArrayInputStream(salt), encryptedStream);
+        } finally {
+            Arrays.fill(password, '\0');
+        }
+    }
+
+    /**
+     * Decrypts the given input byte array using the specified password.
+     * <p>
+     * The input should contain a 16-byte salt followed by the encrypted data.
+     * The method extracts the salt and the encrypted data, derives a key using the provided
+     * password and salt, and then decrypts the encrypted data.
+     * <p>
+     * The password must have at least 8 characters.
+     *
+     * @param input    the encrypted byte array containing the salt and encrypted data
+     * @param password the password to derive the decryption key
      * @return the decrypted data as a byte array
-     * @throws IllegalArgumentException if the input string is invalid in format or there is no '$' delimiter
+     * @throws IllegalArgumentException if the input is too short to contain the salt
      * @throws IllegalStateException    if decryption fails due to cryptographic errors
      */
-    public static byte[] decrypt(String input, char[] password) {
+    public static byte[] decryptBytes(byte[] input, char[] password) {
         try {
-            int splitIndex = input.indexOf('$');
-            LangUtil.checkArg(splitIndex > 0, "Invalid input", splitIndex);
-            byte[] salt = TextUtil.base64Decode(input.substring(0, splitIndex));
-            byte[] encoded = TextUtil.base64Decode(input.substring(splitIndex + 1));
+            checkPasswordLength(password, 8);
+            LangUtil.checkArg(input.length >= 16, "Invalid input: too short to contain salt");
+            byte[] salt = Arrays.copyOfRange(input, 0, 16);
+            byte[] encoded = Arrays.copyOfRange(input, 16, input.length);
             SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
             return decryptSymmetric(SymmetricAlgorithm.AES, key, encoded);
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Failed to decrypt", e);
+        } finally {
+            Arrays.fill(password, '\0');
+        }
+    }
+
+    /**
+     * Decrypts the given Base64-encoded input string using the specified password.
+     * <p>
+     * The method decodes the Base64 input string and decrypts the resulting byte array
+     * using {@link #decryptBytes(byte[], char[])}.
+     * <p>
+     * The password must have at least 8 characters.
+     *
+     * @param input    the Base64-encoded encrypted string containing salt and encrypted data
+     * @param password the password to derive the decryption key
+     * @return the decrypted data as a byte array
+     * @throws IllegalArgumentException if the input is invalid
+     * @throws IllegalStateException    if decryption fails due to cryptographic errors
+     */
+    public static byte[] decrypt(String input, char[] password) {
+        return decryptBytes(TextUtil.base64Decode(input), password);
+    }
+
+    /**
+     * Decrypts the given input stream using the specified password.
+     * <p>
+     * The input stream should provide the 16-byte salt followed by the encrypted data.
+     * The method extracts the salt, derives a key using the provided password and salt,
+     * and then decrypts the encrypted data stream.
+     * <p>
+     * The password must have at least 8 characters. The password array is cleared after key derivation.
+     *
+     * @param input    the encrypted input stream containing the salt and encrypted data
+     * @param password the password to derive the decryption key
+     * @return an InputStream providing the decrypted data
+     * @throws GeneralSecurityException if decryption initialization fails
+     * @throws IOException              if an I/O error occurs
+     */
+    @SuppressWarnings("java:S2093") // stream is returned
+    public static InputStream decrypt(InputStream input, char[] password) throws GeneralSecurityException, IOException {
+        try {
+            checkPasswordLength(password, 8);
+            byte[] salt = input.readNBytes(16);
+            LangUtil.checkArg(salt.length == 16, "Invalid input: stream too short to contain salt");
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
+            return decryptSymmetric(SymmetricAlgorithm.AES, key, input);
         } finally {
             Arrays.fill(password, '\0');
         }
@@ -208,6 +365,43 @@ public final class CryptUtil {
     }
 
     /**
+     * Symmetrically decrypt data from an InputStream using a Key object with the specified algorithm.
+     *
+     * @param algorithm    the symmetric algorithm that was used for encryption
+     * @param key          the encryption key (must be compatible with the algorithm)
+     * @param cipherStream the encrypted data stream
+     * @return an InputStream providing the decrypted data
+     * @throws GeneralSecurityException if decryption initialization fails
+     * @throws IOException              if an I/O error occurs reading from the stream
+     */
+    public static InputStream decryptSymmetric(SymmetricAlgorithm algorithm, Key key, InputStream cipherStream) throws GeneralSecurityException, IOException {
+        KeyUtil.validateSymmetricKey(key, algorithm);
+
+        Cipher cipher = Cipher.getInstance(algorithm.getTransformation());
+
+        if (algorithm.requiresIv()) {
+            int ivLength = algorithm.getIvLength();
+            byte[] iv = cipherStream.readNBytes(ivLength);
+            if (iv.length < ivLength) {
+                throw new IllegalArgumentException("Cipher stream too short to contain IV");
+            }
+
+            if (algorithm.isAuthenticated()) {
+                GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+                cipher.init(Cipher.DECRYPT_MODE, key, gcmSpec);
+            } else {
+                IvParameterSpec ivSpec = new IvParameterSpec(iv);
+                cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+            }
+
+            return new CipherInputStream(cipherStream, cipher);
+        } else {
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            return new CipherInputStream(cipherStream, cipher);
+        }
+    }
+
+    /**
      * Symmetrically decrypt data using a Key object with the default algorithm.
      * <p>
      * The data is decrypted using AES-GCM.
@@ -222,6 +416,19 @@ public final class CryptUtil {
      */
     public static byte[] decryptSymmetric(Key key, byte[] cipherMessage) throws GeneralSecurityException {
         return decryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherMessage);
+    }
+
+    /**
+     * Symmetrically decrypt data from an InputStream using a Key object with the default algorithm.
+     *
+     * @param key          the encryption key (must be compatible with the algorithm)
+     * @param cipherStream the encrypted data stream
+     * @return an InputStream providing the decrypted data
+     * @throws GeneralSecurityException if decryption initialization fails
+     * @throws IOException              if an I/O error occurs reading from the stream
+     */
+    public static InputStream decryptSymmetric(Key key, InputStream cipherStream) throws GeneralSecurityException, IOException {
+        return decryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherStream);
     }
 
     /**
@@ -265,6 +472,37 @@ public final class CryptUtil {
                 Arrays.fill(data, (byte) 0);
             }
         }
+    }
+
+    /**
+     * Hybrid encryption for streaming data using RSA/EC for key encryption and AES-GCM for data encryption.
+     * <p>
+     * Format: [4 bytes: encrypted key length][encrypted AES key][encrypted data]
+     *
+     * @param publicKey the public key for encrypting the AES key (RSA, EC, or ECIES)
+     * @param data      the stream of data to encrypt
+     * @return an InputStream producing the hybrid encrypted data
+     * @throws GeneralSecurityException if encryption fails
+     * @throws IOException              if an I/O error occurs
+     */
+    public static InputStream encryptHybrid(PublicKey publicKey, InputStream data) throws GeneralSecurityException {
+        validateAsymmetricEncryptionKey(publicKey, 32); // 32 bytes = 256-bit AES key
+
+        // Generate random AES key
+        SecretKey aesKey = KeyUtil.generateSecretKey(256, SYMMETRIC_ALGORITHM_DEFAULT);
+
+        // Encrypt data with AES
+        InputStream encryptedData = encryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, aesKey, data);
+
+        // Encrypt AES key with public key
+        byte[] encryptedKey = encryptAsymmetric(publicKey, aesKey.getEncoded(), InputBufferHandling.CLEAR_AFTER_USE);
+
+        // Combine: [4 bytes: key length][encrypted key][encrypted data stream]
+        ByteBuffer buffer = ByteBuffer.allocate(4 + encryptedKey.length);
+        buffer.putInt(encryptedKey.length);
+        buffer.put(encryptedKey);
+
+        return new SequenceInputStream(new ByteArrayInputStream(buffer.array()), encryptedData);
     }
 
     /**
@@ -322,6 +560,32 @@ public final class CryptUtil {
                 Arrays.fill(data, (byte) 0);
             }
         }
+    }
+
+    /**
+     * Asymmetrically encrypt data from an InputStream using a public key.
+     *
+     * @param publicKey the public key for encryption
+     * @param data      the stream of data to encrypt
+     * @return an InputStream producing the encrypted data
+     * @throws GeneralSecurityException if encryption fails
+     * @throws IOException              if an I/O error occurs
+     */
+    public static InputStream encryptAsymmetric(PublicKey publicKey, InputStream data) throws GeneralSecurityException {
+        AsymmetricAlgorithm algorithm;
+        try {
+            algorithm = AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm());
+            if (!algorithm.isEncryptionSupported()) {
+                throw new InvalidKeyException(publicKey.getAlgorithm() + " keys are for signatures only, not encryption");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new InvalidKeyException("Unsupported asymmetric algorithm: " + publicKey.getAlgorithm(), e);
+        }
+
+        String transformation = getAsymmetricTransformation(algorithm);
+        Cipher cipher = Cipher.getInstance(transformation);
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        return new CipherInputStream(data, cipher);
     }
 
     /**
@@ -417,6 +681,40 @@ public final class CryptUtil {
     }
 
     /**
+     * Decrypt hybrid encrypted data stream using the corresponding private key.
+     *
+     * @param privateKey   the private key corresponding to the public key used for encryption
+     * @param cipherStream the hybrid encrypted data stream
+     * @return an InputStream providing the decrypted data
+     * @throws GeneralSecurityException if decryption fails
+     * @throws IOException              if an I/O error occurs
+     */
+    public static InputStream decryptHybrid(PrivateKey privateKey, InputStream cipherStream) throws GeneralSecurityException, IOException {
+        byte[] lengthBytes = cipherStream.readNBytes(4);
+        if (lengthBytes.length < 4) {
+            throw new IllegalArgumentException("Invalid hybrid encrypted data");
+        }
+
+        ByteBuffer buffer = ByteBuffer.wrap(lengthBytes);
+        int keyLength = buffer.getInt();
+
+        if (keyLength <= 0) {
+            throw new IllegalArgumentException("Invalid encrypted key length: " + keyLength);
+        }
+
+        byte[] encryptedKey = cipherStream.readNBytes(keyLength);
+        if (encryptedKey.length < keyLength) {
+            throw new IllegalArgumentException("Invalid encrypted key length");
+        }
+
+        // Decrypt AES key
+        SecretKey aesKey = KeyUtil.toSecretKey(decryptAsymmetric(privateKey, encryptedKey));
+
+        // Decrypt data with AES key
+        return decryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, aesKey, cipherStream);
+    }
+
+    /**
      * Asymmetrically decrypt data using a private key.
      * <p>
      * <strong>Note:</strong> decryption methods to not take an {@link InputBufferHandling} argument
@@ -435,6 +733,30 @@ public final class CryptUtil {
         Cipher cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         return cipher.doFinal(cipherData);
+    }
+
+    /**
+     * Asymmetrically decrypt data from an InputStream using a private key.
+     *
+     * @param privateKey   the private key for decryption
+     * @param cipherStream the encrypted data stream
+     * @return an InputStream providing the decrypted data
+     * @throws GeneralSecurityException if decryption fails
+     * @throws IOException              if an I/O error occurs
+     */
+    public static InputStream decryptAsymmetric(PrivateKey privateKey, InputStream cipherStream) throws GeneralSecurityException {
+        String algorithm = privateKey.getAlgorithm();
+        AsymmetricAlgorithm asymmAlg;
+        try {
+            asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new InvalidKeyException("Unsupported asymmetric algorithm: " + algorithm, e);
+        }
+        String transformation = getAsymmetricTransformation(asymmAlg);
+
+        Cipher cipher = Cipher.getInstance(transformation);
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        return new CipherInputStream(cipherStream, cipher);
     }
 
     /**

@@ -21,6 +21,9 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -43,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+@SuppressWarnings({"java:S5778", "java:S5783"})
 class CryptUtilTest {
 
     @Test
@@ -840,7 +844,6 @@ class CryptUtilTest {
         // Step 1: First encryption
         String encrypted1 = CryptUtil.encrypt(inputBytes, password.clone(), InputBufferHandling.PRESERVE);
         assertNotNull(encrypted1, "Encrypted result should not be null");
-        assertTrue(encrypted1.contains("$"), "Encrypted result should contain delimiter");
 
         // Step 2: Decrypt the encrypted data
         byte[] decrypted = CryptUtil.decrypt(encrypted1, password.clone());
@@ -861,5 +864,318 @@ class CryptUtilTest {
         byte[] decrypted2 = CryptUtil.decrypt(encrypted2, Arrays.copyOf(password, password.length));
         String decryptedString2 = new String(decrypted2, StandardCharsets.UTF_8);
         assertEquals(input, decryptedString2, "Second round decryption should match original input");
+    }
+
+    @ParameterizedTest
+    @MethodSource("encryptDecryptRoundTripTestData")
+    void testEncryptBytesDecryptBytesRoundTrip(String input, char[] password) {
+        byte[] inputBytes = input.getBytes(StandardCharsets.UTF_8);
+
+        // Step 1: First encryption
+        byte[] encrypted1 = CryptUtil.encryptBytes(inputBytes, password.clone(), InputBufferHandling.PRESERVE);
+        assertNotNull(encrypted1, "Encrypted result should not be null");
+        assertTrue(encrypted1.length >= 16 + 12 + inputBytes.length, "Encrypted bytes should contain at least salt and IV");
+
+        // Step 2: Decrypt the encrypted data
+        byte[] decrypted = CryptUtil.decryptBytes(encrypted1, password.clone());
+        assertNotNull(decrypted, "Decrypted result should not be null");
+        assertArrayEquals(inputBytes, decrypted, "Decrypted data should match original input");
+
+        // Step 3: Encrypt the decrypted data again
+        byte[] encrypted2 = CryptUtil.encryptBytes(decrypted, password.clone(), InputBufferHandling.PRESERVE);
+        assertNotNull(encrypted2, "Second encrypted result should not be null");
+        assertFalse(Arrays.equals(encrypted1, encrypted2), "Second encryption should differ from first due to random salt/IV");
+
+        // Step 4: Decrypt the second encryption to verify it works
+        byte[] decrypted2 = CryptUtil.decryptBytes(encrypted2, Arrays.copyOf(password, password.length));
+        assertArrayEquals(inputBytes, decrypted2, "Second round decryption should match original input");
+    }
+
+    @Test
+    void testSymmetricStreamEncryptionRoundTrip() throws GeneralSecurityException, IOException {
+        for (int keyLength : KEY_LENGTHS) {
+            SecretKey key = KeyUtil.generateSecretKey(keyLength);
+
+            for (String message : MESSAGES) {
+                byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+
+                // Default algorithm stream roundtrip
+                try (InputStream in = new ByteArrayInputStream(messageBytes);
+                     InputStream cipherIn = CryptUtil.encryptSymmetric(key, in);
+                     InputStream plainIn = CryptUtil.decryptSymmetric(key, cipherIn)) {
+                    byte[] decrypted = plainIn.readAllBytes();
+                    assertArrayEquals(messageBytes, decrypted, "Decrypted data should match original message");
+                }
+
+                // Specified algorithm stream roundtrip
+                try (InputStream in = new ByteArrayInputStream(messageBytes);
+                     InputStream cipherIn = CryptUtil.encryptSymmetric(SymmetricAlgorithm.AES, key, in);
+                     InputStream plainIn = CryptUtil.decryptSymmetric(SymmetricAlgorithm.AES, key, cipherIn)) {
+                    byte[] decrypted = plainIn.readAllBytes();
+                    assertArrayEquals(messageBytes, decrypted, "Decrypted data should match original message");
+                }
+            }
+
+            // Test large payload (100KB)
+            byte[] largeData = RandomUtil.generateRandomBytes(100 * 1024);
+            try (InputStream in = new ByteArrayInputStream(largeData);
+                 InputStream cipherIn = CryptUtil.encryptSymmetric(key, in);
+                 InputStream plainIn = CryptUtil.decryptSymmetric(key, cipherIn)) {
+                byte[] decrypted = plainIn.readAllBytes();
+                assertArrayEquals(largeData, decrypted, "Decrypted large data should match original");
+            }
+        }
+    }
+
+    @Test
+    void testSymmetricStreamInteroperability() throws GeneralSecurityException, IOException {
+        for (int keyLength : KEY_LENGTHS) {
+            SecretKey key = KeyUtil.generateSecretKey(keyLength);
+
+            for (String message : MESSAGES) {
+                byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+
+                // 1. Encrypt with byte[] method, decrypt with stream method (default algorithm)
+                byte[] encryptedBytesDefault = CryptUtil.encryptSymmetric(key, messageBytes, InputBufferHandling.PRESERVE);
+                try (InputStream cipherIn = new ByteArrayInputStream(encryptedBytesDefault);
+                     InputStream plainIn = CryptUtil.decryptSymmetric(key, cipherIn)) {
+                    byte[] decrypted = plainIn.readAllBytes();
+                    assertArrayEquals(messageBytes, decrypted, "Stream decrypt of byte[] encrypted data should match original");
+                }
+
+                // 2. Encrypt with stream method, decrypt with byte[] method (default algorithm)
+                byte[] streamedEncryptedDefault;
+                try (InputStream in = new ByteArrayInputStream(messageBytes);
+                     InputStream cipherIn = CryptUtil.encryptSymmetric(key, in)) {
+                    streamedEncryptedDefault = cipherIn.readAllBytes();
+                }
+                byte[] decryptedFromStreamDefault = CryptUtil.decryptSymmetric(key, streamedEncryptedDefault);
+                assertArrayEquals(messageBytes, decryptedFromStreamDefault, "byte[] decrypt of stream encrypted data should match original");
+
+                // 3. Encrypt with byte[] method, decrypt with stream method (specified algorithm)
+                byte[] encryptedBytesAes = CryptUtil.encryptSymmetric(SymmetricAlgorithm.AES, key, messageBytes, InputBufferHandling.PRESERVE);
+                try (InputStream cipherIn = new ByteArrayInputStream(encryptedBytesAes);
+                     InputStream plainIn = CryptUtil.decryptSymmetric(SymmetricAlgorithm.AES, key, cipherIn)) {
+                    byte[] decrypted = plainIn.readAllBytes();
+                    assertArrayEquals(messageBytes, decrypted, "Stream decrypt of byte[] encrypted data should match original");
+                }
+
+                // 4. Encrypt with stream method, decrypt with byte[] method (specified algorithm)
+                byte[] streamedEncryptedAes;
+                try (InputStream in = new ByteArrayInputStream(messageBytes);
+                     InputStream cipherIn = CryptUtil.encryptSymmetric(SymmetricAlgorithm.AES, key, in)) {
+                    streamedEncryptedAes = cipherIn.readAllBytes();
+                }
+                byte[] decryptedFromStreamAes = CryptUtil.decryptSymmetric(SymmetricAlgorithm.AES, key, streamedEncryptedAes);
+                assertArrayEquals(messageBytes, decryptedFromStreamAes, "byte[] decrypt of stream encrypted data should match original");
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("encryptDecryptRoundTripTestData")
+    void testPasswordBasedStreamRoundTrip(String input, char[] password) throws GeneralSecurityException, IOException {
+        byte[] inputBytes = input.getBytes(StandardCharsets.UTF_8);
+
+        // Stream roundtrip
+        try (InputStream in = new ByteArrayInputStream(inputBytes);
+             InputStream cipherIn = CryptUtil.encrypt(in, password.clone());
+             InputStream plainIn = CryptUtil.decrypt(cipherIn, password.clone())) {
+            byte[] decrypted = plainIn.readAllBytes();
+            assertArrayEquals(inputBytes, decrypted, "Decrypted stream data should match original input");
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("encryptDecryptRoundTripTestData")
+    void testPasswordBasedStreamInteroperability(String input, char[] password) throws GeneralSecurityException, IOException {
+        byte[] inputBytes = input.getBytes(StandardCharsets.UTF_8);
+
+        // 1. Encrypt with encryptBytes (byte[] method), decrypt with stream method
+        byte[] encryptedBytes = CryptUtil.encryptBytes(inputBytes, password.clone(), InputBufferHandling.PRESERVE);
+        try (InputStream in = new ByteArrayInputStream(encryptedBytes);
+             InputStream plainIn = CryptUtil.decrypt(in, password.clone())) {
+            byte[] decrypted = plainIn.readAllBytes();
+            assertArrayEquals(inputBytes, decrypted, "Stream decrypt of byte[] encrypted data should match original");
+        }
+
+        // 2. Encrypt with stream method, decrypt with decryptBytes (byte[] method)
+        byte[] streamedEncrypted;
+        try (InputStream in = new ByteArrayInputStream(inputBytes);
+             InputStream cipherIn = CryptUtil.encrypt(in, password.clone())) {
+            streamedEncrypted = cipherIn.readAllBytes();
+        }
+        byte[] decryptedFromStream = CryptUtil.decryptBytes(streamedEncrypted, password.clone());
+        assertArrayEquals(inputBytes, decryptedFromStream, "decryptBytes of stream encrypted data should match original");
+
+        // 3. Encrypt with String method, decode Base64 and decrypt with stream method
+        String encryptedString = CryptUtil.encrypt(inputBytes, password.clone(), InputBufferHandling.PRESERVE);
+        byte[] decodedStringBytes = TextUtil.base64Decode(encryptedString);
+        try (InputStream in = new ByteArrayInputStream(decodedStringBytes);
+             InputStream plainIn = CryptUtil.decrypt(in, password.clone())) {
+            byte[] decrypted = plainIn.readAllBytes();
+            assertArrayEquals(inputBytes, decrypted, "Stream decrypt of decoded Base64 string data should match original");
+        }
+
+        // 4. Encrypt with stream method, Base64 encode and decrypt with String method
+        String streamEncodedBase64 = TextUtil.base64Encode(streamedEncrypted);
+        byte[] decryptedFromString = CryptUtil.decrypt(streamEncodedBase64, password.clone());
+        assertArrayEquals(inputBytes, decryptedFromString, "String decrypt of Base64 encoded stream data should match original");
+    }
+
+    @Test
+    void testHybridStreamRoundTripAndInteroperability() throws GeneralSecurityException, IOException {
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        for (String message : MESSAGES) {
+            byte[] data = message.getBytes(StandardCharsets.UTF_8);
+
+            // 1. Stream roundtrip
+            try (InputStream in = new ByteArrayInputStream(data);
+                 InputStream cipherIn = CryptUtil.encryptHybrid(publicKey, in);
+                 InputStream plainIn = CryptUtil.decryptHybrid(privateKey, cipherIn)) {
+                byte[] decrypted = plainIn.readAllBytes();
+                assertArrayEquals(data, decrypted, "Decrypted hybrid stream data should match original");
+            }
+
+            // 2. Encrypt with byte[] method, decrypt with stream method
+            byte[] encryptedBytes = CryptUtil.encryptHybrid(publicKey, data, InputBufferHandling.PRESERVE);
+            try (InputStream cipherIn = new ByteArrayInputStream(encryptedBytes);
+                 InputStream plainIn = CryptUtil.decryptHybrid(privateKey, cipherIn)) {
+                byte[] decrypted = plainIn.readAllBytes();
+                assertArrayEquals(data, decrypted, "Stream decrypt of hybrid byte[] data should match original");
+            }
+
+            // 3. Encrypt with stream method, decrypt with byte[] method
+            byte[] streamedEncrypted;
+            try (InputStream in = new ByteArrayInputStream(data);
+                 InputStream cipherIn = CryptUtil.encryptHybrid(publicKey, in)) {
+                streamedEncrypted = cipherIn.readAllBytes();
+            }
+            byte[] decryptedFromStream = CryptUtil.decryptHybrid(privateKey, streamedEncrypted);
+            assertArrayEquals(data, decryptedFromStream, "byte[] decrypt of hybrid stream data should match original");
+        }
+
+        // Test large payload (50KB)
+        byte[] largeData = RandomUtil.generateRandomBytes(50 * 1024);
+        try (InputStream in = new ByteArrayInputStream(largeData);
+             InputStream cipherIn = CryptUtil.encryptHybrid(publicKey, in);
+             InputStream plainIn = CryptUtil.decryptHybrid(privateKey, cipherIn)) {
+            byte[] decrypted = plainIn.readAllBytes();
+            assertArrayEquals(largeData, decrypted, "Decrypted large hybrid stream data should match original");
+        }
+    }
+
+    @Test
+    void testAsymmetricStreamRoundTripAndInteroperability() throws GeneralSecurityException, IOException {
+        KeyPair keyPair = KeyUtil.generateRSAKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        byte[][] testPayloads = {
+                "short".getBytes(StandardCharsets.UTF_8),
+                "A bit longer text for asymmetric encryption testing".getBytes(StandardCharsets.UTF_8),
+                new byte[190] // Max OAEP SHA-256 for RSA-2048
+        };
+        Arrays.fill(testPayloads[2], (byte) 'Z');
+
+        for (byte[] data : testPayloads) {
+            // 1. Stream roundtrip
+            try (InputStream in = new ByteArrayInputStream(data);
+                 InputStream cipherIn = CryptUtil.encryptAsymmetric(publicKey, in);
+                 InputStream plainIn = CryptUtil.decryptAsymmetric(privateKey, cipherIn)) {
+                byte[] decrypted = plainIn.readAllBytes();
+                assertArrayEquals(data, decrypted, "Decrypted asymmetric stream data should match original");
+            }
+
+            // 2. Encrypt byte[], decrypt stream
+            byte[] encryptedBytes = CryptUtil.encryptAsymmetric(publicKey, data, InputBufferHandling.PRESERVE);
+            try (InputStream cipherIn = new ByteArrayInputStream(encryptedBytes);
+                 InputStream plainIn = CryptUtil.decryptAsymmetric(privateKey, cipherIn)) {
+                byte[] decrypted = plainIn.readAllBytes();
+                assertArrayEquals(data, decrypted, "Stream decrypt of asymmetric byte[] data should match original");
+            }
+
+            // 3. Encrypt stream, decrypt byte[]
+            byte[] streamedEncrypted;
+            try (InputStream in = new ByteArrayInputStream(data);
+                 InputStream cipherIn = CryptUtil.encryptAsymmetric(publicKey, in)) {
+                streamedEncrypted = cipherIn.readAllBytes();
+            }
+            byte[] decryptedFromStream = CryptUtil.decryptAsymmetric(privateKey, streamedEncrypted);
+            assertArrayEquals(data, decryptedFromStream, "byte[] decrypt of asymmetric stream data should match original");
+        }
+    }
+
+    @Test
+    void testStreamErrorHandling() throws GeneralSecurityException {
+        SecretKey key = KeyUtil.generateSecretKey(256);
+
+        // Symmetric stream: truncated IV
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.decryptSymmetric(key, new ByteArrayInputStream(new byte[5])));
+
+        // Symmetric stream: corrupted ciphertext triggers IOException on read
+        byte[] validEncrypted = CryptUtil.encryptSymmetric(key, "Hello".getBytes(StandardCharsets.UTF_8), InputBufferHandling.PRESERVE);
+        byte[] corruptedEncrypted = validEncrypted.clone();
+        corruptedEncrypted[corruptedEncrypted.length - 1] ^= 0xFF; // corrupt GCM tag
+
+        assertThrows(IOException.class, () -> {
+            try (InputStream plainIn = CryptUtil.decryptSymmetric(key, new ByteArrayInputStream(corruptedEncrypted))) {
+                plainIn.readAllBytes();
+            }
+        });
+
+        // Hybrid stream: truncated header
+        KeyPair rsaPair = KeyUtil.generateRSAKeyPair();
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.decryptHybrid(rsaPair.getPrivate(), new ByteArrayInputStream(new byte[2])));
+
+        // Password stream: password too short (< 8 chars)
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.encrypt(new ByteArrayInputStream(new byte[10]), "short".toCharArray()));
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.decrypt(new ByteArrayInputStream(new byte[20]), "short".toCharArray()));
+
+        // Password stream: truncated salt (< 16 bytes)
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.decrypt(new ByteArrayInputStream(new byte[10]), "password123".toCharArray()));
+
+        // Password stream: wrong password triggers IOException on read
+        byte[] validPasswordEnc = CryptUtil.encryptBytes("Secret data".getBytes(StandardCharsets.UTF_8), "password123".toCharArray(), InputBufferHandling.PRESERVE);
+        assertThrows(IOException.class, () -> {
+            try (InputStream plainIn = CryptUtil.decrypt(new ByteArrayInputStream(validPasswordEnc), "wrongpassword".toCharArray())) {
+                plainIn.readAllBytes();
+            }
+        });
+
+        // Unsupported asymmetric algorithm (DSA)
+        KeyPair dsaPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.DSA, 2048);
+        assertThrows(InvalidKeyException.class, () ->
+                CryptUtil.encryptAsymmetric(dsaPair.getPublic(), new ByteArrayInputStream(new byte[10])));
+        assertThrows(InvalidKeyException.class, () ->
+                CryptUtil.decryptAsymmetric(dsaPair.getPrivate(), new ByteArrayInputStream(new byte[10])));
+    }
+
+    @Test
+    void testPasswordBytesErrorHandling() {
+        byte[] data = "Hello, World!".getBytes(StandardCharsets.UTF_8);
+
+        // Password too short (< 8 chars)
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.encryptBytes(data, "short".toCharArray(), InputBufferHandling.PRESERVE));
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.decryptBytes(data, "short".toCharArray()));
+
+        // Input too short (< 16 bytes salt)
+        assertThrows(IllegalArgumentException.class, () ->
+                CryptUtil.decryptBytes(new byte[15], "password123".toCharArray()));
+
+        // Wrong password throws IllegalStateException
+        byte[] encrypted = CryptUtil.encryptBytes(data, "password123".toCharArray(), InputBufferHandling.PRESERVE);
+        assertThrows(IllegalStateException.class, () ->
+                CryptUtil.decryptBytes(encrypted, "wrongpassword".toCharArray()));
     }
 }
