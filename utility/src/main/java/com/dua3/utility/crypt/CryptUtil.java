@@ -128,7 +128,6 @@ public final class CryptUtil {
      * @param data      the stream of data to encrypt
      * @return an InputStream producing the encrypted data (including IV if required)
      * @throws GeneralSecurityException if encryption fails
-     * @throws IOException              if an I/O error occurs
      */
     public static InputStream encryptSymmetric(SymmetricAlgorithm algorithm, Key key, InputStream data) throws GeneralSecurityException {
         KeyUtil.validateSymmetricKey(key, algorithm);
@@ -483,7 +482,6 @@ public final class CryptUtil {
      * @param data      the stream of data to encrypt
      * @return an InputStream producing the hybrid encrypted data
      * @throws GeneralSecurityException if encryption fails
-     * @throws IOException              if an I/O error occurs
      */
     public static InputStream encryptHybrid(PublicKey publicKey, InputStream data) throws GeneralSecurityException {
         validateAsymmetricEncryptionKey(publicKey, 32); // 32 bytes = 256-bit AES key
@@ -569,7 +567,6 @@ public final class CryptUtil {
      * @param data      the stream of data to encrypt
      * @return an InputStream producing the encrypted data
      * @throws GeneralSecurityException if encryption fails
-     * @throws IOException              if an I/O error occurs
      */
     public static InputStream encryptAsymmetric(PublicKey publicKey, InputStream data) throws GeneralSecurityException {
         AsymmetricAlgorithm algorithm;
@@ -742,7 +739,6 @@ public final class CryptUtil {
      * @param cipherStream the encrypted data stream
      * @return an InputStream providing the decrypted data
      * @throws GeneralSecurityException if decryption fails
-     * @throws IOException              if an I/O error occurs
      */
     public static InputStream decryptAsymmetric(PrivateKey privateKey, InputStream cipherStream) throws GeneralSecurityException {
         String algorithm = privateKey.getAlgorithm();
