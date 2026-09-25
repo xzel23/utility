@@ -16,7 +16,7 @@ class FxServiceTest extends FxTestBase {
         protected Task<String> doCreateTask() {
             return new Task<>() {
                 @Override
-                protected String call() throws Exception {
+                protected String call() {
                     updateTitle("Task Title");
                     updateProgress(50, 100);
                     updateProgress(100, 100);
@@ -27,6 +27,7 @@ class FxServiceTest extends FxTestBase {
     }
 
     @Test
+    @SuppressWarnings({"java:S4030", "MismatchedQueryAndUpdateOfCollection"})
     void testFxServiceAndTracker() throws Throwable {
         runOnFxThreadAndWait(() -> {
             SampleService service = new SampleService();
@@ -38,8 +39,8 @@ class FxServiceTest extends FxTestBase {
 
             FxTaskTracker tracker = new FxTaskTracker() {
                 @Override
-                public void updateTaskProgress(Task<?> task, double totalWork) {
-                    progressList.add(totalWork);
+                public void updateTaskProgress(Task<?> task, double progress) {
+                    progressList.add(progress);
                 }
 
                 @Override
