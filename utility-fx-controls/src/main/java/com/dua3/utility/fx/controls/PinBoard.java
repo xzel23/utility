@@ -528,10 +528,7 @@ public class PinBoard extends Control {
 
     @Override
     public String toString() {
-        return "PinBoard{" +
-                "area=" + areaProperty.get() +
-                ", items=" + items +
-                '}';
+        return "PinBoard{area=" + areaProperty.get() + ", #items=" + items.size() + '}';
     }
 
     /**
