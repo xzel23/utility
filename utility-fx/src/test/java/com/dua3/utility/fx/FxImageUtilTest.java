@@ -72,7 +72,7 @@ class FxImageUtilTest extends FxTestBase {
     void testFxDataRetainingImage() throws Throwable {
         runOnFxThreadAndWait(() -> {
             WritableImage fxImg = new WritableImage(2, 2);
-            byte[] sourceData = new byte[]{1, 2, 3, 4};
+            byte[] sourceData = {1, 2, 3, 4};
 
             FxDataRetainingImage img = new FxDataRetainingImage(fxImg, "image/jpeg", "jpg", sourceData);
             assertEquals(2, img.width());
@@ -89,6 +89,7 @@ class FxImageUtilTest extends FxTestBase {
             });
 
             // Compact constructor validation
+            //noinspection ResultOfObjectAllocationIgnored
             assertThrows(IllegalArgumentException.class, () -> new FxDataRetainingImage(fxImg, "image/jpeg", "jpg", "not-a-byte-array"));
         });
     }
