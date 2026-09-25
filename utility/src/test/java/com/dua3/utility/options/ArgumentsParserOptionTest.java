@@ -1,13 +1,18 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.data.Converter;
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.text.TextUtil;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -19,7 +24,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests for the option() method in ArgumentsParser with various occurrence and arity configurations.
  */
+@Isolated("uses Locale.setDefault")
+@SuppressWarnings({"MissingJavadoc", "EqualsAndHashcode"})
 class ArgumentsParserOptionTest {
+
+    @SuppressWarnings("RedundantFieldInitialization")
+    private static Locale defaultLocale = null;
+
+    @BeforeAll
+    static void setLocale() {
+        defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
+        I18N.init("", Locale.getDefault());
+    }
+
+    @AfterAll
+    static void restoreLocale() {
+        Locale.setDefault(defaultLocale);
+        I18N.init("", Locale.getDefault());
+    }
 
     /**
      * Test option with occurrence(0, 1) and arity(1).
@@ -693,16 +716,16 @@ class ArgumentsParserOptionTest {
             URI uriValue
     ) {
         @Override
-        public boolean equals(@Nullable Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            TestRecord that = (TestRecord) o;
-            return intValue == that.intValue &&
-                    longValue == that.longValue &&
-                    Double.compare(doubleValue, that.doubleValue) == 0 &&
-                    Objects.equals(stringValue, that.stringValue) &&
-                    Objects.equals(pathValue, that.pathValue) &&
-                    Objects.equals(uriValue, that.uriValue);
+        public boolean equals(@Nullable Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            TestRecord other = (TestRecord) obj;
+            return intValue == other.intValue &&
+                    longValue == other.longValue &&
+                    Double.compare(doubleValue, other.doubleValue) == 0 &&
+                    Objects.equals(stringValue, other.stringValue) &&
+                    Objects.equals(pathValue, other.pathValue) &&
+                    Objects.equals(uriValue, other.uriValue);
         }
     }
 
@@ -815,13 +838,13 @@ class ArgumentsParserOptionTest {
             TestEnum size
     ) {
         @Override
-        public boolean equals(@Nullable Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            TestRecordWithEnum that = (TestRecordWithEnum) o;
-            return quantity == that.quantity &&
-                    Objects.equals(name, that.name) &&
-                    size == that.size;
+        public boolean equals(@Nullable Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            TestRecordWithEnum other = (TestRecordWithEnum) obj;
+            return quantity == other.quantity &&
+                    Objects.equals(name, other.name) &&
+                    size == other.size;
         }
     }
 
@@ -1017,6 +1040,7 @@ class ArgumentsParserOptionTest {
     }
 
     public record ServerConfig(String host, int port, double timeout, TestEnum mode) {}
+
     public record UnsupportedConfig(boolean active) {}
 
     @Test
@@ -1114,6 +1138,7 @@ class ArgumentsParserOptionTest {
         assertTrue(errMsg.contains("Test error"));
 
         // Test ArgumentsException constructors
+        //noinspection NewExceptionWithoutArguments
         assertDoesNotThrow(() -> new ArgumentsException());
         assertDoesNotThrow(() -> new ArgumentsException(new RuntimeException("cause")));
     }

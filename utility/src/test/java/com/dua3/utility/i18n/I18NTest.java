@@ -1,8 +1,11 @@
 package com.dua3.utility.i18n;
 
 import com.dua3.utility.text.MessageFormatter;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.List;
 import java.util.ListResourceBundle;
@@ -20,7 +23,22 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated("uses global I18N.init")
 class I18NTest {
+
+    @SuppressWarnings("RedundantFieldInitialization")
+    private static Locale defaultLocale = null;
+
+    @BeforeAll
+    static void setLocale() {
+        defaultLocale = Locale.getDefault();
+    }
+
+    @AfterAll
+    static void restoreLocale() {
+        Locale.setDefault(defaultLocale);
+        I18N.init("", Locale.getDefault());
+    }
 
     private static final String TEST_KEY = "test.key";
     private static final String TEST_VALUE = "Test Value";
@@ -118,6 +136,7 @@ class I18NTest {
         assertTrue(i18n.isLiteral(literal));
         assertFalse(i18n.isLiteral(TEST_KEY));
         assertFalse(i18n.isLiteral(""));
+        //noinspection DataFlowIssue
         assertThrows(Throwable.class, () -> i18n.isLiteral(null));
 
         assertEquals("Raw Text", i18n.get(literal));
@@ -232,7 +251,7 @@ class I18NTest {
 
         // 1. Key already mapped -> loader should not be invoked
         AtomicBoolean loaderCalled = new AtomicBoolean(false);
-        Optional<ResourceBundle> result1 = i18n.lookupBundle(TEST_KEY, k -> {
+        Optional<ResourceBundle> result1 = i18n.lookupBundle(TEST_KEY, locale -> {
             loaderCalled.set(true);
             return testBundle;
         });
@@ -247,18 +266,18 @@ class I18NTest {
                 return new Object[][]{{"dynamic.key", "Dynamic Value"}};
             }
         };
-        Optional<ResourceBundle> result2 = i18n.lookupBundle("dynamic.key", k -> dynamicBundle);
+        Optional<ResourceBundle> result2 = i18n.lookupBundle("dynamic.key", locale -> dynamicBundle);
         assertTrue(result2.isPresent());
         assertSame(dynamicBundle, result2.get());
         assertTrue(i18n.isMapped("dynamic.key"));
         assertEquals("Dynamic Value", i18n.get("dynamic.key"));
 
         // 3. Key unmapped, loader returns bundle NOT containing key -> returns Optional.empty()
-        Optional<ResourceBundle> result3 = i18n.lookupBundle("unmatched.key", k -> dynamicBundle);
+        Optional<ResourceBundle> result3 = i18n.lookupBundle("unmatched.key", locale -> dynamicBundle);
         assertFalse(result3.isPresent());
 
         // 4. Key unmapped, loader returns null -> returns Optional.empty()
-        Optional<ResourceBundle> result4 = i18n.lookupBundle("null.key", k -> null);
+        Optional<ResourceBundle> result4 = i18n.lookupBundle("null.key", locale -> null);
         assertFalse(result4.isPresent());
     }
 

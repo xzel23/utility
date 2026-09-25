@@ -1,7 +1,11 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.i18n.I18N;
 import com.dua3.utility.text.TextUtil;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -11,7 +15,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Tests for the help() method in ArgumentsParser.
  */
+@Isolated("uses Locale.setDefault")
 class ArgumentsParserHelpTest {
+
+    @SuppressWarnings("RedundantFieldInitialization")
+    private static Locale defaultLocale = null;
+
+    @BeforeAll
+    static void setLocale() {
+        defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
+        I18N.init("", Locale.getDefault());
+    }
+
+    @AfterAll
+    static void restoreLocale() {
+        Locale.setDefault(defaultLocale);
+        I18N.init("", Locale.getDefault());
+    }
 
     /**
      * Test help() with empty name.

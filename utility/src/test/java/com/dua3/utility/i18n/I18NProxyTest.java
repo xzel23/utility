@@ -1,6 +1,9 @@
 package com.dua3.utility.i18n;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.Locale;
 
@@ -8,7 +11,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+@Isolated("uses global I18N.init")
 class I18NProxyTest {
+
+    @SuppressWarnings("RedundantFieldInitialization")
+    private static Locale defaultLocale = null;
+
+    @BeforeAll
+    static void setLocale() {
+        defaultLocale = Locale.getDefault();
+    }
+
+    @AfterAll
+    static void restoreLocale() {
+        Locale.setDefault(defaultLocale);
+        I18N.init("", Locale.getDefault());
+    }
 
     @Test
     void testProxyGetAndSyncWithGlobalInstance() {
