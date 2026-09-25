@@ -14,7 +14,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import javax.sql.DataSource;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -29,18 +28,19 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for DbUtil.
  */
 @Execution(ExecutionMode.SAME_THREAD) // all tests use the same Database instance
+@SuppressWarnings("ProhibitedExceptionThrown")
 class DbUtilTest {
 
     private static class RecordingCloseable implements AutoCloseable {
@@ -48,13 +48,15 @@ class DbUtilTest {
         private final java.util.List<String> log;
         private final ResultSet rs;
         private boolean closed = false;
+
         RecordingCloseable(String name, java.util.List<String> log, ResultSet rs) {
             this.name = name;
             this.log = log;
             this.rs = rs;
         }
+
         @Override
-        public void close() throws Exception {
+        public void close() {
             // when this closeable is closed, the ResultSet must not yet be closed
             if (rs != null) {
                 try {
@@ -68,6 +70,7 @@ class DbUtilTest {
             log.add(name);
             closed = true;
         }
+
         boolean isClosed() { return closed; }
     }
 
@@ -226,22 +229,20 @@ class DbUtilTest {
     @Test
     void testLoadDriver() {
         // Test loading driver from the current ClassLoader
-        try {
+        assertDoesNotThrow(() -> {
             Optional<Driver> driver = DbUtil.loadDriver(getClass().getClassLoader());
 
             // The H2 driver should be available
             assertTrue(driver.isPresent());
             assertNotNull(driver.get());
             assertTrue(driver.get().getClass().getName().contains("h2") || driver.get().getClass().getName().contains("H2"), "Expected H2 driver but got: " + driver.get().getClass().getName());
-        } catch (ClassNotFoundException | SQLException e) {
-            fail("Exception while testing loadDriver: " + e.getMessage());
-        }
+        });
     }
 
     @Test
-    void testLoadDriverWithURLs() throws URISyntaxException {
+    void testLoadDriverWithURLs() {
         // Test loading driver using URLs
-        try {
+        assertDoesNotThrow(() -> {
             // Get the URL of the H2 driver JAR that's already in the classpath
             // This is a bit of a hack, but it allows us to test the method without needing external files
             String h2ClassName = "org.h2.Driver";
@@ -265,15 +266,13 @@ class DbUtilTest {
             assertTrue(driver.isPresent(), "Driver should be present");
             assertNotNull(driver.get(), "Driver should not be null");
             assertTrue(driver.get().getClass().getName().contains("h2") || driver.get().getClass().getName().contains("H2"), "Expected H2 driver but got: " + driver.get().getClass().getName());
-        } catch (ClassNotFoundException | SQLException | java.net.MalformedURLException e) {
-            fail("Exception while testing loadDriver with URLs: " + e.getMessage());
-        }
+        });
     }
 
     @Test
     void testCreateDataSource() {
         // Test creating a DataSource with a Driver
-        try {
+        assertDoesNotThrow(() -> {
             // First, get a Driver instance
             Optional<Driver> driverOpt = DbUtil.loadDriver(getClass().getClassLoader());
             assertTrue(driverOpt.isPresent(), "Driver should be present");
@@ -301,15 +300,13 @@ class DbUtilTest {
                     assertEquals(1, rs.getInt(1), "Query result should be 1");
                 }
             }
-        } catch (ClassNotFoundException | SQLException e) {
-            fail("Exception while testing createDataSource: " + e.getMessage());
-        }
+        });
     }
 
     @Test
     void testCreateDataSourceWithInvalidURL() {
         // Test creating a DataSource with an invalid URL
-        try {
+        assertDoesNotThrow(() -> {
             // First, get a Driver instance
             Optional<Driver> driverOpt = DbUtil.loadDriver(getClass().getClassLoader());
             assertTrue(driverOpt.isPresent(), "Driver should be present");
@@ -326,9 +323,7 @@ class DbUtilTest {
 
             // Verify the exception message
             assertTrue(exception.getMessage().contains("URL not accepted by driver"), "Exception message should indicate URL is not accepted");
-        } catch (ClassNotFoundException | SQLException e) {
-            fail("Exception while testing createDataSource with invalid URL: " + e.getMessage());
-        }
+        });
     }
 
     @Test
@@ -365,8 +360,7 @@ class DbUtilTest {
             }, a, b, c);
 
             // consume the stream
-            int count = (int) stream.count();
-            assertEquals(1, count);
+            assertEquals(1L, stream.count());
 
             // close the stream to trigger closing chain
             stream.close();
