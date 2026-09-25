@@ -69,7 +69,7 @@ public class Magic {
                 mask |= 0xFFL << shift;
 
                 // Shift the byte into its proper position
-                magicNumber |= ((long) bytes[i] & 0xFFL) << shift;
+                magicNumber |= (bytes[i] & 0xFFL) << shift;
             }
 
             return new SimpleMagicNumber(mimeType, magicNumber, mask);
