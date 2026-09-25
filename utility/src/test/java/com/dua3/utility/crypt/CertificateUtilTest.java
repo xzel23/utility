@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class CertificateUtilTest {
 
@@ -54,11 +53,7 @@ class CertificateUtilTest {
         assertArrayEquals(keyPair.getPublic().getEncoded(), certPublicKey.getEncoded());
 
         // Verify the certificate can be verified with its own public key
-        try {
-            certificates[0].verify(keyPair.getPublic());
-        } catch (Exception e) {
-            fail("Certificate verification failed: " + e.getMessage());
-        }
+        assertDoesNotThrow(() -> certificates[0].verify(keyPair.getPublic()));
 
         // Verify the certificate's string representation contains the subject
         for (String part : subject.split("[,\n]")) {
@@ -94,11 +89,7 @@ class CertificateUtilTest {
         assertArrayEquals(childKeyPair.getPublic().getEncoded(), certPublicKey.getEncoded());
 
         // Verify the certificate was signed by the parent
-        try {
-            certificates[0].verify(parentCertificate.getPublicKey());
-        } catch (Exception e) {
-            fail("Certificate verification with parent certificate failed: " + e.getMessage());
-        }
+        assertDoesNotThrow(() -> certificates[0].verify(parentCertificate.getPublicKey()));
 
         // Verify the certificate's string representation contains the subject
         for (String part : subject.split("[,\n]")) {
@@ -237,11 +228,7 @@ class CertificateUtilTest {
         assertArrayEquals(childKeyPair.getPublic().getEncoded(), certPublicKey.getEncoded());
 
         // Verify the certificate was signed by the immediate parent (intermediate2)
-        try {
-            certificates[0].verify(intermediate2Certificate.getPublicKey());
-        } catch (Exception e) {
-            fail("Certificate verification with immediate parent certificate failed: " + e.getMessage());
-        }
+        assertDoesNotThrow(() -> certificates[0].verify(intermediate2Certificate.getPublicKey()));
 
         // Verify the certificate's string representation contains the subject
         for (String part : childSubject.split("[,\n]")) {
