@@ -788,9 +788,9 @@ public final class FxLauncher {
 
         //noinspection DataFlowIssue -- value returned by PlatformGuar.run() cannot evaluate to null
         return Optional.ofNullable(logWindow.updateAndGet(lw ->
-                Objects.requireNonNullElse(
+                Objects.requireNonNullElseGet(
                         lw,
-                        PlatformGuard.run(() -> PlatformHelper.runAndWait(() -> {
+                        () -> PlatformGuard.run(() -> PlatformHelper.runAndWait(() -> {
                             FxLogWindow window = new FxLogWindow(title, buffer);
                             window.initOwner(owner);
                             ApplicationUtil.addDarkModeListener(window::setDarkMode);

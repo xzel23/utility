@@ -279,7 +279,7 @@ public final class AwtFontUtil implements FontUtil {
     @Override
     @SuppressWarnings({"java:S2259", "java:S4449"}) // false positives
     public Font deriveFont(Font font, FontDef fontDef) {
-        List<String> families = Objects.requireNonNullElse(fontDef.getFamilies(), font.getFamilies());
+        List<String> families = Objects.requireNonNullElseGet(fontDef.getFamilies(), font::getFamilies);
         float size = Objects.requireNonNullElseGet(fontDef.getSize(), font::getSizeInPoints);
         boolean bold = Objects.requireNonNullElseGet(fontDef.getBold(), font::isBold);
         boolean italic = Objects.requireNonNullElseGet(fontDef.getItalic(), font::isItalic);
@@ -309,8 +309,8 @@ public final class AwtFontUtil implements FontUtil {
                 baseFont.getSpaceWidth()
         );
 
-        Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
-        Color backgroundColor = Objects.requireNonNullElse(fontDef.getBackgroundColor(), font.getBackgroundColor());
+        Color color = Objects.requireNonNullElseGet(fontDef.getColor(), font::getColor);
+        Color backgroundColor = Objects.requireNonNullElseGet(fontDef.getBackgroundColor(), font::getBackgroundColor);
         if (fontData.equals(baseFont.getFontData())
                 && Objects.equals(color, baseFont.getColor())
                 && Objects.equals(backgroundColor, baseFont.getBackgroundColor())) {

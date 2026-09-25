@@ -54,6 +54,7 @@ public final class FxFontUtil implements FontUtil {
         // on macOS use Verdana instead of the default font because the default font
         // does not support styling (bold, italics) in JavaFX..
         DEFAULT_FAMILY = Platform.isMacOS() ? "Verdana" : font.getFamily();
+        //noinspection NumericCastThatLosesPrecision
         DEFAULT_SIZE = (float) font.getSize();
     }
 
@@ -298,10 +299,10 @@ public final class FxFontUtil implements FontUtil {
 
     @Override
     public com.dua3.utility.text.Font deriveFont(com.dua3.utility.text.Font font, FontDef fontDef) {
-        List<String> families = Objects.requireNonNullElse(fontDef.getFamilies(), font.getFamilies());
-        float size = Objects.requireNonNullElse(fontDef.getSize(), font.getSizeInPoints());
-        boolean bold = Objects.requireNonNullElse(fontDef.getBold(), font.isBold());
-        boolean italic = Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic());
+        List<String> families = Objects.requireNonNullElseGet(fontDef.getFamilies(), font::getFamilies);
+        float size = Objects.requireNonNullElseGet(fontDef.getSize(), font::getSizeInPoints);
+        boolean bold = Objects.requireNonNullElseGet(fontDef.getBold(), font::isBold);
+        boolean italic = Objects.requireNonNullElseGet(fontDef.getItalic(), font::isItalic);
 
         com.dua3.utility.text.Font baseFont = convert(getFxFont(
                 families,
@@ -324,8 +325,8 @@ public final class FxFontUtil implements FontUtil {
                 baseFont.getSpaceWidth()
         );
 
-        Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
-        Color backgroundColor = Objects.requireNonNullElse(fontDef.getBackgroundColor(), font.getBackgroundColor());
+        Color color = Objects.requireNonNullElseGet(fontDef.getColor(), font::getColor);
+        Color backgroundColor = Objects.requireNonNullElseGet(fontDef.getBackgroundColor(), font::getBackgroundColor);
         if (fontData.equals(baseFont.getFontData())
                 && color.equals(baseFont.getColor())
                 && backgroundColor.equals(baseFont.getBackgroundColor())) {
