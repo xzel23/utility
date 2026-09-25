@@ -42,7 +42,8 @@ public class FileChooserBuilder {
 
     private final @Nullable Window parentWindow;
     private Path initialDir = IoUtil.getUserHome();
-    private String initialFileName = "";
+    private @Nullable String title = null;
+    private @Nullable String initialFileName = null;
     private List<ExtensionFilter> filters = new ArrayList<>();
     private @Nullable ExtensionFilter selectedFilter = null;
 
@@ -63,15 +64,15 @@ public class FileChooserBuilder {
     private FileChooser build() {
         FileChooser chooser = new FileChooser();
 
+        LangUtil.applyIfNonNull(title, chooser::setTitle);
+
         chooser.getExtensionFilters().setAll(filters);
-        if (selectedFilter != null) {
-            chooser.setSelectedExtensionFilter(selectedFilter);
-        }
+        LangUtil.applyIfNonNull(selectedFilter, chooser::setSelectedExtensionFilter);
 
         Controls.setInitialDirectory(chooser::setInitialDirectory, initialDir);
         LOG.trace("initial directory: {}", chooser::getInitialDirectory);
 
-        chooser.setInitialFileName(initialFileName);
+        LangUtil.applyIfNonNull(initialFileName, chooser::setInitialFileName);
 
         return chooser;
     }
@@ -115,13 +116,24 @@ public class FileChooserBuilder {
     }
 
     /**
+     * Set title.
+     *
+     * @param title the title
+     * @return this instance
+     */
+    public FileChooserBuilder title(@Nullable String title) {
+        this.title = title;
+        return this;
+    }
+
+    /**
      * Set initial filename.
      *
      * @param initialFileName the initial filename
      * @return this instance
      */
     public FileChooserBuilder initialFileName(@Nullable String initialFileName) {
-        this.initialFileName = initialFileName != null ? initialFileName : "";
+        this.initialFileName = initialFileName;
         return this;
     }
 

@@ -235,6 +235,11 @@ could not be loaded.
 
 ## Changes
 
+## 24.9.1
+
+- added `setTitle()` to `FileChooserBuilder` and `DirectoryChooserBuilder`.
+- added Cache.clear()
+
 ## 24.9.0
 
 - add `CryptUtil.encrypt...()` and `CryptUtil.decrypt...()` methods for transparent stream encryption/decryption.

@@ -15,6 +15,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
@@ -35,7 +36,8 @@ public class DirectoryChooserBuilder {
     private static final Logger LOG = LogManager.getLogger(DirectoryChooserBuilder.class);
 
     private final @Nullable Window parentWindow;
-    private Path initialDir = IoUtil.getUserHome();
+    private @Nullable String title = null;
+    private @Nullable Path initialDir = IoUtil.getUserHome();
 
     DirectoryChooserBuilder(@Nullable Window parentWindow) {
         this.parentWindow = parentWindow;
@@ -53,9 +55,21 @@ public class DirectoryChooserBuilder {
 
     private DirectoryChooser build() {
         DirectoryChooser chooser = new DirectoryChooser();
+        LangUtil.applyIfNonNull(title, chooser::setTitle);
         Controls.setInitialDirectory(chooser::setInitialDirectory, initialDir);
         LOG.trace("initial directory: {}", chooser::getInitialDirectory);
         return chooser;
+    }
+
+    /**
+     * Set title.
+     *
+     * @param title the title
+     * @return this instance
+     */
+    public DirectoryChooserBuilder title(@Nullable String title) {
+        this.title = title;
+        return this;
     }
 
     /**
@@ -64,7 +78,7 @@ public class DirectoryChooserBuilder {
      * @param initialDir the initial directory
      * @return this instance
      */
-    public DirectoryChooserBuilder initialDir(Path initialDir) {
+    public DirectoryChooserBuilder initialDir(@Nullable Path initialDir) {
         this.initialDir = initialDir;
         return this;
     }
