@@ -7,7 +7,6 @@ import javafx.scene.image.WritableImage;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -84,12 +83,10 @@ class FxImageUtilTest extends FxTestBase {
             assertNotNull(img.getArgb());
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try {
+            assertDoesNotThrow(() -> {
                 img.write(baos);
                 assertArrayEquals(sourceData, baos.toByteArray());
-            } catch (IOException e) {
-                fail(e);
-            }
+            });
 
             // Compact constructor validation
             assertThrows(IllegalArgumentException.class, () -> new FxDataRetainingImage(fxImg, "image/jpeg", "jpg", "not-a-byte-array"));
@@ -99,29 +96,24 @@ class FxImageUtilTest extends FxTestBase {
     @Test
     void testLoadDataRetainingImage() throws Throwable {
         runOnFxThreadAndWait(() -> {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try {
-                FxMutableImage src = FxImageUtil.getInstance().createImage(2, 2, new int[]{0xFF112233, 0xFF445566, 0xFF778899, 0xFFAABBCC});
-                src.write(baos);
-            } catch (IOException e) {
-                fail(e);
-            }
-            byte[] pngBytes = baos.toByteArray();
+            assertDoesNotThrow(() -> {
+                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                    FxMutableImage src = FxImageUtil.getInstance().createImage(2, 2, new int[]{0xFF112233, 0xFF445566, 0xFF778899, 0xFFAABBCC});
+                    src.write(baos);
+                    byte[] pngBytes = baos.toByteArray();
 
-            FxImageUtil util = FxImageUtil.getInstance();
-            try {
-                FxImage loaded = util.load(Payload.fromInputStream(new java.io.ByteArrayInputStream(pngBytes)), ImageUtil.LoadOption.DONT_RETAIN_DATA);
-                assertNotNull(loaded);
-                assertEquals(2, loaded.width());
-                assertEquals(2, loaded.height());
+                    FxImageUtil util = FxImageUtil.getInstance();
+                    FxImage loaded = util.load(Payload.fromInputStream(new java.io.ByteArrayInputStream(pngBytes)), ImageUtil.LoadOption.DONT_RETAIN_DATA);
+                    assertNotNull(loaded);
+                    assertEquals(2, loaded.width());
+                    assertEquals(2, loaded.height());
 
-                FxImage loadedRetain = util.load(Payload.fromInputStream(new java.io.ByteArrayInputStream(pngBytes)), ImageUtil.LoadOption.RETAIN_DATA);
-                assertInstanceOf(FxDataRetainingImage.class, loadedRetain);
-                assertEquals(2, loadedRetain.width());
-                assertEquals(2, loadedRetain.height());
-            } catch (IOException e) {
-                fail(e);
-            }
+                    FxImage loadedRetain = util.load(Payload.fromInputStream(new java.io.ByteArrayInputStream(pngBytes)), ImageUtil.LoadOption.RETAIN_DATA);
+                    assertInstanceOf(FxDataRetainingImage.class, loadedRetain);
+                    assertEquals(2, loadedRetain.width());
+                    assertEquals(2, loadedRetain.height());
+                }
+            });
         });
     }
 
