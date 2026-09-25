@@ -96,6 +96,16 @@ public class Cache<K, V> {
         return (V) holder[0];
     }
 
+    /**
+     * Clears all entries in the cache.
+     * <p>
+     * This method empties the cache by clearing all items stored within it.
+     * After calling this method, the cache will be empty.
+     */
+    public void clear() {
+        items.clear();
+    }
+
     @Override
     public String toString() {
         return String.format("Cache backed by %s [%d entries]", items.getClass().getSimpleName(), items.size());

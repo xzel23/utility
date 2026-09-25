@@ -44,4 +44,24 @@ class CacheTest {
         assertEquals(1, computeCount.get());
         assertNotNull(cache.toString());
     }
+
+    @Test
+    void clearRemovesEntriesAndRecomputesValues() {
+        AtomicInteger computeCount = new AtomicInteger(0);
+        Cache<String, Object> cache = new Cache<>(Cache.ReferenceType.SOFT_REFERENCES, key -> {
+            computeCount.incrementAndGet();
+            return new Object();
+        });
+
+        Object first = cache.get("key");
+        assertEquals(1, computeCount.get());
+        assertTrue(cache.toString().contains("[1 entries]"));
+
+        cache.clear();
+
+        assertTrue(cache.toString().contains("[0 entries]"));
+        Object second = cache.get("key");
+        assertEquals(2, computeCount.get());
+        assertTrue(first != second);
+    }
 }
