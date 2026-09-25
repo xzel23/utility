@@ -705,15 +705,15 @@ class NamedParameterStatementTest {
     void testInvalidParameterName() {
         String sql = "SELECT * FROM test_table WHERE id = :id";
 
-        try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
-            Exception exception = assertThrows(NullPointerException.class, () -> stmt.setInt("nonExistentParam", 1));
+        assertDoesNotThrow(() -> {
+            try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+                Exception exception = assertThrows(NullPointerException.class, () -> stmt.setInt("nonExistentParam", 1));
 
-            String expectedMessage = "unknown parameter 'nonExistentParam'";
-            String actualMessage = exception.getMessage();
-            assertTrue(actualMessage.contains(expectedMessage));
-        } catch (SQLException e) {
-            fail("Should not throw SQLException here: " + e.getMessage());
-        }
+                String expectedMessage = "unknown parameter 'nonExistentParam'";
+                String actualMessage = exception.getMessage();
+                assertTrue(actualMessage.contains(expectedMessage));
+            }
+        });
     }
 
     @Test
@@ -985,7 +985,7 @@ class NamedParameterStatementTest {
                 private final byte[] data = testBytes;
 
                 @Override
-                public long length() throws SQLException {
+                public long length() {
                     return data.length;
                 }
 
@@ -1003,7 +1003,7 @@ class NamedParameterStatementTest {
                 }
 
                 @Override
-                public java.io.InputStream getBinaryStream() throws SQLException {
+                public java.io.InputStream getBinaryStream() {
                     return new java.io.ByteArrayInputStream(data);
                 }
 
@@ -1038,7 +1038,7 @@ class NamedParameterStatementTest {
                 }
 
                 @Override
-                public void free() throws SQLException {
+                public void free() {
                     // No-op for mock
                 }
 
@@ -1049,6 +1049,7 @@ class NamedParameterStatementTest {
                     }
 
                     int offset = (int) (pos - 1); // JDBC uses 1-based indexing
+                    @SuppressWarnings("NumericCastThatLosesPrecision")
                     int len = (int) Math.min(length, data.length - offset);
                     return new java.io.ByteArrayInputStream(data, offset, len);
                 }
@@ -1186,22 +1187,22 @@ class NamedParameterStatementTest {
             // For testing purposes, we'll mock a Ref
             Ref mockRef = new Ref() {
                 @Override
-                public String getBaseTypeName() throws SQLException {
+                public String getBaseTypeName() {
                     return "VARCHAR";
                 }
 
                 @Override
-                public Object getObject() throws SQLException {
+                public Object getObject() {
                     return "test_ref_value";
                 }
 
                 @Override
-                public Object getObject(Map<String, Class<?>> map) throws SQLException {
+                public Object getObject(Map<String, Class<?>> map) {
                     return "test_ref_value";
                 }
 
                 @Override
-                public void setObject(Object value) throws SQLException {
+                public void setObject(Object value) {
                     // Not needed for this test
                 }
             };
@@ -1231,15 +1232,14 @@ class NamedParameterStatementTest {
         String xmlContent = "<test>This is a test XML</test>";
 
         // Create an SQLXML object using the connection
-        SQLXML sqlxml = null;
+        SQLXML sqlxml = connection.createSQLXML();
         try {
-            sqlxml = connection.createSQLXML();
             // Set the XML content
-            try (Writer writer = sqlxml.setCharacterStream()) {
-                writer.write(xmlContent);
-            } catch (Exception e) {
-                fail("Failed to write XML content: " + e.getMessage());
-            }
+            assertDoesNotThrow(() -> {
+                try (Writer writer = sqlxml.setCharacterStream()) {
+                    writer.write(xmlContent);
+                }
+            });
 
             try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
                 stmt.setInt("id", 37);
