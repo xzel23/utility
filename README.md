@@ -235,7 +235,10 @@ could not be loaded.
 
 ## Changes
 
-## 24.8.3 (in development)
+## 24.9.0 (in development)
+
+- add `CryptUtil.encrypt...()` and `CryptUtil.decrypt...()` methods for transparent stream encryption/decryption.
+- add `Base64EncodingInputStream` and `Base64EncodingOutputStream` for transparent BASE64 encoded streams
 
 ## 24.8.2
 
