@@ -249,7 +249,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     }
 
     private void updateTextControlDimensions() {
-        var font = (label != null) ? label.getFont() : ((tfValue != null) ? tfValue.getFont() : null);
+        var font = (label != null) ? label.getFont() : (tfValue != null ? tfValue.getFont() : null);
 
         if (font == null) {
             return;
