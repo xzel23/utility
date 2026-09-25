@@ -149,7 +149,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @param paramMap map to hold parameter-index mappings
      * @return the parsed query
      */
-    @SuppressWarnings("AssignmentToForLoopParameter")
+    @SuppressWarnings({"AssignmentToForLoopParameter", "java:S6916"})
     static String parse(String query, Map<String, ParameterInfo> paramMap) {
         // I was originally using regular expressions, but they didn't work well for
         // ignoring parameter-like strings inside quotes.
@@ -1027,7 +1027,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setTimestamp(int, java.sql.Timestamp, java.util.Calendar)
      */
-    @SuppressWarnings("UseOfObsoleteDateTimeApi")
+    @SuppressWarnings({"UseOfObsoleteDateTimeApi", "java:S2143"})
     public void setZonedDateTime(String name, @Nullable ZonedDateTime value) throws SQLException {
         if (value == null) {
             setNull(name, JDBCType.TIMESTAMP);
@@ -1051,7 +1051,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setTimestamp(int, java.sql.Timestamp, java.util.Calendar)
      */
-    @SuppressWarnings("UseOfObsoleteDateTimeApi")
+    @SuppressWarnings({"UseOfObsoleteDateTimeApi", "java:S2143"})
     public void setInstant(String name, @Nullable Instant value) throws SQLException {
 
         if (value == null) {
