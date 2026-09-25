@@ -7,8 +7,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -22,7 +20,6 @@ import java.util.stream.Stream;
  * and creating an empty icon. Icons are represented by the {@link Icon} interface.
  */
 public final class IconUtil {
-    private static final Logger LOG = LogManager.getLogger(IconUtil.class);
 
     private IconUtil() {
     }
