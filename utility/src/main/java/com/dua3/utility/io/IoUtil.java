@@ -43,6 +43,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Formatter;
@@ -57,6 +58,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
@@ -733,6 +736,50 @@ public final class IoUtil {
      */
     public static InputStream stringInputStream(String s, Charset cs) {
         return new ByteArrayInputStream(s.getBytes(cs));
+    }
+
+    /**
+     * Wraps the specified {@link OutputStream} so that all data written to it is Base64 encoded.
+     *
+     * @param out the underlying output stream to write Base64 encoded bytes to
+     * @return an {@link OutputStream} that encodes written data into Base64
+     */
+    public static OutputStream base64Encode(OutputStream out) {
+        Objects.requireNonNull(out, "out must not be null");
+        return new Base64EncodingOutputStream(out);
+    }
+
+    /**
+     * Wraps the specified {@link InputStream} so that Base64 encoded data read from it is decoded.
+     *
+     * @param in the underlying input stream containing Base64 encoded bytes
+     * @return an {@link InputStream} that decodes Base64 data from the underlying stream
+     */
+    public static InputStream base64Decode(InputStream in) {
+        Objects.requireNonNull(in, "in must not be null");
+        return Base64.getDecoder().wrap(in);
+    }
+
+    /**
+     * Wraps the specified {@link OutputStream} so that all data written to it is compressed using the Deflate algorithm.
+     *
+     * @param out the underlying output stream to write compressed bytes to
+     * @return an {@link OutputStream} that compresses written data using Deflate
+     */
+    public static OutputStream compress(OutputStream out) {
+        Objects.requireNonNull(out, "out must not be null");
+        return new DeflaterOutputStream(out);
+    }
+
+    /**
+     * Wraps the specified {@link InputStream} so that compressed data read from it is decompressed using the Inflate algorithm.
+     *
+     * @param in the underlying input stream containing Deflate compressed bytes
+     * @return an {@link InputStream} that decompresses data from the underlying stream
+     */
+    public static InputStream uncompress(InputStream in) {
+        Objects.requireNonNull(in, "in must not be null");
+        return new InflaterInputStream(in);
     }
 
     /**

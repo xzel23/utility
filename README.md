@@ -239,6 +239,7 @@ could not be loaded.
 
 - add `CryptUtil.encrypt...()` and `CryptUtil.decrypt...()` methods for transparent stream encryption/decryption.
 - add `Base64EncodingInputStream` and `Base64EncodingOutputStream` for transparent BASE64 encoded streams
+- add base64 and compression streaming methods to `IoUtil`
 
 ## 24.8.2
 

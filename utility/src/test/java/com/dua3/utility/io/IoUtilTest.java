@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -38,10 +39,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipException;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -1449,5 +1452,179 @@ class IoUtilTest {
         Path dataDir = IoUtil.getApplicationDataDir("TestApp");
         assertNotNull(dataDir);
         assertTrue(dataDir.toString().contains("TestApp"));
+    }
+
+    @Test
+    void testBase64NullChecks() {
+        assertThrows(Throwable.class, () -> IoUtil.base64Encode(null));
+        assertThrows(Throwable.class, () -> IoUtil.base64Decode(null));
+    }
+
+    @Test
+    void testCompressNullChecks() {
+        assertThrows(Throwable.class, () -> IoUtil.compress(null));
+        assertThrows(Throwable.class, () -> IoUtil.uncompress(null));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, 3, 4, 5, 10, 50, 100, 3071, 3072, 3073, 10000, 65536})
+    void testBase64RoundTrip(int size) throws IOException {
+        byte[] original = new byte[size];
+        new Random(1000 + size).nextBytes(original);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream out = IoUtil.base64Encode(baos)) {
+            out.write(original);
+        }
+
+        byte[] encoded = baos.toByteArray();
+
+        byte[] restored;
+        try (InputStream in = IoUtil.base64Decode(new ByteArrayInputStream(encoded))) {
+            restored = in.readAllBytes();
+        }
+
+        assertArrayEquals(original, restored);
+    }
+
+    @Test
+    void testBase64SingleByteAndChunkedIO() throws IOException {
+        byte[] original = "Testing Base64 single-byte and chunked round trip with IoUtil.".getBytes(StandardCharsets.UTF_8);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream out = IoUtil.base64Encode(baos)) {
+            for (byte b : original) {
+                out.write(b & 0xFF);
+            }
+        }
+
+        byte[] encoded = baos.toByteArray();
+
+        ByteArrayOutputStream restoredBos = new ByteArrayOutputStream();
+        try (InputStream in = IoUtil.base64Decode(new ByteArrayInputStream(encoded))) {
+            byte[] chunk = new byte[7];
+            int n;
+            while ((n = in.read(chunk, 0, chunk.length)) != -1) {
+                restoredBos.write(chunk, 0, n);
+            }
+        }
+
+        assertArrayEquals(original, restoredBos.toByteArray());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, 3, 4, 10, 100, 1024, 8192, 65536})
+    void testCompressRoundTrip(int size) throws IOException {
+        byte[] original = new byte[size];
+        new Random(2000 + size).nextBytes(original);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream out = IoUtil.compress(baos)) {
+            out.write(original);
+        }
+
+        byte[] compressed = baos.toByteArray();
+
+        byte[] restored;
+        try (InputStream in = IoUtil.uncompress(new ByteArrayInputStream(compressed))) {
+            restored = in.readAllBytes();
+        }
+
+        assertArrayEquals(original, restored);
+    }
+
+    @Test
+    void testCompressRepetitiveData() throws IOException {
+        byte[] pattern = "Repeated data for testing compression efficiency and round trip restoration.".getBytes(StandardCharsets.UTF_8);
+        byte[] original = new byte[pattern.length * 500];
+        for (int i = 0; i < 500; i++) {
+            System.arraycopy(pattern, 0, original, i * pattern.length, pattern.length);
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream out = IoUtil.compress(baos)) {
+            out.write(original);
+        }
+
+        byte[] compressed = baos.toByteArray();
+        assertTrue(compressed.length < original.length / 10, "Compressed size should be significantly smaller than original");
+
+        byte[] restored;
+        try (InputStream in = IoUtil.uncompress(new ByteArrayInputStream(compressed))) {
+            restored = in.readAllBytes();
+        }
+
+        assertArrayEquals(original, restored);
+    }
+
+    @Test
+    void testCompressSingleByteAndChunkedIO() throws IOException {
+        byte[] original = "Testing compress single-byte writes and chunked reads with IoUtil.".getBytes(StandardCharsets.UTF_8);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream out = IoUtil.compress(baos)) {
+            for (byte b : original) {
+                out.write(b & 0xFF);
+            }
+        }
+
+        byte[] compressed = baos.toByteArray();
+
+        ByteArrayOutputStream restoredBos = new ByteArrayOutputStream();
+        try (InputStream in = IoUtil.uncompress(new ByteArrayInputStream(compressed))) {
+            byte[] chunk = new byte[5];
+            int n;
+            while ((n = in.read(chunk, 0, chunk.length)) != -1) {
+                restoredBos.write(chunk, 0, n);
+            }
+        }
+
+        assertArrayEquals(original, restoredBos.toByteArray());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 15, 128, 4096, 32768})
+    void testCombinedCompressAndBase64RoundTrip(int size) throws IOException {
+        byte[] original = new byte[size];
+        new Random(3000 + size).nextBytes(original);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream b64Out = IoUtil.base64Encode(baos);
+             OutputStream compOut = IoUtil.compress(b64Out)) {
+            compOut.write(original);
+        }
+
+        byte[] encodedAndCompressed = baos.toByteArray();
+
+        byte[] restored;
+        try (InputStream b64In = IoUtil.base64Decode(new ByteArrayInputStream(encodedAndCompressed));
+             InputStream uncompIn = IoUtil.uncompress(b64In)) {
+            restored = uncompIn.readAllBytes();
+        }
+
+        assertArrayEquals(original, restored);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 15, 128, 4096, 32768})
+    void testCombinedBase64AndCompressRoundTrip(int size) throws IOException {
+        byte[] original = new byte[size];
+        new Random(4000 + size).nextBytes(original);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream compOut = IoUtil.compress(baos);
+             OutputStream b64Out = IoUtil.base64Encode(compOut)) {
+            b64Out.write(original);
+        }
+
+        byte[] compressedAndEncoded = baos.toByteArray();
+
+        byte[] restored;
+        try (InputStream uncompIn = IoUtil.uncompress(new ByteArrayInputStream(compressedAndEncoded));
+             InputStream b64In = IoUtil.base64Decode(uncompIn)) {
+            restored = b64In.readAllBytes();
+        }
+
+        assertArrayEquals(original, restored);
     }
 }
