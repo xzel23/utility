@@ -237,6 +237,7 @@ could not be loaded.
 
 ## 24.9.1
 
+- fix: make PinBoard.toString() less verbose, leading to low performance when logging is enabled
 - added `setTitle()` to `FileChooserBuilder` and `DirectoryChooserBuilder`.
 - added Cache.clear()
 
