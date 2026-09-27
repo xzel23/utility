@@ -454,7 +454,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
             // Scaling changes the bitmap transform immediately. Update the visible
             // nodes in the same frame so their translations cannot lag one pulse.
-            updateNodes();
+            refresh();
         }
     }
 }
