@@ -34,6 +34,7 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
     void publicFactoryCreatesFileStore() throws Exception {
         try (ObjectStore store = ObjectStores.fileStore(tempDir.resolve("factory-store"))) {
             assertTrue(store.getRoot().isAbsolute());
+            assertTrue(store.getRoot().toString().endsWith("/"));
             assertEquals(ObjectStore.AccessMode.READ_AND_WRITE, store.getAccessMode());
         }
     }

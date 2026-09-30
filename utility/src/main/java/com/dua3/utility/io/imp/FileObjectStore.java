@@ -69,7 +69,7 @@ public final class FileObjectStore implements ObjectStore {
     private FileObjectStore(Path rootPath, AccessMode accessMode, boolean lazy) throws IOException {
         assert rootPath.equals(normalizeRoot(rootPath)) : "Root path is not absolute or notnormalized";
 
-        this.root = rootPath.toUri();
+        this.root = toRootUri(rootPath);
         this.accessMode = accessMode;
         if (lazy) {
             this.rootPath = LangUtil.cache(LangUtil.unchecked(() -> checkOrCreateDirectory(rootPath, accessMode)), ignored -> {});
@@ -79,6 +79,19 @@ public final class FileObjectStore implements ObjectStore {
         }
 
         LOG.debug("Created FileObjectStore with root {}", rootPath);
+    }
+
+    /**
+     * Converts the given root path to a URI, ensuring that the URI
+     * path ends with a forward slash ('/').
+     *
+     * @param rootPath the root path to be converted to a URI
+     * @return a URI representing the given root path, ensuring it ends with a '/'
+     */
+    private static URI toRootUri(Path rootPath) {
+        URI uri = rootPath.toUri();
+        String uriStr = uri.toString();
+        return uriStr.endsWith("/") ? uri : URI.create(uriStr + "/");
     }
 
     private static Path normalizeRoot(Path root) {
