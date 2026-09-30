@@ -235,6 +235,20 @@ could not be loaded.
 
 ## Changes
 
+## 24.10.0
+
+- **BREAKING:** renamed AutoClosableCachingSupplier to AutoCloseableCachingSupplier. This affects code using
+  `LangUtil.cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner)`.
+- fix: AutoCloseableCachingSupplier.get() was calling the cleaner on the cached object when invoked for the second 
+  time.
+- fix: AutoCloseableSupplier.get() implementations will throw an IllegalStateException when the supplier was closed 
+  instead of returning null.
+- added overloads taking a lazy parameter when creating FileObjectStore instances.
+  - when creating a readable FileObjectStore with lazy, the existence of the directory is checked on first access, 
+    otherwise when the instance is created.
+  - when creating a writable FileObjectStore with lazy, the existence of the directory is created on first access, 
+    otherwise when the instance is created.
+
 ## 24.9.1
 
 - fix flickering on large item count PinBoard scale updates
