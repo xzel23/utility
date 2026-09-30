@@ -52,23 +52,23 @@ public final class FileObjectStore implements ObjectStore {
 
     private static final StandardCopyOption[] EMPTY_STANDARD_COPY_OPTIONS = {};
 
-    private final Path root;
-    private final URI rootUri;
+    private final Path rootPath;
+    private final URI root;
     private final AccessMode accessMode;
 
     /**
      * Constructs a {@code FileObjectStore} with the specified root directory.
      * It normalizes and ensures the creation of the root directory as a valid absolute path.
      *
-     * @param root the path to the root directory of the file object store
+     * @param rootPath the path to the root directory of the file object store
      * @param accessMode the access level for the file object store
      * @throws IOException if an I/O error occurs while creating or accessing the directory
      */
-    private FileObjectStore(Path root, AccessMode accessMode) throws IOException {
-        this.root = Files.createDirectories(root).toAbsolutePath().normalize();
-        this.rootUri = this.root.toUri();
+    private FileObjectStore(Path rootPath, AccessMode accessMode) throws IOException {
+        this.rootPath = Files.createDirectories(rootPath).toAbsolutePath().normalize();
+        this.root = this.rootPath.toUri();
         this.accessMode = accessMode;
-        LOG.debug("Created FileObjectStore with root {}", root);
+        LOG.debug("Created FileObjectStore with root {}", rootPath);
     }
 
     /**
@@ -104,10 +104,9 @@ public final class FileObjectStore implements ObjectStore {
         return new FileObjectStore(root, AccessMode.READ_AND_WRITE);
     }
 
-    @SuppressWarnings("SuspiciousGetterSetter")
     @Override
     public URI getRoot() {
-        return rootUri;
+        return root;
     }
 
     @Override
@@ -390,13 +389,13 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public void close() {
-        LOG.debug("Closing FileObjectStore with root {}", root);
+        LOG.debug("Closing FileObjectStore with root {}", rootPath);
         // nothing to close
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(root=" + rootUri + ", accessMode=" + accessMode + ")";
+        return getClass().getSimpleName() + "(root=" + root + ", accessMode=" + accessMode + ")";
     }
 
     /**
@@ -422,8 +421,8 @@ public final class FileObjectStore implements ObjectStore {
             throw new IllegalPathException("invalid path: " + path, e);
         }
 
-        Path resolved = root.resolve(relative).normalize();
-        if (!resolved.startsWith(root)) {
+        Path resolved = rootPath.resolve(relative).normalize();
+        if (!resolved.startsWith(rootPath)) {
             throw new IllegalPathException("path points outside root: " + path);
         }
         return resolved;
@@ -486,7 +485,7 @@ public final class FileObjectStore implements ObjectStore {
             throw new IOException("Path points to a symbolic link: " + path);
         }
 
-        Path relativePath = root.relativize(path);
+        Path relativePath = rootPath.relativize(path);
         String normalized = IoUtil.toUnixPath(relativePath);
         if (attributes.isDirectory() && !normalized.isEmpty() && !normalized.endsWith("/")) {
             normalized += "/";
