@@ -1133,8 +1133,8 @@ public final class LangUtil {
      * @param cleaner  the cleanup operation to be executed on `close()`
      * @return caching Supplier
      */
-    public static <T> AutoClosableCachingSupplier<T> cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
-        return new AutoClosableCachingSupplier<>(supplier, cleaner);
+    public static <T> AutoCloseableCachingSupplier<T> cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
+        return new AutoCloseableCachingSupplier<>(supplier, cleaner);
     }
 
     /**
@@ -1877,7 +1877,7 @@ public final class LangUtil {
     }
 
     /**
-     * Interface AutoClosableSupplier, used in {@link #cache(Supplier, Consumer)}.
+     * Interface AutoCloseableSupplier, used in {@link #cache(Supplier, Consumer)}.
      *
      * @param <T> the base type
      */
@@ -2002,7 +2002,7 @@ public final class LangUtil {
      *
      * @param <T> the type of the object supplied, which may be nullable
      */
-    public static sealed class StrongCachingSupplier<T extends @Nullable Object> implements CachingSupplier<T> permits AutoClosableCachingSupplier {
+    public static sealed class StrongCachingSupplier<T extends @Nullable Object> implements CachingSupplier<T> permits AutoCloseableCachingSupplier {
         /**
          * A supplier that provides instances of type {@code T}.
          */
@@ -2066,10 +2066,10 @@ public final class LangUtil {
      *
      * @param <T> the type of the object supplied, which may be nullable
      */
-    public static final class AutoClosableCachingSupplier<T extends @Nullable Object> extends StrongCachingSupplier<T> implements AutoCloseableSupplier<T> {
+    public static final class AutoCloseableCachingSupplier<T extends @Nullable Object> extends StrongCachingSupplier<T> implements AutoCloseableSupplier<T> {
         private @Nullable Consumer<? super T> cleaner;
 
-        AutoClosableCachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
+        AutoCloseableCachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
             super(supplier);
             this.cleaner = cleaner;
         }
