@@ -878,8 +878,8 @@ class LangUtilTest {
         // Close the cache
         cS.close();
 
-        // Make sure cache was resetted to uninitialized state
-        assertNotEquals("test", cS.get());
+        // Make sure cache was reset to uninitialized state
+        assertThrows(IllegalStateException.class, cS::get);
     }
 
     @Test

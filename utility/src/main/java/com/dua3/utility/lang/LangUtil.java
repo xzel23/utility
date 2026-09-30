@@ -1164,6 +1164,79 @@ public final class LangUtil {
     }
 
     /**
+     * A private static final class that implements the {@link AutoCloseableSupplier} interface.
+     * The class provides a way to supply an object and manage its lifecycle with automatic cleanup
+     * when it is closed.
+     *
+     * @param <T> the type of object supplied and to be cleaned up
+     */
+    private static final class AutoCloseableSupplierImp<T> implements AutoCloseableSupplier<T> {
+        @Nullable Consumer<? super T> cleaner;
+        @Nullable T obj;
+
+        AutoCloseableSupplierImp(T obj, Consumer<? super T> cleaner) {
+            this.obj = obj;
+            this.cleaner = cleaner;
+        }
+
+        @Override
+        public T get() {
+            check(cleaner != null, "closed");
+            return obj;
+        }
+
+        @Override
+        public void close() {
+            if (cleaner == null) {
+                LOG.warn("already closed");
+                assert obj == null;
+                return;
+            }
+
+            T tmpObj = obj;
+            Consumer<? super T> tmpCleaner = cleaner;
+
+            obj = null;
+            cleaner = null;
+
+            if (tmpObj != null) {
+                tmpCleaner.accept(tmpObj);
+            }
+        }
+    }
+
+    /**
+     * Creates an AutoCloseableSupplier that supplies a given object and uses a specified cleaner action
+     * when the object is closed. This is typically used to manage resources that need a specific clean-up
+     * action when they are no longer in use.
+     *
+     * @param <T> the type of the object that the supplier will supply, must be a nullable object.
+     * @param obj the object that the supplier will hold and return upon request.
+     * @param cleaner a Consumer that defines the clean-up action to be performed on the object when the
+     *        AutoCloseableSupplier is closed.
+     * @return an instance of AutoCloseableSupplier that manages the given object and performs the
+     *         specified cleaning action upon closure.
+     */
+    public static <T extends @Nullable Object> AutoCloseableSupplier<T> autoCloseableSupplier(T obj, Consumer<? super T> cleaner) {
+        return new AutoCloseableSupplierImp<>(obj, cleaner);
+    }
+
+    /**
+     * Creates an AutoCloseableSupplier for the given object.
+     * <p>
+     * The supplier wraps the provided object and implements AutoCloseable,
+     * allowing it to be used in a try-with-resources statement. The close method
+     * is a no-op in this implementation.
+     *
+     * @param <T> the type of the object supplied, extends Nullable Object
+     * @param obj the object to be supplied by the AutoCloseableSupplier, may be null
+     * @return an instance of AutoCloseableSupplier that supplies the given object
+     */
+    public static <T extends @Nullable Object> AutoCloseableSupplier<T> autoCloseableSupplier(T obj) {
+        return new AutoCloseableSupplierImp<>(obj, objToClean -> {});
+    }
+
+    /**
      * Get URL for a resource on the classpath.
      *
      * @param clazz    the Class that's used to load the resource.
@@ -1994,7 +2067,7 @@ public final class LangUtil {
      * @param <T> the type of the object supplied, which may be nullable
      */
     public static final class AutoClosableCachingSupplier<T extends @Nullable Object> extends StrongCachingSupplier<T> implements AutoCloseableSupplier<T> {
-        private final Consumer<? super T> cleaner;
+        private @Nullable Consumer<? super T> cleaner;
 
         AutoClosableCachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
             super(supplier);
@@ -2003,23 +2076,36 @@ public final class LangUtil {
 
         @Override
         public T get() {
-            if (initialized && obj != null) {
-                cleaner.accept(obj);
+            if (cleaner == null) {
+                throw new IllegalStateException("closed");
             }
             return super.get();
         }
 
         @Override
         public void reset() {
-            if (initialized && obj != null) {
-                cleaner.accept(obj);
-            }
+            check(cleaner != null, "closed");
+            T tmpObj = obj;
             super.reset();
+            if (tmpObj != null) {
+                cleaner.accept(tmpObj);
+            }
         }
 
         @Override
         public void close() {
-            reset();
+            if (cleaner == null) {
+                LOG.warn("already closed");
+                return;
+            }
+
+            T tmpObj = obj;
+            Consumer<? super T> tmpCleaner = cleaner;
+            obj = null;
+            cleaner = null;
+            if (tmpObj != null) {
+                tmpCleaner.accept(tmpObj);
+            }
         }
     }
 

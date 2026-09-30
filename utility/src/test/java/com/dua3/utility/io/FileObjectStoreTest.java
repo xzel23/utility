@@ -74,6 +74,7 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
     @Test
     void readableObjectStore_accessModeAndRoot() throws Exception {
         Path root = tempDir.resolve("readable-access");
+        Files.createDirectories(root);
         try (ReadableObjectStore readable = FileObjectStore.newReadableObjectStore(root)) {
             assertEquals(ObjectStore.AccessMode.READ, ((FileObjectStore) readable).getAccessMode());
             assertTrue(readable.getRoot().isAbsolute());

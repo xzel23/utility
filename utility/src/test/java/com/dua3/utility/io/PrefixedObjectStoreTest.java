@@ -79,6 +79,7 @@ class PrefixedObjectStoreTest {
     @Test
     void writableStoreWritesBelowPrefix() throws Exception {
         Path root = tempDir.resolve("writable");
+        Files.createDirectories(root);
         try (WritableObjectStore delegate = ObjectStores.writableFileStore(root)) {
             WritableObjectStore prefixed = delegate.prefixed(URI.create("reports/current"));
 
@@ -105,6 +106,7 @@ class PrefixedObjectStoreTest {
     @Test
     void objectStoreProvidesReadWriteViewBelowPrefix() throws Exception {
         Path root = tempDir.resolve("object");
+        Files.createDirectories(root);
         try (ObjectStore delegate = ObjectStores.fileStore(root)) {
             ObjectStore prefixed = delegate.prefixed(URI.create("reports/current"));
 
@@ -139,6 +141,7 @@ class PrefixedObjectStoreTest {
     @Test
     void emptyPrefixReturnsAnIdentityView() throws Exception {
         Path root = tempDir.resolve("identity");
+        Files.createDirectories(root);
         try (ObjectStore delegate = ObjectStores.fileStore(root)) {
             ObjectStore prefixed = delegate.prefixed(URI.create(""));
             prefixed.write(URI.create("data.txt"), "data".getBytes(StandardCharsets.UTF_8));

@@ -10,6 +10,7 @@ import com.dua3.utility.io.ObjectNotFoundException;
 import com.dua3.utility.io.ObjectStore;
 import com.dua3.utility.io.ReadableObjectStore;
 import com.dua3.utility.io.WritableObjectStore;
+import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -27,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -52,9 +54,9 @@ public final class FileObjectStore implements ObjectStore {
 
     private static final StandardCopyOption[] EMPTY_STANDARD_COPY_OPTIONS = {};
 
-    private final Path rootPath;
     private final URI root;
     private final AccessMode accessMode;
+    private final LangUtil.AutoCloseableSupplier<Path> rootPath;
 
     /**
      * Constructs a {@code FileObjectStore} with the specified root directory.
@@ -64,11 +66,31 @@ public final class FileObjectStore implements ObjectStore {
      * @param accessMode the access level for the file object store
      * @throws IOException if an I/O error occurs while creating or accessing the directory
      */
-    private FileObjectStore(Path rootPath, AccessMode accessMode) throws IOException {
-        this.rootPath = Files.createDirectories(rootPath).toAbsolutePath().normalize();
-        this.root = this.rootPath.toUri();
+    private FileObjectStore(Path rootPath, AccessMode accessMode, boolean lazy) throws IOException {
+        assert rootPath.equals(normalizeRoot(rootPath)) : "Root path is not absolute or notnormalized";
+
+        this.root = rootPath.toUri();
         this.accessMode = accessMode;
+        if (lazy) {
+            this.rootPath = LangUtil.cache(LangUtil.unchecked(() -> checkOrCreateDirectory(rootPath, accessMode)), ignored -> {});
+        } else {
+            Path path = checkOrCreateDirectory(rootPath, accessMode);
+            this.rootPath = LangUtil.autoCloseableSupplier(path);
+        }
+
         LOG.debug("Created FileObjectStore with root {}", rootPath);
+    }
+
+    private static Path normalizeRoot(Path root) {
+        return root.toAbsolutePath().normalize();
+    }
+
+    private static Path checkOrCreateDirectory(Path path, AccessMode accessMode) throws IOException {
+        switch (accessMode) {
+            case READ -> LangUtil.check(Files.isDirectory(path), () -> new IOException("Root path does not exist or is not a directory: " + path));
+            case WRITE, READ_AND_WRITE -> Files.createDirectories(path);
+        }
+        return path.toAbsolutePath().normalize();
     }
 
     /**
@@ -79,7 +101,19 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException if an I/O error occurs during the initialization of the store
      */
     public static ReadableObjectStore newReadableObjectStore(Path root) throws IOException {
-        return new FileObjectStore(root, AccessMode.READ);
+        return newReadableObjectStore(root, false);
+    }
+
+    /**
+     * Creates a new instance of a ReadableObjectStore object.
+     *
+     * @param root the root directory path where the objects are stored
+     * @param lazy a boolean flag indicating whether to load objects lazily
+     * @return a new ReadableObjectStore instance configured with the specified root path and lazy loading option
+     * @throws IOException if an I/O error occurs initializing the object store
+     */
+    public static ReadableObjectStore newReadableObjectStore(Path root, boolean lazy) throws IOException {
+        return new FileObjectStore(normalizeRoot(root), AccessMode.READ, lazy);
     }
 
     /**
@@ -90,7 +124,20 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException if an I/O error occurs during the initialization of the store
      */
     public static WritableObjectStore newWritableObjectStore(Path root) throws IOException {
-        return new FileObjectStore(root, AccessMode.WRITE);
+        return newWritableObjectStore(root, false);
+    }
+
+    /**
+     * Creates a new instance of WritableObjectStore at the specified root path.
+     * This store allows for objects to be written to the file system.
+     *
+     * @param root the root directory path where the object store will be created
+     * @param lazy if true, defers loading resources until needed; if false, loads immediately
+     * @return a new WritableObjectStore configured with the specified root and loading strategy
+     * @throws IOException if an I/O error occurs during the creation of the object store
+     */
+    public static WritableObjectStore newWritableObjectStore(Path root, boolean lazy) throws IOException {
+        return new FileObjectStore(normalizeRoot(root), AccessMode.WRITE, lazy);
     }
 
     /**
@@ -101,7 +148,19 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException if an I/O error occurs during the initialization of the store
      */
     public static FileObjectStore newObjectStore(Path root) throws IOException {
-        return new FileObjectStore(root, AccessMode.READ_AND_WRITE);
+        return newObjectStore(root, false);
+    }
+
+    /**
+     * Creates a new instance of FileObjectStore with the specified root path and lazy loading option.
+     *
+     * @param root the root path of the object store
+     * @param lazy a boolean indicating whether the object store should employ lazy loading
+     * @return a new instance of FileObjectStore configured with the specified parameters
+     * @throws IOException if an I/O error occurs while creating the object store
+     */
+    public static FileObjectStore newObjectStore(Path root, boolean lazy) throws IOException {
+        return new FileObjectStore(normalizeRoot(root), AccessMode.READ_AND_WRITE, lazy);
     }
 
     @Override
@@ -122,7 +181,6 @@ public final class FileObjectStore implements ObjectStore {
         }
     }
 
-    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public long write(URI path, InputStream in, OutputOption... options) throws IOException {
         assertWritable();
@@ -213,6 +271,7 @@ public final class FileObjectStore implements ObjectStore {
      * @return the resolved {@code Path} that validates as a regular file
      * @throws IOException if an I/O error occurs during resolution or validation
      */
+    @SuppressWarnings("OverlyBroadThrowsClause")
     private Path resolveRegularData(URI path) throws IOException {
         Path resolved = resolve(path);
 
@@ -238,6 +297,7 @@ public final class FileObjectStore implements ObjectStore {
      * @return the resolved {@code Path} that validates as a regular folder
      * @throws IOException if an I/O error occurs during resolution or validation
      */
+    @SuppressWarnings("OverlyBroadThrowsClause")
     private Path resolveRegularFolder(URI path) throws IOException {
         Path resolved = resolve(path);
 
@@ -256,7 +316,6 @@ public final class FileObjectStore implements ObjectStore {
         return resolved;
     }
 
-    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public OutputStream openOutputStream(URI path, OutputOption... options) throws IOException {
         assertWritable();
@@ -328,7 +387,6 @@ public final class FileObjectStore implements ObjectStore {
         }
     }
 
-    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public Optional<ObjectInfo> getInfo(URI path) throws IOException {
         assertReadable();
@@ -388,9 +446,9 @@ public final class FileObjectStore implements ObjectStore {
     }
 
     @Override
-    public void close() {
-        LOG.debug("Closing FileObjectStore with root {}", rootPath);
-        // nothing to close
+    public void close() throws IOException {
+        LOG.debug("Closing FileObjectStore with root {}", Paths.get(root));
+        rootPath.close();
     }
 
     @Override
@@ -409,7 +467,7 @@ public final class FileObjectStore implements ObjectStore {
      * @throws AbsolutePathException if the provided URI is absolute
      */
     @SuppressWarnings("OverlyBroadThrowsClause")
-    public Path resolve(URI path) throws IllegalPathException {
+    public Path resolve(URI path) throws IOException {
         if (path.isAbsolute()) {
             throw new AbsolutePathException("absolute path not allowed: " + path);
         }
@@ -421,8 +479,8 @@ public final class FileObjectStore implements ObjectStore {
             throw new IllegalPathException("invalid path: " + path, e);
         }
 
-        Path resolved = rootPath.resolve(relative).normalize();
-        if (!resolved.startsWith(rootPath)) {
+        Path resolved = getRootPath().resolve(relative).normalize();
+        if (!resolved.startsWith(getRootPath())) {
             throw new IllegalPathException("path points outside root: " + path);
         }
         return resolved;
@@ -485,7 +543,7 @@ public final class FileObjectStore implements ObjectStore {
             throw new IOException("Path points to a symbolic link: " + path);
         }
 
-        Path relativePath = rootPath.relativize(path);
+        Path relativePath = getRootPath().relativize(path);
         String normalized = IoUtil.toUnixPath(relativePath);
         if (attributes.isDirectory() && !normalized.isEmpty() && !normalized.endsWith("/")) {
             normalized += "/";
@@ -539,6 +597,14 @@ public final class FileObjectStore implements ObjectStore {
         Path parent = resolved.getParent();
         if (parent != null) {
             Files.createDirectories(parent);
+        }
+    }
+
+    private Path getRootPath() throws IOException {
+        try {
+            return rootPath.get();
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
         }
     }
 }
