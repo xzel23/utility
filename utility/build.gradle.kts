@@ -37,6 +37,7 @@ dependencies {
 
     implementation(rootProject.libs.rtfparserkit)
 
+    testImplementation(sourceSets.getByName("javaTestUtil").output)
     testImplementation(platform(rootProject.libs.bouncycastle.bom))
     testImplementation(rootProject.libs.bouncycastle.provider)
     testImplementation(rootProject.libs.bouncycastle.pkix)

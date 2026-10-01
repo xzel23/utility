@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -26,10 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-abstract class AbstractObjectStoreTest {
+/**
+ * Abstract test class providing standard tests for {@link ObjectStore} implementations.
+ */
+public abstract class AbstractObjectStoreTest {
 
     @TempDir
-    Path tempDir;
+    protected Path tempDir;
 
     protected abstract ObjectStore createStore(Path root) throws IOException;
 
@@ -538,7 +542,11 @@ abstract class AbstractObjectStoreTest {
             assertEquals(ObjectStore.ObjectType.FOLDER, rootInfo.type());
 
             ObjectStore.ObjectInfo missingInfo = store.getInfo(URI.create("nonexistent"));
-            assertEquals(ObjectStore.ObjectType.MISSING, missingInfo.type());
+            assertSame(ObjectStore.ObjectType.MISSING, missingInfo.type());
+            assertEquals(URI.create("nonexistent"), missingInfo.uri());
+            assertEquals(ObjectStore.ObjectInfo.UNKNOWN_SIZE, missingInfo.size());
+            assertEquals(Instant.MIN, missingInfo.created());
+            assertEquals(Instant.MIN, missingInfo.lastModified());
         }
     }
 }
