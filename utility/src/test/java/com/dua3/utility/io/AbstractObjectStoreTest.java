@@ -457,4 +457,88 @@ abstract class AbstractObjectStoreTest {
             assertThrows(IllegalPathException.class, () -> store.getInfo(illegal));
         }
     }
+
+    @Test
+    void writeInputStream_outputOptionsBehavior() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("stream-opt.txt");
+            store.writeString(path, "initial");
+
+            assertThrows(ObjectExistsException.class, () ->
+                    store.write(path, new ByteArrayInputStream("second".getBytes(StandardCharsets.UTF_8))));
+            assertThrows(ObjectExistsException.class, () ->
+                    store.write(path, new ByteArrayInputStream("third".getBytes(StandardCharsets.UTF_8)), ObjectStore.OutputOption.CREATE_NEW));
+
+            store.write(path, new ByteArrayInputStream("replaced".getBytes(StandardCharsets.UTF_8)), ObjectStore.OutputOption.CREATE_OR_REPLACE);
+            assertEquals("replaced", store.readString(path));
+        }
+    }
+
+    @Test
+    void openOutputStream_outputOptionsBehavior() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI path = URI.create("out-opt.txt");
+            store.writeString(path, "initial");
+
+            assertThrows(ObjectExistsException.class, () -> store.openOutputStream(path));
+            assertThrows(ObjectExistsException.class, () -> store.openOutputStream(path, ObjectStore.OutputOption.CREATE_NEW));
+
+            try (OutputStream out = store.openOutputStream(path, ObjectStore.OutputOption.CREATE_OR_REPLACE)) {
+                out.write("replaced".getBytes(StandardCharsets.UTF_8));
+            }
+            assertEquals("replaced", store.readString(path));
+        }
+    }
+
+    @Test
+    void openInputStreamAndChannel_throwsNotADataObjectForFolder() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI folder = URI.create("folder");
+            store.createFolder(folder);
+
+            assertThrows(NotADataObjectException.class, () -> store.openInputStream(folder));
+            assertThrows(NotADataObjectException.class, () -> store.openReadableByteChannel(folder));
+        }
+    }
+
+    @Test
+    void listAndRemoveFolder_throwsNotAFolderForData() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI file = URI.create("file.txt");
+            store.writeString(file, "content");
+
+            assertThrows(NotAFolderException.class, () -> store.list(file));
+            assertThrows(NotAFolderException.class, () -> store.removeFolder(file));
+        }
+    }
+
+    @Test
+    void copyAndMove_throwsNotADataObjectForFolderSource() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            URI folder = URI.create("folder");
+            store.createFolder(folder);
+
+            assertThrows(NotADataObjectException.class, () -> store.copy(folder, URI.create("target.txt")));
+            assertThrows(NotADataObjectException.class, () -> store.move(folder, URI.create("target.txt")));
+        }
+    }
+
+    @Test
+    void walk_throwsForMissingObject() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            assertThrows(ObjectNotFoundException.class, () -> store.walk(URI.create("missing")));
+            assertThrows(ObjectNotFoundException.class, () -> store.walk(URI.create("missing"), 2));
+        }
+    }
+
+    @Test
+    void getInfo_rootAndMissing() throws Exception {
+        try (ObjectStore store = createStore(tempDir.resolve("store"))) {
+            ObjectStore.ObjectInfo rootInfo = store.getInfo(URI.create(""));
+            assertEquals(ObjectStore.ObjectType.FOLDER, rootInfo.type());
+
+            ObjectStore.ObjectInfo missingInfo = store.getInfo(URI.create("nonexistent"));
+            assertEquals(ObjectStore.ObjectType.MISSING, missingInfo.type());
+        }
+    }
 }

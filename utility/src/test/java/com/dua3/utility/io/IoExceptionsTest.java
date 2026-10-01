@@ -50,6 +50,20 @@ class IoExceptionsTest {
     }
 
     @Test
+    void testNotADataObjectException() {
+        NotADataObjectException ex2 = new NotADataObjectException("msg");
+        assertEquals("msg", ex2.getMessage());
+
+        Throwable cause = new RuntimeException("cause");
+        NotADataObjectException ex3 = new NotADataObjectException("msg", cause);
+        assertEquals("msg", ex3.getMessage());
+        assertSame(cause, ex3.getCause());
+
+        NotADataObjectException ex4 = new NotADataObjectException(cause);
+        assertSame(cause, ex4.getCause());
+    }
+
+    @Test
     void testNotAFolderException() {
         NotAFolderException ex2 = new NotAFolderException("msg");
         assertEquals("msg", ex2.getMessage());

@@ -313,4 +313,43 @@ class PrefixedObjectStoreTest {
             prefixed.close();
         }
     }
+
+    @Test
+    void prefixedObjectStore_getInfoRootAndMissing() throws Exception {
+        Path root = tempDir.resolve("prefixed-info");
+        try (ObjectStore delegate = ObjectStores.fileStore(root)) {
+            ObjectStore prefixed = delegate.prefixed(URI.create("sub"));
+            assertEquals(ObjectStore.ObjectType.MISSING, prefixed.getInfo(URI.create("")).type());
+            assertEquals(ObjectStore.ObjectType.MISSING, prefixed.getInfo(URI.create("missing.txt")).type());
+
+            prefixed.createFolder(URI.create(""));
+            assertEquals(ObjectStore.ObjectType.FOLDER, prefixed.getInfo(URI.create("")).type());
+        }
+    }
+
+    @Test
+    void prefixedObjectStore_walkAndDeleteMissingThrows() throws Exception {
+        Path root = tempDir.resolve("prefixed-missing-err");
+        try (ObjectStore delegate = ObjectStores.fileStore(root)) {
+            ObjectStore prefixed = delegate.prefixed(URI.create("sub"));
+            assertThrows(ObjectNotFoundException.class, () -> prefixed.walk(URI.create("missing")));
+            assertThrows(ObjectNotFoundException.class, () -> prefixed.deleteRecursively(URI.create("missing")));
+        }
+    }
+
+    @Test
+    void prefixedObjectStore_typeValidationErrors() throws Exception {
+        Path root = tempDir.resolve("prefixed-type-err");
+        try (ObjectStore delegate = ObjectStores.fileStore(root)) {
+            ObjectStore prefixed = delegate.prefixed(URI.create("sub"));
+            prefixed.createFolder(URI.create("dir"));
+            prefixed.writeString(URI.create("file.txt"), "hello");
+
+            assertThrows(NotADataObjectException.class, () -> prefixed.copy(URI.create("dir"), URI.create("out.txt")));
+            assertThrows(NotADataObjectException.class, () -> prefixed.move(URI.create("dir"), URI.create("out.txt")));
+            assertThrows(NotADataObjectException.class, () -> prefixed.openInputStream(URI.create("dir")));
+            assertThrows(NotAFolderException.class, () -> prefixed.removeFolder(URI.create("file.txt")));
+            assertThrows(NotAFolderException.class, () -> prefixed.list(URI.create("file.txt")));
+        }
+    }
 }

@@ -277,11 +277,11 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
             targetStore.writeString(URI.create("exists.txt"), "existing");
 
             assertThrows(ObjectNotFoundException.class, () -> sourceStore.copyTo(targetStore, URI.create("missing.txt"), URI.create("out.txt")));
-            assertThrows(IOException.class, () -> sourceStore.copyTo(targetStore, URI.create("dir"), URI.create("out.txt")));
+            assertThrows(NotADataObjectException.class, () -> sourceStore.copyTo(targetStore, URI.create("dir"), URI.create("out.txt")));
             assertThrows(ObjectExistsException.class, () -> sourceStore.copyTo(targetStore, URI.create("file.txt"), URI.create("exists.txt"), ObjectStore.OutputOption.CREATE_NEW));
 
             assertThrows(ObjectNotFoundException.class, () -> sourceStore.moveTo(targetStore, URI.create("missing.txt"), URI.create("out.txt")));
-            assertThrows(IOException.class, () -> sourceStore.moveTo(targetStore, URI.create("dir"), URI.create("out.txt")));
+            assertThrows(NotADataObjectException.class, () -> sourceStore.moveTo(targetStore, URI.create("dir"), URI.create("out.txt")));
             assertThrows(ObjectExistsException.class, () -> sourceStore.moveTo(targetStore, URI.create("file.txt"), URI.create("exists.txt"), ObjectStore.OutputOption.CREATE_NEW));
 
             try (FileObjectStore readOnlyTarget = (FileObjectStore) FileObjectStore.newReadableObjectStore(targetRoot)) {
@@ -329,11 +329,12 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
     }
 
     @Test
-    void createFolder_whenDataObjectExistsThrowsNotAFolderException() throws Exception {
+    void createFolder_whenDataObjectExistsThrowsObjectExistsException() throws Exception {
         Path root = tempDir.resolve("create-folder-err");
         try (FileObjectStore store = FileObjectStore.newObjectStore(root)) {
             store.writeString(URI.create("data"), "content");
             assertThrows(ObjectExistsException.class, () -> store.createFolder(URI.create("data")));
+            assertThrows(IOException.class, () -> store.createFolder(URI.create("data/sub")));
         }
     }
 
@@ -344,7 +345,7 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
             assertThrows(ObjectNotFoundException.class, () -> store.removeFolder(URI.create("missingFolder")));
 
             store.writeString(URI.create("file.txt"), "content");
-            assertThrows(IOException.class, () -> store.removeFolder(URI.create("file.txt")));
+            assertThrows(NotAFolderException.class, () -> store.removeFolder(URI.create("file.txt")));
         }
     }
 
@@ -354,6 +355,10 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
         try (FileObjectStore store = FileObjectStore.newObjectStore(root)) {
             assertThrows(ObjectNotFoundException.class, () -> store.delete(URI.create("missing.txt")));
             assertThrows(ObjectNotFoundException.class, () -> store.deleteRecursively(URI.create("missing.txt")));
+
+            store.createFolder(URI.create("dir"));
+            store.writeString(URI.create("dir/file.txt"), "nested");
+            assertThrows(FolderNotEmptyException.class, () -> store.delete(URI.create("dir")));
         }
     }
 
@@ -363,8 +368,8 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
         try (FileObjectStore store = FileObjectStore.newObjectStore(root)) {
             store.createFolder(URI.create("folder"));
 
-            assertThrows(IOException.class, () -> store.openInputStream(URI.create("folder")));
-            assertThrows(IOException.class, () -> store.openReadableByteChannel(URI.create("folder")));
+            assertThrows(NotADataObjectException.class, () -> store.openInputStream(URI.create("folder")));
+            assertThrows(NotADataObjectException.class, () -> store.openReadableByteChannel(URI.create("folder")));
 
             assertThrows(ObjectNotFoundException.class, () -> store.openInputStream(URI.create("missing.txt")));
             assertThrows(ObjectNotFoundException.class, () -> store.openReadableByteChannel(URI.create("missing.txt")));
@@ -376,8 +381,49 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
         Path root = tempDir.resolve("list-err");
         try (FileObjectStore store = FileObjectStore.newObjectStore(root)) {
             store.writeString(URI.create("file.txt"), "content");
-            assertThrows(IOException.class, () -> store.list(URI.create("file.txt")));
+            assertThrows(NotAFolderException.class, () -> store.list(URI.create("file.txt")));
             assertThrows(ObjectNotFoundException.class, () -> store.list(URI.create("missing")));
+        }
+    }
+
+    @Test
+    void openWritableByteChannel_optionsBehavior() throws Exception {
+        Path root = tempDir.resolve("channel-opts");
+        try (FileObjectStore store = FileObjectStore.newObjectStore(root)) {
+            store.writeString(URI.create("data.bin"), "old");
+
+            assertThrows(IOException.class, () -> store.openWritableByteChannel(URI.create("data.bin")));
+            assertThrows(IOException.class, () -> store.openWritableByteChannel(URI.create("data.bin"), ObjectStore.OutputOption.CREATE_NEW));
+
+            try (WritableByteChannel ch = store.openWritableByteChannel(URI.create("data.bin"), ObjectStore.OutputOption.CREATE_OR_REPLACE)) {
+                ch.write(ByteBuffer.wrap("new".getBytes(StandardCharsets.UTF_8)));
+            }
+            assertEquals("new", store.readString(URI.create("data.bin")));
+        }
+    }
+
+    @Test
+    void storeCreation_lazyInitializationAndErrors() throws Exception {
+        Path missingDir = tempDir.resolve("non-existent-readable");
+        assertThrows(IOException.class, () -> FileObjectStore.newReadableObjectStore(missingDir));
+
+        Path lazyStorePath = tempDir.resolve("lazy-store");
+        try (ObjectStore store = FileObjectStore.newObjectStore(lazyStorePath, true)) {
+            store.writeString(URI.create("lazy.txt"), "lazy content");
+            assertTrue(Files.exists(lazyStorePath.resolve("lazy.txt")));
+        }
+
+        Path lazyWritablePath = tempDir.resolve("lazy-writable");
+        try (WritableObjectStore store = FileObjectStore.newWritableObjectStore(lazyWritablePath, true)) {
+            store.writeString(URI.create("lazy.txt"), "writable content");
+            assertTrue(Files.exists(lazyWritablePath.resolve("lazy.txt")));
+        }
+
+        Path lazyReadablePath = tempDir.resolve("lazy-readable");
+        Files.createDirectories(lazyReadablePath);
+        Files.writeString(lazyReadablePath.resolve("lazy.txt"), "readable content");
+        try (ReadableObjectStore store = FileObjectStore.newReadableObjectStore(lazyReadablePath, true)) {
+            assertEquals("readable content", store.readString(URI.create("lazy.txt")));
         }
     }
 

@@ -78,6 +78,7 @@ class ObjectStoresTest {
     }
 
     @Test
+    @SuppressWarnings("java:S5778")
     void objectStoreDefaultMethods_copyMoveDeleteRecursivelyAndAccessMode() throws Exception {
         Path root = tempDir.resolve("default-methods");
         try (ObjectStore fileStore = ObjectStores.fileStore(root)) {
@@ -179,6 +180,25 @@ class ObjectStoresTest {
 
             // Test default deleteRecursively on missing throws ObjectNotFoundException
             org.junit.jupiter.api.Assertions.assertThrows(ObjectNotFoundException.class, () -> defaultStore.deleteRecursively(URI.create("missing")));
+
+            // Test default deleteRecursively on UNKNOWN type throws UnsupportedOperationException
+            ObjectStore unknownStore = new ObjectStore() {
+                @Override public URI getRoot() { return fileStore.getRoot(); }
+                @Override public java.util.stream.Stream<ObjectInfo> list(URI path) { return java.util.stream.Stream.empty(); }
+                @Override public java.io.InputStream openInputStream(URI path) { throw new UnsupportedOperationException(); }
+                @Override public ObjectInfo getInfo(URI path) { return new ObjectStore.ObjectInfo(path, ObjectStore.ObjectType.UNKNOWN, ObjectStore.ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN); }
+                @Override public java.nio.channels.ReadableByteChannel openReadableByteChannel(URI path) { throw new UnsupportedOperationException(); }
+                @Override public long write(URI path, java.io.InputStream in, OutputOption... options) { throw new UnsupportedOperationException(); }
+                @Override public long write(URI path, byte[] data, int from, int to, OutputOption... options) { throw new UnsupportedOperationException(); }
+                @Override public java.io.OutputStream openOutputStream(URI path, OutputOption... options) { throw new UnsupportedOperationException(); }
+                @Override public void createFolder(URI path) {/* ignored */}
+                @Override public java.nio.channels.WritableByteChannel openWritableByteChannel(URI path, OutputOption... options) { throw new UnsupportedOperationException(); }
+                @Override public void removeFolder(URI path) {/* ignored */}
+                @Override public void delete(URI path) {/* ignored */}
+                @Override public AccessMode getAccessMode() { return AccessMode.READ_AND_WRITE; }
+                @Override public void close() {/* ignored */}
+            };
+            org.junit.jupiter.api.Assertions.assertThrows(UnsupportedOperationException.class, () -> unknownStore.deleteRecursively(URI.create("unknown")));
         }
     }
 
