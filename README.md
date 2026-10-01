@@ -235,7 +235,7 @@ could not be loaded.
 
 ## Changes
 
-## 24.10.0
+## 25.0.0
 
 - **BREAKING:** renamed AutoClosableCachingSupplier to AutoCloseableCachingSupplier. This affects code using
   `LangUtil.cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner)`.
@@ -243,6 +243,7 @@ could not be loaded.
   time.
 - fix: AutoCloseableSupplier.get() implementations will throw an IllegalStateException when the supplier was closed 
   instead of returning null.
+- added `DbObjectStore` implementation
 - added overloads taking a lazy parameter when creating FileObjectStore instances.
   - when creating a readable FileObjectStore with lazy, the existence of the directory is checked on first access, 
     otherwise when the instance is created.
