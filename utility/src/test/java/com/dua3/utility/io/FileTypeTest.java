@@ -35,6 +35,7 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -306,6 +307,7 @@ class FileTypeTest {
     }
 
     @Test
+    @SuppressWarnings("java:S5778")
     void exposesMetadataAndMatchesFilenames() {
         assertEquals("FileType test text", textFileType.getName());
         assertEquals(String.class, textFileType.getDocumentClass());
@@ -340,6 +342,7 @@ class FileTypeTest {
     }
 
     @Test
+    @SuppressWarnings({"java:S5845", "java:S5863"})
     void comparesAndIdentifiesTypesByTheirDefinition() {
         TestFileType<String> equalType = new TestFileType<>(
                 "FileType test text", OpenMode.READ_AND_WRITE, String.class, TEXT_EXTENSION, ALTERNATE_TEXT_EXTENSION);
@@ -471,8 +474,8 @@ class FileTypeTest {
         }
 
         @Override
-        public Optional<ObjectStore.ObjectInfo> getInfo(URI path) {
-            return Optional.empty();
+        public ObjectStore.ObjectInfo getInfo(URI path) {
+            return new ObjectStore.ObjectInfo(URI.create(""), ObjectStore.ObjectType.DATA, ObjectStore.ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN);
         }
 
         @Override

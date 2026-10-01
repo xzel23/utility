@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /** Internal implementations of the prefixed object-store views. */
@@ -58,8 +57,8 @@ final class PrefixedObjectStores {
         }
 
         @Override
-        public Optional<ObjectStore.ObjectInfo> getInfo(URI path) throws IOException {
-            return delegate.getInfo(prefix.resolve(path)).map(prefix::relative);
+        public ObjectStore.ObjectInfo getInfo(URI path) throws IOException {
+            return prefix.relative(delegate.getInfo(prefix.resolve(path)));
         }
 
         @Override
@@ -143,8 +142,8 @@ final class PrefixedObjectStores {
         }
 
         @Override
-        public Optional<ObjectInfo> getInfo(URI path) throws IOException {
-            return delegate.getInfo(prefix.resolve(path)).map(prefix::relative);
+        public ObjectInfo getInfo(URI path) throws IOException {
+            return prefix.relative(delegate.getInfo(prefix.resolve(path)));
         }
 
         @Override

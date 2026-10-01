@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -113,8 +114,8 @@ class PrefixedObjectStoreTest {
             prefixed.write(URI.create("settings.dcompare"), "settings".getBytes(StandardCharsets.UTF_8));
 
             assertEquals(root.resolve("reports/current/").toUri(), prefixed.getRoot());
-            assertEquals(ObjectStore.ObjectType.FOLDER, prefixed.getInfo(URI.create("")).orElseThrow().type());
-            assertEquals(ObjectStore.ObjectType.DATA, prefixed.getInfo(URI.create("settings.dcompare")).orElseThrow().type());
+            assertEquals(ObjectStore.ObjectType.FOLDER, prefixed.getInfo(URI.create("")).type());
+            assertEquals(ObjectStore.ObjectType.DATA, prefixed.getInfo(URI.create("settings.dcompare")).type());
             try (InputStream in = prefixed.openInputStream(URI.create("settings.dcompare"))) {
                 assertArrayEquals("settings".getBytes(StandardCharsets.UTF_8), in.readAllBytes());
             }
@@ -179,7 +180,7 @@ class PrefixedObjectStoreTest {
             }
 
             @Override
-            public java.util.Optional<ObjectStore.ObjectInfo> getInfo(URI path) throws java.io.IOException {
+            public ObjectStore.ObjectInfo getInfo(URI path) throws java.io.IOException {
                 return fileReadable.getInfo(path);
             }
 
@@ -210,7 +211,7 @@ class PrefixedObjectStoreTest {
             assertArrayEquals("hello".getBytes(StandardCharsets.UTF_8), buf.array());
         }
 
-        assertTrue(prefixed.getInfo(URI.create("test.txt")).isPresent());
+        assertSame(ObjectStore.ObjectType.DATA, prefixed.getInfo(URI.create("test.txt")).type());
         try (var list = prefixed.list(URI.create(""))) {
             assertEquals(List.of(URI.create("test.txt")), list.map(ObjectStore.ObjectInfo::uri).toList());
         }

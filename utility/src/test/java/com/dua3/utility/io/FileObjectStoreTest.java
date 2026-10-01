@@ -20,6 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -120,10 +121,10 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
                 assertEquals(List.of("hello world", "second line"), lines.toList());
             }
 
-            var fileInfo = readable.getInfo(URI.create("hello.txt")).orElseThrow();
+            var fileInfo = readable.getInfo(URI.create("hello.txt"));
             assertEquals(ObjectStore.ObjectType.DATA, fileInfo.type());
 
-            var folderInfo = readable.getInfo(URI.create("sub")).orElseThrow();
+            var folderInfo = readable.getInfo(URI.create("sub"));
             assertEquals(ObjectStore.ObjectType.FOLDER, folderInfo.type());
 
             try (var list = readable.list(URI.create(""))) {
@@ -260,7 +261,7 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
 
             sourceStore.moveTo(targetStore, URI.create("data.txt"), URI.create("move/target.txt"));
             assertEquals("cross store content", targetStore.readString(URI.create("move/target.txt")));
-            assertTrue(sourceStore.getInfo(URI.create("data.txt")).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, sourceStore.getInfo(URI.create("data.txt")).type());
         }
     }
 
@@ -332,7 +333,7 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
         Path root = tempDir.resolve("create-folder-err");
         try (FileObjectStore store = FileObjectStore.newObjectStore(root)) {
             store.writeString(URI.create("data"), "content");
-            assertThrows(NotAFolderException.class, () -> store.createFolder(URI.create("data")));
+            assertThrows(ObjectExistsException.class, () -> store.createFolder(URI.create("data")));
         }
     }
 

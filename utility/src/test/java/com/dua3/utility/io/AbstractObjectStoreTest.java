@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -253,7 +254,7 @@ abstract class AbstractObjectStoreTest {
 
             store.move(source, target, ObjectStore.OutputOption.CREATE_OR_REPLACE);
 
-            assertTrue(store.getInfo(source).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, store.getInfo(source).type());
             assertEquals("moved", store.readString(target));
         }
     }
@@ -286,16 +287,16 @@ abstract class AbstractObjectStoreTest {
             store.createFolder(URI.create("folder"));
             store.write(URI.create("folder/data.bin"), new byte[]{1, 2, 3});
 
-            ObjectStore.ObjectInfo folderInfo = store.getInfo(URI.create("folder")).orElseThrow();
+            ObjectStore.ObjectInfo folderInfo = store.getInfo(URI.create("folder"));
             assertEquals(ObjectStore.ObjectType.FOLDER, folderInfo.type());
 
-            ObjectStore.ObjectInfo dataInfo = store.getInfo(URI.create("folder/data.bin")).orElseThrow();
+            ObjectStore.ObjectInfo dataInfo = store.getInfo(URI.create("folder/data.bin"));
             assertEquals(ObjectStore.ObjectType.DATA, dataInfo.type());
             assertEquals(3, dataInfo.size());
             assertNotNull(dataInfo.created());
             assertNotNull(dataInfo.lastModified());
 
-            assertTrue(store.getInfo(URI.create("folder/missing.bin")).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, store.getInfo(URI.create("folder/missing.bin")).type());
         }
     }
 
@@ -318,10 +319,10 @@ abstract class AbstractObjectStoreTest {
             store.write(URI.create("f/data.txt"), "x".getBytes(StandardCharsets.UTF_8));
 
             store.delete(URI.create("f/data.txt"));
-            assertTrue(store.getInfo(URI.create("f/data.txt")).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, store.getInfo(URI.create("f/data.txt")).type());
 
             store.removeFolder(URI.create("f"));
-            assertTrue(store.getInfo(URI.create("f")).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, store.getInfo(URI.create("f")).type());
         }
     }
 
@@ -341,7 +342,7 @@ abstract class AbstractObjectStoreTest {
             store.write(URI.create("a/b/d.txt"), "y".getBytes(StandardCharsets.UTF_8), ObjectStore.OutputOption.CREATE_OR_REPLACE);
 
             store.deleteRecursively(URI.create("a"));
-            assertTrue(store.getInfo(URI.create("a")).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, store.getInfo(URI.create("a")).type());
         }
     }
 

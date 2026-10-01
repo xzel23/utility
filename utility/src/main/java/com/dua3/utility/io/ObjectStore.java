@@ -42,7 +42,15 @@ public interface ObjectStore extends ReadableObjectStore, WritableObjectStore {
         /**
          * Represents a data object type.
          */
-        DATA
+        DATA,
+        /**
+         * Represents a non existing object..
+         */
+        MISSING,
+        /**
+         * Represents an object of unknown type or where existence could not be determined.
+         */
+        UNKNOWN
     }
 
     /**
@@ -146,8 +154,9 @@ public interface ObjectStore extends ReadableObjectStore, WritableObjectStore {
      * @throws IOException if an I/O error occurs while deleting the contents
      */
     default void deleteRecursively(URI path) throws IOException {
-        switch (getInfo(path).map(ObjectInfo::type).orElse(null)) {
-            case null -> throw new ObjectNotFoundException(String.valueOf(path));
+        switch (getInfo(path).type()) {
+            case MISSING -> throw new ObjectNotFoundException(String.valueOf(path));
+            case UNKNOWN -> throw new UnsupportedOperationException("cannot delete object of unknown type: " + path);
             case DATA -> delete(path);
             case FOLDER -> {
                 try (Stream<ObjectInfo> children = list(path)) {

@@ -9,6 +9,7 @@ import java.net.URI;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
 
 /**
  * Represents a generic object storage interface for managing and interacting
@@ -169,10 +170,14 @@ public interface WritableObjectStore extends AutoCloseable {
      * @throws IOException if an I/O error occurs during the write operation
      */
     default long writeString(URI path, @Nullable CharSequence s, Charset cs, ObjectStore.OutputOption... options) throws IOException {
-        return switch (s) {
-            case String str -> write(path, str.getBytes(cs), options);
-            case null, default -> write(path, String.valueOf(s).getBytes(cs), options);
-        };
+        try {
+            return switch (s) {
+                case String str -> write(path, str.getBytes(cs), options);
+                case null, default -> write(path, String.valueOf(s).getBytes(cs), options);
+            };
+        } catch (FileAlreadyExistsException e) {
+            throw new ObjectExistsException(e);
+        }
     }
 
     /**

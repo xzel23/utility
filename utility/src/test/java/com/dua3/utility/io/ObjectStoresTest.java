@@ -7,8 +7,10 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ObjectStoresTest {
@@ -48,7 +50,7 @@ class ObjectStoresTest {
 
             ObjectStores.move(sourceStore, source, targetStore, target, ObjectStore.OutputOption.CREATE_OR_REPLACE);
 
-            assertTrue(sourceStore.getInfo(source).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, sourceStore.getInfo(source).type());
             assertEquals("new content", targetStore.readString(target));
         }
     }
@@ -71,7 +73,7 @@ class ObjectStoresTest {
 
             assertEquals("copy", targetStore.readString(URI.create("copy.txt")));
             assertEquals("move", targetStore.readString(URI.create("move.txt")));
-            assertTrue(sourceStore.getInfo(URI.create("move.txt")).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, sourceStore.getInfo(URI.create("move.txt")).type());
         }
     }
 
@@ -97,7 +99,7 @@ class ObjectStoresTest {
                 }
 
                 @Override
-                public java.util.Optional<ObjectInfo> getInfo(URI path) throws java.io.IOException {
+                public ObjectInfo getInfo(URI path) throws java.io.IOException {
                     return fileStore.getInfo(path);
                 }
 
@@ -161,19 +163,19 @@ class ObjectStoresTest {
             // Test default move
             defaultStore.move(URI.create("copied.txt"), URI.create("moved.txt"), ObjectStore.OutputOption.CREATE_NEW);
             assertEquals("hello orig", defaultStore.readString(URI.create("moved.txt")));
-            assertTrue(defaultStore.getInfo(URI.create("copied.txt")).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, defaultStore.getInfo(URI.create("copied.txt")).type());
 
             // Test default deleteRecursively on DATA
             defaultStore.deleteRecursively(URI.create("moved.txt"));
-            assertTrue(defaultStore.getInfo(URI.create("moved.txt")).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, defaultStore.getInfo(URI.create("moved.txt")).type());
 
             // Test default deleteRecursively on FOLDER
             defaultStore.createFolder(URI.create("tree/nested"));
             defaultStore.writeString(URI.create("tree/nested/leaf.txt"), "leaf");
             defaultStore.writeString(URI.create("tree/root_leaf.txt"), "root_leaf");
             defaultStore.deleteRecursively(URI.create("tree"));
-            assertTrue(defaultStore.getInfo(URI.create("tree/nested/leaf.txt")).isEmpty());
-            assertTrue(defaultStore.getInfo(URI.create("tree/root_leaf.txt")).isEmpty());
+            assertSame(ObjectStore.ObjectType.MISSING, defaultStore.getInfo(URI.create("tree/nested/leaf.txt")).type());
+            assertSame(ObjectStore.ObjectType.MISSING, defaultStore.getInfo(URI.create("tree/root_leaf.txt")).type());
 
             // Test default deleteRecursively on missing throws ObjectNotFoundException
             org.junit.jupiter.api.Assertions.assertThrows(ObjectNotFoundException.class, () -> defaultStore.deleteRecursively(URI.create("missing")));
@@ -186,7 +188,7 @@ class ObjectStoresTest {
             @Override public URI getRoot() { return URI.create("file:///tmp/"); }
             @Override public java.util.stream.Stream<ObjectInfo> list(URI path) { return java.util.stream.Stream.empty(); }
             @Override public java.io.InputStream openInputStream(URI path) { return new java.io.ByteArrayInputStream(new byte[0]); }
-            @Override public java.util.Optional<ObjectInfo> getInfo(URI path) { return java.util.Optional.empty(); }
+            @Override public ObjectInfo getInfo(URI path) { return new ObjectStore.ObjectInfo(URI.create(""), ObjectStore.ObjectType.DATA, ObjectStore.ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN); }
             @Override public java.nio.channels.ReadableByteChannel openReadableByteChannel(URI path) { throw new UnsupportedOperationException(); }
             @Override public long write(URI path, java.io.InputStream in, OutputOption... options) { throw new UnsupportedOperationException(); }
             @Override public long write(URI path, byte[] data, int from, int to, OutputOption... options) { throw new UnsupportedOperationException(); }
@@ -208,7 +210,7 @@ class ObjectStoresTest {
             @Override public URI getRoot() { return URI.create("file:///tmp/"); }
             @Override public java.util.stream.Stream<ObjectInfo> list(URI path) { return java.util.stream.Stream.empty(); }
             @Override public java.io.InputStream openInputStream(URI path) { return new java.io.ByteArrayInputStream(new byte[0]); }
-            @Override public java.util.Optional<ObjectInfo> getInfo(URI path) { return java.util.Optional.empty(); }
+            @Override public ObjectInfo getInfo(URI path) { return new ObjectStore.ObjectInfo(URI.create(""), ObjectStore.ObjectType.DATA, ObjectStore.ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN); }
             @Override public java.nio.channels.ReadableByteChannel openReadableByteChannel(URI path) { throw new UnsupportedOperationException(); }
             @Override public long write(URI path, java.io.InputStream in, OutputOption... options) { throw new UnsupportedOperationException(); }
             @Override public long write(URI path, byte[] data, int from, int to, OutputOption... options) { throw new UnsupportedOperationException(); }

@@ -4,6 +4,7 @@ import com.dua3.utility.io.AbsolutePathException;
 import com.dua3.utility.io.FolderNotEmptyException;
 import com.dua3.utility.io.IllegalPathException;
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.io.NotADataObjectException;
 import com.dua3.utility.io.NotAFolderException;
 import com.dua3.utility.io.ObjectExistsException;
 import com.dua3.utility.io.ObjectNotFoundException;
@@ -11,10 +12,11 @@ import com.dua3.utility.io.ObjectStore;
 import com.dua3.utility.io.ReadableObjectStore;
 import com.dua3.utility.io.WritableObjectStore;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.WrappedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.Nullable;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,7 +26,10 @@ import java.net.URISyntaxException;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
@@ -32,9 +37,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -186,11 +191,11 @@ public final class FileObjectStore implements ObjectStore {
     public Stream<ObjectInfo> list(URI path) throws IOException {
         assertReadable();
         try {
-            return Files.list(resolveRegularFolder(path))
+            return Files.list(resolveRegularFolder(path, false))
                     .sorted(Comparator.comparing(Path::getFileName, Comparator.comparing(Path::toString)))
-                    .map(this::toObjectInfoUnchecked);
-        } catch (UncheckedIOException e) {
-            throw e.getCause();
+                    .map(this::getObjectInfoUnchecked);
+        } catch (Exception e) {
+            throw mapException(e);
         }
     }
 
@@ -198,11 +203,15 @@ public final class FileObjectStore implements ObjectStore {
     public long write(URI path, InputStream in, OutputOption... options) throws IOException {
         assertWritable();
 
-        Path resolved = resolve(path);
-        StandardCopyOption[] copyOptions = getCopyOptions(options, resolved);
+        try {
+            Path resolved = resolve(path);
+            StandardCopyOption[] copyOptions = getCopyOptions(options);
 
-        createParent(resolved);
-        return Files.copy(in, resolved, copyOptions);
+            createParent(resolved);
+            return Files.copy(in, resolved, copyOptions);
+        } catch (Exception e) {
+            throw mapException(e);
+        }
     }
 
     @Override
@@ -225,15 +234,19 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException If an I/O error occurs during the copy operation.
      */
     public void copyTo(FileObjectStore targetStore, URI source, URI target, OutputOption... options) throws IOException {
-        assertReadable();
-        Path sourcePath = resolveRegularData(source);
+        try {
+            assertReadable();
+            Path sourcePath = resolveRegularData(source, false);
 
-        targetStore.assertWritable();
-        Path targetPath = targetStore.resolve(target);
-        StandardCopyOption[] copyOptions = targetStore.getCopyOptions(options, targetPath);
+            targetStore.assertWritable();
+            Path targetPath = targetStore.resolve(target);
+            StandardCopyOption[] copyOptions = getCopyOptions(options);
 
-        createParent(targetPath);
-        Files.copy(sourcePath, targetPath, copyOptions);
+            createParent(targetPath);
+            Files.copy(sourcePath, targetPath, copyOptions);
+        } catch (Exception e) {
+            throw mapException(e);
+        }
     }
 
     /**
@@ -246,15 +259,35 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException If an I/O error occurs during the move operation.
      */
     public void moveTo(FileObjectStore targetStore, URI source, URI target, OutputOption... options) throws IOException {
-        assertReadable();
-        Path sourcePath = resolveRegularData(source);
+        try {
+            assertReadable();
+            Path sourcePath = resolveRegularData(source, false);
 
-        targetStore.assertWritable();
-        Path targetPath = targetStore.resolve(target);
-        StandardCopyOption[] copyOptions = targetStore.getCopyOptions(options, targetPath);
+            targetStore.assertWritable();
+            Path targetPath = targetStore.resolve(target);
+            StandardCopyOption[] copyOptions = FileObjectStore.getCopyOptions(options);
 
-        createParent(targetPath);
-        Files.move(sourcePath, targetPath, copyOptions);
+            createParent(targetPath);
+            Files.move(sourcePath, targetPath, copyOptions);
+        } catch (Exception e) {
+            throw mapException(e);
+        }
+    }
+
+    @SuppressWarnings("java:S6916")
+    private Path resolveRegularData(URI path, boolean allowUnknown) throws IOException {
+        Path sourcePath = resolve(path);
+        switch (getObjectInfo(sourcePath).type()) {
+            case MISSING -> throw new ObjectNotFoundException("Source file does not exist: " + path);
+            case FOLDER -> throw new NotADataObjectException("Not a data object: " + path);
+            case DATA -> {/* ignore */}
+            case UNKNOWN -> {
+                if (!allowUnknown) {
+                    throw new UnsupportedOperationException("cannot process object of unknown type: " + path);
+                }
+            }
+        }
+        return sourcePath;
     }
 
     @Override
@@ -267,6 +300,8 @@ public final class FileObjectStore implements ObjectStore {
         }
         try (OutputStream out = openOutputStream(path, options)) {
             out.write(data, from, length);
+        } catch (Exception e) {
+            throw mapException(e);
         }
         return length;
     }
@@ -274,33 +309,8 @@ public final class FileObjectStore implements ObjectStore {
     @Override
     public InputStream openInputStream(URI path) throws IOException {
         assertReadable();
-        return Files.newInputStream(resolveRegularData(path), StandardOpenOption.READ);
-    }
-
-    /**
-     * Resolves the given URI to a {@code Path} and ensures it corresponds to a regular data object.
-     *
-     * @param path the URI to be resolved; must not refer to a symbolic link or be non-existent
-     * @return the resolved {@code Path} that validates as a regular file
-     * @throws IOException if an I/O error occurs during resolution or validation
-     */
-    @SuppressWarnings("OverlyBroadThrowsClause")
-    private Path resolveRegularData(URI path) throws IOException {
-        Path resolved = resolve(path);
-
-        try {
-            BasicFileAttributes attrs = Files.readAttributes(resolved, BasicFileAttributes.class);
-            if (attrs.isSymbolicLink()) {
-                throw new IOException("File is a symbolic link: " + path);
-            }
-            if (!attrs.isRegularFile()) {
-                throw new IOException("Not a data object: " + path);
-            }
-        } catch (NoSuchFileException e) {
-            throw new ObjectNotFoundException(path.toString());
-        }
-
-        return resolved;
+        Path resolved = resolveRegularData(path, true);
+        return Files.newInputStream(resolved, StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS);
     }
 
     /**
@@ -310,34 +320,35 @@ public final class FileObjectStore implements ObjectStore {
      * @return the resolved {@code Path} that validates as a regular folder
      * @throws IOException if an I/O error occurs during resolution or validation
      */
-    @SuppressWarnings("OverlyBroadThrowsClause")
-    private Path resolveRegularFolder(URI path) throws IOException {
+    @SuppressWarnings({"OverlyBroadThrowsClause", "java:S6916"})
+    private Path resolveRegularFolder(URI path, boolean allowUnknownType) throws IOException {
         Path resolved = resolve(path);
-
-        try {
-            BasicFileAttributes attrs = Files.readAttributes(resolved, BasicFileAttributes.class);
-            if (attrs.isSymbolicLink()) {
-                throw new IOException("File is a symbolic link: " + path);
+        switch (getObjectInfo(resolved).type()) {
+            case FOLDER -> {/* ignore */}
+            case DATA -> throw new NotAFolderException(path.toString());
+            case MISSING -> throw new ObjectNotFoundException(path.toString());
+            case UNKNOWN -> {
+                if (!allowUnknownType) {
+                    throw new UnsupportedOperationException("cannot operate on object of unknown type: " + path);
+                }
             }
-            if (!attrs.isDirectory()) {
-                throw new IOException("Not a folder object: " + path);
-            }
-        } catch (NoSuchFileException e) {
-            throw new ObjectNotFoundException(path.toString());
         }
-
         return resolved;
     }
 
     @Override
     public OutputStream openOutputStream(URI path, OutputOption... options) throws IOException {
-        assertWritable();
+        try {
+            assertWritable();
 
-        Path resolved = resolve(path);
-        OpenOption[] soo = getOpenOptions(options, resolved);
+            Path resolved = resolve(path);
+            OpenOption[] soo = getOpenOptions(options);
 
-        createParent(resolved);
-        return Files.newOutputStream(resolved, soo);
+            createParent(resolved);
+            return Files.newOutputStream(resolved, soo);
+        } catch (Exception e) {
+            throw mapException(e);
+        }
     }
 
     /**
@@ -346,35 +357,37 @@ public final class FileObjectStore implements ObjectStore {
      * the resolved file path is writable and then sets the required open options accordingly.
      *
      * @param options an array of OutputOption that specifies the desired file write behavior
-     * @param resolved the Path of the file for which the open options are being determined
      * @return an array of OpenOption elements that specify how the file should be opened
-     * @throws IOException if an I/O error occurs or if the file cannot be written to
      */
-    private OpenOption[] getOpenOptions(OutputOption[] options, Path resolved) throws IOException {
-        OutputOption effectiveOption = ensureCanWrite(resolved, options);
+    private static OpenOption[] getOpenOptions(OutputOption[] options) {
+        OutputOption effectiveOption = getWriteOption(options);
         return effectiveOption == OutputOption.CREATE_OR_REPLACE
                 ? new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING}
                 : new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW};
     }
 
-    private StandardCopyOption[] getCopyOptions(OutputOption[] options, Path resolved) throws IOException {
-        OutputOption effectiveOption = ensureCanWrite(resolved, options);
+    /**
+     * Determines the standard copy options based on the provided output options.
+     *
+     * @param options an array of output options that determine how the file should be written.
+     * @return an array of StandardCopyOption where StandardCopyOption.REPLACE_EXISTING is included if
+     *         OutputOption.CREATE_OR_REPLACE is set in the provided options; otherwise, an empty array is returned.
+     */
+    private static StandardCopyOption[] getCopyOptions(OutputOption[] options) {
+        OutputOption effectiveOption = getWriteOption(options);
         return effectiveOption == OutputOption.CREATE_OR_REPLACE
                 ? new StandardCopyOption[]{StandardCopyOption.REPLACE_EXISTING}
                 : EMPTY_STANDARD_COPY_OPTIONS;
     }
 
-    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public void createFolder(URI path) throws IOException {
         assertWritable();
-
-        Path resolved = resolve(path);
-        ObjectInfo oi = toObjectInfo(resolved);
-        if (oi != null && oi.type() != ObjectType.FOLDER) {
-            throw new NotAFolderException(path.toString());
+        try {
+            Files.createDirectories(resolve(path));
+        } catch (Exception e) {
+            throw mapException(e);
         }
-        Files.createDirectories(resolved);
     }
 
     @Override
@@ -382,7 +395,7 @@ public final class FileObjectStore implements ObjectStore {
         assertWritable();
 
         Path resolved = resolve(path);
-        OpenOption[] soo = getOpenOptions(options, resolved);
+        OpenOption[] soo = getOpenOptions(options);
 
         createParent(resolved);
 
@@ -394,52 +407,39 @@ public final class FileObjectStore implements ObjectStore {
     public void removeFolder(URI path) throws IOException {
         assertWritable();
         try {
-            Files.delete(resolveRegularFolder(path));
-        } catch (DirectoryNotEmptyException e) {
-            throw new FolderNotEmptyException(path.toString(), e);
+            Files.delete(resolveRegularFolder(path, false));
+        } catch (Exception e) {
+            throw mapException(e);
         }
     }
 
     @Override
-    public Optional<ObjectInfo> getInfo(URI path) throws IOException {
+    public ObjectInfo getInfo(URI path) throws IOException {
         assertReadable();
-        return Optional.ofNullable(toObjectInfo(resolve(path)));
+        return getObjectInfo(resolve(path));
     }
 
     @Override
     public SeekableByteChannel openReadableByteChannel(URI path) throws IOException {
         assertReadable();
-        return Files.newByteChannel(resolveRegularData(path), StandardOpenOption.READ);
+        return Files.newByteChannel(resolveRegularData(path, true), StandardOpenOption.READ);
     }
 
     @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public void delete(URI path) throws IOException {
         assertWritable();
-
-        ObjectInfo oi = toObjectInfo(resolve(path));
-        if (oi == null) {
-            throw new ObjectNotFoundException(path.toString());
-        }
         try {
             Files.delete(resolve(path));
-        } catch (NoSuchFileException e) {
-            throw new ObjectNotFoundException(path.toString(), e);
+        } catch (Exception e) {
+            throw mapException(e);
         }
     }
 
-    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public void deleteRecursively(URI path) throws IOException {
         assertWritable();
-
-        Path resolved = resolve(path);
-        ObjectInfo oi = toObjectInfo(resolved);
-        if (oi == null) {
-            throw new ObjectNotFoundException(path.toString());
-        }
-
-        try (Stream<Path> stream = Files.walk(resolved)) {
+        try (Stream<Path> stream = Files.walk(resolve(path))) {
             stream.sorted(Comparator.reverseOrder())
                     .forEach(p -> {
                         try {
@@ -448,8 +448,8 @@ public final class FileObjectStore implements ObjectStore {
                             throw new UncheckedIOException(e);
                         }
                     });
-        } catch (UncheckedIOException e) {
-            throw e.getCause();
+        } catch (Exception e) {
+            throw mapException(e);
         }
     }
 
@@ -500,79 +500,74 @@ public final class FileObjectStore implements ObjectStore {
     }
 
     /**
-     * Ensures that the specified path is suitable for writing operations, taking into account
-     * the provided output options. This method checks for the existence and type of the file
-     * at the specified path and throws exceptions if writing is not allowed.
+     * Determines the write option from the provided array of {@link OutputOption} values.
+     * If no options are provided, it defaults to {@link OutputOption#CREATE_NEW}.
+     * If a single option is provided, it returns that option.
+     * If multiple options are provided, an exception is thrown due to incompatibility.
      *
-     * @param path    the path to the file or directory to be checked for write operations; must not be null
-     * @param options output options specifying the desired behavior for file creation or replacement
-     * @return the effective output option to be used for writing operations
-     *
-     * @throws IllegalArgumentException if multiple incompatible output options are specified
-     * @throws IOException           if the specified path is a directory or another I/O error occurs
-     * @throws ObjectExistsException if the specified path exists and the output option is {@code OutputOption.CREATE_NEW}
-     *
+     * @param options an array of {@link OutputOption} values to select the write option from
+     * @return the chosen {@link OutputOption}, which is {@link OutputOption#CREATE_NEW} if no options are provided,
+     *         or the single provided option if only one is specified
+     * @throws IllegalArgumentException if multiple options are provided, indicating incompatible choices
      */
-    @SuppressWarnings("OverlyBroadThrowsClause")
-    private OutputOption ensureCanWrite(Path path, OutputOption... options) throws IOException {
+    private static OutputOption getWriteOption(OutputOption... options) {
         Set<OutputOption> optionSet = Set.of(options);
-        OutputOption outputOption = switch (optionSet.size()) {
+        return switch (optionSet.size()) {
             case 0 -> OutputOption.CREATE_NEW;
             case 1 -> optionSet.iterator().next();
             default -> throw new IllegalArgumentException("Multiple incompatible output options specified: " + Arrays.toString(options));
         };
-
-        ObjectInfo oi = toObjectInfo(path);
-        if (oi != null) {
-            if (outputOption == OutputOption.CREATE_NEW) {
-                throw new ObjectExistsException(path.toString());
-            }
-            if (oi.type() == ObjectType.FOLDER) {
-                throw new IOException("Cannot write data directly to folder: " + path);
-            }
-        }
-
-        return outputOption;
     }
 
     /**
-     * Converts the specified path into an {@link ObjectInfo}, extracting metadata
-     * such as creation time, last modified time, size, type, and relative URI.
+     * Retrieves information about a file system object located at the specified path.
      *
-     * @param path the {@link Path} representing the file or directory; must not be null
-     * @return an {@link ObjectInfo} containing the metadata of the specified path,
-     *         or {@code null}, if the object does not exist
-     * @throws IOException if an I/O error occurs while reading file attributes or the file is a symbolic link
+     * @param path the path of the file system object for which information is to be retrieved
+     * @return an ObjectInfo containing details about the file system object, or null if the object does not exist
+     * @throws IOException if there is an error accessing the file system object or if the path is a symbolic link
      */
-    private @Nullable ObjectInfo toObjectInfo(Path path) throws IOException {
-        BasicFileAttributes attributes;
-        try {
-            attributes = Files.readAttributes(path, BasicFileAttributes.class);
-        } catch (NoSuchFileException e) {
-            return null;
-        }
-
-        if (attributes.isSymbolicLink()) {
-            throw new IOException("Path points to a symbolic link: " + path);
-        }
-
+    private ObjectInfo getObjectInfo(Path path) throws IOException {
         Path relativePath = getRootPath().relativize(path);
         String normalized = IoUtil.toUnixPath(relativePath);
-        if (attributes.isDirectory() && !normalized.isEmpty() && !normalized.endsWith("/")) {
+
+        ObjectType objectType = ObjectType.UNKNOWN;
+        long size = ObjectInfo.UNKNOWN_SIZE;
+        Instant created = Instant.MIN;
+        Instant modified = Instant.MIN;
+        try {
+            BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+            if (attributes.isSymbolicLink()) {
+                throw new IOException("Path points to a symbolic link: " + path);
+            }
+            objectType = attributes.isDirectory() ? ObjectType.FOLDER : ObjectType.DATA;
+            size = attributes.size();
+            created = attributes.creationTime().toInstant();
+            modified = attributes.lastModifiedTime().toInstant();
+            LOG.debug("read attribute for path path: {}", path);
+        } catch (NoSuchFileException ignored) {
+            LOG.debug("missing object with path: {}", path);
+            objectType = ObjectType.MISSING;
+        } catch (FileSystemException e) {
+            LOG.warn("could not read file attributes for path: {}", path, e);
+        }
+
+        if (objectType == ObjectType.FOLDER && !normalized.isEmpty() && !normalized.endsWith("/")) {
             normalized += "/";
         }
+
         URI uri;
         try {
             uri = new URI(null, null, normalized, null);
         } catch (URISyntaxException e) {
             throw new IOException("could not create URI for path: " + normalized, e);
         }
+
         return new ObjectInfo(
                 uri,
-                attributes.isDirectory() ? ObjectType.FOLDER : ObjectType.DATA,
-                attributes.isDirectory() ? ObjectInfo.UNKNOWN_SIZE : attributes.size(),
-                attributes.creationTime().toInstant(),
-                attributes.lastModifiedTime().toInstant()
+                objectType,
+                size,
+                created,
+                modified
         );
     }
 
@@ -585,13 +580,9 @@ public final class FileObjectStore implements ObjectStore {
      * @return an {@link ObjectInfo} containing the metadata of the specified path
      * @throws UncheckedIOException if an I/O error occurs while reading file attributes
      */
-    private ObjectInfo toObjectInfoUnchecked(Path path) throws UncheckedIOException {
+    private ObjectInfo getObjectInfoUnchecked(Path path) throws UncheckedIOException {
         try {
-            ObjectInfo objectInfo = toObjectInfo(path);
-            if (objectInfo == null) {
-                throw new UncheckedIOException(new ObjectNotFoundException(path.toString()));
-            }
-            return objectInfo;
+            return getObjectInfo(path);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -619,5 +610,19 @@ public final class FileObjectStore implements ObjectStore {
         } catch (UncheckedIOException e) {
             throw e.getCause();
         }
+    }
+
+    private static IOException mapException(Exception e) throws IOException {
+        return switch (e) {
+            case NoSuchFileException e1-> new ObjectNotFoundException(e1);
+            case FileNotFoundException e1-> new ObjectNotFoundException(e1);
+            case FileAlreadyExistsException e1-> new ObjectExistsException(e1);
+            case DirectoryNotEmptyException e1 -> new FolderNotEmptyException(e1);
+            case IOException e1-> e1;
+            case UncheckedIOException e1-> mapException(e1.getCause());
+            case WrappedException e1 -> mapException(e1.getCause());
+            case RuntimeException e1 -> throw e1;
+            default -> throw new WrappedException(e);
+        };
     }
 }

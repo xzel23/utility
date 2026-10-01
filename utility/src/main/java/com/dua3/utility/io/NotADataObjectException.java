@@ -3,34 +3,34 @@ package com.dua3.utility.io;
 import java.io.IOException;
 
 /**
- * Signals that an object is not a folder.
+ * Signals that an object is not a data object.
  */
-public class NotAFolderException extends IOException {
+public class NotADataObjectException extends IOException {
     /**
-     * Constructs a new {@code NotAFolderException} with the specified detail message.
+     * Constructs a new {@code NotADataObjectException} with the specified detail message.
      *
      * @param message the detail message providing information about the exception
      */
-    public NotAFolderException(String message) {
+    public NotADataObjectException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new {@code NotAFolderException} with the specified detail message and cause.
+     * Constructs a new {@code NotADataObjectException}  with the specified detail message and cause.
      *
      * @param message the detail message explaining why the exception was thrown
      * @param cause   the underlying cause of the exception, or null if not available
      */
-    public NotAFolderException(String message, Throwable cause) {
+    public NotADataObjectException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * Constructs a new {@code NotAFolderException} with the specified cause.
+     * Constructs a new {@code NotADataObjectException}  with the specified cause.
      *
      * @param cause the cause of this exception, which is saved for later retrieval by the {@link Throwable#getCause()} method
      */
-    public NotAFolderException(Throwable cause) {
+    public NotADataObjectException(Throwable cause) {
         super(cause);
     }
 }

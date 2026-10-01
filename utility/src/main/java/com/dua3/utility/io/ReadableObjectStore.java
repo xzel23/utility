@@ -104,7 +104,7 @@ public interface ReadableObjectStore extends AutoCloseable {
         GlobAdapter<URI> adapter = new GlobAdapter<>(
                 "/",
                 ReadableObjectStore::resolveGlobPath,
-                uri -> getInfo(uri).isPresent(),
+                uri -> getInfo(uri).type() != ObjectStore.ObjectType.MISSING,
                 uri -> walk(uri).map(ObjectStore.ObjectInfo::uri),
                 ReadableObjectStore::uriGlobMatcher,
                 (ignored, uri) -> uri
@@ -206,7 +206,7 @@ public interface ReadableObjectStore extends AutoCloseable {
      * @throws IllegalPathException if the path points outside the root of the storage
      * @throws IOException if an I/O error occurs while attempting to retrieve the object info.
      */
-    Optional<ObjectStore.ObjectInfo> getInfo(URI path) throws IOException;
+    ObjectStore.ObjectInfo getInfo(URI path) throws IOException;
 
     /**
      * Traverses a directory structure starting at the given path and returns a stream of ObjectInfo instances
@@ -250,12 +250,12 @@ public interface ReadableObjectStore extends AutoCloseable {
 
         Deque<Node> stack = new ArrayDeque<>();
 
-        Optional<ObjectStore.ObjectInfo> root = getInfo(start);
-        if (root.isEmpty()) {
+        ObjectStore.ObjectInfo root = getInfo(start);
+        if (root.type() == ObjectStore.ObjectType.MISSING) {
             throw new ObjectNotFoundException("object does not exist in the object store: " + start);
         }
 
-        stack.push(new Node(root.get(), 0));
+        stack.push(new Node(root, 0));
 
         Iterator<ObjectStore.ObjectInfo> iterator = new Iterator<>() {
             @Override
@@ -286,10 +286,14 @@ public interface ReadableObjectStore extends AutoCloseable {
             }
         };
 
-        return StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(iterator, Spliterator.NONNULL),
-                false
-        );
+        try {
+            return StreamSupport.stream(
+                    Spliterators.spliteratorUnknownSize(iterator, Spliterator.NONNULL),
+                    false
+            );
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 
     /**
