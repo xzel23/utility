@@ -87,6 +87,7 @@ public class DbObjectStore implements ObjectStore {
     private final Connection connection;
     private final String tableName;
     private final AccessMode accessMode;
+    private final Object lock = new Object();
     private volatile boolean closed = false;
 
     private final PreparedStatement stmtFindRoot;
@@ -359,6 +360,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused")
     public static DbObjectStore newObjectStore(URI root, DataSource dataSource, String tableName) throws IOException {
         return new DbObjectStore(root, dataSource::getConnection, tableName, AccessMode.READ_AND_WRITE);
     }
@@ -596,161 +598,171 @@ public class DbObjectStore implements ObjectStore {
     }
 
     @Override
-    public synchronized void createFolder(URI path) throws IOException {
-        assertWritable();
-        String normalizedPath = resolvePath(path);
-        if (normalizedPath.isEmpty()) {
-            return;
-        }
-
-        boolean origAutoCommit = false;
-        try {
-            origAutoCommit = connection.getAutoCommit();
-            connection.setAutoCommit(false);
-            try {
-                String parentPath = getParentPath(normalizedPath);
-                DbNode parent = ensureParentFoldersExist(parentPath);
-                String name = getFileName(normalizedPath);
-                DbNode existing = findChild(parent.id(), name);
-                if (existing != null) {
-                    if (existing.type() != ObjectType.FOLDER) {
-                        throw new NotAFolderException("Path is not a folder: " + path);
-                    }
-                } else {
-                    long newId = getNextId();
-                    Timestamp now = Timestamp.from(Instant.now());
-                    stmtInsertFolder.setLong(1, newId);
-                    stmtInsertFolder.setLong(2, parent.id());
-                    stmtInsertFolder.setString(3, name);
-                    stmtInsertFolder.setTimestamp(4, now);
-                    stmtInsertFolder.setTimestamp(5, now);
-                    stmtInsertFolder.executeUpdate();
-                }
-                connection.commit();
-            } catch (Exception e) {
-                connection.rollback();
-                if (e instanceof IOException ioe) throw ioe;
-                if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
-                throw new IOException(e);
-            } finally {
-                connection.setAutoCommit(origAutoCommit);
+    public void createFolder(URI path) throws IOException {
+        synchronized (lock) {
+            assertWritable();
+            String normalizedPath = resolvePath(path);
+            if (normalizedPath.isEmpty()) {
+                return;
             }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
+
+            boolean origAutoCommit = false;
+            try {
+                origAutoCommit = connection.getAutoCommit();
+                connection.setAutoCommit(false);
+                try {
+                    String parentPath = getParentPath(normalizedPath);
+                    DbNode parent = ensureParentFoldersExist(parentPath);
+                    String name = getFileName(normalizedPath);
+                    DbNode existing = findChild(parent.id(), name);
+                    if (existing != null) {
+                        if (existing.type() != ObjectType.FOLDER) {
+                            throw new NotAFolderException("Path is not a folder: " + path);
+                        }
+                    } else {
+                        long newId = getNextId();
+                        Timestamp now = Timestamp.from(Instant.now());
+                        stmtInsertFolder.setLong(1, newId);
+                        stmtInsertFolder.setLong(2, parent.id());
+                        stmtInsertFolder.setString(3, name);
+                        stmtInsertFolder.setTimestamp(4, now);
+                        stmtInsertFolder.setTimestamp(5, now);
+                        stmtInsertFolder.executeUpdate();
+                    }
+                    connection.commit();
+                } catch (Exception e) {
+                    connection.rollback();
+                    if (e instanceof IOException ioe) throw ioe;
+                    if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
+                    throw new IOException(e);
+                } finally {
+                    connection.setAutoCommit(origAutoCommit);
+                }
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
+            }
         }
     }
 
     @Override
-    public synchronized void removeFolder(URI path) throws IOException {
-        assertWritable();
-        String normalizedPath = resolvePath(path);
+    public void removeFolder(URI path) throws IOException {
+        synchronized (lock) {
+            assertWritable();
+            String normalizedPath = resolvePath(path);
 
-        boolean origAutoCommit = false;
-        try {
-            origAutoCommit = connection.getAutoCommit();
-            connection.setAutoCommit(false);
+            boolean origAutoCommit = false;
             try {
-                DbNode target = findNode(normalizedPath);
-                if (target == null) {
-                    throw new ObjectNotFoundException("Object not found: " + path);
-                }
-                if (target.type() != ObjectType.FOLDER) {
-                    throw new NotAFolderException("Not a folder: " + path);
-                }
-                if (target.parentId() == null) {
+                origAutoCommit = connection.getAutoCommit();
+                connection.setAutoCommit(false);
+                try {
+                    DbNode target = findNode(normalizedPath);
+                    if (target == null) {
+                        throw new ObjectNotFoundException("Object not found: " + path);
+                    }
+                    if (target.type() != ObjectType.FOLDER) {
+                        throw new NotAFolderException("Not a folder: " + path);
+                    }
+                    if (target.parentId() == null) {
+                        if (hasChildren(target.id())) {
+                            throw new FolderNotEmptyException("Folder is not empty: " + path);
+                        }
+                        throw new IOException("Cannot remove root folder");
+                    }
+
                     if (hasChildren(target.id())) {
                         throw new FolderNotEmptyException("Folder is not empty: " + path);
                     }
-                    throw new IOException("Cannot remove root folder");
-                }
 
-                if (hasChildren(target.id())) {
-                    throw new FolderNotEmptyException("Folder is not empty: " + path);
+                    stmtDelete.setLong(1, target.id());
+                    stmtDelete.executeUpdate();
+                    connection.commit();
+                } catch (Exception e) {
+                    connection.rollback();
+                    if (e instanceof IOException ioe) throw ioe;
+                    if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
+                    throw new IOException(e);
+                } finally {
+                    connection.setAutoCommit(origAutoCommit);
                 }
-
-                stmtDelete.setLong(1, target.id());
-                stmtDelete.executeUpdate();
-                connection.commit();
-            } catch (Exception e) {
-                connection.rollback();
-                if (e instanceof IOException ioe) throw ioe;
-                if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
-                throw new IOException(e);
-            } finally {
-                connection.setAutoCommit(origAutoCommit);
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
         }
     }
 
     @Override
-    public synchronized void delete(URI path) throws IOException {
-        assertWritable();
-        String normalizedPath = resolvePath(path);
-        if (normalizedPath.isEmpty()) {
-            throw new IllegalArgumentException("Cannot delete root");
-        }
-
-        boolean origAutoCommit = false;
-        try {
-            origAutoCommit = connection.getAutoCommit();
-            connection.setAutoCommit(false);
-            try {
-                DbNode target = findNode(normalizedPath);
-                if (target == null) {
-                    throw new ObjectNotFoundException("Object not found: " + path);
-                }
-                if (target.type() == ObjectType.FOLDER && hasChildren(target.id())) {
-                    throw new FolderNotEmptyException("Folder is not empty: " + path);
-                }
-
-                stmtDelete.setLong(1, target.id());
-                stmtDelete.executeUpdate();
-                connection.commit();
-            } catch (Exception e) {
-                connection.rollback();
-                if (e instanceof IOException ioe) throw ioe;
-                if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
-                throw new IOException(e);
-            } finally {
-                connection.setAutoCommit(origAutoCommit);
+    public void delete(URI path) throws IOException {
+        synchronized (lock) {
+            assertWritable();
+            String normalizedPath = resolvePath(path);
+            if (normalizedPath.isEmpty()) {
+                throw new IllegalArgumentException("Cannot delete root");
             }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
+
+            boolean origAutoCommit = false;
+            try {
+                origAutoCommit = connection.getAutoCommit();
+                connection.setAutoCommit(false);
+                try {
+                    DbNode target = findNode(normalizedPath);
+                    if (target == null) {
+                        throw new ObjectNotFoundException("Object not found: " + path);
+                    }
+                    if (target.type() == ObjectType.FOLDER && hasChildren(target.id())) {
+                        throw new FolderNotEmptyException("Folder is not empty: " + path);
+                    }
+
+                    stmtDelete.setLong(1, target.id());
+                    stmtDelete.executeUpdate();
+                    connection.commit();
+                } catch (Exception e) {
+                    connection.rollback();
+                    if (e instanceof IOException ioe) throw ioe;
+                    if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
+                    throw new IOException(e);
+                } finally {
+                    connection.setAutoCommit(origAutoCommit);
+                }
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
+            }
         }
     }
 
     @Override
-    public synchronized void deleteRecursively(URI path) throws IOException {
-        assertWritable();
-        String normalizedPath = resolvePath(path);
+    public void deleteRecursively(URI path) throws IOException {
+        synchronized (lock) {
+            assertWritable();
+            String normalizedPath = resolvePath(path);
 
-        boolean origAutoCommit = false;
-        try {
-            origAutoCommit = connection.getAutoCommit();
-            connection.setAutoCommit(false);
+            boolean origAutoCommit = false;
             try {
-                DbNode target = findNode(normalizedPath);
-                if (target == null) {
-                    throw new ObjectNotFoundException("Object not found: " + path);
+                origAutoCommit = connection.getAutoCommit();
+                connection.setAutoCommit(false);
+                try {
+                    DbNode target = findNode(normalizedPath);
+                    if (target == null) {
+                        throw new ObjectNotFoundException("Object not found: " + path);
+                    }
+                    if (target.parentId() == null) {
+                        deleteChildrenRecursively(target.id());
+                    } else {
+                        deleteSubtreeRecursively(target.id());
+                    }
+                    connection.commit();
+                } catch (Exception e) {
+                    connection.rollback();
+                    switch (e) {
+                        case IOException ioe -> throw ioe;
+                        case SQLException sqle -> throw new IOException(sqle.getMessage(), sqle);
+                        default -> throw new IOException(e);
+                    }
+                } finally {
+                    connection.setAutoCommit(origAutoCommit);
                 }
-                if (target.parentId() == null) {
-                    deleteChildrenRecursively(target.id());
-                } else {
-                    deleteSubtreeRecursively(target.id());
-                }
-                connection.commit();
-            } catch (Exception e) {
-                connection.rollback();
-                if (e instanceof IOException ioe) throw ioe;
-                if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
-                throw new IOException(e);
-            } finally {
-                connection.setAutoCommit(origAutoCommit);
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -794,157 +806,165 @@ public class DbObjectStore implements ObjectStore {
     }
 
     @Override
-    public synchronized long write(URI path, byte[] data, OutputOption... options) throws IOException {
-        assertWritable();
-        String normalizedPath = resolvePath(path);
-        if (normalizedPath.isEmpty()) {
-            throw new NotADataObjectException("Cannot write to root path");
-        }
-        OutputOption option = getWriteOption(options);
+    public long write(URI path, byte[] data, OutputOption... options) throws IOException {
+        synchronized (lock) {
+            assertWritable();
+            String normalizedPath = resolvePath(path);
+            if (normalizedPath.isEmpty()) {
+                throw new NotADataObjectException("Cannot write to root path");
+            }
+            OutputOption option = getWriteOption(options);
 
-        boolean origAutoCommit = false;
-        try {
-            origAutoCommit = connection.getAutoCommit();
-            connection.setAutoCommit(false);
+            boolean origAutoCommit = false;
             try {
-                String parentPath = getParentPath(normalizedPath);
-                DbNode parent = ensureParentFoldersExist(parentPath);
-                String name = getFileName(normalizedPath);
-                DbNode existing = findChild(parent.id(), name);
-                Timestamp now = Timestamp.from(Instant.now());
+                origAutoCommit = connection.getAutoCommit();
+                connection.setAutoCommit(false);
+                try {
+                    String parentPath = getParentPath(normalizedPath);
+                    DbNode parent = ensureParentFoldersExist(parentPath);
+                    String name = getFileName(normalizedPath);
+                    DbNode existing = findChild(parent.id(), name);
+                    Timestamp now = Timestamp.from(Instant.now());
 
-                if (existing != null) {
-                    if (existing.type() == ObjectType.FOLDER) {
+                    if (existing != null) {
+                        if (existing.type() == ObjectType.FOLDER) {
+                            throw new NotADataObjectException("Path is a folder: " + path);
+                        }
+                        if (option == OutputOption.CREATE_NEW) {
+                            throw new ObjectExistsException("Object already exists: " + path);
+                        }
+                        stmtUpdateData.setLong(1, data.length);
+                        stmtUpdateData.setTimestamp(2, now);
+                        stmtUpdateData.setBytes(3, data);
+                        stmtUpdateData.setLong(4, existing.id());
+                        stmtUpdateData.executeUpdate();
+                    } else {
+                        long newId = getNextId();
+                        stmtInsertData.setLong(1, newId);
+                        stmtInsertData.setLong(2, parent.id());
+                        stmtInsertData.setString(3, name);
+                        stmtInsertData.setLong(4, data.length);
+                        stmtInsertData.setTimestamp(5, now);
+                        stmtInsertData.setTimestamp(6, now);
+                        stmtInsertData.setBytes(7, data);
+                        stmtInsertData.executeUpdate();
+                    }
+                    connection.commit();
+                    return data.length;
+                } catch (Exception e) {
+                    connection.rollback();
+                    if (e instanceof IOException ioe) throw ioe;
+                    if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
+                    throw new IOException(e);
+                } finally {
+                    connection.setAutoCommit(origAutoCommit);
+                }
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    public OutputStream openOutputStream(URI path, OutputOption... options) throws IOException {
+        synchronized (lock) {
+            assertWritable();
+            String normalizedPath = resolvePath(path);
+            if (normalizedPath.isEmpty()) {
+                throw new NotADataObjectException("Cannot write to root path");
+            }
+            OutputOption option = getWriteOption(options);
+
+            try {
+                DbNode target = findNode(normalizedPath);
+                if (target != null) {
+                    if (target.type() == ObjectType.FOLDER) {
                         throw new NotADataObjectException("Path is a folder: " + path);
                     }
                     if (option == OutputOption.CREATE_NEW) {
                         throw new ObjectExistsException("Object already exists: " + path);
                     }
-                    stmtUpdateData.setLong(1, data.length);
-                    stmtUpdateData.setTimestamp(2, now);
-                    stmtUpdateData.setBytes(3, data);
-                    stmtUpdateData.setLong(4, existing.id());
-                    stmtUpdateData.executeUpdate();
-                } else {
-                    long newId = getNextId();
-                    stmtInsertData.setLong(1, newId);
-                    stmtInsertData.setLong(2, parent.id());
-                    stmtInsertData.setString(3, name);
-                    stmtInsertData.setLong(4, data.length);
-                    stmtInsertData.setTimestamp(5, now);
-                    stmtInsertData.setTimestamp(6, now);
-                    stmtInsertData.setBytes(7, data);
-                    stmtInsertData.executeUpdate();
                 }
-                connection.commit();
-                return data.length;
-            } catch (Exception e) {
-                connection.rollback();
-                if (e instanceof IOException ioe) throw ioe;
-                if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
-                throw new IOException(e);
-            } finally {
-                connection.setAutoCommit(origAutoCommit);
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
+
+            return new ByteArrayOutputStream() {
+                private boolean closed = false;
+
+                @Override
+                public void close() throws IOException {
+                    if (!closed) {
+                        closed = true;
+                        byte[] data = toByteArray();
+                        DbObjectStore.this.write(path, data, option);
+                    }
+                    super.close();
+                }
+            };
         }
     }
 
     @Override
-    public synchronized OutputStream openOutputStream(URI path, OutputOption... options) throws IOException {
-        assertWritable();
-        String normalizedPath = resolvePath(path);
-        if (normalizedPath.isEmpty()) {
-            throw new NotADataObjectException("Cannot write to root path");
-        }
-        OutputOption option = getWriteOption(options);
-
-        try {
-            DbNode target = findNode(normalizedPath);
-            if (target != null) {
-                if (target.type() == ObjectType.FOLDER) {
-                    throw new NotADataObjectException("Path is a folder: " + path);
-                }
-                if (option == OutputOption.CREATE_NEW) {
-                    throw new ObjectExistsException("Object already exists: " + path);
-                }
+    public WritableByteChannel openWritableByteChannel(URI path, OutputOption... options) throws IOException {
+        synchronized (lock) {
+            assertWritable();
+            String normalizedPath = resolvePath(path);
+            if (normalizedPath.isEmpty()) {
+                throw new NotADataObjectException("Cannot write to root path");
             }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
-        }
+            OutputOption option = getWriteOption(options);
 
-        return new ByteArrayOutputStream() {
-            private boolean closed = false;
-
-            @Override
-            public void close() throws IOException {
-                if (!closed) {
-                    closed = true;
-                    byte[] data = toByteArray();
-                    DbObjectStore.this.write(path, data, option);
+            try {
+                DbNode target = findNode(normalizedPath);
+                if (target != null) {
+                    if (target.type() == ObjectType.FOLDER) {
+                        throw new NotADataObjectException("Path is a folder: " + path);
+                    }
+                    if (option == OutputOption.CREATE_NEW) {
+                        throw new ObjectExistsException("Object already exists: " + path);
+                    }
                 }
-                super.close();
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
             }
-        };
+
+            return new ByteArrayWritableByteChannel(bytes -> write(path, bytes, option));
+        }
     }
 
     @Override
-    public synchronized WritableByteChannel openWritableByteChannel(URI path, OutputOption... options) throws IOException {
-        assertWritable();
-        String normalizedPath = resolvePath(path);
-        if (normalizedPath.isEmpty()) {
-            throw new NotADataObjectException("Cannot write to root path");
-        }
-        OutputOption option = getWriteOption(options);
-
-        try {
-            DbNode target = findNode(normalizedPath);
-            if (target != null) {
-                if (target.type() == ObjectType.FOLDER) {
-                    throw new NotADataObjectException("Path is a folder: " + path);
-                }
-                if (option == OutputOption.CREATE_NEW) {
-                    throw new ObjectExistsException("Object already exists: " + path);
-                }
-            }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
-        }
-
-        return new ByteArrayWritableByteChannel(bytes -> write(path, bytes, option));
-    }
-
-    @Override
-    public synchronized void copy(URI source, URI target, OutputOption... options) throws IOException {
-        assertReadable();
-        assertWritable();
-        String srcPath = resolvePath(source);
-        if (srcPath.isEmpty()) {
-            throw new NotADataObjectException("Source is root folder");
-        }
-
+    public void copy(URI source, URI target, OutputOption... options) throws IOException {
         byte[] data;
-        try {
-            DbNode node = findNode(srcPath);
-            if (node == null) {
-                throw new ObjectNotFoundException("Source object not found: " + source);
+        synchronized (lock) {
+            assertReadable();
+            assertWritable();
+            String srcPath = resolvePath(source);
+            if (srcPath.isEmpty()) {
+                throw new NotADataObjectException("Source is root folder");
             }
-            if (node.type() != ObjectType.DATA) {
-                throw new NotADataObjectException("Source object is not a data object: " + source);
-            }
-            stmtGetData.setLong(1, node.id());
-            try (ResultSet rs = stmtGetData.executeQuery()) {
-                if (!rs.next()) {
+
+            try {
+                DbNode node = findNode(srcPath);
+                if (node == null) {
                     throw new ObjectNotFoundException("Source object not found: " + source);
                 }
-                data = rs.getBytes("data");
-                if (data == null) {
-                    data = new byte[0];
+                if (node.type() != ObjectType.DATA) {
+                    throw new NotADataObjectException("Source object is not a data object: " + source);
                 }
+                stmtGetData.setLong(1, node.id());
+                try (ResultSet rs = stmtGetData.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new ObjectNotFoundException("Source object not found: " + source);
+                    }
+                    data = rs.getBytes("data");
+                    if (data == null) {
+                        data = new byte[0];
+                    }
+                }
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
         }
 
         write(target, data, options);
@@ -957,149 +977,159 @@ public class DbObjectStore implements ObjectStore {
     }
 
     @Override
-    public synchronized InputStream openInputStream(URI path) throws IOException {
-        assertReadable();
-        String normalizedPath = resolvePath(path);
-        if (normalizedPath.isEmpty()) {
-            throw new NotADataObjectException("Path is root folder");
-        }
+    public InputStream openInputStream(URI path) throws IOException {
+        synchronized (lock) {
+            assertReadable();
+            String normalizedPath = resolvePath(path);
+            if (normalizedPath.isEmpty()) {
+                throw new NotADataObjectException("Path is root folder");
+            }
 
-        try {
-            DbNode target = findNode(normalizedPath);
-            if (target == null) {
-                throw new ObjectNotFoundException("Object not found: " + path);
-            }
-            if (target.type() != ObjectType.DATA) {
-                throw new NotADataObjectException("Not a data object: " + path);
-            }
-            stmtGetData.setLong(1, target.id());
-            try (ResultSet rs = stmtGetData.executeQuery()) {
-                if (!rs.next()) {
-                    throw new ObjectNotFoundException("Object not found: " + path);
-                }
-                byte[] bytes = rs.getBytes("data");
-                if (bytes == null) {
-                    bytes = new byte[0];
-                }
-                return new ByteArrayInputStream(bytes);
-            }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public synchronized SeekableByteChannel openReadableByteChannel(URI path) throws IOException {
-        assertReadable();
-        String normalizedPath = resolvePath(path);
-        if (normalizedPath.isEmpty()) {
-            throw new NotADataObjectException("Path is root folder");
-        }
-
-        try {
-            DbNode target = findNode(normalizedPath);
-            if (target == null) {
-                throw new ObjectNotFoundException("Object not found: " + path);
-            }
-            if (target.type() != ObjectType.DATA) {
-                throw new NotADataObjectException("Not a data object: " + path);
-            }
-            stmtGetData.setLong(1, target.id());
-            try (ResultSet rs = stmtGetData.executeQuery()) {
-                if (!rs.next()) {
-                    throw new ObjectNotFoundException("Object not found: " + path);
-                }
-                byte[] bytes = rs.getBytes("data");
-                if (bytes == null) {
-                    bytes = new byte[0];
-                }
-                return new ByteArraySeekableByteChannel(bytes);
-            }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public synchronized ObjectInfo getInfo(URI path) throws IOException {
-        assertReadable();
-        String normalizedPath = resolvePath(path);
-
-        try {
-            DbNode target;
             try {
-                target = findNode(normalizedPath);
-            } catch (NotAFolderException e) {
-                return new ObjectInfo(toUri(normalizedPath, ObjectType.MISSING), ObjectType.MISSING, ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN);
-            }
-            if (target != null) {
-                return new ObjectInfo(toUri(normalizedPath, target.type()), target.type(), target.size(), target.created(), target.lastModified());
-            } else {
-                return new ObjectInfo(toUri(normalizedPath, ObjectType.MISSING), ObjectType.MISSING, ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN);
-            }
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public synchronized Stream<ObjectInfo> list(URI path) throws IOException {
-        assertReadable();
-        String normalizedPath = resolvePath(path);
-
-        try {
-            DbNode target = findNode(normalizedPath);
-            if (target == null) {
-                throw new ObjectNotFoundException("Object not found: " + path);
-            }
-            if (target.type() != ObjectType.FOLDER) {
-                throw new NotAFolderException("Not a folder: " + path);
-            }
-
-            List<ObjectInfo> list = new ArrayList<>();
-            stmtListChildren.setLong(1, target.id());
-            try (ResultSet rs = stmtListChildren.executeQuery()) {
-                while (rs.next()) {
-                    DbNode child = readNode(rs);
-                    String childPath = normalizedPath.isEmpty() ? child.name() : (normalizedPath + '/' + child.name());
-                    list.add(new ObjectInfo(toUri(childPath, child.type()), child.type(), child.size(), child.created(), child.lastModified()));
+                DbNode target = findNode(normalizedPath);
+                if (target == null) {
+                    throw new ObjectNotFoundException("Object not found: " + path);
                 }
+                if (target.type() != ObjectType.DATA) {
+                    throw new NotADataObjectException("Not a data object: " + path);
+                }
+                stmtGetData.setLong(1, target.id());
+                try (ResultSet rs = stmtGetData.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new ObjectNotFoundException("Object not found: " + path);
+                    }
+                    byte[] bytes = rs.getBytes("data");
+                    if (bytes == null) {
+                        bytes = new byte[0];
+                    }
+                    return new ByteArrayInputStream(bytes);
+                }
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
             }
-            return list.stream();
-        } catch (SQLException e) {
-            throw new IOException(e.getMessage(), e);
         }
     }
 
     @Override
-    public synchronized void close() throws IOException {
-        if (closed) {
-            return;
-        }
-        closed = true;
-        List<Exception> exceptions = new ArrayList<>();
-        closeStatement(stmtFindRoot, exceptions);
-        closeStatement(stmtFindChild, exceptions);
-        closeStatement(stmtInsertFolder, exceptions);
-        closeStatement(stmtInsertData, exceptions);
-        closeStatement(stmtUpdateData, exceptions);
-        closeStatement(stmtDelete, exceptions);
-        closeStatement(stmtFindChildrenIds, exceptions);
-        closeStatement(stmtHasChildren, exceptions);
-        closeStatement(stmtGetData, exceptions);
-        closeStatement(stmtListChildren, exceptions);
-        closeStatement(stmtGetNextId, exceptions);
-        try {
-            if (!connection.isClosed()) {
-                connection.close();
+    public SeekableByteChannel openReadableByteChannel(URI path) throws IOException {
+        synchronized (lock) {
+            assertReadable();
+            String normalizedPath = resolvePath(path);
+            if (normalizedPath.isEmpty()) {
+                throw new NotADataObjectException("Path is root folder");
             }
-        } catch (Exception e) {
-            exceptions.add(e);
+
+            try {
+                DbNode target = findNode(normalizedPath);
+                if (target == null) {
+                    throw new ObjectNotFoundException("Object not found: " + path);
+                }
+                if (target.type() != ObjectType.DATA) {
+                    throw new NotADataObjectException("Not a data object: " + path);
+                }
+                stmtGetData.setLong(1, target.id());
+                try (ResultSet rs = stmtGetData.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new ObjectNotFoundException("Object not found: " + path);
+                    }
+                    byte[] bytes = rs.getBytes("data");
+                    if (bytes == null) {
+                        bytes = new byte[0];
+                    }
+                    return new ByteArraySeekableByteChannel(bytes);
+                }
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
+            }
         }
-        if (!exceptions.isEmpty()) {
-            IOException ioe = new IOException("Error closing DbObjectStore");
-            exceptions.forEach(ioe::addSuppressed);
-            throw ioe;
+    }
+
+    @Override
+    public ObjectInfo getInfo(URI path) throws IOException {
+        synchronized (lock) {
+            assertReadable();
+            String normalizedPath = resolvePath(path);
+
+            try {
+                DbNode target;
+                try {
+                    target = findNode(normalizedPath);
+                } catch (NotAFolderException e) {
+                    return new ObjectInfo(toUri(normalizedPath, ObjectType.MISSING), ObjectType.MISSING, ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN);
+                }
+                if (target != null) {
+                    return new ObjectInfo(toUri(normalizedPath, target.type()), target.type(), target.size(), target.created(), target.lastModified());
+                } else {
+                    return new ObjectInfo(toUri(normalizedPath, ObjectType.MISSING), ObjectType.MISSING, ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN);
+                }
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    public Stream<ObjectInfo> list(URI path) throws IOException {
+        synchronized (lock) {
+            assertReadable();
+            String normalizedPath = resolvePath(path);
+
+            try {
+                DbNode target = findNode(normalizedPath);
+                if (target == null) {
+                    throw new ObjectNotFoundException("Object not found: " + path);
+                }
+                if (target.type() != ObjectType.FOLDER) {
+                    throw new NotAFolderException("Not a folder: " + path);
+                }
+
+                List<ObjectInfo> list = new ArrayList<>();
+                stmtListChildren.setLong(1, target.id());
+                try (ResultSet rs = stmtListChildren.executeQuery()) {
+                    while (rs.next()) {
+                        DbNode child = readNode(rs);
+                        String childPath = normalizedPath.isEmpty() ? child.name() : (normalizedPath + '/' + child.name());
+                        list.add(new ObjectInfo(toUri(childPath, child.type()), child.type(), child.size(), child.created(), child.lastModified()));
+                    }
+                }
+                return list.stream();
+            } catch (SQLException e) {
+                throw new IOException(e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        synchronized (lock) {
+            if (closed) {
+                return;
+            }
+            closed = true;
+            List<Exception> exceptions = new ArrayList<>();
+            closeStatement(stmtFindRoot, exceptions);
+            closeStatement(stmtFindChild, exceptions);
+            closeStatement(stmtInsertFolder, exceptions);
+            closeStatement(stmtInsertData, exceptions);
+            closeStatement(stmtUpdateData, exceptions);
+            closeStatement(stmtDelete, exceptions);
+            closeStatement(stmtFindChildrenIds, exceptions);
+            closeStatement(stmtHasChildren, exceptions);
+            closeStatement(stmtGetData, exceptions);
+            closeStatement(stmtListChildren, exceptions);
+            closeStatement(stmtGetNextId, exceptions);
+            try {
+                if (!connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+            if (!exceptions.isEmpty()) {
+                IOException ioe = new IOException("Error closing DbObjectStore");
+                exceptions.forEach(ioe::addSuppressed);
+                throw ioe;
+            }
         }
     }
 
