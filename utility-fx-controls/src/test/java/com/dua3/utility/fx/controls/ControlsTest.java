@@ -502,7 +502,8 @@ class ControlsTest extends FxTestBase {
             ListCell<String> buttonCell = fontCb.getButtonCell();
             assertNotNull(buttonCell);
             assertEquals("Verdana", buttonCell.getText());
-            assertEquals("Verdana", buttonCell.getFont().getFamily());
+            javafx.scene.text.Font expectedFont = javafx.scene.text.Font.font("Verdana", 14);
+            assertEquals(expectedFont, buttonCell.getFont());
             assertEquals(14.0, buttonCell.getFont().getSize(), 0.01);
         });
     }

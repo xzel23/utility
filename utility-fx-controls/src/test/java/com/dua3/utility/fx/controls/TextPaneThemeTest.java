@@ -38,7 +38,8 @@ class TextPaneThemeTest extends FxTestBase {
             javafx.scene.control.ListCell<String> buttonCell = fontComboBox.getButtonCell();
             assertNotNull(buttonCell, "buttonCell should be found");
             assertEquals("Verdana", buttonCell.getText());
-            assertEquals("Verdana", buttonCell.getFont().getFamily());
+            javafx.scene.text.Font expectedFont = javafx.scene.text.Font.font("Verdana", 14);
+            assertEquals(expectedFont, buttonCell.getFont());
             assertEquals(14.0, buttonCell.getFont().getSize(), 0.01);
             assertNull(buttonCell.getGraphic(), "Graphic should be null as text/font are set on buttonCell directly");
             // Text color is now styled by buttonCell directly (not white on light background)
