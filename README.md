@@ -249,6 +249,9 @@ could not be loaded.
     otherwise when the instance is created.
   - when creating a writable FileObjectStore with lazy, the existence of the directory is created on first access, 
     otherwise when the instance is created.
+- JavaFX TextPane toolbar changes:
+  - use JavaFX ColorPicker
+  - show the font names using the actual font in the font selection drop down
 
 ## 24.9.1
 
