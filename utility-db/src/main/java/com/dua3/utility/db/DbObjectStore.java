@@ -16,6 +16,7 @@ import com.dua3.utility.io.ObjectStore;
 import com.dua3.utility.io.ReadableObjectStore;
 import com.dua3.utility.io.WritableObjectStore;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.WrappedException;
 import org.jspecify.annotations.Nullable;
 
 import javax.sql.DataSource;
@@ -24,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -46,18 +48,25 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
  * An implementation of {@link ObjectStore} that stores objects in a relational database table using
  * an adjacency-list hierarchy layout.
  */
+@SuppressWarnings({"ProhibitedExceptionThrown", "OverlyBroadCatchBlock"})
 public class DbObjectStore implements ObjectStore {
 
     /**
      * Default table name used when no custom table name is provided.
      */
     public static final String DEFAULT_TABLE_NAME = "object_store";
+
+    /**
+     * Regex pattern for allowed table names.
+     */
+    private static final Pattern PATTERN_TABLE_NAME = Pattern.compile("[a-z_][a-z0-9_]*");
 
     /**
      * Functional interface for supplying database connections with checked {@link SQLException}.
@@ -92,6 +101,7 @@ public class DbObjectStore implements ObjectStore {
 
     private final PreparedStatement stmtFindRoot;
     private final PreparedStatement stmtFindChild;
+    private final PreparedStatement stmtListChildren;
     private final PreparedStatement stmtInsertFolder;
     private final PreparedStatement stmtInsertData;
     private final PreparedStatement stmtUpdateData;
@@ -99,7 +109,6 @@ public class DbObjectStore implements ObjectStore {
     private final PreparedStatement stmtFindChildrenIds;
     private final PreparedStatement stmtHasChildren;
     private final PreparedStatement stmtGetData;
-    private final PreparedStatement stmtListChildren;
     private final PreparedStatement stmtGetNextId;
 
     /**
@@ -111,7 +120,7 @@ public class DbObjectStore implements ObjectStore {
      * @param accessMode the access mode
      * @throws IOException if table verification, creation, or statement preparation fails
      */
-    @SuppressWarnings("java:S2077")
+    @SuppressWarnings({"java:S2077", "JDBCPrepareStatementWithNonConstantString", "java:S1192"})
     public DbObjectStore(
             URI root,
             Connection connection,
@@ -119,7 +128,7 @@ public class DbObjectStore implements ObjectStore {
             AccessMode accessMode
     ) throws IOException {
         LangUtil.check(root.isAbsolute(), "Root URI must be absolute: %s", root);
-        LangUtil.check(tableName.matches("[a-z_][a-z0-9_]*"), "Invalid table name: %s", tableName);
+        LangUtil.check(PATTERN_TABLE_NAME.matcher(tableName).matches(), "Invalid table name: %s", tableName);
 
         String rootStr = root.toString();
         this.root = rootStr.endsWith("/") ? root : URI.create(rootStr + "/");
@@ -134,6 +143,8 @@ public class DbObjectStore implements ObjectStore {
                     "SELECT id, parent_id, name, type, size, created, last_modified FROM " + tableName + " WHERE parent_id IS NULL AND name = ''");
             this.stmtFindChild = connection.prepareStatement(
                     "SELECT id, parent_id, name, type, size, created, last_modified FROM " + tableName + " WHERE parent_id = ? AND name = ?");
+            this.stmtListChildren = connection.prepareStatement(
+                    "SELECT id, parent_id, name, type, size, created, last_modified FROM " + tableName + " WHERE parent_id = ? ORDER BY name ASC");
             this.stmtInsertFolder = connection.prepareStatement(
                     "INSERT INTO " + tableName + " (id, parent_id, name, type, size, created, last_modified, data) VALUES (?, ?, ?, 'F', NULL, ?, ?, NULL)");
             this.stmtInsertData = connection.prepareStatement(
@@ -148,15 +159,13 @@ public class DbObjectStore implements ObjectStore {
                     "SELECT 1 FROM " + tableName + " WHERE parent_id = ?");
             this.stmtGetData = connection.prepareStatement(
                     "SELECT data FROM " + tableName + " WHERE id = ?");
-            this.stmtListChildren = connection.prepareStatement(
-                    "SELECT id, parent_id, name, type, size, created, last_modified FROM " + tableName + " WHERE parent_id = ? ORDER BY name ASC");
             this.stmtGetNextId = connection.prepareStatement(
                     "SELECT COALESCE(MAX(id), 0) + 1 FROM " + tableName);
 
             if (accessMode != AccessMode.READ) {
                 ensureRootExists();
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new IOException("Failed to initialize database object store for table " + tableName, e);
         }
     }
@@ -182,11 +191,7 @@ public class DbObjectStore implements ObjectStore {
     private static Connection obtainConnection(ConnectionSupplier supplier) throws IOException {
         Objects.requireNonNull(supplier, "connectionSupplier");
         try {
-            Connection conn = supplier.get();
-            if (conn == null) {
-                throw new IOException("Connection supplier returned null");
-            }
-            return conn;
+            return Objects.requireNonNull(supplier.get(), "Connection supplier returned null");
         } catch (SQLException e) {
             throw new IOException("Failed to obtain database connection", e);
         }
@@ -198,6 +203,7 @@ public class DbObjectStore implements ObjectStore {
      * @param tableName the table name
      * @return the default root URI
      */
+    @SuppressWarnings("unused") // API
     public static URI defaultRootUri(String tableName) {
         return URI.create("db://localhost/" + tableName + "/");
     }
@@ -211,6 +217,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(Connection connection) throws IOException {
         return newObjectStore(connection, DEFAULT_TABLE_NAME);
     }
@@ -223,6 +230,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(Connection connection, String tableName) throws IOException {
         return new DbObjectStore(defaultRootUri(tableName), connection, tableName, AccessMode.READ_AND_WRITE);
     }
@@ -236,6 +244,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(URI root, Connection connection, String tableName) throws IOException {
         return new DbObjectStore(root, connection, tableName, AccessMode.READ_AND_WRITE);
     }
@@ -247,6 +256,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the readable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static ReadableObjectStore newReadableObjectStore(Connection connection) throws IOException {
         return newReadableObjectStore(connection, DEFAULT_TABLE_NAME);
     }
@@ -259,6 +269,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the readable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static ReadableObjectStore newReadableObjectStore(Connection connection, String tableName) throws IOException {
         return new DbObjectStore(defaultRootUri(tableName), connection, tableName, AccessMode.READ);
     }
@@ -272,6 +283,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the readable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static ReadableObjectStore newReadableObjectStore(URI root, Connection connection, String tableName) throws IOException {
         return new DbObjectStore(root, connection, tableName, AccessMode.READ);
     }
@@ -283,6 +295,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the writable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static WritableObjectStore newWritableObjectStore(Connection connection) throws IOException {
         return newWritableObjectStore(connection, DEFAULT_TABLE_NAME);
     }
@@ -295,6 +308,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the writable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static WritableObjectStore newWritableObjectStore(Connection connection, String tableName) throws IOException {
         return new DbObjectStore(defaultRootUri(tableName), connection, tableName, AccessMode.WRITE);
     }
@@ -308,6 +322,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the writable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static WritableObjectStore newWritableObjectStore(URI root, Connection connection, String tableName) throws IOException {
         return new DbObjectStore(root, connection, tableName, AccessMode.WRITE);
     }
@@ -322,6 +337,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore create(URI root, Connection connection, String tableName, AccessMode accessMode) throws IOException {
         return new DbObjectStore(root, connection, tableName, accessMode);
     }
@@ -335,6 +351,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(DataSource dataSource) throws IOException {
         return newObjectStore(dataSource, DEFAULT_TABLE_NAME);
     }
@@ -347,6 +364,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(DataSource dataSource, String tableName) throws IOException {
         return new DbObjectStore(defaultRootUri(tableName), dataSource::getConnection, tableName, AccessMode.READ_AND_WRITE);
     }
@@ -360,7 +378,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(URI root, DataSource dataSource, String tableName) throws IOException {
         return new DbObjectStore(root, dataSource::getConnection, tableName, AccessMode.READ_AND_WRITE);
     }
@@ -372,6 +390,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the readable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static ReadableObjectStore newReadableObjectStore(DataSource dataSource) throws IOException {
         return newReadableObjectStore(dataSource, DEFAULT_TABLE_NAME);
     }
@@ -384,6 +403,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the readable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static ReadableObjectStore newReadableObjectStore(DataSource dataSource, String tableName) throws IOException {
         return new DbObjectStore(defaultRootUri(tableName), dataSource::getConnection, tableName, AccessMode.READ);
     }
@@ -397,6 +417,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the readable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static ReadableObjectStore newReadableObjectStore(URI root, DataSource dataSource, String tableName) throws IOException {
         return new DbObjectStore(root, dataSource::getConnection, tableName, AccessMode.READ);
     }
@@ -408,6 +429,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the writable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static WritableObjectStore newWritableObjectStore(DataSource dataSource) throws IOException {
         return newWritableObjectStore(dataSource, DEFAULT_TABLE_NAME);
     }
@@ -420,6 +442,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the writable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static WritableObjectStore newWritableObjectStore(DataSource dataSource, String tableName) throws IOException {
         return new DbObjectStore(defaultRootUri(tableName), dataSource::getConnection, tableName, AccessMode.WRITE);
     }
@@ -433,6 +456,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the writable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static WritableObjectStore newWritableObjectStore(URI root, DataSource dataSource, String tableName) throws IOException {
         return new DbObjectStore(root, dataSource::getConnection, tableName, AccessMode.WRITE);
     }
@@ -446,6 +470,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(ConnectionSupplier connectionSupplier) throws IOException {
         return newObjectStore(connectionSupplier, DEFAULT_TABLE_NAME);
     }
@@ -458,6 +483,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(ConnectionSupplier connectionSupplier, String tableName) throws IOException {
         return new DbObjectStore(defaultRootUri(tableName), connectionSupplier, tableName, AccessMode.READ_AND_WRITE);
     }
@@ -471,6 +497,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(URI root, ConnectionSupplier connectionSupplier, String tableName) throws IOException {
         return new DbObjectStore(root, connectionSupplier, tableName, AccessMode.READ_AND_WRITE);
     }
@@ -482,6 +509,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the readable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static ReadableObjectStore newReadableObjectStore(ConnectionSupplier connectionSupplier) throws IOException {
         return newReadableObjectStore(connectionSupplier, DEFAULT_TABLE_NAME);
     }
@@ -494,6 +522,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the readable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static ReadableObjectStore newReadableObjectStore(ConnectionSupplier connectionSupplier, String tableName) throws IOException {
         return new DbObjectStore(defaultRootUri(tableName), connectionSupplier, tableName, AccessMode.READ);
     }
@@ -507,6 +536,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the readable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static ReadableObjectStore newReadableObjectStore(URI root, ConnectionSupplier connectionSupplier, String tableName) throws IOException {
         return new DbObjectStore(root, connectionSupplier, tableName, AccessMode.READ);
     }
@@ -518,6 +548,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the writable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static WritableObjectStore newWritableObjectStore(ConnectionSupplier connectionSupplier) throws IOException {
         return newWritableObjectStore(connectionSupplier, DEFAULT_TABLE_NAME);
     }
@@ -530,6 +561,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the writable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static WritableObjectStore newWritableObjectStore(ConnectionSupplier connectionSupplier, String tableName) throws IOException {
         return new DbObjectStore(defaultRootUri(tableName), connectionSupplier, tableName, AccessMode.WRITE);
     }
@@ -543,6 +575,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the writable object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static WritableObjectStore newWritableObjectStore(URI root, ConnectionSupplier connectionSupplier, String tableName) throws IOException {
         return new DbObjectStore(root, connectionSupplier, tableName, AccessMode.WRITE);
     }
@@ -556,6 +589,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(Supplier<Connection> connectionSupplier) throws IOException {
         return newObjectStore(connectionSupplier, DEFAULT_TABLE_NAME);
     }
@@ -568,6 +602,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore newObjectStore(Supplier<Connection> connectionSupplier, String tableName) throws IOException {
         ConnectionSupplier supplier = connectionSupplier::get;
         return new DbObjectStore(defaultRootUri(tableName), supplier, tableName, AccessMode.READ_AND_WRITE);
@@ -583,6 +618,7 @@ public class DbObjectStore implements ObjectStore {
      * @return the object store
      * @throws IOException if an I/O or SQL error occurs
      */
+    @SuppressWarnings("unused") // API
     public static DbObjectStore create(URI root, ConnectionSupplier connectionSupplier, String tableName, AccessMode accessMode) throws IOException {
         return new DbObjectStore(root, connectionSupplier, tableName, accessMode);
     }
@@ -638,8 +674,8 @@ public class DbObjectStore implements ObjectStore {
                 } finally {
                     connection.setAutoCommit(origAutoCommit);
                 }
-            } catch (SQLException e) {
-                throw new IOException(e.getMessage(), e);
+            } catch (Exception e) {
+                throw mapException(e);
             }
         }
     }
@@ -678,9 +714,7 @@ public class DbObjectStore implements ObjectStore {
                     connection.commit();
                 } catch (Exception e) {
                     connection.rollback();
-                    if (e instanceof IOException ioe) throw ioe;
-                    if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
-                    throw new IOException(e);
+                    throw mapException(e);
                 } finally {
                     connection.setAutoCommit(origAutoCommit);
                 }
@@ -717,9 +751,7 @@ public class DbObjectStore implements ObjectStore {
                     connection.commit();
                 } catch (Exception e) {
                     connection.rollback();
-                    if (e instanceof IOException ioe) throw ioe;
-                    if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
-                    throw new IOException(e);
+                    throw mapException(e);
                 } finally {
                     connection.setAutoCommit(origAutoCommit);
                 }
@@ -752,11 +784,7 @@ public class DbObjectStore implements ObjectStore {
                     connection.commit();
                 } catch (Exception e) {
                     connection.rollback();
-                    switch (e) {
-                        case IOException ioe -> throw ioe;
-                        case SQLException sqle -> throw new IOException(sqle.getMessage(), sqle);
-                        default -> throw new IOException(e);
-                    }
+                    throw mapException(e);
                 } finally {
                     connection.setAutoCommit(origAutoCommit);
                 }
@@ -853,9 +881,7 @@ public class DbObjectStore implements ObjectStore {
                     return data.length;
                 } catch (Exception e) {
                     connection.rollback();
-                    if (e instanceof IOException ioe) throw ioe;
-                    if (e instanceof SQLException sqle) throw new IOException(sqle.getMessage(), sqle);
-                    throw new IOException(e);
+                    throw mapException(e);
                 } finally {
                     connection.setAutoCommit(origAutoCommit);
                 }
@@ -885,8 +911,8 @@ public class DbObjectStore implements ObjectStore {
                         throw new ObjectExistsException("Object already exists: " + path);
                     }
                 }
-            } catch (SQLException e) {
-                throw new IOException(e.getMessage(), e);
+            } catch (Exception e) {
+                throw mapException(e);
             }
 
             return new ByteArrayOutputStream() {
@@ -925,8 +951,8 @@ public class DbObjectStore implements ObjectStore {
                         throw new ObjectExistsException("Object already exists: " + path);
                     }
                 }
-            } catch (SQLException e) {
-                throw new IOException(e.getMessage(), e);
+            } catch (Exception e) {
+                throw mapException(e);
             }
 
             return new ByteArrayWritableByteChannel(bytes -> write(path, bytes, option));
@@ -962,8 +988,8 @@ public class DbObjectStore implements ObjectStore {
                         data = new byte[0];
                     }
                 }
-            } catch (SQLException e) {
-                throw new IOException(e.getMessage(), e);
+            } catch (Exception e) {
+                throw mapException(e);
             }
         }
 
@@ -1004,8 +1030,8 @@ public class DbObjectStore implements ObjectStore {
                     }
                     return new ByteArrayInputStream(bytes);
                 }
-            } catch (SQLException e) {
-                throw new IOException(e.getMessage(), e);
+            } catch (Exception e) {
+                throw mapException(e);
             }
         }
     }
@@ -1038,8 +1064,8 @@ public class DbObjectStore implements ObjectStore {
                     }
                     return new ByteArraySeekableByteChannel(bytes);
                 }
-            } catch (SQLException e) {
-                throw new IOException(e.getMessage(), e);
+            } catch (Exception e) {
+                throw mapException(e);
             }
         }
     }
@@ -1051,19 +1077,16 @@ public class DbObjectStore implements ObjectStore {
             String normalizedPath = resolvePath(path);
 
             try {
-                DbNode target;
-                try {
-                    target = findNode(normalizedPath);
-                } catch (NotAFolderException e) {
-                    return new ObjectInfo(toUri(normalizedPath, ObjectType.MISSING), ObjectType.MISSING, ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN);
-                }
+                DbNode target = findNode(normalizedPath);
                 if (target != null) {
                     return new ObjectInfo(toUri(normalizedPath, target.type()), target.type(), target.size(), target.created(), target.lastModified());
                 } else {
                     return new ObjectInfo(toUri(normalizedPath, ObjectType.MISSING), ObjectType.MISSING, ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN);
                 }
-            } catch (SQLException e) {
-                throw new IOException(e.getMessage(), e);
+            } catch (NotAFolderException e) {
+                return new ObjectInfo(toUri(normalizedPath, ObjectType.MISSING), ObjectType.MISSING, ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN);
+            } catch (Exception e) {
+                throw mapException(e);
             }
         }
     }
@@ -1093,8 +1116,8 @@ public class DbObjectStore implements ObjectStore {
                     }
                 }
                 return list.stream();
-            } catch (SQLException e) {
-                throw new IOException(e.getMessage(), e);
+            } catch (Exception e) {
+                throw mapException(e);
             }
         }
     }
@@ -1328,14 +1351,12 @@ public class DbObjectStore implements ObjectStore {
         if (path.isAbsolute()) {
             throw new AbsolutePathException("absolute path not allowed: " + path);
         }
-        if (path.getQuery() != null || path.getFragment() != null) {
-            throw new IllegalPathException("path contains query or fragment: " + path);
-        }
+        LangUtil.check(path.getQuery() == null, () -> new IllegalPathException("path contains query: " + path));
+        LangUtil.check(path.getFragment() == null, () -> new IllegalPathException("path contains fragment: " + path));
         String raw = path.getPath();
-        if (raw == null || raw.startsWith("/")) {
-            throw new IllegalPathException("path must not start with /: " + path);
-        }
+        LangUtil.check(raw != null && !raw.startsWith("/"), () -> new IllegalPathException("path must not be undefined and not start with /: " + path));
 
+        @SuppressWarnings("java:S2259") // false positive
         String[] parts = raw.split("/", -1);
         List<String> segments = new ArrayList<>();
         for (String part : parts) {
@@ -1506,5 +1527,16 @@ public class DbObjectStore implements ObjectStore {
             buffer.write(bytes);
             return len;
         }
+    }
+
+    private static IOException mapException(Exception e) throws IOException {
+        return switch (e) {
+            case SQLException e1 -> new IOException(e1);
+            case IOException e1 -> e1;
+            case UncheckedIOException e1-> mapException(e1.getCause());
+            case WrappedException e1 -> mapException(e1.getCause());
+            case RuntimeException e1 -> throw e1;
+            default -> throw new WrappedException(e);
+        };
     }
 }
