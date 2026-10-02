@@ -5,6 +5,9 @@ import com.dua3.utility.text.MessageFormatter;
 import javafx.scene.control.Alert;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.FXCollections;
@@ -16,7 +19,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.util.StringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -185,6 +190,31 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
 
         comboBox.setButtonCell(createCell(true));
         comboBox.setCellFactory(lv -> createCell(false));
+
+        comboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (comboBox.isEditable()) {
+                String expected = newValue != null ? (comboBox.getConverter() != null ? comboBox.getConverter().toString(newValue) : String.valueOf(newValue)) : "";
+                if (!java.util.Objects.equals(comboBox.getEditor().getText(), expected)) {
+                    comboBox.getEditor().setText(expected);
+                }
+            }
+        });
+
+        comboBox.getEditor().focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+            if (!isFocused && comboBox.isEditable()) {
+                String text = comboBox.getEditor().getText();
+                T current = comboBox.getValue();
+                String currentText = current != null ? (comboBox.getConverter() != null ? comboBox.getConverter().toString(current) : String.valueOf(current)) : "";
+                if (!java.util.Objects.equals(text, currentText)) {
+                    try {
+                        commitValue();
+                    } catch (Exception e) {
+                        LOG.warn("error committing value on focus loss", e);
+                        comboBox.getEditor().setText(currentText);
+                    }
+                }
+            }
+        });
 
         comboBox.setValue(this.dflt.get());
     }
@@ -362,7 +392,134 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
         if (items.contains(item)) {
             return false;
         }
-        return items.add(item);
+        boolean res = items.add(item);
+        if (res && comparator != null) {
+            sortItems();
+        }
+        return res;
+    }
+
+    /**
+     * Returns whether the combo box is editable.
+     *
+     * @return true if editable, false otherwise
+     */
+    public boolean isEditable() {
+        return comboBox.isEditable();
+    }
+
+    /**
+     * Sets whether the combo box is editable.
+     *
+     * @param editable true to make the combo box editable, false otherwise
+     */
+    public void setEditable(boolean editable) {
+        comboBox.setEditable(editable);
+        if (editable && comboBox.getValue() != null) {
+            T val = comboBox.getValue();
+            String text = comboBox.getConverter() != null ? comboBox.getConverter().toString(val) : String.valueOf(val);
+            comboBox.getEditor().setText(text);
+        }
+    }
+
+    /**
+     * Returns the editable property of the combo box.
+     *
+     * @return the editable property
+     */
+    public BooleanProperty editableProperty() {
+        return comboBox.editableProperty();
+    }
+
+    /**
+     * Retrieves the StringConverter for the combo box.
+     *
+     * @return the StringConverter
+     */
+    public @Nullable StringConverter<@Nullable T> getConverter() {
+        return comboBox.getConverter();
+    }
+
+    /**
+     * Sets the StringConverter for the combo box.
+     *
+     * @param converter the StringConverter to set
+     */
+    public void setConverter(@Nullable StringConverter<@Nullable T> converter) {
+        comboBox.setConverter(converter);
+        if (comboBox.isEditable() && comboBox.getValue() != null) {
+            T val = comboBox.getValue();
+            String text = converter != null ? converter.toString(val) : String.valueOf(val);
+            comboBox.getEditor().setText(text);
+        }
+    }
+
+    /**
+     * Returns the StringConverter property of the combo box.
+     *
+     * @return the converter property
+     */
+    public ObjectProperty<@Nullable StringConverter<@Nullable T>> converterProperty() {
+        return comboBox.converterProperty();
+    }
+
+    /**
+     * Returns the editor TextField when the combo box is editable.
+     *
+     * @return the editor TextField
+     */
+    public TextField getEditor() {
+        return comboBox.getEditor();
+    }
+
+    /**
+     * Returns the editor property of the combo box.
+     *
+     * @return the editor property
+     */
+    public ReadOnlyObjectProperty<TextField> editorProperty() {
+        return comboBox.editorProperty();
+    }
+
+    /**
+     * Commits the current value from the editor if editable.
+     */
+    public void commitValue() {
+        comboBox.commitValue();
+    }
+
+    /**
+     * Cancels editing and reverts the editor text to the current value.
+     */
+    public void cancelEdit() {
+        comboBox.cancelEdit();
+    }
+
+    /**
+     * Sets the preferred number of columns for the editor in the combo box.
+     *
+     * @param columns the preferred number of columns
+     */
+    public void setColumns(int columns) {
+        comboBox.getEditor().setPrefColumnCount(columns);
+    }
+
+    /**
+     * Returns the preferred number of columns for the editor in the combo box.
+     *
+     * @return the preferred number of columns
+     */
+    public int getColumns() {
+        return comboBox.getEditor().getPrefColumnCount();
+    }
+
+    /**
+     * Returns the property representing the preferred number of text columns in the editor.
+     *
+     * @return the preferred column count property
+     */
+    public IntegerProperty columnsProperty() {
+        return comboBox.getEditor().prefColumnCountProperty();
     }
 
     /**
@@ -391,9 +548,11 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
      * The selected item is preserved after the sorting.
      */
     public void sortItems() {
-        Optional<T> selectedItem = getSelectedItem();
+        T currentVal = comboBox.getValue();
         items.sort(LangUtil.orNaturalOrder(comparator));
-        selectedItem.ifPresent((T item) -> comboBox.selectionModelProperty().get().select(item));
+        if (currentVal != null) {
+            comboBox.selectionModelProperty().get().select(currentVal);
+        }
     }
 
     /**

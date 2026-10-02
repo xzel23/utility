@@ -236,8 +236,16 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
 
     private void initSelectionInteraction() {
         setFocusTraversable(true);
-        addEventFilter(KeyEvent.KEY_PRESSED, this::processKeyPressed);
-        addEventFilter(KeyEvent.KEY_TYPED, this::processKeyTyped);
+        addEventHandler(KeyEvent.KEY_PRESSED, evt -> {
+            if (evt.getTarget() == this) {
+                processKeyPressed(evt);
+            }
+        });
+        addEventHandler(KeyEvent.KEY_TYPED, evt -> {
+            if (evt.getTarget() == this) {
+                processKeyTyped(evt);
+            }
+        });
     }
 
     void processMousePressed(MouseEvent evt) {
@@ -1481,7 +1489,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      * @param enabled {@code true} for bold, {@code false} for normal weight
      */
     public void markBold(boolean enabled) {
-        if (sharedModel.markAttribute(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD, Style.FONT_WEIGHT_VALUE_NORMAL, enabled)) {
+        if (sharedModel.markBold(enabled)) {
             onModelTextMutated(true);
         }
     }
@@ -1492,7 +1500,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      * @param enabled {@code true} for italic, {@code false} for normal style
      */
     public void markItalic(boolean enabled) {
-        if (sharedModel.markAttribute(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC, Style.FONT_STYLE_VALUE_NORMAL, enabled)) {
+        if (sharedModel.markItalic(enabled)) {
             onModelTextMutated(true);
         }
     }
@@ -1503,12 +1511,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      * @param enabled {@code true} to underline, {@code false} to remove underline
      */
     public void markUnderline(boolean enabled) {
-        if (sharedModel.markAttribute(
-                Style.TEXT_DECORATION_UNDERLINE,
-                Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE,
-                Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE,
-                enabled
-        )) {
+        if (sharedModel.markUnderline(enabled)) {
             onModelTextMutated(true);
         }
     }
@@ -1519,12 +1522,7 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
      * @param enabled {@code true} to strike through, {@code false} to remove
      */
     public void markStrikeThrough(boolean enabled) {
-        if (sharedModel.markAttribute(
-                Style.TEXT_DECORATION_LINE_THROUGH,
-                Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE,
-                Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE,
-                enabled
-        )) {
+        if (sharedModel.markStrikeThrough(enabled)) {
             onModelTextMutated(true);
         }
     }

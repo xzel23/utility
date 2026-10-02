@@ -371,10 +371,7 @@ public class RichTextEditorModel {
         for (Run run : text) {
             int overlapStart = Math.max(selection.start(), run.getStart());
             int overlapEnd = Math.min(selection.end(), run.getEnd());
-            if (overlapStart >= overlapEnd) {
-                continue;
-            }
-            if (!run.getStyles().contains(style)) {
+            if (overlapStart < overlapEnd && !run.getStyles().contains(style)) {
                 return false;
             }
         }
@@ -1014,7 +1011,13 @@ public class RichTextEditorModel {
      * @return true if text changed
      */
     public boolean markBold(boolean enabled) {
-        return enabled ? applyStyle(Style.BOLD) : removeStyle(Style.BOLD);
+        IndexRange selection = getSelection();
+        if (selection.length() == 0) {
+            return false;
+        }
+        RichText updated = enabled ? text.apply(Style.BOLD, selection.start(), selection.end()) : text.removeStyle(Style.BOLD, selection.start(), selection.end());
+        updated = updated.removeAttribute(Style.FONT_WEIGHT, selection.start(), selection.end());
+        return applyFormattingChange(updated);
     }
 
     /**
@@ -1024,7 +1027,13 @@ public class RichTextEditorModel {
      * @return true if text changed
      */
     public boolean markItalic(boolean enabled) {
-        return enabled ? applyStyle(Style.ITALIC) : removeStyle(Style.ITALIC);
+        IndexRange selection = getSelection();
+        if (selection.length() == 0) {
+            return false;
+        }
+        RichText updated = enabled ? text.apply(Style.ITALIC, selection.start(), selection.end()) : text.removeStyle(Style.ITALIC, selection.start(), selection.end());
+        updated = updated.removeAttribute(Style.FONT_STYLE, selection.start(), selection.end());
+        return applyFormattingChange(updated);
     }
 
     /**
@@ -1034,7 +1043,13 @@ public class RichTextEditorModel {
      * @return true if text changed
      */
     public boolean markUnderline(boolean enabled) {
-        return enabled ? applyStyle(Style.UNDERLINE) : removeStyle(Style.UNDERLINE);
+        IndexRange selection = getSelection();
+        if (selection.length() == 0) {
+            return false;
+        }
+        RichText updated = enabled ? text.apply(Style.UNDERLINE, selection.start(), selection.end()) : text.removeStyle(Style.UNDERLINE, selection.start(), selection.end());
+        updated = updated.removeAttribute(Style.TEXT_DECORATION_UNDERLINE, selection.start(), selection.end());
+        return applyFormattingChange(updated);
     }
 
     /**
@@ -1044,7 +1059,13 @@ public class RichTextEditorModel {
      * @return true if text changed
      */
     public boolean markStrikeThrough(boolean enabled) {
-        return enabled ? applyStyle(Style.LINE_THROUGH) : removeStyle(Style.LINE_THROUGH);
+        IndexRange selection = getSelection();
+        if (selection.length() == 0) {
+            return false;
+        }
+        RichText updated = enabled ? text.apply(Style.LINE_THROUGH, selection.start(), selection.end()) : text.removeStyle(Style.LINE_THROUGH, selection.start(), selection.end());
+        updated = updated.removeAttribute(Style.TEXT_DECORATION_LINE_THROUGH, selection.start(), selection.end());
+        return applyFormattingChange(updated);
     }
 
     /**
@@ -1171,19 +1192,18 @@ public class RichTextEditorModel {
         TextAttributes attributes = probe.attributesAt(0);
         List<Style> styles = probe.stylesAt(0);
 
-        boolean boldAtCaret = styles.contains(Style.BOLD)
-                || Objects.equals(resolveAttribute(attributes, styles, Style.FONT_WEIGHT), Style.FONT_WEIGHT_VALUE_BOLD);
+        Object fontWeight = resolveAttribute(attributes, styles, Style.FONT_WEIGHT);
+        boolean boldAtCaret = Objects.equals(fontWeight, Style.FONT_WEIGHT_VALUE_BOLD);
 
         Object fontStyle = resolveAttribute(attributes, styles, Style.FONT_STYLE);
-        boolean italicAtCaret = styles.contains(Style.ITALIC)
-                || Objects.equals(fontStyle, Style.FONT_STYLE_VALUE_ITALIC)
+        boolean italicAtCaret = Objects.equals(fontStyle, Style.FONT_STYLE_VALUE_ITALIC)
                 || Objects.equals(fontStyle, Style.FONT_STYLE_VALUE_OBLIQUE);
 
-        boolean underlineAtCaret = styles.contains(Style.UNDERLINE)
-                || Objects.equals(resolveAttribute(attributes, styles, Style.TEXT_DECORATION_UNDERLINE), Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE);
+        Object underline = resolveAttribute(attributes, styles, Style.TEXT_DECORATION_UNDERLINE);
+        boolean underlineAtCaret = Objects.equals(underline, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE);
 
-        boolean strikeThroughAtCaret = styles.contains(Style.LINE_THROUGH)
-                || Objects.equals(resolveAttribute(attributes, styles, Style.TEXT_DECORATION_LINE_THROUGH), Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE);
+        Object strikeThrough = resolveAttribute(attributes, styles, Style.TEXT_DECORATION_LINE_THROUGH);
+        boolean strikeThroughAtCaret = Objects.equals(strikeThrough, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE);
 
         Color colorAtCaret = Optional.ofNullable(resolveColor(attributes, styles))
                 .orElseGet(fallbackFont::getColor);

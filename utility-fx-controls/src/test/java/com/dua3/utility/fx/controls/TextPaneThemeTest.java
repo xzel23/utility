@@ -48,6 +48,155 @@ class TextPaneThemeTest extends FxTestBase {
     }
 
     @Test
+    void testCustomFontSizeEntry() throws Exception {
+        TextEditorPane editor = new TextEditorPane("sample text");
+        addToScene(editor);
+
+        runOnFxThreadAndWait(() -> {
+            var comboBoxes = editor.lookupAll(".comboboxex .combo-box");
+            assertEquals(2, comboBoxes.size(), "Should have font and size combo boxes");
+
+            @SuppressWarnings("unchecked")
+            ComboBox<Float> sizeComboBox = (ComboBox<Float>) comboBoxes.stream()
+                    .filter(node -> node instanceof ComboBox<?> cb && cb.isEditable())
+                    .findFirst()
+                    .orElse(null);
+
+            assertNotNull(sizeComboBox, "Editable size ComboBox should be found");
+            assertEquals(3, sizeComboBox.getEditor().getPrefColumnCount());
+            assertEquals("13", sizeComboBox.getEditor().getText());
+
+            // Enter a custom font size not originally in the default sizes list
+            sizeComboBox.getEditor().setText("17");
+            sizeComboBox.commitValue();
+
+            assertEquals(17.0f, editor.getFontSize(), 0.01f);
+            assertEquals(17.0f, sizeComboBox.getValue(), 0.01f);
+            org.junit.jupiter.api.Assertions.assertTrue(sizeComboBox.getItems().contains(17.0f));
+        });
+    }
+
+    @Test
+    void testFontSizeSelectionAndTyping() throws Exception {
+        TextEditorPane editor = new TextEditorPane("sample text");
+        addToScene(editor);
+
+        runOnFxThreadAndWait(() -> {
+            var comboBoxes = editor.lookupAll(".comboboxex .combo-box");
+            @SuppressWarnings("unchecked")
+            ComboBox<Float> sizeComboBox = (ComboBox<Float>) comboBoxes.stream()
+                    .filter(node -> node instanceof ComboBox<?> cb && cb.isEditable())
+                    .findFirst()
+                    .orElse(null);
+            assertNotNull(sizeComboBox, "Editable size ComboBox should be found");
+
+            // 1. Focus the editor first (user had clicked the combo box or opened dropdown)
+            sizeComboBox.getEditor().requestFocus();
+            // User selects a value from the dropdown
+            sizeComboBox.getSelectionModel().select(24.0f);
+            assertEquals(24.0f, editor.getFontSize(), 0.01f);
+            assertEquals(24.0f, sizeComboBox.getValue(), 0.01f);
+            assertEquals("24", sizeComboBox.getEditor().getText());
+
+            // 2. Type into the sizeComboBox editor
+            sizeComboBox.getEditor().requestFocus();
+            javafx.scene.input.KeyEvent keyEvent = new javafx.scene.input.KeyEvent(
+                    javafx.scene.input.KeyEvent.KEY_TYPED,
+                    "x", "x", javafx.scene.input.KeyCode.UNDEFINED,
+                    false, false, false, false
+            );
+            javafx.event.Event.fireEvent(sizeComboBox.getEditor(), keyEvent);
+            // Verify characters were NOT intercepted and inserted into editor document text
+            assertEquals("sample text", editor.getText().toString());
+        });
+    }
+
+    @Test
+    void testItalicButtonToggle() throws Exception {
+        TextEditorPane editor = new TextEditorPane("sample text");
+        addToScene(editor);
+
+        runOnFxThreadAndWait(() -> {
+            var toggleButtons = editor.lookupAll(".toggle-button");
+            javafx.scene.control.ToggleButton boldBtn = null;
+            javafx.scene.control.ToggleButton italicBtn = null;
+            for (var node : toggleButtons) {
+                if (node instanceof javafx.scene.control.ToggleButton tb) {
+                    if (tb.getTooltip() != null && "Bold".equals(tb.getTooltip().getText())) {
+                        boldBtn = tb;
+                    } else if (tb.getTooltip() != null && "Italic".equals(tb.getTooltip().getText())) {
+                        italicBtn = tb;
+                    }
+                }
+            }
+            assertNotNull(boldBtn, "Bold button should be found");
+            assertNotNull(italicBtn, "Italic button should be found");
+
+            org.junit.jupiter.api.Assertions.assertFalse(boldBtn.isSelected());
+            org.junit.jupiter.api.Assertions.assertFalse(italicBtn.isSelected());
+
+            // Case 1: No selection, plain text
+            editor.selectRange(10, 10);
+            org.junit.jupiter.api.Assertions.assertFalse(boldBtn.isSelected());
+            org.junit.jupiter.api.Assertions.assertFalse(italicBtn.isSelected());
+            italicBtn.fire();
+            org.junit.jupiter.api.Assertions.assertTrue(italicBtn.isSelected());
+            org.junit.jupiter.api.Assertions.assertFalse(boldBtn.isSelected());
+            org.junit.jupiter.api.Assertions.assertTrue(editor.isItalic());
+            org.junit.jupiter.api.Assertions.assertFalse(editor.isBold());
+
+            // Toggle italic back off
+            italicBtn.fire();
+            org.junit.jupiter.api.Assertions.assertFalse(italicBtn.isSelected());
+            org.junit.jupiter.api.Assertions.assertFalse(boldBtn.isSelected());
+            org.junit.jupiter.api.Assertions.assertFalse(editor.isItalic());
+
+            // Case 2: Selection in plain text
+            editor.selectRange(0, 4);
+            italicBtn.fire();
+            org.junit.jupiter.api.Assertions.assertTrue(italicBtn.isSelected());
+            org.junit.jupiter.api.Assertions.assertFalse(boldBtn.isSelected());
+            org.junit.jupiter.api.Assertions.assertTrue(editor.isItalic());
+            org.junit.jupiter.api.Assertions.assertFalse(editor.isBold());
+            org.junit.jupiter.api.Assertions.assertTrue(editor.getText().stylesAt(1).contains(com.dua3.utility.text.Style.ITALIC));
+            org.junit.jupiter.api.Assertions.assertFalse(editor.getText().stylesAt(1).contains(com.dua3.utility.text.Style.BOLD));
+
+            // Case 3: Selection in bold text
+            com.dua3.utility.text.RichText rt = com.dua3.utility.text.RichText.valueOf("Bold text\nPlain text");
+            rt = rt.apply(com.dua3.utility.text.Style.BOLD, 0, 9);
+            TextEditorPane editor2 = new TextEditorPane(rt);
+            addToScene(editor2);
+            var tb2 = editor2.lookupAll(".toggle-button");
+            javafx.scene.control.ToggleButton b2 = null, i2 = null;
+            for (var node : tb2) {
+                if (node instanceof javafx.scene.control.ToggleButton tb) {
+                    if (tb.getTooltip() != null && "Bold".equals(tb.getTooltip().getText())) b2 = tb;
+                    if (tb.getTooltip() != null && "Italic".equals(tb.getTooltip().getText())) i2 = tb;
+                }
+            }
+            assertNotNull(b2);
+            assertNotNull(i2);
+            editor2.selectRange(0, 4);
+            org.junit.jupiter.api.Assertions.assertTrue(b2.isSelected());
+            org.junit.jupiter.api.Assertions.assertFalse(i2.isSelected());
+
+            // Apply italic to bold text
+            i2.fire();
+            org.junit.jupiter.api.Assertions.assertTrue(b2.isSelected());
+            org.junit.jupiter.api.Assertions.assertTrue(i2.isSelected());
+            org.junit.jupiter.api.Assertions.assertTrue(editor2.isBold());
+            org.junit.jupiter.api.Assertions.assertTrue(editor2.isItalic());
+
+            // Remove bold
+            b2.fire();
+            org.junit.jupiter.api.Assertions.assertFalse(b2.isSelected());
+            org.junit.jupiter.api.Assertions.assertTrue(i2.isSelected());
+            org.junit.jupiter.api.Assertions.assertFalse(editor2.isBold());
+            org.junit.jupiter.api.Assertions.assertTrue(editor2.isItalic());
+        });
+    }
+
+    @Test
     void usesTextAreaColorsAndRefreshesThemWhenStylesChange() throws Exception {
         runOnFxThreadAndWait(() -> {
             TextArea reference = new TextArea("text");

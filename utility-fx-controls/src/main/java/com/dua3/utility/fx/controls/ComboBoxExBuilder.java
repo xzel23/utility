@@ -4,13 +4,14 @@ import com.dua3.utility.fx.controls.abstract_builders.ControlBuilder;
 import com.dua3.utility.text.TextUtil;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -23,16 +24,23 @@ import java.util.function.Supplier;
  * @param <T> the type of the items in the ComboBoxEx
  */
 public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBoxExBuilder<T>> {
+    private static final Function<@Nullable Object, @Nullable String> DEFAULT_FORMAT = TextUtil::toLocalizedString;
+
     private final ObservableList<T> items;
-    private final Property<@Nullable T> property;
+    private @Nullable Property<@Nullable T> boundProperty;
     private @Nullable Function<T, @Nullable T> edit;
     private @Nullable Supplier<@Nullable T> add;
     private @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
     private Supplier<? extends @Nullable T> dflt = () -> null;
-    private Function<? super @Nullable T, @Nullable String> format = TextUtil::toLocalizedString;
+    private Function<? super @Nullable T, @Nullable String> format = DEFAULT_FORMAT;
     private Function<? super @Nullable T, ? extends @Nullable Node> graphic = item -> null;
     private Function<? super @Nullable T, ? extends javafx.scene.text.@Nullable Font> font = item -> null;
     private @Nullable Consumer<@Nullable T> onChange;
+    private boolean editable = false;
+    private @Nullable StringConverter<@Nullable T> converter;
+    private @Nullable Function<String, ? extends @Nullable T> parser;
+    private @Nullable Comparator<? super T> comparator;
+    private @Nullable Integer columns;
 
     /**
      * Constructs a new ComboBoxExBuilder.
@@ -41,7 +49,6 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
      */
     ComboBoxExBuilder(Collection<T> items) {
         super(() -> null);
-        this.property = new SimpleObjectProperty<>(null);
         this.items = items instanceof ObservableList<T> ol ? ol : FXCollections.observableList(List.copyOf(items));
     }
 
@@ -146,19 +153,130 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
     }
 
     /**
+     * Sets whether the ComboBoxEx is editable.
+     *
+     * @param editable true to make the combo box editable, false otherwise
+     * @return the current instance of the builder
+     */
+    public ComboBoxExBuilder<T> editable(boolean editable) {
+        this.editable = editable;
+        return self();
+    }
+
+    /**
+     * Sets the StringConverter for the ComboBoxEx.
+     *
+     * @param converter the StringConverter to use
+     * @return the current instance of the builder
+     */
+    public ComboBoxExBuilder<T> converter(StringConverter<@Nullable T> converter) {
+        this.converter = converter;
+        return self();
+    }
+
+    /**
+     * Sets the StringConverter for the ComboBoxEx using the provided toString and fromString functions.
+     *
+     * @param toString   function converting an item to string
+     * @param fromString function parsing a string into an item
+     * @return the current instance of the builder
+     */
+    public ComboBoxExBuilder<T> converter(Function<? super @Nullable T, @Nullable String> toString, Function<String, ? extends @Nullable T> fromString) {
+        this.converter = new StringConverter<>() {
+            @Override
+            public @Nullable String toString(@Nullable T object) {
+                return object == null ? "" : toString.apply(object);
+            }
+
+            @Override
+            public @Nullable T fromString(@Nullable String string) {
+                return string == null ? null : fromString.apply(string);
+            }
+        };
+        return self();
+    }
+
+    /**
+     * Sets the parser function used to convert strings entered by the user into items of type {@code T}.
+     *
+     * @param parser a function parsing a string into an item
+     * @return the current instance of the builder
+     */
+    public ComboBoxExBuilder<T> parser(Function<String, ? extends @Nullable T> parser) {
+        this.parser = parser;
+        return self();
+    }
+
+    /**
+     * Sets the comparator used for sorting items in the ComboBoxEx.
+     *
+     * @param comparator the comparator to set
+     * @return the current instance of the builder
+     */
+    public ComboBoxExBuilder<T> comparator(Comparator<? super T> comparator) {
+        this.comparator = comparator;
+        return self();
+    }
+
+    /**
+     * Sets the preferred number of columns for the editor in the ComboBoxEx.
+     *
+     * @param columns the preferred number of columns
+     * @return the current instance of the builder
+     */
+    public ComboBoxExBuilder<T> columns(int columns) {
+        this.columns = columns;
+        return self();
+    }
+
+    /**
      * Binds the provided property bidirectionally to the builder's internal property.
      *
      * @param property the property to bind bidirectionally with the builder's internal property
      * @return the current instance of the builder
      */
     public ComboBoxExBuilder<T> bind(Property<@Nullable T> property) {
-        this.property.bindBidirectional(property);
+        this.boundProperty = property;
         return self();
     }
 
     @Override
     public ComboBoxEx<T> build() {
-        ComboBoxEx<T> comboBoxEx = new ComboBoxEx<>(edit, add, remove, dflt, format, graphic, font, items);
+        Function<? super @Nullable T, @Nullable String> effectiveFormat = format;
+        if (converter != null && format == DEFAULT_FORMAT) {
+            effectiveFormat = converter::toString;
+        }
+
+        ComboBoxEx<T> comboBoxEx = new ComboBoxEx<>(edit, add, remove, dflt, effectiveFormat, graphic, font, items);
+
+        if (converter != null) {
+            comboBoxEx.setConverter(converter);
+        } else if (parser != null) {
+            Function<? super @Nullable T, @Nullable String> fmt = effectiveFormat;
+            comboBoxEx.setConverter(new StringConverter<>() {
+                @Override
+                public @Nullable String toString(@Nullable T object) {
+                    return object == null ? "" : fmt.apply(object);
+                }
+
+                @Override
+                public @Nullable T fromString(@Nullable String string) {
+                    return string == null ? null : parser.apply(string);
+                }
+            });
+        }
+
+        if (comparator != null) {
+            comboBoxEx.setComparator(comparator);
+        }
+
+        if (editable) {
+            comboBoxEx.setEditable(true);
+        }
+
+        if (columns != null) {
+            comboBoxEx.setColumns(columns);
+        }
 
         // ControlBuilder.build() applies tooltip, etc.
         // But it also calls factory.get().
@@ -176,7 +294,9 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
             comboBoxEx.valueProperty().addListener((obs, oldVal, newVal) -> onChange.accept(newVal));
         }
 
-        Bindings.bindBidirectional(comboBoxEx.valueProperty(), property);
+        if (boundProperty != null) {
+            Bindings.bindBidirectional(comboBoxEx.valueProperty(), boundProperty);
+        }
 
         return comboBoxEx;
     }

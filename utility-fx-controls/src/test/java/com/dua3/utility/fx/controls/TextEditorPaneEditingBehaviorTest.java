@@ -355,20 +355,28 @@ class TextEditorPaneEditingBehaviorTest extends FxTestBase {
             editor.markUnderline(true);
             editor.markStrikeThrough(true);
 
-            assertEquals(Style.FONT_WEIGHT_VALUE_BOLD, editor.getText().attributesAt(1).get(Style.FONT_WEIGHT));
-            assertEquals(Style.FONT_STYLE_VALUE_ITALIC, editor.getText().attributesAt(1).get(Style.FONT_STYLE));
-            assertEquals(Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE, editor.getText().attributesAt(1).get(Style.TEXT_DECORATION_UNDERLINE));
-            assertEquals(Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, editor.getText().attributesAt(1).get(Style.TEXT_DECORATION_LINE_THROUGH));
+            assertTrue(editor.getText().stylesAt(1).contains(Style.BOLD));
+            assertTrue(editor.getText().stylesAt(1).contains(Style.ITALIC));
+            assertTrue(editor.getText().stylesAt(1).contains(Style.UNDERLINE));
+            assertTrue(editor.getText().stylesAt(1).contains(Style.LINE_THROUGH));
+            assertTrue(editor.isBold());
+            assertTrue(editor.isItalic());
+            assertTrue(editor.isUnderline());
+            assertTrue(editor.isStrikeThrough());
 
             editor.markBold(false);
             editor.markItalic(false);
             editor.markUnderline(false);
             editor.markStrikeThrough(false);
 
-            assertEquals(Style.FONT_WEIGHT_VALUE_NORMAL, editor.getText().attributesAt(1).get(Style.FONT_WEIGHT));
-            assertEquals(Style.FONT_STYLE_VALUE_NORMAL, editor.getText().attributesAt(1).get(Style.FONT_STYLE));
-            assertEquals(Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE, editor.getText().attributesAt(1).get(Style.TEXT_DECORATION_UNDERLINE));
-            assertEquals(Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE, editor.getText().attributesAt(1).get(Style.TEXT_DECORATION_LINE_THROUGH));
+            assertFalse(editor.getText().stylesAt(1).contains(Style.BOLD));
+            assertFalse(editor.getText().stylesAt(1).contains(Style.ITALIC));
+            assertFalse(editor.getText().stylesAt(1).contains(Style.UNDERLINE));
+            assertFalse(editor.getText().stylesAt(1).contains(Style.LINE_THROUGH));
+            assertFalse(editor.isBold());
+            assertFalse(editor.isItalic());
+            assertFalse(editor.isUnderline());
+            assertFalse(editor.isStrikeThrough());
         });
     }
 

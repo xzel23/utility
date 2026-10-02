@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Timeout;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -477,6 +478,42 @@ class ControlsTest extends FxTestBase {
             comboBoxEx.valueProperty().setValue("A");
             assertEquals("A", property.get());
             assertEquals("A", changedValue.get());
+        });
+    }
+
+    /**
+     * Test ComboBoxEx editable behavior.
+     */
+    @Test
+    @Timeout(value = 10, unit = java.util.concurrent.TimeUnit.SECONDS)
+    void testComboBoxExEditable() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            List<Float> items = List.of(10.0f, 12.0f, 14.0f);
+            ComboBoxEx<Float> comboBoxEx = Controls.comboBoxEx(items)
+                    .editable(true)
+                    .columns(3)
+                    .converter(
+                            f -> f == null ? "" : (f == Math.floor(f) ? Integer.toString(f.intValue()) : Float.toString(f)),
+                            s -> (s == null || s.isBlank()) ? null : Float.parseFloat(s.trim())
+                    )
+                    .comparator(Comparator.naturalOrder())
+                    .defaultValue(() -> 12.0f)
+                    .build();
+
+            assertTrue(comboBoxEx.isEditable());
+            assertEquals(3, comboBoxEx.getColumns());
+            assertEquals(3, comboBoxEx.getEditor().getPrefColumnCount());
+            assertEquals(12.0f, comboBoxEx.valueProperty().getValue());
+            assertEquals("12", comboBoxEx.getEditor().getText());
+
+            // Type a custom value not in list and commit
+            comboBoxEx.getEditor().setText("13.5");
+            comboBoxEx.commitValue();
+            assertEquals(13.5f, comboBoxEx.valueProperty().getValue());
+
+            // Adding custom value sorts with comparator
+            assertTrue(comboBoxEx.addValue(11.0f));
+            assertEquals(List.of(10.0f, 11.0f, 12.0f, 14.0f), comboBoxEx.getItems());
         });
     }
 

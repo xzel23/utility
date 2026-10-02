@@ -79,6 +79,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Shear;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -90,6 +91,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -1637,7 +1639,36 @@ public class TextPane extends Control implements RichTextPane {
                 ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS)
                         .font(fnt -> fnt != null ? javafx.scene.text.Font.font(fnt, 14) : null)
                         .build();
-                ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
+                ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES)
+                        .editable(true)
+                        .columns(3)
+                        .converter(new StringConverter<>() {
+                            @Override
+                            public @Nullable String toString(@Nullable Float object) {
+                                if (object == null) {
+                                    return "";
+                                }
+                                if (object == Math.floor(object) && !Float.isInfinite(object)) {
+                                    return Integer.toString(object.intValue());
+                                }
+                                return Float.toString(object);
+                            }
+
+                            @Override
+                            public @Nullable Float fromString(@Nullable String string) {
+                                if (string == null || string.isBlank()) {
+                                    return null;
+                                }
+                                try {
+                                    float v = Float.parseFloat(string.trim());
+                                    return (Float.isFinite(v) && v > 0.0f) ? v : null;
+                                } catch (NumberFormatException e) {
+                                    return null;
+                                }
+                            }
+                        })
+                        .comparator(Comparator.naturalOrder())
+                        .build();
                 ColorPicker textColorPicker = createColorPicker("Text color", Color.BLACK);
                 ColorPicker backgroundColorPicker = createColorPicker("Background color", Color.TRANSPARENT_WHITE);
                 StackPane textColorButton = createTextColorButton(textColorPicker);
