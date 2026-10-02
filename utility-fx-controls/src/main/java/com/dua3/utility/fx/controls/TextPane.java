@@ -7,6 +7,7 @@ import com.dua3.utility.fx.FxGraphics;
 import com.dua3.utility.fx.FxImageUtil;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.Alignment;
@@ -76,6 +77,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Shear;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1627,10 +1630,10 @@ public class TextPane extends Control implements RichTextPane {
                 Button decreaseIndentButton = createButton("Decrease indentation", Controls.graphic(Feather.ARROW_LEFT.getDescription()), editor, TextEditorPane::decreaseIndentation);
                 Button increaseIndentButton = createButton("Increase indentation", Controls.graphic(Feather.ARROW_RIGHT.getDescription()), editor, TextEditorPane::increaseIndentation);
 
-                ToggleButton boldButton = createToggleButton("Bold", Controls.graphic(Feather.BOLD.getDescription()), editor, TextEditorPane::markBold);
-                ToggleButton italicsButton = createToggleButton("Italic", Controls.graphic(Feather.ITALIC.getDescription()), editor, TextEditorPane::markItalic);
-                ToggleButton underlineButton = createToggleButton("Underline", Controls.graphic(Feather.UNDERLINE.getDescription()), editor, TextEditorPane::markUnderline);
-                ToggleButton strikeThroughButton = createToggleButton("Strike Through", createStrikeThroughGraphic(), editor, TextEditorPane::markStrikeThrough);
+                ToggleButton boldButton = createToggleButton("Bold", createTextStyleGraphic("B", "-fx-font-weight: bold;", false, false, false), editor, TextEditorPane::markBold);
+                ToggleButton italicsButton = createToggleButton("Italic", createTextStyleGraphic("I", "-fx-font-style: italic;", true, false, false), editor, TextEditorPane::markItalic);
+                ToggleButton underlineButton = createToggleButton("Underline", createTextStyleGraphic("U", "", false, true, false), editor, TextEditorPane::markUnderline);
+                ToggleButton strikeThroughButton = createToggleButton("Strike Through", createTextStyleGraphic("S", "", false, false, true), editor, TextEditorPane::markStrikeThrough);
 
                 ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS).build();
                 ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
@@ -1781,14 +1784,23 @@ public class TextPane extends Control implements RichTextPane {
                     .build();
         }
 
-        private static Node createStrikeThroughGraphic() {
-            Label letter = new Label("S");
-            letter.setStyle("-fx-font-weight: normal; -fx-font-size: 14px;");
+        private static Node createTextStyleGraphic(String letterText, String letterStyle, boolean italic, boolean underline, boolean strikeThrough) {
+            Label letter = new Label(letterText);
+            letter.setStyle(letterStyle + " -fx-font-size: 14px;");
 
-            Rectangle line = new Rectangle(14, 1, javafx.scene.paint.Color.BLACK);
-
-            StackPane graphic = new StackPane(letter, line);
+            StackPane graphic = new StackPane(letter);
+            if (underline || strikeThrough) {
+                Rectangle line = new Rectangle(14, 1, javafx.scene.paint.Color.BLACK);
+                if (underline) {
+                    StackPane.setAlignment(line, javafx.geometry.Pos.BOTTOM_CENTER);
+                }
+                graphic.getChildren().add(line);
+            }
+            if (italic) {
+                graphic.getTransforms().add(new Shear(-Math.sin(MathUtil.rad(15)), 0, 8, 8));
+            }
             graphic.setPrefSize(16, 16);
+
             return graphic;
         }
 
