@@ -31,6 +31,7 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
     private Supplier<? extends @Nullable T> dflt = () -> null;
     private Function<? super @Nullable T, @Nullable String> format = TextUtil::toLocalizedString;
     private Function<? super @Nullable T, ? extends @Nullable Node> graphic = item -> null;
+    private Function<? super @Nullable T, ? extends javafx.scene.text.@Nullable Font> font = item -> null;
     private @Nullable Consumer<@Nullable T> onChange;
 
     /**
@@ -120,6 +121,19 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
     }
 
     /**
+     * Sets a font generation function for the items in the ComboBoxEx. The specified function
+     * determines how to format items of type {@code T} with a {@link javafx.scene.text.Font}.
+     *
+     * @param font a function that takes an item of type {@code T} (which may be nullable)
+     *             and returns a {@link javafx.scene.text.Font} (which may also be nullable) to style the item
+     * @return the current instance of {@code ComboBoxExBuilder} for method chaining
+     */
+    public ComboBoxExBuilder<T> font(Function<? super @Nullable T, ? extends javafx.scene.text.@Nullable Font> font) {
+        this.font = font;
+        return self();
+    }
+
+    /**
      * Sets a callback to be invoked when the value of the ComboBoxEx changes.
      *
      * @param onChange a {@link Consumer} that accepts the new value of the ComboBoxEx.
@@ -144,7 +158,7 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
 
     @Override
     public ComboBoxEx<T> build() {
-        ComboBoxEx<T> comboBoxEx = new ComboBoxEx<>(edit, add, remove, dflt, format, graphic, items);
+        ComboBoxEx<T> comboBoxEx = new ComboBoxEx<>(edit, add, remove, dflt, format, graphic, font, items);
 
         // ControlBuilder.build() applies tooltip, etc.
         // But it also calls factory.get().

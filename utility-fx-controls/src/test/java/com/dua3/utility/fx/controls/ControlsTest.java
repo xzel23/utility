@@ -12,6 +12,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
@@ -475,6 +476,34 @@ class ControlsTest extends FxTestBase {
             comboBoxEx.valueProperty().setValue("A");
             assertEquals("A", property.get());
             assertEquals("A", changedValue.get());
+        });
+    }
+
+    /**
+     * Test ComboBoxEx font configuration.
+     */
+    @Test
+    @Timeout(value = 10, unit = java.util.concurrent.TimeUnit.SECONDS)
+    void testComboBoxExFont() throws Exception {
+        List<String> items = List.of("Verdana", "Arial");
+        ComboBoxEx<String> comboBoxEx = Controls.<String>comboBoxEx(items)
+                .font(fnt -> fnt != null ? javafx.scene.text.Font.font(fnt, 14) : null)
+                .build();
+        addToScene(comboBoxEx);
+
+        runOnFxThreadAndWait(() -> {
+            assertNotNull(comboBoxEx);
+            assertEquals(items, comboBoxEx.getItems());
+
+            @SuppressWarnings("unchecked")
+            ComboBox<String> fontCb = (ComboBox<String>) comboBoxEx.lookup(".combo-box");
+            assertNotNull(fontCb);
+            fontCb.setValue("Verdana");
+            ListCell<String> buttonCell = fontCb.getButtonCell();
+            assertNotNull(buttonCell);
+            assertEquals("Verdana", buttonCell.getText());
+            assertEquals("Verdana", buttonCell.getFont().getFamily());
+            assertEquals(14.0, buttonCell.getFont().getSize(), 0.01);
         });
     }
 

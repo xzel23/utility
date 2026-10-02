@@ -112,7 +112,7 @@ import java.util.function.Function;
  * <p>Inline controls can be embedded by assigning styles containing
  * {@link RichTextBuilderExtBase#STYLE_ATTRIBUTE_INLINE_NODE_FACTORY} to a run.
  */
-@SuppressWarnings("NumericCastThatLosesPrecision")
+@SuppressWarnings({"NumericCastThatLosesPrecision", "java:S110", "java:S6878"})
 public class TextPane extends Control implements RichTextPane {
     private static final Logger LOG = LogManager.getLogger(TextPane.class);
 
@@ -1635,8 +1635,7 @@ public class TextPane extends Control implements RichTextPane {
                 ToggleButton strikeThroughButton = createToggleButton("Strike Through", createTextStyleGraphic("S", "", false, false, true), editor, TextEditorPane::markStrikeThrough);
 
                 ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS)
-                        .format(fnt -> "")
-                        .graphic(TextPaneSkin::createFontPreview)
+                        .font(fnt -> fnt != null ? javafx.scene.text.Font.font(fnt, 14) : null)
                         .build();
                 ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
                 ColorPicker textColorPicker = createColorPicker("Text color", Color.BLACK);
@@ -1804,16 +1803,6 @@ public class TextPane extends Control implements RichTextPane {
             graphic.setPrefSize(16, 16);
 
             return graphic;
-        }
-
-        private static @Nullable Node createFontPreview(@Nullable String fontFamily) {
-            if (fontFamily == null) {
-                return null;
-            }
-
-            Label preview = new Label(fontFamily);
-            preview.setFont(javafx.scene.text.Font.font(fontFamily, 14));
-            return preview;
         }
 
         private static ColorPicker createColorPicker(String tooltip, Color defaultColor) {

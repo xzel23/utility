@@ -35,6 +35,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of the items contained in the ComboBox
  */
+@SuppressWarnings({"java:S4276", "java:S107"})
 public class ComboBoxEx<T> extends CustomControl<HBox> {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
@@ -65,10 +66,10 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Supplier<? extends @Nullable T> dflt,
             Function<? super @Nullable T, @Nullable String> format,
-            Function<? super @Nullable T, ? extends Node> graphic,
+            Function<? super @Nullable T, ? extends @Nullable Node> graphic,
             T... items
     ) {
-        this(edit, add, remove, dflt, format, graphic, LangUtil.asUnmodifiableList(items));
+        this(edit, add, remove, dflt, format, graphic, item -> null, LangUtil.asUnmodifiableList(items));
     }
 
     /**
@@ -84,10 +85,62 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
      */
     public ComboBoxEx(
             @Nullable Function<T, @Nullable T> edit,
-            @Nullable Supplier<@Nullable T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            @Nullable Supplier<@Nullable T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Supplier<? extends @Nullable T> dflt,
             Function<? super @Nullable T, @Nullable String> format,
             Function<? super @Nullable T, ? extends @Nullable Node> graphic,
+            Collection<T> items
+    ) {
+        this(edit, add, remove, dflt, format, graphic, item -> null, items);
+    }
+
+    /**
+     * Constructs a ComboBoxEx with the specified edit, add, remove, format, font, and items.
+     *
+     * @param edit   the unary operator to perform editing on the selected item (nullable)
+     * @param add    the supplier to provide a new item to add (nullable)
+     * @param remove the bi-predicate to determine if an item should be removed (nullable)
+     * @param dflt   the supplier for the default value
+     * @param format the function to format the items as strings
+     * @param graphic  a function to provide a graphic for the combo box item, or null if no graphic is required
+     * @param font   a function to provide a font for the combo box item, or null if no font is required
+     * @param items  the initial items to populate the ComboBox (variadic parameter)
+     */
+    @SafeVarargs
+    public ComboBoxEx(
+            @Nullable Function<T, @Nullable T> edit,
+            @Nullable Supplier<@Nullable T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            Supplier<? extends @Nullable T> dflt,
+            Function<? super @Nullable T, @Nullable String> format,
+            Function<? super @Nullable T, ? extends @Nullable Node> graphic,
+            Function<? super @Nullable T, ? extends javafx.scene.text.@Nullable Font> font,
+            T... items
+    ) {
+        this(edit, add, remove, dflt, format, graphic, font, LangUtil.asUnmodifiableList(items));
+    }
+
+    /**
+     * Constructs a ComboBoxEx with the specified edit, add, remove, format, font, and items.
+     *
+     * @param edit   the unary operator to perform editing on the selected item (nullable)
+     * @param add    the supplier to provide a new item to add (nullable)
+     * @param remove the bi-predicate to determine if an item should be removed (nullable)
+     * @param dflt   the supplier for the default value
+     * @param format the function to format the items as strings
+     * @param graphic  a function to provide a graphic for the combo box item, or null if no graphic is required
+     * @param font   a function to provide a font for the combo box item, or null if no font is required
+     * @param items  the initial items to populate the ComboBox (variadic parameter)
+     */
+    public ComboBoxEx(
+            @Nullable Function<T, @Nullable T> edit,
+            @Nullable Supplier<@Nullable T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            Supplier<? extends @Nullable T> dflt,
+            Function<? super @Nullable T, @Nullable String> format,
+            Function<? super @Nullable T, ? extends @Nullable Node> graphic,
+            Function<? super @Nullable T, ? extends javafx.scene.text.@Nullable Font> font,
             Collection<T> items
     ) {
         super(new HBox());
@@ -133,6 +186,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
             @Override
             public ListCell<@Nullable T> call(@Nullable ListView<T> lv) {
                 return new ListCell<>() {
+                    private final javafx.scene.text.Font defaultFont = getFont();
 
                     @Override
                     protected void updateItem(@Nullable T item, boolean empty) {
@@ -140,6 +194,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
 
                         String text = "";
                         Node node = null;
+                        javafx.scene.text.Font itemFont = null;
                         if (!empty) {
                             try {
                                 text = format.apply(item);
@@ -153,9 +208,15 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
                                 LOG.warn("error during formatting", e);
                                 text = String.valueOf(item);
                             }
+                            try {
+                                itemFont = font.apply(item);
+                            } catch (Exception e) {
+                                LOG.warn("error during formatting", e);
+                            }
                         }
                         setText(text);
                         setGraphic(node);
+                        setFont(itemFont != null ? itemFont : defaultFont);
                     }
                 };
             }
@@ -226,6 +287,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
 
     private void removeItem() {
         T item = comboBox.getSelectionModel().getSelectedItem();
+        //noinspection DataFlowIssue
         if (Optional.ofNullable(remove).orElse(ComboBoxEx::alwaysRemoveSelectedItem).test(this, item)) {
             int idx = items.indexOf(item);
             items.remove(idx);
