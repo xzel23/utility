@@ -55,6 +55,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Labeled;
@@ -74,6 +75,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.feather.Feather;
 
@@ -107,6 +110,7 @@ import java.util.function.Function;
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public class TextPane extends Control implements RichTextPane {
+    private static final Logger LOG = LogManager.getLogger(TextPane.class);
 
     /**
      * A shared instance of {@link FxFontUtil} used for font-related utilities
@@ -499,21 +503,20 @@ public class TextPane extends Control implements RichTextPane {
     int sourcePositionForPoint(Point2D point, double availableWidth, List<VisualLine> fallbackLines) {
         RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = createLayout(availableWidth);
         for (InlineControlPlacement placement : layout.placements()) {
-            if (!(placement.node() instanceof TableNode tableNode)) {
-                continue;
-            }
-            tableNode.applyCss();
-            tableNode.autosize();
-            double prefHeight = tableNode.prefHeight(-1);
-            double tableY = computeInlineNodeY(placement, prefHeight, tableNode.getBaselineOffset());
-            var sourcePosition = RichTextTableHelper.sourcePositionForPoint(
-                    tableNode.tableLayout(),
-                    (float) (point.getX() - placement.x()),
-                    (float) (point.getY() - tableY),
-                    FONT_UTIL
-            );
-            if (sourcePosition.isPresent()) {
-                return sourcePosition.getAsInt();
+            if (placement.node() instanceof TableNode tableNode) {
+                tableNode.applyCss();
+                tableNode.autosize();
+                double prefHeight = tableNode.prefHeight(-1);
+                double tableY = computeInlineNodeY(placement, prefHeight, tableNode.getBaselineOffset());
+                var sourcePosition = RichTextTableHelper.sourcePositionForPoint(
+                        tableNode.tableLayout(),
+                        (float) (point.getX() - placement.x()),
+                        (float) (point.getY() - tableY),
+                        FONT_UTIL
+                );
+                if (sourcePosition.isPresent()) {
+                    return sourcePosition.getAsInt();
+                }
             }
         }
         return RichTextVisualLayoutHelper.indexForPoint(fallbackLines, point.getX(), point.getY());
@@ -795,49 +798,47 @@ public class TextPane extends Control implements RichTextPane {
 
         List<InlineControlPlacement> placements = new ArrayList<>();
         for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
-            if (line.isEmpty()) {
-                continue;
-            }
-
-            float lineTop = line.getFirst().y();
-            float lineBottom = lineTop;
-            double lineAscent = 0.0;
-            for (FragmentedText.Fragment fragment : line) {
-                lineBottom = Math.max(lineBottom, fragment.y() + fragment.h());
-                double fragmentAscent = fragment.font().getAscent();
-                if (fragment.text() instanceof Run run) {
-                    fragmentAscent = getInlineReferenceAscent(run, fragment.font(), displayScale);
+            if (!line.isEmpty()) {
+                float lineTop = line.getFirst().y();
+                float lineBottom = lineTop;
+                double lineAscent = 0.0;
+                for (FragmentedText.Fragment fragment : line) {
+                    lineBottom = Math.max(lineBottom, fragment.y() + fragment.h());
+                    double fragmentAscent = fragment.font().getAscent();
+                    if (fragment.text() instanceof Run run) {
+                        fragmentAscent = getInlineReferenceAscent(run, fragment.font(), displayScale);
+                    }
+                    lineAscent = Math.max(lineAscent, fragmentAscent);
                 }
-                lineAscent = Math.max(lineAscent, fragmentAscent);
-            }
 
-            float lineHeight = Math.max(0.0f, lineBottom - lineTop);
-            lineAscent = Math.clamp(lineAscent, 0.0, lineHeight);
-            double lineDescent = Math.max(0.0, lineHeight - lineAscent);
-            float baselineY = (float) (lineTop + lineAscent);
+                float lineHeight = Math.max(0.0f, lineBottom - lineTop);
+                lineAscent = Math.clamp(lineAscent, 0.0, lineHeight);
+                double lineDescent = Math.max(0.0, lineHeight - lineAscent);
+                float baselineY = (float) (lineTop + lineAscent);
 
-            for (FragmentedText.Fragment fragment : line) {
-                if (fragment.text() instanceof Run run) {
-                    Node node = createInlineNode(run, displayScale, availableWidth, wrapText);
-                    if (node != null) {
-                        applyInlineNodeFont(node, fragment.font());
-                        VAnchor vAnchor = getInlineNodeVAnchor(run);
-                        double descent = getInlineNodeDescent(run, displayScale);
-                        placements.add(new InlineControlPlacement(
-                                node,
-                                fragment.x(),
-                                lineTop,
-                                fragment.w(),
-                                lineHeight,
-                                baselineY,
-                                fragment.font(),
-                                vAnchor,
-                                lineAscent,
-                                lineDescent,
-                                descent,
-                                run.getStart(),
-                                run.getEnd()
-                        ));
+                for (FragmentedText.Fragment fragment : line) {
+                    if (fragment.text() instanceof Run run) {
+                        Node node = createInlineNode(run, displayScale, availableWidth, wrapText);
+                        if (node != null) {
+                            applyInlineNodeFont(node, fragment.font());
+                            VAnchor vAnchor = getInlineNodeVAnchor(run);
+                            double descent = getInlineNodeDescent(run, displayScale);
+                            placements.add(new InlineControlPlacement(
+                                    node,
+                                    fragment.x(),
+                                    lineTop,
+                                    fragment.w(),
+                                    lineHeight,
+                                    baselineY,
+                                    fragment.font(),
+                                    vAnchor,
+                                    lineAscent,
+                                    lineDescent,
+                                    descent,
+                                    run.getStart(),
+                                    run.getEnd()
+                            ));
+                        }
                     }
                 }
             }
@@ -883,11 +884,9 @@ public class TextPane extends Control implements RichTextPane {
 
     private static @Nullable Number findLineDirectIndent(RichText text, int start, int end) {
         for (int index = start; index < end; index++) {
-            if (text.charAt(index) == RichText.SPLIT_MARKER) {
-                continue;
+            if (text.charAt(index) != RichText.SPLIT_MARKER) {
+                return text.attributesAt(index).get(Style.TEXT_INDENT_LEFT) instanceof Number number ? number : null;
             }
-            Object indent = text.attributesAt(index).get(Style.TEXT_INDENT_LEFT);
-            return indent instanceof Number number ? number : null;
         }
         return null;
     }
@@ -970,17 +969,14 @@ public class TextPane extends Control implements RichTextPane {
 
     private static @Nullable Number findFragmentLineIndent(List<FragmentedText.Fragment> line) {
         for (FragmentedText.Fragment fragment : line) {
-            if (!(fragment.text() instanceof Run run) || isStructuralMarker(run)) {
-                continue;
-            }
-            Object directIndent = run.getAttributes().get(Style.TEXT_INDENT_LEFT);
-            if (directIndent instanceof Number number) {
-                return number;
-            }
-            for (int i = run.getStyles().size() - 1; i >= 0; i--) {
-                Object styleIndent = run.getStyles().get(i).get(Style.TEXT_INDENT_LEFT);
-                if (styleIndent instanceof Number number) {
+            if (fragment.text() instanceof Run run && !isStructuralMarker(run)) {
+                if (run.getAttributes().get(Style.TEXT_INDENT_LEFT) instanceof Number number) {
                     return number;
+                }
+                for (int i = run.getStyles().size() - 1; i >= 0; i--) {
+                    if (run.getStyles().get(i).get(Style.TEXT_INDENT_LEFT) instanceof Number number) {
+                        return number;
+                    }
                 }
             }
         }
@@ -1300,6 +1296,8 @@ public class TextPane extends Control implements RichTextPane {
                 desktop.mail(uri);
             } else if (desktop.isSupported(Desktop.Action.BROWSE)) {
                 desktop.browse(uri);
+            } else {
+                LOG.warn("No suitable action for opening URI {}", uri);
             }
         } catch (IOException | UnsupportedOperationException ignored) {
             // ignore failures from user-supplied or unsupported URI schemes
@@ -1403,14 +1401,13 @@ public class TextPane extends Control implements RichTextPane {
         float cumulativeShift = 0.0f;
         float lastLineShift = 0.0f;
         for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
-            if (line.isEmpty()) {
-                continue;
+            if (!line.isEmpty()) {
+                float lineY = line.getFirst().y();
+                cumulativeShift += overflowAboveByLineY.getOrDefault(lineY, 0.0f);
+                lineShiftByY.put(lineY, cumulativeShift);
+                lastLineShift = cumulativeShift;
+                cumulativeShift += overflowBelowByLineY.getOrDefault(lineY, 0.0f);
             }
-            float lineY = line.getFirst().y();
-            cumulativeShift += overflowAboveByLineY.getOrDefault(lineY, 0.0f);
-            lineShiftByY.put(lineY, cumulativeShift);
-            lastLineShift = cumulativeShift;
-            cumulativeShift += overflowBelowByLineY.getOrDefault(lineY, 0.0f);
         }
         float tailOverflowBelow = Math.max(0.0f, cumulativeShift - lastLineShift);
         return new LineShiftData(lineShiftByY, tailOverflowBelow);
@@ -1458,27 +1455,27 @@ public class TextPane extends Control implements RichTextPane {
         for (List<FragmentedText.Fragment> line : fragments.lines()) {
             if (line.isEmpty()) {
                 shiftedLines.add(List.of());
-                continue;
+            } else {
+                float lineY = line.getFirst().y();
+                float dy = lineShiftByY.getOrDefault(lineY, 0.0f);
+                if (dy == 0.0f) {
+                    shiftedLines.add(line);
+                } else {
+                    List<FragmentedText.Fragment> shiftedLine = new ArrayList<>(line.size());
+                    for (FragmentedText.Fragment fragment : line) {
+                        shiftedLine.add(new FragmentedText.Fragment(
+                                fragment.x(),
+                                fragment.y() + dy,
+                                fragment.w(),
+                                fragment.h(),
+                                fragment.baseLine(),
+                                fragment.font(),
+                                fragment.text()
+                        ));
+                    }
+                    shiftedLines.add(shiftedLine);
+                }
             }
-            float lineY = line.getFirst().y();
-            float dy = lineShiftByY.getOrDefault(lineY, 0.0f);
-            if (dy == 0.0f) {
-                shiftedLines.add(line);
-                continue;
-            }
-            List<FragmentedText.Fragment> shiftedLine = new ArrayList<>(line.size());
-            for (FragmentedText.Fragment fragment : line) {
-                shiftedLine.add(new FragmentedText.Fragment(
-                        fragment.x(),
-                        fragment.y() + dy,
-                        fragment.w(),
-                        fragment.h(),
-                        fragment.baseLine(),
-                        fragment.font(),
-                        fragment.text()
-                ));
-            }
-            shiftedLines.add(shiftedLine);
         }
         return shiftedLines;
     }
@@ -1529,26 +1526,6 @@ public class TextPane extends Control implements RichTextPane {
         private static final double DRAG_AUTOSCROLL_TICK_MS = 40.0;
         private static final SequencedCollection<String> AVAILABLE_FONTS = FxFontUtil.getInstance().getFamilies(FontUtil.FontTypes.ALL);
         private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
-        private static final Color[] DEFAULT_TEXT_COLORS = {
-                Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
-                Color.RED.darker(), Color.RED, Color.RED.brighter(),
-                Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
-                Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
-                Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
-                Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
-                Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
-        };
-        private static final Color[] DEFAULT_BACKGROUND_COLORS = {
-                Color.TRANSPARENT_WHITE,
-                Color.BLACK, Color.DARKGRAY, Color.GRAY, Color.LIGHTGRAY, Color.WHITE,
-                Color.RED.darker(), Color.RED, Color.RED.brighter(),
-                Color.GREEN.darker(), Color.GREEN, Color.GREEN.brighter(),
-                Color.BLUE.darker(), Color.BLUE, Color.BLUE.brighter(),
-                Color.YELLOW.darker(), Color.YELLOW, Color.YELLOW.brighter(),
-                Color.DARKCYAN, Color.DARKCYAN.brighter(), Color.LIGHTCYAN,
-                Color.DARKMAGENTA, Color.DARKMAGENTA.brighter(), Color.DARKMAGENTA.brighter().brighter()
-        };
-
         private final Pane contentPane = new Pane();
         private final Pane selectionLayer = new Pane();
         private final Canvas canvas = new Canvas();
@@ -1655,16 +1632,8 @@ public class TextPane extends Control implements RichTextPane {
 
                 ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS).build();
                 ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
-                ComboBoxEx<Color> textColorList = Controls.comboBoxEx(DEFAULT_TEXT_COLORS)
-                        .defaultValue(() -> Color.BLACK)
-                        .format(color -> LangUtil.mapNonNullOrElse(color, Color::toArgb, ""))
-                        .graphic(color -> new Rectangle(16, 16, FxUtil.convert(color)))
-                        .build();
-                ComboBoxEx<Color> backgroundColorList = Controls.comboBoxEx(DEFAULT_BACKGROUND_COLORS)
-                        .defaultValue(() -> Color.TRANSPARENT_WHITE)
-                        .format(color -> LangUtil.mapNonNullOrElse(color, Color::toArgb, ""))
-                        .graphic(color -> new Rectangle(16, 16, FxUtil.convert(color)))
-                        .build();
+                ColorPicker textColorPicker = createColorPicker("Text color", Color.BLACK);
+                ColorPicker backgroundColorPicker = createColorPicker("Background color", Color.TRANSPARENT_WHITE);
 
                 copyButton.setFocusTraversable(false);
                 cutButton.setFocusTraversable(false);
@@ -1677,14 +1646,14 @@ public class TextPane extends Control implements RichTextPane {
                 strikeThroughButton.setFocusTraversable(false);
                 fontList.setFocusTraversable(false);
                 sizeList.setFocusTraversable(false);
-                textColorList.setFocusTraversable(false);
-                backgroundColorList.setFocusTraversable(false);
+                textColorPicker.setFocusTraversable(false);
+                backgroundColorPicker.setFocusTraversable(false);
 
                 boldButton.selectedProperty().bindBidirectional(editor.boldProperty());
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
                 underlineButton.selectedProperty().bindBidirectional(editor.underlineProperty());
                 strikeThroughButton.selectedProperty().bindBidirectional(editor.strikeThroughProperty());
-                bindFontLists(editor, fontList, sizeList, textColorList, backgroundColorList);
+                bindFontLists(editor, fontList, sizeList, textColorPicker, backgroundColorPicker);
                 undoButton.disableProperty().bind(editor.undoableProperty().not());
                 redoButton.disableProperty().bind(editor.redoableProperty().not());
 
@@ -1706,8 +1675,8 @@ public class TextPane extends Control implements RichTextPane {
                                 italicsButton,
                                 underlineButton,
                                 strikeThroughButton,
-                                textColorList,
-                                backgroundColorList
+                                textColorPicker,
+                                backgroundColorPicker
                         )
                         .focusTraversable(false)
                         .bindLocation(editor.toolbarLocationProperty())
@@ -1808,12 +1777,19 @@ public class TextPane extends Control implements RichTextPane {
                     .build();
         }
 
+        private static ColorPicker createColorPicker(String tooltip, Color defaultColor) {
+            ColorPicker colorPicker = new ColorPicker(FxUtil.convert(defaultColor));
+            colorPicker.setTooltip(new javafx.scene.control.Tooltip(tooltip));
+            colorPicker.setAccessibleText(tooltip);
+            return colorPicker;
+        }
+
         private static void bindFontLists(
                 TextEditorPane editor,
                 ComboBoxEx<String> fontList,
                 ComboBoxEx<Float> sizeList,
-                ComboBoxEx<Color> textColorList,
-                ComboBoxEx<Color> backgroundColorList
+                ColorPicker textColorPicker,
+                ColorPicker backgroundColorPicker
         ) {
             AtomicBoolean synchronizing = new AtomicBoolean(false);
 
@@ -1870,18 +1846,19 @@ public class TextPane extends Control implements RichTextPane {
                             return;
                         }
 
-                        ensureValuePresent(textColorList, newValue);
-                        if (!Objects.equals(textColorList.valueProperty().getValue(), newValue)) {
-                            textColorList.valueProperty().setValue(newValue);
+                        javafx.scene.paint.Color pickerColor = FxUtil.convert(newValue);
+                        if (!Objects.equals(textColorPicker.getValue(), pickerColor)) {
+                            textColorPicker.setValue(pickerColor);
                         }
                     }));
 
-            textColorList.valueProperty().addListener((obs, oldValue, newValue) -> {
+            textColorPicker.valueProperty().addListener((obs, oldValue, newValue) -> {
                 if (synchronizing.get() || newValue == null) {
                     return;
                 }
-                if (!Objects.equals(editor.getTextColor(), newValue)) {
-                    editor.setTextColor(newValue);
+                Color color = FxUtil.convert(newValue);
+                if (!Objects.equals(editor.getTextColor(), color)) {
+                    editor.setTextColor(color);
                 }
                 editor.requestFocus();
             });
@@ -1892,18 +1869,19 @@ public class TextPane extends Control implements RichTextPane {
                             return;
                         }
 
-                        ensureValuePresent(backgroundColorList, newValue);
-                        if (!Objects.equals(backgroundColorList.valueProperty().getValue(), newValue)) {
-                            backgroundColorList.valueProperty().setValue(newValue);
+                        javafx.scene.paint.Color pickerColor = FxUtil.convert(newValue);
+                        if (!Objects.equals(backgroundColorPicker.getValue(), pickerColor)) {
+                            backgroundColorPicker.setValue(pickerColor);
                         }
                     }));
 
-            backgroundColorList.valueProperty().addListener((obs, oldValue, newValue) -> {
+            backgroundColorPicker.valueProperty().addListener((obs, oldValue, newValue) -> {
                 if (synchronizing.get() || newValue == null) {
                     return;
                 }
-                if (!Objects.equals(editor.getBackgroundColor(), newValue)) {
-                    editor.setBackgroundColor(newValue);
+                Color color = FxUtil.convert(newValue);
+                if (!Objects.equals(editor.getBackgroundColor(), color)) {
+                    editor.setBackgroundColor(color);
                 }
                 editor.requestFocus();
             });
@@ -1928,17 +1906,17 @@ public class TextPane extends Control implements RichTextPane {
 
                 Color currentColor = editor.getTextColor();
                 if (currentColor != null) {
-                    ensureValuePresent(textColorList, currentColor);
-                    if (!Objects.equals(textColorList.valueProperty().getValue(), currentColor)) {
-                        textColorList.valueProperty().setValue(currentColor);
+                    javafx.scene.paint.Color pickerColor = FxUtil.convert(currentColor);
+                    if (!Objects.equals(textColorPicker.getValue(), pickerColor)) {
+                        textColorPicker.setValue(pickerColor);
                     }
                 }
 
                 Color currentBackgroundColor = editor.getBackgroundColor();
                 if (currentBackgroundColor != null) {
-                    ensureValuePresent(backgroundColorList, currentBackgroundColor);
-                    if (!Objects.equals(backgroundColorList.valueProperty().getValue(), currentBackgroundColor)) {
-                        backgroundColorList.valueProperty().setValue(currentBackgroundColor);
+                    javafx.scene.paint.Color pickerColor = FxUtil.convert(currentBackgroundColor);
+                    if (!Objects.equals(backgroundColorPicker.getValue(), pickerColor)) {
+                        backgroundColorPicker.setValue(pickerColor);
                     }
                 }
             });
@@ -2072,23 +2050,21 @@ public class TextPane extends Control implements RichTextPane {
         private void ensureCaretVisible(TextEditorPane editor, double availableWidth) {
             int caret = editor.getCaretPosition();
             for (Node node : inlineLayer.getChildren()) {
-                if (!(node instanceof TableNode tableNode)) {
-                    continue;
+                if (node instanceof TableNode tableNode) {
+                    RichTextTableHelper.Table table = tableNode.tableLayout().table();
+                    if (caret >= table.start() && caret < table.end()) {
+                        RichTextTableHelper.caretForSourcePosition(tableNode.tableLayout(), caret, FONT_UTIL)
+                                .ifPresent(tableCaret -> {
+                                    Bounds bounds = tableNode.getBoundsInParent();
+                                    scrollHorizontallyToInclude(bounds.getMinX() + tableCaret.x(), 1.0);
+                                    scrollVerticallyToInclude(
+                                            bounds.getMinY() + tableCaret.y(),
+                                            bounds.getMinY() + tableCaret.y() + tableCaret.height()
+                                    );
+                                });
+                        return;
+                    }
                 }
-                RichTextTableHelper.Table table = tableNode.tableLayout().table();
-                if (caret < table.start() || caret >= table.end()) {
-                    continue;
-                }
-                RichTextTableHelper.caretForSourcePosition(tableNode.tableLayout(), caret, FONT_UTIL)
-                        .ifPresent(tableCaret -> {
-                            Bounds bounds = tableNode.getBoundsInParent();
-                            scrollHorizontallyToInclude(bounds.getMinX() + tableCaret.x(), 1.0);
-                            scrollVerticallyToInclude(
-                                    bounds.getMinY() + tableCaret.y(),
-                                    bounds.getMinY() + tableCaret.y() + tableCaret.height()
-                            );
-                        });
-                return;
             }
             List<VisualLine> lines = editor.buildVisualLines(availableWidth);
             if (lines.isEmpty()) {
@@ -2343,25 +2319,24 @@ public class TextPane extends Control implements RichTextPane {
             Set<Node> added = Collections.newSetFromMap(new IdentityHashMap<>());
             for (InlineControlPlacement placement : layout.placements()) {
                 Node node = placement.node();
-                if (!added.add(node)) {
-                    continue;
+                if (added.add(node)) {
+                    inlineLayer.getChildren().add(node);
+                    if (node instanceof Labeled labeled) {
+                        labeled.setFont(FxFontUtil.getInstance().convert(placement.font()));
+                    }
+                    if (node instanceof ButtonBase button) {
+                        wireButtonAction(control, button);
+                    }
+                    node.setManaged(false);
+                    node.applyCss();
+                    node.autosize();
+                    double prefW = node.prefWidth(-1);
+                    double prefH = node.prefHeight(-1);
+                    double baselineOffset = node.getBaselineOffset();
+                    double x = placement.x();
+                    double y = computeInlineNodeY(placement, prefH, baselineOffset);
+                    node.resizeRelocate(x, y, prefW, prefH);
                 }
-                inlineLayer.getChildren().add(node);
-                if (node instanceof Labeled labeled) {
-                    labeled.setFont(FxFontUtil.getInstance().convert(placement.font()));
-                }
-                if (node instanceof ButtonBase button) {
-                    wireButtonAction(control, button);
-                }
-                node.setManaged(false);
-                node.applyCss();
-                node.autosize();
-                double prefW = node.prefWidth(-1);
-                double prefH = node.prefHeight(-1);
-                double baselineOffset = node.getBaselineOffset();
-                double x = placement.x();
-                double y = computeInlineNodeY(placement, prefH, baselineOffset);
-                node.resizeRelocate(x, y, prefW, prefH);
             }
 
             renderEditorOverlay(control, availableWidth, layout);
@@ -2407,32 +2382,28 @@ public class TextPane extends Control implements RichTextPane {
                 List<FragmentedText.Fragment> line = lines.get(i);
                 BlockDecorationData decorationData = blockDecorationData(line);
                 if (decorationData == null) {
-                    if (isBlankVisualLine(line) && area != null && nextNonEmptyLineHasDecoration(lines, i + 1, area)) {
-                        continue;
-                    }
-                    if (area != null) {
+                    if (area != null  && (!isBlankVisualLine(line) || !nextNonEmptyLineHasDecoration(lines, i + 1, area))) {
                         areas.add(area);
                         area = null;
                     }
-                    continue;
-                }
-
-                float lineTop = line.stream().map(FragmentedText.Fragment::y).min(Float::compare).orElse(0.0f);
-                float lineBottom = line.stream()
-                        .map(fragment -> fragment.y() + fragment.h())
-                        .max(Float::compare)
-                        .orElse(lineTop);
-                float lineLeft = line.stream().map(FragmentedText.Fragment::x).min(Float::compare).orElse(0.0f);
-
-                if (area == null
-                        || !area.decoration().equals(decorationData.decoration())
-                        || !Objects.equals(area.blockId(), decorationData.blockId())) {
-                    if (area != null) {
-                        areas.add(area);
-                    }
-                    area = new BlockDecorationArea(decorationData.decoration(), decorationData.blockId(), lineLeft, lineTop, lineBottom);
                 } else {
-                    area = new BlockDecorationArea(area.decoration(), area.blockId(), Math.min(area.left(), lineLeft), area.top(), lineBottom);
+                    float lineTop = line.stream().map(FragmentedText.Fragment::y).min(Float::compare).orElse(0.0f);
+                    float lineBottom = line.stream()
+                            .map(fragment -> fragment.y() + fragment.h())
+                            .max(Float::compare)
+                            .orElse(lineTop);
+                    float lineLeft = line.stream().map(FragmentedText.Fragment::x).min(Float::compare).orElse(0.0f);
+
+                    if (area == null
+                            || !area.decoration().equals(decorationData.decoration())
+                            || !Objects.equals(area.blockId(), decorationData.blockId())) {
+                        if (area != null) {
+                            areas.add(area);
+                        }
+                        area = new BlockDecorationArea(decorationData.decoration(), decorationData.blockId(), lineLeft, lineTop, lineBottom);
+                    } else {
+                        area = new BlockDecorationArea(area.decoration(), area.blockId(), Math.min(area.left(), lineLeft), area.top(), lineBottom);
+                    }
                 }
             }
             if (area != null) {
@@ -2448,13 +2419,12 @@ public class TextPane extends Control implements RichTextPane {
         ) {
             for (int i = start; i < lines.size(); i++) {
                 List<FragmentedText.Fragment> line = lines.get(i);
-                if (isBlankVisualLine(line)) {
-                    continue;
+                if (!isBlankVisualLine(line)) {
+                    BlockDecorationData data = blockDecorationData(line);
+                    return data != null
+                            && area.decoration().equals(data.decoration())
+                            && Objects.equals(area.blockId(), data.blockId());
                 }
-                BlockDecorationData data = blockDecorationData(line);
-                return data != null
-                        && area.decoration().equals(data.decoration())
-                        && Objects.equals(area.blockId(), data.blockId());
             }
             return false;
         }
@@ -2466,10 +2436,9 @@ public class TextPane extends Control implements RichTextPane {
         ) {
             for (int i = start; i < lines.size(); i++) {
                 List<FragmentedText.Fragment> line = lines.get(i);
-                if (isBlankVisualLine(line)) {
-                    continue;
+                if (!isBlankVisualLine(line)) {
+                    return Objects.equals(spacing, blockSpacing(line));
                 }
-                return Objects.equals(spacing, blockSpacing(line));
             }
             return false;
         }
@@ -2533,15 +2502,11 @@ public class TextPane extends Control implements RichTextPane {
 
         private static @Nullable BlockDecorationData blockDecorationData(List<FragmentedText.Fragment> line) {
             for (FragmentedText.Fragment fragment : line) {
-                if (!(fragment.text() instanceof Run run)) {
-                    continue;
-                }
-                if (isStructuralMarker(run)) {
-                    continue;
-                }
-                BlockDecoration decoration = blockDecoration(run);
-                if (decoration != null) {
-                    return new BlockDecorationData(decoration, decoratedBlockId(run, decoration));
+                if (fragment.text() instanceof Run run && !isStructuralMarker(run)) {
+                    BlockDecoration decoration = blockDecoration(run);
+                    if (decoration != null) {
+                        return new BlockDecorationData(decoration, decoratedBlockId(run, decoration));
+                    }
                 }
             }
             return null;
@@ -2549,15 +2514,11 @@ public class TextPane extends Control implements RichTextPane {
 
         private static @Nullable BlockSpacing blockSpacing(List<FragmentedText.Fragment> line) {
             for (FragmentedText.Fragment fragment : line) {
-                if (!(fragment.text() instanceof Run run)) {
-                    continue;
-                }
-                if (isStructuralMarker(run)) {
-                    continue;
-                }
-                BlockSpacing spacing = blockSpacing(run);
-                if (spacing != null) {
-                    return spacing;
+                if (fragment.text() instanceof Run run && !isStructuralMarker(run)) {
+                    BlockSpacing spacing = blockSpacing(run);
+                    if (spacing != null) {
+                        return spacing;
+                    }
                 }
             }
             return null;
@@ -2713,51 +2674,39 @@ public class TextPane extends Control implements RichTextPane {
                             marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
                             selectionLayer.getChildren().add(marker);
                         }
-                        continue;
+                    } else if (isInlinePlacementSelected(layout.layoutTextData(), placement, sourceSelStart, sourceSelEnd)) {
+                        Rectangle marker = createInlineSelectionMarker(placement);
+                        marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
+                        selectionLayer.getChildren().add(marker);
                     }
-                    if (!isInlinePlacementSelected(layout.layoutTextData(), placement, sourceSelStart, sourceSelEnd)) {
-                        continue;
-                    }
-                    Rectangle marker = createInlineSelectionMarker(placement);
-                    marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
-                    selectionLayer.getChildren().add(marker);
                 }
 
                 for (List<FragmentedText.Fragment> line : layout.renderLines()) {
-                    if (line.isEmpty()) {
-                        continue;
-                    }
-                    double lineTop = line.getFirst().y();
-                    double lineHeight = line.stream().mapToDouble(FragmentedText.Fragment::h).max().orElse(0.0);
-                    for (FragmentedText.Fragment fragment : line) {
-                        if (!(fragment.text() instanceof Run run)) {
-                            continue;
+                    if (!line.isEmpty()) {
+                        double lineTop = line.getFirst().y();
+                        double lineHeight = line.stream().mapToDouble(FragmentedText.Fragment::h).max().orElse(0.0);
+                        for (FragmentedText.Fragment fragment : line) {
+                            if (fragment.text() instanceof Run run) {
+                                int fragStart = run.getStart();
+                                int fragEnd = run.getEnd();
+                                int from = Math.max(selStart, fragStart);
+                                int to = Math.min(selEnd, fragEnd);
+                                if (from < to && !RichTextPaneLayoutHelper.hasInlineNode(run)) {
+                                    int relStart = from - fragStart;
+                                    int relEnd = to - fragStart;
+                                    double x1 = fragment.x() + textWidth(fontUtil, run, relStart, fragment.font());
+                                    double x2 = fragment.x() + textWidth(fontUtil, run, relEnd, fragment.font());
+                                    Rectangle marker = new Rectangle(
+                                            Math.min(x1, x2),
+                                            lineTop,
+                                            Math.max(1.0, Math.abs(x2 - x1)),
+                                            lineHeight
+                                    );
+                                    marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
+                                    selectionLayer.getChildren().add(marker);
+                                }
+                            }
                         }
-                        int fragStart = run.getStart();
-                        int fragEnd = run.getEnd();
-                        int from = Math.max(selStart, fragStart);
-                        int to = Math.min(selEnd, fragEnd);
-                        if (from >= to) {
-                            continue;
-                        }
-
-                        if (RichTextPaneLayoutHelper.hasInlineNode(run)) {
-                            // Inline-node selections are handled above using placement bounds.
-                            continue;
-                        }
-
-                        int relStart = from - fragStart;
-                        int relEnd = to - fragStart;
-                        double x1 = fragment.x() + textWidth(fontUtil, run, relStart, fragment.font());
-                        double x2 = fragment.x() + textWidth(fontUtil, run, relEnd, fragment.font());
-                        Rectangle marker = new Rectangle(
-                                Math.min(x1, x2),
-                                lineTop,
-                                Math.max(1.0, Math.abs(x2 - x1)),
-                                lineHeight
-                        );
-                        marker.setFill(javafx.scene.paint.Color.color(0.25, 0.45, 0.85, 0.35));
-                        selectionLayer.getChildren().add(marker);
                     }
                 }
             }
@@ -2767,24 +2716,22 @@ public class TextPane extends Control implements RichTextPane {
                 TextEditorPane tep = (TextEditorPane) control;
                 int caretPosition = tep.getCaretPosition();
                 for (InlineControlPlacement placement : layout.placements()) {
-                    if (!(placement.node() instanceof TableNode tableNode)) {
-                        continue;
-                    }
-                    RichTextTableHelper.Table table = tableNode.tableLayout().table();
-                    if (caretPosition < table.start() || caretPosition >= table.end()) {
-                        continue;
-                    }
-                    Bounds bounds = tableNode.getBoundsInParent();
-                    caretInfo = RichTextTableHelper.caretForSourcePosition(
-                                    tableNode.tableLayout(), caretPosition, FONT_UTIL)
-                            .map(caret -> new CaretInfo(
-                                    bounds.getMinX() + caret.x(),
-                                    bounds.getMinY() + caret.y(),
-                                    caret.height()
-                            ))
-                            .orElse(null);
-                    if (caretInfo != null) {
-                        break;
+                    if (placement.node() instanceof TableNode tableNode) {
+                        RichTextTableHelper.Table table = tableNode.tableLayout().table();
+                        if (caretPosition >= table.start() && caretPosition < table.end()) {
+                            Bounds bounds = tableNode.getBoundsInParent();
+                            caretInfo = RichTextTableHelper.caretForSourcePosition(
+                                            tableNode.tableLayout(), caretPosition, FONT_UTIL)
+                                    .map(caret -> new CaretInfo(
+                                            bounds.getMinX() + caret.x(),
+                                            bounds.getMinY() + caret.y(),
+                                            caret.height()
+                                    ))
+                                    .orElse(null);
+                            if (caretInfo != null) {
+                                break;
+                            }
+                        }
                     }
                 }
                 List<VisualLine> lines = tep.buildVisualLines(availableWidth);
@@ -2906,25 +2853,20 @@ public class TextPane extends Control implements RichTextPane {
         private static @Nullable CaretInfo findCaret(List<List<FragmentedText.Fragment>> lines, int layoutCaretPosition) {
             FontUtil fontUtil = FontUtil.getInstance();
             for (List<FragmentedText.Fragment> line : lines) {
-                if (line.isEmpty()) {
-                    continue;
-                }
-                double lineTop = line.getFirst().y();
-                double lineHeight = line.stream().mapToDouble(FragmentedText.Fragment::h).max().orElse(0.0);
-                for (FragmentedText.Fragment fragment : line) {
-                    if (!(fragment.text() instanceof Run run)) {
-                        continue;
+                if (!line.isEmpty()) {
+                    double lineTop = line.getFirst().y();
+                    double lineHeight = line.stream().mapToDouble(FragmentedText.Fragment::h).max().orElse(0.0);
+                    for (FragmentedText.Fragment fragment : line) {
+                        if (fragment.text() instanceof Run run) {
+                            int start = run.getStart();
+                            int end = run.getEnd();
+                            if (layoutCaretPosition >= start && layoutCaretPosition <= end) {
+                                int rel = layoutCaretPosition - start;
+                                double x = fragment.x() + textWidth(fontUtil, run, rel, fragment.font());
+                                return new CaretInfo(x, lineTop, lineHeight);
+                            }
+                        }
                     }
-
-                    int start = run.getStart();
-                    int end = run.getEnd();
-                    if (layoutCaretPosition < start || layoutCaretPosition > end) {
-                        continue;
-                    }
-
-                    int rel = layoutCaretPosition - start;
-                    double x = fragment.x() + textWidth(fontUtil, run, rel, fragment.font());
-                    return new CaretInfo(x, lineTop, lineHeight);
                 }
             }
             return null;
