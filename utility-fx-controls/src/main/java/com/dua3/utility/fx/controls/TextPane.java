@@ -77,7 +77,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Shear;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
@@ -1635,7 +1634,10 @@ public class TextPane extends Control implements RichTextPane {
                 ToggleButton underlineButton = createToggleButton("Underline", createTextStyleGraphic("U", "", false, true, false), editor, TextEditorPane::markUnderline);
                 ToggleButton strikeThroughButton = createToggleButton("Strike Through", createTextStyleGraphic("S", "", false, false, true), editor, TextEditorPane::markStrikeThrough);
 
-                ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS).build();
+                ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS)
+                        .format(fnt -> "")
+                        .graphic(TextPaneSkin::createFontPreview)
+                        .build();
                 ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
                 ColorPicker textColorPicker = createColorPicker("Text color", Color.BLACK);
                 ColorPicker backgroundColorPicker = createColorPicker("Background color", Color.TRANSPARENT_WHITE);
@@ -1802,6 +1804,16 @@ public class TextPane extends Control implements RichTextPane {
             graphic.setPrefSize(16, 16);
 
             return graphic;
+        }
+
+        private static @Nullable Node createFontPreview(@Nullable String fontFamily) {
+            if (fontFamily == null) {
+                return null;
+            }
+
+            Label preview = new Label(fontFamily);
+            preview.setFont(javafx.scene.text.Font.font(fontFamily, 14));
+            return preview;
         }
 
         private static ColorPicker createColorPicker(String tooltip, Color defaultColor) {
