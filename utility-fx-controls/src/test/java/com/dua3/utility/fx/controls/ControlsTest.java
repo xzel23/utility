@@ -13,6 +13,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
@@ -502,9 +503,22 @@ class ControlsTest extends FxTestBase {
             ListCell<String> buttonCell = fontCb.getButtonCell();
             assertNotNull(buttonCell);
             assertEquals("Verdana", buttonCell.getText());
+
+            // Button cell keeps the standard font to avoid changing toolbar height
+            assertEquals(new ListCell<String>().getFont(), buttonCell.getFont());
+
+            // List cells in the dropdown use the configured font
+            ListView<String> listView = new ListView<>(fontCb.getItems());
+            listView.setCellFactory(fontCb.getCellFactory());
+            addToScene(listView);
+
+            @SuppressWarnings("unchecked")
+            ListCell<String> listCell = (ListCell<String>) listView.lookup(".list-cell");
+            assertNotNull(listCell);
+            assertEquals("Verdana", listCell.getText());
             javafx.scene.text.Font expectedFont = javafx.scene.text.Font.font("Verdana", 14);
-            assertEquals(expectedFont, buttonCell.getFont());
-            assertEquals(14.0, buttonCell.getFont().getSize(), 0.01);
+            assertEquals(expectedFont, listCell.getFont());
+            assertEquals(14.0, listCell.getFont().getSize(), 0.01);
         });
     }
 

@@ -16,9 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
-import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,6 +43,8 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
     private final @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
     private final Supplier<? extends @Nullable T> dflt;
     private final Function<? super @Nullable T, @Nullable String> format;
+    private final Function<? super @Nullable T, ? extends @Nullable Node> graphic;
+    private final Function<? super @Nullable T, ? extends javafx.scene.text.@Nullable Font> font;
     private final ObservableList<T> items;
     private final ComboBox<@Nullable T> comboBox;
 
@@ -149,6 +149,8 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
         getStyleClass().setAll("comboboxex");
 
         this.format = format;
+        this.graphic = graphic;
+        this.font = font;
         this.items = FXCollections.observableArrayList(List.copyOf(items));
         this.dflt = dflt;
         container.setFillHeight(false);
@@ -181,51 +183,49 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
             buttonRemove.disableProperty().bind(comboBox.selectionModelProperty().isNull().or(comboBox.valueProperty().isNull()));
         }
 
-        Callback<@Nullable ListView<@Nullable T>, ListCell<@Nullable T>> cellFactory = new Callback<>() {
-
-            @Override
-            public ListCell<@Nullable T> call(@Nullable ListView<T> lv) {
-                return new ListCell<>() {
-                    private final javafx.scene.text.Font defaultFont = getFont();
-
-                    @Override
-                    protected void updateItem(@Nullable T item, boolean empty) {
-                        super.updateItem(item, empty);
-
-                        String text = "";
-                        Node node = null;
-                        javafx.scene.text.Font itemFont = null;
-                        if (!empty) {
-                            try {
-                                text = format.apply(item);
-                            } catch (Exception e) {
-                                LOG.warn("error during formatting", e);
-                                text = String.valueOf(item);
-                            }
-                            try {
-                                node = graphic.apply(item);
-                            } catch (Exception e) {
-                                LOG.warn("error during formatting", e);
-                                text = String.valueOf(item);
-                            }
-                            try {
-                                itemFont = font.apply(item);
-                            } catch (Exception e) {
-                                LOG.warn("error during formatting", e);
-                            }
-                        }
-                        setText(text);
-                        setGraphic(node);
-                        setFont(itemFont != null ? itemFont : defaultFont);
-                    }
-                };
-            }
-        };
-
-        comboBox.setButtonCell(cellFactory.call(null));
-        comboBox.setCellFactory(cellFactory);
+        comboBox.setButtonCell(createCell(true));
+        comboBox.setCellFactory(lv -> createCell(false));
 
         comboBox.setValue(this.dflt.get());
+    }
+
+    private ListCell<@Nullable T> createCell(boolean isButtonCell) {
+        return new ListCell<>() {
+            private final javafx.scene.text.Font defaultFont = getFont();
+
+            @Override
+            protected void updateItem(@Nullable T item, boolean empty) {
+                super.updateItem(item, empty);
+
+                String text = "";
+                Node node = null;
+                javafx.scene.text.Font itemFont = null;
+                if (!empty) {
+                    try {
+                        text = format.apply(item);
+                    } catch (Exception e) {
+                        LOG.warn("error during formatting", e);
+                        text = String.valueOf(item);
+                    }
+                    try {
+                        node = graphic.apply(item);
+                    } catch (Exception e) {
+                        LOG.warn("error during formatting", e);
+                        text = String.valueOf(item);
+                    }
+                    if (!isButtonCell) {
+                        try {
+                            itemFont = font.apply(item);
+                        } catch (Exception e) {
+                            LOG.warn("error during formatting", e);
+                        }
+                    }
+                }
+                setText(text);
+                setGraphic(node);
+                setFont(itemFont != null ? itemFont : defaultFont);
+            }
+        };
     }
 
     private void editItem() {
