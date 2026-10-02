@@ -58,6 +58,7 @@ import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
@@ -71,6 +72,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -1628,12 +1630,13 @@ public class TextPane extends Control implements RichTextPane {
                 ToggleButton boldButton = createToggleButton("Bold", Controls.graphic(Feather.BOLD.getDescription()), editor, TextEditorPane::markBold);
                 ToggleButton italicsButton = createToggleButton("Italic", Controls.graphic(Feather.ITALIC.getDescription()), editor, TextEditorPane::markItalic);
                 ToggleButton underlineButton = createToggleButton("Underline", Controls.graphic(Feather.UNDERLINE.getDescription()), editor, TextEditorPane::markUnderline);
-                ToggleButton strikeThroughButton = createToggleButton("Strike Through", Controls.graphic(Feather.MINUS.getDescription()), editor, TextEditorPane::markStrikeThrough);
+                ToggleButton strikeThroughButton = createToggleButton("Strike Through", createStrikeThroughGraphic(), editor, TextEditorPane::markStrikeThrough);
 
                 ComboBoxEx<String> fontList = Controls.comboBoxEx(AVAILABLE_FONTS).build();
                 ComboBoxEx<Float> sizeList = Controls.comboBoxEx(DEFAULT_FONT_SIZES).build();
                 ColorPicker textColorPicker = createColorPicker("Text color", Color.BLACK);
                 ColorPicker backgroundColorPicker = createColorPicker("Background color", Color.TRANSPARENT_WHITE);
+                StackPane textColorButton = createTextColorButton(textColorPicker);
 
                 copyButton.setFocusTraversable(false);
                 cutButton.setFocusTraversable(false);
@@ -1648,6 +1651,7 @@ public class TextPane extends Control implements RichTextPane {
                 sizeList.setFocusTraversable(false);
                 textColorPicker.setFocusTraversable(false);
                 backgroundColorPicker.setFocusTraversable(false);
+                textColorButton.setFocusTraversable(false);
 
                 boldButton.selectedProperty().bindBidirectional(editor.boldProperty());
                 italicsButton.selectedProperty().bindBidirectional(editor.italicProperty());
@@ -1675,7 +1679,7 @@ public class TextPane extends Control implements RichTextPane {
                                 italicsButton,
                                 underlineButton,
                                 strikeThroughButton,
-                                textColorPicker,
+                                textColorButton,
                                 backgroundColorPicker
                         )
                         .focusTraversable(false)
@@ -1777,11 +1781,59 @@ public class TextPane extends Control implements RichTextPane {
                     .build();
         }
 
+        private static Node createStrikeThroughGraphic() {
+            Label letter = new Label("S");
+            letter.setStyle("-fx-font-weight: normal; -fx-font-size: 14px;");
+
+            Rectangle line = new Rectangle(14, 1, javafx.scene.paint.Color.BLACK);
+
+            StackPane graphic = new StackPane(letter, line);
+            graphic.setPrefSize(16, 16);
+            return graphic;
+        }
+
         private static ColorPicker createColorPicker(String tooltip, Color defaultColor) {
             ColorPicker colorPicker = new ColorPicker(FxUtil.convert(defaultColor));
             colorPicker.setTooltip(new javafx.scene.control.Tooltip(tooltip));
             colorPicker.setAccessibleText(tooltip);
+            colorPicker.setStyle("-fx-color-label-visible: false;");
             return colorPicker;
+        }
+
+        private static StackPane createTextColorButton(ColorPicker colorPicker) {
+            Label letter = new Label("A");
+            letter.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
+
+            Rectangle colorBar = new Rectangle(16, 3);
+            colorBar.fillProperty().bind(colorPicker.valueProperty());
+
+            VBox graphic = new VBox(0, letter, colorBar);
+            graphic.setAlignment(javafx.geometry.Pos.CENTER);
+            graphic.setMouseTransparent(true);
+
+            StackPane button = new StackPane(colorPicker, graphic);
+            button.setAccessibleText("Text color");
+
+            Runnable hidePickerSwatch = () -> {
+                if (colorPicker.getScene() == null) {
+                    return;
+                }
+                colorPicker.applyCss();
+                Node pickerSwatch = colorPicker.lookup(".picker-color");
+                if (pickerSwatch != null) {
+                    pickerSwatch.setVisible(false);
+                    pickerSwatch.setManaged(false);
+                }
+            };
+            colorPicker.sceneProperty().addListener((obs, oldScene, newScene) -> {
+                if (newScene != null) {
+                    javafx.application.Platform.runLater(hidePickerSwatch);
+                }
+            });
+            colorPicker.skinProperty().addListener((obs, oldSkin, newSkin) ->
+                    javafx.application.Platform.runLater(hidePickerSwatch));
+
+            return button;
         }
 
         private static void bindFontLists(
