@@ -56,6 +56,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Swing rich-text editor pane backed by a shared {@link com.dua3.utility.ui.RichTextEditorModel}.
  */
+@SuppressWarnings("NumericCastThatLosesPrecision")
 public class TextEditorPane extends TextPane implements RichTextEditorPane {
 
     private static final java.awt.Color SELECTION_COLOR = new java.awt.Color(0.25f, 0.45f, 0.85f, 0.35f);
@@ -832,22 +833,19 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         if (selection.length() > 0) {
             g2.setColor(SELECTION_COLOR);
             for (VisualLine line : lines) {
-                if (layout.intersectsTable(line.start(), line.end())) {
-                    continue;
+                if (!layout.intersectsTable(line.start(), line.end())) {
+                    int from = Math.max(selection.start(), line.start());
+                    int to = Math.min(selection.end(), line.end());
+                    if (from < to) {
+                        double x1 = RichTextVisualLayoutHelper.xForIndex(line, from);
+                        double x2 = RichTextVisualLayoutHelper.xForIndex(line, to);
+                        double left = Math.min(x1, x2);
+                        double width = Math.max(1.0, Math.abs(x2 - x1));
+                        int y = (int) Math.floor(line.top());
+                        int h = Math.max(1, (int) Math.ceil(line.height()));
+                        g2.fillRect((int) Math.floor(left), y, (int) Math.ceil(width), h);
+                    }
                 }
-                int from = Math.max(selection.start(), line.start());
-                int to = Math.min(selection.end(), line.end());
-                if (from >= to) {
-                    continue;
-                }
-
-                double x1 = RichTextVisualLayoutHelper.xForIndex(line, from);
-                double x2 = RichTextVisualLayoutHelper.xForIndex(line, to);
-                double left = Math.min(x1, x2);
-                double width = Math.max(1.0, Math.abs(x2 - x1));
-                int y = (int) Math.floor(line.top());
-                int h = Math.max(1, (int) Math.ceil(line.height()));
-                g2.fillRect((int) Math.floor(left), y, (int) Math.ceil(width), h);
             }
         }
 
@@ -1658,16 +1656,16 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
         int insertAt = model.getSize();
         for (int i = 0; i < model.getSize(); i++) {
             Float existing = model.getElementAt(i);
-            if (existing == null) {
-                continue;
-            }
-            int compare = Float.compare(existing, size);
-            if (compare == 0) {
-                return;
-            }
-            if (compare > 0) {
-                insertAt = i;
-                break;
+            //noinspection ConstantValue -- false postive
+            if (existing != null) {
+                int compare = Float.compare(existing, size);
+                if (compare == 0) {
+                    return;
+                }
+                if (compare > 0) {
+                    insertAt = i;
+                    break;
+                }
             }
         }
         model.insertElementAt(size, insertAt);
