@@ -82,7 +82,8 @@ public class TextEditorPaneSample extends Application {
         committedValuePane.setPrefWidth(600);
         committedValuePane.setMaxHeight(1000);
         committedValuePane.setMinHeight(100);
-        committedValuePane.textProperty().bind(editor.valueProperty());
+        //noinspection NullableProblems -- false positive
+        committedValuePane.textProperty().bind(editor.valueProperty().orElse(RichText.emptyText()));
         committedValuePane.wrapTextProperty().bind(editor.wrapTextProperty());
         editor.setHyperlinkHandler(uri -> handleSampleUri(status, uri));
         liveDocumentPane.setHyperlinkHandler(uri -> handleSampleUri(status, uri));

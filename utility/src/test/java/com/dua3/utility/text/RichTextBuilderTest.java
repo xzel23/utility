@@ -7,6 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Image;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.VAnchor;
 import org.junit.jupiter.api.Test;
@@ -502,7 +503,7 @@ class RichTextBuilderTest {
         InlineNode<String> inlineNode = assertInstanceOf(InlineNode.class, factory.apply("ignored"));
         assertEquals("node", inlineNode.getWrapped());
         assertEquals("application/octet-stream", inlineNode.getMimeType());
-        assertArrayEquals(new byte[0], inlineNode.getData());
+        assertArrayEquals(LangUtil.EMPTY_BYTE_ARRAY, inlineNode.getData());
         assertEquals(1, supplierCalls.get());
     }
 

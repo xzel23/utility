@@ -5,6 +5,7 @@
 
 package com.dua3.utility.io;
 
+import com.dua3.utility.lang.LangUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -80,12 +81,12 @@ class ZipTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try (Zip zip = new Zip(baos)) {
-            assertThrows(IllegalArgumentException.class, () -> zip.add("", new byte[0]));
+            assertThrows(IllegalArgumentException.class, () -> zip.add("", LangUtil.EMPTY_BYTE_ARRAY));
             assertThrows(IllegalArgumentException.class, () -> zip.add("", "test"));
-            assertThrows(IllegalArgumentException.class, () -> zip.add("", new ByteArrayInputStream(new byte[0])));
-            assertThrows(IllegalArgumentException.class, () -> zip.add("a/b.txt", new byte[0]));
+            assertThrows(IllegalArgumentException.class, () -> zip.add("", new ByteArrayInputStream(LangUtil.EMPTY_BYTE_ARRAY)));
+            assertThrows(IllegalArgumentException.class, () -> zip.add("a/b.txt", LangUtil.EMPTY_BYTE_ARRAY));
             assertThrows(IllegalArgumentException.class, () -> zip.add("a/b.txt", "test"));
-            assertThrows(IllegalArgumentException.class, () -> zip.add("a/b.txt", new ByteArrayInputStream(new byte[0])));
+            assertThrows(IllegalArgumentException.class, () -> zip.add("a/b.txt", new ByteArrayInputStream(LangUtil.EMPTY_BYTE_ARRAY)));
         }
     }
 

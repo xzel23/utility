@@ -1,6 +1,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Image;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.VAnchor;
 
@@ -65,7 +66,6 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
 
     private static final AtomicLong STYLE_ID = new AtomicLong();
     private static final String INLINE_NODE = "inline-node";
-    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
     /**
      * Protected constructor for the {@code RichTextBuilderExtBase} class.
@@ -133,7 +133,7 @@ public abstract class RichTextBuilderExtBase<N, B extends RichTextBuilderExtBase
      */
     public B appendInlineNode(Supplier<? extends N> node) {
         return appendInlineNodeWithStyle(() ->
-                new InlineNode<>(node.get(), "application/octet-stream", EMPTY_BYTE_ARRAY));
+                new InlineNode<>(node.get(), "application/octet-stream", LangUtil.EMPTY_BYTE_ARRAY));
     }
 
     /**

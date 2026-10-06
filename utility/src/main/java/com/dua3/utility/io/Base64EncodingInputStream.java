@@ -1,5 +1,7 @@
 package com.dua3.utility.io;
 
+import com.dua3.utility.lang.LangUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -10,13 +12,11 @@ import java.util.Objects;
  * An InputStream that encodes bytes from an underlying InputStream into Base64 ASCII bytes.
  */
 public final class Base64EncodingInputStream extends InputStream {
-    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
-
     private final InputStream in;
     private final Base64.Encoder encoder;
     private final byte[] inBuf = new byte[3072]; // multiple of 3
     private int inRem = 0;
-    private byte[] outBuf = EMPTY_BYTE_ARRAY;
+    private byte[] outBuf = LangUtil.EMPTY_BYTE_ARRAY;
     private int outPos = 0;
     private boolean eof = false;
 

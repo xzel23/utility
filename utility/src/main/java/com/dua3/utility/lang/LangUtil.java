@@ -765,7 +765,8 @@ public final class LangUtil {
      */
     public static <T> T throwAsRuntimeException(Throwable t) {
         switch (t) {
-            case RuntimeException e -> throw e;
+            case RuntimeException e -> //noinspection ProhibitedExceptionThrown
+                    throw e;
             case IOException e -> throw new UncheckedIOException(e);
             case Exception e -> throw new WrappedException(e);
             default -> sneakyThrow(t);
@@ -943,6 +944,7 @@ public final class LangUtil {
      */
     public static <E extends Exception> Runnable unchecked(RunnableThrows<E> r) {
         return () -> {
+            //noinspection OverlyBroadCatchBlock
             try {
                 r.run();
             } catch (Exception e) {
@@ -1182,13 +1184,14 @@ public final class LangUtil {
         @Override
         public T get() {
             check(cleaner != null, "closed");
+            //noinspection DataFlowIssue -- obj is set to null when close() is called
             return obj;
         }
 
         @Override
         public void close() {
             if (cleaner == null) {
-                LOG.warn("already closed");
+                LOG.warn("AutoCloseableSupplier is already closed");
                 assert obj == null;
                 return;
             }
@@ -1217,7 +1220,7 @@ public final class LangUtil {
      * @return an instance of AutoCloseableSupplier that manages the given object and performs the
      *         specified cleaning action upon closure.
      */
-    public static <T extends @Nullable Object> AutoCloseableSupplier<T> autoCloseableSupplier(T obj, Consumer<? super T> cleaner) {
+    public static <T> AutoCloseableSupplier<T> autoCloseableSupplier(T obj, Consumer<? super T> cleaner) {
         return new AutoCloseableSupplierImp<>(obj, cleaner);
     }
 
@@ -1232,7 +1235,7 @@ public final class LangUtil {
      * @param obj the object to be supplied by the AutoCloseableSupplier, may be null
      * @return an instance of AutoCloseableSupplier that supplies the given object
      */
-    public static <T extends @Nullable Object> AutoCloseableSupplier<T> autoCloseableSupplier(T obj) {
+    public static <T> AutoCloseableSupplier<T> autoCloseableSupplier(T obj) {
         return new AutoCloseableSupplierImp<>(obj, objToClean -> {});
     }
 
@@ -2095,7 +2098,7 @@ public final class LangUtil {
         @Override
         public void close() {
             if (cleaner == null) {
-                LOG.warn("already closed");
+                LOG.warn("AutoCloseableCachingSupplier is already closed");
                 return;
             }
 
@@ -2448,6 +2451,14 @@ public final class LangUtil {
         return value;
     }
 
+    /**
+     * A constant representing an empty array of objects.
+     */
+    public static final Object[] EMPTY_OBJECT_ARRAY = {};
+    /**
+     * A constant representing an empty array of strings.
+     */
+    public static final String[] EMPTY_STRING_ARRAY = {};
     /**
      * A constant representing an empty byte array.
      */
@@ -2868,7 +2879,7 @@ public final class LangUtil {
      *         if the provided comparator is null
      */
     @SuppressWarnings({"unchecked", "java:S2637" /* false positive */})
-    public static <T> Comparator<@Nullable T> orNaturalOrder(@Nullable Comparator<T> comparator) {
+    public static <T extends @Nullable Object> Comparator<T> orNaturalOrder(@Nullable Comparator<T> comparator) {
         return Objects.requireNonNullElse(comparator, (Comparator<T>) NullableNaturalOrderComparator.INSTANCE);
     }
 
@@ -2925,6 +2936,7 @@ public final class LangUtil {
      *         or greater than the second key
      */
     public static <T extends @Nullable Object> int compare(@Nullable Comparator<T> comparator, T a, T b) {
+        //noinspection NullableProblems
         return orNaturalOrder(comparator).compare(a, b);
     }
 
@@ -3187,7 +3199,7 @@ public final class LangUtil {
      */
     public static boolean isClassOnClasspath(String... fcqn) {
         boolean result = true;
-        for (String className: fcqn) {
+        for (String className : fcqn) {
             String classResource = className.replace('.', '/') + ".class";
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             if (loader.getResource(classResource) == null) {

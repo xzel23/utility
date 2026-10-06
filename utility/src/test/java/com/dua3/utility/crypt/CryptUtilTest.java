@@ -5,6 +5,7 @@
 
 package com.dua3.utility.crypt;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -519,7 +520,7 @@ class CryptUtilTest {
 
             @Override
             public byte[] getEncoded() {
-                return new byte[0];
+                return LangUtil.EMPTY_BYTE_ARRAY;
             }
         };
 

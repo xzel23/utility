@@ -4,6 +4,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.io.Payload;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.RichTextBuilderExtBase;
@@ -102,7 +103,6 @@ public final class RtfReader {
 
         private static final Map<String, String> FONT_CLASS_BY_FAMILY = createFontClassByFamilyMap();
         private static final Base64.Decoder STYLE_NAMES_DECODER = Base64.getUrlDecoder();
-        private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
         private final RichTextBuilder builder = new RichTextBuilder();
         private final ArrayDeque<CharacterStyle> styleStack = new ArrayDeque<>();
@@ -979,7 +979,7 @@ public final class RtfReader {
         private static byte[] decodeHex(CharSequence hex) {
             int length = hex.length();
             if (length < 2) {
-                return EMPTY_BYTE_ARRAY;
+                return LangUtil.EMPTY_BYTE_ARRAY;
             }
 
             int evenLength = length & ~1;
@@ -988,7 +988,7 @@ public final class RtfReader {
                 int high = Character.digit(hex.charAt(i), 16);
                 int low = Character.digit(hex.charAt(i + 1), 16);
                 if (high < 0 || low < 0) {
-                    return EMPTY_BYTE_ARRAY;
+                    return LangUtil.EMPTY_BYTE_ARRAY;
                 }
                 result[i / 2] = (byte) ((high << 4) | low);
             }
@@ -1109,7 +1109,7 @@ public final class RtfReader {
     }
 
     private record ParserInvocationHandler(StyledRtfParser parser) implements InvocationHandler {
-        private static final Object[] NO_ARGS = new Object[0];
+        private static final Object[] NO_ARGS = LangUtil.EMPTY_OBJECT_ARRAY;
 
         @Override
         public @Nullable Object invoke(Object proxy, Method method, Object @Nullable [] args) {

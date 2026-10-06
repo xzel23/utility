@@ -1,6 +1,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.io.imp.FileObjectStore;
+import com.dua3.utility.lang.LangUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -155,7 +156,7 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
 
         try (ReadableObjectStore readable = FileObjectStore.newReadableObjectStore(root)) {
             FileObjectStore fos = (FileObjectStore) readable;
-            assertThrows(IllegalStateException.class, () -> fos.write(URI.create("new.txt"), new ByteArrayInputStream(new byte[0])));
+            assertThrows(IllegalStateException.class, () -> fos.write(URI.create("new.txt"), new ByteArrayInputStream(LangUtil.EMPTY_BYTE_ARRAY)));
             assertThrows(IllegalStateException.class, () -> fos.write(URI.create("new.txt"), new byte[]{1, 2}));
             assertThrows(IllegalStateException.class, () -> fos.write(URI.create("new.txt"), new byte[]{1, 2}, 0, 1));
             assertThrows(IllegalStateException.class, () -> fos.writeString(URI.create("new.txt"), "text"));
@@ -314,7 +315,7 @@ class FileObjectStoreTest extends AbstractObjectStoreTest {
         try (FileObjectStore store = FileObjectStore.newObjectStore(root)) {
             assertThrows(IllegalArgumentException.class, () -> store.write(
                     URI.create("x.txt"),
-                    new byte[0],
+                    LangUtil.EMPTY_BYTE_ARRAY,
                     ObjectStore.OutputOption.CREATE_NEW,
                     ObjectStore.OutputOption.CREATE_OR_REPLACE
             ));

@@ -1,5 +1,6 @@
 package com.dua3.utility.io;
 
+import com.dua3.utility.lang.LangUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,12 +24,12 @@ class Base64EncodingInputStreamTest {
     void testNullArguments() {
         assertThrows(Throwable.class, () -> new Base64EncodingInputStream(null));
         assertThrows(Throwable.class, () -> new Base64EncodingInputStream(null, Base64.getEncoder()));
-        assertThrows(Throwable.class, () -> new Base64EncodingInputStream(new ByteArrayInputStream(new byte[0]), null));
+        assertThrows(Throwable.class, () -> new Base64EncodingInputStream(new ByteArrayInputStream(LangUtil.EMPTY_BYTE_ARRAY), null));
     }
 
     @Test
     void testEmptyStream() throws IOException {
-        try (InputStream in = new Base64EncodingInputStream(new ByteArrayInputStream(new byte[0]))) {
+        try (InputStream in = new Base64EncodingInputStream(new ByteArrayInputStream(LangUtil.EMPTY_BYTE_ARRAY))) {
             byte[] result = in.readAllBytes();
             assertEquals(0, result.length);
             assertEquals(-1, in.read());

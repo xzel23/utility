@@ -41,7 +41,6 @@ public final class CryptUtil {
     private static final int GCM_TAG_LENGTH = 128;
     private static final int ARGON2_MEMORY_MB = 64;
     private static final int ARGON2_ITERATIONS = 5;
-    private static final byte[] ZERO_LENGTH_BYTE_ARRAY = {};
     private static final String HMAC_SHA_256 = "HmacSHA256";
 
     /**
@@ -173,7 +172,7 @@ public final class CryptUtil {
         try {
             checkPasswordLength(password, 8);
             byte[] salt = RandomUtil.generateRandomBytes(16);
-            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), LangUtil.EMPTY_BYTE_ARRAY, InputBufferHandling.PRESERVE);
             byte[] encrypted = encryptSymmetric(SymmetricAlgorithm.AES, key, input, inputBufferHandling);
             byte[] result = new byte[salt.length + encrypted.length];
             System.arraycopy(salt, 0, result, 0, salt.length);
@@ -238,7 +237,7 @@ public final class CryptUtil {
         try {
             checkPasswordLength(password, 8);
             byte[] salt = RandomUtil.generateRandomBytes(16);
-            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), LangUtil.EMPTY_BYTE_ARRAY, InputBufferHandling.PRESERVE);
             InputStream encryptedStream = encryptSymmetric(SymmetricAlgorithm.AES, key, input);
             return new SequenceInputStream(new ByteArrayInputStream(salt), encryptedStream);
         } finally {
@@ -267,7 +266,7 @@ public final class CryptUtil {
             LangUtil.checkArg(input.length >= 16, "Invalid input: too short to contain salt");
             byte[] salt = Arrays.copyOfRange(input, 0, 16);
             byte[] encoded = Arrays.copyOfRange(input, 16, input.length);
-            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), LangUtil.EMPTY_BYTE_ARRAY, InputBufferHandling.PRESERVE);
             return decryptSymmetric(SymmetricAlgorithm.AES, key, encoded);
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Failed to decrypt", e);
@@ -315,7 +314,7 @@ public final class CryptUtil {
             checkPasswordLength(password, 8);
             byte[] salt = input.readNBytes(16);
             LangUtil.checkArg(salt.length == 16, "Invalid input: stream too short to contain salt");
-            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), ZERO_LENGTH_BYTE_ARRAY, InputBufferHandling.PRESERVE);
+            SecretKey key = KeyUtil.deriveSecretKey(SymmetricAlgorithm.AES, salt, TextUtil.toByteArray(password), LangUtil.EMPTY_BYTE_ARRAY, InputBufferHandling.PRESERVE);
             return decryptSymmetric(SymmetricAlgorithm.AES, key, input);
         } finally {
             Arrays.fill(password, '\0');

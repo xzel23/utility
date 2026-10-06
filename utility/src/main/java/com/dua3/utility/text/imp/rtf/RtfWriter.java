@@ -5,6 +5,7 @@ import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.FontDef;
@@ -49,7 +50,6 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
     private static final double DEFAULT_ASCENT_RATIO = 0.8;
     private static final double DEFAULT_DESCENT_RATIO = 0.2;
     private static final Base64.Encoder STYLE_NAMES_ENCODER = Base64.getUrlEncoder().withoutPadding();
-    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
     private final Map<String, Integer> fontIndexByName;
     private final Map<Color, Integer> colorIndexByColor;
 
@@ -284,16 +284,14 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             int segmentStart = 0;
             boolean hasMarker = false;
             for (int i = 0; i < length; i++) {
-                if (run.charAt(i) != RichTextBuilderExtBase.INLINE_NODE_MARKER) {
-                    continue;
+                if (run.charAt(i) == RichTextBuilderExtBase.INLINE_NODE_MARKER) {
+                    hasMarker = true;
+                    if (segmentStart < i) {
+                        appendEscapedText(buffer, run.subSequence(segmentStart, i));
+                    }
+                    appendHyperlinkField(target, displayText);
+                    segmentStart = i + 1;
                 }
-
-                hasMarker = true;
-                if (segmentStart < i) {
-                    appendEscapedText(buffer, run.subSequence(segmentStart, i));
-                }
-                appendHyperlinkField(target, displayText);
-                segmentStart = i + 1;
             }
 
             if (!hasMarker) {
@@ -551,7 +549,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                 ImageUtil.getInstance().write(image, out, ImageUtil.MIME_TYPE_PNG);
                 return out.toByteArray();
             } catch (IOException | RuntimeException ex) {
-                return EMPTY_BYTE_ARRAY;
+                return LangUtil.EMPTY_BYTE_ARRAY;
             }
         }
 
@@ -720,13 +718,12 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
         StringBuilder joined = new StringBuilder();
         for (Style style : styles) {
             String name = style.name();
-            if (name.isBlank()) {
-                continue;
+            if (!name.isBlank()) {
+                if (!joined.isEmpty()) {
+                    joined.append('\n');
+                }
+                joined.append(name);
             }
-            if (!joined.isEmpty()) {
-                joined.append('\n');
-            }
-            joined.append(name);
         }
         if (joined.isEmpty()) {
             return "";

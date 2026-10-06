@@ -100,7 +100,6 @@ public record Param<T>(
     }
 
     private static final class SingleElementConverter<T> implements Converter<String[], @Nullable T> {
-        public static final String[] ZERO_LENGTH_STRING_ARRAY = {};
         private final Function<String[], @Nullable T> a2b;
         private final Function<@Nullable T, String[]> b2a;
 
@@ -112,7 +111,7 @@ public record Param<T>(
                         throw new IllegalArgumentException("Expected array length 0 or 1, got %d".formatted(strings.length));
             };
 
-            this.b2a = v -> v == null ? ZERO_LENGTH_STRING_ARRAY : new String[]{elementConverter.convertBack(v)};
+            this.b2a = v -> v == null ? LangUtil.EMPTY_STRING_ARRAY : new String[]{elementConverter.convertBack(v)};
         }
 
         @Override

@@ -985,7 +985,7 @@ public class DbObjectStore implements ObjectStore {
                     }
                     data = rs.getBytes("data");
                     if (data == null) {
-                        data = new byte[0];
+                        data = LangUtil.EMPTY_BYTE_ARRAY;
                     }
                 }
             } catch (Exception e) {
@@ -1026,7 +1026,7 @@ public class DbObjectStore implements ObjectStore {
                     }
                     byte[] bytes = rs.getBytes("data");
                     if (bytes == null) {
-                        bytes = new byte[0];
+                        bytes = LangUtil.EMPTY_BYTE_ARRAY;
                     }
                     return new ByteArrayInputStream(bytes);
                 }
@@ -1060,7 +1060,7 @@ public class DbObjectStore implements ObjectStore {
                     }
                     byte[] bytes = rs.getBytes("data");
                     if (bytes == null) {
-                        bytes = new byte[0];
+                        bytes = LangUtil.EMPTY_BYTE_ARRAY;
                     }
                     return new ByteArraySeekableByteChannel(bytes);
                 }

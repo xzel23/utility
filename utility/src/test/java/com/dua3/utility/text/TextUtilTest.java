@@ -1064,7 +1064,7 @@ class TextUtilTest {
     @Test
     void testCharsToBytesWithEmptyInput() {
         char[] input = {};
-        byte[] expected = new byte[0];
+        byte[] expected = LangUtil.EMPTY_BYTE_ARRAY;
         byte[] result = TextUtil.toByteArray(input);
         Assertions.assertArrayEquals(expected, result, "Expected an empty byte array.");
     }

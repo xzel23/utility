@@ -7,6 +7,7 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
+import com.dua3.utility.lang.LangUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -428,6 +429,6 @@ class CodecsTest {
 
         // Test decodeUnchecked exception wrapping
         Decoder<String> failingDecoder = is -> { throw new IOException("simulated decode failure"); };
-        assertThrows(java.io.UncheckedIOException.class, () -> failingDecoder.decodeUnchecked(new DataInputStream(new ByteArrayInputStream(new byte[0]))));
+        assertThrows(java.io.UncheckedIOException.class, () -> failingDecoder.decodeUnchecked(new DataInputStream(new ByteArrayInputStream(LangUtil.EMPTY_BYTE_ARRAY))));
     }
 }

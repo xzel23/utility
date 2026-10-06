@@ -2,6 +2,7 @@ package com.dua3.utility.ui;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Image;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Arc2f;
@@ -31,7 +32,8 @@ public interface Graphics extends AutoCloseable {
     /**
      * A constant representing the absence of a line dash pattern.
      */
-    float[] EMPTY_DASHES = new float[0];
+    @SuppressWarnings({"PublicStaticArrayField", "java:S2386"})
+    float[] EMPTY_DASHES = LangUtil.EMPTY_FLOAT_ARRAY;
 
     /**
      * Get the width of this {@code Graphics} instance.

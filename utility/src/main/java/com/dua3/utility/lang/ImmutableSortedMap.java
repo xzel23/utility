@@ -49,7 +49,7 @@ public final class ImmutableSortedMap<K, V extends @Nullable Object> implements 
         }
     }
 
-    private static final ImmutableSortedMap<?, ?> EMPTY_MAP = new ImmutableSortedMap<>(new Comparable[0], new Object[0], null);
+    private static final ImmutableSortedMap<?, ?> EMPTY_MAP = new ImmutableSortedMap<>(new Comparable[0], LangUtil.EMPTY_OBJECT_ARRAY, null);
 
     private final K[] keys;
     private final V[] values;

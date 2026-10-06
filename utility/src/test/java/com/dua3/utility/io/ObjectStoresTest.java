@@ -1,5 +1,6 @@
 package com.dua3.utility.io;
 
+import com.dua3.utility.lang.LangUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -207,7 +208,7 @@ class ObjectStoresTest {
         ObjectStore readOnly = new ObjectStore() {
             @Override public URI getRoot() { return URI.create("file:///tmp/"); }
             @Override public java.util.stream.Stream<ObjectInfo> list(URI path) { return java.util.stream.Stream.empty(); }
-            @Override public java.io.InputStream openInputStream(URI path) { return new java.io.ByteArrayInputStream(new byte[0]); }
+            @Override public java.io.InputStream openInputStream(URI path) { return new java.io.ByteArrayInputStream(LangUtil.EMPTY_BYTE_ARRAY); }
             @Override public ObjectInfo getInfo(URI path) { return new ObjectStore.ObjectInfo(URI.create(""), ObjectStore.ObjectType.DATA, ObjectStore.ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN); }
             @Override public java.nio.channels.ReadableByteChannel openReadableByteChannel(URI path) { throw new UnsupportedOperationException(); }
             @Override public long write(URI path, java.io.InputStream in, OutputOption... options) { throw new UnsupportedOperationException(); }
@@ -229,7 +230,7 @@ class ObjectStoresTest {
         ObjectStore writeOnly = new ObjectStore() {
             @Override public URI getRoot() { return URI.create("file:///tmp/"); }
             @Override public java.util.stream.Stream<ObjectInfo> list(URI path) { return java.util.stream.Stream.empty(); }
-            @Override public java.io.InputStream openInputStream(URI path) { return new java.io.ByteArrayInputStream(new byte[0]); }
+            @Override public java.io.InputStream openInputStream(URI path) { return new java.io.ByteArrayInputStream(LangUtil.EMPTY_BYTE_ARRAY); }
             @Override public ObjectInfo getInfo(URI path) { return new ObjectStore.ObjectInfo(URI.create(""), ObjectStore.ObjectType.DATA, ObjectStore.ObjectInfo.UNKNOWN_SIZE, Instant.MIN, Instant.MIN); }
             @Override public java.nio.channels.ReadableByteChannel openReadableByteChannel(URI path) { throw new UnsupportedOperationException(); }
             @Override public long write(URI path, java.io.InputStream in, OutputOption... options) { throw new UnsupportedOperationException(); }

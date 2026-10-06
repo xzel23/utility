@@ -2,6 +2,7 @@ package com.dua3.utility.ui;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Image;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Dimension2f;
@@ -43,7 +44,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * Concrete test classes should extend this class and implement the abstract methods to provide
  * the specific Graphics implementation to test.
  */
-@SuppressWarnings("resource")
+@SuppressWarnings({"resource", "java:S5960"})
 public abstract class AbstractGraphicsTest {
     private static final Logger LOG = LogManager.getLogManager().getLogger(AbstractGraphicsTest.class.getName());
 
@@ -183,8 +184,8 @@ public abstract class AbstractGraphicsTest {
         graphics().setLineDashOffset(3.0f);
         assertEquals(3.0f, graphics().getLineDashOffset(), "Line dash offset should be 3.0");
 
-        graphics().setLineDashes(new float[0]);
-        assertArrayEquals(new float[0], graphics().getLineDashes(), "Empty line dash pattern should be preserved");
+        graphics().setLineDashes(LangUtil.EMPTY_FLOAT_ARRAY);
+        assertArrayEquals(LangUtil.EMPTY_FLOAT_ARRAY, graphics().getLineDashes(), "Empty line dash pattern should be preserved");
 
         // Test setFont and getFont
         Font font = graphics().getDefaultFont().withSize(16).withColor(Color.BLACK);
