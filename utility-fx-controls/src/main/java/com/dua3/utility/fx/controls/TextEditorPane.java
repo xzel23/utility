@@ -1769,7 +1769,18 @@ public class TextEditorPane extends TextPane implements InputControl<RichText>, 
     }
 
     void refreshTypingStylesForTextAreaColors() {
-        updatePropertiesFromCaretPosition();
+        RichTextEditorModel.CaretProperties properties = sharedModel.resolveCaretProperties(getTextFont());
+        if (properties == null) {
+            return;
+        }
+
+        updatingPropertiesFromText = true;
+        try {
+            setTextColor(properties.textColor());
+            setBackgroundColor(properties.backgroundColor());
+        } finally {
+            updatingPropertiesFromText = false;
+        }
     }
 
     private static RichText toRichText(@Nullable CharSequence text, Font font) {
