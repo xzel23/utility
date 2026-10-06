@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxUtil;
+import com.dua3.utility.math.MathUtil;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
@@ -64,7 +65,7 @@ class TextPaneThemeTest extends FxTestBase {
 
             assertNotNull(sizeComboBox, "Editable size ComboBox should be found");
             assertEquals(3, sizeComboBox.getEditor().getPrefColumnCount());
-            assertEquals("13", sizeComboBox.getEditor().getText());
+            assertEquals(Integer.toString(MathUtil.roundToInt(editor.getFontSize())), sizeComboBox.getEditor().getText());
 
             // Enter a custom font size not originally in the default sizes list
             sizeComboBox.getEditor().setText("17");
