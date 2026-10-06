@@ -1357,11 +1357,13 @@ public class TextPane extends Control implements RichTextPane {
     }
 
     private static double computeInlineDescent(InlineControlPlacement placement, double prefH, double baselineOffset) {
-        return Double.isFinite(placement.descent())
-                ? placement.descent()
-                : (baselineOffset != BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)
-                        ? Math.max(0.0, prefH - baselineOffset)
-                        : 0.0);
+        if (Double.isFinite(placement.descent())) {
+            return placement.descent();
+        } else if (baselineOffset != BASELINE_OFFSET_SAME_AS_HEIGHT && Double.isFinite(baselineOffset)) {
+            return Math.max(0.0, prefH - baselineOffset);
+        } else {
+            return 0.0;
+        }
     }
 
     private static double computeInlineNodeY(InlineControlPlacement placement, double prefH, double baselineOffset) {
@@ -2478,7 +2480,7 @@ public class TextPane extends Control implements RichTextPane {
                 List<FragmentedText.Fragment> line = lines.get(i);
                 BlockDecorationData decorationData = blockDecorationData(line);
                 if (decorationData == null) {
-                    if (area != null  && (!isBlankVisualLine(line) || !nextNonEmptyLineHasDecoration(lines, i + 1, area))) {
+                    if (area != null && (!isBlankVisualLine(line) || !nextNonEmptyLineHasDecoration(lines, i + 1, area))) {
                         areas.add(area);
                         area = null;
                     }
