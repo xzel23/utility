@@ -392,11 +392,11 @@ public class ComboBoxEx<T> extends CustomControl<HBox> {
         if (items.contains(item)) {
             return false;
         }
-        boolean res = items.add(item);
-        if (res && comparator != null) {
+        items.add(item);
+        if (comparator != null) {
             sortItems();
         }
-        return res;
+        return true;
     }
 
     /**
