@@ -199,4 +199,163 @@ class DbObjectStoreTest extends AbstractObjectStoreTest {
             assertEquals("hello direct", store.readString(URI.create("direct.txt")));
         }
     }
+
+    @Test
+    void testPublicFactoryOverloads() throws Exception {
+        JdbcDataSource ds = dataSource("factory_overloads");
+        URI root = URI.create("db://factory/root/");
+
+        try (DbObjectStore store = DbObjectStore.newObjectStore(ds)) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, DbObjectStore.DEFAULT_TABLE_NAME);
+        }
+        try (DbObjectStore store = DbObjectStore.newObjectStore(ds, "ds_rw_named")) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, "ds_rw_named");
+        }
+        try (DbObjectStore store = DbObjectStore.newObjectStore(root, ds, "ds_rw_root")) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, root);
+        }
+
+        seedTable(ds, "ds_read_named");
+        seedTable(ds, "ds_read_root");
+        try (ReadableObjectStore store = DbObjectStore.newReadableObjectStore(ds)) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.READ, DbObjectStore.DEFAULT_TABLE_NAME);
+        }
+        try (ReadableObjectStore store = DbObjectStore.newReadableObjectStore(ds, "ds_read_named")) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.READ, "ds_read_named");
+        }
+        try (ReadableObjectStore store = DbObjectStore.newReadableObjectStore(root, ds, "ds_read_root")) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.READ, root);
+        }
+
+        try (WritableObjectStore store = DbObjectStore.newWritableObjectStore(ds)) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.WRITE, DbObjectStore.DEFAULT_TABLE_NAME);
+        }
+        try (WritableObjectStore store = DbObjectStore.newWritableObjectStore(ds, "ds_write_named")) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.WRITE, "ds_write_named");
+        }
+        try (WritableObjectStore store = DbObjectStore.newWritableObjectStore(root, ds, "ds_write_root")) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.WRITE, root);
+        }
+
+        try (java.sql.Connection connection = ds.getConnection();
+             DbObjectStore store = DbObjectStore.create(root, connection, "conn_create", ObjectStore.AccessMode.READ_AND_WRITE)) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, root);
+        }
+
+        DbObjectStore.ConnectionSupplier connectionSupplier = ds::getConnection;
+        try (DbObjectStore store = DbObjectStore.newObjectStore(connectionSupplier)) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, DbObjectStore.DEFAULT_TABLE_NAME);
+        }
+        try (DbObjectStore store = DbObjectStore.newObjectStore(connectionSupplier, "supplier_rw_named")) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, "supplier_rw_named");
+        }
+        try (DbObjectStore store = DbObjectStore.newObjectStore(root, connectionSupplier, "supplier_rw_root")) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, root);
+        }
+
+        seedTable(ds, "supplier_read_named");
+        seedTable(ds, "supplier_read_root");
+        try (ReadableObjectStore store = DbObjectStore.newReadableObjectStore(connectionSupplier)) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.READ, DbObjectStore.DEFAULT_TABLE_NAME);
+        }
+        try (ReadableObjectStore store = DbObjectStore.newReadableObjectStore(connectionSupplier, "supplier_read_named")) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.READ, "supplier_read_named");
+        }
+        try (ReadableObjectStore store = DbObjectStore.newReadableObjectStore(root, connectionSupplier, "supplier_read_root")) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.READ, root);
+        }
+
+        try (WritableObjectStore store = DbObjectStore.newWritableObjectStore(connectionSupplier)) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.WRITE, DbObjectStore.DEFAULT_TABLE_NAME);
+        }
+        try (WritableObjectStore store = DbObjectStore.newWritableObjectStore(connectionSupplier, "supplier_write_named")) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.WRITE, "supplier_write_named");
+        }
+        try (WritableObjectStore store = DbObjectStore.newWritableObjectStore(root, connectionSupplier, "supplier_write_root")) {
+            assertStore((DbObjectStore) store, ObjectStore.AccessMode.WRITE, root);
+        }
+        try (DbObjectStore store = DbObjectStore.create(root, connectionSupplier, "supplier_create", ObjectStore.AccessMode.READ_AND_WRITE)) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, root);
+        }
+
+        java.util.function.Supplier<java.sql.Connection> javaSupplier = () -> {
+            try {
+                return ds.getConnection();
+            } catch (java.sql.SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        try (DbObjectStore store = DbObjectStore.newObjectStore(javaSupplier)) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, DbObjectStore.DEFAULT_TABLE_NAME);
+        }
+        try (DbObjectStore store = DbObjectStore.newObjectStore(javaSupplier, "java_supplier_named")) {
+            assertStore(store, ObjectStore.AccessMode.READ_AND_WRITE, "java_supplier_named");
+        }
+    }
+
+    @Test
+    void testPublicStateAndLifecycleMethods() throws Exception {
+        assertEquals(URI.create("db://localhost/example/"), DbObjectStore.defaultRootUri("example"));
+
+        JdbcDataSource ds = dataSource("state_methods");
+        DbObjectStore store = DbObjectStore.newObjectStore(ds, "state_store");
+        assertEquals(ObjectStore.AccessMode.READ_AND_WRITE, store.getAccessMode());
+        assertEquals(URI.create("db://localhost/state_store/"), store.getRoot());
+        assertTrue(store.toString().contains("table=state_store"));
+        store.assertReadable();
+        store.assertWritable();
+        assertFalse(store.isClosed());
+        store.close();
+        store.close();
+        assertTrue(store.isClosed());
+        assertThrows(IllegalStateException.class, store::assertReadable);
+        assertThrows(IllegalStateException.class, store::assertWritable);
+    }
+
+    @Test
+    void testDirectByteArrayChannelsAndRootDeletion() throws Exception {
+        JdbcDataSource ds = dataSource("direct_methods");
+        try (DbObjectStore store = DbObjectStore.newObjectStore(ds, "direct_methods_store")) {
+            URI path = URI.create("channel.bin");
+            try (var channel = store.openWritableByteChannel(path)) {
+                channel.write(java.nio.ByteBuffer.wrap(new byte[]{1, 2, 3}));
+            }
+            try (var channel = store.openReadableByteChannel(path)) {
+                java.nio.ByteBuffer buffer = java.nio.ByteBuffer.allocate(3);
+                assertEquals(3, channel.read(buffer));
+                assertEquals(3, channel.position());
+                channel.position(1);
+                assertEquals(2, channel.read(java.nio.ByteBuffer.allocate(2)));
+            }
+
+            store.createFolder(URI.create("tree/branch"));
+            store.write(URI.create("tree/branch/file"), new byte[]{4}, ObjectStore.OutputOption.CREATE_NEW);
+            store.deleteRecursively(URI.create("tree"));
+            assertEquals(ObjectStore.ObjectType.MISSING, store.getInfo(URI.create("tree")).type());
+            store.deleteRecursively(URI.create(""));
+            assertEquals(ObjectStore.ObjectType.MISSING, store.getInfo(URI.create("channel.bin")).type());
+        }
+    }
+
+    private static JdbcDataSource dataSource(String name) {
+        JdbcDataSource ds = new JdbcDataSource();
+        ds.setURL("jdbc:h2:mem:" + name + ";DB_CLOSE_DELAY=-1");
+        return ds;
+    }
+
+    private static void seedTable(JdbcDataSource ds, String tableName) throws IOException {
+        try (DbObjectStore ignored = DbObjectStore.newObjectStore(ds, tableName)) {
+            // Creating and closing the read-write store creates the table and root row.
+        }
+    }
+
+    private static void assertStore(DbObjectStore store, ObjectStore.AccessMode mode, String tableName) {
+        assertStore(store, mode, URI.create("db://localhost/" + tableName + "/"));
+    }
+
+    private static void assertStore(DbObjectStore store, ObjectStore.AccessMode mode, URI root) {
+        assertEquals(mode, store.getAccessMode());
+        assertEquals(root, store.getRoot());
+        assertFalse(store.isClosed());
+    }
 }
