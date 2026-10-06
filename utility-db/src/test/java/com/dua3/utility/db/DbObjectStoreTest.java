@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("java:S5778")
+@SuppressWarnings({"java:S5778", "ProhibitedExceptionThrown"})
 class DbObjectStoreTest extends AbstractObjectStoreTest {
 
     private static final AtomicInteger DB_COUNTER = new AtomicInteger();
@@ -343,6 +343,7 @@ class DbObjectStoreTest extends AbstractObjectStoreTest {
         return ds;
     }
 
+    @SuppressWarnings("EmptyTryBlock")
     private static void seedTable(JdbcDataSource ds, String tableName) throws IOException {
         try (DbObjectStore ignored = DbObjectStore.newObjectStore(ds, tableName)) {
             // Creating and closing the read-write store creates the table and root row.
