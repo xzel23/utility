@@ -575,13 +575,13 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
                 height = nativeHeight * scale;
             }
 
-            int widthGoalTwips = Math.max(1, (int) Math.round(nativeWidth * TWIPS_PER_PIXEL));
-            int heightGoalTwips = Math.max(1, (int) Math.round(nativeHeight * TWIPS_PER_PIXEL));
-            int displayWidthTwips = Math.max(1, (int) Math.round(width * TWIPS_PER_PIXEL));
-            int displayHeightTwips = Math.max(1, (int) Math.round(height * TWIPS_PER_PIXEL));
+            int widthGoalTwips = Math.max(1, MathUtil.roundToInt(nativeWidth * TWIPS_PER_PIXEL));
+            int heightGoalTwips = Math.max(1, MathUtil.roundToInt(nativeHeight * TWIPS_PER_PIXEL));
+            int displayWidthTwips = Math.max(1, MathUtil.roundToInt(width * TWIPS_PER_PIXEL));
+            int displayHeightTwips = Math.max(1, MathUtil.roundToInt(height * TWIPS_PER_PIXEL));
 
-            int scaleXPercent = Math.max(1, (int) Math.round(width * 100.0 / nativeWidth));
-            int scaleYPercent = Math.max(1, (int) Math.round(height * 100.0 / nativeHeight));
+            int scaleXPercent = Math.max(1, MathUtil.roundToInt(width * 100.0 / nativeWidth));
+            int scaleYPercent = Math.max(1, MathUtil.roundToInt(height * 100.0 / nativeHeight));
             boolean scaled = Math.abs(width - nativeWidth) > 1.0e-6 || Math.abs(height - nativeHeight) > 1.0e-6;
             return new PictureTarget(widthGoalTwips, heightGoalTwips, displayWidthTwips, displayHeightTwips, scaleXPercent, scaleYPercent, scaled);
         }
@@ -608,7 +608,7 @@ public final class RtfWriter extends AttributeBasedConverter<String> {
             };
 
             double upShiftPt = -deltaDownPt;
-            return (int) Math.round(upShiftPt * 2.0);
+            return MathUtil.roundToInt(upShiftPt * 2.0);
         }
 
         private static double ifPositiveOrElse(@Nullable Number number, double defaultValue) {

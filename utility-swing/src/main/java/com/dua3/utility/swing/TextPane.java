@@ -3,6 +3,7 @@ package com.dua3.utility.swing;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.awt.AwtImageUtil;
 import com.dua3.utility.data.Image;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.FragmentedText;
@@ -465,17 +466,16 @@ public class TextPane extends JScrollPane implements RichTextPane {
     private List<TablePlacement> tablePlacements(List<InlineComponentPlacement> placements) {
         List<TablePlacement> tables = new ArrayList<>();
         for (InlineComponentPlacement placement : placements) {
-            if (!(placement.component() instanceof TableComponent component)) {
-                continue;
+            if (placement.component() instanceof TableComponent component) {
+                Dimension preferredSize = component.getPreferredSize();
+                int baseline = component.getBaseline(preferredSize.width, preferredSize.height);
+                tables.add(new TablePlacement(
+                        component,
+                        component.tableLayout(),
+                        placement.x(),
+                        (float) computeInlineComponentY(placement, preferredSize.height, baseline)
+                ));
             }
-            Dimension preferredSize = component.getPreferredSize();
-            int baseline = component.getBaseline(preferredSize.width, preferredSize.height);
-            tables.add(new TablePlacement(
-                    component,
-                    component.tableLayout(),
-                    placement.x(),
-                    (float) computeInlineComponentY(placement, preferredSize.height, baseline)
-            ));
         }
         return List.copyOf(tables);
     }
@@ -608,35 +608,32 @@ public class TextPane extends JScrollPane implements RichTextPane {
             float baselineY = (float) (lineTop + lineAscent);
 
             for (FragmentedText.Fragment fragment : line) {
-                if (!(fragment.text() instanceof Run run)) {
-                    continue;
+                if (fragment.text() instanceof Run run) {
+                    Component component = createInlineComponent(run, fragment.font(), availableWidth);
+                    if (component != null) {
+                        VAnchor vAnchor = getInlineNodeVAnchor(run);
+                        double descent = getInlineNodeDescent(run);
+                        placements.add(new InlineComponentPlacement(
+                                component,
+                                fragment.x(),
+                                lineTop,
+                                fragment.w(),
+                                lineHeight,
+                                baselineY,
+                                fragment.font(),
+                                vAnchor,
+                                lineAscent,
+                                lineDescent,
+                                descent
+                        ));
+                    }
                 }
-
-                Component component = createInlineComponent(run, fragment.font(), availableWidth);
-                if (component == null) {
-                    continue;
-                }
-
-                VAnchor vAnchor = getInlineNodeVAnchor(run);
-                double descent = getInlineNodeDescent(run);
-                placements.add(new InlineComponentPlacement(
-                        component,
-                        fragment.x(),
-                        lineTop,
-                        fragment.w(),
-                        lineHeight,
-                        baselineY,
-                        fragment.font(),
-                        vAnchor,
-                        lineAscent,
-                        lineDescent,
-                        descent
-                ));
             }
         }
 
         return placements;
     }
+
     private @Nullable Component createInlineComponent(Run run, Font runFont, double availableWidth) {
         if (TextUtil.isWhitespaceOnly(run)) {
             return null;
@@ -906,8 +903,8 @@ public class TextPane extends JScrollPane implements RichTextPane {
             return icon;
         }
 
-        int targetWidth = Math.max(1, (int) Math.round(sourceWidth * scale));
-        int targetHeight = Math.max(1, (int) Math.round(sourceHeight * scale));
+        int targetWidth = Math.max(1, MathUtil.roundToInt(sourceWidth * scale));
+        int targetHeight = Math.max(1, MathUtil.roundToInt(sourceHeight * scale));
         java.awt.Image scaledImage = icon.getImage().getScaledInstance(targetWidth, targetHeight, java.awt.Image.SCALE_SMOOTH);
         return new ImageIcon(scaledImage);
     }
@@ -1032,14 +1029,13 @@ public class TextPane extends JScrollPane implements RichTextPane {
         float cumulativeShift = 0.0f;
         float lastLineShift = 0.0f;
         for (List<FragmentedText.Fragment> line : renderFragments.lines()) {
-            if (line.isEmpty()) {
-                continue;
+            if (!line.isEmpty()) {
+                float lineY = line.getFirst().y();
+                cumulativeShift += overflowAboveByLineY.getOrDefault(lineY, 0.0f);
+                lineShiftByY.put(lineY, cumulativeShift);
+                lastLineShift = cumulativeShift;
+                cumulativeShift += overflowBelowByLineY.getOrDefault(lineY, 0.0f);
             }
-            float lineY = line.getFirst().y();
-            cumulativeShift += overflowAboveByLineY.getOrDefault(lineY, 0.0f);
-            lineShiftByY.put(lineY, cumulativeShift);
-            lastLineShift = cumulativeShift;
-            cumulativeShift += overflowBelowByLineY.getOrDefault(lineY, 0.0f);
         }
         float tailOverflowBelow = Math.max(0.0f, cumulativeShift - lastLineShift);
         return new LineShiftData(lineShiftByY, tailOverflowBelow);
@@ -1324,28 +1320,27 @@ public class TextPane extends JScrollPane implements RichTextPane {
 
             for (InlineComponentPlacement placement : layout.placements()) {
                 Component component = placement.component();
-                if (!used.add(component)) {
-                    continue;
+                if (used.add(component)) {
+                    if (component.getParent() != this) {
+                        add(component);
+                    }
+                    if (component instanceof AbstractButton button) {
+                        wireButtonAction(TextPane.this, button);
+                    }
+
+                    Dimension pref = component.getPreferredSize();
+                    int prefW = Math.max(1, (int) Math.ceil(pref.getWidth()));
+                    int prefH = Math.max(1, (int) Math.ceil(pref.getHeight()));
+                    int baselineOffset = component.getBaseline(prefW, prefH);
+                    double y = computeInlineComponentY(placement, prefH, baselineOffset);
+                    int x = (int) Math.floor(placement.x() * scale);
+                    int yPx = (int) Math.floor(y * scale);
+                    int widthPx = Math.max(1, (int) Math.ceil(prefW * scale));
+                    int heightPx = Math.max(1, (int) Math.ceil(prefH * scale));
+                    component.setBounds(x, yPx, widthPx, heightPx);
+                    component.setVisible(true);
                 }
 
-                if (component.getParent() != this) {
-                    add(component);
-                }
-                if (component instanceof AbstractButton button) {
-                    wireButtonAction(TextPane.this, button);
-                }
-
-                Dimension pref = component.getPreferredSize();
-                int prefW = Math.max(1, (int) Math.ceil(pref.getWidth()));
-                int prefH = Math.max(1, (int) Math.ceil(pref.getHeight()));
-                int baselineOffset = component.getBaseline(prefW, prefH);
-                double y = computeInlineComponentY(placement, prefH, baselineOffset);
-                int x = (int) Math.floor(placement.x() * scale);
-                int yPx = (int) Math.floor(y * scale);
-                int widthPx = Math.max(1, (int) Math.ceil(prefW * scale));
-                int heightPx = Math.max(1, (int) Math.ceil(prefH * scale));
-                component.setBounds(x, yPx, widthPx, heightPx);
-                component.setVisible(true);
             }
 
             for (Component child : getComponents()) {

@@ -5,6 +5,7 @@ import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.io.Payload;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.RichTextBuilderExtBase;
@@ -698,7 +699,7 @@ public final class RtfReader {
             }
 
             int nativeValue = nativeUnits > 0 ? nativeUnits : Math.max(1, fallbackPixels);
-            return Math.max(1, (int) Math.round(nativeValue * (safeScalePercent / 100.0) * TWIPS_PER_PIXEL));
+            return Math.max(1, MathUtil.roundToInt(nativeValue * (safeScalePercent / 100.0) * TWIPS_PER_PIXEL));
         }
 
         private static VAnchor deriveVAnchor(int baselineShiftHalfPoints, int pictureHeightTwips, float fontSize) {

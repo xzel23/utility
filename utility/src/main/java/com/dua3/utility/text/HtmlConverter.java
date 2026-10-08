@@ -3,6 +3,7 @@ package com.dua3.utility.text;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.ui.InlineNode;
 import org.jspecify.annotations.Nullable;
 
@@ -297,17 +298,17 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         for (Run run : richText) {
             Style directFontStyle = directFontStyle(run.attributes());
-            if (directFontStyle == null) {
+            if (directFontStyle != null) {
+                Map<String, @Nullable Object> attributes = new HashMap<>(run.attributes());
+                List<Style> styles = new ArrayList<>(run.getStyles());
+                styles.add(directFontStyle);
+                attributes.put(RichText.ATTRIBUTE_NAME_STYLE_LIST, styles);
+                runs.add(new Run(run.base(), run.getStart(), run.length(), TextAttributes.of(attributes)));
+                changed = true;
+            } else {
                 runs.add(run);
-                continue;
             }
 
-            Map<String, @Nullable Object> attributes = new HashMap<>(run.attributes());
-            List<Style> styles = new ArrayList<>(run.getStyles());
-            styles.add(directFontStyle);
-            attributes.put(RichText.ATTRIBUTE_NAME_STYLE_LIST, styles);
-            runs.add(new Run(run.base(), run.getStart(), run.length(), TextAttributes.of(attributes)));
-            changed = true;
         }
 
         return changed ? new RichText(runs.toArray(Run[]::new)) : richText;
@@ -685,6 +686,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             return primaryTag;
         }
 
+        @SuppressWarnings("java:S2203") // list may contain null values
         private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
             Map<String, @Nullable Object> properties = new LinkedHashMap<>();
@@ -770,15 +772,13 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
             int segmentStart = 0;
             for (int i = 0; i < run.length(); i++) {
-                if (run.charAt(i) != RichTextBuilderExtBase.INLINE_NODE_MARKER) {
-                    continue;
+                if (run.charAt(i) == RichTextBuilderExtBase.INLINE_NODE_MARKER) {
+                    if (segmentStart < i) {
+                        appendChars(run.subSequence(segmentStart, i));
+                    }
+                    appendInlineNode(run, inlineNode);
+                    segmentStart = i + 1;
                 }
-
-                if (segmentStart < i) {
-                    appendChars(run.subSequence(segmentStart, i));
-                }
-                appendInlineNode(run, inlineNode);
-                segmentStart = i + 1;
             }
 
             if (segmentStart < run.length()) {
@@ -893,8 +893,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                 }
             }
             return new ImageDimensions(
-                    Math.max(1, (int) Math.round(width)),
-                    Math.max(1, (int) Math.round(height))
+                    Math.max(1, MathUtil.roundToInt(width)),
+                    Math.max(1, MathUtil.roundToInt(height))
             );
         }
 

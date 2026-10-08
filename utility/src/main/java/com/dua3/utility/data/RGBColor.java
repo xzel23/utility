@@ -6,6 +6,7 @@
 package com.dua3.utility.data;
 
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 
 /**
  * Color in ARGB format.
@@ -142,7 +143,7 @@ public record RGBColor(int argb) implements Color {
 
     @Override
     public RGBColor withAlpha(double a) {
-        return withAlpha(Math.clamp((int) Math.round(a * 255), 0, 255));
+        return withAlpha(Math.clamp(MathUtil.roundToInt(a * 255), 0, 255));
     }
 
     @Override

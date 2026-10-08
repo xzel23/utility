@@ -4,6 +4,7 @@ import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
@@ -860,7 +861,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
             int lineIndex = RichTextVisualLayoutHelper.lineIndexForCaret(lines, caret);
             if (lineIndex >= 0 && lineIndex < lines.size()) {
                 VisualLine line = lines.get(lineIndex);
-                int x = (int) Math.round(RichTextVisualLayoutHelper.xForIndex(line, caret));
+                int x = MathUtil.roundToInt(RichTextVisualLayoutHelper.xForIndex(line, caret));
                 int y1 = (int) Math.floor(line.top());
                 int y2 = (int) Math.ceil(line.top() + line.height());
                 g2.setColor(getForeground());
