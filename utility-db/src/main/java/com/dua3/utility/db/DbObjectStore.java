@@ -1206,8 +1206,8 @@ public class DbObjectStore implements ObjectStore {
             }
         }
 
-        try (Statement stmt1 = connection.createStatement()) {
-            stmt1.executeQuery("SELECT 1 FROM " + tableName + " WHERE 1=0");
+        try (Statement stmt1 = connection.createStatement();
+             ResultSet ignored = stmt1.executeQuery("SELECT 1 FROM " + tableName + " WHERE 1=0")) {
             return;
         } catch (SQLException ignored) {
             // ignore
