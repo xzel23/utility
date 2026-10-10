@@ -244,25 +244,23 @@ public final class FontDef {
         FontDef fd = new FontDef();
 
         for (String rule : fontdef.split(";")) {
-            if (rule.isBlank()) {
-                continue;
+            if (!rule.isBlank()) {
+                Pair<String, String> pair = parseCssRule(rule);
+
+                String attribute = pair.first().toLowerCase(Locale.ROOT);
+                String value = pair.second().strip();
+
+                switch (attribute) {
+                    case "color" -> fd.setColor(parseColor(value));
+                    case "background-color" -> fd.setBackgroundColor(parseColor(value));
+                    case "font-size" -> fd.setSize(parseFontSize(value));
+                    case "font-family" -> fd.setFamilies(parseFontFamilies(value, true));
+                    case "font-weight" -> fd.setBold(parseFontWeight(value));
+                    case "font-style" -> fd.setItalic(parseFontStyle(value));
+                    default -> LOG.warn("unknown font attribute: {}", attribute);
+                }
             }
 
-            Pair<String, String> pair = parseCssRule(rule);
-            assert pair.first() != null && pair.second() != null;
-
-            String attribute = pair.first().toLowerCase(Locale.ROOT);
-            String value = pair.second().strip();
-
-            switch (attribute) {
-                case "color" -> fd.setColor(parseColor(value));
-                case "background-color" -> fd.setBackgroundColor(parseColor(value));
-                case "font-size" -> fd.setSize(parseFontSize(value));
-                case "font-family" -> fd.setFamilies(parseFontFamilies(value, true));
-                case "font-weight" -> fd.setBold(parseFontWeight(value));
-                case "font-style" -> fd.setItalic(parseFontStyle(value));
-                default -> LOG.warn("unknown font attribute: {}", attribute);
-            }
         }
 
         return fd;

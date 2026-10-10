@@ -712,8 +712,9 @@ public record Param<T>(
      *         Lists of the target type back into String arrays
      */
     private static <T> Converter<String[], List<T>> listConverter(Converter<String, T> elementConverter) {
+        //noinspection ConstantValue -- false positive, s may be null
         return Converter.create(
-                s -> s == null ? Collections.emptyList() : mapList(s, elementConverter.a2b()),
+                arr -> arr == null ? Collections.emptyList() : mapList(arr, elementConverter.a2b()),
                 v -> formatList(v, elementConverter.b2a())
         );
     }

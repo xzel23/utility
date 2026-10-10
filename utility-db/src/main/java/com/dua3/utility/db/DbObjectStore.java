@@ -642,7 +642,7 @@ public class DbObjectStore implements ObjectStore {
                 return;
             }
 
-            boolean origAutoCommit = false;
+            boolean origAutoCommit;
             try {
                 origAutoCommit = connection.getAutoCommit();
                 connection.setAutoCommit(false);
@@ -686,7 +686,7 @@ public class DbObjectStore implements ObjectStore {
             assertWritable();
             String normalizedPath = resolvePath(path);
 
-            boolean origAutoCommit = false;
+            boolean origAutoCommit;
             try {
                 origAutoCommit = connection.getAutoCommit();
                 connection.setAutoCommit(false);
@@ -733,7 +733,7 @@ public class DbObjectStore implements ObjectStore {
                 throw new IllegalArgumentException("Cannot delete root");
             }
 
-            boolean origAutoCommit = false;
+            boolean origAutoCommit;
             try {
                 origAutoCommit = connection.getAutoCommit();
                 connection.setAutoCommit(false);
@@ -767,7 +767,7 @@ public class DbObjectStore implements ObjectStore {
             assertWritable();
             String normalizedPath = resolvePath(path);
 
-            boolean origAutoCommit = false;
+            boolean origAutoCommit;
             try {
                 origAutoCommit = connection.getAutoCommit();
                 connection.setAutoCommit(false);
@@ -843,7 +843,7 @@ public class DbObjectStore implements ObjectStore {
             }
             OutputOption option = getWriteOption(options);
 
-            boolean origAutoCommit = false;
+            boolean origAutoCommit;
             try {
                 origAutoCommit = connection.getAutoCommit();
                 connection.setAutoCommit(false);

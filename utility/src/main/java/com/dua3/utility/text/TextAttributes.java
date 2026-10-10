@@ -71,7 +71,6 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
         Entry[] entryArray = new Entry[entries.length];
         for (int i = 0; i < entries.length; i++) {
             Pair<String, ?> entry = entries[i];
-            assert entry.first() != null;
             entryArray[i] = new Entry(entry.first(), entry.second());
         }
         return new TextAttributes(entryArray);
@@ -86,7 +85,6 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
     public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
         List<Entry> entryList = new ArrayList<>();
         entries.forEach(entry -> {
-            assert entry.first() != null;
             entryList.addLast(new Entry(entry.first(), entry.second()));
         });
         return new TextAttributes(entryList.toArray(Entry[]::new));

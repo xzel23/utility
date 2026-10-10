@@ -264,7 +264,7 @@ public interface ReadableObjectStore extends AutoCloseable {
             }
 
             @Override
-            @SuppressWarnings("java:S2272") // NoSuchElementException is thrown in stack.pop()
+            @SuppressWarnings({"java:S2272", "IteratorNextCanNotThrowNoSuchElementException"})
             public ObjectStore.ObjectInfo next() throws NoSuchElementException, UncheckedIOException {
                 Node node = stack.pop();
                 ObjectStore.ObjectInfo info = node.info();

@@ -907,6 +907,7 @@ public final class RichTextTableHelper {
                 nextCellStart = position;
             }
             start = Math.min(start, position);
+            //noinspection NonShortCircuitBooleanExpression
             this.header |= header;
         }
 
