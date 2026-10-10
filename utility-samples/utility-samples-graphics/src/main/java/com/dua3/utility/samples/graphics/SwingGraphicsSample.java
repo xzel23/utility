@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  * - The main method serves as the entry point for launching the application.
  * - The createSlide method renders a graphical slide on a JPanel for any given slide factory.
  */
-public class SwingGraphicsSample extends JFrame implements IGraphicsSample<JComponent> {
+public final class SwingGraphicsSample extends JFrame implements IGraphicsSample<JComponent> {
 
     /**
      * The name of the application. This constant holds the name of the Swing-based graphical sample application.
@@ -83,19 +83,28 @@ public class SwingGraphicsSample extends JFrame implements IGraphicsSample<JComp
     public JComponent createSlide(Supplier<Slide> factory, float w, float h) {
         Slide slide = factory.get();
 
-        JPanel panel = new JPanel(false) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g); // Clear panel before rendering
-                Graphics2D g2d = (Graphics2D) g;
-                SwingUtil.setRenderingQualityHigh(g2d);
-                SwingGraphics swingGraphics = new SwingGraphics(g2d, g.getClipBounds());
-                slide.draw(swingGraphics);
-            }
-        };
+        JPanel panel = new SlidePanel(slide);
         panel.setName(slide.title());
         panel.setSize((int) w, (int) h);
 
         return panel;
+    }
+
+    private static final class SlidePanel extends JPanel {
+        private final Slide slide;
+
+        public SlidePanel(Slide slide) {
+            super(false);
+            this.slide = slide;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g); // Clear panel before rendering
+            Graphics2D g2d = (Graphics2D) g;
+            SwingUtil.setRenderingQualityHigh(g2d);
+            SwingGraphics swingGraphics = new SwingGraphics(g2d, g.getClipBounds());
+            slide.draw(swingGraphics);
+        }
     }
 }

@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
  * a boolean value. This is a specialized implementation of {@code AbstractOptionBuilder}
  * designed for flags, where the presence of the flag indicates a {@code true} value.
  */
-public class FlagBuilder extends AbstractOptionBuilder<Boolean, FlagBuilder> {
+public final class FlagBuilder extends AbstractOptionBuilder<Boolean, FlagBuilder> {
 
     /**
      * Constructor.

@@ -30,7 +30,7 @@ import java.util.Arrays;
 /**
  * The SwingGraphics class implements the {@link Graphics} interface for rendering graphics in swing based applications.
  */
-public class SwingGraphics implements Graphics {
+public final class SwingGraphics implements Graphics {
     private static final Logger LOG = LogManager.getLogger(SwingGraphics.class);
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
     private static final AwtImageUtil IMAGE_UTIL = AwtImageUtil.getInstance();

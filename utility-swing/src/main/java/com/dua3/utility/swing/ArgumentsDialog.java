@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  * Optional<Arguments> arguments = ArgumentsDialog.showDialog(window, parser);
  * }
  */
-public class ArgumentsDialog extends JDialog {
+public final class ArgumentsDialog extends JDialog {
 
     /**
      * The {@link ArgumentsPanel} instance that contains the input fields.

@@ -115,7 +115,7 @@ public final class Decoration {
 
 }
 
-class DecorationPane extends AnchorPane {
+final class DecorationPane extends AnchorPane {
 
     static final String DECORATION_PANE = "com.dua3.decoration_pane";
 

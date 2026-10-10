@@ -17,7 +17,7 @@ import java.util.Optional;
  * and allows switching between them by name. It utilizes a {@link StackPane} to display the cards,
  * ensuring only the desired card is visible at a time.
  */
-public class CardPane extends Pane {
+public final class CardPane extends Pane {
 
     /**
      * Logger instance

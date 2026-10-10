@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -90,7 +91,7 @@ public abstract class PrepareReleaseTask extends DefaultTask {
             throw new GradleException("the Git working tree must be clean before preparing a release");
         }
 
-        String releaseType = getReleaseType().get().trim().toLowerCase();
+        String releaseType = getReleaseType().get().trim().toLowerCase(Locale.ROOT);
         if (!Set.of("patch", "minor", "major").contains(releaseType)) {
             throw new GradleException("supply -PreleaseType=patch, -PreleaseType=minor, or -PreleaseType=major");
         }

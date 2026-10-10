@@ -26,7 +26,7 @@ import java.util.List;
  * The IconView control can be used to display icons in various JavaFX applications.
  * It provides methods for setting and getting the icon identifier, size, and color.
  */
-public class IconView extends Control {
+public final class IconView extends Control {
     private static final String DEFAULT_ICON_IDENTIFIER = "";
     private static final int DEFAULT_ICON_SIZE = 10;
     private static final Paint DEFAULT_ICON_COLOR = Paint.valueOf("BLACK");

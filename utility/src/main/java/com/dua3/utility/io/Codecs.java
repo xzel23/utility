@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * Codecs are registered by calling {@link #registerCodec(Class, Encoder, Decoder)}.
  * Registered codecs for a class can be obtained by using {@link #get(Class)}.
  */
-public class Codecs {
+public final class Codecs {
     private final Map<String, Codec<?>> repository = new HashMap<>();
 
     /**

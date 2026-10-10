@@ -48,7 +48,9 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.HierarchyBoundsAdapter;
+import java.awt.event.HierarchyBoundsListener;
 import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -131,6 +133,26 @@ public class TextPane extends JScrollPane implements RichTextPane {
                 invalidateRenderLayout();
             }
         });
+    }
+
+    @Override
+    public final void setViewportView(Component view) {
+        super.setViewportView(view);
+    }
+
+    @Override
+    public final JViewport getViewport() {
+        return super.getViewport();
+    }
+
+    @Override
+    public final void addHierarchyBoundsListener(HierarchyBoundsListener l) {
+        super.addHierarchyBoundsListener(l);
+    }
+
+    @Override
+    public final void addHierarchyListener(HierarchyListener l) {
+        super.addHierarchyListener(l);
     }
 
     /**

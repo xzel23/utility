@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of the items in the ComboBox
  */
-public class ComboBoxEx<T> extends JPanel {
+public final class ComboBoxEx<T> extends JPanel {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
     /**

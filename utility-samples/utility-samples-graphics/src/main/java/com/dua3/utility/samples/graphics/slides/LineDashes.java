@@ -6,6 +6,8 @@ import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.ui.HAnchor;
 import com.dua3.utility.ui.VAnchor;
 
+import static com.dua3.utility.lang.LangUtil.EMPTY_FLOAT_ARRAY;
+
 /**
  * Demonstrates dashed line patterns and dash offsets.
  */
@@ -40,7 +42,7 @@ public class LineDashes implements IGraphicsSample.Slide {
         drawLine(g, "10 / 10, offset 15", new float[]{10, 10}, 15, margin, y + lineSpacing, lineWidth);
         drawLine(g, "20 / 10 / 3 / 10", new float[]{20, 10, 3, 10}, 0, margin, y + 2 * lineSpacing, lineWidth);
 
-        g.setLineDashes(new float[0]);
+        g.setLineDashes(EMPTY_FLOAT_ARRAY);
         g.setLineDashOffset(0);
         g.drawText("solid line", margin, y + 3 * lineSpacing - 35, HAnchor.LEFT, VAnchor.TOP);
         g.strokeLine(margin, y + 3 * lineSpacing, margin + lineWidth, y + 3 * lineSpacing);

@@ -25,7 +25,7 @@ import java.util.function.Function;
  *
  * @param <T> The type of items that will be represented as radio buttons.
  */
-public class RadioPane<T> extends VBox implements InputControl<T> {
+public final class RadioPane<T> extends VBox implements InputControl<T> {
 
     private static final double SPACING = 4;
     private final LinkedHashMap<T, RadioButton> items = new LinkedHashMap<>();
