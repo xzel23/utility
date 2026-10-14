@@ -141,11 +141,6 @@ public class TextPane extends JScrollPane implements RichTextPane {
     }
 
     @Override
-    public final JViewport getViewport() {
-        return super.getViewport();
-    }
-
-    @Override
     public final void addHierarchyBoundsListener(HierarchyBoundsListener l) {
         super.addHierarchyBoundsListener(l);
     }
