@@ -1,5 +1,7 @@
 package com.dua3.utility.rest;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
@@ -17,8 +19,10 @@ import java.util.Set;
 
 /** Imports the OpenAPI 3 subset represented by {@link RestApi} and {@link RestEndpoint}. */
 final class OpenApiImporter {
+    private static final Logger LOG = LogManager.getLogger(OpenApiImporter.class);
     private static final Set<String> HTTP_METHODS = Set.of(
             "get", "put", "post", "delete", "options", "head", "patch", "trace");
+    private static final String SECURITY = "security";
 
     private OpenApiImporter() {
         // Utility class.
@@ -27,7 +31,10 @@ final class OpenApiImporter {
     static void importInto(RestApiBuilder builder, InputStream input, OpenApiFormat requestedFormat) throws IOException {
         byte[] document = input.readAllBytes();
         OpenApiFormat format = requestedFormat == OpenApiFormat.AUTO ? detectFormat(document) : requestedFormat;
+        LOG.debug("Importing OpenAPI document: {} bytes, requested format {}, detected format {}",
+                document.length, requestedFormat, format);
         Map<String, Object> root = JacksonRestCodec.readOpenApi(new ByteArrayInputStream(document), format);
+        LOG.debug("OpenAPI document parsed; top-level keys: {}", root.keySet());
 
         String version = string(root.get("openapi"));
         if (version == null || !version.startsWith("3.")) {
@@ -35,8 +42,9 @@ final class OpenApiImporter {
         }
 
         importServer(builder, root);
-        List<Map<String, Object>> globalSecurity = securityRequirements(root.get("security"), root);
+        List<Map<String, Object>> globalSecurity = securityRequirements(root.get(SECURITY), root);
         Map<String, Object> paths = object(root.get("paths"), root, "paths");
+        LOG.debug("Importing {} OpenAPI paths", paths.size());
         for (Map.Entry<String, Object> pathEntry : paths.entrySet()) {
             importPath(builder, root, pathEntry.getKey(), object(pathEntry.getValue(), root, "path item"), globalSecurity);
         }
@@ -97,8 +105,8 @@ final class OpenApiImporter {
             importParameters(endpoint, mergeParameters(pathParameters, parameterDefinitions(operation.get("parameters"), root)));
             importRequestBody(endpoint, operation.get("requestBody"), root);
             importResponses(endpoint, operation.get("responses"), root);
-            List<Map<String, Object>> security = operation.containsKey("security")
-                    ? securityRequirements(operation.get("security"), root) : globalSecurity;
+            List<Map<String, Object>> security = operation.containsKey(SECURITY)
+                    ? securityRequirements(operation.get(SECURITY), root) : globalSecurity;
             for (Map<String, Object> requirement : security) {
                 requirement.keySet().forEach(endpoint::securityRequirement);
             }

@@ -1,5 +1,8 @@
 package com.dua3.utility.rest;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +14,7 @@ import java.util.Objects;
 
 /** Reflection-based Jackson 3 adapter, keeping Jackson out of this module's public API. */
 final class JacksonRestCodec implements RestCodec {
+    private static final Logger LOG = LogManager.getLogger(JacksonRestCodec.class);
     private static final String JSON_MAPPER = "tools.jackson.databind.json.JsonMapper";
     private static final String YAML_MAPPER = "tools.jackson.dataformat.yaml.YAMLMapper";
 
@@ -20,6 +24,7 @@ final class JacksonRestCodec implements RestCodec {
     private final String contentType;
 
     private JacksonRestCodec(String mapperClassName, String contentType, String requiredDependency) {
+        LOG.debug("Creating Jackson mapper {}", mapperClassName);
         try {
             Class<?> mapperClass = Class.forName(mapperClassName);
             this.mapper = mapperClass.getConstructor().newInstance();
@@ -27,8 +32,10 @@ final class JacksonRestCodec implements RestCodec {
             this.readValue = mapperClass.getMethod("readValue", byte[].class, Class.class);
             this.contentType = contentType;
         } catch (ClassNotFoundException exception) {
+            LOG.error("Jackson mapper class is unavailable: {}", mapperClassName, exception);
             throw unavailable(requiredDependency, exception);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
+            LOG.error("Jackson mapper {} is incompatible", mapperClassName, exception);
             throw new UnsupportedOperationException(
                     "Jackson 3 is present but does not provide a compatible " + mapperClassName, exception);
         }

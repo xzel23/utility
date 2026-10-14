@@ -2,6 +2,8 @@ package com.dua3.utility.rest;
 
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -23,6 +25,7 @@ import java.util.function.Consumer;
  * Builder for immutable {@link RestApi} definitions.
  */
 public final class RestApiBuilder {
+    private static final Logger LOG = LogManager.getLogger(RestApiBuilder.class);
     private @Nullable URI baseUri;
     private @Nullable HttpClient httpClient;
     private @Nullable Duration connectTimeout;
@@ -141,7 +144,9 @@ public final class RestApiBuilder {
      * @throws UnsupportedOperationException if the required Jackson 3 component is unavailable
      */
     public RestApiBuilder fromOpenApi(InputStream document, OpenApiFormat format) throws IOException {
+        LOG.debug("Loading OpenAPI definition with format {}", format);
         OpenApiImporter.importInto(this, document, format);
+        LOG.debug("OpenAPI definition loaded; {} endpoint(s) configured", endpoints.size());
         return this;
     }
 
@@ -186,6 +191,7 @@ public final class RestApiBuilder {
             }
             client = clientBuilder.build();
         }
+        LOG.debug("Building REST API with base URI {} and {} endpoint(s)", apiBaseUri, endpoints.size());
         return new RestApi(apiBaseUri, client, requestTimeout, defaultHeaders, endpoints);
     }
 

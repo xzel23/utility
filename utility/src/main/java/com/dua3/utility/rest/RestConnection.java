@@ -1,5 +1,7 @@
 package com.dua3.utility.rest;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.function.Supplier;
  * A reusable authenticated connection to a {@link RestApi}.
  */
 public final class RestConnection {
+    private static final Logger LOG = LogManager.getLogger(RestConnection.class);
     /**
      * Constant representing the key for specifying the content type in HTTP headers.
      */
@@ -103,6 +106,7 @@ public final class RestConnection {
     <T> CompletableFuture<RestResponse<T>> executeAsync(RestRequest request,
                                                         Supplier<? extends HttpResponse.BodyHandler<T>> bodyHandlerSupplier) {
         RestRequest.Prepared prepared = request.prepare();
+        LOG.debug("Executing REST request {} {}", prepared.endpoint().method(), prepared.path());
         // A retry must carry the same key as the original request.
         ensureIdempotencyKey(prepared);
         return authentication.credentials(false)
@@ -142,6 +146,7 @@ public final class RestConnection {
                 || !prepared.endpoint().retryAfterAuthenticationRefresh() || !prepared.body().repeatable()) {
             return CompletableFuture.completedFuture(response);
         }
+        LOG.debug("Received HTTP 401 for {}; refreshing authentication and retrying", prepared.endpoint().name());
         return authentication.credentials(true).thenCompose(credentials -> send(prepared, credentials, bodyHandlerSupplier));
     }
 
@@ -155,7 +160,17 @@ public final class RestConnection {
         } catch (RuntimeException exception) {
             return CompletableFuture.failedFuture(exception);
         }
-        return api.httpClient().sendAsync(request, bodyHandler).thenApply(RestResponse::from);
+        LOG.trace("Sending HTTP request {} {}", request::method, request::uri);
+        return api.httpClient().sendAsync(request, bodyHandler)
+                .thenApply(response -> {
+                    LOG.debug("Received HTTP {} from {}", response::statusCode, response::uri);
+                    return RestResponse.from(response);
+                })
+                .whenComplete((response, error) -> {
+                    if (error != null) {
+                        LOG.warn("REST request {} {} failed", request.method(), request.uri(), error);
+                    }
+                });
     }
 
     private HttpRequest buildRequest(RestRequest.Prepared prepared, RestCredentials credentials) {

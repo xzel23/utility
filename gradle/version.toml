@@ -38,6 +38,7 @@ ikonli-feather = { group = "org.kordamp.ikonli", name = "ikonli-feather-pack" }
 ikonli-javafx = { group = "org.kordamp.ikonli", name = "ikonli-javafx" }
 jackson-bom = { group = "tools.jackson", name = "jackson-bom", version.ref = "jackson" }
 jackson-databind = { group = "tools.jackson.core", name = "jackson-databind" }
+jackson-dataformat-yaml = { group = "tools.jackson.dataformat", name = "jackson-dataformat-yaml" }
 jimfs = { group = "com.google.jimfs", name = "jimfs", version.ref = "jimfs" }
 jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit-bom" }
