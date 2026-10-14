@@ -235,6 +235,12 @@ could not be loaded.
 
 ## Changes
 
+## 25.1.0
+
+- feature: added new REST API support in package utility.REST
+- FileObjectStore: support lazy instantiation; use to avoid directory creation for writable FileObjectStore 
+  instances when now write operation is executed
+
 ## 25.0.0
 
 - **BREAKING:** renamed AutoClosableCachingSupplier to AutoCloseableCachingSupplier. This affects code using

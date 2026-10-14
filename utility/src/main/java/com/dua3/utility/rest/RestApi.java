@@ -1,5 +1,7 @@
 package com.dua3.utility.rest;
 
+import com.dua3.utility.lang.LangUtil;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.Duration;
@@ -107,14 +109,20 @@ public final class RestApi {
         return defaultHeaders;
     }
 
-    private static URI normalizeBaseUri(URI value) {
-        if (!value.isAbsolute() || value.getScheme() == null || value.getHost() == null) {
-            throw new IllegalArgumentException("base URI must be an absolute HTTP URI: " + value);
-        }
-        if (value.getQuery() != null || value.getFragment() != null) {
-            throw new IllegalArgumentException("base URI must not contain a query or fragment: " + value);
-        }
-        String normalized = value.toString();
+    private static URI normalizeBaseUri(URI baseUri) {
+        String scheme = baseUri.getScheme();
+        LangUtil.checkArg(
+                baseUri.isAbsolute() && scheme != null
+                        && baseUri.getHost() != null
+                        && (scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https")),
+                "baseUri must be an absolute HTTP URI: %s", baseUri
+        );
+        LangUtil.checkArg(
+                baseUri.getQuery() == null && baseUri.getFragment() == null,
+                "baseUri must not contain a query or fragment"
+        );
+
+        String normalized = baseUri.toString();
         return URI.create(normalized.endsWith("/") ? normalized : normalized + '/');
     }
 

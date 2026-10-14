@@ -70,6 +70,8 @@ public final class RestConnection {
     <T> CompletableFuture<RestResponse<T>> executeAsync(RestRequest request,
                                                         Supplier<? extends HttpResponse.BodyHandler<T>> bodyHandlerSupplier) {
         RestRequest.Prepared prepared = request.prepare();
+        // A retry must carry the same key as the original request.
+        ensureIdempotencyKey(prepared);
         return authentication.credentials(false)
                 .thenCompose(credentials -> send(prepared, credentials, bodyHandlerSupplier))
                 .thenCompose(response -> retryAfterUnauthorized(prepared, response, bodyHandlerSupplier))
@@ -136,13 +138,6 @@ public final class RestConnection {
         if (prepared.body().contentType() != null && !containsHeader(headers, "Content-Type")) {
             putHeader(headers, "Content-Type", List.of(prepared.body().contentType()));
         }
-        if (prepared.endpoint().idempotencyKeyHeader() != null
-                && prepared.endpoint().retryAfterAuthenticationRefresh()
-                && isUnsafe(prepared.endpoint().method())
-                && !containsHeader(headers, prepared.endpoint().idempotencyKeyHeader())) {
-            putHeader(headers, prepared.endpoint().idempotencyKeyHeader(), List.of(UUID.randomUUID().toString()));
-        }
-
         validateContentType(prepared.endpoint(), headers);
         HttpRequest.Builder builder = HttpRequest.newBuilder(uri).timeout(prepared.timeout());
         headers.forEach((name, values) -> values.forEach(value -> builder.header(name, value)));
@@ -236,6 +231,17 @@ public final class RestConnection {
             case "GET", "HEAD", "OPTIONS", "TRACE", "PUT", "DELETE" -> false;
             default -> true;
         };
+    }
+
+    private void ensureIdempotencyKey(RestRequest.Prepared prepared) {
+        String header = prepared.endpoint().idempotencyKeyHeader();
+        if (header != null
+                && prepared.endpoint().retryAfterAuthenticationRefresh()
+                && isUnsafe(prepared.endpoint().method())
+                && !containsHeader(prepared.headers(), header)
+                && !containsHeader(api.defaultHeaders(), header)) {
+            putHeader(prepared.headers(), header, List.of(UUID.randomUUID().toString()));
+        }
     }
 
     static String encodePathSegment(String value) {
