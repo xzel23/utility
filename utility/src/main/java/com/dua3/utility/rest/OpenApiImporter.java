@@ -125,13 +125,16 @@ final class OpenApiImporter {
         }
     }
 
-    private static void importRequestBody(RestEndpoint.Builder endpoint, Object value, Map<String, Object> root) {
+    private static void importRequestBody(RestEndpoint.Builder endpoint, @Nullable Object value, Map<String, Object> root) {
+        if (value == null) {
+            return;
+        }
         Map<String, Object> requestBody = object(value, root, "request body");
         endpoint.requestBodyRequired(Boolean.TRUE.equals(requestBody.get("required")));
         objectOrEmpty(requestBody.get("content"), root).keySet().forEach(endpoint::consumes);
     }
 
-    private static void importResponses(RestEndpoint.Builder endpoint, Object value, Map<String, Object> root) {
+    private static void importResponses(RestEndpoint.Builder endpoint, @Nullable Object value, Map<String, Object> root) {
         for (Map.Entry<String, Object> response : object(value, root, "responses").entrySet()) {
             try {
                 endpoint.expectedStatus(Integer.parseInt(response.getKey()));
@@ -143,7 +146,7 @@ final class OpenApiImporter {
         }
     }
 
-    private static List<Map<String, Object>> parameterDefinitions(Object value, Map<String, Object> root) {
+    private static List<Map<String, Object>> parameterDefinitions(@Nullable Object value, Map<String, Object> root) {
         List<Map<String, Object>> result = new ArrayList<>();
         for (Object parameter : list(value)) {
             result.add(object(parameter, root, "parameter"));
@@ -172,7 +175,7 @@ final class OpenApiImporter {
         return location + '\u0000' + name;
     }
 
-    private static List<Map<String, Object>> securityRequirements(Object value, Map<String, Object> root) {
+    private static List<Map<String, Object>> securityRequirements(@Nullable Object value, Map<String, Object> root) {
         List<Map<String, Object>> result = new ArrayList<>();
         for (Object requirement : list(value)) {
             result.add(object(requirement, root, "security requirement"));
@@ -180,7 +183,7 @@ final class OpenApiImporter {
         return result;
     }
 
-    private static Map<String, Object> object(Object value, Map<String, Object> root, String description) {
+    private static Map<String, Object> object(@Nullable Object value, Map<String, Object> root, String description) {
         Object resolved = resolve(value, root);
         if (!(resolved instanceof Map<?, ?> map)) {
             throw new IllegalArgumentException("OpenAPI " + description + " must be an object");
@@ -199,7 +202,7 @@ final class OpenApiImporter {
         return value == null ? Map.of() : object(value, root, "object");
     }
 
-    private static Object resolve(Object value, Map<String, Object> root) {
+    private static @Nullable Object resolve(@Nullable Object value, Map<String, Object> root) {
         if (!(value instanceof Map<?, ?> map)) {
             return value;
         }
@@ -259,7 +262,7 @@ final class OpenApiImporter {
         throw new IllegalArgumentException("OpenAPI document is empty");
     }
 
-    private static @Nullable String string(Object value) {
+    private static @Nullable String string(@Nullable Object value) {
         return value instanceof String s ? s : null;
     }
 }

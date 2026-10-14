@@ -91,7 +91,7 @@ public final class RestRequest {
      * @return this request
      */
     public RestRequest header(String name, String value) {
-        LangUtil.checkArg(!name.isEmpty(), "name must not be blank");
+        LangUtil.checkArg(!name.isBlank(), "name must not be blank");
         put(headers, name, value, false);
         return this;
     }
@@ -136,7 +136,7 @@ public final class RestRequest {
      * @return this request
      */
     public RestRequest timeout(Duration timeout) {
-        LangUtil.checkArg(!timeout.isPositive(), "timeout must be positive");
+        LangUtil.checkArg(timeout.isPositive(), "timeout must be positive");
         this.timeout = timeout;
         return this;
     }

@@ -4,6 +4,7 @@ import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,7 +38,7 @@ public final class RestEndpoint {
         this.name = builder.name;
         this.method = builder.method;
         this.pathTemplate = builder.pathTemplate;
-        this.parameters = Map.copyOf(builder.parameters);
+        this.parameters = Collections.unmodifiableMap(new LinkedHashMap<>(builder.parameters));
         this.requestContentTypes = Set.copyOf(builder.requestContentTypes);
         this.responseContentTypes = Set.copyOf(builder.responseContentTypes);
         this.expectedStatuses = Set.copyOf(builder.expectedStatuses);
@@ -200,6 +201,8 @@ public final class RestEndpoint {
          * @return this builder
          */
         public Builder method(String method, String pathTemplate) {
+            LangUtil.checkArg(!method.isBlank(), "HTTP method must not be blank");
+            LangUtil.checkArg(!pathTemplate.isBlank(), "path template must not be blank");
             this.method = method.toUpperCase(Locale.ROOT);
             this.pathTemplate = pathTemplate.startsWith("/") ? pathTemplate : '/' + pathTemplate;
             return this;

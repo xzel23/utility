@@ -41,6 +41,8 @@ dependencies {
     testImplementation(platform(rootProject.libs.bouncycastle.bom))
     testImplementation(rootProject.libs.bouncycastle.provider)
     testImplementation(rootProject.libs.bouncycastle.pkix)
+    testImplementation(platform(rootProject.libs.jackson.bom))
+    testImplementation(rootProject.libs.jackson.databind)
 }
 
 // Add dependencies for java25 source set

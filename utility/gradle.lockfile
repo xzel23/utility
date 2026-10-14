@@ -3,6 +3,7 @@
 # This file is expected to be part of source control.
 # To regenerate this file, run: ./gradlew :utility:dependencies --write-locks
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,java25CompileClasspath,jmhCompileClasspath,testCompileClasspath,testJava25CompileClasspath
+com.fasterxml.jackson.core:jackson-annotations:2.22=jmhRuntimeClasspath,testCompileClasspath,testJava25CompileClasspath,testJava25RuntimeClasspath,testRuntimeClasspath
 com.github.joniles:rtfparserkit:1.16.0=compileClasspath,java25CompileClasspath,java25RuntimeClasspath,jmhCompileClasspath,jmhRuntimeClasspath,runtimeClasspath,testCompileClasspath,testJava25CompileClasspath,testJava25RuntimeClasspath,testRuntimeClasspath
 com.github.spotbugs:spotbugs-annotations:4.10.4=jmhRuntimeClasspath,spotbugs,testCompileClasspath,testJava25CompileClasspath,testJava25RuntimeClasspath,testRuntimeClasspath
 com.github.spotbugs:spotbugs:4.10.4=spotbugs
@@ -69,4 +70,7 @@ org.slf4j:slf4j-api:2.0.17=spotbugsSlf4j
 org.slf4j:slf4j-api:2.0.18=spotbugs
 org.slf4j:slf4j-simple:2.0.17=spotbugsSlf4j
 org.xmlresolver:xmlresolver:5.3.3=spotbugs
+tools.jackson.core:jackson-core:3.2.3=jmhRuntimeClasspath,testCompileClasspath,testJava25CompileClasspath,testJava25RuntimeClasspath,testRuntimeClasspath
+tools.jackson.core:jackson-databind:3.2.3=jmhRuntimeClasspath,testCompileClasspath,testJava25CompileClasspath,testJava25RuntimeClasspath,testRuntimeClasspath
+tools.jackson:jackson-bom:3.2.3=jmhRuntimeClasspath,testCompileClasspath,testJava25CompileClasspath,testJava25RuntimeClasspath,testRuntimeClasspath
 empty=annotationProcessor,java25AnnotationProcessor,javaTestUtilAnnotationProcessor,jmhAnnotationProcessor,spotbugsPlugins,testAnnotationProcessor,testJava25AnnotationProcessor

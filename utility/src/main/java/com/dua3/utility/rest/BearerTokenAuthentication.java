@@ -1,5 +1,7 @@
 package com.dua3.utility.rest;
 
+import com.dua3.utility.lang.LangUtil;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
@@ -36,7 +38,9 @@ final class BearerTokenAuthentication implements RestAuthentication {
     private CompletionStage<AccessToken> token(boolean forceRefresh) {
         synchronized (lock) {
             if (!forceRefresh && isUsable(cachedToken)) {
-                return CompletableFuture.completedFuture(Objects.requireNonNull(cachedToken));
+                assert cachedToken != null;
+                //noinspection NullableProblems
+                return CompletableFuture.completedFuture(cachedToken);
             }
             if (refresh != null) {
                 return refresh;
@@ -67,7 +71,10 @@ final class BearerTokenAuthentication implements RestAuthentication {
     }
 
     private static boolean isUsable(@Nullable AccessToken token) {
-        return token != null
-                && (token.expiresAt() == null || token.expiresAt().isAfter(Instant.now().plus(REFRESH_SKEW)));
+        if (token == null) {
+            return false;
+        }
+        Instant expiresAt = token.expiresAt();
+        return expiresAt == null || expiresAt.isAfter(Instant.now().plus(REFRESH_SKEW));
     }
 }
