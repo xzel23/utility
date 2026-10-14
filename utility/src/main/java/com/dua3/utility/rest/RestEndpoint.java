@@ -212,37 +212,72 @@ public final class RestEndpoint {
             return this;
         }
 
-        /** Sets a GET endpoint. */
+        /**
+         * Sets a GET endpoint.
+         *
+         * @param pathTemplate the endpoint path template
+         * @return this builder
+         */
         public Builder get(String pathTemplate) {
             return method("GET", pathTemplate);
         }
 
-        /** Sets a POST endpoint. */
+        /**
+         * Sets a POST endpoint.
+         *
+         * @param pathTemplate the endpoint path template
+         * @return this builder
+         */
         public Builder post(String pathTemplate) {
             return method("POST", pathTemplate);
         }
 
-        /** Sets a PUT endpoint. */
+        /**
+         * Sets a PUT endpoint.
+         *
+         * @param pathTemplate the endpoint path template
+         * @return this builder
+         */
         public Builder put(String pathTemplate) {
             return method("PUT", pathTemplate);
         }
 
-        /** Sets a PATCH endpoint. */
+        /**
+         * Sets a PATCH endpoint.
+         *
+         * @param pathTemplate the endpoint path template
+         * @return this builder
+         */
         public Builder patch(String pathTemplate) {
             return method("PATCH", pathTemplate);
         }
 
-        /** Sets a DELETE endpoint. */
+        /**
+         * Sets a DELETE endpoint.
+         *
+         * @param pathTemplate the endpoint path template
+         * @return this builder
+         */
         public Builder delete(String pathTemplate) {
             return method("DELETE", pathTemplate);
         }
 
-        /** Sets a HEAD endpoint. */
+        /**
+         * Sets a HEAD endpoint.
+         *
+         * @param pathTemplate the endpoint path template
+         * @return this builder
+         */
         public Builder head(String pathTemplate) {
             return method("HEAD", pathTemplate);
         }
 
-        /** Sets an OPTIONS endpoint. */
+        /**
+         * Sets an OPTIONS endpoint.
+         *
+         * @param pathTemplate the endpoint path template
+         * @return this builder
+         */
         public Builder options(String pathTemplate) {
             return method("OPTIONS", pathTemplate);
         }
@@ -264,27 +299,55 @@ public final class RestEndpoint {
             return this;
         }
 
-        /** Declares a required path parameter. */
+        /**
+         * Declares a required path parameter.
+         *
+         * @param name the parameter name
+         * @return this builder
+         */
         public Builder pathParameter(String name) {
             return parameter(name, RestParameterLocation.PATH, true);
         }
 
-        /** Declares a query parameter. */
+        /**
+         * Declares a query parameter.
+         *
+         * @param name the parameter name
+         * @param required whether the parameter is mandatory
+         * @return this builder
+         */
         public Builder queryParameter(String name, boolean required) {
             return parameter(name, RestParameterLocation.QUERY, required);
         }
 
-        /** Declares an optional query parameter. */
+        /**
+         * Declares an optional query parameter.
+         *
+         * @param name the parameter name
+         * @return this builder
+         */
         public Builder queryParameter(String name) {
             return queryParameter(name, false);
         }
 
-        /** Declares a header parameter. */
+        /**
+         * Declares a header parameter.
+         *
+         * @param name the parameter name
+         * @param required whether the parameter is mandatory
+         * @return this builder
+         */
         public Builder headerParameter(String name, boolean required) {
             return parameter(name, RestParameterLocation.HEADER, required);
         }
 
-        /** Declares a cookie parameter. */
+        /**
+         * Declares a cookie parameter.
+         *
+         * @param name the parameter name
+         * @param required whether the parameter is mandatory
+         * @return this builder
+         */
         public Builder cookieParameter(String name, boolean required) {
             return parameter(name, RestParameterLocation.COOKIE, required);
         }

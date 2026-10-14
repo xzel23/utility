@@ -4,25 +4,19 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpResponse;
-import java.util.Objects;
 
 /**
  * An immutable HTTP response returned by a REST request.
  *
  * @param <T> the response body type
+ * @param statusCode the HTTP response status code
+ * @param headers the HTTP response headers
+ * @param body the response body
+ * @param uri the URI of the response
+ * @param version the HTTP protocol version
  */
 public record RestResponse<T>(int statusCode, HttpHeaders headers, T body, URI uri,
                               HttpClient.Version version) {
-
-    /**
-     * Creates a REST response.
-     */
-    public RestResponse {
-        Objects.requireNonNull(headers, "headers");
-        Objects.requireNonNull(uri, "uri");
-        Objects.requireNonNull(version, "version");
-    }
-
     /**
      * Indicates whether the response status is in the 2xx range.
      *

@@ -107,14 +107,16 @@ public interface RestBody {
         return new SimpleRestBody(() -> publisher, repeatable, contentType);
     }
 
-    /** Internal immutable implementation shared by the factory methods. */
+    /**
+     * Internal immutable implementation shared by the factory methods.
+     *
+     * @param publisherSupplier supplies a publisher for each request attempt
+     * @param repeatable whether the body can be sent again
+     * @param contentType the media type, or {@code null}
+     */
     record SimpleRestBody(Supplier<? extends HttpRequest.BodyPublisher> publisherSupplier,
                           boolean repeatable,
                           @Nullable String contentType) implements RestBody {
-        public SimpleRestBody {
-            Objects.requireNonNull(publisherSupplier, "publisherSupplier");
-        }
-
         @Override
         public HttpRequest.BodyPublisher newPublisher() {
             return Objects.requireNonNull(publisherSupplier.get(), "publisherSupplier returned null");

@@ -6,7 +6,10 @@ import java.util.Objects;
  * Thrown by {@link RestResponse#requireSuccess()} for a non-success HTTP status.
  */
 public final class RestStatusException extends RuntimeException {
-    private final RestResponse<?> response;
+    /**
+     * The REST response associated with this exception.
+     */
+    private final transient RestResponse<?> response;
 
     /**
      * Creates an exception for a response.

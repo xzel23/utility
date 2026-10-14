@@ -3,7 +3,6 @@ package com.dua3.utility.rest;
 import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
-import java.util.Objects;
 
 /**
  * A bearer access token and its optional expiry time.
