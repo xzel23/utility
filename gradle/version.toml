@@ -6,6 +6,7 @@ atlantafx = "3.0.0"
 bouncycastle = "1.86.1"
 h2database = "2.5.252"
 ikonli = "12.4.0"
+jackson = "3.2.3"
 jimfs = "1.3.2"
 jspecify = "1.0.1"
 junit-bom = "6.1.3"
@@ -35,6 +36,8 @@ ikonli-bom = { group = "org.kordamp.ikonli", name = "ikonli-bom", version.ref = 
 ikonli-fontawesome6 = { group = "org.kordamp.ikonli", name = "ikonli-fontawesome6-pack" }
 ikonli-feather = { group = "org.kordamp.ikonli", name = "ikonli-feather-pack" }
 ikonli-javafx = { group = "org.kordamp.ikonli", name = "ikonli-javafx" }
+jackson-bom = { group = "tools.jackson", name = "jackson-bom", version.ref = "jackson" }
+jackson-databind = { group = "tools.jackson.core", name = "jackson-databind" }
 jimfs = { group = "com.google.jimfs", name = "jimfs", version.ref = "jimfs" }
 jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit-bom" }
