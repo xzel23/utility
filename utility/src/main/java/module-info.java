@@ -24,6 +24,7 @@ import org.jspecify.annotations.NullMarked;
  * <li>com.dua3.utility.math: Utility classes for mathematical operations.
  * <li>com.dua3.utility.math.geometry: Utility classes for geometric operations.
  * <li>com.dua3.utility.options: Utility classes for handling options.
+ * <li>com.dua3.utility.rest: Utility classes for declaring and calling REST APIs.
  * <li>com.dua3.utility.text: Utility classes for text manipulation.
  * <li>com.dua3.utility.xml: Utility classes for XML processing.
  * </ul>
@@ -51,6 +52,7 @@ open module com.dua3.utility {
     exports com.dua3.utility.math;
     exports com.dua3.utility.math.geometry;
     exports com.dua3.utility.options;
+    exports com.dua3.utility.rest;
     exports com.dua3.utility.text;
     exports com.dua3.utility.spi;
     exports com.dua3.utility.ui;
@@ -59,6 +61,7 @@ open module com.dua3.utility {
     exports com.dua3.utility.crypt;
 
     requires java.xml;
+    requires java.net.http;
     requires org.apache.logging.log4j;
     requires org.jspecify;
     requires static org.bouncycastle.provider;
