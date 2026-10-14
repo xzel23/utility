@@ -51,6 +51,18 @@ public final class ObjectStores {
     }
 
     /**
+     * Creates an object store which stores objects in files on the local file system.
+     *
+     * @param root the root directory where the object store will be located
+     * @param lazy whether the object store should be lazily initialized
+     * @return the created object store
+     * @throws IOException if the object store cannot be created
+     */
+    public static ObjectStore fileStore(Path root, boolean lazy) throws IOException {
+        return FileObjectStore.newObjectStore(root, lazy);
+    }
+
+    /**
      * Copies an object between object stores.
      * <p>
      * File-backed stores use the file-system copy operation directly. Other

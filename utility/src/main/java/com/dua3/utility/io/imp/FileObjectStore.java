@@ -41,6 +41,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 /**
@@ -62,6 +63,7 @@ public final class FileObjectStore implements ObjectStore {
     private final URI root;
     private final AccessMode accessMode;
     private final LangUtil.AutoCloseableSupplier<Path> rootPath;
+    private static final AtomicBoolean READ_ATTRIBUTES_FAILURE_REPORTED = new AtomicBoolean(false);
 
     /**
      * Constructs a {@code FileObjectStore} with the specified root directory.
@@ -69,12 +71,11 @@ public final class FileObjectStore implements ObjectStore {
      *
      * @param rootPath the path to the root directory of the file object store
      * @param accessMode the access level for the file object store
+     * @param lazy true if the object store should only be initialized ad first access
      * @throws IOException if an I/O error occurs while creating or accessing the directory
      */
     private FileObjectStore(Path rootPath, AccessMode accessMode, boolean lazy) throws IOException {
-        assert rootPath.equals(normalizeRoot(rootPath)) : "Root path is not absolute or notnormalized";
-
-        this.root = toRootUri(rootPath);
+        this.root = toRootUri(normalizeRoot(rootPath));
         this.accessMode = accessMode;
         if (lazy) {
             this.rootPath = LangUtil.cache(LangUtil.unchecked(() -> checkOrCreateDirectory(rootPath, accessMode)), ignored -> {});
@@ -119,7 +120,7 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException if an I/O error occurs during the initialization of the store
      */
     public static ReadableObjectStore newReadableObjectStore(Path root) throws IOException {
-        return newReadableObjectStore(root, false);
+        return newObjectStore(root, AccessMode.READ, false);
     }
 
     /**
@@ -130,8 +131,9 @@ public final class FileObjectStore implements ObjectStore {
      * @return a new ReadableObjectStore instance configured with the specified root path and lazy loading option
      * @throws IOException if an I/O error occurs initializing the object store
      */
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static ReadableObjectStore newReadableObjectStore(Path root, boolean lazy) throws IOException {
-        return new FileObjectStore(normalizeRoot(root), AccessMode.READ, lazy);
+        return newObjectStore(root, AccessMode.READ, lazy);
     }
 
     /**
@@ -142,7 +144,7 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException if an I/O error occurs during the initialization of the store
      */
     public static WritableObjectStore newWritableObjectStore(Path root) throws IOException {
-        return newWritableObjectStore(root, false);
+        return newObjectStore(root, AccessMode.WRITE, false);
     }
 
     /**
@@ -154,8 +156,9 @@ public final class FileObjectStore implements ObjectStore {
      * @return a new WritableObjectStore configured with the specified root and loading strategy
      * @throws IOException if an I/O error occurs during the creation of the object store
      */
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static WritableObjectStore newWritableObjectStore(Path root, boolean lazy) throws IOException {
-        return new FileObjectStore(normalizeRoot(root), AccessMode.WRITE, lazy);
+        return newObjectStore(root, AccessMode.WRITE, lazy);
     }
 
     /**
@@ -166,7 +169,7 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException if an I/O error occurs during the initialization of the store
      */
     public static FileObjectStore newObjectStore(Path root) throws IOException {
-        return newObjectStore(root, false);
+        return newObjectStore(root, AccessMode.READ_AND_WRITE, false);
     }
 
     /**
@@ -178,7 +181,20 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException if an I/O error occurs while creating the object store
      */
     public static FileObjectStore newObjectStore(Path root, boolean lazy) throws IOException {
-        return new FileObjectStore(normalizeRoot(root), AccessMode.READ_AND_WRITE, lazy);
+        return newObjectStore(root, AccessMode.READ_AND_WRITE, lazy);
+    }
+
+    /**
+     * Creates a new instance of FileObjectStore with the specified root path, access mode, and lazy loading option.
+     *
+     * @param root the root path where the object store will be located
+     * @param mode the access mode for reading and writing to the object store
+     * @param lazy true if the object store should only be initialized ad first access
+     * @return a new FileObjectStore instance initialized with the provided parameters
+     * @throws IOException if an I/O error occurs during object store initialization
+     */
+    public static FileObjectStore newObjectStore(Path root, AccessMode mode, boolean lazy) throws IOException {
+        return new FileObjectStore(root, mode, lazy);
     }
 
     @Override
@@ -190,6 +206,7 @@ public final class FileObjectStore implements ObjectStore {
     @SuppressWarnings({"java:S2095", "resource"}) // caller closes the stream
     public Stream<ObjectInfo> list(URI path) throws IOException {
         assertReadable();
+        //noinspection OverlyBroadCatchBlock
         try {
             return Files.list(resolveRegularFolder(path, false))
                     .sorted(Comparator.comparing(Path::getFileName, Comparator.comparing(Path::toString)))
@@ -203,6 +220,7 @@ public final class FileObjectStore implements ObjectStore {
     public long write(URI path, InputStream in, OutputOption... options) throws IOException {
         assertWritable();
 
+        //noinspection OverlyBroadCatchBlock
         try {
             Path resolved = resolve(path);
             StandardCopyOption[] copyOptions = getCopyOptions(options);
@@ -234,6 +252,7 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException If an I/O error occurs during the copy operation.
      */
     public void copyTo(FileObjectStore targetStore, URI source, URI target, OutputOption... options) throws IOException {
+        //noinspection OverlyBroadCatchBlock
         try {
             assertReadable();
             Path sourcePath = resolveRegularData(source, false);
@@ -259,6 +278,7 @@ public final class FileObjectStore implements ObjectStore {
      * @throws IOException If an I/O error occurs during the move operation.
      */
     public void moveTo(FileObjectStore targetStore, URI source, URI target, OutputOption... options) throws IOException {
+        //noinspection OverlyBroadCatchBlock
         try {
             assertReadable();
             Path sourcePath = resolveRegularData(source, false);
@@ -274,7 +294,7 @@ public final class FileObjectStore implements ObjectStore {
         }
     }
 
-    @SuppressWarnings("java:S6916")
+    @SuppressWarnings({"java:S6916", "OverlyBroadThrowsClause"})
     private Path resolveRegularData(URI path, boolean allowUnknown) throws IOException {
         Path sourcePath = resolve(path);
         switch (getObjectInfo(sourcePath).type()) {
@@ -298,6 +318,7 @@ public final class FileObjectStore implements ObjectStore {
         if (from < 0 || to < from || to > data.length) {
             throw new IndexOutOfBoundsException("invalid bounds: from=" + from + ", to=" + to + ", length=" + data.length);
         }
+        //noinspection OverlyBroadCatchBlock
         try (OutputStream out = openOutputStream(path, options)) {
             out.write(data, from, length);
         } catch (Exception e) {
@@ -338,6 +359,7 @@ public final class FileObjectStore implements ObjectStore {
 
     @Override
     public OutputStream openOutputStream(URI path, OutputOption... options) throws IOException {
+        //noinspection OverlyBroadCatchBlock
         try {
             assertWritable();
 
@@ -383,6 +405,7 @@ public final class FileObjectStore implements ObjectStore {
     @Override
     public void createFolder(URI path) throws IOException {
         assertWritable();
+        //noinspection OverlyBroadCatchBlock
         try {
             Files.createDirectories(resolve(path));
         } catch (Exception e) {
@@ -402,10 +425,10 @@ public final class FileObjectStore implements ObjectStore {
         return Files.newByteChannel(resolved, soo);
     }
 
-    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public void removeFolder(URI path) throws IOException {
         assertWritable();
+        //noinspection OverlyBroadCatchBlock
         try {
             Files.delete(resolveRegularFolder(path, false));
         } catch (Exception e) {
@@ -425,10 +448,10 @@ public final class FileObjectStore implements ObjectStore {
         return Files.newByteChannel(resolveRegularData(path, true), StandardOpenOption.READ);
     }
 
-    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public void delete(URI path) throws IOException {
         assertWritable();
+        //noinspection OverlyBroadCatchBlock
         try {
             Files.delete(resolve(path));
         } catch (Exception e) {
@@ -439,6 +462,7 @@ public final class FileObjectStore implements ObjectStore {
     @Override
     public void deleteRecursively(URI path) throws IOException {
         assertWritable();
+        //noinspection OverlyBroadCatchBlock
         try (Stream<Path> stream = Files.walk(resolve(path))) {
             stream.sorted(Comparator.reverseOrder())
                     .forEach(p -> {
@@ -548,7 +572,13 @@ public final class FileObjectStore implements ObjectStore {
             LOG.debug("missing object with path: {}", path);
             objectType = ObjectType.MISSING;
         } catch (FileSystemException e) {
-            LOG.warn("could not read file attributes for path: {}", path, e);
+            if (READ_ATTRIBUTES_FAILURE_REPORTED.compareAndSet(false, true)) {
+                LOG.warn("File attributes could not be read." +
+                        " This may be caused when accessing deduplicated files on Windows network shares." +
+                        " This warning is reported only once per run. " +
+                        " Details for this and future occurrences are being logged at debug level");
+            }
+            LOG.debug("could not read file attributes for path: {}", path, e);
         }
 
         if (objectType == ObjectType.FOLDER && !normalized.isEmpty() && !normalized.endsWith("/")) {

@@ -932,6 +932,7 @@ public class DbObjectStore implements ObjectStore {
     }
 
     @Override
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public WritableByteChannel openWritableByteChannel(URI path, OutputOption... options) throws IOException {
         synchronized (lock) {
             assertWritable();
@@ -960,6 +961,7 @@ public class DbObjectStore implements ObjectStore {
     }
 
     @Override
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public void copy(URI source, URI target, OutputOption... options) throws IOException {
         byte[] data;
         synchronized (lock) {
@@ -1003,6 +1005,7 @@ public class DbObjectStore implements ObjectStore {
     }
 
     @Override
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public InputStream openInputStream(URI path) throws IOException {
         synchronized (lock) {
             assertReadable();
@@ -1037,6 +1040,7 @@ public class DbObjectStore implements ObjectStore {
     }
 
     @Override
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public SeekableByteChannel openReadableByteChannel(URI path) throws IOException {
         synchronized (lock) {
             assertReadable();
@@ -1283,6 +1287,7 @@ public class DbObjectStore implements ObjectStore {
         }
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     private @Nullable DbNode findNode(String normalizedPath) throws SQLException, IOException {
         DbNode current = findRoot();
         if (current == null) {
@@ -1304,6 +1309,7 @@ public class DbObjectStore implements ObjectStore {
         return current;
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     private DbNode ensureParentFoldersExist(String parentNormalizedPath) throws SQLException, IOException {
         DbNode current = findRoot();
         if (current == null) {
@@ -1347,6 +1353,7 @@ public class DbObjectStore implements ObjectStore {
         }
     }
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     private String resolvePath(URI path) throws IOException {
         if (path.isAbsolute()) {
             throw new AbsolutePathException("absolute path not allowed: " + path);
@@ -1434,6 +1441,7 @@ public class DbObjectStore implements ObjectStore {
             open = false;
         }
 
+        @SuppressWarnings("OverlyBroadThrowsClause")
         @Override
         public int read(ByteBuffer dst) throws IOException {
             if (!open) {
@@ -1450,6 +1458,7 @@ public class DbObjectStore implements ObjectStore {
         }
 
         @Override
+        @SuppressWarnings("OverlyBroadThrowsClause")
         public int write(ByteBuffer src) throws IOException {
             if (!open) {
                 throw new ClosedChannelException();
@@ -1458,6 +1467,7 @@ public class DbObjectStore implements ObjectStore {
         }
 
         @Override
+        @SuppressWarnings("OverlyBroadThrowsClause")
         public long position() throws IOException {
             if (!open) {
                 throw new ClosedChannelException();
@@ -1466,6 +1476,7 @@ public class DbObjectStore implements ObjectStore {
         }
 
         @Override
+        @SuppressWarnings("OverlyBroadThrowsClause")
         public SeekableByteChannel position(long newPosition) throws IOException {
             if (!open) {
                 throw new ClosedChannelException();
@@ -1478,6 +1489,7 @@ public class DbObjectStore implements ObjectStore {
         }
 
         @Override
+        @SuppressWarnings("OverlyBroadThrowsClause")
         public long size() throws IOException {
             if (!open) {
                 throw new ClosedChannelException();
@@ -1486,6 +1498,7 @@ public class DbObjectStore implements ObjectStore {
         }
 
         @Override
+        @SuppressWarnings("OverlyBroadThrowsClause")
         public SeekableByteChannel truncate(long size) throws IOException {
             if (!open) {
                 throw new ClosedChannelException();
@@ -1517,6 +1530,7 @@ public class DbObjectStore implements ObjectStore {
         }
 
         @Override
+        @SuppressWarnings("OverlyBroadThrowsClause")
         public int write(ByteBuffer src) throws IOException {
             if (!open) {
                 throw new ClosedChannelException();
