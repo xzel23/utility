@@ -210,9 +210,7 @@ public final class RestConnection {
     private static void mergeHeaders(Map<String, List<String>> target, Map<String, List<String>> source,
                                      boolean replace) {
         source.forEach((name, values) -> {
-            if (replace) {
-                putHeader(target, name, values);
-            } else if (!containsHeader(target, name)) {
+            if (replace || !containsHeader(target, name)) {
                 putHeader(target, name, values);
             }
         });
