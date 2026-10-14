@@ -1,49 +1,49 @@
 [release]
 schemaVersion = 2
-bomVersion = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+bomVersion = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 
 [modules.utility]
-version = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+version = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 paths = ["utility"]
 
 [modules.utility-db]
-version = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+version = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 paths = ["utility-db"]
 
 [modules.utility-swing]
-version = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+version = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 paths = ["utility-swing"]
 
 [modules.utility-fx]
-version = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+version = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 paths = ["utility-fx"]
 
 [modules.utility-fx-icons]
-version = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+version = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 paths = ["utility-fx-icons"]
 
 [modules.utility-fx-icons-ikonli]
-version = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+version = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 paths = ["utility-fx-icons-ikonli"]
 
 [modules.utility-fx-controls]
-version = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+version = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 paths = ["utility-fx-controls"]
 
 [modules.utility-fx-db]
-version = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+version = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 paths = ["utility-fx-db"]
 
 [modules.utility-fx-web]
-version = "25.0.0"
-publishedRevision = "c25944cad64422ca281aea22a0cf6652fbcc9f2f"
+version = "25.1.0"
+publishedRevision = "cccb51f5730ce0f94196b9ec0498dda8e3a9703f"
 paths = ["utility-fx-web"]
