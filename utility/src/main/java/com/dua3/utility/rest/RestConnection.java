@@ -24,6 +24,39 @@ import java.util.function.Supplier;
  * A reusable authenticated connection to a {@link RestApi}.
  */
 public final class RestConnection {
+    /**
+     * Constant representing the key for specifying the content type in HTTP headers.
+     */
+    public static final String CONTENT_TYPE = "Content-Type";
+    /**
+     * Constant representing the "Accept" header for HTTP requests.
+     */
+    public static final String ACCEPT = "Accept";
+    /**
+     * Represents the HTTP method "GET".
+     */
+    public static final String GET = "GET";
+    /**
+     * Represents the constant value "HEAD".
+     */
+    public static final String HEAD = "HEAD";
+    /**
+     * Represents the HTTP method "OPTIONS".
+     */
+    public static final String OPTIONS = "OPTIONS";
+    /**
+     * Constant representing the TRACE HTTP method.
+     */
+    public static final String TRACE = "TRACE";
+    /**
+     * Represents the HTTP method PUT.
+     */
+    public static final String PUT = "PUT";
+    /**
+     * Represents the HTTP method DELETE.
+     */
+    public static final String DELETE = "DELETE";
+
     private final RestApi api;
     private final RestAuthentication authentication;
 
@@ -132,11 +165,11 @@ public final class RestConnection {
         mergeHeaders(headers, prepared.headers(), true);
         mergeHeaders(headers, credentials.headers(), true);
 
-        if (!prepared.endpoint().responseContentTypes().isEmpty() && !containsHeader(headers, "Accept")) {
-            putHeader(headers, "Accept", List.of(String.join(", ", prepared.endpoint().responseContentTypes())));
+        if (!prepared.endpoint().responseContentTypes().isEmpty() && !containsHeader(headers, ACCEPT)) {
+            putHeader(headers, ACCEPT, List.of(String.join(", ", prepared.endpoint().responseContentTypes())));
         }
-        if (prepared.body().contentType() != null && !containsHeader(headers, "Content-Type")) {
-            putHeader(headers, "Content-Type", List.of(prepared.body().contentType()));
+        if (prepared.body().contentType() != null && !containsHeader(headers, CONTENT_TYPE)) {
+            putHeader(headers, CONTENT_TYPE, List.of(prepared.body().contentType()));
         }
         validateContentType(prepared.endpoint(), headers);
         HttpRequest.Builder builder = HttpRequest.newBuilder(uri).timeout(prepared.timeout());
@@ -210,7 +243,7 @@ public final class RestConnection {
         if (endpoint.requestContentTypes().isEmpty()) {
             return;
         }
-        String headerName = headerName(headers, "Content-Type");
+        String headerName = headerName(headers, CONTENT_TYPE);
         if (headerName == null) {
             if (endpoint.requestBodyRequired()) {
                 throw new IllegalStateException("endpoint requires a Content-Type from " + endpoint.requestContentTypes());
@@ -228,7 +261,7 @@ public final class RestConnection {
 
     private static boolean isUnsafe(String method) {
         return switch (method) {
-            case "GET", "HEAD", "OPTIONS", "TRACE", "PUT", "DELETE" -> false;
+            case GET, HEAD, OPTIONS, TRACE, PUT, DELETE -> false;
             default -> true;
         };
     }
