@@ -1,5 +1,7 @@
 package com.dua3.utility.rest;
 
+import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -58,6 +61,7 @@ public final class RestApiBuilder {
      * @param httpClient the HTTP client
      * @return this builder
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public RestApiBuilder httpClient(HttpClient httpClient) {
         if (this.httpClient != null) {
             throw new IllegalStateException("HTTP client already set");
@@ -96,8 +100,8 @@ public final class RestApiBuilder {
      * @return this builder
      */
     public RestApiBuilder defaultHeader(String name, String value) {
-        defaultHeaders.computeIfAbsent(validName(name, "header"), ignored -> new ArrayList<>())
-                .add(value);
+        LangUtil.checkArg(!name.isBlank(), "name must not be blank");
+        defaultHeaders.computeIfAbsent(name, ignored -> new ArrayList<>()).add(value);
         return this;
     }
 
@@ -202,21 +206,11 @@ public final class RestApiBuilder {
         return value;
     }
 
-    private static String validName(String value, String name) {
-        if (value.isBlank()) {
-            throw new IllegalArgumentException(name + " name must not be blank");
-        }
-        return value;
-    }
-
     private static OpenApiFormat formatForPath(Path path) {
-        String name = path.getFileName().toString().toLowerCase(java.util.Locale.ROOT);
-        if (name.endsWith(".yaml") || name.endsWith(".yml")) {
-            return OpenApiFormat.YAML;
-        }
-        if (name.endsWith(".json")) {
-            return OpenApiFormat.JSON;
-        }
-        return OpenApiFormat.AUTO;
+        return switch (IoUtil.getExtension(path).toLowerCase(Locale.ROOT)) {
+            case "yaml", "yml" -> OpenApiFormat.YAML;
+            case "json" -> OpenApiFormat.JSON;
+            default -> OpenApiFormat.AUTO;
+        };
     }
 }

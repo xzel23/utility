@@ -1,5 +1,6 @@
 package com.dua3.utility.rest;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
@@ -19,8 +20,6 @@ public record AccessToken(String value, @Nullable Instant expiresAt) {
      * @param expiresAt the expiry time, or {@code null} when unknown
      */
     public AccessToken {
-        if (value.isBlank()) {
-            throw new IllegalArgumentException("token value must not be blank");
-        }
+        LangUtil.checkArg(!value.isBlank(), "value must not be blank");
     }
 }

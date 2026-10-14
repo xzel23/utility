@@ -17,6 +17,9 @@ public record RestCredentials(Map<String, List<String>> headers,
 
     /**
      * Creates immutable credentials.
+     *
+     * @param headers HTTP headers
+     * @param queryParameters URI query parameters
      */
     public RestCredentials {
         headers = immutableCopy(headers, "headers");
@@ -55,7 +58,6 @@ public record RestCredentials(Map<String, List<String>> headers,
     }
 
     private static Map<String, List<String>> immutableCopy(Map<String, List<String>> values, String name) {
-        Objects.requireNonNull(values, name);
         Map<String, List<String>> copy = new LinkedHashMap<>();
         values.forEach((key, value) -> {
             Objects.requireNonNull(key, name + " contains a null name");

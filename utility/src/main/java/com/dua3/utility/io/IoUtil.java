@@ -162,13 +162,7 @@ public final class IoUtil {
      */
     public static String getExtension(Path path) {
         Path fnamePath = path.getFileName();
-
-        if (fnamePath == null) {
-            return "";
-        }
-
-        String fname = fnamePath.toString();
-        return getExtensionUnsafe(fname);
+        return fnamePath == null ? "" : getExtensionUnsafe(fnamePath.toString());
     }
 
     /**

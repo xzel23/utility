@@ -108,7 +108,6 @@ public final class RestApi {
     }
 
     private static URI normalizeBaseUri(URI value) {
-        Objects.requireNonNull(value, "baseUri");
         if (!value.isAbsolute() || value.getScheme() == null || value.getHost() == null) {
             throw new IllegalArgumentException("base URI must be an absolute HTTP URI: " + value);
         }

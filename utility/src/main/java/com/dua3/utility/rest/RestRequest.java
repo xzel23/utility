@@ -1,5 +1,6 @@
 package com.dua3.utility.rest;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -34,8 +35,8 @@ public final class RestRequest {
     private @Nullable Duration timeout;
 
     RestRequest(RestConnection connection, RestEndpoint endpoint) {
-        this.connection = Objects.requireNonNull(connection, "connection");
-        this.endpoint = Objects.requireNonNull(endpoint, "endpoint");
+        this.connection = connection;
+        this.endpoint = endpoint;
     }
 
     /**
@@ -90,10 +91,8 @@ public final class RestRequest {
      * @return this request
      */
     public RestRequest header(String name, String value) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("header name must not be blank");
-        }
-        put(headers, name, Objects.requireNonNull(value, "value"), false);
+        LangUtil.checkArg(!name.isEmpty(), "name must not be blank");
+        put(headers, name, value, false);
         return this;
     }
 
@@ -104,7 +103,7 @@ public final class RestRequest {
      * @return this request
      */
     public RestRequest body(RestBody body) {
-        this.body = Objects.requireNonNull(body, "body");
+        this.body = body;
         return this;
     }
 
@@ -116,7 +115,7 @@ public final class RestRequest {
      * @return this request
      */
     public RestRequest body(RestCodec codec, Object value) {
-        return body(Objects.requireNonNull(codec, "codec").write(value));
+        return body(codec.write(value));
     }
 
     /**
@@ -137,10 +136,7 @@ public final class RestRequest {
      * @return this request
      */
     public RestRequest timeout(Duration timeout) {
-        Objects.requireNonNull(timeout, "timeout");
-        if (timeout.isZero() || timeout.isNegative()) {
-            throw new IllegalArgumentException("timeout must be positive");
-        }
+        LangUtil.checkArg(!timeout.isPositive(), "timeout must be positive");
         this.timeout = timeout;
         return this;
     }
@@ -272,24 +268,22 @@ public final class RestRequest {
             throw new IllegalArgumentException("endpoint " + endpoint.name() + " has no " + location
                     + " parameter named " + name);
         }
-        put(target, name, String.valueOf(Objects.requireNonNull(value, "value")), append,
-                location == RestParameterLocation.HEADER);
+        put(target, name, String.valueOf(value), append, location == RestParameterLocation.HEADER);
         return this;
     }
 
     private void validateRequiredParameters() {
         for (RestParameter parameter : endpoint.parameters()) {
-            if (!parameter.required()) {
-                continue;
-            }
-            Map<String, List<String>> values = switch (parameter.location()) {
-                case PATH -> pathParameters;
-                case QUERY -> queryParameters;
-                case HEADER -> headers;
-                case COOKIE -> cookies;
-            };
-            if (!contains(values, parameter.name(), parameter.location() == RestParameterLocation.HEADER)) {
-                throw new IllegalStateException("required " + parameter.location() + " parameter is missing: " + parameter.name());
+            if (parameter.required()) {
+                Map<String, List<String>> values = switch (parameter.location()) {
+                    case PATH -> pathParameters;
+                    case QUERY -> queryParameters;
+                    case HEADER -> headers;
+                    case COOKIE -> cookies;
+                };
+                if (!contains(values, parameter.name(), parameter.location() == RestParameterLocation.HEADER)) {
+                    throw new IllegalStateException("required " + parameter.location() + " parameter is missing: " + parameter.name());
+                }
             }
         }
     }

@@ -1,5 +1,7 @@
 package com.dua3.utility.rest;
 
+import com.dua3.utility.lang.LangUtil;
+
 import java.util.Objects;
 
 /**
@@ -17,10 +19,7 @@ public record RestParameter(String name, RestParameterLocation location, boolean
      * @throws IllegalArgumentException if {@code name} is blank
      */
     public RestParameter {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("parameter name must not be blank");
-        }
-        Objects.requireNonNull(location, "location");
+        LangUtil.checkArg(!name.isBlank(), "name must not be blank");
         if (location == RestParameterLocation.PATH && !required) {
             throw new IllegalArgumentException("path parameters must be required");
         }

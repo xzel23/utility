@@ -45,10 +45,7 @@ final class JacksonRestCodec implements RestCodec {
         JacksonRestCodec codec = new JacksonRestCodec(mapperClass, mediaType, dependency);
         try {
             byte[] document = input.readAllBytes();
-            Object value = codec.read(document, Map.class);
-            if (!(value instanceof Map<?, ?> values)) {
-                throw new IllegalArgumentException("OpenAPI document root must be an object");
-            }
+            Map<?, ?> values = codec.read(document, Map.class);
             Map<String, Object> result = new LinkedHashMap<>();
             for (Map.Entry<?, ?> entry : values.entrySet()) {
                 if (!(entry.getKey() instanceof String key)) {
@@ -57,10 +54,10 @@ final class JacksonRestCodec implements RestCodec {
                 result.put(key, entry.getValue());
             }
             return result;
-        } catch (IOException exception) {
-            throw exception;
-        } catch (RuntimeException exception) {
-            throw new IOException("could not parse OpenAPI document as " + mediaType, exception);
+        } catch (IOException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new IOException("could not parse OpenAPI document as " + mediaType, e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.dua3.utility.rest;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -187,9 +188,7 @@ public final class RestEndpoint {
         private @Nullable String idempotencyKeyHeader;
 
         private Builder(String name) {
-            if (name == null || name.isBlank()) {
-                throw new IllegalArgumentException("endpoint name must not be blank");
-            }
+            LangUtil.checkArg(!name.isBlank(), "name must not be blank");
             this.name = name;
         }
 
@@ -201,12 +200,6 @@ public final class RestEndpoint {
          * @return this builder
          */
         public Builder method(String method, String pathTemplate) {
-            if (method == null || method.isBlank()) {
-                throw new IllegalArgumentException("HTTP method must not be blank");
-            }
-            if (pathTemplate == null || pathTemplate.isBlank()) {
-                throw new IllegalArgumentException("path template must not be blank");
-            }
             this.method = method.toUpperCase(Locale.ROOT);
             this.pathTemplate = pathTemplate.startsWith("/") ? pathTemplate : '/' + pathTemplate;
             return this;
@@ -392,9 +385,7 @@ public final class RestEndpoint {
          * @return this builder
          */
         public Builder expectedStatus(int status) {
-            if (status < 100 || status > 599) {
-                throw new IllegalArgumentException("invalid HTTP status: " + status);
-            }
+            LangUtil.checkArg(100 <= status && status <= 599, "invalid HTTP status: %d", status);
             expectedStatuses.add(status);
             return this;
         }
@@ -406,9 +397,7 @@ public final class RestEndpoint {
          * @return this builder
          */
         public Builder securityRequirement(String securityScheme) {
-            if (securityScheme == null || securityScheme.isBlank()) {
-                throw new IllegalArgumentException("security scheme must not be blank");
-            }
+            LangUtil.checkArg(!securityScheme.isBlank(), "security scheme must not be blank");
             securityRequirements.add(securityScheme);
             return this;
         }
@@ -435,9 +424,7 @@ public final class RestEndpoint {
          * @return this builder
          */
         public Builder idempotencyKeyHeader(String headerName) {
-            if (headerName == null || headerName.isBlank()) {
-                throw new IllegalArgumentException("idempotency-key header must not be blank");
-            }
+            LangUtil.checkArg(!headerName.isBlank(), "headerName scheme must not be blank");
             this.idempotencyKeyHeader = headerName;
             return this;
         }
@@ -476,19 +463,14 @@ public final class RestEndpoint {
         }
 
         private static String validContentType(String contentType) {
-            if (contentType == null || contentType.isBlank()) {
-                throw new IllegalArgumentException("content type must not be blank");
-            }
+            LangUtil.checkArg(!contentType.isBlank(), "content type must not be blank");
             return contentType;
         }
     }
 
     private record ParameterKey(String name, RestParameterLocation location) {
         static ParameterKey of(String name, RestParameterLocation location) {
-            Objects.requireNonNull(name, "name");
-            Objects.requireNonNull(location, "location");
-            String normalizedName = location == RestParameterLocation.HEADER
-                    ? name.toLowerCase(Locale.ROOT) : name;
+            String normalizedName = location == RestParameterLocation.HEADER ? name.toLowerCase(Locale.ROOT) : name;
             return new ParameterKey(normalizedName, location);
         }
     }

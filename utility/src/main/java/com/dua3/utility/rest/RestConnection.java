@@ -1,5 +1,7 @@
 package com.dua3.utility.rest;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -38,7 +40,7 @@ public final class RestConnection {
      * @throws IllegalArgumentException if the endpoint is unknown
      */
     public RestRequest request(String endpointName) {
-        RestEndpoint endpoint = api.endpoint(Objects.requireNonNull(endpointName, "endpointName"))
+        RestEndpoint endpoint = api.endpoint(endpointName)
                 .orElseThrow(() -> new IllegalArgumentException("unknown REST endpoint: " + endpointName));
         return new RestRequest(this, endpoint);
     }
@@ -51,7 +53,6 @@ public final class RestConnection {
      * @throws IllegalArgumentException if the endpoint name is not part of this API
      */
     public RestRequest request(RestEndpoint endpoint) {
-        Objects.requireNonNull(endpoint, "endpoint");
         if (api.endpoint(endpoint.name()).orElse(null) != endpoint) {
             throw new IllegalArgumentException("endpoint does not belong to this REST API: " + endpoint.name());
         }
@@ -67,9 +68,7 @@ public final class RestConnection {
     }
 
     <T> CompletableFuture<RestResponse<T>> executeAsync(RestRequest request,
-                                                          Supplier<? extends HttpResponse.BodyHandler<T>> bodyHandlerSupplier) {
-        Objects.requireNonNull(request, "request");
-        Objects.requireNonNull(bodyHandlerSupplier, "bodyHandlerSupplier");
+                                                        Supplier<? extends HttpResponse.BodyHandler<T>> bodyHandlerSupplier) {
         RestRequest.Prepared prepared = request.prepare();
         return authentication.credentials(false)
                 .thenCompose(credentials -> send(prepared, credentials, bodyHandlerSupplier))
@@ -102,8 +101,8 @@ public final class RestConnection {
     }
 
     private <T> CompletionStage<RestResponse<T>> retryAfterUnauthorized(RestRequest.Prepared prepared,
-                                                                          RestResponse<T> response,
-                                                                          Supplier<? extends HttpResponse.BodyHandler<T>> bodyHandlerSupplier) {
+                                                                        RestResponse<T> response,
+                                                                        Supplier<? extends HttpResponse.BodyHandler<T>> bodyHandlerSupplier) {
         if (response.statusCode() != 401 || !authentication.refreshable()
                 || !prepared.endpoint().retryAfterAuthenticationRefresh() || !prepared.body().repeatable()) {
             return CompletableFuture.completedFuture(response);
@@ -112,7 +111,7 @@ public final class RestConnection {
     }
 
     private <T> CompletableFuture<RestResponse<T>> send(RestRequest.Prepared prepared, RestCredentials credentials,
-                                                         Supplier<? extends HttpResponse.BodyHandler<T>> bodyHandlerSupplier) {
+                                                        Supplier<? extends HttpResponse.BodyHandler<T>> bodyHandlerSupplier) {
         HttpRequest request;
         HttpResponse.BodyHandler<T> bodyHandler;
         try {
@@ -169,7 +168,7 @@ public final class RestConnection {
     }
 
     private static Map<String, List<String>> mergeParameters(Map<String, List<String>> first,
-                                                               Map<String, List<String>> second) {
+                                                             Map<String, List<String>> second) {
         Map<String, List<String>> result = new LinkedHashMap<>();
         appendParameters(result, first);
         appendParameters(result, second);
@@ -203,7 +202,7 @@ public final class RestConnection {
         return headerName(headers, name) != null;
     }
 
-    private static String headerName(Map<String, List<String>> headers, String soughtName) {
+    private static @Nullable String headerName(Map<String, List<String>> headers, String soughtName) {
         for (String name : headers.keySet()) {
             if (name.equalsIgnoreCase(soughtName)) {
                 return name;

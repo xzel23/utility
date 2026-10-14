@@ -45,8 +45,6 @@ public interface RestAuthentication {
      * @return Basic authentication
      */
     static RestAuthentication basic(String userName, String password) {
-        Objects.requireNonNull(userName, "userName");
-        Objects.requireNonNull(password, "password");
         String value = userName + ':' + password;
         String encoded = Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
         return fixed(RestCredentials.header("Authorization", "Basic " + encoded));
@@ -81,9 +79,7 @@ public interface RestAuthentication {
      * @return API-key authentication
      */
     static RestAuthentication apiKey(String name, String value, RestParameterLocation location) {
-        Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(value, "value");
-        return switch (Objects.requireNonNull(location, "location")) {
+        return switch (location) {
             case HEADER -> fixed(RestCredentials.header(name, value));
             case QUERY -> fixed(RestCredentials.queryParameter(name, value));
             default -> throw new IllegalArgumentException("API keys can only be placed in headers or query parameters");

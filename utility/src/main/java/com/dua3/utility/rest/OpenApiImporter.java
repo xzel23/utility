@@ -126,18 +126,12 @@ final class OpenApiImporter {
     }
 
     private static void importRequestBody(RestEndpoint.Builder endpoint, Object value, Map<String, Object> root) {
-        if (value == null) {
-            return;
-        }
         Map<String, Object> requestBody = object(value, root, "request body");
         endpoint.requestBodyRequired(Boolean.TRUE.equals(requestBody.get("required")));
         objectOrEmpty(requestBody.get("content"), root).keySet().forEach(endpoint::consumes);
     }
 
     private static void importResponses(RestEndpoint.Builder endpoint, Object value, Map<String, Object> root) {
-        if (value == null) {
-            return;
-        }
         for (Map.Entry<String, Object> response : object(value, root, "responses").entrySet()) {
             try {
                 endpoint.expectedStatus(Integer.parseInt(response.getKey()));
@@ -158,7 +152,7 @@ final class OpenApiImporter {
     }
 
     private static Collection<Map<String, Object>> mergeParameters(List<Map<String, Object>> pathParameters,
-                                                                     List<Map<String, Object>> operationParameters) {
+                                                                   List<Map<String, Object>> operationParameters) {
         Map<String, Map<String, Object>> merged = new LinkedHashMap<>();
         for (Map<String, Object> parameter : pathParameters) {
             merged.put(parameterKey(parameter), parameter);
@@ -201,7 +195,7 @@ final class OpenApiImporter {
         return result;
     }
 
-    private static Map<String, Object> objectOrEmpty(Object value, Map<String, Object> root) {
+    private static Map<String, Object> objectOrEmpty(@Nullable Object value, Map<String, Object> root) {
         return value == null ? Map.of() : object(value, root, "object");
     }
 
@@ -229,7 +223,7 @@ final class OpenApiImporter {
         return current;
     }
 
-    private static List<?> list(Object value) {
+    private static List<?> list(@Nullable Object value) {
         if (value == null) {
             return List.of();
         }
@@ -242,13 +236,12 @@ final class OpenApiImporter {
     private static String generatedOperationName(String method, String path) {
         StringBuilder name = new StringBuilder(method.toLowerCase(Locale.ROOT));
         for (String segment : path.split("/")) {
-            if (segment.isBlank()) {
-                continue;
-            }
-            String normalized = segment.replaceAll("[^A-Za-z0-9]+", " ").trim();
-            for (String word : normalized.split("\\s+")) {
-                if (!word.isEmpty()) {
-                    name.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+            if (!segment.isBlank()) {
+                String normalized = segment.replaceAll("[^A-Za-z0-9]+", " ").trim();
+                for (String word : normalized.split("\\s+")) {
+                    if (!word.isEmpty()) {
+                        name.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+                    }
                 }
             }
         }
@@ -259,10 +252,9 @@ final class OpenApiImporter {
         String text = new String(document, StandardCharsets.UTF_8);
         for (int index = 0; index < text.length(); index++) {
             char character = text.charAt(index);
-            if (character == '\ufeff' || Character.isWhitespace(character)) {
-                continue;
+            if (character != '\ufeff' && !Character.isWhitespace(character)) {
+                return character == '{' ? OpenApiFormat.JSON : OpenApiFormat.YAML;
             }
-            return character == '{' ? OpenApiFormat.JSON : OpenApiFormat.YAML;
         }
         throw new IllegalArgumentException("OpenAPI document is empty");
     }

@@ -65,7 +65,6 @@ public interface RestBody {
      * @return a repeatable text body
      */
     static RestBody text(String value, String contentType) {
-        Objects.requireNonNull(value, "value");
         return bytes(value.getBytes(StandardCharsets.UTF_8), contentType);
     }
 
@@ -77,7 +76,6 @@ public interface RestBody {
      * @return a repeatable body
      */
     static RestBody bytes(byte[] value, String contentType) {
-        Objects.requireNonNull(value, "value");
         byte[] copy = value.clone();
         return new SimpleRestBody(() -> HttpRequest.BodyPublishers.ofByteArray(copy), true, contentType);
     }
@@ -90,7 +88,6 @@ public interface RestBody {
      * @return a repeatable body
      */
     static RestBody inputStream(Supplier<? extends InputStream> streamSupplier, String contentType) {
-        Objects.requireNonNull(streamSupplier, "streamSupplier");
         return new SimpleRestBody(() -> HttpRequest.BodyPublishers.ofInputStream(streamSupplier::get), true, contentType);
     }
 
@@ -103,7 +100,6 @@ public interface RestBody {
      * @return the wrapped body
      */
     static RestBody ofPublisher(HttpRequest.BodyPublisher publisher, boolean repeatable, @Nullable String contentType) {
-        Objects.requireNonNull(publisher, "publisher");
         return new SimpleRestBody(() -> publisher, repeatable, contentType);
     }
 
