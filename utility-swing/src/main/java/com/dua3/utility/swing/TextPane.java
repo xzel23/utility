@@ -114,7 +114,8 @@ public class TextPane extends JScrollPane implements RichTextPane {
         applyTextAreaDefaults();
 
         // keep layout cache in sync with viewport geometry changes
-        getViewport().addComponentListener(new ComponentAdapter() {
+        JViewport vp = Objects.requireNonNull(getViewport(), "viewport not initialized");
+        vp.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 invalidateRenderLayout();
@@ -138,6 +139,19 @@ public class TextPane extends JScrollPane implements RichTextPane {
     @Override
     public final void setViewportView(Component view) {
         super.setViewportView(view);
+    }
+
+    /**
+     * Returns the current {@link JViewport}.
+     * <p>
+     * This final overload is added to make using the method sage in constructors.
+     *
+     * @return the {@code viewport}
+     * @see JScrollPane#getViewport()
+     **/
+    @Override
+    public final @Nullable JViewport getViewport() {
+        return super.getViewport();
     }
 
     @Override
