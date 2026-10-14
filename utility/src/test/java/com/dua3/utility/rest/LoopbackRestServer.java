@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
+import static com.dua3.utility.lang.LangUtil.EMPTY_BYTE_ARRAY;
+
 /** Small HTTP/1.1 loopback server for REST client integration tests. */
 final class LoopbackRestServer implements AutoCloseable {
     private static final int STARTUP_TIMEOUT_SECONDS = 5;
@@ -117,7 +119,7 @@ final class LoopbackRestServer implements AutoCloseable {
 
         byte[] body = headers.containsKey("content-length")
                 ? readFixedLengthBody(input, Integer.parseInt(headers.get("content-length").getFirst()))
-                : isChunked(headers) ? readChunkedBody(input) : new byte[0];
+                : isChunked(headers) ? readChunkedBody(input) : EMPTY_BYTE_ARRAY;
         return new ReceivedRequest(requestParts[0], URI.create(requestParts[1]), immutableHeaders(headers), body);
     }
 

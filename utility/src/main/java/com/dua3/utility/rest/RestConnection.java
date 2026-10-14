@@ -126,14 +126,11 @@ public final class RestConnection {
             return executeAsync(request, bodyHandlerSupplier).get();
         } catch (ExecutionException exception) {
             Throwable cause = exception.getCause();
-            if (cause instanceof IOException ioException) {
-                throw ioException;
-            }
-            if (cause instanceof RuntimeException runtimeException) {
-                throw runtimeException;
-            }
-            if (cause instanceof Error error) {
-                throw error;
+            switch (cause) {
+                case IOException ioException -> throw ioException;
+                case RuntimeException runtimeException -> throw runtimeException;
+                case Error error -> throw error;
+                case null, default -> {/* ignored */}
             }
             throw new IOException("REST request failed", cause);
         }
