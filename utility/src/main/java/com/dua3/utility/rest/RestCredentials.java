@@ -60,11 +60,11 @@ public record RestCredentials(Map<String, List<String>> headers,
     private static Map<String, List<String>> immutableCopy(Map<String, List<String>> values, String name) {
         Map<String, List<String>> copy = new LinkedHashMap<>();
         values.forEach((key, value) -> {
-            Objects.requireNonNull(key, name + " contains a null name");
-            Objects.requireNonNull(value, name + " contains a null value list");
+            Objects.requireNonNull(key, () -> name + " contains a null name");
+            Objects.requireNonNull(value, () -> name + " contains a null value list");
             List<String> copiedValues = new ArrayList<>(value.size());
             for (String item : value) {
-                copiedValues.add(Objects.requireNonNull(item, name + " contains a null value"));
+                copiedValues.add(Objects.requireNonNull(item, () -> name + " contains a null value"));
             }
             copy.put(key, List.copyOf(copiedValues));
         });
