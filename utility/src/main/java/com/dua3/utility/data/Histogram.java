@@ -1,7 +1,5 @@
 package com.dua3.utility.data;
 
-import org.w3c.dom.css.Counter;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,7 +20,7 @@ import java.util.stream.Stream;
 public final class Histogram<T> {
 
     /**
-     * A constant Counter instance with a value of zero.
+     * A constant LongAdder instance with a value of zero.
      * This is used as a default or fallback value in the {@link Histogram} class
      * when querying counts for items that do not exist in the histogram.
      * <p>
@@ -32,7 +30,7 @@ public final class Histogram<T> {
 
     /**
      * A map that associates items of type {@code T} with their respective counts,
-     * represented by instances of the {@link Counter} class.
+     * represented by instances of the {@link LongAdder} class.
      * This map serves as the underlying storage for maintaining the histogram's data.
      */
     private final Map<T, LongAdder> map;
@@ -41,7 +39,7 @@ public final class Histogram<T> {
      * Constructs a {@code Histogram} instance using the provided map for internal storage.
      *
      * @param map the map used to store items and their associated counts;
-     *            must map items of type {@code T} to their respective {@code Counter} instances
+     *            must map items of type {@code T} to their respective {@code LongAdder} instances
      */
     private Histogram(Map<T, LongAdder> map) {
         this.map = map;

@@ -96,7 +96,7 @@ public class TextEditorPane extends TextPane implements RichTextEditorPane {
     private transient @Nullable Color typingBackgroundColor;
     private @Nullable String typingFontFamily;
     private volatile double typingFontSize;
-    private int dragAnchor = -1;
+    private volatile int dragAnchor = -1;
     private final AtomicLong documentVersion = new AtomicLong();
     private final AtomicBoolean caretVisible = new AtomicBoolean(true);
     private final Timer caretBlinkTimer;
