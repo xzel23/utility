@@ -32,9 +32,10 @@ open module com.dua3.utility.fx.controls {
     requires com.dua3.utility.fx.icons;
     requires org.apache.logging.log4j;
     requires org.jspecify;
-    requires java.desktop;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
     requires org.kordamp.ikonli.feather;
+
+    requires static java.desktop;
 }

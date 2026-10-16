@@ -37,11 +37,12 @@ open module com.dua3.utility.fx {
             with FxImageUtilProvider;
 
     requires com.dua3.utility;
-    requires java.desktop;
     requires javafx.base;
     requires javafx.graphics;
     requires org.apache.logging.log4j;
     requires org.jspecify;
+
+    requires static java.desktop;
     requires static org.slb4j;
     requires static org.slb4j.ext;
     requires static org.slb4j.ext.fx;
