@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CacheTest {
@@ -63,6 +63,6 @@ class CacheTest {
         assertTrue(cache.toString().contains("[0 entries]"));
         Object second = cache.get("key");
         assertEquals(2, computeCount.get());
-        assertSame(first, second);
+        assertNotSame(first, second);
     }
 }
