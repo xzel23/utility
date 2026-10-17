@@ -235,6 +235,11 @@ could not be loaded.
 
 ## Changes
 
+## 25.1.1
+
+- update module-info to correct reference to use "requires static" for optional dependencies
+- remove incorrect reference to org.w3c.dom.css.Counter Histogram class Javadoc
+
 ## 25.1.0
 
 - feature: added new REST API support in package utility.REST
