@@ -96,6 +96,7 @@ public final class SwingUtil {
 
     static {
         boolean isHeadless = GraphicsEnvironment.isHeadless();
+        @SuppressWarnings("AccessOfSystemProperties")
         boolean isJavaAwtHeadless = Boolean.getBoolean("java.awt.headless");
         if (isHeadless) {
             LOG.warn("No GraphicsEnvironment, swing will not work!");
@@ -388,7 +389,6 @@ public final class SwingUtil {
         }
         try {
             Object data = transferable.getTransferData(flavor);
-            assert data != null;
             return switch (data) {
                 case String s -> Optional.of(s);
                 case ByteArrayInputStream bais -> Optional.of(new String(bais.readAllBytes(), StandardCharsets.UTF_8));
@@ -435,6 +435,7 @@ public final class SwingUtil {
         setNativeLookAndFeelInternal(applicationName);
     }
 
+    @SuppressWarnings("AccessOfSystemProperties")
     private static void setNativeLookAndFeelInternal(@Nullable String applicationName) {
         if (Platform.isMacOS()) {
             if (applicationName != null) {
