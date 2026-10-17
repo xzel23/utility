@@ -622,6 +622,36 @@ class NamedParameterStatementTest {
     }
 
     @Test
+    void testSetObjectWithIntType() throws SQLException {
+        String sql = "INSERT INTO test_table (id, int_val) VALUES (:id, :intVal)";
+
+        try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+            stmt.setInt("id", 42);
+            stmt.setObject("intVal", 12345, java.sql.Types.INTEGER);
+            stmt.executeUpdate();
+        }
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT int_val FROM test_table WHERE id = 42")) {
+            assertTrue(rs.next());
+            assertEquals(12345, rs.getInt("int_val"));
+        }
+
+        sql = "INSERT INTO test_table (id, int_val) VALUES (:id, :intVal)";
+        try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+            stmt.setInt("id", 43);
+            stmt.setObject("intVal", null, java.sql.Types.INTEGER);
+            stmt.executeUpdate();
+        }
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT int_val FROM test_table WHERE id = 43")) {
+            assertTrue(rs.next());
+            assertNull(rs.getObject("int_val"));
+        }
+    }
+
+    @Test
     void testSetFetchSize() throws SQLException {
         String sql = "SELECT * FROM test_table WHERE id = :id";
         try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
@@ -655,6 +685,13 @@ class NamedParameterStatementTest {
             Optional<NamedParameterStatement.ParameterInfo> idParam = stmt.getParameterInfo("id");
             assertTrue(idParam.isPresent());
             assertEquals("id", idParam.get().getName());
+            assertEquals(List.of(1), idParam.get().getIndexes());
+
+            String repeatedParameterSql = "SELECT :first, :second, :first";
+            try (NamedParameterStatement repeatedStmt = new NamedParameterStatement(connection, repeatedParameterSql)) {
+                assertEquals(List.of(1, 3), repeatedStmt.getParameterInfo("first").orElseThrow().getIndexes());
+                assertEquals(List.of(2), repeatedStmt.getParameterInfo("second").orElseThrow().getIndexes());
+            }
 
             // Test non-existent parameter
             Optional<NamedParameterStatement.ParameterInfo> nonExistentParam = stmt.getParameterInfo("nonExistent");
@@ -1145,6 +1182,25 @@ class NamedParameterStatementTest {
             assertTrue(rs.next());
             String result = rs.getString("clob_val");
             assertEquals(testString, result);
+        }
+    }
+
+    @Test
+    void testSetNClobWithLength() throws SQLException {
+        String sql = "INSERT INTO test_table (id, clob_val) VALUES (:id, :nClobVal)";
+        String testString = "test nclob data with length";
+
+        try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql);
+             java.io.StringReader reader = new java.io.StringReader(testString)) {
+            stmt.setInt("id", 44);
+            stmt.setNClob("nClobVal", reader, (long) testString.length());
+            stmt.executeUpdate();
+        }
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT clob_val FROM test_table WHERE id = 44")) {
+            assertTrue(rs.next());
+            assertEquals(testString, rs.getString("clob_val"));
         }
     }
 
