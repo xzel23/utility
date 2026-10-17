@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * A mutable class holding font attributes to help create immutable font
  * instances.
  */
-@SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode", "MagicCharacter"})
+@SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode", "MagicCharacter", "java:S1845"})
 public final class FontDef {
 
     private static final Logger LOG = LogManager.getLogger(FontDef.class);
