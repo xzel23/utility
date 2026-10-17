@@ -21,6 +21,7 @@ class RestEndpointTest {
         assertThrows(IllegalStateException.class, () -> RestEndpoint.builder("missingPathParameter")
                 .get("items/{id}")
                 .build());
+        //noinspection ResultOfObjectAllocationIgnored
         assertThrows(IllegalArgumentException.class,
                 () -> new RestParameter("id", RestParameterLocation.PATH, false));
         assertThrows(IllegalArgumentException.class, () -> RestEndpoint.builder("invalidStatus")
