@@ -44,10 +44,10 @@ public final class PropertyConverter {
      *                  from type A to type B and vice versa
      * @return a new Property with a value of type B, synchronized with the original property
      */
-    public static <A, B, P extends Property<@Nullable A>> Property<B> convert(P property, Converter<@Nullable A, @Nullable B> converter) {
+    public static <A extends @Nullable Object, B extends @Nullable Object, P extends Property<A>> Property<B> convert(P property, Converter<@Nullable A, @Nullable B> converter) {
         LangUtil.check(!property.isBound(), () -> new IllegalArgumentException("property must not be bound!"));
 
-        Property<@Nullable B> convertedProperty = new SimpleObjectProperty<>(converter.convert(property.getValue()));
+        Property<B> convertedProperty = new SimpleObjectProperty<>(converter.convert(property.getValue()));
 
         property.addListener((obs, oldValue, newValue) -> {
             try {
