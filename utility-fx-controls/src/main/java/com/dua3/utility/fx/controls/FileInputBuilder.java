@@ -95,7 +95,7 @@ public final class FileInputBuilder extends InputControlBuilder<FileInputBuilder
      */
     @Override
     public FileInput build() {
-        FileInput control = new FileInput(owner, mode, existingOnly, getDefault(), extensionFilters, validate);
+        FileInput control = new FileInput(owner, mode, getDefault(), extensionFilters, validate);
         applyTo(control);
         if (disabled != null) {
             control.disableProperty().bind(disabled);

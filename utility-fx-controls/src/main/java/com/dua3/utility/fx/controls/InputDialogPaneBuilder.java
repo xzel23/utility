@@ -256,8 +256,8 @@ public class InputDialogPaneBuilder extends PaneBuilder<GridInputDialogPane, Inp
     }
 
     @Override
-    public InputDialogPaneBuilder inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
-        pb.inputFile(id, label, dflt, mode, existingOnly, filter, validate);
+    public InputDialogPaneBuilder inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
+        pb.inputFile(id, label, dflt, mode, filter, validate);
         return this;
     }
 

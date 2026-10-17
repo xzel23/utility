@@ -1177,23 +1177,22 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter) {
-        return inputFile(id, MessageFormatter.args(label), dflt, mode, existingOnly, filter, FileInput.defaultValidate(mode, existingOnly));
+        return inputFile(id, MessageFormatter.args(label), dflt, mode, filter, FileInput.defaultValidate(mode, existingOnly));
     }
 
     /**
      * Add a file chooser dialog to allow the user to select a file.
      *
-     * @param id           The identifier for the file chooser dialog.
-     * @param label        The label to display in the file chooser dialog.
-     * @param dflt         A function that provides the default path to preselect in the file chooser dialog.
-     * @param mode         The mode of the file dialog, such as OPEN or SAVE.
-     * @param existingOnly Whether to only allow selection of existing files.
-     * @param filter       The file filters to apply in the file chooser dialog.
-     * @param validate     A function to perform additional validation on the selected file path.
-     *                     It returns an optional error message if the validation fails.
+     * @param id       The identifier for the file chooser dialog.
+     * @param label    The label to display in the file chooser dialog.
+     * @param dflt     A function that provides the default path to preselect in the file chooser dialog.
+     * @param mode     The mode of the file dialog, such as OPEN or SAVE.
+     * @param filter   The file filters to apply in the file chooser dialog.
+     * @param validate A function to perform additional validation on the selected file path.
+     *                 It returns an optional error message if the validation fails.
      * @return {@code this}
      */
-    B inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate);
+    B inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate);
 
     /**
      * Add a file chooser.
@@ -1207,7 +1206,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter) {
-        return inputFile(id, label, dflt, mode, existingOnly, filter, FileInput.defaultValidate(mode, existingOnly));
+        return inputFile(id, label, dflt, mode, filter, FileInput.defaultValidate(mode, existingOnly));
     }
 
     /**
@@ -1224,7 +1223,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputFile(String id, String label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
-        return inputFile(id, MessageFormatter.args(label), dflt, mode, existingOnly, filter, validate);
+        return inputFile(id, MessageFormatter.args(label), dflt, mode, filter, validate);
     }
 
     /**
@@ -1251,7 +1250,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputFolder(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, boolean existingOnly, Function<@Nullable Path, Optional<String>> validate) {
-        return inputFile(id, label, dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
+        return inputFile(id, label, dflt, FileDialogMode.DIRECTORY, List.of(), validate);
     }
 
     /**
@@ -1278,7 +1277,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @return {@code this}
      */
     default B inputFolder(String id, String label, Supplier<@Nullable Path> dflt, boolean existingOnly, Function<@Nullable Path, Optional<String>> validate) {
-        return inputFile(id, MessageFormatter.args(label), dflt, FileDialogMode.DIRECTORY, existingOnly, List.of(), validate);
+        return inputFile(id, MessageFormatter.args(label), dflt, FileDialogMode.DIRECTORY, List.of(), validate);
     }
 
     /**

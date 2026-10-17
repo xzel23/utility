@@ -397,8 +397,8 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
     }
 
     @Override
-    public GridBuilder inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
-        return addInput(id, label, dflt, new FileInput(owner, mode, existingOnly, dflt, filter, validate), true);
+    public GridBuilder inputFile(String id, MessageFormatter.MessageFormatterArgs label, Supplier<@Nullable Path> dflt, FileDialogMode mode, Collection<FileChooser.ExtensionFilter> filter, Function<@Nullable Path, Optional<String>> validate) {
+        return addInput(id, label, dflt, new FileInput(owner, mode, dflt, filter, validate), true);
     }
 
     @Override

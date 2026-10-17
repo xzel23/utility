@@ -64,7 +64,6 @@ public final class FileInput extends CustomControl<HBox> implements InputControl
      *
      * @param parentWindow the parent window
      * @param mode         the mode of the file dialog, which can be OPEN, SAVE, or DIRECTORY
-     * @param existingOnly boolean indicating whether only existing files or directories should be selectable
      * @param dflt         a supplier providing the default path
      * @param filters      collection of file extension filters to apply in the file chooser
      * @param validate     a function to validate the selected file path, returning an optional error message
@@ -72,7 +71,6 @@ public final class FileInput extends CustomControl<HBox> implements InputControl
     public FileInput(
             @Nullable Window parentWindow,
             FileDialogMode mode,
-            boolean existingOnly,
             Supplier<@Nullable Path> dflt,
             Collection<FileChooser.ExtensionFilter> filters,
             Function<@Nullable Path, Optional<String>> validate) {

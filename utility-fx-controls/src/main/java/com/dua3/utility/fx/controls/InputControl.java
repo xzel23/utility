@@ -332,14 +332,13 @@ public interface InputControl<T> {
      * @param parentWindow  the parent window
      * @param dflt          a {@link Supplier} providing the default file path.
      * @param mode          the {@link FileDialogMode} of the dialog (e.g., OPEN, SAVE, DIRECTORY).
-     * @param existingOnly  specifies if only existing files can be chosen.
      * @param filters       a {@link Collection} of {@link javafx.stage.FileChooser.ExtensionFilter} to apply.
      * @param validate      a {@link Function} that validates the selected file path.
      * @return An {@code InputControl} instance for file selection.
      */
-    static InputControl<Path> chooseFile(@Nullable Window parentWindow, Supplier<@Nullable Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filters,
+    static InputControl<Path> chooseFile(@Nullable Window parentWindow, Supplier<@Nullable Path> dflt, FileDialogMode mode, Collection<FileChooser.ExtensionFilter> filters,
                                          Function<Path, Optional<String>> validate) {
-        return new FileInput(parentWindow, mode, existingOnly, dflt, filters, validate);
+        return new FileInput(parentWindow, mode, dflt, filters, validate);
     }
 
     /**
