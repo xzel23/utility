@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -111,7 +112,7 @@ public record Param<T>(
                         throw new IllegalArgumentException("Expected array length 0 or 1, got %d".formatted(strings.length));
             };
 
-            this.b2a = v -> v == null ? LangUtil.EMPTY_STRING_ARRAY : new String[]{elementConverter.convertBack(v)};
+            this.b2a = v -> v == null ? LangUtil.EMPTY_STRING_ARRAY : new String[]{Objects.requireNonNullElse(elementConverter.convertBack(v), "")};
         }
 
         @Override

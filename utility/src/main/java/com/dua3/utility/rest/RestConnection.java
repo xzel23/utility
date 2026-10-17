@@ -180,8 +180,9 @@ public final class RestConnection {
         if (!prepared.endpoint().responseContentTypes().isEmpty() && !containsHeader(headers, ACCEPT)) {
             putHeader(headers, ACCEPT, List.of(String.join(", ", prepared.endpoint().responseContentTypes())));
         }
-        if (prepared.body().contentType() != null && !containsHeader(headers, CONTENT_TYPE)) {
-            putHeader(headers, CONTENT_TYPE, List.of(prepared.body().contentType()));
+        String contentType = prepared.body().contentType();
+        if (contentType != null && !containsHeader(headers, CONTENT_TYPE)) {
+            putHeader(headers, CONTENT_TYPE, List.of(contentType));
         }
         validateContentType(prepared.endpoint(), headers);
         HttpRequest.Builder builder = HttpRequest.newBuilder(uri).timeout(prepared.timeout());

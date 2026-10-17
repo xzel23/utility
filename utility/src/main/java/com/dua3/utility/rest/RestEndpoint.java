@@ -36,8 +36,8 @@ public final class RestEndpoint {
 
     private RestEndpoint(Builder builder, boolean retryAfterAuthenticationRefresh) {
         this.name = builder.name;
-        this.method = builder.method;
-        this.pathTemplate = builder.pathTemplate;
+        this.method = Objects.requireNonNull(builder.method, "method must not be null");
+        this.pathTemplate = Objects.requireNonNull(builder.pathTemplate, "pathTemplate must not be null");
         this.parameters = Collections.unmodifiableMap(new LinkedHashMap<>(builder.parameters));
         this.requestContentTypes = Set.copyOf(builder.requestContentTypes);
         this.responseContentTypes = Set.copyOf(builder.responseContentTypes);

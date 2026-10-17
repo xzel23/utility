@@ -33,7 +33,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
     @SafeVarargs
     public static <K, V> void addToMap(Map<? super K, ? super V> m, Pair<K, V>... args) {
         for (Pair<K, V> arg : args) {
-            m.put(arg.first, arg.second);
+            m.put(Objects.requireNonNull(arg.first, "key is null"), arg.second);
         }
     }
 
@@ -47,7 +47,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      */
     public static <K, V> void addToMap(Map<? super K, ? super V> m, Iterable<Pair<K, V>> args) {
         for (Pair<K, V> arg : args) {
-            m.put(arg.first, arg.second);
+            m.put(Objects.requireNonNull(arg.first, "key is null"), arg.second);
         }
     }
 
