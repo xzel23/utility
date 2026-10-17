@@ -155,7 +155,9 @@ public class NamedParameterStatement implements AutoCloseable {
         // ignoring parameter-like strings inside quotes.
         int length = query.length();
         StringBuilder parsedQuery = new StringBuilder(length);
+        @SuppressWarnings("BooleanVariableAlwaysNegated")
         boolean inSingleQuote = false;
+        @SuppressWarnings("BooleanVariableAlwaysNegated")
         boolean inDoubleQuote = false;
         int index = 1;
 
@@ -359,11 +361,12 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
      * @param value parameter value
+     * @param length the number of bytes
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setBinaryStream(int, InputStream, int)
      */
-    void setBinaryStream(String name, InputStream value, int length) throws SQLException {
+    public void setBinaryStream(String name, InputStream value, int length) throws SQLException {
         setNonNullWithIntArg(name, value, length, statement::setBinaryStream);
     }
 
@@ -372,11 +375,12 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
      * @param value parameter value
+     * @param length the number of bytes
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setBinaryStream(int, InputStream, long)
      */
-    void setBinaryStream(String name, InputStream value, long length) throws SQLException {
+    public void setBinaryStream(String name, InputStream value, long length) throws SQLException {
         setNonNullWithLongArg(name, value, length, statement::setBinaryStream);
     }
 
@@ -389,7 +393,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setBlob(int, InputStream)
      */
-    void setBlob(String name, InputStream value) throws SQLException {
+    public void setBlob(String name, InputStream value) throws SQLException {
         setNonNull(name, value, statement::setBlob);
     }
 
@@ -398,11 +402,12 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
      * @param value parameter value
+     * @param length the number of bytes
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setBlob(int, InputStream, long) (int, Array)
      */
-    void setBlob(String name, InputStream value, long length) throws SQLException {
+    public void setBlob(String name, InputStream value, long length) throws SQLException {
         setNonNullWithLongArg(name, value, length, statement::setBlob);
     }
 
@@ -467,7 +472,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setCharacterStream(int, Reader)
      */
-    void setCharacterStream(String name, Reader value) throws SQLException {
+    public void setCharacterStream(String name, Reader value) throws SQLException {
         setNonNull(name, value, statement::setCharacterStream);
     }
 
@@ -476,11 +481,12 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
      * @param value parameter value
+     * @param length the number of characters
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setCharacterStream(int, Reader, int)
      */
-    void setCharacterStream(String name, Reader value, int length) throws SQLException {
+    public void setCharacterStream(String name, Reader value, int length) throws SQLException {
         setNonNullWithIntArg(name, value, length, statement::setCharacterStream);
     }
 
@@ -489,11 +495,12 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
      * @param value parameter value
+     * @param length the number of characters
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setCharacterStream(int, Reader, long)
      */
-    void setCharacterStream(String name, Reader value, long length) throws SQLException {
+    public void setCharacterStream(String name, Reader value, long length) throws SQLException {
         setNonNullWithLongArg(name, value, length, statement::setCharacterStream);
     }
 
@@ -506,7 +513,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setClob(int, Reader)
      */
-    void setClob(String name, Reader value) throws SQLException {
+    public void setClob(String name, Reader value) throws SQLException {
         setNonNull(name, value, statement::setClob);
     }
 
@@ -515,11 +522,12 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
      * @param value parameter value
+     * @param length the number of characters
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setClob(int, Reader, long)
      */
-    void setClob(String name, Reader value, long length) throws SQLException {
+    public void setClob(String name, Reader value, long length) throws SQLException {
         setNonNullWithLongArg(name, value, length, statement::setClob);
     }
 
@@ -597,7 +605,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setNCharacterStream(int, Reader)
      */
-    void setNCharacterStream(String name, Reader value) throws SQLException {
+    public void setNCharacterStream(String name, Reader value) throws SQLException {
         setNonNull(name, value, statement::setNCharacterStream);
     }
 
@@ -606,11 +614,12 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
      * @param value parameter value
+     * @param length the number of characters
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setNCharacterStream(int, Reader, long)
      */
-    void setNCharacterStream(String name, Reader value, long length) throws SQLException {
+    public void setNCharacterStream(String name, Reader value, long length) throws SQLException {
         setNonNullWithLongArg(name, value, length, statement::setNCharacterStream);
     }
 
@@ -623,7 +632,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setNClob(int, Reader)
      */
-    void setNClob(String name, Reader value) throws SQLException {
+    public void setNClob(String name, Reader value) throws SQLException {
         setNonNull(name, value, statement::setNClob);
     }
 
@@ -632,11 +641,12 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
      * @param value parameter value
+     * @param length the number of characters
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setNClob(int, Reader, long)
      */
-    void setNClob(String name, Reader value, long length) throws SQLException {
+    public void setNClob(String name, Reader value, long length) throws SQLException {
         setNonNullWithLongArg(name, value, length, statement::setNClob);
     }
 
@@ -649,7 +659,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setNClob(int, NClob)
      */
-    void setNClob(String name, @Nullable NClob value) throws SQLException {
+    public void setNClob(String name, @Nullable NClob value) throws SQLException {
         set(JDBCType.NCLOB, name, value, statement::setNClob);
     }
 
@@ -662,7 +672,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setNString(int, String)
      */
-    void setNString(String name, @Nullable String value) throws SQLException {
+    public void setNString(String name, @Nullable String value) throws SQLException {
         set(JDBCType.NCHAR, name, value, statement::setNString);
     }
 
@@ -670,11 +680,12 @@ public class NamedParameterStatement implements AutoCloseable {
      * Set a parameter to {@code null}.
      *
      * @param name parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
+     * @param type SQL type of the parameter
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setNull(int, int)
      */
-    void setNull(String name, SQLType type) throws SQLException {
+    public void setNull(String name, SQLType type) throws SQLException {
         for (int idx : getIndexes(name)) {
             statement.setNull(idx, type.getVendorTypeNumber());
         }
@@ -684,11 +695,12 @@ public class NamedParameterStatement implements AutoCloseable {
      * Set a parameter to {@code null}.
      *
      * @param name parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
+     * @param sqlType SQL type of the parameter, as defined in {@link java.sql.Types}
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setNull(int, int)
      */
-    void setNull(String name, int sqlType) throws SQLException {
+    public void setNull(String name, int sqlType) throws SQLException {
         for (int idx : getIndexes(name)) {
             statement.setNull(idx, sqlType);
         }
@@ -698,11 +710,13 @@ public class NamedParameterStatement implements AutoCloseable {
      * Set a parameter to {@code null}.
      *
      * @param name parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
+     * @param sqlType SQL type of the parameter, as defined in {@link java.sql.Types}
+     * @param typeName fully qualified SQL type name
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setNull(int, int, String)
      */
-    void setNull(String name, int sqlType, String typeName) throws SQLException {
+    public void setNull(String name, int sqlType, String typeName) throws SQLException {
         for (int idx : getIndexes(name)) {
             statement.setNull(idx, sqlType, typeName);
         }
@@ -724,12 +738,14 @@ public class NamedParameterStatement implements AutoCloseable {
     /**
      * Set a parameter.
      *
-     * @param name parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
+     * @param name          parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
+     * @param value         parameter value
+     * @param targetSqlType the SQL type (as defined in {@link java.sql.Types})
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setObject(int, Object, int)
      */
-    void setObject(String name, @Nullable Object value, int targetSqlType) throws SQLException {
+    public void setObject(String name, @Nullable Object value, int targetSqlType) throws SQLException {
         if (value == null) {
             setNull(name, targetSqlType);
         } else {
@@ -846,11 +862,12 @@ public class NamedParameterStatement implements AutoCloseable {
      * Set a parameter.
      *
      * @param name parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
+     * @param value SQLXML value; {@code null} sets the parameter to SQL {@code NULL}
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setSQLXML(int, SQLXML)
      */
-    void setSQLXML(String name, @Nullable SQLXML value) throws SQLException {
+    public void setSQLXML(String name, @Nullable SQLXML value) throws SQLException {
         set(JDBCType.SQLXML, name, value, statement::setSQLXML);
     }
 
@@ -1138,7 +1155,7 @@ public class NamedParameterStatement implements AutoCloseable {
             this.type = null;
         }
 
-        void addIndex(int index) {
+        private void addIndex(int index) {
             indexes.add(index);
         }
 

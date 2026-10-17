@@ -18,8 +18,10 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.JDBCType;
+import java.sql.NClob;
 import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.RowId;
@@ -687,14 +689,6 @@ class NamedParameterStatementTest {
         // Test getType (default)
         assertEquals(JDBCType.JAVA_OBJECT, info.getType());
 
-        // Test addIndex and getIndexes
-        info.addIndex(1);
-        info.addIndex(2);
-        List<Integer> indexes = info.getIndexes();
-        assertEquals(2, indexes.size());
-        assertEquals(1, indexes.get(0));
-        assertEquals(2, indexes.get(1));
-
         // Test toString
         String infoString = info.toString();
         assertTrue(infoString.contains("testParam"));
@@ -834,6 +828,20 @@ class NamedParameterStatementTest {
              ResultSet rs = stmt.executeQuery("SELECT string_val FROM test_table WHERE id = 25")) {
             assertTrue(rs.next());
             assertNull(rs.getString("string_val"));
+        }
+
+        // Test setNull with a type name
+        sql = "INSERT INTO test_table (id, int_val) VALUES (:id, :nullVal)";
+        try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+            stmt.setInt("id", 41);
+            stmt.setNull("nullVal", java.sql.Types.INTEGER, "INTEGER");
+            stmt.executeUpdate();
+        }
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT int_val FROM test_table WHERE id = 41")) {
+            assertTrue(rs.next());
+            assertNull(rs.getObject("int_val"));
         }
     }
 
@@ -1096,6 +1104,28 @@ class NamedParameterStatementTest {
     }
 
     @Test
+    void testSetClobValue() throws SQLException {
+        String sql = "INSERT INTO test_table (id, clob_val) VALUES (:id, :clobVal)";
+        String testString = "test clob object";
+        Clob clob = connection.createClob();
+        clob.setString(1, testString);
+
+        try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+            stmt.setInt("id", 39);
+            stmt.setClob("clobVal", clob);
+            stmt.executeUpdate();
+        } finally {
+            clob.free();
+        }
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT clob_val FROM test_table WHERE id = 39")) {
+            assertTrue(rs.next());
+            assertEquals(testString, rs.getString("clob_val"));
+        }
+    }
+
+    @Test
     void testSetNClob() throws SQLException {
         String sql = "INSERT INTO test_table (id, clob_val) VALUES (:id, :nClobVal)";
         String testString = "test nclob data";
@@ -1115,6 +1145,28 @@ class NamedParameterStatementTest {
             assertTrue(rs.next());
             String result = rs.getString("clob_val");
             assertEquals(testString, result);
+        }
+    }
+
+    @Test
+    void testSetNClobValue() throws SQLException {
+        String sql = "INSERT INTO test_table (id, clob_val) VALUES (:id, :nClobVal)";
+        String testString = "test nclob object";
+        NClob nclob = connection.createNClob();
+        nclob.setString(1, testString);
+
+        try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+            stmt.setInt("id", 40);
+            stmt.setNClob("nClobVal", nclob);
+            stmt.executeUpdate();
+        } finally {
+            nclob.free();
+        }
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT clob_val FROM test_table WHERE id = 40")) {
+            assertTrue(rs.next());
+            assertEquals(testString, rs.getString("clob_val"));
         }
     }
 
