@@ -55,7 +55,9 @@ public final class FxDbUtil {
     private static final Logger LOG = LogManager.getLogger(FxDbUtil.class);
     private static final String ERROR_TEXT = "###";
 
-    // utility - no instances
+    /**
+     * Utility class constructor.
+     */
     private FxDbUtil() {}
 
     /**
@@ -97,29 +99,6 @@ public final class FxDbUtil {
             int scale = meta.getScale(i);
 
             // define the formatting
-            @SuppressWarnings("java:S3457")
-            Function<@Nullable Object, String> format = switch (sqlType) {
-                case DATE ->
-                        item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalDate(item), v -> v.format(dateFormatter), LangUtil.NULL_STRING);
-                case TIMESTAMP ->
-                        item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalDateTime(item), v -> v.format(timestampFormatter), LangUtil.NULL_STRING);
-                case TIME ->
-                        item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalTime(item), v -> v.format(timeFormatter), LangUtil.NULL_STRING);
-
-                // numbers that have scale
-                case DECIMAL, NUMERIC -> {
-                    if (scale > 0) {
-                        //noinspection StringConcatenationInFormatCall,StringConcatenationMissingWhitespace
-                        yield item -> item == null ? LangUtil.NULL_STRING : String.format(locale, "%.0" + scale + "f", ((Number) item).doubleValue());
-                    } else {
-                        yield String::valueOf;
-                    }
-                }
-
-                // numbers that do not have scale
-                case DOUBLE, REAL, FLOAT -> String::valueOf;
-                case null, default -> String::valueOf;
-            };
             LOG.trace("column name: {} label: {} type: {} scale: {}", name, label, sqlType, scale);
 
             // CellValueFactory
@@ -135,19 +114,21 @@ public final class FxDbUtil {
                     = col -> new TableCell<>() {
                 @Override
                 protected void updateItem(@Nullable Object item, boolean empty) {
+                    //noinspection DataFlowIssue - false positive, super class method allows null
                     super.updateItem(item, empty);
 
                     if (empty) {
                         setText(null);
                         setGraphic(null);
                     } else {
-                        setText(format.apply(item));
+                        setText(getFormat(sqlType, dateFormatter, timestampFormatter, timeFormatter, scale, locale).apply(item));
                     }
                 }
             };
 
             // create column
             TableColumn<ObservableList<Object>, Object> column = new TableColumn<>(label);
+            //noinspection NullableProblems - false positive
             column.setCellValueFactory(cellValueFactory);
             column.setCellFactory(cellFactory);
             newColumns.add(column);
@@ -173,6 +154,52 @@ public final class FxDbUtil {
         return newItems.size();
     }
 
+    /**
+     * Returns a Function that formats an Object value based on the given JDBCType.
+     *
+     * @param sqlType the JDBCType to determine the formatting behavior
+     * @param dateFormatter the DateTimeFormatter for DATE type
+     * @param timestampFormatter the DateTimeFormatter for TIMESTAMP type
+     * @param timeFormatter the DateTimeFormatter for TIME type
+     * @param scale the scale for decimal and numeric types
+     * @param locale the Locale to use for formatting
+     * @return a Function to format the input Object based on the provided JDBCType
+     */
+    @SuppressWarnings("java:S3457")
+    private static Function<@Nullable Object, String> getFormat(JDBCType sqlType, DateTimeFormatter dateFormatter, DateTimeFormatter timestampFormatter, DateTimeFormatter timeFormatter, int scale, Locale locale) {
+        return switch (sqlType) {
+            case DATE ->
+                    item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalDate(item), v -> v.format(dateFormatter), LangUtil.NULL_STRING);
+            case TIMESTAMP ->
+                    item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalDateTime(item), v -> v.format(timestampFormatter), LangUtil.NULL_STRING);
+            case TIME ->
+                    item -> LangUtil.mapNonNullOrElse(DbUtil.toLocalTime(item), v -> v.format(timeFormatter), LangUtil.NULL_STRING);
+
+            // numbers that have scale
+            case DECIMAL, NUMERIC -> {
+                if (scale > 0) {
+                    //noinspection StringConcatenationInFormatCall,StringConcatenationMissingWhitespace
+                    yield item -> item == null ? LangUtil.NULL_STRING : String.format(locale, "%.0" + scale + "f", ((Number) item).doubleValue());
+                } else {
+                    yield String::valueOf;
+                }
+            }
+
+            // numbers that do not have scale
+            case DOUBLE, REAL, FLOAT -> String::valueOf;
+            default -> String::valueOf;
+        };
+    }
+
+    /**
+     * Retrieves an object from the specified ResultSet at the given index.
+     * If the retrieved object is an instance of Clob, it is converted to a String.
+     *
+     * @param rs the ResultSet from which to retrieve the object
+     * @param i the index of the object to retrieve
+     * @return the retrieved object or its String representation in case of a Clob
+     * @throws SQLException if an error occurs during object retrieval
+     */
     private static @Nullable Object getObject(ResultSet rs, int i) throws SQLException {
         Object obj = rs.getObject(i);
 
@@ -183,6 +210,12 @@ public final class FxDbUtil {
         return obj;
     }
 
+    /**
+     * Retrieves the content of a Clob object as a String.
+     *
+     * @param clob the Clob object to extract the content from
+     * @return the content of the Clob object as a String
+     */
     private static String toString(Clob clob) {
         try {
             return clob.getSubString(1L, Math.toIntExact(Math.min(Integer.MAX_VALUE, clob.length())));
