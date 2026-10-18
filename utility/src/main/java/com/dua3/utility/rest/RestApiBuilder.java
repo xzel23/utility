@@ -61,6 +61,9 @@ public final class RestApiBuilder {
     /**
      * Uses a caller-supplied HTTP client.
      *
+     * <p>The client remains owned by the caller and will not be closed when
+     * the resulting {@link RestApi} is closed.</p>
+     *
      * @param httpClient the HTTP client
      * @return this builder
      */
@@ -184,6 +187,7 @@ public final class RestApiBuilder {
         URI apiBaseUri = Objects.requireNonNull(baseUri,
                 "base URI has not been set and was not supplied by the OpenAPI document");
         HttpClient client = httpClient;
+        boolean ownsClient = client == null;
         if (client == null) {
             HttpClient.Builder clientBuilder = HttpClient.newBuilder();
             if (connectTimeout != null) {
@@ -192,7 +196,7 @@ public final class RestApiBuilder {
             client = clientBuilder.build();
         }
         LOG.debug("Building REST API with base URI {} and {} endpoint(s)", apiBaseUri, endpoints.size());
-        return new RestApi(apiBaseUri, client, requestTimeout, defaultHeaders, endpoints);
+        return new RestApi(apiBaseUri, client, ownsClient, requestTimeout, defaultHeaders, endpoints);
     }
 
     boolean hasBaseUri() {

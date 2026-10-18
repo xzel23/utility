@@ -14,18 +14,24 @@ import java.util.Optional;
 
 /**
  * An immutable REST API definition backed by Java's {@link HttpClient}.
+ *
+ * <p>A client created by this API is closed when the API is closed. A client
+ * supplied to {@link RestApiBuilder#httpClient(HttpClient)} remains owned by
+ * the caller and is not closed by this API.</p>
  */
-public final class RestApi {
+public final class RestApi implements AutoCloseable {
     private final URI baseUri;
     private final HttpClient httpClient;
+    private final boolean ownsHttpClient;
     private final Duration requestTimeout;
     private final Map<String, List<String>> defaultHeaders;
     private final Map<String, RestEndpoint> endpoints;
 
-    RestApi(URI baseUri, HttpClient httpClient, Duration requestTimeout,
+    RestApi(URI baseUri, HttpClient httpClient, boolean ownsHttpClient, Duration requestTimeout,
             Map<String, List<String>> defaultHeaders, Map<String, RestEndpoint> endpoints) {
         this.baseUri = normalizeBaseUri(baseUri);
         this.httpClient = Objects.requireNonNull(httpClient, "httpClient");
+        this.ownsHttpClient = ownsHttpClient;
         this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout");
         this.defaultHeaders = immutableHeaders(defaultHeaders);
         this.endpoints = Map.copyOf(endpoints);
@@ -51,6 +57,10 @@ public final class RestApi {
 
     /**
      * Gets the HTTP client used by new connections.
+     *
+     * <p>The client is owned by this API when it was created by the builder.
+     * When supplied with {@link RestApiBuilder#httpClient(HttpClient)}, it is
+     * owned by the caller.</p>
      *
      * @return the HTTP client
      */
@@ -103,6 +113,19 @@ public final class RestApi {
      */
     public RestConnection connect(RestAuthentication authentication) {
         return new RestConnection(this, Objects.requireNonNull(authentication, "authentication"));
+    }
+
+    /**
+     * Closes the HTTP client when this API created it.
+     *
+     * <p>A caller supplied through {@link RestApiBuilder#httpClient(HttpClient)}
+     * is not closed.</p>
+     */
+    @Override
+    public void close() {
+        if (ownsHttpClient) {
+            httpClient.close();
+        }
     }
 
     Map<String, List<String>> defaultHeaders() {

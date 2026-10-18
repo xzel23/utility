@@ -28,20 +28,25 @@
  * request is executed.
  *
  * <pre>{@code
- * RestApi api = RestApi.builder()
+ * try (RestApi api = RestApi.builder()
  *         .baseUri("https://api.example.com/v1")
  *         .endpoint("getPet", endpoint -> endpoint
  *                 .get("/pets/{id}")
  *                 .pathParameter("id")
  *                 .produces("application/json"))
- *         .build();
- *
- * RestResponse<String> response = api.connect(RestAuthentication.none())
- *         .request("getPet")
- *         .pathParameter("id", 42)
- *         .execute(HttpResponse.BodyHandlers.ofString())
- *         .requireSuccess();
+ *         .build()) {
+ *     RestResponse<String> response = api.connect(RestAuthentication.none())
+ *             .request("getPet")
+ *             .pathParameter("id", 42)
+ *             .execute(HttpResponse.BodyHandlers.ofString())
+ *             .requireSuccess();
+ * }
  * }</pre>
+ *
+ * <p>{@link RestApi} owns the {@link java.net.http.HttpClient} created by its
+ * builder and closes it with the API. If an application supplies a client with
+ * {@link RestApiBuilder#httpClient(java.net.http.HttpClient)}, the application
+ * retains ownership and must close that client itself.</p>
  *
  * <h2>Importing an OpenAPI 3 document</h2>
  *
