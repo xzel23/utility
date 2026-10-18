@@ -48,7 +48,7 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
      * @param items the collection of items to populate the combo box
      */
     ComboBoxExBuilder(Collection<T> items) {
-        super(() -> null);
+        super(() -> {throw new IllegalStateException("factory has not yet been set");});
         this.items = items instanceof ObservableList<T> ol ? ol : FXCollections.observableList(List.copyOf(items));
     }
 
