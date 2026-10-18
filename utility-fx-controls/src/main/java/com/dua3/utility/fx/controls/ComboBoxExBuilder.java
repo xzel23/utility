@@ -59,6 +59,7 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
      *             {@code null} if the item should not be modified
      * @return the current instance of the builder
      */
+    @SuppressWarnings({"java:S4276", "ParameterHidesMemberVariable"})
     public ComboBoxExBuilder<T> edit(Function<T, @Nullable T> edit) {
         this.edit = edit;
         return self();
@@ -67,7 +68,7 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
     /**
      * Sets the supplier responsible for adding a new item to the ComboBoxEx.
      *
-     * @param add a supplier that provides a new item to be added to the ComboBoxEx, or null if no item is to be added
+     * @param add a supplier that provides a new item to be added to the ComboBoxEx or null if no item is to be added
      * @return this instance of the builder
      */
     public ComboBoxExBuilder<T> add(Supplier<@Nullable T> add) {
