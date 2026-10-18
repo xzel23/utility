@@ -43,6 +43,7 @@ public class PromptDialog extends Dialog<String> {
 
         setResultConverter(btn -> {
             ButtonData data = btn == null ? null : btn.getButtonData();
+            //noinspection DataFlowIssue - false positive
             return data == ButtonData.OK_DONE ? textField.getText() : null;
         });
 

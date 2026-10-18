@@ -371,11 +371,13 @@ public class FxDialogSample extends Application {
         return I18NInstance.get();
     }
 
-    private void setLocale(Locale locale) {
-        if (!Objects.equals(locale, Locale.getDefault())) {
-            Locale.setDefault(locale);
-            I18N.init("", locale);
-            PlatformHelper.runLater(() -> start((Stage) comboLocale.getScene().getWindow()));
+    @SuppressWarnings("java:S4449") // false positive
+    private void setLocale(@Nullable Locale locale) {
+        Locale loc = Objects.requireNonNullElse(locale, Locale.ENGLISH);
+        if (!Objects.equals(loc, Locale.getDefault())) {
+            Locale.setDefault(loc);
+            I18N.init("", loc);
+            PlatformHelper.runLater(() -> start((Stage) Objects.requireNonNull(comboLocale).getScene().getWindow()));
         }
     }
 

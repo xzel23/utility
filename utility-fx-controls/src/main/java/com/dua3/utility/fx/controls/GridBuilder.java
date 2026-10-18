@@ -421,6 +421,7 @@ public class GridBuilder implements InputBuilder<GridBuilder> {
             LangUtil.check(!data.isEmpty(), "no inline nodes defined for current row");
             node = data.getLast().control.node();
         }
+        assert node != null;
         action.accept(node);
         return this;
     }
