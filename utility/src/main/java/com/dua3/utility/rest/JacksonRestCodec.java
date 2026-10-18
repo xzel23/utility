@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.http.HttpResponse;
@@ -50,6 +51,7 @@ final class JacksonRestCodec implements RestCodec {
         String mediaType = format == OpenApiFormat.YAML ? "application/yaml" : "application/json";
         String dependency = format == OpenApiFormat.YAML ? "Jackson 3 YAML support" : "Jackson 3 databind";
         JacksonRestCodec codec = new JacksonRestCodec(mapperClass, mediaType, dependency);
+        //noinspection OverlyBroadCatchBlock
         try {
             byte[] document = input.readAllBytes();
             Map<?, ?> values = codec.read(document, Map.class);
@@ -61,8 +63,8 @@ final class JacksonRestCodec implements RestCodec {
                 result.put(key, entry.getValue());
             }
             return result;
-        } catch (IOException e) {
-            throw e;
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
         } catch (RuntimeException e) {
             throw new IOException("could not parse OpenAPI document as " + mediaType, e);
         }
