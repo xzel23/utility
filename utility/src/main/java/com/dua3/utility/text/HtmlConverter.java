@@ -892,6 +892,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                     height *= scale;
                 }
             }
+            //noinspection SuspiciousNameCombination
             return new ImageDimensions(
                     Math.max(1, MathUtil.roundToInt(width)),
                     Math.max(1, MathUtil.roundToInt(height))
