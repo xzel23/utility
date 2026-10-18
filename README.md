@@ -235,10 +235,17 @@ could not be loaded.
 
 ## Changes
 
-## 25.1.1
+## 25.2.0
 
+- BREAKING: removed unused `existingOnly` argument from FileInputBuilder constructor and InputBuilder methods.
+  Remove the argument if it is used in your code.
+- BREAKING: declared dependencies on java.desktop and java.xml static. This should only affect jlinked/jpackaged
+  applications; add a requires statement to your application if these are needed or explicitly add the modules in
+  your jlink configuration if needed
 - update module-info to correct reference to use "requires static" for optional dependencies
 - remove incorrect reference to org.w3c.dom.css.Counter Histogram class Javadoc
+- added missing public keyword to some methods in NamedParameterStatement; added tests
+- minor code cleanups and fixes
 
 ## 25.1.0
 
