@@ -44,6 +44,7 @@ public class GenericTableCell<S, T> extends TableCell<S, T> {
 
     @Override
     protected void updateItem(@Nullable T item, boolean empty) {
+        //noinspection DataFlowIssue -- false positive, null is allowed
         super.updateItem(item, empty);
         node = empty ? null : nodeFactory.apply(node, item);
         editNode = null;

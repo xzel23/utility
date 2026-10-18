@@ -152,8 +152,9 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
             });
         }
 
-        if (onChange != null) {
-            comboBox.valueProperty().addListener((obs, oldVal, newVal) -> onChange.accept(newVal));
+        Consumer<@Nullable T> onchg = onChange;
+        if (onchg != null) {
+            comboBox.valueProperty().addListener((obs, oldVal, newVal) -> onchg.accept(newVal));
         }
 
         Bindings.bindBidirectional(comboBox.valueProperty(), property);
