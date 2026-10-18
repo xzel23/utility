@@ -60,7 +60,7 @@ public class AboutDialogBuilder {
     private String copyright = "";
     private String version = "";
     private String mailText = "";
-    private @Nullable URI mailTo = null;
+    private @Nullable URI mailTo;
     private String licenseNote = "";
     private String licenseNoteShort = "";
     private @Nullable Runnable showLicenseDetails;
@@ -344,11 +344,11 @@ public class AboutDialogBuilder {
     /**
      * Sets the expandable content for the AboutDialog.
      *
-     * @param c the node to be displayed as expandable content in the dialog
+     * @param content the node to be displayed as expandable content in the dialog
      * @return the AboutDialogBuilder instance for method chaining
      */
-    public AboutDialogBuilder expandableContent(Node c) {
-        this.expandableContent = c;
+    public AboutDialogBuilder expandableContent(Node content) {
+        this.expandableContent = content;
         return this;
     }
 
@@ -422,6 +422,7 @@ public class AboutDialogBuilder {
             if (showLicenseDetails != null) {
                 Hyperlink hlLicense = new Hyperlink(shortNote);
                 hlLicense.setId("license");
+                //noinspection DataFlowIssue - false positive
                 hlLicense.setOnAction(e -> showLicenseDetails.run());
                 children.add(hlLicense);
             } else {
@@ -490,7 +491,7 @@ public class AboutDialogBuilder {
      * @param id the identifier to assign to the label
      * @param text the label text
      */
-    private void addLabelLiteral(Collection<Node> nodes, String id, String text) {
+    private static void addLabelLiteral(Collection<Node> nodes, String id, String text) {
         if (!text.isEmpty()) {
             Label label = new Label(text);
             label.setId(id);
