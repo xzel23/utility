@@ -22,8 +22,8 @@ private data class ReleaseVersions(
 
 /**
  * Reads the small, deliberately constrained TOML subset used by the release files.
- * Release files contain only string, boolean, and array values in [release] and
- * [modules.<project-name>] tables, so adding a TOML library to the settings
+ * Release files contain only string, boolean, and array values in the `release` and
+ * `modules.<project-name>` tables, so adding a TOML library to the settings
  * classpath is unnecessary.
  */
 private fun readReleaseVersions(file: File, requireSelection: Boolean): ReleaseVersions {
