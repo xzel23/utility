@@ -247,7 +247,9 @@ public final class FontDef {
             if (!rule.isBlank()) {
                 Pair<String, String> pair = parseCssRule(rule);
 
+                assert pair.first() != null;
                 String attribute = pair.first().toLowerCase(Locale.ROOT);
+                assert pair.second() != null;
                 String value = pair.second().strip();
 
                 switch (attribute) {
@@ -260,7 +262,6 @@ public final class FontDef {
                     default -> LOG.warn("unknown font attribute: {}", attribute);
                 }
             }
-
         }
 
         return fd;
