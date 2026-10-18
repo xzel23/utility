@@ -85,8 +85,9 @@ public class ChoiceMenuBuilder<T> extends MenuItemBuilder<Menu, ChoiceMenuBuilde
 
         T current = property.getValue();
 
-        if (onChange != null) {
-            property.addListener((obs, oldVal, newVal) -> onChange.accept(newVal));
+        Consumer<@Nullable T> onchg = onChange;
+        if (onchg != null) {
+            property.addListener((obs, oldVal, newVal) -> onchg.accept(newVal));
         }
 
         ToggleGroup group = new ToggleGroup();

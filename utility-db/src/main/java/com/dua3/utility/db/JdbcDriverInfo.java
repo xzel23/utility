@@ -103,7 +103,9 @@ public class JdbcDriverInfo {
         this.link = link;
 
         Pair<String, List<Option<?>>> parsed = parseScheme(urlScheme);
+        assert parsed.first() != null;
         this.urlScheme = parsed.first();
+        assert parsed.second() != null;
         this.options = parsed.second();
     }
 

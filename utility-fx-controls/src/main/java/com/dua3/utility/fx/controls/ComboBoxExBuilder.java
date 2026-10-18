@@ -249,10 +249,12 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
 
         ComboBoxEx<T> comboBoxEx = new ComboBoxEx<>(edit, add, remove, dflt, effectiveFormat, graphic, font, items);
 
+        Function<String, ? extends @Nullable T> prsr = parser;
         if (converter != null) {
             comboBoxEx.setConverter(converter);
-        } else if (parser != null) {
+        } else if (prsr != null) {
             Function<? super @Nullable T, @Nullable String> fmt = effectiveFormat;
+            //noinspection QuestionableName
             comboBoxEx.setConverter(new StringConverter<>() {
                 @Override
                 public @Nullable String toString(@Nullable T object) {
@@ -261,7 +263,7 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
 
                 @Override
                 public @Nullable T fromString(@Nullable String string) {
-                    return string == null ? null : parser.apply(string);
+                    return string == null ? null : prsr.apply(string);
                 }
             });
         }
@@ -290,8 +292,9 @@ public class ComboBoxExBuilder<T> extends ControlBuilder<ComboBoxEx<T>, ComboBox
             factory = oldFactory;
         }
 
-        if (onChange != null) {
-            comboBoxEx.valueProperty().addListener((obs, oldVal, newVal) -> onChange.accept(newVal));
+        Consumer<@Nullable T> onchg = onChange;
+        if (onchg != null) {
+            comboBoxEx.valueProperty().addListener((obs, oldVal, newVal) -> onchg.accept(newVal));
         }
 
         if (boundProperty != null) {

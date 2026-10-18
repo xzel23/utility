@@ -128,22 +128,20 @@ public class ComboBoxBuilder<T> extends ControlBuilder<ComboBox<T>, ComboBoxBuil
         ComboBox<T> comboBox = super.build();
         comboBox.setItems(items);
 
-        if (format == null && localized) {
-            format = TextUtil::toLocalizedString;
-        }
-        if (format != null) {
+        Function<T, String> fmt = format == null && localized ? TextUtil::toLocalizedString : format;
+        if (fmt != null) {
             comboBox.setCellFactory(lv -> new ListCell<>() {
                 @SuppressWarnings("DataFlowIssue")
                 @Override
                 protected void updateItem(@Nullable T item, boolean empty) {
                     super.updateItem(item, empty);
-                    setText(format.apply(item));
+                    setText(fmt.apply(item));
                 }
             });
             comboBox.setConverter(new StringConverter<>() {
                 @Override
                 public String toString(@Nullable T item) {
-                    return item == null ? "" : format.apply(item);
+                    return item == null ? "" : fmt.apply(item);
                 }
 
                 @SuppressWarnings("QuestionableName")

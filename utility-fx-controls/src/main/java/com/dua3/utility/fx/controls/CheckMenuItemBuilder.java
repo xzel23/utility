@@ -29,8 +29,9 @@ public class CheckMenuItemBuilder extends MenuItemBuilder<CheckMenuItem, CheckMe
     public CheckMenuItem build() {
         CheckMenuItem item = super.build();
 
-        if (action != null) {
-            item.selectedProperty().addListener((v, o, n) -> action.accept(n));
+        Consumer<Boolean> act = this.action;
+        if (act != null) {
+            item.selectedProperty().addListener((v, o, n) -> act.accept(n));
         }
 
         apply(selected, item.selectedProperty());
