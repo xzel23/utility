@@ -79,6 +79,7 @@ public final class PropertyConverter {
      * @return a read-only property containing the converted value of type B
      */
     public static <A, B, V extends ObservableValue<A>> ReadOnlyProperty<B> convertReadOnly(V value, Converter<A, B> converter) {
+        //noinspection DataFlowIssue - false positive
         return convertReadOnly(value, converter::convert);
     }
 
